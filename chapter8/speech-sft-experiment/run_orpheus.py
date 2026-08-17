@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the Orpheus half of Experiment 7-6 on one local CUDA GPU.
+"""Run the Orpheus half of Experiment 8-6 on one local CUDA GPU.
 
 The campaign deliberately keeps a held-out split and emits base/adapted audio
 for identical prompts and seeds.  It is bounded for a workstation, but it is
@@ -192,7 +192,7 @@ def main():
     p.add_argument("--max-audio-seconds", type=float, default=4.0)
     p.add_argument("--steps", type=int, default=60)
     p.add_argument("--generation-tokens", type=int, default=560)
-    p.add_argument("--hf-repo", default="bojieli/exp7-6-orpheus-elise-lora")
+    p.add_argument("--hf-repo", default="bojieli/exp8-6-orpheus-elise-lora")
     args = p.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
     started = time.time()
@@ -271,7 +271,7 @@ def main():
         if x.is_file()
     ]
     manifest = {
-        "experiment": "7-6",
+        "experiment": "8-6",
         "track": "orpheus_cross_sentence_voice_consistency",
         "status": "trained_and_generated",
         "seed": SEED,

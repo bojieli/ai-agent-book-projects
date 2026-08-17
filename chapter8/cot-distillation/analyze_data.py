@@ -36,7 +36,7 @@ def main():
         think = m.group(1) if m else ""
         think_lens.append(len(think))
         answer_lens.append(len(assistant))
-        # 教师式的反思/验算行为（实验 7-9 验收标准之一）
+        # 教师式的反思/验算行为（实验 8-9 验收标准之一）
         if re.search(r"(验算|检查|重新|等等|不对|再算|反思|verify|check|wait)", think, re.IGNORECASE):
             n_reflect += 1
 

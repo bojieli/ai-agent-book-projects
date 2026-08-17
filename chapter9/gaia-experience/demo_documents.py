@@ -1,4 +1,4 @@
-"""Offline demonstration of Experiment 8-2."""
+"""Offline demonstration of Experiment 9-2."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ ROOT = Path(__file__).parent
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Experiment 8-2 experience-document extraction")
+    parser = argparse.ArgumentParser(description="Experiment 9-2 experience-document extraction")
     parser.add_argument("--extractor", choices=("fixture", "llm"), default="fixture")
     parser.add_argument("--model", help="real LLM model; defaults to LLM_MODEL or gpt-5.6")
     args = parser.parse_args()
@@ -26,7 +26,7 @@ def main() -> None:
     output_paths = write_documents(documents, ROOT / "output" / "experience_documents")
     report = evaluate_retrieval_baselines(records, documents, dataset["transfer_cases"])
 
-    print(f"Experiment 8-2: evaluated trajectories -> Markdown experience documents (extractor={args.extractor})\n")
+    print(f"Experiment 9-2: evaluated trajectories -> Markdown experience documents (extractor={args.extractor})\n")
     for document, path in zip(documents, output_paths):
         print(f"{document.task_family:<18} sources={len(document.sources)} "
               f"recommendations={len(document.recommended_strategies)} -> {path.relative_to(ROOT)}")

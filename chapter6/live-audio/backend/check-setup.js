@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * check-setup.js — Headless environment verifier for the Live Voice Chat demo (实验 9-1).
+ * check-setup.js — Headless environment verifier for the Live Voice Chat demo (实验 6-3).
  *
  * Runs WITHOUT any API keys, microphone, or browser. It only checks that the
  * local prerequisites for the cascaded VAD -> ASR -> LLM -> TTS pipeline are in
@@ -26,7 +26,7 @@ const ok = (msg) => console.log(`  ✅ ${msg}`);
 const warn = (msg) => { console.log(`  ⚠️  ${msg}`); warnings++; };
 const fail = (msg) => { console.log(`  ❌ ${msg}`); hardFailures++; };
 
-console.log('🔍 Live Voice Chat — setup check (实验 9-1)');
+console.log('🔍 Live Voice Chat — setup check (实验 6-3)');
 console.log('='.repeat(60));
 
 // 1. Node version (README requires v16+)

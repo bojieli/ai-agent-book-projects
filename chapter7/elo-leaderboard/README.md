@@ -2,7 +2,7 @@
 
 ## English
 
-**Experiment 6-6**: Building Model Leaderboard from Pairwise Comparison Data
+**Experiment 7-7**: Building Model Leaderboard from Pairwise Comparison Data
 
 This project implements an Elo rating system from scratch to analyze model performance using Chatbot Arena's public voting data. The implementation demonstrates how the Bradley-Terry model extracts relative model capabilities from millions of pairwise comparison votes.
 
@@ -61,7 +61,7 @@ source .venv/bin/activate
 # pip fallback when uv is not installed:
 # python -m pip install -e ".[ch6]"
 
-cd chapter6/elo-leaderboard
+cd chapter7/elo-leaderboard
 
 # Single-project compatibility path, still supported during migration:
 # python -m pip install -r requirements.txt
@@ -79,13 +79,13 @@ source .venv/bin/activate
 # pip fallback when uv is not installed:
 # python -m pip install -e ".[ch6,dev]"
 
-cd chapter6/elo-leaderboard
+cd chapter7/elo-leaderboard
 python -m pytest tests
 ```
 
 ## Canonical full-data validation
 
-The accepted Experiment 6-6 run uses the complete public 2024-08-14 Arena
+The accepted Experiment 7-7 run uses the complete public 2024-08-14 Arena
 snapshot rather than the synthetic quickstart or a small sample. The 2.0 GB
 input is not committed to git; the manifest records its official URL, byte
 size, 1,799,991-row count, and SHA-256.
@@ -97,11 +97,11 @@ curl -L \
 
 python validation/run_experiment.py \
   --input /path/to/arena_data.json \
-  --output-dir validation/runs/exp6-6-arena-20260731-v1 \
+  --output-dir validation/runs/exp7-7-arena-20260731-v1 \
   --bootstrap-rounds 20
 
 python validation/validate_evidence.py \
-  validation/runs/exp6-6-arena-20260731-v1 \
+  validation/runs/exp7-7-arena-20260731-v1 \
   --input /path/to/arena_data.json
 ```
 
@@ -719,7 +719,7 @@ source .venv/bin/activate
 # 未安装 uv 时可用 pip 兜底：
 # python -m pip install -e ".[ch6]"
 
-cd chapter6/elo-leaderboard
+cd chapter7/elo-leaderboard
 
 # 迁移期间仍支持单项目兼容路径：
 # python -m pip install -r requirements.txt
@@ -737,7 +737,7 @@ source .venv/bin/activate
 # 未安装 uv 时可用 pip 兜底：
 # python -m pip install -e ".[ch6,dev]"
 
-cd chapter6/elo-leaderboard
+cd chapter7/elo-leaderboard
 python -m pytest tests
 ```
 

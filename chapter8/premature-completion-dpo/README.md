@@ -1,13 +1,13 @@
-# 实验 7-17：过早结束的 DPO 修复
+# 实验 8-17：过早结束的 DPO 修复
 
-本项目演示实验 7-17 的完整链路：从 Coding Agent 的"过早结束"生产 bad case 出发，经过失败原因分析与轨迹前缀回归任务，构造 DPO 偏好对，做 7B+LoRA 单卡训练，最后在边界集与保留集上验证修复效果。它使用第六章建立的评估题（端到端/轨迹前缀回归任务、失败原因分析），是全书唯一一个从生产 bad case 出发的训练实验。
+本项目演示实验 8-17 的完整链路：从 Coding Agent 的"过早结束"生产 bad case 出发，经过失败原因分析与轨迹前缀回归任务，构造 DPO 偏好对，做 7B+LoRA 单卡训练，最后在边界集与保留集上验证修复效果。它使用第六章建立的评估题（端到端/轨迹前缀回归任务、失败原因分析），是全书唯一一个从生产 bad case 出发的训练实验。
 
 "过早结束"指 Coding Agent 在任务未真正完成时宣称完成：没跑测试就说"已完成"、多目标只完成一部分就收尾、遇到错误放弃并宣称"不可能完成"，甚至更恶劣的 reward hacking（删除失败测试后宣称全部通过）。修复思路是在"Agent 准备宣称完成"的决策边界上构造偏好对：rejected 是直接宣称完成，chosen 是先运行测试/逐条核对验收条件再下结论。
 
 离线教学演示与机制单元测试不依赖 API key 和 GPU：
 
 ```bash
-cd chapter7/premature-completion-dpo
+cd chapter8/premature-completion-dpo
 python demo.py                          # 离线端到端演示：偏好对构造 + mock 评估
 python -m pytest -q test_pipeline.py    # 机制单元测试
 python build_preference_data.py         # 离线确定性路径生成 preference_pairs.jsonl
@@ -21,7 +21,7 @@ python train_dpo.py --smoke             # 数据/tokenizer/前向一次性检查
 # 从仓库根目录开始：使用共享的第 7 章训练环境
 uv sync --locked --python 3.12 --extra ch7
 source .venv/bin/activate
-cd chapter7/premature-completion-dpo
+cd chapter8/premature-completion-dpo
 # 单项目兼容路径（兜底）：python -m pip install -r requirements.txt
 
 # 可选：用教师模型生成 chosen（规则过滤的拒绝采样，留证据回执）
@@ -57,7 +57,7 @@ python evaluate.py --judge --provider ark
 - **已完成任务保留集的正常收尾率**：训练后应保持；
 - **过度矫正率** = 1 − 已完成任务保留集的正常收尾率，应维持在低位。
 
-本地 RTX PRO 6000（约 98GB 显存）实测：基座在固定候选比较的未完成任务集上选对 3/12（25.0%），已完成任务保留集 8/8（100%）；LoRA DPO（Qwen2.5-7B-Instruct，4 epochs，学习率 3e-5）后分别为 11/12（91.7%）和 8/8（100%），平均差值由 −0.2083 提升到 0.3828，保留集平均差值为 4.6904 → 2.8525。自由生成是补充诊断：过早结束 1/12 → 0/12，但正常收尾 6/8 → 0/8，说明小数据 DPO 会让模型在开放式回答里过于谨慎；因此主要结论只采用格式固定、与训练提示一致的候选比较，不能把它外推成线上总体成功率提升。完整训练回执、评估报告和迭代记录见 `validation/experiment_7_17_gpu_20260807.md` 与 `validation/`。
+本地 RTX PRO 6000（约 98GB 显存）实测：基座在固定候选比较的未完成任务集上选对 3/12（25.0%），已完成任务保留集 8/8（100%）；LoRA DPO（Qwen2.5-7B-Instruct，4 epochs，学习率 3e-5）后分别为 11/12（91.7%）和 8/8（100%），平均差值由 −0.2083 提升到 0.3828，保留集平均差值为 4.6904 → 2.8525。自由生成是补充诊断：过早结束 1/12 → 0/12，但正常收尾 6/8 → 0/8，说明小数据 DPO 会让模型在开放式回答里过于谨慎；因此主要结论只采用格式固定、与训练提示一致的候选比较，不能把它外推成线上总体成功率提升。完整训练回执、评估报告和迭代记录见 `validation/experiment_8_17_gpu_20260807.md` 与 `validation/`。
 
 ## 可选 RL 分支
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Honest verification of the merged Experiment 6-11 (README row 6-11) full matrix.
+"""Honest verification of the merged Experiment 7-11 (README row 7-11) full matrix.
 
 Checks, without trusting the runner's own summary:
   1. All 60 cases present, each with exactly 24 cells (4 embeddings x 3 rerankers x 2 main models).
@@ -18,7 +18,7 @@ import math
 import sys
 from collections import defaultdict
 
-PATH = sys.argv[1] if len(sys.argv) > 1 else "results/full_6_11_60_case_matrix.json"
+PATH = sys.argv[1] if len(sys.argv) > 1 else "results/full_7_11_60_case_matrix.json"
 
 failures = []
 

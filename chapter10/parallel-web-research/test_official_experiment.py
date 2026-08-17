@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent
-RUN = ROOT / "validation" / "runs" / "exp10-6-real-receipts-20260730-v2"
+RUN = ROOT / "validation" / "runs" / "exp10-4-real-receipts-20260730-v2"
 
 
 def sha256_bytes(value: bytes) -> str:

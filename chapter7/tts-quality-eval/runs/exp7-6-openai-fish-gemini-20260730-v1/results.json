@@ -1,0 +1,166 @@
+{
+  "schema_version": "2.0",
+  "experiment": "7-6",
+  "generated_at_utc": "2026-07-29T19:41:22.781006+00:00",
+  "command_scope": {
+    "providers": [
+      "fishaudio",
+      "openai"
+    ],
+    "configurations": [
+      {
+        "name": "openai-alloy",
+        "provider": "openai",
+        "model": "tts-1",
+        "voice": "alloy",
+        "speed": 1.0
+      },
+      {
+        "name": "fishaudio-s1-clone",
+        "provider": "fishaudio",
+        "model": "s1",
+        "voice": "6df3c1e14c9440e9ac978556536bf116",
+        "speed": 1.0
+      }
+    ],
+    "corpus_ids": [
+      "num",
+      "polyphone",
+      "long",
+      "emotion",
+      "sad",
+      "question"
+    ],
+    "expected_records": 12,
+    "direct_audio_judge": true,
+    "optional_asr_enabled": false
+  },
+  "reference_audio": {
+    "path": "../../../../chapter9/controllable-tts/reference_audio/neutral_normal_formal.mp3",
+    "sha256": "2cf4c64bb8222399ab54c63cc41049c572ea5f1b819ffdcbc496014daae004c0"
+  },
+  "rubric_dimensions": [
+    "准确性",
+    "自然度",
+    "情感表达",
+    "音色一致性"
+  ],
+  "completion": {
+    "successful_records": 0,
+    "direct_audio_four_dimension_records": 0,
+    "expected_records": 12,
+    "all_cells_complete": false,
+    "multi_provider": true,
+    "manuscript_core_complete": false
+  },
+  "records": [
+    {
+      "config": "openai-alloy",
+      "sample": "num",
+      "challenge": "数字/百分比/日期",
+      "provider": "openai",
+      "ok": false,
+      "error": "RateLimitError: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}"
+    },
+    {
+      "config": "openai-alloy",
+      "sample": "polyphone",
+      "challenge": "多音字（行/长/重/还）",
+      "provider": "openai",
+      "ok": false,
+      "error": "RateLimitError: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}"
+    },
+    {
+      "config": "openai-alloy",
+      "sample": "long",
+      "challenge": "长句/新闻文体",
+      "provider": "openai",
+      "ok": false,
+      "error": "RateLimitError: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}"
+    },
+    {
+      "config": "openai-alloy",
+      "sample": "emotion",
+      "challenge": "专有名词 + 感叹情感",
+      "provider": "openai",
+      "ok": false,
+      "error": "RateLimitError: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}"
+    },
+    {
+      "config": "openai-alloy",
+      "sample": "sad",
+      "challenge": "悲伤情感/低语速低语调",
+      "provider": "openai",
+      "ok": false,
+      "error": "RateLimitError: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}"
+    },
+    {
+      "config": "openai-alloy",
+      "sample": "question",
+      "challenge": "对话文体/疑问句升调",
+      "provider": "openai",
+      "ok": false,
+      "error": "RateLimitError: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}"
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "num",
+      "challenge": "数字/百分比/日期",
+      "provider": "fishaudio",
+      "ok": false,
+      "error": "HTTPError: HTTP Error 400: Bad Request"
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "polyphone",
+      "challenge": "多音字（行/长/重/还）",
+      "provider": "fishaudio",
+      "ok": false,
+      "error": "HTTPError: HTTP Error 400: Bad Request"
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "long",
+      "challenge": "长句/新闻文体",
+      "provider": "fishaudio",
+      "ok": false,
+      "error": "HTTPError: HTTP Error 400: Bad Request"
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "emotion",
+      "challenge": "专有名词 + 感叹情感",
+      "provider": "fishaudio",
+      "ok": false,
+      "error": "HTTPError: HTTP Error 400: Bad Request"
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "sad",
+      "challenge": "悲伤情感/低语速低语调",
+      "provider": "fishaudio",
+      "ok": false,
+      "error": "HTTPError: HTTP Error 400: Bad Request"
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "question",
+      "challenge": "对话文体/疑问句升调",
+      "provider": "fishaudio",
+      "ok": false,
+      "error": "HTTPError: HTTP Error 400: Bad Request"
+    }
+  ],
+  "summary": [
+    {
+      "config": "openai-alloy",
+      "n_ok": 0,
+      "n": 6
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "n_ok": 0,
+      "n": 6
+    }
+  ]
+}

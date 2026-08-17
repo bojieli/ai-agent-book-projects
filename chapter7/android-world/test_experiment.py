@@ -1,4 +1,4 @@
-"""Focused, offline checks for Experiment 6-11 evidence/reporting."""
+"""Focused, offline checks for Experiment 7-12 evidence/reporting."""
 
 from __future__ import annotations
 
@@ -381,7 +381,7 @@ def test_report_labels_historical_and_hypothetical_numbers() -> None:
 
 def test_resume_rejects_changed_configuration() -> None:
   evidence = {
-      "experiment": "6-10",
+      "experiment": "7-12",
       "hypothesis": {"id": "H5"},
       "scope": {
           "mode": "paired",
@@ -426,7 +426,7 @@ def test_resume_rejects_changed_configuration() -> None:
 
 def test_resume_rejects_changed_pair_seed() -> None:
   evidence = {
-      "experiment": "6-10",
+      "experiment": "7-12",
       "hypothesis": {"id": "H5C"},
       "scope": {
           "mode": "paired",

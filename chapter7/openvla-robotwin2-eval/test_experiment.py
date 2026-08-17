@@ -19,7 +19,7 @@ def config():
 def row(arm, chunk, source, seed, success=True):
     return {
         "schema_version": 1,
-        "experiment": "6-12",
+        "experiment": "7-13",
         "source": "upstream_val_only",
         "arm": arm,
         "upstream_commit": config()["expected_upstream_commit"],

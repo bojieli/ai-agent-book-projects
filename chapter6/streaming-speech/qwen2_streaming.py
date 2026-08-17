@@ -1,4 +1,4 @@
-"""Qwen2-Audio growing-prefix inference for Experiment 9-3."""
+"""Qwen2-Audio growing-prefix inference for Experiment 6-4."""
 
 from __future__ import annotations
 

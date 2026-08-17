@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Experiments 6-4 and 6-11: end-to-end user-memory system evaluation.
+"""Experiments 7-4 and 7-11: end-to-end user-memory system evaluation.
 
 Unlike the old response-file comparison, this module builds memory from every
 test case, invokes real embedding/reranking/chat APIs, runs the answering agent,
@@ -1012,7 +1012,7 @@ class ExperimentRunner:
         )
 
     def run_64(self, cases: Sequence[TestCase]) -> List[RunRecord]:
-        cfg = self.config["experiment_6_4"]
+        cfg = self.config["experiment_7_4"]
         main_name = cfg["main_model"]
         chat = ChatBackend(self.endpoint_specs[main_name])
         agent = MemoryAgent(chat)
@@ -1040,7 +1040,7 @@ class ExperimentRunner:
 
             if card_error:
                 records.append(self._error_record(
-                    "6-4", test_case, "advanced_json_cards", main_name, card_error
+                    "7-4", test_case, "advanced_json_cards", main_name, card_error
                 ))
             else:
                 try:
@@ -1049,18 +1049,18 @@ class ExperimentRunner:
                         test_case, cards_result.answer, json.dumps(cards, ensure_ascii=False)
                     )
                     records.append(self._record(
-                        "6-4", test_case, "advanced_json_cards", main_name, cards_result, cards_eval,
+                        "7-4", test_case, "advanced_json_cards", main_name, cards_result, cards_eval,
                         extra_usage=card_usage, extra_latency_ms=card_latency,
                     ))
                 except Exception as exc:
                     records.append(self._error_record(
-                        "6-4", test_case, "advanced_json_cards", main_name, exc
+                        "7-4", test_case, "advanced_json_cards", main_name, exc
                     ))
 
             reranker_name = cfg.get("reranker", "none")
             if index_error:
                 records.append(self._error_record(
-                    "6-4", test_case, "rag", main_name, index_error,
+                    "7-4", test_case, "rag", main_name, index_error,
                     embedding=embedding_name, reranker=reranker_name,
                 ))
             else:
@@ -1073,20 +1073,20 @@ class ExperimentRunner:
                         test_case, rag_result.answer, "\n".join(c.text for c in rag_result.retrieved_chunks)
                     )
                     records.append(self._record(
-                        "6-4", test_case, "rag", main_name, rag_result, rag_eval,
+                        "7-4", test_case, "rag", main_name, rag_result, rag_eval,
                         embedding=embedding_name, reranker=reranker.name,
                         extra_usage=rag_extra, extra_latency_ms=index.build_latency_ms,
                     ))
                 except Exception as exc:
                     records.append(self._error_record(
-                        "6-4", test_case, "rag", main_name, exc,
+                        "7-4", test_case, "rag", main_name, exc,
                         embedding=embedding_name, reranker=reranker_name,
                     ))
 
             hybrid_dependency_error = card_error or index_error
             if hybrid_dependency_error:
                 records.append(self._error_record(
-                    "6-4", test_case, "hybrid", main_name, hybrid_dependency_error,
+                    "7-4", test_case, "hybrid", main_name, hybrid_dependency_error,
                     embedding=embedding_name, reranker=reranker_name,
                 ))
             else:
@@ -1104,20 +1104,20 @@ class ExperimentRunner:
                         "\n".join(c.text for c in hybrid_result.retrieved_chunks),
                     )
                     records.append(self._record(
-                        "6-4", test_case, "hybrid", main_name, hybrid_result, hybrid_eval,
+                        "7-4", test_case, "hybrid", main_name, hybrid_result, hybrid_eval,
                         embedding=embedding_name, reranker=reranker.name,
                         extra_usage=hybrid_extra,
                         extra_latency_ms=index.build_latency_ms + card_latency,
                     ))
                 except Exception as exc:
                     records.append(self._error_record(
-                        "6-4", test_case, "hybrid", main_name, exc,
+                        "7-4", test_case, "hybrid", main_name, exc,
                         embedding=embedding_name, reranker=reranker_name,
                     ))
         return records
 
     def run_611(self, cases: Sequence[TestCase]) -> List[RunRecord]:
-        cfg = self.config["experiment_6_11"]
+        cfg = self.config["experiment_7_11"]
         records: List[RunRecord] = []
         gold_chat = ChatBackend(self.endpoint_specs[cfg["retrieval_judge_model"]])
         gold_selector = RetrievalGoldSelector(gold_chat)
@@ -1130,7 +1130,7 @@ class ExperimentRunner:
                     for reranker_name in cfg["rerankers"]:
                         for main_name in cfg["main_models"]:
                             records.append(self._error_record(
-                                "6-11", test_case, "rag", main_name, exc,
+                                "7-11", test_case, "rag", main_name, exc,
                                 embedding=embedding_name, reranker=reranker_name,
                             ))
                 continue
@@ -1145,7 +1145,7 @@ class ExperimentRunner:
                     for reranker_name in cfg["rerankers"]:
                         for main_name in cfg["main_models"]:
                             records.append(self._error_record(
-                                "6-11", test_case, "rag", main_name, exc,
+                                "7-11", test_case, "rag", main_name, exc,
                                 embedding=embedding_name, reranker=reranker_name,
                             ))
                     continue
@@ -1172,7 +1172,7 @@ class ExperimentRunner:
                     except Exception as exc:
                         for main_name in cfg["main_models"]:
                             records.append(self._error_record(
-                                "6-11", test_case, "rag", main_name, exc,
+                                "7-11", test_case, "rag", main_name, exc,
                                 embedding=embedding_name, reranker=reranker_name,
                             ))
                         continue
@@ -1196,7 +1196,7 @@ class ExperimentRunner:
                             extra = Usage()
                             extra.add(index.build_usage)
                             records.append(self._record(
-                                "6-11", test_case, "rag", main_name, result, evaluation,
+                                "7-11", test_case, "rag", main_name, result, evaluation,
                                 embedding=embedding_name, reranker=reranker_name, relevant_ids=relevant_ids,
                                 extra_usage=extra, extra_latency_ms=index.build_latency_ms,
                                 fixed_retrieval=fixed_metrics,
@@ -1207,7 +1207,7 @@ class ExperimentRunner:
                             ))
                         except Exception as exc:
                             records.append(self._error_record(
-                                "6-11", test_case, "rag", main_name, exc,
+                                "7-11", test_case, "rag", main_name, exc,
                                 embedding=embedding_name, reranker=reranker_name,
                             ))
         return records
@@ -1393,7 +1393,7 @@ def interaction_analysis(
 
 
 def failure_boundary_analysis(records: Sequence[RunRecord]) -> Dict[str, Any]:
-    """Diagnose what each 6-4 system loses and measure hybrid synergy per paired case."""
+    """Diagnose what each 7-4 system loses and measure hybrid synergy per paired case."""
     records = [row for row in records if row.status == "ok"]
     boundaries = []
     for system in sorted({row.system for row in records}):
@@ -1455,13 +1455,13 @@ def selected_pricing_manifest(experiment: str, config: Optional[Dict[str, Any]])
     if not config:
         return []
     selected: List[Tuple[str, str, Dict[str, Any]]] = []
-    if experiment == "6-4":
-        cfg = config["experiment_6_4"]
+    if experiment == "7-4":
+        cfg = config["experiment_7_4"]
         chat_names = {cfg["main_model"]}
         embedding_names = {cfg["embedding"]}
         reranker_names = {cfg.get("reranker", "none")}
     else:
-        cfg = config["experiment_6_11"]
+        cfg = config["experiment_7_11"]
         chat_names = set(cfg["main_models"])
         embedding_names = set(cfg["embeddings"])
         reranker_names = set(cfg["rerankers"])
@@ -1565,11 +1565,11 @@ def pricing_coverage(records: Sequence[RunRecord]) -> Dict[str, Any]:
 
 
 def expected_cells(experiment: str, config: Optional[Dict[str, Any]]) -> set:
-    if experiment == "6-4":
+    if experiment == "7-4":
         return {("advanced_json_cards",), ("rag",), ("hybrid",)}
     if not config:
         return set()
-    cfg = config["experiment_6_11"]
+    cfg = config["experiment_7_11"]
     return {
         (embedding, reranker, main_model)
         for embedding in cfg["embeddings"]
@@ -1579,7 +1579,7 @@ def expected_cells(experiment: str, config: Optional[Dict[str, Any]]) -> set:
 
 
 def record_cell(record: RunRecord) -> Tuple[Any, ...]:
-    if record.experiment == "6-4":
+    if record.experiment == "7-4":
         return (record.system,)
     return (record.embedding, record.reranker, record.main_model)
 
@@ -1617,8 +1617,8 @@ def completion_assessment(
     errors = len(records) - completed
     matrix_shape = None
     exact_book_matrix = True
-    if experiment == "6-11" and config:
-        cfg = config["experiment_6_11"]
+    if experiment == "7-11" and config:
+        cfg = config["experiment_7_11"]
         matrix_shape = {
             "embeddings": len(cfg["embeddings"]),
             "rerankers": len(cfg["rerankers"]),
@@ -1644,7 +1644,7 @@ def completion_assessment(
     evidence_is_real = all(record.evidence_mode == "real_api" for record in records if record.status == "ok")
     readiness = (config or {}).get("execution_readiness", {})
     readiness_complete = True
-    if experiment == "6-11":
+    if experiment == "7-11":
         readiness_complete = bool(readiness.get("all_required_backends_ready"))
     cost_complete = bool(coverage["all_observed_usage_priced"])
     evidence_complete = trajectory_complete and cost_complete and evidence_is_real and readiness_complete
@@ -1652,7 +1652,7 @@ def completion_assessment(
     blockers: List[Dict[str, Any]] = []
     if len(case_ids) != 60:
         blockers.append({"code": "missing_cases", "message": f"{len(case_ids)}/60 cases are present"})
-    if experiment == "6-11" and not exact_book_matrix:
+    if experiment == "7-11" and not exact_book_matrix:
         blockers.append({"code": "wrong_matrix_shape", "message": f"expected 4x3x2, observed {matrix_shape}"})
     if errors:
         blockers.append({"code": "trajectory_errors", "message": f"{errors} configured cells have status:error"})
@@ -1670,13 +1670,13 @@ def completion_assessment(
         })
     if not evidence_is_real:
         blockers.append({"code": "non_api_evidence", "message": "mock/offline records cannot complete evidence"})
-    if experiment == "6-11" and not readiness_complete:
+    if experiment == "7-11" and not readiness_complete:
         blockers.append({"code": "backend_readiness", "message": "all exact-matrix backends have not passed explicit probes"})
 
     if evidence_complete:
         status = "complete"
     elif len(case_ids) < 60:
-        status = "blocked" if errors or (experiment == "6-11" and not readiness_complete) else "smoke"
+        status = "blocked" if errors or (experiment == "7-11" and not readiness_complete) else "smoke"
     elif errors or not readiness_complete:
         status = "blocked"
     else:
@@ -1708,7 +1708,7 @@ def reprice_legacy_64_records(
     config: Dict[str, Any],
     source_generated_at_utc: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Cover old 6-4 Kimi usage without changing any saved trajectory content.
+    """Cover old 7-4 Kimi usage without changing any saved trajectory content.
 
     The original 180-record campaign stored aggregate input/output and marked
     all Kimi tokens unpriced, while Mistral embedding tokens were already USD
@@ -1717,22 +1717,22 @@ def reprice_legacy_64_records(
     token, yielding a conservative native-CNY upper-bound estimate.  No FX
     conversion is performed.
     """
-    cfg = config["experiment_6_4"]
+    cfg = config["experiment_7_4"]
     spec = EndpointSpec.from_dict({
         "name": cfg["main_model"],
         **config["chat_models"][cfg["main_model"]],
     })
     if spec.pricing is None:
-        raise ValueError("legacy 6-4 repricing requires validated main-model pricing")
+        raise ValueError("legacy 7-4 repricing requires validated main-model pricing")
     if spec.pricing.input_per_million is None or spec.pricing.output_per_million is None:
-        raise ValueError("legacy 6-4 repricing requires both uncached-input and output rates")
+        raise ValueError("legacy 7-4 repricing requires both uncached-input and output rates")
 
     repriced_records = 0
     repriced_tokens = 0
     added_cost: Dict[str, float] = {}
     for record in records:
-        if record.experiment != "6-4":
-            raise ValueError("legacy repricing is restricted to Experiment 6-4 records")
+        if record.experiment != "7-4":
+            raise ValueError("legacy repricing is restricted to Experiment 7-4 records")
         if record.status != "ok" or record.unpriced_tokens == 0:
             continue
         if record.output_tokens > record.unpriced_tokens:
@@ -1785,7 +1785,7 @@ def save_report(
     records: Sequence[RunRecord],
     config: Optional[Dict[str, Any]] = None,
 ) -> None:
-    keys = ["layer", "system"] if experiment == "6-4" else ["layer", "embedding", "reranker", "main_model"]
+    keys = ["layer", "system"] if experiment == "7-4" else ["layer", "embedding", "reranker", "main_model"]
     case_ids = sorted({record.test_id for record in records})
     configured = len(records)
     completed = sum(record.status == "ok" for record in records)
@@ -1837,7 +1837,7 @@ def save_report(
         ),
         "scope_note": "latency and cost cover memory ingestion/retrieval/reranking/main-Agent calls; benchmark gold selection and LLM judging are evaluation overhead and excluded",
     }
-    if experiment == "6-4":
+    if experiment == "7-4":
         report["failure_boundaries"] = failure_boundary_analysis(records)
     else:
         report["interaction_analysis"] = interaction_analysis(records, completion)
@@ -1852,15 +1852,15 @@ def load_config(path: Path) -> Dict[str, Any]:
         return yaml.safe_load(os.path.expandvars(handle.read()))
 
 
-def execution_config_fingerprint(config: Dict[str, Any], experiment: str = "6-11") -> str:
+def execution_config_fingerprint(config: Dict[str, Any], experiment: str = "7-11") -> str:
     """Fingerprint execution semantics while allowing price-only report rebuilds."""
-    if experiment == "6-4":
-        cfg = config["experiment_6_4"]
+    if experiment == "7-4":
+        cfg = config["experiment_7_4"]
         chat_names = {cfg["main_model"]}
         embedding_names = {cfg["embedding"]}
         reranker_names = {cfg.get("reranker", "none")}
     else:
-        cfg = config["experiment_6_11"]
+        cfg = config["experiment_7_11"]
         chat_names = set(cfg["main_models"]) | {cfg["retrieval_judge_model"]}
         embedding_names = set(cfg["embeddings"])
         reranker_names = set(cfg["rerankers"])
@@ -1896,28 +1896,28 @@ def execution_config_fingerprint(config: Dict[str, Any], experiment: str = "6-11
 
 
 def required_readiness_components(config: Dict[str, Any]) -> set:
-    cfg64 = config["experiment_6_4"]
-    cfg611 = config["experiment_6_11"]
+    cfg64 = config["experiment_7_4"]
+    cfg711 = config["experiment_7_11"]
     chat_names = {
-        cfg64["main_model"], cfg611["retrieval_judge_model"], *cfg611["main_models"]
+        cfg64["main_model"], cfg711["retrieval_judge_model"], *cfg711["main_models"]
     }
     chat_names |= {
         config["rerankers"][name]["chat_model"]
-        for name in cfg611["rerankers"]
+        for name in cfg711["rerankers"]
         if config["rerankers"][name].get("type") == "llm"
     }
     return (
         {("chat", name) for name in chat_names}
-        | {("embedding", name) for name in {cfg64["embedding"], *cfg611["embeddings"]}}
-        | {("reranker", name) for name in {cfg64.get("reranker", "none"), *cfg611["rerankers"]}}
+        | {("embedding", name) for name in {cfg64["embedding"], *cfg711["embeddings"]}}
+        | {("reranker", name) for name in {cfg64.get("reranker", "none"), *cfg711["rerankers"]}}
     )
 
 
 def validate_readiness(config: Dict[str, Any], readiness: Dict[str, Any]) -> List[str]:
     errors: List[str] = []
-    expected_fingerprint = execution_config_fingerprint(config, "6-11")
+    expected_fingerprint = execution_config_fingerprint(config, "7-11")
     if readiness.get("execution_config_fingerprint") != expected_fingerprint:
-        errors.append("readiness execution_config_fingerprint does not match the 6-11 config")
+        errors.append("readiness execution_config_fingerprint does not match the 7-11 config")
     probes = readiness.get("probes")
     if not isinstance(probes, list):
         return errors + ["readiness probes must be a list"]
@@ -1954,8 +1954,8 @@ def validate_readiness(config: Dict[str, Any], readiness: Dict[str, Any]) -> Lis
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Run book Experiments 6-4 and 6-11 end to end")
-    parser.add_argument("experiment", choices=["6-4", "6-11"])
+    parser = argparse.ArgumentParser(description="Run book Experiments 7-4 and 7-11 end to end")
+    parser.add_argument("experiment", choices=["7-4", "7-11"])
     parser.add_argument("--config", type=Path, default=HERE / "default_config.yaml")
     parser.add_argument("--test-id", action="append", help="Run only named test id (repeatable)")
     parser.add_argument("--layer", choices=["layer1", "layer2", "layer3"])
@@ -1982,7 +1982,7 @@ def main() -> int:
             "execution_config_fingerprint": readiness.get("execution_config_fingerprint"),
             "validated": True,
         }
-    elif args.experiment == "6-11":
+    elif args.experiment == "7-11":
         config["execution_readiness"] = {
             "source_file": None,
             "all_required_backends_ready": False,
@@ -1998,7 +1998,7 @@ def main() -> int:
             parser.error(f"unknown or filtered test ids: {', '.join(sorted(missing))}")
     if args.limit is not None:
         cases = cases[: args.limit]
-    records = runner.run_64(cases) if args.experiment == "6-4" else runner.run_611(cases)
+    records = runner.run_64(cases) if args.experiment == "7-4" else runner.run_611(cases)
     output = args.output or HERE / "results" / f"experiment_{args.experiment.replace('-', '_')}.json"
     save_report(output, args.experiment, records, runner.config)
     print(f"Wrote {len(records)} real trajectories for {len(cases)} cases to {output}")

@@ -1,4 +1,4 @@
-"""VAD + Whisper comparison baseline for Experiment 9-3."""
+"""VAD + Whisper comparison baseline for Experiment 6-4."""
 
 from __future__ import annotations
 

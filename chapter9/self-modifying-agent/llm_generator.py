@@ -1,4 +1,4 @@
-"""Real API Coding Agent used by the Experiment 8-5 campaign."""
+"""Real API Coding Agent used by the Experiment 9-6 campaign."""
 
 from __future__ import annotations
 

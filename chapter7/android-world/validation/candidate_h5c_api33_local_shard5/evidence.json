@@ -113,7 +113,7 @@
       "success_preservation_passed": true,
       "treatment_successes": 4
     },
-    "source_paired_evidence": "/workspace/exp6_11_run/validation/paired_h5c_compact_api35_20260729/evidence.json",
+    "source_paired_evidence": "/workspace/exp7_12_run/validation/paired_h5c_compact_api35_20260729/evidence.json",
     "source_paired_model": {
       "base_url": "https://ark.cn-beijing.volces.com/api/v3",
       "max_tokens": 1024,
@@ -122,7 +122,7 @@
       "seed": 42,
       "temperature": 0
     },
-    "source_paired_run_id": "exp6-10-20260729T131911Z"
+    "source_paired_run_id": "exp7-12-20260729T131911Z"
   },
   "diagnosis": {
     "findings": [
@@ -4805,7 +4805,7 @@
       "params": {
         "file_name": "receipt.md",
         "img": "<PIL.Image.Image image mode=RGB size=500x900 at 0x7F5EA84B6810>",
-        "text": "Date, Item, Amount\n2023-07-12, Monitor Stand, $34.74\n2023-08-05, External Hard Drive, $70.30\n2023-08-26, External Hard Drive, $100.37\n2023-04-02, Wireless Mouse, $45.43\n2023-05-24, Webcam, $66.43"
+        "text": "Date, Item, Amount\n2023-06-11, Monitor Stand, $34.74\n2023-08-05, External Hard Drive, $70.30\n2023-08-26, External Hard Drive, $100.37\n2023-04-02, Wireless Mouse, $45.43\n2023-05-24, Webcam, $66.43"
       },
       "status": "completed",
       "steps": 10,
@@ -14392,7 +14392,7 @@
       "trial": 5
     }
   ],
-  "experiment": "6-11",
+  "experiment": "7-12",
   "experiment_complete": false,
   "generated_at_utc": "2026-08-04T09:13:41Z",
   "hypothesis": {
@@ -14800,7 +14800,7 @@
       "reused_checkpoint_params": 2
     }
   ],
-  "run_id": "exp6-11-20260804T045559Z",
+  "run_id": "exp7-12-20260804T045559Z",
   "schema_version": 1,
   "scope": {
     "base_pair_seed": 42,

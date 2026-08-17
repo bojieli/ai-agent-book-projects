@@ -41,7 +41,7 @@ def evenly_sample(rows: list[Any], maximum: int) -> list[Any]:
 
 
 def seed_node_counts(output: Path) -> dict[str, int]:
-    seed = output / "storage" / "exp10_7_history_seed" / "personas"
+    seed = output / "storage" / "exp10_5_history_seed" / "personas"
     result = {}
     for persona in seed.iterdir():
         if persona.is_dir():
@@ -304,7 +304,7 @@ def main() -> int:
             preferences["no_reflection"] += 1
     summary = {
         "schema_version": 1,
-        "experiment": "10-7",
+        "experiment": "10-5",
         "model": args.model,
         "judgments": len(successful),
         "preferences": preferences,

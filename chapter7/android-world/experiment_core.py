@@ -1,4 +1,4 @@
-"""Pure reporting helpers for the Experiment 6-11 AndroidWorld loop.
+"""Pure reporting helpers for the Experiment 7-12 AndroidWorld loop.
 
 The runtime runner deliberately keeps AndroidWorld imports out of this module so
 the evidence checks and report generation can be tested without an emulator.
@@ -411,7 +411,7 @@ def render_report(evidence: Mapping[str, Any]) -> str:
   )
 
   lines = [
-      "# Experiment 6-11 AndroidWorld iteration report",
+      "# Experiment 7-12 AndroidWorld iteration report",
       "",
       f"- Run ID: `{evidence['run_id']}`",
       f"- Generated (UTC): `{evidence['generated_at_utc']}`",

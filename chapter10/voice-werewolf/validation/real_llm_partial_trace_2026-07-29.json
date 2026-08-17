@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "experiment": "10-8",
+  "experiment": "10-6",
   "mode": "real_llm_all_ai_diagnostic",
   "provider": "Volcengine ARK",
   "model": "doubao-seed-1-6-250615",

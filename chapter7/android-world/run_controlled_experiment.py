@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run a real, evidence-producing Experiment 6-11 T3A ablation.
+"""Run a real, evidence-producing Experiment 7-12 T3A ablation.
 
 This companion runner imports the adjacent, unmodified AndroidWorld checkout.
 It supports a paired control/treatment experiment and a subsequent candidate
@@ -129,8 +129,8 @@ SCOPE_CAVEAT = (
     "deployment approval, and a subset must never be reported as full-suite success."
 )
 
-EXPERIMENT_ID = "6-11"
-LEGACY_EXPERIMENT_IDS = {"6-10"}
+EXPERIMENT_ID = "7-12"
+LEGACY_EXPERIMENT_IDS = {"7-12"}
 
 REQUIRED_APP_PACKAGES = {
     "android world": "com.example.androidworld",
@@ -249,7 +249,7 @@ def _read_evidence(path: Path, *, purpose: str) -> dict[str, Any]:
       evidence.get("experiment") not in {EXPERIMENT_ID, *LEGACY_EXPERIMENT_IDS}
       or not evidence.get("run_id")
   ):
-    raise RuntimeError(f"Invalid {purpose} evidence: not an Experiment 6-11 artifact")
+    raise RuntimeError(f"Invalid {purpose} evidence: not an Experiment 7-12 artifact")
   return evidence
 
 
@@ -881,7 +881,7 @@ def _generate_llm_analysis(
       "environment_boundaries": evidence.get("environment_boundaries"),
   }
   prompt = (
-      "Analyze the following real Experiment 6-11 AndroidWorld evidence. Return exactly one "
+      "Analyze the following real Experiment 7-12 AndroidWorld evidence. Return exactly one "
       "JSON object with keys summary (string), observed_failure_pattern (array of strings), "
       "cost_benefit_interpretation (string), and next_hypothesis (object with id, layer, idea, "
       "target, verification). Do not invent results, extrapolate the four-task subset to 116 "
@@ -1287,7 +1287,7 @@ def _validate_resume_evidence(evidence: dict[str, Any], args: argparse.Namespace
             "Resume checkpoint has an invalid original --transition-pause value"
         ) from None
   if evidence.get("experiment") not in {EXPERIMENT_ID, *LEGACY_EXPERIMENT_IDS}:
-    raise RuntimeError("Resume checkpoint is not Experiment 6-11 evidence")
+    raise RuntimeError("Resume checkpoint is not Experiment 7-12 evidence")
   checks = {
       "hypothesis": (evidence.get("hypothesis", {}).get("id"), args.hypothesis),
       "mode": (scope.get("mode"), args.mode.replace("-", "_")),
@@ -1443,7 +1443,7 @@ def main() -> int:
     evidence["llm_analysis"] = {"status": "pending"}
     evidence.pop("fatal_error", None)
   else:
-    run_id = "exp6-11-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    run_id = "exp7-12-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     output_dir = args.output_dir or Path(__file__).resolve().parent / "validation" / run_id
     output_dir.mkdir(parents=True, exist_ok=False)
     evidence = _base_evidence(args, run_id)

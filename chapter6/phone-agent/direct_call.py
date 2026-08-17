@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Launch the fixed-parameter control arm of Experiment 9-2."""
+"""Launch the fixed-parameter control arm of Phone Agent add-on."""
 
 from __future__ import annotations
 
@@ -33,7 +33,7 @@ def main() -> None:
         }
     )
     url = f"http://{args.host}:{args.port}/?{query}"
-    print(f"Experiment 9-2 direct endpoint: {url}")
+    print(f"Phone Agent add-on direct endpoint: {url}")
     if not args.no_open:
         threading.Timer(0.8, lambda: webbrowser.open(url)).start()
     uvicorn.run("webrtc_app:app", host=args.host, port=args.port)

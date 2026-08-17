@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail-closed validation for a retained Experiment 9-4 local run."""
+"""Fail-closed validation for a retained Experiment 6-5 local run."""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ def validate(evidence_path: Path) -> dict:
     evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
     implementation_hashes = evidence.get("implementation_sha256", {})
     checks = {
-        "experiment_is_9_4": evidence.get("experiment") == "9-4",
+        "experiment_is_6_5": evidence.get("experiment") == "6-5",
         "exact_model": evidence.get("model", {}).get("model_id") == MODEL_ID,
         "pinned_revision": evidence.get("model", {}).get("model_revision") == MODEL_REVISION,
         "cuda_used": evidence.get("model", {}).get("cuda_available") is True,

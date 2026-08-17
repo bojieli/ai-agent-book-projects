@@ -57,7 +57,7 @@ source .venv/bin/activate
 # pip fallback when uv is not installed:
 # python -m pip install -e ".[ch7]"
 
-cd chapter7/MultilingualReasoning
+cd chapter8/MultilingualReasoning
 
 # Single-project compatibility path, still supported during migration:
 # python -m pip install -r requirements.txt
@@ -622,7 +622,7 @@ source .venv/bin/activate
 # 未安装 uv 时可用 pip 兜底：
 # python -m pip install -e ".[ch7]"
 
-cd chapter7/MultilingualReasoning
+cd chapter8/MultilingualReasoning
 
 # 迁移期间仍支持单项目兼容路径：
 # python -m pip install -r requirements.txt

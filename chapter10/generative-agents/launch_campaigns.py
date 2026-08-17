@@ -72,7 +72,7 @@ def main() -> int:
         )
     record = {
         "schema_version": 1,
-        "experiment": "10-7",
+        "experiment": "10-5",
         "launched_at": dt.datetime.now(dt.timezone.utc).isoformat(),
         "launches": launches,
     }

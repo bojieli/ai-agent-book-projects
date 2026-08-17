@@ -187,20 +187,20 @@ def main() -> int:
         acceptance_path,
         {
             "schema_version": 1,
-            "experiment": "9-7",
+            "experiment": "6-8",
             "arm": "open-model-api",
             "status": "passed" if passed else "failed",
             "checks": checks,
             "qualification": (
                 "The Qwen3-VL browser arm passed. This does not claim that the separate "
-                "Anthropic native-computer-tool arm in Experiment 9-6 ran."
+                "Anthropic native-computer-tool arm in Experiment 6-7 ran."
             ),
         },
     )
     manifest_path = write_manifest(
         run_dir,
         {
-            "experiment": "9-7",
+            "experiment": "6-8",
             "arm": "open-model-api",
             "status": "passed" if passed else "failed",
             "api": summary["api"],
@@ -212,7 +212,7 @@ def main() -> int:
             args.latest,
             {
                 "schema_version": 1,
-                "experiment": "9-7",
+                "experiment": "6-8",
                 "arm": "open-model-api",
                 "status": "passed" if passed else "failed",
                 "run_dir": str(run_dir.relative_to(args.latest.parent.resolve())),

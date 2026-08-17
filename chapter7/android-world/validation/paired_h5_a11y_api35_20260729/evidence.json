@@ -145,7 +145,7 @@
   },
   "environment": {
     "a11y_method": "varies_by_arm:a11y_forwarder_app_vs_uiautomator",
-    "android_world_checkout": "/Users/boj/book/ai-agent-book/chapter6/android_world",
+    "android_world_checkout": "/Users/boj/book/ai-agent-book/chapter7/android_world",
     "android_world_checkout_clean": true,
     "android_world_commit": "0e95d641e244504c22087cc29b013f3b2428a261",
     "api_level": 35,
@@ -867,7 +867,7 @@
       "trial": 1
     }
   ],
-  "experiment": "6-10",
+  "experiment": "7-12",
   "experiment_complete": false,
   "generated_at_utc": "2026-07-29T13:17:47Z",
   "hypothesis": {
@@ -903,7 +903,7 @@
     ],
     "source": "real configured LLM over aggregate direct evidence",
     "status": "completed",
-    "summary": "Experiment 6-10 compared control (a11y-forwarder observation) and treatment (UIAutomator observation) arms in a paired setup with 4 Wi-Fi system Settings tasks. Treatment achieved 100% success (4/4) vs control's 25% (1/4), reduced mean latency (136.2s vs 172.8s) and LLM calls (11.0 vs 14.0), but had a mean token ratio (treatment/control) of 2.498, exceeding the 1.5x guardrail. Environment boundaries include API 35 AVD (vs upstream API 33 reference), restriction to Settings tasks, UIAutomator as a compatibility path (not reference config), and skipped device-time setting due to non-root AVD limitations."
+    "summary": "Experiment 7-12 compared control (a11y-forwarder observation) and treatment (UIAutomator observation) arms in a paired setup with 4 Wi-Fi system Settings tasks. Treatment achieved 100% success (4/4) vs control's 25% (1/4), reduced mean latency (136.2s vs 172.8s) and LLM calls (11.0 vs 14.0), but had a mean token ratio (treatment/control) of 2.498, exceeding the 1.5x guardrail. Environment boundaries include API 35 AVD (vs upstream API 33 reference), restriction to Settings tasks, UIAutomator as a compatibility path (not reference config), and skipped device-time setting due to non-root AVD limitations."
   },
   "model": {
     "base_url": "https://ark.cn-beijing.volces.com/api/v3",
@@ -988,8 +988,8 @@
       "promote_to_full_suite_candidate": false,
       "reason": "Treatment produced no paired success gain; keep the upstream control prompt."
     },
-    "source_phase1_evidence": "/Users/boj/book/ai-agent-book/chapter6/android-world/validation/paired_wifi_api35_20260729/evidence.json",
-    "source_phase1_run_id": "exp6-10-20260729T114648Z"
+    "source_phase1_evidence": "/Users/boj/book/ai-agent-book/chapter7/android-world/validation/paired_wifi_api35_20260729/evidence.json",
+    "source_phase1_run_id": "exp7-12-20260729T114648Z"
   },
   "resume_commands": [
     [
@@ -1043,7 +1043,7 @@
       "validation/paired_h5_a11y_api35_20260729"
     ]
   ],
-  "run_id": "exp6-10-20260729T122904Z",
+  "run_id": "exp7-12-20260729T122904Z",
   "schema_version": 1,
   "scope": {
     "completed_episodes": 8,

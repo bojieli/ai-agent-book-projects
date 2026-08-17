@@ -1,6 +1,6 @@
-# Experiment 6-10 AndroidWorld iteration report
+# Experiment 7-12 AndroidWorld iteration report
 
-- Run ID: `exp6-10-20260729T131911Z`
+- Run ID: `exp7-12-20260729T131911Z`
 - Generated (UTC): `2026-07-29T14:12:27Z`
 - Upstream commit: `0e95d641e244504c22087cc29b013f3b2428a261`
 - Device: `sdk_gphone64_arm64`, API `35` (upstream tested reference: API `33`)

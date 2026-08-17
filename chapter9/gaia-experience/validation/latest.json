@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "experiment_id": "8-2",
-  "canonical_source": "book/chapter8.md#实验-8-2-从-GAIA-轨迹提炼经验知识文档",
+  "experiment_id": "9-2",
+  "canonical_source": "book/chapter9.md#实验-9-2-从-GAIA-轨迹提炼经验知识文档",
   "evidence_mode": "real_gaia_live_web_llm_transfer_campaign",
   "created_at": "2026-07-29T16:40:12+00:00",
   "provider": "ark",

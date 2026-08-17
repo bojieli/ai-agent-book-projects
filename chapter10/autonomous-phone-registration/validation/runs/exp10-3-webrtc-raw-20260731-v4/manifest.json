@@ -1,0 +1,50 @@
+{
+  "schema_version": 2,
+  "experiment": "10-3",
+  "run_kind": "full_safe_webrtc_acceptance",
+  "generated_at": "2026-07-31T19:29:06+0800",
+  "git_head_at_run": "f66e2fbdbe267f75bf28470ddc59fc1b7beb5c4c",
+  "command": "python run_acceptance.py --run-dir <validation-run-directory>",
+  "providers": {
+    "decision_and_extraction": "Volcengine ARK",
+    "speech": "local system TTS + local OpenAI Whisper"
+  },
+  "privacy": {
+    "phone_number_required": false,
+    "pstn_provider_required": false,
+    "participant": "safe synthesized voice",
+    "raw_audio_retained": false,
+    "transcripts_or_values_retained": false,
+    "form_values_retained": false
+  },
+  "source_sha256": {
+    "browser.py": "66768575e96e76c745c9d470bbad24c98e47a8a321e9e908cc6ba67df795fd97",
+    "bus.py": "d5ae473831426b4cd5c9f746f8f9c24f7e1f08f3d61173430d5bb582f92af1de",
+    "decision.py": "64e68c5a7c77d9404fcb451fbd8325f29d0b4ab58fedcfb0c4700653ee53c913",
+    "demo.py": "d491b0a8f5de02fa7da44f382005a108d9f252b864b57fc189ff0b6608ddd826",
+    "models.py": "1f28ed0b6edfbcde68146ba68f183cc0a3a9ce6aa64a3220026453628eb97f1d",
+    "orchestration.py": "0e2e3eadcd5158e9ac4faea7bb5179f53f56ca84ed7956d31f023b397619e58e",
+    "run_acceptance.py": "867b4b9b5f7ca6201517fbe4b2165d2946e322fe1cd8bbe0a2bd6a08cf22be0b",
+    "validate_acceptance.py": "4a89fc84407fd4813459872f973411fcc2beb871ba1fe7553e22d5e8ce2dc85f",
+    "voice.py": "5fb46942a38fa4a8aa338e8360dfb459a3b0b629ee07579f127cea6dd962d490",
+    "webrtc_channel.py": "47835d12ba988f017647bf4e527696ef69ab867f7bd730f30904b5ed9369040f"
+  },
+  "input_sha256": {
+    "experiment_input.json": "49df4da2dcf86a24c31a8cb447e1c94b98bde908cdb95ce902a319ddc768b51d"
+  },
+  "artifact_sha256": {
+    "acceptance_report.json": "78adfb166ecf10736dcf69afdaacca52356f266d2b95e83a1a7c364106222b38",
+    "decision.json": "69ac3b412a0e5921f50b1b31c6e7678f71a77a7ed8275b0f773602fe8ab99baa",
+    "message_timeline.json": "3ad8d949458e1be0f8c632624c1fc7582621c624a45a2d72f4c2d1cc88852ca8",
+    "form_submission_receipt.json": "d073943e7ebbe29f3945ac3597f5237a8e6258f842f872b0a926abe547d63f66",
+    "raw_decision_request.json": "893317a2f60dc41a0966af41355d4ccad1276f0c289aba7b5df1889582a76f23",
+    "raw_decision_response.json": "19d8efd662750b29129fe13dd69c6b64accd1ddf06d8a2ecdab50edb3d775e94",
+    "validation_report.json": "c9a02501d00f790f88c7d43ad699cdcc7a6aac72dd6dd5d1d695d4a092925724"
+  },
+  "acceptance": {
+    "overall_status": "pass",
+    "gate_count": 9,
+    "passed_gate_count": 9
+  },
+  "retained_evidence_validation": "pass"
+}

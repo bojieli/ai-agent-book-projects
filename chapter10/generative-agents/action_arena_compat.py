@@ -107,7 +107,7 @@ def install() -> CorrectionRecorder:
 
     from persona.cognitive_modules import plan
 
-    installed = getattr(plan.generate_action_arena, "_exp10_7_compat", None)
+    installed = getattr(plan.generate_action_arena, "_exp10_5_compat", None)
     if installed is not None:
         return installed
 
@@ -153,6 +153,6 @@ def install() -> CorrectionRecorder:
             )
         return result.value
 
-    generate_action_arena._exp10_7_compat = recorder  # type: ignore[attr-defined]
+    generate_action_arena._exp10_5_compat = recorder  # type: ignore[attr-defined]
     plan.generate_action_arena = generate_action_arena
     return recorder

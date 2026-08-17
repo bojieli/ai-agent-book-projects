@@ -1,0 +1,129 @@
+{
+  "schema_version": "2.0",
+  "experiment": "7-6",
+  "generated_at_utc": "2026-07-29T22:25:34.024892+00:00",
+  "command_scope": {
+    "providers": [
+      "fishaudio"
+    ],
+    "configurations": [
+      {
+        "name": "fishaudio-s1-clone",
+        "provider": "fishaudio",
+        "model": "s1",
+        "voice": "6df3c1e14c9440e9ac978556536bf116",
+        "speed": 1.0
+      }
+    ],
+    "corpus_ids": [
+      "num",
+      "polyphone",
+      "long",
+      "emotion",
+      "sad",
+      "question"
+    ],
+    "expected_records": 6,
+    "direct_audio_judge": true,
+    "optional_asr_enabled": false
+  },
+  "reference_audio": {
+    "path": "../../../../chapter9/controllable-tts/reference_audio/neutral_normal_formal.mp3",
+    "sha256": "2cf4c64bb8222399ab54c63cc41049c572ea5f1b819ffdcbc496014daae004c0"
+  },
+  "rubric_dimensions": [
+    "准确性",
+    "自然度",
+    "情感表达",
+    "音色一致性"
+  ],
+  "completion": {
+    "successful_records": 0,
+    "direct_audio_four_dimension_records": 0,
+    "expected_records": 6,
+    "all_cells_complete": false,
+    "multi_provider": false,
+    "manuscript_core_complete": false
+  },
+  "records": [
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "num",
+      "challenge": "数字/百分比/日期",
+      "provider": "fishaudio",
+      "ok": false,
+      "error": "RuntimeError: Gemini HTTP 400: {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"API key not valid. Please pass a valid API key.\",\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"API_KEY_INVALID\",\n        \"domain\": \"googleapis.com\",\n        \"metadata\": {\n          \"service\": \"generativelanguage.googleapis.com\"\n        }\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.LocalizedMessage\",\n        \"locale\": \"en-US\",\n        \"message\": \"API key not valid. Please pass a valid API key.\"\n      }\n    ]\n  }\n}\n",
+      "audio_path": "fishaudio-s1-clone__num.mp3",
+      "audio_sha256": "536bd78c6f39cbc24833ac7096b6c9c5cf7018273619b58f307fc9a012ea5f1a",
+      "audio_bytes": 103652,
+      "failed_stage": "multimodal_judge"
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "polyphone",
+      "challenge": "多音字（行/长/重/还）",
+      "provider": "fishaudio",
+      "ok": false,
+      "error": "RuntimeError: Gemini HTTP 400: {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"API key not valid. Please pass a valid API key.\",\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"API_KEY_INVALID\",\n        \"domain\": \"googleapis.com\",\n        \"metadata\": {\n          \"service\": \"generativelanguage.googleapis.com\"\n        }\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.LocalizedMessage\",\n        \"locale\": \"en-US\",\n        \"message\": \"API key not valid. Please pass a valid API key.\"\n      }\n    ]\n  }\n}\n",
+      "audio_path": "fishaudio-s1-clone__polyphone.mp3",
+      "audio_sha256": "10f0ef83d8440209a016f9ca0aa0de8c528c809cf94dbab0f61403edf24ab391",
+      "audio_bytes": 97801,
+      "failed_stage": "multimodal_judge"
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "long",
+      "challenge": "长句/新闻文体",
+      "provider": "fishaudio",
+      "ok": false,
+      "error": "RuntimeError: Gemini HTTP 400: {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"API key not valid. Please pass a valid API key.\",\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"API_KEY_INVALID\",\n        \"domain\": \"googleapis.com\",\n        \"metadata\": {\n          \"service\": \"generativelanguage.googleapis.com\"\n        }\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.LocalizedMessage\",\n        \"locale\": \"en-US\",\n        \"message\": \"API key not valid. Please pass a valid API key.\"\n      }\n    ]\n  }\n}\n",
+      "audio_path": "fishaudio-s1-clone__long.mp3",
+      "audio_sha256": "1a0560b87d85699ee8e5635f4b50cac315d0621163ca27cf3b6740e1ba70129b",
+      "audio_bytes": 203127,
+      "failed_stage": "multimodal_judge"
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "emotion",
+      "challenge": "专有名词 + 感叹情感",
+      "provider": "fishaudio",
+      "ok": false,
+      "error": "RuntimeError: Gemini HTTP 400: {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"API key not valid. Please pass a valid API key.\",\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"API_KEY_INVALID\",\n        \"domain\": \"googleapis.com\",\n        \"metadata\": {\n          \"service\": \"generativelanguage.googleapis.com\"\n        }\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.LocalizedMessage\",\n        \"locale\": \"en-US\",\n        \"message\": \"API key not valid. Please pass a valid API key.\"\n      }\n    ]\n  }\n}\n",
+      "audio_path": "fishaudio-s1-clone__emotion.mp3",
+      "audio_sha256": "f124226905ed828674d2517ff67fe9f3b976f8d48e739ad2214088a459833a8f",
+      "audio_bytes": 95293,
+      "failed_stage": "multimodal_judge"
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "sad",
+      "challenge": "悲伤情感/低语速低语调",
+      "provider": "fishaudio",
+      "ok": false,
+      "error": "RuntimeError: Gemini HTTP 400: {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"API key not valid. Please pass a valid API key.\",\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"API_KEY_INVALID\",\n        \"domain\": \"googleapis.com\",\n        \"metadata\": {\n          \"service\": \"generativelanguage.googleapis.com\"\n        }\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.LocalizedMessage\",\n        \"locale\": \"en-US\",\n        \"message\": \"API key not valid. Please pass a valid API key.\"\n      }\n    ]\n  }\n}\n",
+      "audio_path": "fishaudio-s1-clone__sad.mp3",
+      "audio_sha256": "5a01f6d1b7f02e8c4c92d317a872f45672e20719ce99f2bbaa190f0a25a8051f",
+      "audio_bytes": 88606,
+      "failed_stage": "multimodal_judge"
+    },
+    {
+      "config": "fishaudio-s1-clone",
+      "sample": "question",
+      "challenge": "对话文体/疑问句升调",
+      "provider": "fishaudio",
+      "ok": false,
+      "error": "RuntimeError: Gemini HTTP 400: {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"API key not valid. Please pass a valid API key.\",\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"API_KEY_INVALID\",\n        \"domain\": \"googleapis.com\",\n        \"metadata\": {\n          \"service\": \"generativelanguage.googleapis.com\"\n        }\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.LocalizedMessage\",\n        \"locale\": \"en-US\",\n        \"message\": \"API key not valid. Please pass a valid API key.\"\n      }\n    ]\n  }\n}\n",
+      "audio_path": "fishaudio-s1-clone__question.mp3",
+      "audio_sha256": "ee56d58c14fce8cdedf6027a738077aa3dcf10d713f09bf99d56871d4879ef82",
+      "audio_bytes": 78993,
+      "failed_stage": "multimodal_judge"
+    }
+  ],
+  "summary": [
+    {
+      "config": "fishaudio-s1-clone",
+      "n_ok": 0,
+      "n": 6
+    }
+  ]
+}

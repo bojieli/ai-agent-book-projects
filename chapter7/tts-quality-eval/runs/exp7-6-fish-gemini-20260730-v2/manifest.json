@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "experiment": "7-6",
+  "status": "incomplete",
+  "generated_at_utc": "2026-07-29T22:26:23.177040+00:00",
+  "run_dir": "chapter7/tts-quality-eval/runs/exp7-6-fish-gemini-20260730-v2",
+  "git_commit": "4a7f37cf278bd15948c409f14533017c4c7fbc29",
+  "command": "python demo.py --providers fishaudio --gemini --fresh --output RUN_DIR",
+  "provider_receipt_count": 0,
+  "status_reasons": [
+    "Fish Audio synthesized all six real corpus clips, but Gemini rejected the configured credential, so zero four-dimensional judgments are valid.",
+    "Only one synthesis provider completed; the manuscript requires a multi-provider comparison."
+  ],
+  "inputs": [
+    {
+      "path": "chapter7/tts-quality-eval/config.py",
+      "bytes": 8485,
+      "sha256": "512913faae41a62e8e2093fa855bbd19d62d3bbbd8b8bb049aac42febe5b90d3"
+    },
+    {
+      "path": "chapter7/tts-quality-eval/pipeline.py",
+      "bytes": 23173,
+      "sha256": "e6ae0088d7649cd90a4bbd21b01dcb24f350d2708b2c747effd0d62c6c2ac29f"
+    },
+    {
+      "path": "chapter7/tts-quality-eval/demo.py",
+      "bytes": 16925,
+      "sha256": "277f032794b10f419affd5800af2c3cf8b624d3fff756f5af98e53e2891bb6da"
+    },
+    {
+      "path": "chapter9/controllable-tts/reference_audio/neutral_normal_formal.mp3",
+      "bytes": 73977,
+      "sha256": "2cf4c64bb8222399ab54c63cc41049c572ea5f1b819ffdcbc496014daae004c0"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "chapter7/tts-quality-eval/runs/exp7-6-fish-gemini-20260730-v2/fishaudio-s1-clone__emotion.mp3",
+      "bytes": 95293,
+      "sha256": "f124226905ed828674d2517ff67fe9f3b976f8d48e739ad2214088a459833a8f"
+    },
+    {
+      "path": "chapter7/tts-quality-eval/runs/exp7-6-fish-gemini-20260730-v2/fishaudio-s1-clone__long.mp3",
+      "bytes": 203127,
+      "sha256": "1a0560b87d85699ee8e5635f4b50cac315d0621163ca27cf3b6740e1ba70129b"
+    },
+    {
+      "path": "chapter7/tts-quality-eval/runs/exp7-6-fish-gemini-20260730-v2/fishaudio-s1-clone__num.mp3",
+      "bytes": 103652,
+      "sha256": "536bd78c6f39cbc24833ac7096b6c9c5cf7018273619b58f307fc9a012ea5f1a"
+    },
+    {
+      "path": "chapter7/tts-quality-eval/runs/exp7-6-fish-gemini-20260730-v2/fishaudio-s1-clone__polyphone.mp3",
+      "bytes": 97801,
+      "sha256": "10f0ef83d8440209a016f9ca0aa0de8c528c809cf94dbab0f61403edf24ab391"
+    },
+    {
+      "path": "chapter7/tts-quality-eval/runs/exp7-6-fish-gemini-20260730-v2/fishaudio-s1-clone__question.mp3",
+      "bytes": 78993,
+      "sha256": "ee56d58c14fce8cdedf6027a738077aa3dcf10d713f09bf99d56871d4879ef82"
+    },
+    {
+      "path": "chapter7/tts-quality-eval/runs/exp7-6-fish-gemini-20260730-v2/fishaudio-s1-clone__sad.mp3",
+      "bytes": 88606,
+      "sha256": "5a01f6d1b7f02e8c4c92d317a872f45672e20719ce99f2bbaa190f0a25a8051f"
+    },
+    {
+      "path": "chapter7/tts-quality-eval/runs/exp7-6-fish-gemini-20260730-v2/results.json",
+      "bytes": 7778,
+      "sha256": "a3b1a78591db3e8bdccd35af7e7f2184cf164e6add6d0d42d77d9437924f5b17"
+    }
+  ]
+}

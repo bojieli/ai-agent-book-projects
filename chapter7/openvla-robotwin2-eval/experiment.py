@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Exact companion for manuscript Experiment 6-12.
+"""Exact companion for manuscript Experiment 7-13.
 
 The runner deliberately separates three things:
 1. a non-destructive host/upstream preflight;
@@ -239,7 +239,7 @@ def preflight(cfg: dict[str, Any]) -> dict[str, Any]:
         {"observed": len(gpus), "required": cfg["gpus_required"], "gpus": gpus, "error": gpu_error},
     )
 
-    custom_task_config = HERE / "task_config_exp6_12_three_view.yml"
+    custom_task_config = HERE / "task_config_exp7_13_three_view.yml"
     task_config_text = custom_task_config.read_text(encoding="utf-8") if custom_task_config.is_file() else ""
     check(
         "three_rgb_view_config",
@@ -263,7 +263,7 @@ def preflight(cfg: dict[str, Any]) -> dict[str, Any]:
         "checks": checks,
         "ready_for_real_validation": not required_failures,
         "blocking_checks": required_failures,
-        "acceptance_note": "Preflight readiness is necessary but never sufficient for Experiment 6-12 completion.",
+        "acceptance_note": "Preflight readiness is necessary but never sufficient for Experiment 7-13 completion.",
     }
 
 
@@ -272,7 +272,7 @@ def hydra_command(cfg: dict[str, Any], arm: str, run_dir: Path, worktree: Path) 
     checkpoint = str(Path(os.environ[cfg["checkpoint_env"]]).expanduser().resolve())
     align_raw = os.environ.get(cfg["align_path_env"])
     align_path = Path(align_raw).expanduser().resolve() if align_raw else worktree / "align.json"
-    experiment_name = f"exp6_12_{cfg['task']}_{arm}"
+    experiment_name = f"exp7_13_{cfg['task']}_{arm}"
     return [
         sys.executable,
         "-u",
@@ -323,7 +323,7 @@ def hydra_command(cfg: dict[str, Any], arm: str, run_dir: Path, worktree: Path) 
         "algorithm.adv_estimator=grpo",
         "algorithm.kl_ctrl.kl_coef=0.0",
         "trainer.logger=['console']",
-        "trainer.project_name=AI-Agent-Book-Experiment-6-12",
+        "trainer.project_name=AI-Agent-Book-Experiment-7-13",
         f"trainer.experiment_name={experiment_name}",
         f"trainer.default_local_dir={str((run_dir / arm / 'checkpoints').resolve())}",
         f"trainer.n_gpus_per_node={cfg['gpus_required']}",
@@ -365,7 +365,7 @@ def prepare_worktree(cfg: dict[str, Any], run_dir: Path) -> Path:
         raise RuntimeError(f"RoboTwin2 overlay setup failed with exit {setup.returncode}")
     task_config_dest = worktree / "verl/utils/envs/robotwin2/task_config" / f"{cfg['task_config']}.yml"
     task_config_dest.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(HERE / "task_config_exp6_12_three_view.yml", task_config_dest)
+    shutil.copy2(HERE / "task_config_exp7_13_three_view.yml", task_config_dest)
     patch_proc = subprocess.run(
         [sys.executable, str(HERE / "instrument_upstream.py"), str(worktree)],
         check=False,
@@ -382,9 +382,9 @@ def write_launch_manifest(cfg: dict[str, Any], run_dir: Path, worktree: Path) ->
         argv = hydra_command(cfg, arm, run_dir, worktree)
         episode_path = (run_dir / arm / "episodes.jsonl").resolve()
         env = {
-            "EXP6_12_EPISODE_JSONL": str(episode_path),
-            "EXP6_12_ARM": arm,
-            "EXP6_12_UPSTREAM_COMMIT": cfg["expected_upstream_commit"],
+            "EXP7_13_EPISODE_JSONL": str(episode_path),
+            "EXP7_13_ARM": arm,
+            "EXP7_13_UPSTREAM_COMMIT": cfg["expected_upstream_commit"],
             "HYDRA_FULL_ERROR": "1",
             "TOKENIZERS_PARALLELISM": "true",
             "NCCL_DEBUG": "WARN",
@@ -394,7 +394,7 @@ def write_launch_manifest(cfg: dict[str, Any], run_dir: Path, worktree: Path) ->
         arms[arm] = {
             "action_chunk_length": chunk,
             "episode_evidence": str(episode_path),
-            "rollout_directory": str((worktree / "rollouts" / f"exp6_12_{cfg['task']}_{arm}").resolve()),
+            "rollout_directory": str((worktree / "rollouts" / f"exp7_13_{cfg['task']}_{arm}").resolve()),
             "environment": env,
             "argv": argv,
             "shell_command": " ".join(
@@ -707,7 +707,7 @@ def analyze(cfg: dict[str, Any], run_dir: Path, annotations_path: Path | None) -
     }
     dump_json(run_dir / "report.json", report)
     lines = [
-        "# Experiment 6-12 OpenVLA + RoboTwin2 evaluation",
+        "# Experiment 7-13 OpenVLA + RoboTwin2 evaluation",
         "",
         f"Official completion: **{report['strict_completion']['complete']}**",
         "",

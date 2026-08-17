@@ -9,7 +9,7 @@ embedding endpoints at runtime. The upstream checkout is not modified.
 
 Status: **complete**. The retained campaign has three equal 17,280-step
 (two-virtual-day) arms, complete analysis, and an independently passing
-[acceptance report](validation/runs/exp10-7-qwen37flash-20260804-v1/acceptance.json):
+[acceptance report](validation/runs/exp10-5-qwen37flash-20260804-v1/acceptance.json):
 
 - `baseline`: the original Isabella Rodriguez Valentine's party and Sam Moore
   mayoral-election seeds;
@@ -46,7 +46,7 @@ The findings are mixed, as allowed by the preregistered interpretation rule:
   continuity (2.72 vs 1.52), and social responsiveness (3.44 vs 2.48).
 
 The full deterministic analysis is retained in
-[`deterministic_analysis.json`](validation/runs/exp10-7-qwen37flash-20260804-v1/analysis/deterministic_analysis.json),
+[`deterministic_analysis.json`](validation/runs/exp10-5-qwen37flash-20260804-v1/analysis/deterministic_analysis.json),
 and the raw blind-judge receipts and summary are under the same package's
 `analysis/` directory. Failed and interrupted attempts remain separately named
 and manifest-bound; they are not counted as canonical evidence.
@@ -114,7 +114,7 @@ Prepare the identical history seed once:
 ```bash
 .venv/bin/python run_campaign.py \
   --upstream /tmp/generative_agents \
-  --output outputs/exp10-7 \
+  --output outputs/exp10-5 \
   --mode seed
 ```
 
@@ -123,7 +123,7 @@ Launch or resume all three arms as detached processes:
 ```bash
 .venv/bin/python launch_campaigns.py \
   --upstream /tmp/generative_agents \
-  --output outputs/exp10-7 \
+  --output outputs/exp10-5 \
   --python .venv/bin/python
 ```
 

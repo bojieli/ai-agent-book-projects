@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run Experiment 9-3 unchanged and bind local-model/audio/source provenance."""
+"""Run Experiment 6-4 unchanged and bind local-model/audio/source provenance."""
 
 from __future__ import annotations
 
@@ -101,7 +101,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def main(args: argparse.Namespace) -> int:
-    run_id = args.run_id or f"exp9-3-qwen2audio-whisper-{datetime.now(timezone.utc):%Y%m%dT%H%M%SZ}"
+    run_id = args.run_id or f"exp6-4-qwen2audio-whisper-{datetime.now(timezone.utc):%Y%m%dT%H%M%SZ}"
     run_dir = Path(args.output_root).resolve() / run_id
     run_dir.mkdir(parents=True, exist_ok=False)
     started_at = utc_now()
@@ -227,7 +227,7 @@ def main(args: argparse.Namespace) -> int:
 
     acceptance = {
         "schema_version": 1,
-        "experiment": "9-3",
+        "experiment": "6-4",
         "run_id": run_id,
         "started_at": started_at,
         "completed_at": utc_now(),
@@ -264,7 +264,7 @@ def main(args: argparse.Namespace) -> int:
 
     manifest = {
         "schema_version": 1,
-        "experiment": "9-3",
+        "experiment": "6-4",
         "run_id": run_id,
         "generated_at": utc_now(),
         "git_commit": acceptance["git_commit"],

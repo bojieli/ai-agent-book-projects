@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Finalize and independently validate the retained Experiment 8-6 evidence."""
+"""Finalize and independently validate the retained Experiment 9-8 evidence."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ import tempfile
 
 
 ROOT = Path(__file__).resolve().parent
-RUN_ID = "exp8-6-hermes-gpt56luna-autonomous-20260802-v2"
+RUN_ID = "exp9-8-hermes-gpt56luna-autonomous-20260802-v2"
 PINNED_COMMIT = "85c8956ec7f2b4607509980794995e1c5e21e292"
 SOURCE = ROOT / "worktree" / "hermes-agent"
 OUTPUT = ROOT / "validation" / RUN_ID
@@ -125,7 +125,7 @@ def main() -> int:
 
     manifest = {
         "schema_version": 2,
-        "experiment": "8-6",
+        "experiment": "9-8",
         "run_id": RUN_ID,
         "source_repository": "https://github.com/NousResearch/hermes-agent.git",
         "started_from_commit": PINNED_COMMIT,

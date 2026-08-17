@@ -1,12 +1,12 @@
-# Experiment 7-13 reproduction anchor
+# Experiment 8-13 reproduction anchor
 
-This directory is the book-owned guide and analysis. The primary source is the [SimpleVLA-RL paper](https://arxiv.org/abs/2509.09674); executable code is the nested external checkout [`PRIME-RL/SimpleVLA-RL`](https://github.com/PRIME-RL/SimpleVLA-RL/tree/7c51662df27b586f9e8a1ab35fcf849f2b8852f9) at `chapter7/SimpleVLA-RL/SimpleVLA-RL`, verified at commit `7c51662df27b586f9e8a1ab35fcf849f2b8852f9`.
+This directory is the book-owned guide and analysis. The primary source is the [SimpleVLA-RL paper](https://arxiv.org/abs/2509.09674); executable code is the nested external checkout [`PRIME-RL/SimpleVLA-RL`](https://github.com/PRIME-RL/SimpleVLA-RL/tree/7c51662df27b586f9e8a1ab35fcf849f2b8852f9) at `chapter8/SimpleVLA-RL/SimpleVLA-RL`, verified at commit `7c51662df27b586f9e8a1ab35fcf849f2b8852f9`.
 
 ```bash
-git clone https://github.com/PRIME-RL/SimpleVLA-RL.git chapter7/SimpleVLA-RL/SimpleVLA-RL
-git -C chapter7/SimpleVLA-RL/SimpleVLA-RL checkout --detach 7c51662df27b586f9e8a1ab35fcf849f2b8852f9
-test "$(git -C chapter7/SimpleVLA-RL/SimpleVLA-RL rev-parse HEAD)" = "7c51662df27b586f9e8a1ab35fcf849f2b8852f9"
-cd chapter7/SimpleVLA-RL/SimpleVLA-RL
+git clone https://github.com/PRIME-RL/SimpleVLA-RL.git chapter8/SimpleVLA-RL/SimpleVLA-RL
+git -C chapter8/SimpleVLA-RL/SimpleVLA-RL checkout --detach 7c51662df27b586f9e8a1ab35fcf849f2b8852f9
+test "$(git -C chapter8/SimpleVLA-RL/SimpleVLA-RL rev-parse HEAD)" = "7c51662df27b586f9e8a1ab35fcf849f2b8852f9"
+cd chapter8/SimpleVLA-RL/SimpleVLA-RL
 bash examples/run_openvla_oft_rl_libero.sh
 # RoboTwin2 track: bash examples/run_openvla_oft_rl_twin2.sh
 ```
@@ -374,8 +374,8 @@ Apply the necessary RoboTwin modifications:
 
 ```bash
 # Reuse the canonical checkout created by the reproduction-anchor commands.
-git -C chapter7/SimpleVLA-RL/SimpleVLA-RL checkout --detach 7c51662df27b586f9e8a1ab35fcf849f2b8852f9
-cd chapter7/SimpleVLA-RL/SimpleVLA-RL
+git -C chapter8/SimpleVLA-RL/SimpleVLA-RL checkout --detach 7c51662df27b586f9e8a1ab35fcf849f2b8852f9
+cd chapter8/SimpleVLA-RL/SimpleVLA-RL
 
 # Apply RoboTwin modifications
 bash copy_overwrite_robotwin2.sh <your_robotwin_path> <your_simplevlarl_path>
@@ -1379,8 +1379,8 @@ cd ..
 
 ```bash
 # 复用本指南开头命令创建的规范 checkout。
-git -C chapter7/SimpleVLA-RL/SimpleVLA-RL checkout --detach 7c51662df27b586f9e8a1ab35fcf849f2b8852f9
-cd chapter7/SimpleVLA-RL/SimpleVLA-RL
+git -C chapter8/SimpleVLA-RL/SimpleVLA-RL checkout --detach 7c51662df27b586f9e8a1ab35fcf849f2b8852f9
+cd chapter8/SimpleVLA-RL/SimpleVLA-RL
 
 # 应用 RoboTwin 修改
 bash copy_overwrite_robotwin2.sh <your_robotwin_path> <your_simplevlarl_path>

@@ -13,7 +13,7 @@ ROOT = Path(__file__).parent
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Experiment 8-5 self-modification pipeline")
+    parser = argparse.ArgumentParser(description="Experiment 9-6 self-modification pipeline")
     parser.add_argument("--generator", choices=("deterministic", "llm"), default="deterministic")
     parser.add_argument("--model", help="real LLM model; defaults to LLM_MODEL or gpt-5.6")
     args = parser.parse_args()
@@ -35,7 +35,7 @@ def main() -> None:
         json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8"
     )
 
-    print(f"Experiment 8-5: trajectory-triggered self-modification (generator={args.generator})\n")
+    print(f"Experiment 9-6: trajectory-triggered self-modification (generator={args.generator})\n")
     print("diagnosed target:", diagnosis["target"])
     print("source cases:", ", ".join(diagnosis["source_case_ids"]))
     print("\nCandidate diff:\n")

@@ -1,5 +1,5 @@
 """
-Regression tests for offline trace parsing (实验 6-7 成本分析).
+Regression tests for offline trace parsing (实验 7-9 成本分析).
 
 Covers two crash classes found in --offline mode:
   - Tracer.from_records: trace JSON with explicit null token fields -> int(None) TypeError

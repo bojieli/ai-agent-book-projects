@@ -28,7 +28,7 @@ export extra_mem_bot=8000000
 #    the probe return immediately with the correct "not found" result.
 export MKTEXTFM=0
 
-OUT="AI-Agents-in-Depth-ar.pdf"
+OUT="AI-Agents-in-Depth-v2.0-ar.pdf"
 PDF_ENGINE="${PDF_ENGINE:-xelatex}"
 CHAPTERS=(
     introduction.ar.md

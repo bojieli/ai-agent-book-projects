@@ -1,7 +1,7 @@
 """
 StagedAgent：根据“执行阶段”切换系统提示词与工具集的 Coding Agent。
 
-设计要点（对应实验 10-1 的 6 项要求）：
+设计要点（对应阶段化系统提示词附加项目 的 6 项要求）：
 1) 三个阶段各有明确角色的系统提示词（STAGE_PROMPTS）。
 2) 每个阶段配套独立工具集（tools.STAGE*_TOOLS）。
 3) 阶段转换由“特定工具调用”触发（complete_requirements_analysis /

@@ -1,6 +1,6 @@
-# 实验 9-3：本地运行 MiniCPM-o 4.5 端到端全模态语音
+# 实验 6-5：本地运行 MiniCPM-o 4.5 端到端全模态语音
 
-> 重编号说明：已有 canonical 运行目录继续使用历史标识 `exp9-4-*`，以保持证据链接和哈希不变。
+运行器、验证器与 canonical 证据目录均使用实验 6-5 的统一标识 `exp6-5-*`。
 
 本实验属于正文的“**范式二 · 端到端全模态模型（Omni）**”，不属于后文的“边想边说”方案。它用同一个开放权重模型 MiniCPM-o 4.5 比较两条路径：
 
@@ -28,7 +28,7 @@
 上游明确测试 Python 3.10、`transformers==4.51.0`、PyTorch 2.3–2.8。该组合与仓库共享环境里的其他实验可能冲突，因此这里有意使用独立虚拟环境：
 
 ```bash
-cd chapter9/end-to-end-speech
+cd chapter6/end-to-end-speech
 uv venv .venv --python 3.10
 uv pip install --python .venv/bin/python -r requirements.txt
 source .venv/bin/activate
@@ -44,11 +44,11 @@ hf download openbmb/MiniCPM-o-4_5 \
 ```bash
 python demo.py \
   --local-files-only \
-  --evidence validation/runs/exp9-4-minicpmo45-20260801-v1/evidence.json \
-  --output-dir validation/runs/exp9-4-minicpmo45-20260801-v1/outputs
+  --evidence validation/runs/exp6-5-minicpmo45-20260801-v1/evidence.json \
+  --output-dir validation/runs/exp6-5-minicpmo45-20260801-v1/outputs
 
 python validate_evidence.py \
-  validation/runs/exp9-4-minicpmo45-20260801-v1/evidence.json
+  validation/runs/exp6-5-minicpmo45-20260801-v1/evidence.json
 ```
 
 `demo.py` 一次加载模型，随后保存每条输入的 SHA-256、两臂原始回复、模型自产转录、分阶段延迟、模型 revision、软件版本、GPU 信息，以及语音输出的 SHA-256/采样率/时长。验收只要求真实本地路径完整且证据闭环，**不要求假设必须为正**。
@@ -64,7 +64,7 @@ python demo.py --help
 
 ## 本地结果
 
-2026-08-01 的[本地 canonical run](validation/runs/exp9-4-minicpmo45-20260801-v1/evidence.json)已通过[全部 11 项验收](validation/runs/exp9-4-minicpmo45-20260801-v1/acceptance.json)。硬件是单张 96GB RTX PRO 6000 Blackwell，PyTorch 2.8.0+cu128、Transformers 4.51.0、BF16/SDPA；模型加载 6.154 秒，峰值分配显存 20.269GiB。
+2026-08-01 的[本地 canonical run](validation/runs/exp6-5-minicpmo45-20260801-v1/evidence.json)已通过[全部 11 项验收](validation/runs/exp6-5-minicpmo45-20260801-v1/acceptance.json)。硬件是单张 96GB RTX PRO 6000 Blackwell，PyTorch 2.8.0+cu128、Transformers 4.51.0、BF16/SDPA；模型加载 6.154 秒，峰值分配显存 20.269GiB。
 
 | 任务 | 端到端 | 自级联 |
 | --- | ---: | ---: |
@@ -74,10 +74,10 @@ python demo.py --help
 
 总分相同但错误互补。端到端在第一题把 “twelve boxes” 感知成 8，算出 47；自级联先正确转录出 12，再算出 79。相反，快/慢两条音频在自级联中都被压成完全相同的 `Please send the report before lunch.`，于是它把 fast 样本也猜成 slow；端到端保留了速度信息，两条都正确。
 
-加载完成后的平均整次调用为端到端 0.686 秒、自级联 0.551 秒。由于端到端固定先跑、回复长度不同且只有四条，这不是可推广的延迟排名。audio-to-audio 臂另生成了[11.56 秒、24kHz 单声道 WAV](validation/runs/exp9-4-minicpmo45-20260801-v1/outputs/spoken-math-boxes-response.wav)，但它继承了第一题的感知错误。这是有价值的负结果：路径真实跑通不等于答案正确。
+加载完成后的平均整次调用为端到端 0.686 秒、自级联 0.551 秒。由于端到端固定先跑、回复长度不同且只有四条，这不是可推广的延迟排名。audio-to-audio 臂另生成了[11.56 秒、24kHz 单声道 WAV](validation/runs/exp6-5-minicpmo45-20260801-v1/outputs/spoken-math-boxes-response.wav)，但它继承了第一题的感知错误。这是有价值的负结果：路径真实跑通不等于答案正确。
 
 ---
 
 ## English
 
-Experiment 9-3 belongs to Paradigm 2, end-to-end omni models. Historical canonical paths retain the `exp9-4-*` identifier. It runs the pinned MiniCPM-o 4.5 checkpoint locally and compares native audio-to-answer inference against a self-cascade that first flattens the same audio to text. A separate audio-output arm retains a real 24kHz waveform. Thinking is deliberately disabled; this experiment makes no MPS or “thinking while speaking” claim.
+Experiment 6-5 belongs to Paradigm 2, end-to-end omni models. Historical canonical paths retain the `exp6-5-*` identifier. It runs the pinned MiniCPM-o 4.5 checkpoint locally and compares native audio-to-answer inference against a self-cascade that first flattens the same audio to text. A separate audio-output arm retains a real 24kHz waveform. Thinking is deliberately disabled; this experiment makes no MPS or “thinking while speaking” claim.

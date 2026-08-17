@@ -159,7 +159,7 @@ async def run(run_dir: Path) -> int:
     validation_report_path = run_dir / "validation_report.json"
     experiment_input = {
         "schema_version": 1,
-        "experiment": "10-5",
+        "experiment": "10-3",
         "page_url": url,
         "form_html": FORM_HTML,
         "form_html_sha256": hashlib.sha256(FORM_HTML.encode("utf-8")).hexdigest(),
@@ -267,7 +267,7 @@ async def run(run_dir: Path) -> int:
     ]
     manifest = {
         "schema_version": 2,
-        "experiment": "10-5",
+        "experiment": "10-3",
         "run_kind": "full_safe_webrtc_acceptance",
         "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
         "git_head_at_run": git_head,
@@ -321,6 +321,6 @@ if __name__ == "__main__":
     destination = (
         Path(arguments.run_dir)
         if arguments.run_dir
-        else Path("validation/runs") / ("exp10-5-webrtc-" + time.strftime("%Y%m%dT%H%M%S%z"))
+        else Path("validation/runs") / ("exp10-3-webrtc-" + time.strftime("%Y%m%dT%H%M%S%z"))
     )
     raise SystemExit(asyncio.run(run(destination)))

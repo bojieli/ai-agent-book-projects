@@ -196,7 +196,7 @@ def write_output(path: str, meta: dict, summaries: list[ProviderSummary]) -> Non
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="多维度模型性能基准测试（实验 6-8）：TTFT / 端到端 / 吞吐 / p50·p95·p99·std / 可用性",
+        description="多维度模型性能基准测试（实验 7-10）：TTFT / 端到端 / 吞吐 / p50·p95·p99·std / 可用性",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument("--num-requests", type=int, default=10,
@@ -274,7 +274,7 @@ def build_providers(args: argparse.Namespace) -> tuple[list[ProviderConfig], lis
 def run_mock(args: argparse.Namespace, metrics: list[str]) -> None:
     """用合成数据演示指标聚合，无需 key/网络。"""
     print("=" * 72)
-    print("多维度模型性能基准测试（实验 6-8）—— 合成数据自检模式 [SYNTHETIC]")
+    print("多维度模型性能基准测试（实验 7-10）—— 合成数据自检模式 [SYNTHETIC]")
     print("=" * 72)
     print("⚠️  以下所有数字均为合成（伪随机）生成，仅用于验证指标聚合数学，")
     print("    不代表任何真实模型/提供商/网络环境的性能，切勿作为选型依据。")
@@ -335,7 +335,7 @@ def main() -> None:
     available, skipped = build_providers(args)
 
     print("=" * 72)
-    print("多维度模型性能基准测试（实验 6-8）")
+    print("多维度模型性能基准测试（实验 7-10）")
     print("=" * 72)
     if skipped:
         for p in skipped:

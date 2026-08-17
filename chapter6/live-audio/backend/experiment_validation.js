@@ -43,7 +43,7 @@ function validateExperimentEvidence(evidence, evidenceDir) {
   );
 
   const gates = {
-    schema_and_scope: evidence?.schema_version === 1 && evidence?.experiment === '9-1',
+    schema_and_scope: evidence?.schema_version === 1 && evidence?.experiment === '6-3',
     real_websocket_microphone_media: sourceAuthentic,
     real_silero_vad_endpoint: Boolean(
       isRealStage(vad) &&

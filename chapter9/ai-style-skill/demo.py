@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""实验 8-9 离线教学演示：模糊反馈 → 可检查规则 → Skill → 防膨胀/防误伤。
+"""AI 写作风格 Skill 附加项目 离线教学演示：模糊反馈 → 可检查规则 → Skill → 防膨胀/防误伤。
 
 全程离线、确定性，不需要 API key：
 
@@ -68,7 +68,7 @@ def main() -> int:
             rule["status"] = "active"
             active.append(rule)
     print("离线路径用确定性代理 judge 演示校准机制；真实验收请跑"
-          " run_experiment_8_9.py --provider ... 用真实 LLM judge。")
+          " run_ai_style_skill.py --provider ... 用真实 LLM judge。")
 
     print("\n" + "=" * 70)
     print("第 4 步：prune——长期未触发或被推翻的规则归档")
@@ -101,7 +101,7 @@ def main() -> int:
     print("参考改写：", result["reference_rewrite"])
 
     print("\n演示完成。真实 LLM 路径："
-          "python run_experiment_8_9.py --provider ark --model doubao-seed-1-6-250615")
+          "python run_ai_style_skill.py --provider ark --model doubao-seed-1-6-250615")
     return 0
 
 

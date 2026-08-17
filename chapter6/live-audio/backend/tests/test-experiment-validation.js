@@ -11,7 +11,7 @@ function fixture(dir) {
   fs.writeFileSync(path.join(dir, 'output.mp3'), Buffer.alloc(2000, 1));
   const real = { execution: 'real', mock: false, probe_only: false, fallback_used: false, latency_seconds: 0.1 };
   return {
-    schema_version: 1, experiment: '9-1',
+    schema_version: 1, experiment: '6-3',
     provenance: { host: { platform: 'test', architecture: 'test' }, runtime: { node: 'test', onnxruntime_node: 'test' } },
     source_media: { path: 'input.wav', capture_method: 'browser_microphone_over_websocket', sha256: sha256(path.join(dir, 'input.wav')), original_sha256: sha256(path.join(dir, 'input.wav')), sample_rate_hz: 16000, channels: 1, bits_per_sample: 16 },
     stages: {
@@ -23,9 +23,9 @@ function fixture(dir) {
   };
 }
 
-describe('Experiment 9-1 strict evidence gates', () => {
+describe('Experiment 6-3 strict evidence gates', () => {
   let dir;
-  beforeEach(() => { dir = fs.mkdtempSync(path.join(os.tmpdir(), 'exp9-1-')); });
+  beforeEach(() => { dir = fs.mkdtempSync(path.join(os.tmpdir(), 'exp6-3-')); });
   afterEach(() => fs.rmSync(dir, { recursive: true, force: true }));
 
   it('accepts direct real media and all four real stages', () => {

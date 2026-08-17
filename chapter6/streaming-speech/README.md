@@ -1,6 +1,6 @@
-# 实验 9-2：Qwen2-Audio 递增前缀模拟流式感知
+# 实验 6-4：Qwen2-Audio 递增前缀模拟流式感知
 
-> 重编号说明：已有 canonical 运行目录继续使用历史标识 `exp9-3-*`，以保持证据链接和哈希不变。
+运行器、验证器与 canonical 证据目录均使用实验 6-4 的统一标识 `exp6-4-*`。
 
 本项目实际运行 `Qwen/Qwen2-Audio-7B-Instruct`：每收到一个新块，就把 `[0:t]` 的完整累积音频再次送入 Qwen2-Audio，输出当前 transcript 和声学事件。它不是 Whisper 替代实现，也不会把这种全量重编码称作真流式。
 
@@ -9,8 +9,8 @@
 ## 安装
 
 ```bash
-# From the repository root: use the shared Chapter 9 core environment
-uv sync --locked --python 3.12 --extra ch9
+# From the repository root: use the shared Chapter 6 core environment
+uv sync --locked --python 3.12 --extra ch6
 
 # Activate it before changing directories:
 # macOS/Linux:
@@ -21,7 +21,7 @@ source .venv/bin/activate
 # pip fallback when uv is not installed:
 # python -m pip install -e ".[ch9]"
 
-cd chapter9/streaming-speech
+cd chapter6/streaming-speech
 
 # Install this experiment's local audio/model runtime dependencies.
 python -m pip install -r requirements.txt
@@ -54,7 +54,7 @@ python demo.py \
 保持上述科学设计不变并生成完整验收 manifest：
 
 ```bash
-python run_official_experiment.py --run-id exp9-3-qwen2audio-whisper-provenance-YYYYMMDD-vN
+python run_official_experiment.py --run-id exp6-4-qwen2audio-whisper-provenance-YYYYMMDD-vN
 ```
 
 官方 runner 在运行前后核对源码 hash，并绑定三类测试音频、原始源音频、Whisper
@@ -63,7 +63,7 @@ checkpoint、Qwen2-Audio snapshot 的每个文件（包括 6.56GB 权重）、13
 
 ## 已验证结果
 
-当前 canonical 记录是 [`validation/runs/exp9-3-qwen2audio-whisper-provenance-20260730-v3/manifest.json`](validation/runs/exp9-3-qwen2audio-whisper-provenance-20260730-v3/manifest.json)。
+当前 canonical 记录是 [`validation/runs/exp6-4-qwen2audio-whisper-provenance-20260730-v3/manifest.json`](validation/runs/exp6-4-qwen2audio-whisper-provenance-20260730-v3/manifest.json)。
 2026-07-30 在 Apple Silicon 上严格复跑 `mlx-community/Qwen2-Audio-7B-Instruct-4bit`；8/8
 执行与溯源门禁通过，但正文结果只复现 2/6。13 次前缀推理实测 8.4–11.3s，不能据此声称
 100–200ms；传统路径也未在三类输入上全部落入 800–1100ms。900ms 停顿被 VAD 分为两段，

@@ -1,4 +1,4 @@
-# 实验 8-8：把这本书交给 Hermes：它能升级自己吗？
+# 实验 9-8：把这本书交给 Hermes：它能升级自己吗？
 
 如果 Agent 读到一本讲“Agent 如何进化”的书，它能不能回头看看自己，并真的学会一项新本领？
 我们没有让 Hermes 只写一份读后感，而是把整本书和它自己的源码一起交给它，让它边读边改自己。
@@ -42,11 +42,11 @@ Hermes 会话，由它重新读代码、修正并再试。第四位全新 Review
 下面保留完整证据，方便核对或复现。Canonical 开放式运行固定在 Hermes commit
 `85c8956ec7f2b4607509980794995e1c5e21e292`，使用 `openai/gpt-5.6-luna`，补丁尚未合入上游。
 
-- [Evidence manifest](validation/exp8-6-hermes-gpt56luna-autonomous-20260802-v2/manifest.json)
-- [Hermes 自述报告](validation/exp8-6-hermes-gpt56luna-autonomous-20260802-v2/BOOK_SELF_EVOLUTION_REPORT.md)
-- [最终修改补丁](validation/exp8-6-hermes-gpt56luna-autonomous-20260802-v2/hermes-self-evolution.patch)
+- [Evidence manifest](validation/exp9-8-hermes-gpt56luna-autonomous-20260802-v2/manifest.json)
+- [Hermes 自述报告](validation/exp9-8-hermes-gpt56luna-autonomous-20260802-v2/BOOK_SELF_EVOLUTION_REPORT.md)
+- [最终修改补丁](validation/exp9-8-hermes-gpt56luna-autonomous-20260802-v2/hermes-self-evolution.patch)
 - 原始主运行、三轮 proposer 修正与四次 fresh acceptance review transcript 位于
-  [`raw/`](validation/exp8-6-hermes-gpt56luna-autonomous-20260802-v2/raw/)
+  [`raw/`](validation/exp9-8-hermes-gpt56luna-autonomous-20260802-v2/raw/)
 
 证据边界：这次运行证明了 Agent 能阅读、审计、生成代码提案并根据外部审查纠错；它**没有**
 证明新的轨迹学习信号提升了下游任务成功率。Hermes 在报告中设计了固定任务、固定模型、逐项关闭功能的
@@ -63,7 +63,7 @@ cp env.example .env
 # 把真实 OPENROUTER_API_KEY 放入当前 shell 或未跟踪的 .env；不要提交。
 set -a && source .env && set +a
 
-python run_experiment_8_6.py --run-id your-run-id
+python run_experiment_9_8.py --run-id your-run-id
 ```
 
 主运行会把 clone 放在忽略的 `worktree/`，把 Hermes 状态放在忽略的 `.hermes-home/`，并把
@@ -85,8 +85,8 @@ home 重跑。`finalize_evidence.py` 用于 canonical 证据收口，包括终�
 普通离线预检不需要 API key：
 
 ```bash
-python -m py_compile run_experiment_8_6.py run_review_pass.py run_acceptance_review.py finalize_evidence.py
-python run_experiment_8_6.py --help
+python -m py_compile run_experiment_9_8.py run_review_pass.py run_acceptance_review.py finalize_evidence.py
+python run_experiment_9_8.py --help
 ```
 
 ## English summary

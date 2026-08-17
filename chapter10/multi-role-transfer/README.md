@@ -241,7 +241,7 @@ python demo.py --interactive           # Interactive multi-turn, type exit to qu
 Run the provenance-complete Moonshot + Tavily acceptance campaign with:
 
 ```bash
-python run_official_experiment.py --run-id exp10-2-kimi-k2.5-tavily-receipts-YYYYMMDD-vN
+python run_official_experiment.py --run-id exp10-1-kimi-k2.5-tavily-receipts-YYYYMMDD-vN
 ```
 
 This path retains credential-free raw Moonshot requests/responses, response IDs
@@ -304,7 +304,7 @@ making it clear at a glance how "different specialized roles take turns on the s
 ### Expected Output Shape
 
 The following excerpt illustrates the console format. The canonical accepted real run is
-[`validation/runs/exp10-2-kimi-k2.5-tavily-receipts-20260730-v3/manifest.json`](validation/runs/exp10-2-kimi-k2.5-tavily-receipts-20260730-v3/manifest.json):
+[`validation/runs/exp10-1-kimi-k2.5-tavily-receipts-20260730-v3/manifest.json`](validation/runs/exp10-1-kimi-k2.5-tavily-receipts-20260730-v3/manifest.json):
 it records Moonshot `kimi-k2.5`, three real Tavily searches with source URLs, the complete handoff chain,
 the calculation tool call, and the counted draft. All 9 behavior and 6 provenance gates passed. The run
 retains nine raw Moonshot requests/responses with unique response IDs and usage, three raw Tavily response
@@ -635,7 +635,7 @@ triage → research → data_analysis → writing
 ### 预期输出形态
 
 以下片段用于说明控制台输出格式。正式验收以
-[`validation/runs/exp10-2-kimi-k2.5-tavily-receipts-20260730-v3/manifest.json`](validation/runs/exp10-2-kimi-k2.5-tavily-receipts-20260730-v3/manifest.json)
+[`validation/runs/exp10-1-kimi-k2.5-tavily-receipts-20260730-v3/manifest.json`](validation/runs/exp10-1-kimi-k2.5-tavily-receipts-20260730-v3/manifest.json)
 为准：该次运行记录 Moonshot `kimi-k2.5`、3 次带来源 URL 的真实 Tavily 检索、完整移交链、计算工具调用与
 长度核对；9/9 行为门禁和 6/6 溯源门禁全通过。9 份 Moonshot 原始请求/响应均有唯一 response ID 与
 usage，3 份 Tavily 原始响应已保留，5 个运行时源码 hash 和 4 个 artifact hash 均复核一致，凭据扫描为零。

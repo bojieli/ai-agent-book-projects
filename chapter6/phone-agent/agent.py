@@ -1,4 +1,4 @@
-"""Fail-closed LLM planning and dialogue contracts for Experiment 9-2.
+"""Fail-closed LLM planning and dialogue contracts for Phone Agent add-on.
 
 The direct arm receives a fixed call plan.  The ReAct arm asks a real external
 OpenAI-compatible provider to observe an incomplete task, identify missing facts,

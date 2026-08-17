@@ -1,4 +1,4 @@
-"""Credential-free raw provider receipts for Experiment 10-1."""
+"""Credential-free raw provider receipts for staged system-prompt add-on."""
 
 from __future__ import annotations
 

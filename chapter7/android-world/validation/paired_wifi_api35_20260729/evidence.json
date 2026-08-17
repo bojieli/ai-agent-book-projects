@@ -102,7 +102,7 @@
     ]
   },
   "environment": {
-    "android_world_checkout": "/Users/boj/book/ai-agent-book/chapter6/android_world",
+    "android_world_checkout": "/Users/boj/book/ai-agent-book/chapter7/android_world",
     "android_world_checkout_clean": true,
     "android_world_commit": "0e95d641e244504c22087cc29b013f3b2428a261",
     "api_level": 35,
@@ -895,7 +895,7 @@
       "trial": 1
     }
   ],
-  "experiment": "6-10",
+  "experiment": "7-12",
   "experiment_complete": false,
   "generated_at_utc": "2026-07-29T12:13:15Z",
   "hypothesis": {
@@ -980,7 +980,7 @@
       "trial": 1
     }
   ],
-  "run_id": "exp6-10-20260729T114648Z",
+  "run_id": "exp7-12-20260729T114648Z",
   "schema_version": 1,
   "scope": {
     "completed_episodes": 8,

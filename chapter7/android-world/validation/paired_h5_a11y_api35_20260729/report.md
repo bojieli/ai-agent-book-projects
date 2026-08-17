@@ -1,6 +1,6 @@
-# Experiment 6-10 AndroidWorld iteration report
+# Experiment 7-12 AndroidWorld iteration report
 
-- Run ID: `exp6-10-20260729T122904Z`
+- Run ID: `exp7-12-20260729T122904Z`
 - Generated (UTC): `2026-07-29T13:17:47Z`
 - Upstream commit: `0e95d641e244504c22087cc29b013f3b2428a261`
 - Device: `sdk_gphone64_arm64`, API `35` (upstream tested reference: API `33`)
@@ -77,7 +77,7 @@ Observed residual failures:
 
 The following bounded interpretation was produced by the configured real LLM from the aggregate evidence (the JSON remains authoritative):
 
-- Summary: Experiment 6-10 compared control (a11y-forwarder observation) and treatment (UIAutomator observation) arms in a paired setup with 4 Wi-Fi system Settings tasks. Treatment achieved 100% success (4/4) vs control's 25% (1/4), reduced mean latency (136.2s vs 172.8s) and LLM calls (11.0 vs 14.0), but had a mean token ratio (treatment/control) of 2.498, exceeding the 1.5x guardrail. Environment boundaries include API 35 AVD (vs upstream API 33 reference), restriction to Settings tasks, UIAutomator as a compatibility path (not reference config), and skipped device-time setting due to non-root AVD limitations.
+- Summary: Experiment 7-12 compared control (a11y-forwarder observation) and treatment (UIAutomator observation) arms in a paired setup with 4 Wi-Fi system Settings tasks. Treatment achieved 100% success (4/4) vs control's 25% (1/4), reduced mean latency (136.2s vs 172.8s) and LLM calls (11.0 vs 14.0), but had a mean token ratio (treatment/control) of 2.498, exceeding the 1.5x guardrail. Environment boundaries include API 35 AVD (vs upstream API 33 reference), restriction to Settings tasks, UIAutomator as a compatibility path (not reference config), and skipped device-time setting due to non-root AVD limitations.
 - Cost/benefit interpretation: Treatment provides substantial benefit via improved success rate (net +3) and reduced latency/LLM calls, but incurs significantly higher token cost (2.498x control), violating token guardrails and limiting deployment despite success gains.
 - Residual pattern: Treatment mean token ratio (2.498x) exceeds 1.5x guardrail
 - Residual pattern: Control arm has low success rate (25%, 1/4 completed episodes)

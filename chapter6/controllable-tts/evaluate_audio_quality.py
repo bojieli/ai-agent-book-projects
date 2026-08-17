@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run a blinded, position-balanced audio study for Experiment 9-5.
+"""Run a blinded, position-balanced audio study for Experiment 6-6.
 
 The three clips already come from real Fish Audio S1 calls.  This program asks a
 real audio-capable Gemini model to listen to them in three different orders,
@@ -352,7 +352,7 @@ def aggregate(passes: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def validate_study(study: dict[str, Any]) -> None:
-    if study.get("schema_version") != 1 or study.get("experiment") != "9-5":
+    if study.get("schema_version") != 1 or study.get("experiment") != "6-6":
         raise ValueError("unexpected quality-study schema or experiment")
     if study.get("study_design", {}).get("judge_type") != "multimodal_llm_not_human_mos":
         raise ValueError("study must identify its judge type honestly")
@@ -376,7 +376,7 @@ def validate_study(study: dict[str, Any]) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Blinded real-API audio study for Experiment 9-5")
+    parser = argparse.ArgumentParser(description="Blinded real-API audio study for Experiment 6-6")
     parser.add_argument("--model", help="Gemini generateContent model; default probes available models")
     parser.add_argument(
         "--provider", choices=("auto", "gemini", "openrouter", "dashscope", "mistral"), default="auto",
@@ -449,7 +449,7 @@ def main() -> int:
         raise RuntimeError(f"All configured audio judges failed; last error: {last_error}")
     study = {
         "schema_version": 1,
-        "experiment": "9-5",
+        "experiment": "6-6",
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
         "provider": provider_names[provider],
         "model": model,

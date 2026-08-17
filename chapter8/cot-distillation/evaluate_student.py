@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Baseline/student/teacher acceptance campaign for Experiment 7-9."""
+"""Baseline/student/teacher acceptance campaign for Experiment 8-9."""
 
 from __future__ import annotations
 
@@ -173,7 +173,7 @@ def score_arm(name: str, problems: list[dict[str, Any]], outputs: list[str]) -> 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Experiment 7-9 paired baseline/student/teacher evaluation",
+        description="Experiment 8-9 paired baseline/student/teacher evaluation",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument("--problems", type=Path, default=Path("problems.jsonl"))
@@ -186,7 +186,7 @@ def parse_args() -> argparse.Namespace:
         help="Reuse retained baseline/student records from a prior evaluation; teacher data is always rescored",
     )
     parser.add_argument("--max-new-tokens", type=int, default=4096)
-    parser.add_argument("--output", type=Path, default=Path("validation/experiment_7_9.json"))
+    parser.add_argument("--output", type=Path, default=Path("validation/experiment_8_9.json"))
     return parser.parse_args()
 
 
@@ -198,7 +198,7 @@ def main() -> None:
     student_manifest = Path(args.student_model) / "training_manifest.json"
     if not student_manifest.is_file():
         raise SystemExit(
-            "student-model lacks training_manifest.json; a mechanism/demo model cannot pass Experiment 7-9"
+            "student-model lacks training_manifest.json; a mechanism/demo model cannot pass Experiment 8-9"
         )
 
     questions = [str(problem["question"]) for problem in problems]
@@ -244,7 +244,7 @@ def main() -> None:
     )
     payload = {
         "schema_version": 1,
-        "experiment": "7-9",
+        "experiment": "8-9",
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "status": "complete" if completion["complete"] else "incomplete",
         "inputs": {

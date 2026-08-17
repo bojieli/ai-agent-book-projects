@@ -1,4 +1,4 @@
-"""DPO 训练脚本（实验 7-17 主线，需要单卡 GPU）。
+"""DPO 训练脚本（实验 8-17 主线，需要单卡 GPU）。
 
 默认配置面向单卡：bf16、gradient checkpointing、LoRA r=16 alpha=32、
 per_device_batch_size=1、gradient_accumulation 2、learning_rate 3e-5、
@@ -115,7 +115,7 @@ def train(args) -> None:
     receipt_dir = ROOT / "validation" / run
     receipt_dir.mkdir(parents=True, exist_ok=True)
     receipt = {
-        "experiment": "7-17 premature-completion-dpo",
+        "experiment": "8-17 premature-completion-dpo",
         "run": run,
         "model": args.model,
         "data": str(data_path.relative_to(ROOT)),

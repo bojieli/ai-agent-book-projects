@@ -51,7 +51,7 @@ For the provenance-complete acceptance campaign (the default comparison plus
 the four-worker live cascade in one run):
 
 ```bash
-python run_official_experiment.py --run-id exp10-6-real-receipts-YYYYMMDD-vN
+python run_official_experiment.py --run-id exp10-4-real-receipts-YYYYMMDD-vN
 ```
 
 This runner stores full rendered browser observations, credential-free raw SDK
@@ -71,7 +71,7 @@ python demo.py --target 'Professor Name' --sites-json sites.example.json --agent
 On 2026-07-29, the default ten-page Stanford run found Andrew Ng on the live Stanford HAI page using ARK extraction. Parallel wall time was 18.542 s; serial time was 58.264 s, a measured 3.142× speedup. All 10 parallel and 10 serial browser contexts closed. The live cascade stress run produced one winner, one terminate broadcast, three losing-worker acknowledgements, and 4/4 closed contexts.
 
 The current provenance-complete campaign is
-[`validation/runs/exp10-6-real-receipts-20260730-v2/manifest.json`](validation/runs/exp10-6-real-receipts-20260730-v2/manifest.json).
+[`validation/runs/exp10-4-real-receipts-20260730-v2/manifest.json`](validation/runs/exp10-4-real-receipts-20260730-v2/manifest.json).
 All 12 acceptance gates passed: the ten-site parallel and serial paths both
 found the target and closed all 20 contexts; the measured speedup was 1.872×;
 the cascade produced one broadcast, three loser acknowledgements, and 4/4

@@ -5,7 +5,7 @@ import unittest
 from learning_agent import KnowledgeBase
 from learning_agent.workflow import WorkflowStatus
 from local_mail_sandbox import mail_sandbox
-from run_experiment_8_4 import FIRST, TRANSFER, compile_workflow, replay
+from run_experiment_9_5 import FIRST, TRANSFER, compile_workflow, replay
 
 
 CAPTURED = [

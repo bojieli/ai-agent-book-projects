@@ -259,7 +259,7 @@ def run(cases_path: Path, output: Path, model: str, formats: list[str], max_case
         }
 
     report = {
-        "experiment": "6-5",
+        "experiment": "7-5",
         "title": "Known-memory policy use on trajectory prefixes",
         "model": model,
         "memory_formats": formats,
@@ -288,7 +288,7 @@ def run(cases_path: Path, output: Path, model: str, formats: list[str], max_case
         else output.name
     )
     manifest = {
-        "experiment": "6-5",
+        "experiment": "7-5",
         "report": report_ref,
         "report_sha256": sha256(output),
         "runner": Path(__file__).name,

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Launch the ReAct arm of the local Experiment 9-2 browser call."""
+"""Launch the ReAct arm of the local Phone Agent add-on browser call."""
 
 from __future__ import annotations
 
@@ -27,7 +27,7 @@ def main() -> None:
     args = parser.parse_args()
     query = urllib.parse.urlencode({"mode": "react", "task": args.task})
     url = f"http://{args.host}:{args.port}/?{query}"
-    print(f"Experiment 9-2 ReAct endpoint: {url}")
+    print(f"Phone Agent add-on ReAct endpoint: {url}")
     if not args.no_open:
         threading.Timer(0.8, lambda: webbrowser.open(url)).start()
     uvicorn.run("webrtc_app:app", host=args.host, port=args.port)

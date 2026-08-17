@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "experiment": "10-4",
+  "run_id": "exp10-4-real-receipts-20260730-v2",
+  "generated_at": "2026-07-30T05:09:57.077Z",
+  "git_commit": "f119cf510f3746cd5d071d0bce0051617f02f163",
+  "runtime_source_sha256": {
+    "run_official_experiment.py": "e09e215e433fbc96073bc57bb9ecfda611a967a0854ec89a0846755f8d4d276e",
+    "demo.py": "0e974987333715f931d6a9f9fa914a9efa7ead3608c21511c407480dc2bd5e86",
+    "agents.py": "1dc78ff96f765de2fee8ee96ac72ae64b706c924d2ae8d9caa084bd4a874eb73",
+    "llm.py": "b7d820398a3e5be6f3cf6fde833f20036ec8039cc9c62aa7560f091dc0ae60a0",
+    "message_bus.py": "06c25d988884830422a1f902d4a6b32c96566af6a180b6f710cd8fa48f6caa42",
+    "sources.py": "05c1115ea2538c32d906c9bb965fe23209078847053e018fe3190a8ff693e27f",
+    "cascade-stress.example.json": "94126527d495304a5f397f9d84de25e4c12f4a916067e38bed8bc8fab82fb146"
+  },
+  "input_sha256": {
+    "default_sites_canonical_json": "6b6c1ecf715b826c18bf553140c0d769e9c65c1c64b51310f6f54f6b6b035223",
+    "cascade_sites_canonical_json": "2fcb099b49d4402967f067a1cb98af51f955c0a809f5fdc4767e2460cccf2dc3"
+  },
+  "artifact_sha256": {
+    "evidence.json": "06dd7becf5602b7a3f98f012b5abf1a2000e0faa7198d7594f59a6cd36887b37",
+    "browser_receipts.json": "7706a362b3f1a09af9351ee1b97b1987f27ef8f442b81eb6d31df44004aaa882",
+    "llm_receipts.json": "6d42e1988095c14f496f3f25b6e47b450ace01d25bcbf8de88fa9c74a2ebdef7",
+    "message_bus_receipts.json": "cddd2ec2da6400c3b2efddb5e2f780bec70dd030d7a9d4d798a9252174cb48c1"
+  },
+  "acceptance": {
+    "overall_status": "pass",
+    "passed_gates": 12,
+    "total_gates": 12
+  }
+}

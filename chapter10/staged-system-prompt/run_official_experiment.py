@@ -1,4 +1,4 @@
-"""Run and package the strict real-provider Experiment 10-1 campaign."""
+"""Run and package the strict real-provider staged system-prompt add-on campaign."""
 
 from __future__ import annotations
 
@@ -113,7 +113,7 @@ def main() -> None:
 
     protocol_raw = PROTOCOL_PATH.read_bytes()
     protocol = json.loads(protocol_raw)
-    run_id = datetime.now(timezone.utc).strftime("exp10-1-kimi-k3-%Y%m%dT%H%M%SZ")
+    run_id = datetime.now(timezone.utc).strftime("staged-system-prompt-kimi-k3-%Y%m%dT%H%M%SZ")
     run_dir = (args.run_dir or HERE / "runs" / run_id).resolve()
     if run_dir.exists() and any(run_dir.iterdir()):
         raise SystemExit(f"run directory is not empty: {run_dir}")

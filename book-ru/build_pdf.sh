@@ -12,7 +12,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
 
 SRC_DIR="."
-OUT="AI-Agents-in-Depth-ru.pdf"
+OUT="AI-Agents-in-Depth-v2.0-ru.pdf"
 NAMES=(introduction chapter1 chapter2 chapter3 chapter4 chapter5 chapter6 \
        chapter7 chapter8 chapter9 chapter10 afterword)
 

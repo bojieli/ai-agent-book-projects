@@ -12,7 +12,7 @@ import argparse
 
 
 ROOT = Path(__file__).resolve().parent
-RUN_ID = "exp8-6-hermes-gpt56luna-20260802-v1"
+RUN_ID = "exp9-8-hermes-gpt56luna-20260802-v1"
 MODEL = "openai/gpt-5.6-luna"
 SECRET_PATTERNS = (
     re.compile(r"sk-or-v1-[A-Za-z0-9_-]{20,}"),

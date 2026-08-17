@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Merge independently executed Experiment 6-11 trial shards without hiding failures."""
+"""Merge independently executed Experiment 7-12 trial shards without hiding failures."""
 
 from __future__ import annotations
 
@@ -161,7 +161,7 @@ def main() -> int:
   episodes.sort(key=lambda row: (task_order[str(row["task"])], int(row["trial"])))
 
   merged = copy.deepcopy(reference)
-  merged["run_id"] = "exp6-11-merged-" + _utc_now().replace(":", "").replace("-", "")
+  merged["run_id"] = "exp7-12-merged-" + _utc_now().replace(":", "").replace("-", "")
   merged["generated_at_utc"] = _utc_now()
   merged["command"] = ["merge_candidate_shards.py", *map(str, paths)]
   merged["scope"]["selected_trials"] = sorted(selected_trials)

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run and retain the bounded Experiment 9-6 native Computer Use trajectory.
+"""Run and retain the bounded Experiment 6-7 native Computer Use trajectory.
 
 This harness calls the pinned Anthropic Computer Use Demo's ``sampling_loop``.
 It is intended to run inside that Demo's locally built container with a host
@@ -266,7 +266,7 @@ async def main() -> int:
     )
     record = {
         "schema_version": 1,
-        "experiment": "9-6",
+        "experiment": "6-7",
         "status": "completed" if termination == "model_finished" else termination,
         "started_at": started_at,
         "finished_at": utc_now(),

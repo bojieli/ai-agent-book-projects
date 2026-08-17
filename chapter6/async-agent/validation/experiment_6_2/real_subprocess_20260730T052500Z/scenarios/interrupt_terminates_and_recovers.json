@@ -1,0 +1,161 @@
+{
+  "id": "interrupt_terminates_and_recovers",
+  "interrupt_at": 0.803,
+  "cancel_receipt_at": 0.806,
+  "cancel_latency_seconds": 0.004,
+  "recovery_at": 0.807,
+  "completed_callbacks": [
+    "T2"
+  ],
+  "events": [
+    {
+      "elapsed_seconds": 0.0,
+      "source": "TASK",
+      "text": "启动真实子进程任务 T1: `python analyze_logs.py` (速度 4%/逻辑秒)"
+    },
+    {
+      "elapsed_seconds": 0.803,
+      "source": "USER",
+      "event": "user.interrupt",
+      "text": "取消",
+      "task_id": "T1",
+      "progress": 18.0
+    },
+    {
+      "elapsed_seconds": 0.806,
+      "source": "TASK",
+      "text": "T1 子进程已终止 🛑 (pid=92040, 进度 18%)"
+    },
+    {
+      "elapsed_seconds": 0.806,
+      "source": "SYSTEM",
+      "event": "process_cancelled",
+      "task_ids": [
+        "T1"
+      ],
+      "cancel_latency_seconds": 0.004,
+      "returncode": -15
+    },
+    {
+      "elapsed_seconds": 0.807,
+      "source": "TASK",
+      "text": "启动真实子进程任务 T2: `python re_run_summary.py` (速度 4%/逻辑秒)"
+    },
+    {
+      "elapsed_seconds": 0.807,
+      "source": "SYSTEM",
+      "event": "runtime_recovered",
+      "task_id": "T2"
+    },
+    {
+      "elapsed_seconds": 1.619,
+      "source": "TASK",
+      "text": "T2 `python re_run_summary.py` 进度 22% (pid=92041)"
+    },
+    {
+      "elapsed_seconds": 2.245,
+      "source": "TASK",
+      "text": "T2 `python re_run_summary.py` 进度 40% (pid=92041)"
+    },
+    {
+      "elapsed_seconds": 3.019,
+      "source": "TASK",
+      "text": "T2 `python re_run_summary.py` 进度 63% (pid=92041)"
+    },
+    {
+      "elapsed_seconds": 3.644,
+      "source": "TASK",
+      "text": "T2 `python re_run_summary.py` 进度 81% (pid=92041)"
+    },
+    {
+      "elapsed_seconds": 4.423,
+      "source": "TASK",
+      "text": "T2 `python re_run_summary.py` 进度 100% (pid=92041)"
+    },
+    {
+      "elapsed_seconds": 4.436,
+      "source": "TASK",
+      "text": "T2 完成 ✅ (pid=92041, returncode=0)"
+    },
+    {
+      "elapsed_seconds": 4.436,
+      "source": "SYSTEM",
+      "event": "async_result_injected",
+      "task_id": "T2"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "T1",
+      "command": "python analyze_logs.py",
+      "status": "cancelled",
+      "progress": 18.0,
+      "pid": 92040,
+      "returncode": -15,
+      "started_at": 1785360512.964798,
+      "completed_at": 1785360513.7706082,
+      "elapsed_seconds": 0.806,
+      "stdout_sha256": null,
+      "stderr_tail": "",
+      "result": null,
+      "executable": {
+        "mode": "real_subprocess",
+        "shell": false,
+        "worker": "/Users/boj/book/ai-agent-book/chapter6/async-agent/analysis_worker.py",
+        "worker_sha256": "ab700e034f63e4b8f83dfb4a6156745b7ab7c9352750c63a900f2632acb134c7",
+        "input": "/Users/boj/book/ai-agent-book/book/chapter6.md",
+        "input_sha256": "4184460334544d326bb7ad4db349b8c583790195d51efc28ef325284c41d7fdd",
+        "job": "logs",
+        "rate_percent_per_logical_second": 4.5,
+        "tick_real_seconds": 0.15,
+        "argv_sha256": "1c6aa3b4072446e8286dce865f45c6bb1c93733319bf7501adbb555bc6a7973c",
+        "pid": 92040,
+        "returncode": -15,
+        "cancelled": true,
+        "elapsed_seconds": 0.806
+      }
+    },
+    {
+      "task_id": "T2",
+      "command": "python re_run_summary.py",
+      "status": "completed",
+      "progress": 100.0,
+      "pid": 92041,
+      "returncode": 0,
+      "started_at": 1785360513.771501,
+      "completed_at": 1785360517.4005382,
+      "elapsed_seconds": 3.629,
+      "stdout_sha256": "5c538eaf31540bcc95acb80a9ca3333a440020c63e015b644575a35cabbe6a11",
+      "stderr_tail": "",
+      "result": {
+        "async_mentions": 69,
+        "bytes": 106193,
+        "error_keyword_count": 20,
+        "experiment_mentions": 37,
+        "heading_count": 27,
+        "input_path": "/Users/boj/book/ai-agent-book/book/chapter6.md",
+        "input_sha256": "4184460334544d326bb7ad4db349b8c583790195d51efc28ef325284c41d7fdd",
+        "job": "recovery",
+        "lines": 679
+      },
+      "executable": {
+        "mode": "real_subprocess",
+        "shell": false,
+        "worker": "/Users/boj/book/ai-agent-book/chapter6/async-agent/analysis_worker.py",
+        "worker_sha256": "ab700e034f63e4b8f83dfb4a6156745b7ab7c9352750c63a900f2632acb134c7",
+        "input": "/Users/boj/book/ai-agent-book/book/chapter6.md",
+        "input_sha256": "4184460334544d326bb7ad4db349b8c583790195d51efc28ef325284c41d7fdd",
+        "job": "recovery",
+        "rate_percent_per_logical_second": 4.5,
+        "tick_real_seconds": 0.15,
+        "argv_sha256": "7079826b54049bc6e5276ade7f4c343a41b9fc82f828d35685665b3101bce693",
+        "pid": 92041,
+        "returncode": 0,
+        "stdout_sha256": "5c538eaf31540bcc95acb80a9ca3333a440020c63e015b644575a35cabbe6a11",
+        "stdout_lines": 24,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "elapsed_seconds": 3.629
+      }
+    }
+  ]
+}

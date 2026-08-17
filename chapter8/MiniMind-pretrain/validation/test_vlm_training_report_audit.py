@@ -85,12 +85,12 @@ def test_canonical_evidence_passes_fail_closed_validator():
     assert result["judge_receipts"] == 8
 
 
-def test_vlm_latest_pointer_does_not_overwrite_experiment_7_3():
+def test_vlm_latest_pointer_does_not_overwrite_experiment_8_3():
     assert audit.LATEST_PATH.name == "latest_vlm.json"
     vlm_latest = json.loads(audit.LATEST_PATH.read_text(encoding="utf-8"))
     llm_latest = json.loads((HERE / "latest.json").read_text(encoding="utf-8"))
-    assert vlm_latest["experiment"] == "7-4"
-    assert llm_latest["experiment"] == "7-3"
+    assert vlm_latest["experiment"] == "8-4"
+    assert llm_latest["experiment"] == "8-3"
 
 
 def test_receipts_are_real_image_aware_unique_and_arm_blind():

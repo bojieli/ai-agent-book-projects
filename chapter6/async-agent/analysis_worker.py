@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Bounded analysis executable used by the Experiment 4-6 task manager."""
+"""Bounded analysis executable used by the Experiment 6-2 task manager."""
 
 from __future__ import annotations
 

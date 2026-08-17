@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "experiment": "10-6",
+  "experiment": "10-4",
   "run_type": "real_browser_cascade_stress",
   "measured_at": "2026-07-29T17:58:19+0800",
   "target": "Andrew Ng",

@@ -1,4 +1,4 @@
-"""Three-layer trajectory verifier used by Experiment 8-1.
+"""Three-layer trajectory verifier used by Experiment 9-1.
 
 Environment and policy conclusions stay deterministic.  Only the two open-
 ended language dimensions are delegated to a quality Judge.

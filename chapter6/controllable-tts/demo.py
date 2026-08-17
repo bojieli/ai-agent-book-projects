@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Experiment 9-5: Fish Audio S1 + a 24-reference voice library."""
+"""Experiment 6-6: Fish Audio S1 + a 24-reference voice library."""
 
 from __future__ import annotations
 
@@ -69,7 +69,7 @@ def main() -> int:
     c_meta = synthesize_segments(controlled, c, output / ".tmp" / "C", manifest_path=args.manifest)
 
     evidence = {
-        "experiment": "9-5",
+        "experiment": "6-6",
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
         "provider": "Fish Audio",
         "backend": "s1",

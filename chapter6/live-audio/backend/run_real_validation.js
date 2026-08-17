@@ -265,7 +265,7 @@ function resolveFishReferenceId(requested) {
   if (requested) return { id: requested, source: 'command line or FISH_TTS_REFERENCE_ID' };
   const manifestPath = path.resolve(__dirname, '..', '..', 'controllable-tts', 'reference_audio', 'manifest.json');
   if (!fs.existsSync(manifestPath)) {
-    throw new Error('Fish TTS requires FISH_TTS_REFERENCE_ID or the authorized Experiment 9-5 reference manifest');
+    throw new Error('Fish TTS requires FISH_TTS_REFERENCE_ID or the authorized Experiment 6-6 reference manifest');
   }
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
   if (!manifest.source_reference_id) throw new Error('Fish reference manifest has no source_reference_id');
@@ -353,7 +353,7 @@ async function runTts(text, providerName, outputDir, options = {}) {
 
 function renderReport(e) {
   const a = e.acceptance;
-  return `# Experiment 9-1 real traditional-voice validation\n\n` +
+  return `# Experiment 6-3 real traditional-voice validation\n\n` +
     `- Run ID: \`${e.run_id}\`\n- Complete: **${e.experiment_complete}**\n` +
     `- Source: \`${e.source_media.path}\` (${e.source_media.duration_seconds.toFixed(3)} s, saved browser microphone/WebSocket capture)\n` +
     `- VAD: Silero ONNX, 500 ms silence, non-forced endpoint = ${e.stages.vad.endpoint_detected}\n` +
@@ -385,7 +385,7 @@ async function main() {
   fs.copyFileSync(input, sourceCopy);
   const probe = mediaProbe(sourceCopy);
   const evidence = {
-    schema_version: 1, experiment: '9-1', run_id: `exp9-1-${new Date().toISOString().replace(/[-:.]/g, '')}`,
+    schema_version: 1, experiment: '6-3', run_id: `exp6-3-${new Date().toISOString().replace(/[-:.]/g, '')}`,
     generated_at_utc: new Date().toISOString(), credentials_persisted: false,
     provenance: buildProvenance(),
     source_media: {

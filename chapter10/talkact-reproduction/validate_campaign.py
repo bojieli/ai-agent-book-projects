@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the retained historical 10-4 campaign for current Experiment 10-3."""
+"""Validate the retained historical 10-3 campaign for current Experiment 10-3."""
 
 from __future__ import annotations
 
@@ -168,7 +168,7 @@ def main() -> int:
 
     acceptance = {
         "schema_version": 1,
-        "experiment": "10-4",
+        "experiment": "10-3",
         "run_dir": run_dir.name,
         "passed": all(gates.values()),
         "gates": gates,
@@ -185,7 +185,7 @@ def main() -> int:
     }
     manifest = {
         "schema_version": 1,
-        "experiment": "10-4",
+        "experiment": "10-3",
         "run_dir": run_dir.name,
         "files": files,
     }

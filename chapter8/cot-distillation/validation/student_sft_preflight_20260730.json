@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
-  "experiment": "7-9",
+  "experiment": "8-9",
   "stage": "student_sft_preflight",
   "generated_at_utc": "2026-07-30T04:51:13.181684+00:00",
   "ready": false,
   "training_data": {
-    "path": "/Users/boj/book/ai-agent-book/chapter7/cot-distillation/data/sft_cot_distill_aime_kimi_k3.jsonl",
+    "path": "/Users/boj/book/ai-agent-book/chapter8/cot-distillation/data/sft_cot_distill_aime_kimi_k3.jsonl",
     "sha256": "0c6cab7cb8e0bd13671eda4e2bd0dc2530f7483f09ae42e946b87600a979968e",
     "samples": 23
   },

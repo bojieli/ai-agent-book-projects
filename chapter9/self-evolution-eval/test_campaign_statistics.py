@@ -1,6 +1,6 @@
 import unittest
 
-from run_experiment_8_7 import describe
+from run_experiment_9_9 import describe
 
 
 class CampaignStatisticsTest(unittest.TestCase):

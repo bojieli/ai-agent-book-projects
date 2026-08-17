@@ -169,7 +169,7 @@ async def main(args: argparse.Namespace) -> int:
                 json.dumps(
                     {
                         "schema_version": 1,
-                        "experiment": "10-5",
+                        "experiment": "10-3",
                         "overall_status": "not_applicable",
                         "reason": "computer_agent_did_not_spawn_phone_agent",
                         "decision": decision.to_dict(),
@@ -296,7 +296,7 @@ async def main(args: argparse.Namespace) -> int:
         )
         report = {
             "schema_version": 2,
-            "experiment": "10-5",
+            "experiment": "10-3",
             "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
             "transport": transport,
             "synthetic_values_used": bool(

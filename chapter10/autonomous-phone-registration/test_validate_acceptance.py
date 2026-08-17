@@ -7,7 +7,7 @@ import pytest
 from validate_acceptance import ValidationFailure, validate_run
 
 ROOT = Path(__file__).parent
-RUN = ROOT / "validation/runs/exp10-5-webrtc-raw-20260731-v4"
+RUN = ROOT / "validation/runs/exp10-3-webrtc-raw-20260731-v4"
 
 
 def _write(path: Path, value: dict) -> None:

@@ -1,0 +1,44 @@
+{
+  "first_completed": "T1",
+  "query_receipts": [
+    {
+      "task_id": "T2",
+      "status": "running",
+      "progress": 68.0,
+      "queried_at": 5.345
+    },
+    {
+      "task_id": "T3",
+      "status": "running",
+      "progress": 34.0,
+      "queried_at": 5.345
+    }
+  ],
+  "cancelled_ids": [
+    "T3"
+  ],
+  "completed_results": {
+    "T1": {
+      "async_mentions": 69,
+      "bytes": 106193,
+      "error_keyword_count": 20,
+      "experiment_mentions": 37,
+      "heading_count": 27,
+      "input_path": "/Users/boj/book/ai-agent-book/book/chapter6.md",
+      "input_sha256": "4184460334544d326bb7ad4db349b8c583790195d51efc28ef325284c41d7fdd",
+      "job": "fast",
+      "lines": 679
+    },
+    "T2": {
+      "async_mentions": 69,
+      "bytes": 106193,
+      "error_keyword_count": 20,
+      "experiment_mentions": 37,
+      "heading_count": 27,
+      "input_path": "/Users/boj/book/ai-agent-book/book/chapter6.md",
+      "input_sha256": "4184460334544d326bb7ad4db349b8c583790195d51efc28ef325284c41d7fdd",
+      "job": "mid",
+      "lines": 679
+    }
+  }
+}

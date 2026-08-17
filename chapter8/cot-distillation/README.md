@@ -39,7 +39,7 @@ source .venv/bin/activate
 # pip fallback when uv is not installed:
 # python -m pip install -e ".[ch7]"
 
-cd chapter7/cot-distillation
+cd chapter8/cot-distillation
 
 # Single-project compatibility path, still supported during migration:
 # python -m pip install -r requirements.txt
@@ -85,14 +85,14 @@ Earlier easy Chinese arithmetic samples are retained as historical artifacts. Th
 
 # CoT 蒸馏：从前沿云模型采集 SFT 数据
 
-配套书中**实验 7-9（思维链蒸馏）**。SFT 的第一步是拿到高质量示范数据，而获取
+配套书中**实验 8-9（思维链蒸馏）**。SFT 的第一步是拿到高质量示范数据，而获取
 SFT 数据最高效的方式就是**蒸馏前沿模型**：通过大规模 API 调用，把教师模型的
 "思考 + 答案"轨迹采集下来，经规则验证器过滤后作为学生模型的训练数据
 （DeepSeek-R1 蒸馏小模型走的就是这条路线）。
 
 ## 方法
 
-三步流程（完整对应实验 7-9，而非只停在采集轨迹）：
+三步流程（完整对应实验 8-9，而非只停在采集轨迹）：
 
 1. **采样任务**：`problems.jsonl` 内置 24 道 AIME 真题（1986–2024 年，按题号
    难度分层抽样：P1–5/P6–10/P11–15 各 8 道，已剔除含图形的题），答案是
@@ -145,7 +145,7 @@ source .venv/bin/activate
 # 未安装 uv 时可用 pip 兜底：
 # python -m pip install -e ".[ch7]"
 
-cd chapter7/cot-distillation
+cd chapter8/cot-distillation
 
 # 迁移期间仍支持单项目兼容路径：
 # python -m pip install -r requirements.txt
@@ -174,7 +174,7 @@ python evaluate_student.py \
   --baseline-model Qwen/Qwen2.5-1.5B-Instruct \
   --student-model checkpoints/cot-student \
   --teacher-data data/raw_trajectories_aime_kimi_k3.jsonl \
-  --output validation/experiment_7_9.json
+  --output validation/experiment_8_9.json
 ```
 
 常用参数：`--model` 换教师模型、`--base_url`/`--api_key_env` 换端点、
@@ -198,9 +198,9 @@ python evaluate_student.py \
 `aime-2016-9-I` 在原生 low-reasoning 控制下完成，但答案错误，因此被正确拒绝。
 第二步与第三步已在 RTX PRO 6000 Blackwell Workstation Edition 上完成
 真实 CUDA 训练：[`student_sft_preflight_20260801_gpu.json`](validation/student_sft_preflight_20260801_gpu.json)
-证明训练栈可用；[`training_manifest.json`](checkpoints/exp7-9-qwen25-1.5b-kimi-k3-20260801-v1/training_manifest.json)
+证明训练栈可用；[`training_manifest.json`](checkpoints/exp8-9-qwen25-1.5b-kimi-k3-20260801-v1/training_manifest.json)
 记录了 Qwen2.5-1.5B-Instruct + LoRA 的真实参数更新（3 epochs，约 27 秒，最终 loss
-2.17）；[`experiment_7_9_complete_20260803_v2.json`](validation/experiment_7_9_complete_20260803_v2.json)
+2.17）；[`experiment_8_9_complete_20260803_v2.json`](validation/experiment_8_9_complete_20260803_v2.json)
 给出同题三臂对照：基线 1/24、学生 2/24、教师 23/24，配对检验 p=1.0 不显著，能力
 恢复比例约 4.5%。学生输出中确实出现了少量反思/验算行为，但总体与基线接近。
 实验执行与证据状态为 **complete**；配对提升不显著是本次实验的负结果，而不是缺失门禁。

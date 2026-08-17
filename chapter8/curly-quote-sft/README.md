@@ -1,4 +1,4 @@
-# 实验 7-18：中文弯引号的作用域敏感 SFT
+# 实验 8-18：中文弯引号的作用域敏感 SFT
 
 本实验从生产反馈“中文文章使用了 ASCII 直引号”出发，先把反馈提炼成可审计的文档 Skill，再用结构化合成数据训练 Qwen3-8B 的 LoRA 适配器。重点不是全局字符替换，而是判断符号所在的作用域：中文自然语言中的引用可以改为 `“”`，英文原文、代码、JSON、路径和标识符必须保持其语法需要的引号。
 
@@ -7,7 +7,7 @@
 ## 运行
 
 ```bash
-cd chapter7/curly-quote-sft
+cd chapter8/curly-quote-sft
 python generate_data.py
 python quality_audit.py
 python train_sft.py --model Qwen/Qwen3-8B

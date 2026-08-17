@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the canonical, checkpoint-free evidence package for Experiment 7-5.
+"""Build the canonical, checkpoint-free evidence package for Experiment 8-5.
 
 The historical RTX 4090 run is retained as a raw terminal transcript in
 ``model_eval_results.md``.  This tool does not pretend to rerun that GPU job.
@@ -33,7 +33,7 @@ REPORT_PATH = EXPERIMENT_DIR / "model_eval_results.md"
 RUNS_DIR = HERE / "runs"
 LATEST_PATH = HERE / "latest.json"
 
-DEFAULT_RUN_ID = "exp7-5-training-report-20260731-v1"
+DEFAULT_RUN_ID = "exp8-5-training-report-20260731-v1"
 DEFAULT_ENDPOINT = "https://ark.cn-beijing.volces.com/api/v3/chat/completions"
 DEFAULT_MODEL = "doubao-seed-1-6-250615"
 BLIND_SEED = 750731
@@ -170,7 +170,7 @@ def parse_retained_outputs(report_path: Path = REPORT_PATH) -> dict[str, Any]:
 
     ordered = [tests[test_id] for test_id in sorted(tests)]
     return {
-        "schema_version": "exp7-5-retained-outputs-v1",
+        "schema_version": "exp8-5-retained-outputs-v1",
         "source_report": str(REPORT_PATH.relative_to(REPO_ROOT)),
         "source_report_sha256": sha256_file(report_path),
         "test_count": len(ordered),
@@ -344,8 +344,8 @@ def reproduction_contract() -> dict[str, Any]:
         "to be the exact historical revision."
     )
     return {
-        "schema_version": "exp7-5-reproduction-contract-v1",
-        "experiment": "7-5",
+        "schema_version": "exp8-5-reproduction-contract-v1",
+        "experiment": "8-5",
         "historical_evidence_boundary": {
             "historical_training_executed": True,
             "raw_three_stage_evaluation_retained": True,
@@ -555,8 +555,8 @@ def summarize(
     }
     passed = all(execution_gates.values())
     return {
-        "schema_version": "exp7-5-summary-v1",
-        "experiment": "7-5",
+        "schema_version": "exp8-5-summary-v1",
+        "experiment": "8-5",
         "status": "passed" if passed else "failed",
         "judge": {
             "provider": "ark",
@@ -593,7 +593,7 @@ def render_report(summary: dict[str, Any]) -> str:
     kimchi = "; ".join(findings["kimchi_finetuned_factual_errors"])
     return "\n".join(
         [
-            "# Experiment 7-5 retained-training-report audit",
+            "# Experiment 8-5 retained-training-report audit",
             "",
             "## Result",
             "",
@@ -667,8 +667,8 @@ def build_manifest(run_id: str, run_dir: Path, summary: dict[str, Any]) -> dict[
         run_dir / "report.md",
     ]
     return {
-        "schema_version": "exp7-5-manifest-v1",
-        "experiment": "7-5",
+        "schema_version": "exp8-5-manifest-v1",
+        "experiment": "8-5",
         "run_id": run_id,
         "created_at": utc_now(),
         "status": summary["status"],
@@ -709,8 +709,8 @@ def main() -> int:
         manifest = build_manifest(args.run_id, run_dir, summary)
         write_json(run_dir / "manifest.json", manifest)
         latest = {
-            "schema_version": "exp7-5-latest-v1",
-            "experiment": "7-5",
+            "schema_version": "exp8-5-latest-v1",
+            "experiment": "8-5",
             "run_id": args.run_id,
             "status": summary["status"],
             "run_dir": str(run_dir.relative_to(EXPERIMENT_DIR)),
@@ -753,8 +753,8 @@ def main() -> int:
     write_json(
         run_dir / "judge_receipts.json",
         {
-            "schema_version": "exp7-5-judge-receipts-v1",
-            "experiment": "7-5",
+            "schema_version": "exp8-5-judge-receipts-v1",
+            "experiment": "8-5",
             "credential_headers_retained": False,
             "calls": receipts,
         },
@@ -764,8 +764,8 @@ def main() -> int:
     manifest = build_manifest(args.run_id, run_dir, summary)
     write_json(run_dir / "manifest.json", manifest)
     latest = {
-        "schema_version": "exp7-5-latest-v1",
-        "experiment": "7-5",
+        "schema_version": "exp8-5-latest-v1",
+        "experiment": "8-5",
         "run_id": args.run_id,
         "status": summary["status"],
         "run_dir": str(run_dir.relative_to(EXPERIMENT_DIR)),

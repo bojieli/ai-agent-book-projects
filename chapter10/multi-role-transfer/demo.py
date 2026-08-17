@@ -249,7 +249,7 @@ def save_evidence(
     }
     payload = {
         "schema_version": "1.0",
-        "experiment": "10-2",
+        "experiment": "10-1",
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "provider": {
             "model": model,

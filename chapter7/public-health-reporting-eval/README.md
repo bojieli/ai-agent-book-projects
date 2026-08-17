@@ -56,7 +56,7 @@ source .venv/bin/activate
 # pip fallback when uv is not installed:
 # python -m pip install -e ".[ch6]"
 
-cd chapter6/public-health-reporting-eval
+cd chapter7/public-health-reporting-eval
 python demo.py
 ```
 
@@ -84,7 +84,7 @@ source .venv/bin/activate
 # Windows PowerShell: .\.venv\Scripts\Activate.ps1
 # Windows cmd: .venv\Scripts\activate.bat
 
-cd chapter6/public-health-reporting-eval
+cd chapter7/public-health-reporting-eval
 
 # Single-project compatibility path, still supported during migration:
 # python -m pip install -r requirements.txt
@@ -151,7 +151,7 @@ source .venv/bin/activate
 # 未安装 uv 时可用 pip 兜底：
 # python -m pip install -e ".[ch6]"
 
-cd chapter6/public-health-reporting-eval
+cd chapter7/public-health-reporting-eval
 python demo.py
 ```
 
@@ -167,7 +167,7 @@ source .venv/bin/activate
 # Windows PowerShell：.\.venv\Scripts\Activate.ps1
 # Windows cmd：.venv\Scripts\activate.bat
 
-cd chapter6/public-health-reporting-eval
+cd chapter7/public-health-reporting-eval
 
 # 迁移期间仍支持单项目兼容路径：
 # python -m pip install -r requirements.txt

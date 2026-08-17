@@ -54,7 +54,7 @@ def main():
         print(f"epoch={epoch + 1}/{args.epochs} loss={losses[-1]:.4f}", flush=True)
     out = Path(args.output); out.mkdir(parents=True, exist_ok=True); model.save_pretrained(out); tokenizer.save_pretrained(out)
     finished = datetime.now(timezone.utc); run = started.strftime("train_%Y%m%dT%H%M%SZ"); vdir = ROOT / "validation" / run; vdir.mkdir(parents=True, exist_ok=True)
-    receipt = {"experiment": "7-19-exact-copy-sft", "run": run, "model": args.model, "data_sha256": hashlib.sha256(data_path.read_bytes()).hexdigest(), "train_examples": len(rows), "config": vars(args), "cuda": torch.cuda.get_device_name(0), "started_at": started.isoformat(), "finished_at": finished.isoformat(), "final_loss": losses[-1]}
+    receipt = {"experiment": "8-19-exact-copy-sft", "run": run, "model": args.model, "data_sha256": hashlib.sha256(data_path.read_bytes()).hexdigest(), "train_examples": len(rows), "config": vars(args), "cuda": torch.cuda.get_device_name(0), "started_at": started.isoformat(), "finished_at": finished.isoformat(), "final_loss": losses[-1]}
     (vdir / "training_receipt.json").write_text(json.dumps(receipt, ensure_ascii=False, indent=2), encoding="utf-8"); (ROOT / "validation" / "latest.json").write_text(json.dumps({"run": run, "training_receipt": str((vdir / "training_receipt.json").relative_to(ROOT))}, ensure_ascii=False, indent=2), encoding="utf-8"); print(json.dumps(receipt, ensure_ascii=False, indent=2))
 
 if __name__ == "__main__": main()

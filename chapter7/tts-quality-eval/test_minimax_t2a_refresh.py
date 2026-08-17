@@ -1,5 +1,5 @@
 """
-Regression tests for the Minimax t2a_v2 synthesis adapter (实验 6-5 TTS 质量评估).
+Regression tests for the Minimax t2a_v2 synthesis adapter (实验 7-6 TTS 质量评估).
 
 Locks in the refreshed contract:
   - the request targets the /v1/t2a_v2 endpoint with Bearer auth and no GroupId

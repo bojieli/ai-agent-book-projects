@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "experiment": "8-4",
-  "canonical_source": "book/chapter8.md#实验-8-4-从浏览器轨迹生成可验证工作流",
+  "experiment": "9-5",
+  "canonical_source": "book/chapter9.md#实验-9-5-从浏览器轨迹生成可验证工作流",
   "executed_at": "2026-07-29T17:13:14.558813+00:00",
   "execution_mode": "real_model_plus_local_http_plus_real_playwright_chromium",
   "model": "doubao-seed-1-6-flash-250615",

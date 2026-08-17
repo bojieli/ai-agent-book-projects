@@ -131,7 +131,7 @@ def main() -> int:
                 status_path,
                 {
                     "schema_version": 1,
-                    "experiment": "10-7",
+                    "experiment": "10-5",
                     "complete": True,
                     "completed_at": dt.datetime.now(dt.timezone.utc).isoformat(),
                     "attempts": attempts,
@@ -177,7 +177,7 @@ def main() -> int:
             status_path,
             {
                 "schema_version": 1,
-                "experiment": "10-7",
+                "experiment": "10-5",
                 "complete": False,
                 "checked_at": dt.datetime.now(dt.timezone.utc).isoformat(),
                 "arms_complete": complete,

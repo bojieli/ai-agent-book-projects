@@ -53,7 +53,7 @@ def make_validation_copy(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> tup
     latest = json.loads(audit.LATEST_PATH.read_text(encoding="utf-8"))
     canonical_run = audit.EXPERIMENT_DIR / latest["run_dir"]
     temp_repo = tmp_path / "repo"
-    temp_experiment = temp_repo / "chapter7/MiniMind-pretrain"
+    temp_experiment = temp_repo / "chapter8/MiniMind-pretrain"
     temp_run = temp_experiment / latest["run_dir"]
     temp_run.parent.mkdir(parents=True)
     shutil.copytree(canonical_run, temp_run)

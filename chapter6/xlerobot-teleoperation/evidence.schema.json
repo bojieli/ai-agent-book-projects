@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://ai-agent-book.local/schemas/experiment-9-8-local-gpu.json",
-  "title": "Experiment 9-8 local GPU expert upper bound evidence",
+  "$id": "https://ai-agent-book.local/schemas/experiment-6-10-local-gpu.json",
+  "title": "Experiment 6-10 local GPU expert upper bound evidence",
   "type": "object",
   "required": ["schema_version", "experiment_id", "status", "kind", "metrics", "artifacts", "hardware_extension", "blockers"],
   "properties": {
     "schema_version": {"const": "3.0"},
-    "experiment_id": {"const": "9-8"},
+    "experiment_id": {"const": "6-10"},
     "status": {"const": "complete"},
     "kind": {"const": "local_gpu_expert_upper_bound"},
     "metrics": {"type": "object"},

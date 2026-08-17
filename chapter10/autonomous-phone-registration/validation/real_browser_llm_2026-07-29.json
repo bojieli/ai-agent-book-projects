@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "experiment": "10-5",
+  "experiment": "10-3",
   "generated_at": "2026-07-29T18:39:03+0800",
   "command_profile": "real Playwright + real LLM + synthetic scripted phone answers",
   "transport": "scripted",

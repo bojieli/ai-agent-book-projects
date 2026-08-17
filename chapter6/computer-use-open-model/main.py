@@ -204,7 +204,7 @@ async def run(args: argparse.Namespace, endpoint: ModelEndpoint) -> int:
         )
         summary = {
             "schema_version": 1,
-            "experiment": "9-6/9-7-open-model-arm",
+            "experiment": "9-6/6-8-open-model-arm",
             "acceptance_scope": "provider-portable-computer-use-trajectory",
             "status": "complete" if history.is_done() else "incomplete",
             "started_at": started_at,
@@ -243,7 +243,7 @@ async def run(args: argparse.Namespace, endpoint: ModelEndpoint) -> int:
     write_manifest(
         run_dir,
         {
-            "experiment": "9-6/9-7-open-model-arm",
+            "experiment": "9-6/6-8-open-model-arm",
             "created_at": utc_now(),
             "api": endpoint.public_dict(),
             "credential_retained": False,

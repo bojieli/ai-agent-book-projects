@@ -1,4 +1,4 @@
-# 实验 8-5：从浏览器轨迹生成可验证工作流
+# 实验 9-5：从浏览器轨迹生成可验证工作流
 
 本项目展示“把经验写成程序”的第一种形式：Agent 首次探索网页任务后，把动作轨迹参数化为工作流；但首次成功只产生 `candidate`（待验证工作流），不能直接进入能力库。待验证工作流必须在重置后的环境中完整重放，并通过每一步的状态谓词与最终状态谓词，才会成为 `validated`。页面变化导致谓词失败时，旧版本转为 `invalid`，系统退回完整 Agent 重新探索。
 
@@ -25,12 +25,12 @@ python -m unittest -v test_state_predicates.py
 
 ## 正文验收：真实模型、HTTP 站点与 Chromium
 
-`run_experiment_8_4.py` 启动一个仅监听 `127.0.0.1` 的可重置消息站。页面通过真实 HTTP/JavaScript 写入服务端状态；真实模型在四个观察—决策—动作回合中选择控件，Playwright Chromium 执行动作。所有收件人和消息均为虚构数据，运行不会发送电子邮件或产生站外副作用。
+`run_experiment_9_5.py` 启动一个仅监听 `127.0.0.1` 的可重置消息站。页面通过真实 HTTP/JavaScript 写入服务端状态；真实模型在四个观察—决策—动作回合中选择控件，Playwright Chromium 执行动作。所有收件人和消息均为虚构数据，运行不会发送电子邮件或产生站外副作用。
 
 ```bash
 pip install -r requirements.txt
 playwright install chromium
-python run_experiment_8_4.py \
+python run_experiment_9_5.py \
   --provider ark \
   --model doubao-seed-1-6-flash-250615 \
   --seed 8401
@@ -108,7 +108,7 @@ python demo_email.py --quick --headless --model gpt-5.6
 | `workflow_validation_demo.py` | 纯标准库的确定性状态机演示 |
 | `test_state_predicates.py` | 生命周期、页面变化和序列化测试 |
 | `local_mail_sandbox.py` | 可重置的本地 HTTP/JavaScript 消息站和服务端环境真值 |
-| `run_experiment_8_4.py` | 正文四阶段真实模型 + Chromium 验收与原始证据保存 |
+| `run_experiment_9_5.py` | 正文四阶段真实模型 + Chromium 验收与原始证据保存 |
 | `test_real_playwright_campaign.py` | 对真实 Chromium 的 reset、参数化、假成功与失效测试 |
 
 该项目检验的是“轨迹能否编译成经过验证的可执行能力”，而不只是回放速度。真实系统还应为高风险动作加入权限检查、幂等键、沙盒账号和人工批准。

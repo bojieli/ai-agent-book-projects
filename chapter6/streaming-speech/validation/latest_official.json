@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "run_id": "exp9-3-qwen2audio-whisper-provenance-20260730-v3",
-  "run_directory": "validation/runs/exp9-3-qwen2audio-whisper-provenance-20260730-v3",
-  "manifest_sha256": "c68c931de97346894e2f291345fb8f784939576d5f9b6a2301cf195a7173ae56",
+  "run_id": "exp6-4-qwen2audio-whisper-provenance-20260730-v3",
+  "run_directory": "validation/runs/exp6-4-qwen2audio-whisper-provenance-20260730-v3",
+  "manifest_sha256": "3d02bce7ac422449bf29bdf61576377b44b9d7b8b046e2cd4f6a7e065f1da67b",
   "execution_status": "pass",
   "manuscript_results_reproduced": false
 }

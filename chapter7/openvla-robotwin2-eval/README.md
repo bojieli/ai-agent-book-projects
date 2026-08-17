@@ -1,22 +1,22 @@
-# 实验 6-12：OpenVLA + RoboTwin2 具身智能评估
+# 实验 7-13：OpenVLA + RoboTwin2 具身智能评估
 
-本目录是第六章实验 6-12 的严格复现实验，不把论文数字、历史视频或命令 dry-run 当作本机结果。实验直接调用固定 commit 的 SimpleVLA-RL 上游 `trainer.val_only=True` 路径，在 `move_can_pot` 的同一组 IID/OOD 种子上对比 action chunk 1 与 25。
+本目录是第六章实验 7-13 的严格复现实验，不把论文数字、历史视频或命令 dry-run 当作本机结果。实验直接调用固定 commit 的 SimpleVLA-RL 上游 `trainer.val_only=True` 路径，在 `move_can_pot` 的同一组 IID/OOD 种子上对比 action chunk 1 与 25。
 
 ## 正式结果
 
-正式单卡运行 `exp6-12-localgpu-20260803-v1` 已完成两个 arm 各 128 IID +
+正式单卡运行 `exp7-13-localgpu-20260803-v1` 已完成两个 arm 各 128 IID +
 128 OOD episodes，并通过严格验收。`chunk_1` 为 0/256；`chunk_25` 为
 26/256（IID 13/128、OOD 13/128），配对成功率提高 10.15625 个百分点。
 这是一项完整的负面/低成功率结果，不把实验完成误写成模型表现良好。其余
 486 个失败均在 200 action steps 上限结束，逐项绑定同次进程窗口内的 MP4 并
 标为 `timeout`。汇总、逐 episode 记录、注释、运行身份以及 512 个外部视频
-的内容哈希见 [`validation/runs/exp6-12-localgpu-20260803-v1/`](validation/runs/exp6-12-localgpu-20260803-v1/)。
+的内容哈希见 [`validation/runs/exp7-13-localgpu-20260803-v1/`](validation/runs/exp7-13-localgpu-20260803-v1/)。
 
 ## 来源、版本与所有权边界
 
 本实验所调用的上游训练/评估实现是 [`PRIME-RL/SimpleVLA-RL`](https://github.com/PRIME-RL/SimpleVLA-RL/tree/7c51662df27b586f9e8a1ab35fcf849f2b8852f9)，固定提交为 `7c51662df27b586f9e8a1ab35fcf849f2b8852f9`，本地路径为 `chapter7/SimpleVLA-RL/SimpleVLA-RL`。
 
-本目录中的 `experiment.py`、`config.json`、`task_config_exp6_12_three_view.yml` 和 `instrument_upstream.py` 是**本书自有的编排、协议与观测插桩**，不是 OpenVLA-OFT、RoboTwin2 或 SimpleVLA-RL 上游源码。它们使本书能够检查三视角、种子、episode 证据与严格完成门禁，但不会提供下列外部运行输入：
+本目录中的 `experiment.py`、`config.json`、`task_config_exp7_13_three_view.yml` 和 `instrument_upstream.py` 是**本书自有的编排、协议与观测插桩**，不是 OpenVLA-OFT、RoboTwin2 或 SimpleVLA-RL 上游源码。它们使本书能够检查三视角、种子、episode 证据与严格完成门禁，但不会提供下列外部运行输入：
 
 - 真实 OpenVLA-OFT checkpoint（应记录模型身份、revision 与文件哈希）
 - 真实 RoboTwin2 checkout 及其明确 revision

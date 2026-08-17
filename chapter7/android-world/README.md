@@ -1,9 +1,9 @@
 # AndroidWorld T3A Evaluation Notes / AndroidWorld T3A 评估分析笔记
 
-> Companion material for *AI Agents in Depth*, Chapter 6 — **Experiment 6-11: Evaluate and improve on AndroidWorld**.
-> 配套《深入理解 AI Agent》第 6 章 **实验 6-11 ★★★：AndroidWorld 的评估和改进**。
+> Companion material for *AI Agents in Depth*, Chapter 7 — **Experiment 7-12: Evaluate and improve on AndroidWorld**.
+> 配套《深入理解 AI Agent》第 7 章 **实验 7-12 ★★★：AndroidWorld 的评估和改进**。
 
-← [Chapter 6 index / 返回第 6 章目录](../README.md) · 📖 [Read the chapter / 读本章正文](../../book/chapter6.md)（[EN](../../book-en/chapter6.md)）
+← [Chapter 7 index / 返回第 7 章目录](../README.md) · 📖 [Read the chapter / 读本章正文](../../book/chapter7.md)（[EN](../../book-en/chapter7.md)）
 
 ---
 
@@ -72,7 +72,7 @@ Condensed from [`t3a_failed_analysis.md`](t3a_failed_analysis.md):
 
 Many failures surface as **max steps** (`Agent did not indicate task is done. Reached max number of steps.`)—symptom of loops, inefficient recovery, or missing perception, not merely “too few steps.”
 
-### How to use this material (Experiment 6-11)
+### How to use this material (Experiment 7-12)
 
 Follow the book’s five-step loop:
 
@@ -101,7 +101,7 @@ The residual traces exposed an API-35 observation issue: AndroidWorld's gRPC acc
 
 H5 recovered the four-task slice from `1/4` control successes to `4/4` UIAutomator successes with no paired regression and a `0.788×` latency ratio. It was still restricted because its `2.498×` mean-token ratio exceeded the `1.5×` guardrail. The resulting cost-refinement hypothesis **H5C** keeps real UIAutomator observations/actions/evaluators but filters non-semantic container elements before T3A formats the prompt.
 
-The completed H5C paired run preserved `4/4` successes in both arms. Compact UIAutomator used `70,557.5` mean tokens versus `139,439.5` for raw UIAutomator (`0.506×`) and `99.18s` versus `101.20s` mean latency (`0.980×`). It therefore passed the stricter H5C subset gate and became eligible only for a full-suite candidate rerun. At that stage it was **not** deployment approval and did not complete Experiment 6-11's 116-task × five-seed requirement. See the [H5C evidence](validation/paired_h5c_compact_api35_20260729/evidence.json) and [report](validation/paired_h5c_compact_api35_20260729/report.md).
+The completed H5C paired run preserved `4/4` successes in both arms. Compact UIAutomator used `70,557.5` mean tokens versus `139,439.5` for raw UIAutomator (`0.506×`) and `99.18s` versus `101.20s` mean latency (`0.980×`). It therefore passed the stricter H5C subset gate and became eligible only for a full-suite candidate rerun. At that stage it was **not** deployment approval and did not complete Experiment 7-12's 116-task × five-seed requirement. See the [H5C evidence](validation/paired_h5c_compact_api35_20260729/evidence.json) and [report](validation/paired_h5c_compact_api35_20260729/report.md).
 
 The final reference-environment campaign subsequently completed all five gates: 580/580 unique episodes, 116 tasks × trials 1–5, zero runtime errors, official setup completed, and the same 24/24 required package versions on every Pixel 6/API-33 shard. The canonical [merged evidence](validation/candidate_h5c_api33_local_qwen_20260804/evidence.json) and [generated report](validation/candidate_h5c_api33_local_qwen_20260804/report.md) record:
 
@@ -187,7 +187,7 @@ Concrete example trajectories for root-cause practice:
 ### Directory layout
 
 ```text
-chapter6/android-world/
+chapter7/android-world/
 ├── README.md                 # This file
 ├── experiment_core.py        # Evidence, decisions, completion gates, report renderer
 ├── run_controlled_experiment.py # Real AndroidWorld paired/candidate runner
@@ -203,7 +203,7 @@ chapter6/android-world/
 
 ### Reproduce the benchmark (optional)
 
-The controlled runner expects a separate adjacent AndroidWorld checkout (the current workspace uses `chapter6/android_world`) plus its configured emulator and model credential. For a clean reproduction:
+The controlled runner expects a separate adjacent AndroidWorld checkout (the current workspace uses `chapter7/android_world`) plus its configured emulator and model credential. For a clean reproduction:
 
 1. Clone [google-research/android_world](https://github.com/google-research/android_world) (or the fork your course materials specify).
 2. Provide an Android emulator / device environment as required by that project.
@@ -256,7 +256,7 @@ Reading order if you only study the notes: **`t3a_summary.md` → `t3a_failed_an
 
 ### 本目录是什么
 
-本目录**不是** [AndroidWorld](https://github.com/google-research/android_world) 基准的源码拷贝。它既包含 **T3A** 类移动 Agent 的**评估产物与分析笔记**，也包含一个连接独立、未修改上游 checkout 的配套 runner，用于真实执行书中的完整闭环：**诊断 → 假设 → 实验 → 决策 → 迭代**（对应**实验 6-11**）。
+本目录**不是** [AndroidWorld](https://github.com/google-research/android_world) 基准的源码拷贝。它既包含 **T3A** 类移动 Agent 的**评估产物与分析笔记**，也包含一个连接独立、未修改上游 checkout 的配套 runner，用于真实执行书中的完整闭环：**诊断 → 假设 → 实验 → 决策 → 迭代**（对应**实验 7-12**）。
 
 | 路径 | 作用 |
 | --- | --- |
@@ -315,7 +315,7 @@ Reading order if you only study the notes: **`t3a_summary.md` → `t3a_failed_an
 
 大量失败以**步数耗尽**呈现（`Reached max number of steps`）——根因往往是循环、低效恢复或感知缺失，而不仅是「上限太小」。
 
-### 如何使用（实验 6-11）
+### 如何使用（实验 7-12）
 
 按书中五步闭环：
 
@@ -380,7 +380,7 @@ H1/H5 决策门槛要求至少四个完整 pair、净成功增益为正、零配
 ### 目录结构
 
 ```text
-chapter6/android-world/
+chapter7/android-world/
 ├── README.md                 # 本文件
 ├── experiment_core.py        # 证据、决策、完成门槛、报告渲染
 ├── run_controlled_experiment.py # 真实 AndroidWorld 配对/候选 runner
@@ -396,7 +396,7 @@ chapter6/android-world/
 
 ### 复现基准（可选）
 
-配套 runner 需要一个独立的相邻 AndroidWorld checkout（当前工作区使用 `chapter6/android_world`）、已配置模拟器以及真实模型凭证。自行重跑请：
+配套 runner 需要一个独立的相邻 AndroidWorld checkout（当前工作区使用 `chapter7/android_world`）、已配置模拟器以及真实模型凭证。自行重跑请：
 
 1. 克隆 [google-research/android_world](https://github.com/google-research/android_world)（或课程指定 fork）。  
 2. 按上游文档准备模拟器/真机环境。  

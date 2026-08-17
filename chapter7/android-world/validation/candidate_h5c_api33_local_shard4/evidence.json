@@ -113,7 +113,7 @@
       "success_preservation_passed": true,
       "treatment_successes": 4
     },
-    "source_paired_evidence": "/workspace/exp6_11_run/validation/paired_h5c_compact_api35_20260729/evidence.json",
+    "source_paired_evidence": "/workspace/exp7_12_run/validation/paired_h5c_compact_api35_20260729/evidence.json",
     "source_paired_model": {
       "base_url": "https://ark.cn-beijing.volces.com/api/v3",
       "max_tokens": 1024,
@@ -122,7 +122,7 @@
       "seed": 42,
       "temperature": 0
     },
-    "source_paired_run_id": "exp6-10-20260729T131911Z"
+    "source_paired_run_id": "exp7-12-20260729T131911Z"
   },
   "diagnosis": {
     "findings": [
@@ -14528,7 +14528,7 @@
       "trial": 4
     }
   ],
-  "experiment": "6-11",
+  "experiment": "7-12",
   "experiment_complete": false,
   "generated_at_utc": "2026-08-04T09:19:57Z",
   "hypothesis": {
@@ -14943,7 +14943,7 @@
       "reused_checkpoint_params": 3
     }
   ],
-  "run_id": "exp6-11-20260804T045559Z",
+  "run_id": "exp7-12-20260804T045559Z",
   "schema_version": 1,
   "scope": {
     "base_pair_seed": 42,

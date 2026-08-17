@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "experiment": "10-6",
+  "experiment": "10-4",
   "run_type": "real_parallel_and_serial_same_sites",
   "measured_at": "2026-07-29T17:57:11+0800",
   "target": "Andrew Ng",

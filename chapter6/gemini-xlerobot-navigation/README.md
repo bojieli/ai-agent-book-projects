@@ -1,6 +1,6 @@
-# 实验 9-8 至 9-10：桌面操作规划与逐步检查
+# 实验 6-11 至 6-12：XLeRobot 自主操作与闭环策略比较
 
-> 重编号说明：本目录承载正文实验 9-8、9-9、9-10；现有 `validation/runs/quality-9-9` 等证据目录保留历史运行标识，不改写其中的 hash 或 schema。
+本目录给出实验 6-11 的真实硬件扩展契约，并以实验 6-12 的非致动模拟运行比较三种闭环策略；当前证据标识统一为 `6-12`。
 
 本实验把原来的导航任务改成桌面操作规划。RoboCrew 仍然负责高层智能体循环，XLeRobot 仍保留为可选的执行器接入对象；本地验收使用确定性的桌面模拟器，避免把 Gemini API、机械臂或串口可用性误报成实验结果。
 
@@ -27,7 +27,7 @@ verify_state()     stop()
 ## 运行
 
 ```bash
-cd chapter9/gemini-xlerobot-navigation
+cd chapter6/gemini-xlerobot-navigation
 python desktop_planner.py --episodes 128 --seeds 20260808,20260809,20260810 --failure-probabilities 0.0,0.25,0.5 --output-dir validation/runs/local-gpu
 python validate_evidence.py validation/runs/local-gpu/evidence.json
 ```

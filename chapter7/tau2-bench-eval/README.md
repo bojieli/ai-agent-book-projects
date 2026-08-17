@@ -1,4 +1,4 @@
-# Experiment 6-1: τ²-bench telecom evaluation
+# Experiment 7-1: τ²-bench telecom evaluation
 
 This directory retains the bounded τ²-bench campaign requested by the
 manuscript: five telecom tasks, one trial per task, with the same model acting
@@ -20,9 +20,9 @@ The external checkout is deliberately not vendored. Clone and pin the
 authoritative source first:
 
 ```bash
-git clone https://github.com/sierra-research/tau2-bench.git chapter6/tau2-bench
-git -C chapter6/tau2-bench checkout --detach 8d005b0e5b9e4af0bc055886fa7f95fc86d1710e
-cd chapter6/tau2-bench
+git clone https://github.com/sierra-research/tau2-bench.git chapter7/tau2-bench
+git -C chapter7/tau2-bench checkout --detach 8d005b0e5b9e4af0bc055886fa7f95fc86d1710e
+cd chapter7/tau2-bench
 uv venv --python 3.12
 uv pip install -e .
 ```
@@ -37,13 +37,13 @@ With `OPENROUTER_API_KEY` configured, the saved campaign used:
   --num-trials 1 \
   --num-tasks 5 \
   --max-concurrency 3 \
-  --save-to exp6-1-openrouter-gpt41mini-telecom-5tasks-20260802-v1 \
+  --save-to exp7-1-openrouter-gpt41mini-telecom-5tasks-20260802-v1 \
   --log-level INFO
 ```
 
 Both model temperatures were `0`; τ²-bench recorded seed `300`. The retained
 raw trajectory is under
-[`validation/runs/exp6-1-openrouter-gpt41mini-telecom-20260802-v1/`](validation/runs/exp6-1-openrouter-gpt41mini-telecom-20260802-v1/).
+[`validation/runs/exp7-1-openrouter-gpt41mini-telecom-20260802-v1/`](validation/runs/exp7-1-openrouter-gpt41mini-telecom-20260802-v1/).
 
 ## Result
 
@@ -80,7 +80,7 @@ The upstream public verifier reports:
 
 That coverage failure is expected for the five-task command specified by this
 book experiment. This evidence therefore establishes the bounded Experiment
-6-1 campaign, not a full-domain τ²-bench leaderboard result. See
-[`evidence.json`](validation/runs/exp6-1-openrouter-gpt41mini-telecom-20260802-v1/evidence.json)
-for machine-readable outcomes and [`manifest.json`](validation/runs/exp6-1-openrouter-gpt41mini-telecom-20260802-v1/manifest.json)
+7-1 campaign, not a full-domain τ²-bench leaderboard result. See
+[`evidence.json`](validation/runs/exp7-1-openrouter-gpt41mini-telecom-20260802-v1/evidence.json)
+for machine-readable outcomes and [`manifest.json`](validation/runs/exp7-1-openrouter-gpt41mini-telecom-20260802-v1/manifest.json)
 for content hashes.

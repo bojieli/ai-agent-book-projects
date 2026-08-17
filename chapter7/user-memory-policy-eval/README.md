@@ -1,4 +1,4 @@
-# 实验 6-5：已知用户记忆的边界行为评估
+# 实验 7-5：已知用户记忆的边界行为评估
 
 这个实验专门测量 Agent **已经看到一条用户记忆时，是否会在当前任务中正确使用它**。它不是检索召回率实验，也不是无记忆对照实验。每个用例把记忆、当前任务、trajectory prefix 和环境状态一起交给 Agent，要求 Agent 输出下一步可观察动作。
 
@@ -16,7 +16,7 @@
 ## 运行真实 OpenRouter API campaign
 
 ```bash
-cd chapter6/user-memory-policy-eval
+cd chapter7/user-memory-policy-eval
 export OPENROUTER_API_KEY=...
 
 # 默认使用 openai/gpt-5.6-sol，运行 11 个 prefix 用例 × 3 种表示
@@ -37,7 +37,7 @@ python runner.py --output results/policy_prefix_live.json
 - `unsafe_memory_application`：根据旧习惯执行不可逆清理；
 - `current_instruction_override`：没有遵循当前明确格式或流程要求。
 
-这组 prefix 结果应与实验 6-4 的端到端用户记忆回归一起阅读：前者定位“下一步为什么错”，后者确认局部决策组合起来后，完整任务是否仍然可用。
+这组 prefix 结果应与实验 7-4 的端到端用户记忆回归一起阅读：前者定位“下一步为什么错”，后者确认局部决策组合起来后，完整任务是否仍然可用。
 
 ## 边界与复现
 

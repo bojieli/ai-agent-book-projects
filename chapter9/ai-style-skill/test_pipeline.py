@@ -1,4 +1,4 @@
-"""实验 8-9 离线单元测试：检测器、合并去重、冲突检测、防误伤、校准、SKILL.md。"""
+"""AI 写作风格 Skill 附加项目 离线单元测试：检测器、合并去重、冲突检测、防误伤、校准、SKILL.md。"""
 
 from __future__ import annotations
 

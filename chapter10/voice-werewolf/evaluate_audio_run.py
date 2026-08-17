@@ -157,7 +157,7 @@ def evaluate(report_path: Path, output: Path, model: str) -> dict[str, Any]:
 
     result = {
         "schema_version": 1,
-        "experiment": "10-8-independent-audio-evaluation",
+        "experiment": "10-6-independent-audio-evaluation",
         "source_report": str(report_path),
         "source_report_sha256": hashlib.sha256(raw).hexdigest(),
         "provider": "OpenRouter multimodal audio API",

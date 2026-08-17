@@ -29,11 +29,11 @@
   },
   "command": [
     "merge_candidate_shards.py",
-    "/home/ubuntu/ai-agent-book-exp6-11/chapter6/android-world/validation/candidate_h5c_api33_local_shard1/evidence.json",
-    "/home/ubuntu/ai-agent-book-exp6-11/chapter6/android-world/validation/candidate_h5c_api33_local_shard2/evidence.json",
-    "/home/ubuntu/ai-agent-book-exp6-11/chapter6/android-world/validation/candidate_h5c_api33_local_shard3/evidence.json",
-    "/home/ubuntu/ai-agent-book-exp6-11/chapter6/android-world/validation/candidate_h5c_api33_local_shard4/evidence.json",
-    "/home/ubuntu/ai-agent-book-exp6-11/chapter6/android-world/validation/candidate_h5c_api33_local_shard5/evidence.json"
+    "/home/ubuntu/ai-agent-book-exp7-12/chapter7/android-world/validation/candidate_h5c_api33_local_shard1/evidence.json",
+    "/home/ubuntu/ai-agent-book-exp7-12/chapter7/android-world/validation/candidate_h5c_api33_local_shard2/evidence.json",
+    "/home/ubuntu/ai-agent-book-exp7-12/chapter7/android-world/validation/candidate_h5c_api33_local_shard3/evidence.json",
+    "/home/ubuntu/ai-agent-book-exp7-12/chapter7/android-world/validation/candidate_h5c_api33_local_shard4/evidence.json",
+    "/home/ubuntu/ai-agent-book-exp7-12/chapter7/android-world/validation/candidate_h5c_api33_local_shard5/evidence.json"
   ],
   "credentials_persisted": false,
   "decision": {
@@ -64,7 +64,7 @@
       "success_preservation_passed": true,
       "treatment_successes": 4
     },
-    "source_paired_evidence": "/home/ubuntu/ai-agent-book-exp6-11/chapter6/android-world/validation/paired_h5c_compact_api35_20260729/evidence.json",
+    "source_paired_evidence": "/home/ubuntu/ai-agent-book-exp7-12/chapter7/android-world/validation/paired_h5c_compact_api35_20260729/evidence.json",
     "source_paired_model": {
       "base_url": "https://ark.cn-beijing.volces.com/api/v3",
       "max_tokens": 1024,
@@ -73,7 +73,7 @@
       "seed": 42,
       "temperature": 0
     },
-    "source_paired_run_id": "exp6-10-20260729T131911Z"
+    "source_paired_run_id": "exp7-12-20260729T131911Z"
   },
   "diagnosis": {
     "findings": [
@@ -446,35 +446,35 @@
         "avd_name": "Pixel_6_API_33",
         "device_serial": "emulator-5554",
         "execution_shard": "shard-1-of-5",
-        "run_id": "exp6-11-20260804T045559Z"
+        "run_id": "exp7-12-20260804T045559Z"
       },
       {
         "api_level": 33,
         "avd_name": "Pixel_6_API_33",
         "device_serial": "emulator-5554",
         "execution_shard": "shard-2-of-5",
-        "run_id": "exp6-11-20260804T045559Z"
+        "run_id": "exp7-12-20260804T045559Z"
       },
       {
         "api_level": 33,
         "avd_name": "Pixel_6_API_33",
         "device_serial": "emulator-5554",
         "execution_shard": "shard-3-of-5",
-        "run_id": "exp6-11-20260804T045559Z"
+        "run_id": "exp7-12-20260804T045559Z"
       },
       {
         "api_level": 33,
         "avd_name": "Pixel_6_API_33",
         "device_serial": "emulator-5554",
         "execution_shard": "shard-4-of-5",
-        "run_id": "exp6-11-20260804T045559Z"
+        "run_id": "exp7-12-20260804T045559Z"
       },
       {
         "api_level": 33,
         "avd_name": "Pixel_6_API_33",
         "device_serial": "emulator-5554",
         "execution_shard": "shard-5-of-5",
-        "run_id": "exp6-11-20260804T045559Z"
+        "run_id": "exp7-12-20260804T045559Z"
       }
     ],
     "skip_device_time": false,
@@ -22357,7 +22357,7 @@
       "params": {
         "file_name": "receipt.md",
         "img": "<PIL.Image.Image image mode=RGB size=500x900 at 0x7F5EA84B6810>",
-        "text": "Date, Item, Amount\n2023-07-12, Monitor Stand, $34.74\n2023-08-05, External Hard Drive, $70.30\n2023-08-26, External Hard Drive, $100.37\n2023-04-02, Wireless Mouse, $45.43\n2023-05-24, Webcam, $66.43"
+        "text": "Date, Item, Amount\n2023-06-11, Monitor Stand, $34.74\n2023-08-05, External Hard Drive, $70.30\n2023-08-26, External Hard Drive, $100.37\n2023-04-02, Wireless Mouse, $45.43\n2023-05-24, Webcam, $66.43"
       },
       "status": "completed",
       "steps": 10,
@@ -70067,7 +70067,7 @@
       "trial": 5
     }
   ],
-  "experiment": "6-11",
+  "experiment": "7-12",
   "experiment_complete": true,
   "generated_at_utc": "2026-08-04T09:20:58Z",
   "hypothesis": {
@@ -71158,7 +71158,7 @@
       "reused_checkpoint_params": 2
     }
   ],
-  "run_id": "exp6-11-merged-20260804T092058Z",
+  "run_id": "exp7-12-merged-20260804T092058Z",
   "schema_version": 1,
   "scope": {
     "base_pair_seed": 42,
@@ -71303,8 +71303,8 @@
       "episodes": 116,
       "error_episodes": 0,
       "execution_shard": "shard-1-of-5",
-      "path": "/home/ubuntu/ai-agent-book-exp6-11/chapter6/android-world/validation/candidate_h5c_api33_local_shard1/evidence.json",
-      "run_id": "exp6-11-20260804T045559Z",
+      "path": "/home/ubuntu/ai-agent-book-exp7-12/chapter7/android-world/validation/candidate_h5c_api33_local_shard1/evidence.json",
+      "run_id": "exp7-12-20260804T045559Z",
       "selected_trials": [
         1
       ],
@@ -71315,8 +71315,8 @@
       "episodes": 116,
       "error_episodes": 0,
       "execution_shard": "shard-2-of-5",
-      "path": "/home/ubuntu/ai-agent-book-exp6-11/chapter6/android-world/validation/candidate_h5c_api33_local_shard2/evidence.json",
-      "run_id": "exp6-11-20260804T045559Z",
+      "path": "/home/ubuntu/ai-agent-book-exp7-12/chapter7/android-world/validation/candidate_h5c_api33_local_shard2/evidence.json",
+      "run_id": "exp7-12-20260804T045559Z",
       "selected_trials": [
         2
       ],
@@ -71327,8 +71327,8 @@
       "episodes": 116,
       "error_episodes": 0,
       "execution_shard": "shard-3-of-5",
-      "path": "/home/ubuntu/ai-agent-book-exp6-11/chapter6/android-world/validation/candidate_h5c_api33_local_shard3/evidence.json",
-      "run_id": "exp6-11-20260804T045559Z",
+      "path": "/home/ubuntu/ai-agent-book-exp7-12/chapter7/android-world/validation/candidate_h5c_api33_local_shard3/evidence.json",
+      "run_id": "exp7-12-20260804T045559Z",
       "selected_trials": [
         3
       ],
@@ -71339,8 +71339,8 @@
       "episodes": 116,
       "error_episodes": 0,
       "execution_shard": "shard-4-of-5",
-      "path": "/home/ubuntu/ai-agent-book-exp6-11/chapter6/android-world/validation/candidate_h5c_api33_local_shard4/evidence.json",
-      "run_id": "exp6-11-20260804T045559Z",
+      "path": "/home/ubuntu/ai-agent-book-exp7-12/chapter7/android-world/validation/candidate_h5c_api33_local_shard4/evidence.json",
+      "run_id": "exp7-12-20260804T045559Z",
       "selected_trials": [
         4
       ],
@@ -71351,8 +71351,8 @@
       "episodes": 116,
       "error_episodes": 0,
       "execution_shard": "shard-5-of-5",
-      "path": "/home/ubuntu/ai-agent-book-exp6-11/chapter6/android-world/validation/candidate_h5c_api33_local_shard5/evidence.json",
-      "run_id": "exp6-11-20260804T045559Z",
+      "path": "/home/ubuntu/ai-agent-book-exp7-12/chapter7/android-world/validation/candidate_h5c_api33_local_shard5/evidence.json",
+      "run_id": "exp7-12-20260804T045559Z",
       "selected_trials": [
         5
       ],

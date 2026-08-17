@@ -1,5 +1,5 @@
 {
-  "experiment": "7-17 premature-completion-dpo",
+  "experiment": "8-17 premature-completion-dpo",
   "run": "train_20260807T155457Z",
   "model": "Qwen/Qwen2.5-7B-Instruct",
   "data": "output/preference_pairs.jsonl",

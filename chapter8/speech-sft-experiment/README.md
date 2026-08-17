@@ -1,4 +1,4 @@
-# Experiment 7-6: speech SFT acceptance campaign
+# Experiment 8-6: speech SFT acceptance campaign
 
 This directory contains the reproducible local-GPU campaign and its retained
 evidence for both speech-training tracks described in the chapter:
@@ -6,7 +6,7 @@ evidence for both speech-training tracks described in the chapter:
 - Orpheus cross-sentence voice/timbre consistency
 - Sesame CSM control of `<laughs>`, `<giggles>`, and `<sighs>` events
 
-The retained run is `validation/exp7-6-20260804-v1/`. It performed 60 optimizer
+The retained run is `validation/exp8-6-20260804-v1/`. It performed 60 optimizer
 updates for each LoRA, used disjoint held-out loss sets, generated matched
 base/adapted WAV comparisons, published the full adapters to Hugging Face, and
 kept explicit negative comparisons. See the run's `REPORT.md` for results and
@@ -22,17 +22,17 @@ optimizer-step count, or comparison campaign.
 Use a fresh environment because the two upstream notebooks move quickly:
 
 ```bash
-python3 -m venv --system-site-packages .venv-exp7-6
-.venv-exp7-6/bin/pip install -r chapter7/speech-sft-experiment/requirements.txt
+python3 -m venv --system-site-packages .venv-exp8-6
+.venv-exp8-6/bin/pip install -r chapter8/speech-sft-experiment/requirements.txt
 
-.venv-exp7-6/bin/python chapter7/speech-sft-experiment/run_orpheus.py \
-  --output chapter7/speech-sft-experiment/validation/my-run
+.venv-exp8-6/bin/python chapter8/speech-sft-experiment/run_orpheus.py \
+  --output chapter8/speech-sft-experiment/validation/my-run
 
-.venv-exp7-6/bin/python chapter7/speech-sft-experiment/run_sesame.py \
-  --output chapter7/speech-sft-experiment/validation/my-run
+.venv-exp8-6/bin/python chapter8/speech-sft-experiment/run_sesame.py \
+  --output chapter8/speech-sft-experiment/validation/my-run
 
-.venv-exp7-6/bin/python chapter7/speech-sft-experiment/analyze_campaign.py \
-  --run chapter7/speech-sft-experiment/validation/my-run
+.venv-exp8-6/bin/python chapter8/speech-sft-experiment/analyze_campaign.py \
+  --run chapter8/speech-sft-experiment/validation/my-run
 ```
 
 The runners default to `bojieli/...` adapter repositories. Pass `--hf-repo`

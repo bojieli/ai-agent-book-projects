@@ -1,7 +1,7 @@
 """
-SFT training-data quality auditor (chapter 7 CoT distillation).
+SFT training-data quality auditor (chapter 8 CoT distillation).
 
-Every chapter 7 SFT experiment (7-8, 7-9, 7-17, 7-18, 7-19) consumes JSONL
+Every chapter 8 SFT experiment (8-8, 8-9, 8-17, 8-18, 8-19) consumes JSONL
 training data: one JSON object per line, each carrying a ``messages`` array of
 ``{"role", "content"}`` pairs. ``generate_data.py`` synthesizes that data and
 ``analyze_data.py`` reports coarse statistics, but neither flags the quality

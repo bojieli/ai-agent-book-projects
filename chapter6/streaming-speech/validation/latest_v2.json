@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "experiment": "9-3",
+  "experiment": "6-4",
   "timestamp_utc": "2026-07-29T15:40:54.554752+00:00",
   "model": "mlx-community/Qwen2-Audio-7B-Instruct-4bit",
   "device": "mlx",

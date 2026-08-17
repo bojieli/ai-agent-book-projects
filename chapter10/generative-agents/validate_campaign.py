@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Independently validate the retained historical 10-7 evidence for current Experiment 10-5."""
+"""Independently validate the retained evidence for Experiment 10-5."""
 
 from __future__ import annotations
 
@@ -231,7 +231,7 @@ def main() -> int:
     }
     acceptance = {
         "schema_version": 1,
-        "experiment": "10-7",
+        "experiment": "10-5",
         "run_id": run_dir.name,
         "passed": all(gates.values()),
         "gates": gates,

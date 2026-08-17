@@ -58,7 +58,7 @@ def git_metadata() -> dict[str, Any]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Experiment 9-4: local MiniCPM-o 4.5 omni speech evaluation"
+        description="Experiment 6-5: local MiniCPM-o 4.5 omni speech evaluation"
     )
     parser.add_argument("--model", default=MODEL_ID)
     parser.add_argument("--revision", default=MODEL_REVISION)
@@ -123,7 +123,7 @@ def main() -> int:
     cascade_passes = sum(result["self_cascade"]["passed"] for result in results)
     evidence = {
         "schema_version": 1,
-        "experiment": "9-4",
+        "experiment": "6-5",
         "title": "MiniCPM-o 4.5 local end-to-end omni speech",
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
         "model": client.runtime_metadata(),

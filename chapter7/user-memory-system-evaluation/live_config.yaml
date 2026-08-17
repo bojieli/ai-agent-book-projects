@@ -47,14 +47,14 @@ judge:
   evaluator: kimi
   model: kimi-k2.5
 
-experiment_6_4:
+experiment_7_4:
   main_model: kimi
   embedding: mistral
   reranker: kimi-semantic
   rounds_per_chunk: 6
   overlap: 2
 
-experiment_6_11:
+experiment_7_11:
   embeddings: [mistral, codestral]
   rerankers: [none, kimi-semantic]
   main_models: [kimi, doubao]

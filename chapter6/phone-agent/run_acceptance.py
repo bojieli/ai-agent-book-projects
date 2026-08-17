@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the safe, full-audio direct-vs-ReAct Experiment 9-2 campaign.
+"""Run the safe, full-audio direct-vs-ReAct Phone Agent add-on campaign.
 
 Each arm gives Chrome a non-private synthesized microphone WAV.  Chrome sends that
 fixture through getUserMedia and RTP to aiortc; the server buffers the received RTP
@@ -212,7 +212,7 @@ def main() -> int:
     require_canonical_runtime()
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     output = (
-        args.output or HERE / "validation" / "runs" / f"exp9-2-webrtc-audio-{stamp}"
+        args.output or HERE / "validation" / "runs" / f"phone-agent-webrtc-audio-{stamp}"
     ).resolve()
     output.mkdir(parents=True, exist_ok=False)
 
@@ -362,7 +362,7 @@ def main() -> int:
     }
     comparison = {
         "schema_version": 2,
-        "experiment": "9-2",
+        "experiment": "phone-agent",
         "executed_at_utc": datetime.now(timezone.utc).isoformat(),
         "control": "fixed parameters -> browser microphone RTP -> ASR -> real LLM dialogue -> TTS RTP",
         "treatment": "natural task -> real LLM ReAct plan -> browser microphone RTP -> ASR -> real LLM dialogue -> TTS RTP",
@@ -414,7 +414,7 @@ def main() -> int:
     executable = Path(chrome_path())
     manifest = {
         "schema_version": 2,
-        "experiment": "9-2",
+        "experiment": "phone-agent",
         "run_id": output.name,
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "result": "passed",

@@ -364,7 +364,7 @@ def test_non_usd_pricing_requires_dated_fx_for_comparable_cost():
 
 def test_markdown_tolerates_null_percentage_fields() -> None:
     report = {
-        "campaign_id": "exp6-8-test",
+        "campaign_id": "exp7-10-test",
         "observation_count": 0,
         "completion_audit": {"official_complete": False},
         "workload": [

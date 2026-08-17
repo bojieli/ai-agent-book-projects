@@ -50,7 +50,7 @@ def main() -> int:
     parser.add_argument("output", type=Path)
     parser.add_argument("--config", type=Path, default=Path(__file__).with_name("live_config.yaml"))
     parser.add_argument(
-        "--reprice-legacy-6-4",
+        "--reprice-legacy-7-4",
         action="store_true",
         help=(
             "Cover legacy Kimi usage with dated native-CNY list prices. Legacy cached-token counts "
@@ -64,9 +64,9 @@ def main() -> int:
     non_accounting_hash_before = canonical_non_accounting_hash(records)
     config = load_config(args.config)
     repricing = None
-    if args.reprice_legacy_6_4:
-        if source.get("experiment") != "6-4":
-            parser.error("--reprice-legacy-6-4 requires an Experiment 6-4 source")
+    if args.reprice_legacy_7_4:
+        if source.get("experiment") != "7-4":
+            parser.error("--reprice-legacy-7-4 requires an Experiment 7-4 source")
         repricing = reprice_legacy_64_records(
             records,
             config,

@@ -136,7 +136,7 @@ def main(args: argparse.Namespace) -> int:
         ]
         raise RuntimeError(f"official run requires configured credentials: {', '.join(missing)}")
 
-    run_id = args.run_id or f"exp10-2-kimi-tavily-receipts-{datetime.now(timezone.utc):%Y%m%dT%H%M%SZ}"
+    run_id = args.run_id or f"exp10-1-kimi-tavily-receipts-{datetime.now(timezone.utc):%Y%m%dT%H%M%SZ}"
     run_dir = Path(args.output_root).resolve() / run_id
     run_dir.mkdir(parents=True, exist_ok=False)
     source_hashes = {name: sha256_file(ROOT / name) for name in SOURCE_FILES}
@@ -205,7 +205,7 @@ def main(args: argparse.Namespace) -> int:
 
     acceptance = {
         "schema_version": 1,
-        "experiment": "10-2",
+        "experiment": "10-1",
         "run_id": run_id,
         "started_at": started_at,
         "completed_at": utc_now(),
@@ -236,7 +236,7 @@ def main(args: argparse.Namespace) -> int:
 
     manifest = {
         "schema_version": 1,
-        "experiment": "10-2",
+        "experiment": "10-1",
         "run_id": run_id,
         "generated_at": utc_now(),
         "git_commit": acceptance["git_commit"],

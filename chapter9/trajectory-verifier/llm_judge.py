@@ -1,4 +1,4 @@
-"""Real OpenAI Responses API judge for Experiment 8-1."""
+"""Real OpenAI Responses API judge for Experiment 9-1."""
 
 from __future__ import annotations
 

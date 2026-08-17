@@ -85,7 +85,7 @@ def save_evidence(run: str, receipts: list[dict[str, Any]], extra: dict[str, Any
     run_dir = ROOT / "validation" / run
     run_dir.mkdir(parents=True, exist_ok=True)
     evidence = {
-        "experiment": "7-17 premature-completion-dpo",
+        "experiment": "8-17 premature-completion-dpo",
         "run": run,
         "receipt_count": len(receipts),
         "receipts": receipts,

@@ -1,4 +1,4 @@
-"""Resettable localhost mail UI used by the real Playwright Experiment 8-4.
+"""Resettable localhost mail UI used by the real Playwright Experiment 9-5.
 
 The server is deliberately small, but it is not a mocked browser: Chromium
 loads the page, JavaScript sends HTTP requests, and the final sent-list is

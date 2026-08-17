@@ -1,6 +1,6 @@
-# Experiment 9-1 real traditional-voice validation
+# Experiment 6-3 real traditional-voice validation
 
-- Run ID: `exp9-1-20260729T153334474Z`
+- Run ID: `exp6-3-20260729T153334474Z`
 - Complete: **true**
 - Source: `microphone_input.wav` (5.056 s, saved browser microphone/WebSocket capture)
 - VAD: Silero ONNX, 500 ms silence, non-forced endpoint = true

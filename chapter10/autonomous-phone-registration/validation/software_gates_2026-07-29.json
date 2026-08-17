@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "experiment": "10-5",
+  "experiment": "10-3",
   "evidence_type": "focused_software_tests",
   "human_audio_used": false,
   "pstn_calls_placed": 0,

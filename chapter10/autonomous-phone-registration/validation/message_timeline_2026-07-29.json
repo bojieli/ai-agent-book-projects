@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "experiment": "10-5",
+  "experiment": "10-3",
   "redaction": "all collected values replaced with <redacted>",
   "events": [
     {"sequence": 1, "at": 19.711342, "sender": "phone_agent", "recipient": "computer_agent", "type": "call_started", "payload": {"fields": ["firstName", "lastName", "gender", "userNumber"]}},

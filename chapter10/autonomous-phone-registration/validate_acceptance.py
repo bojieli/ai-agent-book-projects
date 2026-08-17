@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail-closed validator for retained historical 10-5 evidence of current Experiment 10-3."""
+"""Fail-closed validator for retained historical 10-3 evidence of current Experiment 10-3."""
 
 from __future__ import annotations
 
@@ -131,7 +131,7 @@ def validate_run(
     source_root = (source_root or Path(__file__).parent).resolve()
     manifest = _load_json(run_dir / "manifest.json")
     _require(manifest.get("schema_version") == 2, "manifest schema_version must be 2")
-    _require(manifest.get("experiment") == "10-5", "manifest experiment must be 10-5")
+    _require(manifest.get("experiment") == "10-3", "manifest experiment must be 10-3")
 
     artifact_names = (
         ARTIFACT_NAMES if require_validation_report else ARTIFACT_NAMES - {"validation_report.json"}
@@ -313,7 +313,7 @@ def validate_run(
 
     result = {
         "schema_version": 1,
-        "experiment": "10-5",
+        "experiment": "10-3",
         "status": "pass",
         "checks": {
             "source_hashes": "pass",

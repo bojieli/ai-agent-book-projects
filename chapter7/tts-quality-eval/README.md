@@ -69,7 +69,7 @@ source .venv/bin/activate
 # pip fallback when uv is not installed:
 # python -m pip install -e ".[ch6]"
 
-cd chapter6/tts-quality-eval
+cd chapter7/tts-quality-eval
 
 # Single-project compatibility path, still supported during migration:
 # python -m pip install -r requirements.txt
@@ -99,7 +99,7 @@ Outputs are under `output/` (audio) and `output/results.json` (structured result
 # From the repository root, include dev tools for pytest
 uv sync --locked --python 3.12 --extra ch6 --extra dev
 source .venv/bin/activate
-cd chapter6/tts-quality-eval
+cd chapter7/tts-quality-eval
 python -m pytest tests
 ```
 
@@ -120,9 +120,9 @@ python -m pytest tests
 
 ## 中文
 
-# 实验 6-5：全自动 TTS 质量评估流水线
+# 实验 7-6：全自动 TTS 质量评估流水线
 
-配套《深入理解 AI Agent》第 6 章「实验 6-5 ★★：构建全自动 TTS 质量评估流水线」。
+配套《深入理解 AI Agent》第 6 章「实验 7-6 ★★：构建全自动 TTS 质量评估流水线」。
 
 用多个 **TTS provider / 配置**（OpenAI、ElevenLabs、Fish Audio、Minimax、豆包，或同
 一家的不同 model / voice / speed）合成同一组带挑战性的参考文本，再用
@@ -171,7 +171,7 @@ python -m pytest tests
   > 的行会被记为失败，**不中断整表**。
 - **诊断回退（非验收）**：可用 Whisper（`whisper-1`）把合成语音回译成文本算 CER，再用
   文本模型基于「转写文本 + 时长 + 语速 + CER」打分；该路径听不到音频，情感表达和音色
-  一致性会明确记为 0，因此不能作为实验 6-5 的完成证据。
+  一致性会明确记为 0，因此不能作为实验 7-6 的完成证据。
   转写时用简体中文提示语引导 Whisper 输出简体，避免繁体字形差异虚高 CER。
   **凭据/回退**：TTS 合成与 Whisper 回译必须走 **OpenAI 直连**（`OPENAI_API_KEY`，
   OpenRouter 不提供音频/转写）；**仅 LLM Rubric 的 chat 评审支持 OpenRouter 回退**——
@@ -213,7 +213,7 @@ source .venv/bin/activate
 # 未安装 uv 时可用 pip 兜底：
 # python -m pip install -e ".[ch6]"
 
-cd chapter6/tts-quality-eval
+cd chapter7/tts-quality-eval
 
 # 迁移期间仍支持单项目兼容路径：
 # python -m pip install -r requirements.txt
@@ -250,7 +250,7 @@ python demo.py --dump-rubric      # 查看 Rubric 维度定义
 # 在仓库根目录安装 pytest 等开发工具
 uv sync --locked --python 3.12 --extra ch6 --extra dev
 source .venv/bin/activate
-cd chapter6/tts-quality-eval
+cd chapter7/tts-quality-eval
 python -m pytest tests
 ```
 

@@ -1,4 +1,4 @@
-"""Auditable self-modification and trusted release gates for Experiment 8-5."""
+"""Auditable self-modification and trusted release gates for Experiment 9-6."""
 
 from __future__ import annotations
 
