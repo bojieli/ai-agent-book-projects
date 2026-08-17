@@ -163,25 +163,6 @@
 
 **一、消息传递。** 最简形态为点对点：Agent A 直接调用 `send_message_to_agent_b(content)`，适用于拓扑固定、Agent 数量少的场景（如本章实验 10-3 的电话 + 电脑双 Agent）。当 Agent 数量增多且需异步并行时，点对点连接数随 Agent 数呈平方增长，且要求收发双方同时在线；此时应改用**消息总线**（详见本章后文“并行协调形态”）：Agent 将消息发布至总线，由总线按订阅关系转发，发送方无需知晓消费者。无论点对点还是经总线，消息通常应携带结构化的**信封**（envelope）：发送者 ID、目标（指定 Agent 或广播）、消息类型（如 `task_assigned`/`status_update`/`result`/`terminate`）及 JSON 负载。统一的信封格式保证接收方可靠地路由与解析，并使协作链路可追溯——这是多 Agent 系统调试的关键。
 
-信封和 worker 生命周期可以先用一个与具体消息库无关的骨架固定下来：
-
-```python
-envelope = {
-    id, trace_id, sender, recipient, type,
-    payload, created_at, deadline, schema_version
-}
-
-worker = spawn(task, budget, cancellation_token)
-publish(task_assigned(envelope, worker))
-while worker.is_running:
-    accept(status_update | artifact | needs_input)
-    if deadline_expired or cancellation_token.is_set:
-        request_graceful_stop(worker)
-await worker.ack_or_timeout()
-```
-
-`trace_id` 用来把跨 Agent 的事件串回同一任务，`deadline` 和取消令牌则把“能运行”与“能收尾”区分开。JSON 序列化、重试和幂等键都必须遵循同一边界。
-
 **二、状态查询。** 这是控制平面中最易被低估的一环。主 Agent 派出子 Agent 后，若无从获知其进展，则既无法判断是否继续等待，也无法在其阻塞时及时介入。直觉的做法定义一个 `get_subagent_status(agent_id)` 查询接口，返回 “运行中/已完成/失败” 等状态。但这种拉取式接口并不实用：子 Agent 一经创建就立即开始执行，直到完成或失败，子 Agent 完成时自然会通知主 Agent，并不需要主 Agent 显式查询。状态获取更自然的做法，是回到本章开头的两大通信范式。
 
 **用消息传递获取状态**。主 Agent 直接给子 Agent 发一条消息：“进展如何？”子 Agent 在合适的时机回复。一切都是异步的：发出消息不阻塞自己的执行，对方何时回复、是否回复是另一回事——正如经理通过即时消息询问下属进度，而不要求对方立即停下手头的工作。反过来，子 Agent 也可以在到达关键节点时主动发消息汇报；系统若已架设消息总线，这就是往总线上发布一条 `status_update`（实验 10-4 的“实时监控”即此形态）。无论问答还是主动汇报，消息中的状态本身宜采用统一的状态机词汇（执行中、需要输入、已完成、失败）——本章后文的 A2A 协议正是把任务生命周期标准化为这样一组状态。
