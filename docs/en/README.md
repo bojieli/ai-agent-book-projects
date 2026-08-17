@@ -7,9 +7,11 @@
 
 > 📥 **[Download PDF / EPUB](#-e-book)** (recommended) — the PDF / EPUB editions offer the best reading experience; you can also [read online](https://bojieli.github.io/ai-agent-book/) (multi-language switcher, collapsible chapter tree, full-text search, auto-rebuilt on every push to main).
 
-**Agent = LLM + Context + Tools** — This book builds on this core formula across 10 chapters, taking AI Agents from principles to engineering practice. The full text, illustrations, and **93 accompanying experiments** are all open source. You are welcome to run the experiments yourself.
+**Agent = LLM + Context + Tools** — This book builds on this core formula across 10 chapters, taking AI Agents from principles to engineering practice. The full text, illustrations, and **103 accompanying experiments** are all open source. You are welcome to run the experiments yourself.
 
-| 📚 **10 chapters** of text, from basics to production | 📂 **93** companion projects (70+ standalone) | 🌐 **13 languages**: CN / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO / HU |
+> 🚧 **Version 2.0 reorganization in progress:** The book has moved from version 1.4 to 2.0 and its content now follows a new learning path. Chapters 6–9 are now “Interaction: Expanding the Observation and Action Spaces,” “Agent Evaluation,” “Model Post-Training,” and “Continual Agent Evolution.” Existing published PDFs may temporarily retain the former structure; use this README and the repository text as the source of truth for chapter placement, numbering, and experiment entry points.
+
+| 📚 **10 chapters** of text, from basics to production | 📂 **103** companion projects (70+ standalone) | 🌐 **13 languages**: CN / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO / HU |
 | :---: | :---: | :---: |
 
 ## 📖 E-Book
@@ -52,17 +54,16 @@ The book revolves around the core formula **Agent = LLM + Context + Tools**, wit
 
 | Ch | Topic | One-line Summary | Text | Code |
 | :--: | --- | --- | :--: | :--: |
-| 1 | 🚀 **Agent Fundamentals** | **Agent = LLM + Context + Tools**; Harness engineering is the real competitive edge | [Read](../../book-en/chapter1.md) | [4](../../chapter1/README.en.md) |
-| 2 | 🎯 **Context Engineering** | Context caps Agent ability: KV Cache, prompt engineering, Agent Skills, context compression | [Read](../../book-en/chapter2.md) | [9](../../chapter2/README.en.md) |
+| 1 | 🚀 **Getting Started with AI Agents** | **Agent = LLM + Context + Tools**; Harness engineering is the real competitive edge | [Read](../../book-en/chapter1.md) | [3](../../chapter1/README.en.md) |
+| 2 | 🎯 **Context Engineering** | Context caps Agent ability: KV Cache, prompt engineering, Agent Skills, context compression | [Read](../../book-en/chapter2.md) | [10](../../chapter2/README.en.md) |
 | 3 | 📚 **User Memory & Knowledge Bases** | Cross-session user memory + external knowledge: user memory, RAG, structured indexes, knowledge graphs | [Read](../../book-en/chapter3.md) | [12](../../chapter3/README.en.md) |
-| 4 | 🛠️ **Tools** | Tools are the Agent's hands: MCP protocol, perception/execution/collaboration tools, event-driven async Agents, proactive tool discovery | [Read](../../book-en/chapter4.md) | [8](../../chapter4/README.en.md) |
+| 4 | 🛠️ **Tools** | Tools are the Agent's hands: MCP and perception, execution, collaboration, and proactive tool discovery | [Read](../../book-en/chapter4.md) | [5](../../chapter4/README.en.md) |
 | 5 | 💻 **Coding Agent & Code Generation** | Code is a "tool that creates new tools"; production-grade Coding Agent in full | [Read](../../book-en/chapter5.md) | [13](../../chapter5/README.en.md) |
-| 6 | 🎯 **Agent Evaluation** | Turn performance into comparable signals: environments, metrics, statistical significance, evaluation-driven selection | [Read](../../book-en/chapter6.md) | [12](../../chapter6/README.en.md) |
-| 7 | 🧠 **Model Post-Training** | Pre-training/SFT/RL three stages: when to choose SFT vs. RL, internalizing tool calls, sample efficiency | [Read](../../book-en/chapter7.md) | [16](../../chapter7/README.en.md) |
-| 8 | 🔄 **Agent Self-Evolution** | Growth without changing weights: learning from experience, from tool user to tool creator | [Read](../../book-en/chapter8.md) | [9](../../chapter8/README.en.md) |
-| 9 | 🎙️ **Multimodal & Real-Time Interaction** | Extending from text to voice, GUI, physical world: three voice paradigms, Computer Use, robotics | [Read](../../book-en/chapter9.md) | [12](../../chapter9/README.en.md) |
-| 10 | 🤝 **Multi-Agent Collaboration** | Collective intelligence > individual: collaboration frameworks, context sharing/isolation, emergent "Agent Society" | [Read](../../book-en/chapter10.md) | [7](../../chapter10/README.en.md) |
-
+| 6 | 🎙️ **Interaction: Expanding the Observation and Action Spaces** | Expands an Agent's observation and action spaces along modality and timing: asynchronous and event-driven systems, voice interaction, Computer Use, and robotics | [Read](../../book-en/chapter6.md) | [13](../../chapter6/README.en.md) |
+| 7 | 🎯 **Agent Evaluation** | Turn performance into comparable signals: environments, metrics, statistical significance, evaluation-driven selection | [Read](../../book-en/chapter7.md) | [13](../../chapter7/README.en.md) |
+| 8 | 🧠 **Model Post-Training** | Pre-training/SFT/RL three stages: when to choose SFT vs. RL, internalizing tool calls, sample efficiency | [Read](../../book-en/chapter8.md) | [19](../../chapter8/README.en.md) |
+| 9 | 🔄 **Continual Agent Evolution** | Turns operational trajectories into learning signals that update knowledge, instructions, programs, and parameters | [Read](../../book-en/chapter9.md) | [9](../../chapter9/README.en.md) |
+| 10 | 🤝 **Multi-Agent Collaboration** | Collective intelligence > individual: collaboration frameworks, context sharing/isolation, emergent "Agent Society" | [Read](../../book-en/chapter10.md) | [6](../../chapter10/README.en.md) |
 > 💡 **Read** = read the chapter text on GitHub (markdown); **N** = number of companion projects, click for code. Project types (✅ Standalone / 📖 Reproduction / 🚧 Design) are explained in each chapter's README.
 >
 > 📚 How to read this book efficiently? See **[Learning Suggestions](LEARNING.md)** (core ideas, learning path, difficulty levels, practice tips).
@@ -116,7 +117,7 @@ Krill offers a special deal for readers of this book: register via [this link](h
 
 ## 📦 Appendix · Obtaining External Repositories
 
-The 23 external repos for benchmarks, training frameworks, and robot platforms in Chapters 6, 7, 9, 10 are **not bundled** (due to size and licensing) and must be cloned into the corresponding directories.
+The 23 external repos for benchmarks, training frameworks, and robot platforms in Chapters 6, 7, 8, 10 are **not bundled** (due to size and licensing) and must be cloned into the corresponding directories.
 
 ### One-shot Clone Script
 
@@ -124,32 +125,32 @@ The 23 external repos for benchmarks, training frameworks, and robot platforms i
 <summary><b>🔧 Expand clone commands</b> (23 external repos)</summary>
 
 ```bash
-# Chapter 6 · Evaluation Benchmarks
-git clone https://github.com/google-research/android_world.git         chapter6/android_world
-git clone https://huggingface.co/datasets/gaia-benchmark/GAIA          chapter6/GAIA
-git clone https://github.com/xlang-ai/OSWorld.git                      chapter6/OSWorld
-git clone https://github.com/SWE-bench/SWE-bench.git                   chapter6/SWE-bench
-git clone https://github.com/sierra-research/tau2-bench.git            chapter6/tau2-bench
-git clone https://github.com/laude-institute/terminal-bench.git        chapter6/terminal-bench
+# Chapter 7 · Evaluation Benchmarks
+git clone https://github.com/google-research/android_world.git         chapter7/android_world
+git clone https://huggingface.co/datasets/gaia-benchmark/GAIA          chapter7/GAIA
+git clone https://github.com/xlang-ai/OSWorld.git                      chapter7/OSWorld
+git clone https://github.com/SWE-bench/SWE-bench.git                   chapter7/SWE-bench
+git clone https://github.com/sierra-research/tau2-bench.git            chapter7/tau2-bench
+git clone https://github.com/laude-institute/terminal-bench.git        chapter7/terminal-bench
 
-# Chapter 7 · Training Frameworks (bojieli/* are book-adapted forks)
-git clone https://github.com/bojieli/minimind.git                      chapter7/MiniMind-pretrain/minimind      # Exp 7-3 train LLM from scratch
-git clone https://github.com/bojieli/minimind-v.git                    chapter7/MiniMind-pretrain/minimind-v    # Exp 7-4 train VLM from scratch (projection layer)
-git clone https://github.com/bojieli/AdaptThink.git                    chapter7/AdaptThink-original
-git clone https://github.com/bojieli/AWorld.git                        chapter7/AWorld
-git clone https://github.com/bojieli/SFTvsRL.git                       chapter7/SFTvsRL
-git clone https://github.com/bojieli/verl.git                          chapter7/verl
-git clone https://github.com/bojieli/SandboxFusion.git chapter7/SandboxFusion && git -C chapter7/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c && git -C chapter7/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c && test "$(git -C chapter7/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"  # Exp 7-15 code sandbox
-git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter7/tinker-cookbook
-git clone https://github.com/19PINE-AI/rlvp.git                        chapter7/RLVP/rlvp                       # Exp 7-14 RLVP paper code
-git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter7/SimpleVLA-RL/SimpleVLA-RL       # Exp 7-13 vision-language-action RL
+# Chapter 8 · Training Frameworks (bojieli/* are book-adapted forks)
+git clone https://github.com/bojieli/minimind.git                      chapter8/MiniMind-pretrain/minimind      # Exp 8-3 train LLM from scratch
+git clone https://github.com/bojieli/minimind-v.git                    chapter8/MiniMind-pretrain/minimind-v    # Exp 8-4 train VLM from scratch (projection layer)
+git clone https://github.com/bojieli/AdaptThink.git                    chapter8/AdaptThink-original
+git clone https://github.com/bojieli/AWorld.git                        chapter8/AWorld
+git clone https://github.com/bojieli/SFTvsRL.git                       chapter8/SFTvsRL
+git clone https://github.com/bojieli/verl.git                          chapter8/verl
+git clone https://github.com/bojieli/SandboxFusion.git chapter8/SandboxFusion && git -C chapter8/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c && git -C chapter8/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c && test "$(git -C chapter8/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"  # Exp 8-14 code sandbox
+git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter8/tinker-cookbook
+git clone https://github.com/19PINE-AI/rlvp.git                        chapter8/RLVP/rlvp                       # Exp 8-16 RLVP paper code
+git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter8/SimpleVLA-RL/SimpleVLA-RL       # Exp 8-13 vision-language-action RL
 
-# Chapter 9 · Browser Automation & Claude Examples
-git clone https://github.com/browser-use/browser-use.git               chapter9/browser-use
-git clone https://github.com/anthropics/claude-quickstarts.git         chapter9/claude-quickstarts
-git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot && git -C chapter9/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter9/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter9/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 9-7/9-9 shared
-git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter9/RoboCrew && git -C chapter9/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter9/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter9/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 9-8/9-9; RoboCrew v0.3.1
-git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-sim2real && git -C chapter9/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter9/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter9/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 9-11
+# Chapter 6 · Browser Automation & Claude Examples
+git clone https://github.com/browser-use/browser-use.git               chapter6/browser-use
+git clone https://github.com/anthropics/claude-quickstarts.git         chapter6/claude-quickstarts
+git clone https://github.com/Vector-Wangel/XLeRobot.git chapter6/XLeRobot && git -C chapter6/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter6/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter6/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 6-9/6-11 shared
+git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter6/RoboCrew && git -C chapter6/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter6/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter6/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 6-10/6-11; RoboCrew v0.3.1
+git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter6/lerobot-sim2real && git -C chapter6/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter6/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter6/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 6-13
 
 # Chapter 10 · Dual-Agent Architecture (now independent TalkAct project) + Stanford AI Town
 git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10/use-computer-while-calling

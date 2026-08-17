@@ -7,9 +7,11 @@
 
 > 📥 **[Descargar PDF / EPUB](#-libro-electrónico)** (recomendado) — las ediciones en PDF / EPUB ofrecen la mejor experiencia de lectura; también puedes [leer en línea](https://bojieli.github.io/ai-agent-book/) (conmutador de idiomas, árbol de capítulos desplegable, búsqueda de texto completo, recompilado automáticamente en cada push a main).
 
-**Agente = LLM + Contexto + Herramientas** — Este libro se desarrolla en torno a esta fórmula central a lo largo de 10 capítulos, llevando los Agentes de IA desde los principios teóricos hasta la práctica de ingeniería. El texto completo, las ilustraciones y los **95 experimentos complementarios** son de código abierto. Te invitamos a ejecutar los experimentos por ti mismo.
+**Agente = LLM + Contexto + Herramientas** — Este libro se desarrolla en torno a esta fórmula central a lo largo de 10 capítulos, llevando los Agentes de IA desde los principios teóricos hasta la práctica de ingeniería. El texto completo, las ilustraciones y los **103 experimentos complementarios** son de código abierto. Te invitamos a ejecutar los experimentos por ti mismo.
 
-| 📚 **10 capítulos** de texto, desde lo básico hasta producción | 📂 **95 experimentos** complementarios, incluidos proyectos locales y rutas de reproducción externas | 🌐 **13 idiomas**: CN / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO / HU |
+> 🚧 **Reorganización de la versión 2.0 en curso:** El libro ha pasado de la versión 1.4 a la 2.0 y ahora sigue una nueva ruta de aprendizaje. Los capítulos 6–9 son «Interacción: expansión de los espacios de observación y acción», «Evaluación de Agentes», «Post-entrenamiento de modelos» y «Evolución continua del Agente». Es posible que los PDF ya publicados conserven temporalmente la estructura anterior; para la ubicación y numeración de capítulos y experimentos, prevalecen este README y el texto del repositorio.
+
+| 📚 **10 capítulos** de texto, desde lo básico hasta producción | 📂 **103 experimentos** complementarios, incluidos proyectos locales y rutas de reproducción externas | 🌐 **13 idiomas**: CN / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO / HU |
 | :---: | :---: | :---: |
 
 ## 📖 Libro electrónico
@@ -52,17 +54,16 @@ El libro se desarrolla en torno a la fórmula central **Agente = LLM + Contexto 
 
 | Cap | Tema | Resumen en una línea | Texto | Código |
 | :--: | --- | --- | :--: | :--: |
-| 1 | 🚀 **Fundamentos de Agentes** | **Agente = LLM + Contexto + Herramientas**; La ingeniería del Harness es la verdadera ventaja competitiva | [Leer](../../book-es/chapter1.es.md) | [4](../../chapter1/README.es.md) |
-| 2 | 🎯 **Ingeniería del Contexto** | El contexto limita la capacidad del Agente: KV Cache, ingeniería de prompts, Agent Skills, compresión de contexto | [Leer](../../book-es/chapter2.es.md) | [8](../../chapter2/README.es.md) |
+| 1 | 🚀 **Introducción a los Agentes de IA** | **Agente = LLM + Contexto + Herramientas**; La ingeniería del Harness es la verdadera ventaja competitiva | [Leer](../../book-es/chapter1.es.md) | [3](../../chapter1/README.es.md) |
+| 2 | 🎯 **Ingeniería del Contexto** | El contexto limita la capacidad del Agente: KV Cache, ingeniería de prompts, Agent Skills, compresión de contexto | [Leer](../../book-es/chapter2.es.md) | [10](../../chapter2/README.es.md) |
 | 3 | 📚 **Memoria de Usuario y Bases de Conocimiento** | Memoria de usuario entre sesiones + conocimiento externo: memoria de usuario, RAG, índices estructurados, grafos de conocimiento | [Leer](../../book-es/chapter3.es.md) | [12](../../chapter3/README.es.md) |
-| 4 | 🛠️ **Herramientas** | Las herramientas son las manos del Agente: protocolo MCP, herramientas de percepción/ejecución/colaboración, Agentes asíncronos orientados a eventos, descubrimiento activo de herramientas | [Leer](../../book-es/chapter4.es.md) | [8](../../chapter4/README.es.md) |
+| 4 | 🛠️ **Herramientas** | Las herramientas son las manos del Agente: MCP, percepción, ejecución, colaboración y descubrimiento activo de herramientas | [Leer](../../book-es/chapter4.es.md) | [5](../../chapter4/README.es.md) |
 | 5 | 💻 **Coding Agent y Generación de Código** | El código es una "herramienta para crear nuevas herramientas"; panorama completo de un Coding Agent de grado de producción | [Leer](../../book-es/chapter5.es.md) | [13](../../chapter5/README.es.md) |
-| 6 | 🎯 **Evaluación de Agentes** | Convertir el rendimiento en señales comparables: entornos, métricas, significación estadística, selección guiada por evaluación | [Leer](../../book-es/chapter6.es.md) | [17](../../chapter6/README.es.md) |
-| 7 | 🧠 **Post-Entrenamiento de Modelos** | Tres etapas (Pre-entrenamiento/SFT/RL): cuándo elegir SFT vs. RL, internalización de llamadas a herramientas, eficiencia de muestra | [Leer](../../book-es/chapter7.es.md) | [18](../../chapter7/README.es.md) |
-| 8 | 🔄 **Auto-Evolución del Agente** | Crecimiento sin cambiar pesos: aprendizaje a partir de la experiencia, de usuario de herramientas a creador de herramientas | [Leer](../../book-es/chapter8.es.md) | [9](../../chapter8/README.es.md) |
-| 9 | 🎙️ **Multimodalidad e Interacción en Tiempo Real** | Extensión del texto a la voz, GUI y mundo físico: tres paradigmas de voz, Computer Use, robótica | [Leer](../../book-es/chapter9.es.md) | [12](../../chapter9/README.es.md) |
-| 10 | 🤝 **Colaboración Multi-Agente** | Inteligencia colectiva > individual: marcos de colaboración, compartición/aislamiento de contexto, "Sociedad de Agentes" emergente | [Leer](../../book-es/chapter10.es.md) | [8](../../chapter10/README.es.md) |
-
+| 6 | 🎙️ **Interacción: expansión de los espacios de observación y acción** | Amplía los espacios de observación y acción del Agente en dos dimensiones, modalidad y temporalidad: sistemas asíncronos y orientados a eventos, voz, Computer Use y robótica | [Leer](../../book-es/chapter6.es.md) | [13](../../chapter6/README.es.md) |
+| 7 | 🎯 **Evaluación de Agentes** | Convertir el rendimiento en señales comparables: entornos, métricas, significación estadística, selección guiada por evaluación | [Leer](../../book-es/chapter7.es.md) | [13](../../chapter7/README.es.md) |
+| 8 | 🧠 **Post-Entrenamiento de Modelos** | Tres etapas (Pre-entrenamiento/SFT/RL): cuándo elegir SFT vs. RL, internalización de llamadas a herramientas, eficiencia de muestra | [Leer](../../book-es/chapter8.es.md) | [19](../../chapter8/README.es.md) |
+| 9 | 🔄 **Evolución continua del Agente** | Convierte las trayectorias de operación en señales de aprendizaje para actualizar conocimientos, instrucciones, programas y parámetros | [Leer](../../book-es/chapter9.es.md) | [9](../../chapter9/README.es.md) |
+| 10 | 🤝 **Colaboración Multi-Agente** | Inteligencia colectiva > individual: marcos de colaboración, compartición/aislamiento de contexto, "Sociedad de Agentes" emergente | [Leer](../../book-es/chapter10.es.md) | [6](../../chapter10/README.es.md) |
 > 💡 **Leer** = leer el texto del capítulo en GitHub (markdown); **N** = número de proyectos complementarios, haz clic para ver el código. Los tipos de proyecto (✅ Independiente / 📖 Reproducción / 🚧 Diseño) se explican en el README de cada capítulo.
 >
 > 📚 ¿Cómo leer este libro de manera eficiente? Consulta las **[Sugerencias de aprendizaje](LEARNING.md)** (ideas clave, ruta de aprendizaje, niveles de dificultad, consejos prácticos).
@@ -98,32 +99,32 @@ Los 23 *checkouts* externos para benchmarks, marcos de entrenamiento y plataform
 <summary><b>🔧 Desplegar comandos de clonación</b> (23 checkouts: 22 asignados a experimentos + 1 cookbook auxiliar)</summary>
 
 ```bash
-# Capítulo 6 · Benchmarks de evaluación
-git clone https://github.com/google-research/android_world.git chapter6/android_world && git -C chapter6/android_world checkout --detach 0e95d641e244504c22087cc29b013f3b2428a261
-git clone https://huggingface.co/datasets/gaia-benchmark/GAIA chapter6/GAIA && git -C chapter6/GAIA checkout --detach 682dd723ee1e1697e00360edccf2366dc8418dd9
-git clone https://github.com/xlang-ai/OSWorld.git chapter6/OSWorld && git -C chapter6/OSWorld checkout --detach 8365edc975efd0477a0d62444a5beed562ab5a7b
-git clone https://github.com/SWE-bench/SWE-bench.git chapter6/SWE-bench && git -C chapter6/SWE-bench checkout --detach 5cd4be9fb23971679cbbafe5a0ecade27cef99be
-git clone https://github.com/sierra-research/tau2-bench.git chapter6/tau2-bench && git -C chapter6/tau2-bench checkout --detach 8d005b0e5b9e4af0bc055886fa7f95fc86d1710e
-git clone https://github.com/laude-institute/terminal-bench.git chapter6/terminal-bench && git -C chapter6/terminal-bench checkout --detach 8384a179b1b8688f6ea5233a4d9d51218df1ac96
+# Capítulo 7 · Benchmarks de evaluación
+git clone https://github.com/google-research/android_world.git chapter7/android_world && git -C chapter7/android_world checkout --detach 0e95d641e244504c22087cc29b013f3b2428a261
+git clone https://huggingface.co/datasets/gaia-benchmark/GAIA chapter7/GAIA && git -C chapter7/GAIA checkout --detach 682dd723ee1e1697e00360edccf2366dc8418dd9
+git clone https://github.com/xlang-ai/OSWorld.git chapter7/OSWorld && git -C chapter7/OSWorld checkout --detach 8365edc975efd0477a0d62444a5beed562ab5a7b
+git clone https://github.com/SWE-bench/SWE-bench.git chapter7/SWE-bench && git -C chapter7/SWE-bench checkout --detach 5cd4be9fb23971679cbbafe5a0ecade27cef99be
+git clone https://github.com/sierra-research/tau2-bench.git chapter7/tau2-bench && git -C chapter7/tau2-bench checkout --detach 8d005b0e5b9e4af0bc055886fa7f95fc86d1710e
+git clone https://github.com/laude-institute/terminal-bench.git chapter7/terminal-bench && git -C chapter7/terminal-bench checkout --detach 8384a179b1b8688f6ea5233a4d9d51218df1ac96
 
-# Capítulo 7 · Marcos de entrenamiento (bojieli/* son ramas adaptadas para el libro)
-git clone https://github.com/bojieli/minimind.git chapter7/MiniMind-pretrain/minimind && git -C chapter7/MiniMind-pretrain/minimind fetch origin 8bdc5d97d5845a8c1ac2ed56a5b8b4c0d0fb0795 && git -C chapter7/MiniMind-pretrain/minimind checkout --detach 8bdc5d97d5845a8c1ac2ed56a5b8b4c0d0fb0795 && test "$(git -C chapter7/MiniMind-pretrain/minimind rev-parse HEAD)" = "8bdc5d97d5845a8c1ac2ed56a5b8b4c0d0fb0795"  # Experimento 7-3
-git clone https://github.com/bojieli/minimind-v.git chapter7/MiniMind-pretrain/minimind-v && git -C chapter7/MiniMind-pretrain/minimind-v fetch origin ead791c530fa5f9a3549dbfe9e11ec732d18d2e5 && git -C chapter7/MiniMind-pretrain/minimind-v checkout --detach ead791c530fa5f9a3549dbfe9e11ec732d18d2e5 && test "$(git -C chapter7/MiniMind-pretrain/minimind-v rev-parse HEAD)" = "ead791c530fa5f9a3549dbfe9e11ec732d18d2e5"  # Experimento 7-4
-git clone https://github.com/bojieli/AdaptThink.git chapter7/AdaptThink-original && git -C chapter7/AdaptThink-original checkout --detach 0033ad172dd53ac64004b763477407014f21b838  # Experimento 7-10
-git clone https://github.com/bojieli/SFTvsRL.git chapter7/SFTvsRL && git -C chapter7/SFTvsRL checkout --detach fef0a4a3367260a0934be1e40b01e4021698e023  # Experimentos 7-11 y 7-12
-git clone https://github.com/bojieli/AWorld.git chapter7/AWorld && git -C chapter7/AWorld checkout --detach a52d61d6d483e66b22ef16970eae5bbf4f4ab2ec  # Experimento 7-16
-git clone https://github.com/bojieli/verl.git chapter7/verl && git -C chapter7/verl checkout --detach 1593fc3a8cf894debdc3dece2a23ed739c282789  # Experimento 7-15: receta ReTool; 7-16: backend de entrenamiento
-git clone https://github.com/bojieli/SandboxFusion.git chapter7/SandboxFusion && git -C chapter7/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c && git -C chapter7/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c && test "$(git -C chapter7/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"  # Experimento 7-15: sandbox de código
-git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter7/tinker-cookbook && git -C chapter7/tinker-cookbook checkout --detach fc8449187041cf102905f3f751e6d2eac7f9f754
-git clone https://github.com/19PINE-AI/rlvp.git chapter7/RLVP/rlvp && git -C chapter7/RLVP/rlvp fetch origin 1ad30bc7e338911fb733739393d92c420f4d8bee && git -C chapter7/RLVP/rlvp checkout --detach 1ad30bc7e338911fb733739393d92c420f4d8bee && test "$(git -C chapter7/RLVP/rlvp rev-parse HEAD)" = "1ad30bc7e338911fb733739393d92c420f4d8bee"  # Experimento 7-14
-git clone https://github.com/PRIME-RL/SimpleVLA-RL.git chapter7/SimpleVLA-RL/SimpleVLA-RL && git -C chapter7/SimpleVLA-RL/SimpleVLA-RL checkout --detach 7c51662df27b586f9e8a1ab35fcf849f2b8852f9  # Experimento 7-13
+# Capítulo 8 · Marcos de entrenamiento (bojieli/* son ramas adaptadas para el libro)
+git clone https://github.com/bojieli/minimind.git chapter8/MiniMind-pretrain/minimind && git -C chapter8/MiniMind-pretrain/minimind fetch origin 8bdc5d97d5845a8c1ac2ed56a5b8b4c0d0fb0795 && git -C chapter8/MiniMind-pretrain/minimind checkout --detach 8bdc5d97d5845a8c1ac2ed56a5b8b4c0d0fb0795 && test "$(git -C chapter8/MiniMind-pretrain/minimind rev-parse HEAD)" = "8bdc5d97d5845a8c1ac2ed56a5b8b4c0d0fb0795"  # Experimento 8-3
+git clone https://github.com/bojieli/minimind-v.git chapter8/MiniMind-pretrain/minimind-v && git -C chapter8/MiniMind-pretrain/minimind-v fetch origin ead791c530fa5f9a3549dbfe9e11ec732d18d2e5 && git -C chapter8/MiniMind-pretrain/minimind-v checkout --detach ead791c530fa5f9a3549dbfe9e11ec732d18d2e5 && test "$(git -C chapter8/MiniMind-pretrain/minimind-v rev-parse HEAD)" = "ead791c530fa5f9a3549dbfe9e11ec732d18d2e5"  # Experimento 8-4
+git clone https://github.com/bojieli/AdaptThink.git chapter8/AdaptThink-original && git -C chapter8/AdaptThink-original checkout --detach 0033ad172dd53ac64004b763477407014f21b838  # Experimento 8-10
+git clone https://github.com/bojieli/SFTvsRL.git chapter8/SFTvsRL && git -C chapter8/SFTvsRL checkout --detach fef0a4a3367260a0934be1e40b01e4021698e023  # Experimentos 8-11 y 8-12
+git clone https://github.com/bojieli/AWorld.git chapter8/AWorld && git -C chapter8/AWorld checkout --detach a52d61d6d483e66b22ef16970eae5bbf4f4ab2ec  # Experimento 8-15
+git clone https://github.com/bojieli/verl.git chapter8/verl && git -C chapter8/verl checkout --detach 1593fc3a8cf894debdc3dece2a23ed739c282789  # Experimento 8-14: receta ReTool; 8-15: backend de entrenamiento
+git clone https://github.com/bojieli/SandboxFusion.git chapter8/SandboxFusion && git -C chapter8/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c && git -C chapter8/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c && test "$(git -C chapter8/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"  # Experimento 8-14: sandbox de código
+git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter8/tinker-cookbook && git -C chapter8/tinker-cookbook checkout --detach fc8449187041cf102905f3f751e6d2eac7f9f754
+git clone https://github.com/19PINE-AI/rlvp.git chapter8/RLVP/rlvp && git -C chapter8/RLVP/rlvp fetch origin 1ad30bc7e338911fb733739393d92c420f4d8bee && git -C chapter8/RLVP/rlvp checkout --detach 1ad30bc7e338911fb733739393d92c420f4d8bee && test "$(git -C chapter8/RLVP/rlvp rev-parse HEAD)" = "1ad30bc7e338911fb733739393d92c420f4d8bee"  # Experimento 8-16
+git clone https://github.com/PRIME-RL/SimpleVLA-RL.git chapter8/SimpleVLA-RL/SimpleVLA-RL && git -C chapter8/SimpleVLA-RL/SimpleVLA-RL checkout --detach 7c51662df27b586f9e8a1ab35fcf849f2b8852f9  # Experimento 8-13
 
-# Capítulo 9 · Rutas externas de reproducción de GUI y robótica
-git clone https://github.com/anthropics/claude-quickstarts.git chapter9/claude-quickstarts && git -C chapter9/claude-quickstarts checkout --detach 9bcc95e316e5ef6542b4c9d0469f4078829eead5  # El experimento 9-5 usa computer-use-demo/
-git clone https://github.com/browser-use/browser-use.git chapter9/browser-use && git -C chapter9/browser-use checkout --detach ec9277c5001f2cb78ee419c927775a3cfc227ff8  # Experimento 9-6
-git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot && git -C chapter9/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter9/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter9/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Compartido por los experimentos 9-7 y 9-9
-git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter9/RoboCrew && git -C chapter9/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter9/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter9/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Experimentos 9-8 y 9-9; RoboCrew v0.3.1
-git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-sim2real && git -C chapter9/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter9/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter9/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Experimento 9-11
+# Capítulo 6 · Rutas externas de reproducción de GUI y robótica
+git clone https://github.com/anthropics/claude-quickstarts.git chapter6/claude-quickstarts && git -C chapter6/claude-quickstarts checkout --detach 9bcc95e316e5ef6542b4c9d0469f4078829eead5  # El experimento 6-7 usa computer-use-demo/
+git clone https://github.com/browser-use/browser-use.git chapter6/browser-use && git -C chapter6/browser-use checkout --detach ec9277c5001f2cb78ee419c927775a3cfc227ff8  # Experimento 6-8
+git clone https://github.com/Vector-Wangel/XLeRobot.git chapter6/XLeRobot && git -C chapter6/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter6/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter6/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Compartido por los experimentos 6-9 y 6-11
+git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter6/RoboCrew && git -C chapter6/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter6/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter6/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Experimentos 6-10 y 6-11; RoboCrew v0.3.1
+git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter6/lerobot-sim2real && git -C chapter6/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter6/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter6/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Experimento 6-13
 
 # Capítulo 10 · Arquitectura de Agente dual (ahora proyecto independiente TalkAct) + Ciudad AI de Stanford
 git clone https://github.com/19PINE-AI/TalkAct.git chapter10/use-computer-while-calling && git -C chapter10/use-computer-while-calling fetch origin 7d70007f72d45ddfc1a14e8e229b6d444e4919a2 && git -C chapter10/use-computer-while-calling checkout --detach 7d70007f72d45ddfc1a14e8e229b6d444e4919a2 && test "$(git -C chapter10/use-computer-while-calling rev-parse HEAD)" = "7d70007f72d45ddfc1a14e8e229b6d444e4919a2"  # Experimento 10-3

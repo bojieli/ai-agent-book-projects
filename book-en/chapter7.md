@@ -738,7 +738,7 @@ That is what continuous iteration means in practice: evidence from one round sho
 
 > **Experiment 7-12 ★★★: Evaluation and Improvement on AndroidWorld**
 >
-> This experiment practices the full path from evaluation report to system improvement. Start with the historical report and three saved paired runs in `chapter6/android-world`.
+> This experiment practices the full path from evaluation report to system improvement. Start with the historical report and three saved paired runs in `chapter7/android-world`.
 >
 > Step 1: Diagnosis. Cross-analyze the per-task table and the capability tag matrix to map surface-level task failures to deep-seated capability deficiencies. Identify capability tags with lower-than-expected success rates and task areas with concentrated failures.
 >

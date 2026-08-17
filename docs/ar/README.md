@@ -9,9 +9,11 @@
 >
 > 📥 **[تنزيل PDF / EPUB](#-الكتاب-الإلكتروني)** (موصى به) — توفر نسختا PDF وEPUB أفضل تجربة قراءة؛ ويمكنك أيضًا [القراءة عبر الإنترنت](https://bojieli.github.io/ai-agent-book/) مع تبديل اللغات وشجرة الفصول والبحث في النص الكامل.
 
-**الوكيل = LLM + السياق + الأدوات** — تنظم هذه المعادلة فصول الكتاب العشرة، التي تنتقل من المبادئ إلى الممارسة الهندسية. والنص الكامل والرسوم و**93 تجربة مصاحبة** كلها مفتوحة المصدر، ويمكنك تشغيل التجارب بنفسك.
+**الوكيل = LLM + السياق + الأدوات** — تنظم هذه المعادلة فصول الكتاب العشرة، التي تنتقل من المبادئ إلى الممارسة الهندسية. والنص الكامل والرسوم و**103 تجربة مصاحبة** كلها مفتوحة المصدر، ويمكنك تشغيل التجارب بنفسك.
 
-| 📚 **10 فصول** من الأساسيات إلى الإنتاج | 📂 **93** مشروعًا مصاحبًا (أكثر من 70 مستقلاً) | 🌐 **13 لغة**: CN / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO / HU |
+> 🚧 **إعادة تنظيم الإصدار 2.0 جارية:** انتقل الكتاب من الإصدار 1.4 إلى 2.0، وأصبح محتواه يتبع مسار تعلم جديدًا. الفصول 6–9 هي الآن «التفاعل: توسيع فضاء الملاحظة والفعل»، و«تقييم الوكلاء»، و«مرحلة ما بعد تدريب النموذج»، و«التطور المستمر للوكلاء». قد تحتفظ ملفات PDF المنشورة مؤقتًا بالبنية السابقة؛ ويُعتمد هذا الملف ونصوص المستودع مرجعًا لمواضع الفصول وأرقامها ومداخل التجارب.
+
+| 📚 **10 فصول** من الأساسيات إلى الإنتاج | 📂 **103** مشروعًا مصاحبًا (أكثر من 70 مستقلاً) | 🌐 **13 لغة**: CN / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO / HU |
 | :---: | :---: | :---: |
 
 ## 📖 الكتاب الإلكتروني
@@ -54,17 +56,16 @@
 
 | الفصل | الموضوع | ملخص من سطر واحد | نص | الكود |
 | :--: | --- | --- | :--: | :--: |
-| 1 | 🚀 **أساسيات الوكيل** | **الوكيل = LLM + السياق + الأدوات**; هندسة منظومة التشغيل هي الميزة التنافسية الحقيقية | [اقرأ](../../book-ar/chapter1.ar.md) | [4](../../chapter1/README.ar.md) |
-| 2 | 🎯 **هندسة السياق** | يحدد السياق سقف قدرة الوكيل: KV Cache، وهندسة الموجّهات، ومهارات الوكيل، وضغط السياق | [اقرأ](../../book-ar/chapter2.ar.md) | [9](../../chapter2/README.ar.md) |
+| 1 | 🚀 **مدخل إلى وكلاء الذكاء الاصطناعي** | **الوكيل = LLM + السياق + الأدوات**; هندسة منظومة التشغيل هي الميزة التنافسية الحقيقية | [اقرأ](../../book-ar/chapter1.ar.md) | [3](../../chapter1/README.ar.md) |
+| 2 | 🎯 **هندسة السياق** | يحدد السياق سقف قدرة الوكيل: KV Cache، وهندسة الموجّهات، ومهارات الوكيل، وضغط السياق | [اقرأ](../../book-ar/chapter2.ar.md) | [10](../../chapter2/README.ar.md) |
 | 3 | 📚 **ذاكرة المستخدم وقواعد المعرفة** | ذاكرة المستخدم عبر الجلسات + المعرفة الخارجية: ذاكرة المستخدم، RAG، الفهارس المنظمة، الرسوم البيانية المعرفية | [اقرأ](../../book-ar/chapter3.ar.md) | [12](../../chapter3/README.ar.md) |
-| 4 | 🛠️ **الأدوات** | الأدوات هي أيدي الوكيل: بروتوكول MCP، وأدوات الإدراك/التنفيذ/التعاون، والوكلاء غير المتزامنين القائمين على الأحداث، والاكتشاف الاستباقي للأدوات | [اقرأ](../../book-ar/chapter4.ar.md) | [8](../../chapter4/README.ar.md) |
+| 4 | 🛠️ **الأدوات** | الأدوات هي أيدي الوكيل: MCP، والإدراك، والتنفيذ، والتعاون، والاكتشاف الاستباقي للأدوات | [اقرأ](../../book-ar/chapter4.ar.md) | [5](../../chapter4/README.ar.md) |
 | 5 | 💻 **وكيل البرمجة وتوليد الشفرة** | الشفرة «أداة تنشئ أدوات جديدة»؛ من وكيل البرمجة الأساسي إلى منظومة جاهزة للإنتاج | [اقرأ](../../book-ar/chapter5.ar.md) | [13](../../chapter5/README.ar.md) |
-| 6 | 🎯 **تقييم الوكيل** | تحويل الأداء إلى إشارات قابلة للمقارنة: البيئات، والمقاييس، والأهمية الإحصائية، والاختيار القائم على التقييم | [اقرأ](../../book-ar/chapter6.ar.md) | [12](../../chapter6/README.ar.md) |
-| 7 | 🧠 **مرحلة ما بعد تدريب النموذج** | التدريب المسبق وSFT وRL في ثلاث مراحل: متى نختار كل مسار، وكيف يستبطن النموذج استدعاء الأدوات، وكيف نحسن كفاءة العينات | [اقرأ](../../book-ar/chapter7.ar.md) | [16](../../chapter7/README.ar.md) |
-| 8 | 🔄 **التطور الذاتي للوكيل** | النمو دون تغيير الأوزان: التعلم من الخبرة، من مستخدم الأداة إلى منشئ الأداة | [اقرأ](../../book-ar/chapter8.ar.md) | [9](../../chapter8/README.ar.md) |
-| 9 | 🎙️ **تعدد الوسائط والتفاعل الآني** | من النص إلى الصوت والواجهات الرسومية والعالم المادي: ثلاثة نماذج صوتية، واستخدام الحاسوب، والتحكم في الروبوت | [اقرأ](../../book-ar/chapter9.ar.md) | [12](../../chapter9/README.ar.md) |
-| 10 | 🤝 **التعاون متعدد الوكلاء** | الذكاء الجماعي أكبر من الفردي: أطر التعاون، ومشاركة السياق أو عزله، ومجتمعات الوكلاء الناشئة | [اقرأ](../../book-ar/chapter10.ar.md) | [7](../../chapter10/README.ar.md) |
-
+| 6 | 🎙️ **التفاعل: توسيع فضاء الملاحظة والفعل** | يوسع فضاءَي الملاحظة والفعل على بُعدَي الوسيط والزمن: الأنظمة غير المتزامنة والقائمة على الأحداث، والتفاعل الصوتي، واستخدام الحاسوب، والروبوتات | [اقرأ](../../book-ar/chapter6.ar.md) | [13](../../chapter6/README.ar.md) |
+| 7 | 🎯 **تقييم الوكيل** | تحويل الأداء إلى إشارات قابلة للمقارنة: البيئات، والمقاييس، والأهمية الإحصائية، والاختيار القائم على التقييم | [اقرأ](../../book-ar/chapter7.ar.md) | [13](../../chapter7/README.ar.md) |
+| 8 | 🧠 **مرحلة ما بعد تدريب النموذج** | التدريب المسبق وSFT وRL في ثلاث مراحل: متى نختار كل مسار، وكيف يستبطن النموذج استدعاء الأدوات، وكيف نحسن كفاءة العينات | [اقرأ](../../book-ar/chapter8.ar.md) | [19](../../chapter8/README.ar.md) |
+| 9 | 🔄 **التطور المستمر للوكيل** | يحول مسارات التشغيل إلى إشارات تعلم تحدّث المعرفة والتعليمات والبرامج والمعلمات | [اقرأ](../../book-ar/chapter9.ar.md) | [9](../../chapter9/README.ar.md) |
+| 10 | 🤝 **التعاون متعدد الوكلاء** | الذكاء الجماعي أكبر من الفردي: أطر التعاون، ومشاركة السياق أو عزله، ومجتمعات الوكلاء الناشئة | [اقرأ](../../book-ar/chapter10.ar.md) | [6](../../chapter10/README.ar.md) |
 > 💡 **اقرأ** = افتح نص الفصل بصيغة Markdown على GitHub؛ و**N** = عدد المشاريع المصاحبة، ويمكن النقر عليه للوصول إلى الشفرة. تُشرح أنواع المشاريع (✅ مستقل / 📖 إعادة إنتاج / 🚧 تصميم) في ملف README الخاص بكل فصل.
 >
 > 📚 كيف تقرأ هذا الكتاب بكفاءة؟ راجع **[اقتراحات التعلم](LEARNING.md)** (الأفكار الأساسية، ومسار التعلم، ومستويات الصعوبة، ونصائح التدريب).
@@ -100,32 +101,32 @@
 <summary><b>🔧 عرض أوامر الاستنساخ</b> (23 مستودعًا خارجيًا)</summary>
 
 ```bash
-# Chapter 6 · Evaluation Benchmarks
-git clone https://github.com/google-research/android_world.git         chapter6/android_world
-git clone https://huggingface.co/datasets/gaia-benchmark/GAIA          chapter6/GAIA
-git clone https://github.com/xlang-ai/OSWorld.git                      chapter6/OSWorld
-git clone https://github.com/SWE-bench/SWE-bench.git                   chapter6/SWE-bench
-git clone https://github.com/sierra-research/tau2-bench.git            chapter6/tau2-bench
-git clone https://github.com/laude-institute/terminal-bench.git        chapter6/terminal-bench
+# Chapter 7 · Evaluation Benchmarks
+git clone https://github.com/google-research/android_world.git         chapter7/android_world
+git clone https://huggingface.co/datasets/gaia-benchmark/GAIA          chapter7/GAIA
+git clone https://github.com/xlang-ai/OSWorld.git                      chapter7/OSWorld
+git clone https://github.com/SWE-bench/SWE-bench.git                   chapter7/SWE-bench
+git clone https://github.com/sierra-research/tau2-bench.git            chapter7/tau2-bench
+git clone https://github.com/laude-institute/terminal-bench.git        chapter7/terminal-bench
 
-# Chapter 7 · Training Frameworks (bojieli/* are book-adapted forks)
-git clone https://github.com/bojieli/minimind.git                      chapter7/MiniMind-pretrain/minimind      # Exp 7-3 train LLM from scratch
-git clone https://github.com/bojieli/minimind-v.git                    chapter7/MiniMind-pretrain/minimind-v    # Exp 7-4 train VLM from scratch (projection layer)
-git clone https://github.com/bojieli/AdaptThink.git                    chapter7/AdaptThink-original
-git clone https://github.com/bojieli/AWorld.git                        chapter7/AWorld
-git clone https://github.com/bojieli/SFTvsRL.git                       chapter7/SFTvsRL
-git clone https://github.com/bojieli/verl.git                          chapter7/verl
-git clone https://github.com/bojieli/SandboxFusion.git chapter7/SandboxFusion && git -C chapter7/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c && git -C chapter7/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c && test "$(git -C chapter7/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"  # Exp 7-15 code sandbox
-git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter7/tinker-cookbook
-git clone https://github.com/19PINE-AI/rlvp.git                        chapter7/RLVP/rlvp                       # Exp 7-14 RLVP paper code
-git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter7/SimpleVLA-RL/SimpleVLA-RL       # Exp 7-13 vision-language-action RL
+# Chapter 8 · Training Frameworks (bojieli/* are book-adapted forks)
+git clone https://github.com/bojieli/minimind.git                      chapter8/MiniMind-pretrain/minimind      # Exp 8-3 train LLM from scratch
+git clone https://github.com/bojieli/minimind-v.git                    chapter8/MiniMind-pretrain/minimind-v    # Exp 8-4 train VLM from scratch (projection layer)
+git clone https://github.com/bojieli/AdaptThink.git                    chapter8/AdaptThink-original
+git clone https://github.com/bojieli/AWorld.git                        chapter8/AWorld
+git clone https://github.com/bojieli/SFTvsRL.git                       chapter8/SFTvsRL
+git clone https://github.com/bojieli/verl.git                          chapter8/verl
+git clone https://github.com/bojieli/SandboxFusion.git chapter8/SandboxFusion && git -C chapter8/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c && git -C chapter8/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c && test "$(git -C chapter8/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"  # Exp 8-14 code sandbox
+git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter8/tinker-cookbook
+git clone https://github.com/19PINE-AI/rlvp.git                        chapter8/RLVP/rlvp                       # Exp 8-16 RLVP paper code
+git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter8/SimpleVLA-RL/SimpleVLA-RL       # Exp 8-13 vision-language-action RL
 
-# Chapter 9 · Browser Automation & Claude Examples
-git clone https://github.com/browser-use/browser-use.git               chapter9/browser-use
-git clone https://github.com/anthropics/claude-quickstarts.git         chapter9/claude-quickstarts
-git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot && git -C chapter9/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter9/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter9/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 9-7/9-9 shared
-git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter9/RoboCrew && git -C chapter9/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter9/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter9/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 9-8/9-9; RoboCrew v0.3.1
-git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-sim2real && git -C chapter9/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter9/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter9/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 9-11
+# Chapter 6 · Browser Automation & Claude Examples
+git clone https://github.com/browser-use/browser-use.git               chapter6/browser-use
+git clone https://github.com/anthropics/claude-quickstarts.git         chapter6/claude-quickstarts
+git clone https://github.com/Vector-Wangel/XLeRobot.git chapter6/XLeRobot && git -C chapter6/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter6/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter6/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 6-9/6-11 shared
+git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter6/RoboCrew && git -C chapter6/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter6/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter6/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 6-10/6-11; RoboCrew v0.3.1
+git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter6/lerobot-sim2real && git -C chapter6/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter6/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter6/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 6-13
 
 # Chapter 10 · Dual-Agent Architecture (now independent TalkAct project) + Stanford AI Town
 git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10/use-computer-while-calling

@@ -1,6 +1,6 @@
-# 第9章 · Agent の自己進化
+# 第9章 · Agent の継続的進化
 
-> 重みを変えずに成長する。3 つの学習パラダイム、経験からの学習、そして「ツールの利用者」から「ツールの創造者」への道のりを通じて、Agent を「賢い」段階から「熟練した」段階へと進化させる。
+> 運用軌跡を信頼できる学習シグナルへ変換し、知識・指示・プログラム・パラメータを検証可能かつロールバック可能な形で更新する。
 
 ← [メイン README に戻る](../docs/ja/README.md) · 📖 [章の本文を読む](../book-ja/chapter9.ja.md)
 
@@ -18,15 +18,16 @@
 
 | 実験 | プロジェクト | 種類 | 説明 |
 | :--: | --- | :--: | --- |
-| 8-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | 実験 8-1：環境の結果・プロセスルール・言語 Rubric を組み合わせ、証拠付きのカスタマーサービス軌跡診断を形成する |
-| 8-2 | [gaia-experience](gaia-experience/) | ✅ | 実験 8-2：成功・部分成功・失敗の軌跡を比較し、軌跡横断の Markdown 経験ドキュメントを生成する |
-| 8-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | 実験 8-3：失敗軌跡から最小の Prompt パッチを生成し、境界セットと保持セットでリリースを制御する |
-| 8-4 | [browser-use-rpa](browser-use-rpa/) | ✅ | 実験 8-4：ブラウザ軌跡を状態述語付きのワークフローにコンパイルし、リセット再生で検証する |
-| 8-5 | [self-modifying-agent](self-modifying-agent/) | ✅ | 実験 8-5：繰り返しの障害をトリガーに、リトライ/サーキットブレーカーのコードパッチ、回帰テスト、カナリアリリースとロールバックを行う |
-| 8-6 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Hermes に本書全体と自分のソースを渡す。改善を選んで自分を書き換え、Reviewer の拒否を次の学習に変えながら受理まで進む |
-| 8-7 | [self-evolution-eval](self-evolution-eval/) | ✅ | 実験 8-7：学習・転移・ルール変化・保持の 4 段階で長期的な進化を評価する |
-| 8-8 | [harness-safety-gate](harness-safety-gate/) | ✅ | 高リスク操作の確認ゲート |
-| 8-9 | [ai-style-skill](ai-style-skill/) | ✅ | 執筆フィードバックを検証可能な Skill に変換する。章では曲線引用符 Skill を監査済み合成データと追加学習に接続し、exact-copy の tokenizer/Harness 障害を分離する |
+| 9-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | 実験 9-1：環境の結果・プロセスルール・言語 Rubric を組み合わせ、証拠付きのカスタマーサービス軌跡診断を形成する |
+| 9-2 | [gaia-experience](gaia-experience/) | ✅ | 実験 9-2：成功・部分成功・失敗の軌跡を比較し、軌跡横断の Markdown 経験ドキュメントを生成する |
+| 9-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | 実験 9-3：失敗軌跡から最小の Prompt パッチを生成し、境界セットと保持セットでリリースを制御する |
+| 9-4 | 本文内の比較実験 | 🚧 | 要件明確化と仕様確認の Skill を、3 群 A/B 設計とリリースゲートを用いてユーザーフィードバックから進化させる |
+| 9-5 | [browser-use-rpa](browser-use-rpa/) | ✅ | 実験 9-5：ブラウザ軌跡を状態述語付きのワークフローにコンパイルし、リセット再生で検証する |
+| 9-6 | [self-modifying-agent](self-modifying-agent/) | ✅ | 実験 9-6：繰り返しの障害をトリガーに、リトライ/サーキットブレーカーのコードパッチ、回帰テスト、カナリアリリースとロールバックを行う |
+| 9-7 | [harness-safety-gate](harness-safety-gate/) | ✅ | 実験 9-7：高リスク操作の確認ゲート |
+| 9-8 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | 実験 9-8：Hermes に本書全体と自分のソースを渡す。改善を選んで自分を書き換え、Reviewer の拒否を次の学習に変えながら受理まで進む |
+| 9-9 | [self-evolution-eval](self-evolution-eval/) | ✅ | 実験 9-9：学習・転移・ルール変化・保持の 4 段階で長期的な進化を評価する |
+| — | [ai-style-skill](ai-style-skill/) | — | 執筆フィードバックを検証可能な Skill に変換する。章では曲線引用符 Skill を監査済み合成データと追加学習に接続し、exact-copy の tokenizer/Harness 障害を分離する |
 
 上記の実験はすべて、API キー不要のオフライン入口とユニットテストを提供する。実モデルやブラウザが必要な拡張パスは各プロジェクトの README に記載されている。
 
@@ -34,7 +35,7 @@
 
 | 実験 | プロジェクト | 関係 |
 | :--: | --- | --- |
-| 7-8 | [prompt-distillation](prompt-distillation/) | Prompt 蒸留とパラメータ化学習の章横断プロジェクト。訓練手法は第 7 章に属する |
+| 8-8 | [prompt-distillation](../chapter8/prompt-distillation/) | Prompt 蒸留とパラメータ化学習の章横断プロジェクト。訓練手法は第 8 章に属する |
 | — | [self-evolving-tools](self-evolving-tools/) | Alita 式のツール発見・カプセル化・再利用。「経験をプログラムとして書き出す」ことの補足事例 |
 
 ## プロジェクトの種類

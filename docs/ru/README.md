@@ -7,9 +7,11 @@
 
 > 📥 **[Скачать PDF / EPUB](#-электронная-книга)** (рекомендуется) — рекомендуем читать книгу в PDF / EPUB, там лучшая вёрстка; также доступно [чтение онлайн](https://bojieli.github.io/ai-agent-book/) (переключатель языков, сворачиваемое оглавление, полнотекстовый поиск; сайт автоматически перестраивается при каждом пуше в main).
 
-**Агент = LLM + Контекст + Инструменты** — книга строится вокруг этой базовой формулы и за 10 глав ведёт AI Agent от принципов к инженерной практике. Весь текст, иллюстрации и **93 сопутствующих эксперимента** открыты. Приглашаем прогнать эксперименты своими руками.
+**Агент = LLM + Контекст + Инструменты** — книга строится вокруг этой базовой формулы и за 10 глав ведёт AI Agent от принципов к инженерной практике. Весь текст, иллюстрации и **103 сопутствующих эксперимента** открыты. Приглашаем прогнать эксперименты своими руками.
 
-| 📚 **10 глав** текста, от основ к продакшену | 📂 **93** сопутствующих проектов (70+ автономных) | 🌐 **13 языков**: CN / EN / ES / ID / AR / zh-TW / **RU** / TA / VI / JA / TR / KO / HU |
+> 🚧 **Идёт реорганизация версии 2.0:** Книга перешла с версии 1.4 на 2.0, а материал теперь следует новой траектории обучения. Главы 6–9 посвящены «Взаимодействию: расширению пространства наблюдений и действий», «Оценке агентов», «Постобучению модели» и «Непрерывной эволюции агентов». Уже опубликованные PDF могут временно сохранять прежнюю структуру; актуальные расположение и нумерацию глав и экспериментов определяют этот README и текст в репозитории.
+
+| 📚 **10 глав** текста, от основ к продакшену | 📂 **103** сопутствующих проектов (70+ автономных) | 🌐 **13 языков**: CN / EN / ES / ID / AR / zh-TW / **RU** / TA / VI / JA / TR / KO / HU |
 | :---: | :---: | :---: |
 
 ## 📖 Электронная книга
@@ -53,17 +55,16 @@
 
 | Гл | Тема | Кратко | Текст | Код |
 | :--: | --- | --- | :--: | :--: |
-| 1 | 🚀 **Основы агентов** | Парадигма «модель как агент» + **Агент = LLM + Контекст + Инструменты**; harness-инженерия — вот настоящее преимущество | [Читать](../../book-ru/chapter1.md) | [4](../../chapter1/README.ru.md) |
-| 2 | 🎯 **Инженерия контекста** | Контекст ограничивает возможности агента: KV Cache, инженерия промптов, Agent Skills, сжатие контекста | [Читать](../../book-ru/chapter2.md) | [9](../../chapter2/README.ru.md) |
+| 1 | 🚀 **Введение в ИИ-агенты** | **Агент = LLM + Контекст + Инструменты**; harness-инженерия — вот настоящее преимущество | [Читать](../../book-ru/chapter1.md) | [3](../../chapter1/README.ru.md) |
+| 2 | 🎯 **Инженерия контекста** | Контекст ограничивает возможности агента: KV Cache, инженерия промптов, Agent Skills, сжатие контекста | [Читать](../../book-ru/chapter2.md) | [10](../../chapter2/README.ru.md) |
 | 3 | 📚 **Память пользователя и базы знаний** | Кросс-сессионная память + внешние знания: пользовательская память, RAG, структурированные индексы, графы знаний | [Читать](../../book-ru/chapter3.md) | [12](../../chapter3/README.ru.md) |
-| 4 | 🛠️ **Инструменты** | Инструменты — руки агента: протокол MCP, инструменты восприятия/исполнения/сотрудничества, событийные асинхронные агенты, активное обнаружение инструментов | [Читать](../../book-ru/chapter4.md) | [8](../../chapter4/README.ru.md) |
+| 4 | 🛠️ **Инструменты** | Инструменты — руки агента: MCP, восприятие, исполнение, сотрудничество и активное обнаружение инструментов | [Читать](../../book-ru/chapter4.md) | [5](../../chapter4/README.ru.md) |
 | 5 | 💻 **Кодинг-агент и генерация кода** | Код — «инструмент, создающий новые инструменты»; промышленный кодинг-агент целиком | [Читать](../../book-ru/chapter5.md) | [13](../../chapter5/README.ru.md) |
-| 6 | 🎯 **Оценка агентов** | Превращаем качество в сравнимые сигналы: среды, метрики, статзначимость, выбор на основе оценки | [Читать](../../book-ru/chapter6.md) | [12](../../chapter6/README.ru.md) |
-| 7 | 🧠 **Постобучение модели** | Три стадии предобучение/SFT/RL: когда выбирать SFT, а когда RL, внедрение вызова инструментов, эффективность выборки | [Читать](../../book-ru/chapter7.md) | [16](../../chapter7/README.ru.md) |
-| 8 | 🔄 **Самоэволюция агента** | Рост без изменения весов: обучение на опыте, от пользователя инструментов к их создателю | [Читать](../../book-ru/chapter8.md) | [9](../../chapter8/README.ru.md) |
-| 9 | 🎙️ **Мультимодальность и реальное время** | От текста к голосу, GUI, физическому миру: три голосовые парадигмы, Computer Use, робототехника | [Читать](../../book-ru/chapter9.md) | [12](../../chapter9/README.ru.md) |
-| 10 | 🤝 **Многоагентное взаимодействие** | Коллективный интеллект > индивидуального: фреймворки сотрудничества, разделение/изоляция контекста, эмерджентное «общество агентов» | [Читать](../../book-ru/chapter10.md) | [7](../../chapter10/README.ru.md) |
-
+| 6 | 🎙️ **Взаимодействие: расширение пространства наблюдений и действий** | Расширяет пространство наблюдений и действий агента по двум измерениям — модальности и времени: асинхронные событийные системы, голос, Computer Use и робототехника | [Читать](../../book-ru/chapter6.md) | [13](../../chapter6/README.ru.md) |
+| 7 | 🎯 **Оценка агентов** | Превращаем качество в сравнимые сигналы: среды, метрики, статзначимость, выбор на основе оценки | [Читать](../../book-ru/chapter7.md) | [13](../../chapter7/README.ru.md) |
+| 8 | 🧠 **Постобучение модели** | Три стадии предобучение/SFT/RL: когда выбирать SFT, а когда RL, внедрение вызова инструментов, эффективность выборки | [Читать](../../book-ru/chapter8.md) | [19](../../chapter8/README.ru.md) |
+| 9 | 🔄 **Непрерывная эволюция агента** | Преобразует рабочие траектории в сигналы обучения для обновления знаний, инструкций, программ и параметров | [Читать](../../book-ru/chapter9.md) | [9](../../chapter9/README.ru.md) |
+| 10 | 🤝 **Многоагентное взаимодействие** | Коллективный интеллект > индивидуального: фреймворки сотрудничества, разделение/изоляция контекста, эмерджентное «общество агентов» | [Читать](../../book-ru/chapter10.md) | [6](../../chapter10/README.ru.md) |
 > 💡 **Читать** = читать текст главы на GitHub (markdown); **N** = число сопутствующих проектов, кликните для кода. Типы проектов (✅ автономный / 📖 воспроизведение / 🚧 проектный) поясняются в README каждой главы.
 >
 > 📚 Как читать книгу эффективно? См. **[Советы по обучению](LEARNING.md)** (ключевые идеи, путь обучения, уровни сложности, советы по практике).
@@ -117,7 +118,7 @@ Krill предлагает читателям книги специальную 
 
 ## 📦 Приложение · Получение внешних репозиториев
 
-23 внешних репозитория для бенчмарков, обучающих фреймворков и робо-платформ из глав 6, 7, 9, 10 **не включены** (из-за размера и лицензий) и должны быть склонированы в соответствующие каталоги.
+23 внешних репозитория для бенчмарков, обучающих фреймворков и робо-платформ из глав 6, 7, 8, 10 **не включены** (из-за размера и лицензий) и должны быть склонированы в соответствующие каталоги.
 
 ### Скрипт клонирования одной командой
 
@@ -126,31 +127,31 @@ Krill предлагает читателям книги специальную 
 
 ```bash
 # Глава 6 · Бенчмарки оценки
-git clone https://github.com/google-research/android_world.git         chapter6/android_world
-git clone https://huggingface.co/datasets/gaia-benchmark/GAIA          chapter6/GAIA
-git clone https://github.com/xlang-ai/OSWorld.git                      chapter6/OSWorld
-git clone https://github.com/SWE-bench/SWE-bench.git                   chapter6/SWE-bench
-git clone https://github.com/sierra-research/tau2-bench.git            chapter6/tau2-bench
-git clone https://github.com/laude-institute/terminal-bench.git        chapter6/terminal-bench
+git clone https://github.com/google-research/android_world.git         chapter7/android_world
+git clone https://huggingface.co/datasets/gaia-benchmark/GAIA          chapter7/GAIA
+git clone https://github.com/xlang-ai/OSWorld.git                      chapter7/OSWorld
+git clone https://github.com/SWE-bench/SWE-bench.git                   chapter7/SWE-bench
+git clone https://github.com/sierra-research/tau2-bench.git            chapter7/tau2-bench
+git clone https://github.com/laude-institute/terminal-bench.git        chapter7/terminal-bench
 
-# Глава 7 · Обучающие фреймворки (bojieli/* — адаптированные под книгу форки)
-git clone https://github.com/bojieli/minimind.git                      chapter7/MiniMind-pretrain/minimind      # Эксп. 7-3: обучение LLM с нуля
-git clone https://github.com/bojieli/minimind-v.git                    chapter7/MiniMind-pretrain/minimind-v    # Эксп. 7-4: обучение VLM с нуля (проекционный слой)
-git clone https://github.com/bojieli/AdaptThink.git                    chapter7/AdaptThink-original
-git clone https://github.com/bojieli/AWorld.git                        chapter7/AWorld
-git clone https://github.com/bojieli/SFTvsRL.git                       chapter7/SFTvsRL
-git clone https://github.com/bojieli/verl.git                          chapter7/verl
-git clone https://github.com/bojieli/SandboxFusion.git chapter7/SandboxFusion && git -C chapter7/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c && git -C chapter7/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c && test "$(git -C chapter7/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"  # Exp 7-15 code sandbox
-git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter7/tinker-cookbook
-git clone https://github.com/19PINE-AI/rlvp.git                        chapter7/RLVP/rlvp                       # Эксп. 7-14: код статьи RLVP
-git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter7/SimpleVLA-RL/SimpleVLA-RL       # Эксп. 7-13: RL «зрение-язык-действие»
+# Глава 8 · Обучающие фреймворки (bojieli/* — адаптированные под книгу форки)
+git clone https://github.com/bojieli/minimind.git                      chapter8/MiniMind-pretrain/minimind      # Эксп. 8-3: обучение LLM с нуля
+git clone https://github.com/bojieli/minimind-v.git                    chapter8/MiniMind-pretrain/minimind-v    # Эксп. 8-4: обучение VLM с нуля (проекционный слой)
+git clone https://github.com/bojieli/AdaptThink.git                    chapter8/AdaptThink-original
+git clone https://github.com/bojieli/AWorld.git                        chapter8/AWorld
+git clone https://github.com/bojieli/SFTvsRL.git                       chapter8/SFTvsRL
+git clone https://github.com/bojieli/verl.git                          chapter8/verl
+git clone https://github.com/bojieli/SandboxFusion.git chapter8/SandboxFusion && git -C chapter8/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c && git -C chapter8/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c && test "$(git -C chapter8/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"  # Exp 8-14 code sandbox
+git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter8/tinker-cookbook
+git clone https://github.com/19PINE-AI/rlvp.git                        chapter8/RLVP/rlvp                       # Эксп. 8-16: код статьи RLVP
+git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter8/SimpleVLA-RL/SimpleVLA-RL       # Эксп. 8-13: RL «зрение-язык-действие»
 
-# Глава 9 · Автоматизация браузера и примеры Claude
-git clone https://github.com/browser-use/browser-use.git               chapter9/browser-use
-git clone https://github.com/anthropics/claude-quickstarts.git         chapter9/claude-quickstarts
-git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot && git -C chapter9/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter9/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter9/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 9-7/9-9 shared
-git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter9/RoboCrew && git -C chapter9/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter9/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter9/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 9-8/9-9; RoboCrew v0.3.1
-git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-sim2real && git -C chapter9/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter9/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter9/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 9-11
+# Глава 6 · Автоматизация браузера и примеры Claude
+git clone https://github.com/browser-use/browser-use.git               chapter6/browser-use
+git clone https://github.com/anthropics/claude-quickstarts.git         chapter6/claude-quickstarts
+git clone https://github.com/Vector-Wangel/XLeRobot.git chapter6/XLeRobot && git -C chapter6/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter6/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter6/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 6-9/6-11 shared
+git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter6/RoboCrew && git -C chapter6/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter6/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter6/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 6-10/6-11; RoboCrew v0.3.1
+git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter6/lerobot-sim2real && git -C chapter6/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter6/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter6/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 6-13
 
 # Глава 10 · Архитектура двух агентов (теперь отдельный проект TalkAct) + Stanford AI Town
 git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10/use-computer-while-calling

@@ -7,9 +7,11 @@
 
 > 📥 **[PDF / EPUB indir](#-e-kitap)** (önerilir) — PDF / EPUB sürümleri en iyi okuma deneyimini sunar; kitabı [çevrimiçi](https://bojieli.github.io/ai-agent-book/) da okuyabilirsiniz.
 
-**Agent = LLM + Bağlam + Araçlar** — Bu kitap, bu temel formül etrafında 10 bölümde AI Agent'ları ilkelerden mühendislik pratiğine taşıyor. Tüm metin, görseller ve **93 eşlik eden deney** açık kaynak; deneyleri bizzat çalıştırmanız için sizi bekliyor.
+**Agent = LLM + Bağlam + Araçlar** — Bu kitap, bu temel formül etrafında 10 bölümde AI Agent'ları ilkelerden mühendislik pratiğine taşıyor. Tüm metin, görseller ve **103 eşlik eden deney** açık kaynak; deneyleri bizzat çalıştırmanız için sizi bekliyor.
 
-| 📚 **10 bölüm** metin, temelden üretime | 📂 **93** eşlik eden proje (70+ bağımsız çalıştırılabilir) | 🌐 **13 dil**: CN / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO / HU |
+> 🚧 **Sürüm 2.0 yeniden düzenlemesi sürüyor:** Kitap 1.4 sürümünden 2.0'a geçti ve içerik yeni bir öğrenme yoluna göre yeniden düzenlendi. 6–9. bölümler artık sırasıyla “Etkileşim: Gözlem ve Eylem Uzaylarının Genişletilmesi”, “Agent Değerlendirmesi”, “Model Eğitim Sonrası” ve “Agent'ın Sürekli Evrimi”dir. Daha önce yayımlanmış PDF'ler geçici olarak eski yapıyı koruyabilir; bölüm yerleşimi, numaralandırma ve deney girişleri için bu README ile depodaki metin esas alınmalıdır.
+
+| 📚 **10 bölüm** metin, temelden üretime | 📂 **103** eşlik eden proje (70+ bağımsız çalıştırılabilir) | 🌐 **13 dil**: CN / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO / HU |
 | :---: | :---: | :---: |
 
 ## 📖 E-Kitap
@@ -52,17 +54,16 @@ Kitap, **Agent = LLM + Bağlam + Araçlar** temel formülü etrafında şekillen
 
 | Böl | Konu | Tek Cümlelik Özet | Metin | Kod |
 | :--: | --- | --- | :--: | :--: |
-| 1 | 🚀 **Agent Temelleri** | "Ajan Olarak Model" paradigması + **Agent = LLM + Bağlam + Araçlar**; Harness mühendisliği gerçek rekabet avantajıdır | [Oku](../../book-tr/chapter1.tr.md) | [4](../../chapter1/README.tr.md) |
-| 2 | 🎯 **Bağlam Mühendisliği** | Bağlam, Agent'ın yetenek tavanını belirler: KV Cache, prompt mühendisliği, Agent Skills, bağlam sıkıştırma | [Oku](../../book-tr/chapter2.tr.md) | [9](../../chapter2/README.tr.md) |
+| 1 | 🚀 **AI Agent'lara Giriş** | **Agent = LLM + Bağlam + Araçlar**; Harness mühendisliği gerçek rekabet avantajıdır | [Oku](../../book-tr/chapter1.tr.md) | [3](../../chapter1/README.tr.md) |
+| 2 | 🎯 **Bağlam Mühendisliği** | Bağlam, Agent'ın yetenek tavanını belirler: KV Cache, prompt mühendisliği, Agent Skills, bağlam sıkıştırma | [Oku](../../book-tr/chapter2.tr.md) | [10](../../chapter2/README.tr.md) |
 | 3 | 📚 **Kullanıcı Belleği ve Bilgi Tabanları** | Oturumlar arası kullanıcı belleği + harici bilgi: kullanıcı belleği, RAG, yapılandırılmış indeksler, bilgi grafikleri | [Oku](../../book-tr/chapter3.tr.md) | [12](../../chapter3/README.tr.md) |
-| 4 | 🛠️ **Araçlar** | Araçlar Agent'ın elleridir: MCP protokolü, algı/yürütme/işbirliği araçları, olay güdümlü asenkron Agent'lar, proaktif araç keşfi | [Oku](../../book-tr/chapter4.tr.md) | [8](../../chapter4/README.tr.md) |
+| 4 | 🛠️ **Araçlar** | Araçlar Agent'ın elleridir: MCP, algı, yürütme, işbirliği ve proaktif araç keşfi | [Oku](../../book-tr/chapter4.tr.md) | [5](../../chapter4/README.tr.md) |
 | 5 | 💻 **Coding Agent ve Kod Üretimi** | Kod, "yeni araçlar yaratabilen bir araçtır"; üretim seviyesinde Coding Agent'ın tam görünümü | [Oku](../../book-tr/chapter5.tr.md) | [13](../../chapter5/README.tr.md) |
-| 6 | 🎯 **Agent Değerlendirmesi** | Performansı karşılaştırılabilir sinyale dönüştürmek: ortamlar, metrikler, istatistiksel anlamlılık, değerlendirme odaklı seçim | [Oku](../../book-tr/chapter6.tr.md) | [12](../../chapter6/README.tr.md) |
-| 7 | 🧠 **Model Eğitim Sonrası** | Pre-training/SFT/RL üç aşama: SFT mi RL mi ne zaman seçilir, araç çağrılarının içselleştirilmesi, örnek verimliliği | [Oku](../../book-tr/chapter7.tr.md) | [16](../../chapter7/README.tr.md) |
-| 8 | 🔄 **Agent'ın Kendi Kendine Evrimi** | Ağırlıkları değiştirmeden büyüme: deneyimden öğrenme, araç kullanıcısından araç yaratıcısına | [Oku](../../book-tr/chapter8.tr.md) | [9](../../chapter8/README.tr.md) |
-| 9 | 🎙️ **Çok Modluluk ve Gerçek Zamanlı Etkileşim** | Metinden sese, GUI'ye, fiziksel dünyaya genişleme: üç ses paradigması, Computer Use, robotik | [Oku](../../book-tr/chapter9.tr.md) | [12](../../chapter9/README.tr.md) |
-| 10 | 🤝 **Çoklu Ajan İşbirliği** | Kolektif zeka bireyden üstündür: işbirliği çerçeveleri, bağlam paylaşımı/izolasyonu, ortaya çıkan "Agent Toplumu" | [Oku](../../book-tr/chapter10.tr.md) | [7](../../chapter10/README.tr.md) |
-
+| 6 | 🎙️ **Etkileşim: Gözlem ve Eylem Uzaylarının Genişletilmesi** | Agent'ın gözlem ve eylem uzaylarını kiplik ve zamanlama boyutlarında genişletir: asenkron ve olay güdümlü sistemler, sesli etkileşim, Computer Use ve robotik | [Oku](../../book-tr/chapter6.tr.md) | [13](../../chapter6/README.tr.md) |
+| 7 | 🎯 **Agent Değerlendirmesi** | Performansı karşılaştırılabilir sinyale dönüştürmek: ortamlar, metrikler, istatistiksel anlamlılık, değerlendirme odaklı seçim | [Oku](../../book-tr/chapter7.tr.md) | [13](../../chapter7/README.tr.md) |
+| 8 | 🧠 **Model Eğitim Sonrası** | Pre-training/SFT/RL üç aşama: SFT mi RL mi ne zaman seçilir, araç çağrılarının içselleştirilmesi, örnek verimliliği | [Oku](../../book-tr/chapter8.tr.md) | [19](../../chapter8/README.tr.md) |
+| 9 | 🔄 **Agent'ın Sürekli Evrimi** | İşletim yörüngelerini bilgi, talimat, program ve parametreleri güncelleyen öğrenme sinyallerine dönüştürür | [Oku](../../book-tr/chapter9.tr.md) | [9](../../chapter9/README.tr.md) |
+| 10 | 🤝 **Çoklu Ajan İşbirliği** | Kolektif zeka bireyden üstündür: işbirliği çerçeveleri, bağlam paylaşımı/izolasyonu, ortaya çıkan "Agent Toplumu" | [Oku](../../book-tr/chapter10.tr.md) | [6](../../chapter10/README.tr.md) |
 > 💡 **Oku** = bölüm metnini GitHub üzerinde doğrudan oku (markdown); **N** = eşlik eden proje sayısı, koda bakmak için tıklayın. Proje türleri (✅ Bağımsız / 📖 Yeniden üretim / 🚧 Tasarım) her bölümün README'sinde açıklanır.
 >
 > 📚 Bu kitabı verimli okumak için bkz. **[Öğrenme Önerileri](LEARNING.md)** (temel fikirler, öğrenme yolu, zorluk seviyeleri, pratik ipuçları).
@@ -83,7 +84,7 @@ Kitap, **Agent = LLM + Bağlam + Araçlar** temel formülü etrafında şekillen
 
 ## 📦 Ek · Harici Depoların Temin Edilmesi
 
-Bölüm 6, 7, 9, 10'daki değerlendirme kıstasları, eğitim çerçeveleri ve robot platformları için 23 harici depo (boyut ve lisanslama nedeniyle) **pakete dahil değildir** ve karşılık gelen dizinlere klonlanması gerekir.
+Bölüm 6, 7, 8, 10'daki değerlendirme kıstasları, eğitim çerçeveleri ve robot platformları için 23 harici depo (boyut ve lisanslama nedeniyle) **pakete dahil değildir** ve karşılık gelen dizinlere klonlanması gerekir.
 
 ### Tek Seferde Klonlama Betiği
 
@@ -91,32 +92,32 @@ Bölüm 6, 7, 9, 10'daki değerlendirme kıstasları, eğitim çerçeveleri ve r
 <summary><b>🔧 Klonlama komutlarını genişlet</b> (23 harici depo)</summary>
 
 ```bash
-# Bölüm 6 · Değerlendirme Kıstasları
-git clone https://github.com/google-research/android_world.git         chapter6/android_world
-git clone https://huggingface.co/datasets/gaia-benchmark/GAIA          chapter6/GAIA
-git clone https://github.com/xlang-ai/OSWorld.git                      chapter6/OSWorld
-git clone https://github.com/SWE-bench/SWE-bench.git                   chapter6/SWE-bench
-git clone https://github.com/sierra-research/tau2-bench.git            chapter6/tau2-bench
-git clone https://github.com/laude-institute/terminal-bench.git        chapter6/terminal-bench
+# Bölüm 7 · Değerlendirme Kıstasları
+git clone https://github.com/google-research/android_world.git         chapter7/android_world
+git clone https://huggingface.co/datasets/gaia-benchmark/GAIA          chapter7/GAIA
+git clone https://github.com/xlang-ai/OSWorld.git                      chapter7/OSWorld
+git clone https://github.com/SWE-bench/SWE-bench.git                   chapter7/SWE-bench
+git clone https://github.com/sierra-research/tau2-bench.git            chapter7/tau2-bench
+git clone https://github.com/laude-institute/terminal-bench.git        chapter7/terminal-bench
 
-# Bölüm 7 · Eğitim Çerçeveleri (bojieli/* kitaba uyarlanmış fork'lardır)
-git clone https://github.com/bojieli/minimind.git                      chapter7/MiniMind-pretrain/minimind      # Deney 7-3 sıfırdan LLM eğitimi
-git clone https://github.com/bojieli/minimind-v.git                    chapter7/MiniMind-pretrain/minimind-v    # Deney 7-4 sıfırdan VLM eğitimi (projeksiyon katmanı)
-git clone https://github.com/bojieli/AdaptThink.git                    chapter7/AdaptThink-original
-git clone https://github.com/bojieli/AWorld.git                        chapter7/AWorld
-git clone https://github.com/bojieli/SFTvsRL.git                       chapter7/SFTvsRL
-git clone https://github.com/bojieli/verl.git                          chapter7/verl
-git clone https://github.com/bojieli/SandboxFusion.git chapter7/SandboxFusion && git -C chapter7/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c && git -C chapter7/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c && test "$(git -C chapter7/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"  # Exp 7-15 code sandbox
-git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter7/tinker-cookbook
-git clone https://github.com/19PINE-AI/rlvp.git                        chapter7/RLVP/rlvp                       # Deney 7-14 RLVP makale kodu
-git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter7/SimpleVLA-RL/SimpleVLA-RL       # Deney 7-13 görsel-dil-eylem RL
+# Bölüm 8 · Eğitim Çerçeveleri (bojieli/* kitaba uyarlanmış fork'lardır)
+git clone https://github.com/bojieli/minimind.git                      chapter8/MiniMind-pretrain/minimind      # Deney 8-3 sıfırdan LLM eğitimi
+git clone https://github.com/bojieli/minimind-v.git                    chapter8/MiniMind-pretrain/minimind-v    # Deney 8-4 sıfırdan VLM eğitimi (projeksiyon katmanı)
+git clone https://github.com/bojieli/AdaptThink.git                    chapter8/AdaptThink-original
+git clone https://github.com/bojieli/AWorld.git                        chapter8/AWorld
+git clone https://github.com/bojieli/SFTvsRL.git                       chapter8/SFTvsRL
+git clone https://github.com/bojieli/verl.git                          chapter8/verl
+git clone https://github.com/bojieli/SandboxFusion.git chapter8/SandboxFusion && git -C chapter8/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c && git -C chapter8/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c && test "$(git -C chapter8/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"  # Exp 8-14 code sandbox
+git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter8/tinker-cookbook
+git clone https://github.com/19PINE-AI/rlvp.git                        chapter8/RLVP/rlvp                       # Deney 8-16 RLVP makale kodu
+git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter8/SimpleVLA-RL/SimpleVLA-RL       # Deney 8-13 görsel-dil-eylem RL
 
-# Bölüm 9 · Tarayıcı Otomasyonu ve Claude Örnekleri
-git clone https://github.com/browser-use/browser-use.git               chapter9/browser-use
-git clone https://github.com/anthropics/claude-quickstarts.git         chapter9/claude-quickstarts
-git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot && git -C chapter9/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter9/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter9/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 9-7/9-9 shared
-git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter9/RoboCrew && git -C chapter9/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter9/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter9/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 9-8/9-9; RoboCrew v0.3.1
-git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-sim2real && git -C chapter9/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter9/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter9/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 9-11
+# Bölüm 6 · Tarayıcı Otomasyonu ve Claude Örnekleri
+git clone https://github.com/browser-use/browser-use.git               chapter6/browser-use
+git clone https://github.com/anthropics/claude-quickstarts.git         chapter6/claude-quickstarts
+git clone https://github.com/Vector-Wangel/XLeRobot.git chapter6/XLeRobot && git -C chapter6/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter6/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter6/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 6-9/6-11 shared
+git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter6/RoboCrew && git -C chapter6/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter6/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter6/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 6-10/6-11; RoboCrew v0.3.1
+git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter6/lerobot-sim2real && git -C chapter6/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter6/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter6/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 6-13
 
 # Bölüm 10 · İkili Agent Mimarisi (artık bağımsız TalkAct projesi) + Stanford AI Kasabası
 git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10/use-computer-while-calling

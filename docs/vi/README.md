@@ -7,9 +7,11 @@
 
 > 📥 **[Tải PDF / EPUB](#-sách-điện-tử)** (khuyên dùng) — nên đọc sách qua bản PDF / EPUB để có trải nghiệm tốt nhất; bạn cũng có thể [đọc trực tuyến](https://bojieli.github.io/ai-agent-book/) (chuyển đổi ngôn ngữ, mục lục đóng/mở được, tìm kiếm toàn văn; tự động xây dựng lại sau mỗi lần đẩy lên main).
 
-**Agent = LLM + Context + Tools** — Cuốn sách xây dựng trên công thức cốt lõi này qua 10 chương, đưa AI Agent từ nguyên lý đến thực hành kỹ thuật. Toàn bộ nội dung, hình minh họa và **93 thí nghiệm đi kèm** đều là mã nguồn mở. Hoan nghênh bạn tự chạy các thí nghiệm.
+**Agent = LLM + Context + Tools** — Cuốn sách xây dựng trên công thức cốt lõi này qua 10 chương, đưa AI Agent từ nguyên lý đến thực hành kỹ thuật. Toàn bộ nội dung, hình minh họa và **103 thí nghiệm đi kèm** đều là mã nguồn mở. Hoan nghênh bạn tự chạy các thí nghiệm.
 
-| 📚 **10 chương** nội dung, từ nền tảng đến sản xuất | 📂 **93** dự án đi kèm (70+ chạy độc lập) | 🌐 **13 ngôn ngữ**: Trung / Anh / Tây Ban Nha / Indonesia / Ả Rập / 繁體中文（台灣） / Nga / Tamil / Việt / Nhật / Thổ Nhĩ Kỳ / Hàn / Hungary |
+> 🚧 **Đang tái cấu trúc cho phiên bản 2.0:** Cuốn sách đã chuyển từ phiên bản 1.4 lên 2.0 và nội dung nay đi theo một lộ trình học mới. Chương 6–9 lần lượt là “Tương tác: mở rộng không gian quan sát và hành động”, “Đánh giá Agent”, “Hậu huấn luyện mô hình” và “Sự tiến hóa liên tục của Agent”. Các PDF đã phát hành có thể tạm thời vẫn dùng cấu trúc cũ; vị trí chương, cách đánh số và điểm vào thí nghiệm lấy README này cùng bản thảo trong kho làm chuẩn.
+
+| 📚 **10 chương** nội dung, từ nền tảng đến sản xuất | 📂 **103** dự án đi kèm (70+ chạy độc lập) | 🌐 **13 ngôn ngữ**: Trung / Anh / Tây Ban Nha / Indonesia / Ả Rập / 繁體中文（台灣） / Nga / Tamil / Việt / Nhật / Thổ Nhĩ Kỳ / Hàn / Hungary |
 | :---: | :---: | :---: |
 
 ## 📖 Sách điện tử
@@ -52,17 +54,16 @@ Sách xoay quanh công thức cốt lõi **Agent = LLM + Context + Tools**, mư�
 
 | Ch | Chủ đề | Tóm tắt một câu | Văn bản | Mã |
 | :--: | --- | --- | :--: | :--: |
-| 1 | 🚀 **Kiến thức nền tảng về Agent** | **Agent = LLM + Context + Tools**; kỹ thuật Harness mới là lợi thế cạnh tranh thực sự | [Đọc](../../book-vi/chapter1.vi.md) | [4](../../chapter1/README.vi.md) |
-| 2 | 🎯 **Kỹ thuật ngữ cảnh** | Ngữ cảnh quyết định trần năng lực: KV Cache, prompt engineering, Agent Skills, nén ngữ cảnh | [Đọc](../../book-vi/chapter2.vi.md) | [9](../../chapter2/README.vi.md) |
+| 1 | 🚀 **Nhập môn AI Agent** | **Agent = LLM + Context + Tools**; kỹ thuật Harness mới là lợi thế cạnh tranh thực sự | [Đọc](../../book-vi/chapter1.vi.md) | [3](../../chapter1/README.vi.md) |
+| 2 | 🎯 **Kỹ thuật ngữ cảnh** | Ngữ cảnh quyết định trần năng lực: KV Cache, prompt engineering, Agent Skills, nén ngữ cảnh | [Đọc](../../book-vi/chapter2.vi.md) | [10](../../chapter2/README.vi.md) |
 | 3 | 📚 **Bộ nhớ người dùng và kho tri thức** | Ghi nhớ người dùng qua phiên + tri thức ngoài: bộ nhớ người dùng, RAG, chỉ mục cấu trúc, đồ thị tri thức | [Đọc](../../book-vi/chapter3.vi.md) | [12](../../chapter3/README.vi.md) |
-| 4 | 🛠️ **Công cụ** | Công cụ là đôi tay Agent: giao thức MCP, cảm nhận/thực thi/cộng tác, Agent bất đồng bộ hướng sự kiện, khám phá công cụ tích cực | [Đọc](../../book-vi/chapter4.vi.md) | [8](../../chapter4/README.vi.md) |
+| 4 | 🛠️ **Công cụ** | Công cụ là đôi tay Agent: MCP, cảm nhận, thực thi, cộng tác và chủ động khám phá công cụ | [Đọc](../../book-vi/chapter4.vi.md) | [5](../../chapter4/README.vi.md) |
 | 5 | 💻 **Coding Agent và sinh mã** | Mã là "công cụ tạo ra công cụ mới"; Coding Agent cấp sản xuất đầy đủ | [Đọc](../../book-vi/chapter5.vi.md) | [13](../../chapter5/README.vi.md) |
-| 6 | 🎯 **Đánh giá Agent** | Biến biểu hiện thành tín hiệu so sánh được: môi trường, chỉ số, ý nghĩa thống kê, chọn mô hình dựa trên đánh giá | [Đọc](../../book-vi/chapter6.vi.md) | [12](../../chapter6/README.vi.md) |
-| 7 | 🧠 **Hậu huấn luyện mô hình** | Tiền huấn luyện/SFT/RL ba giai đoạn: khi nào SFT, khi nào RL, nội tại hóa gọi công cụ, hiệu quả mẫu | [Đọc](../../book-vi/chapter7.vi.md) | [16](../../chapter7/README.vi.md) |
-| 8 | 🔄 **Tự tiến hóa của Agent** | Trưởng thành không cần sửa trọng số: học từ kinh nghiệm, từ người dùng thành người tạo | [Đọc](../../book-vi/chapter8.vi.md) | [9](../../chapter8/README.vi.md) |
-| 9 | 🎙️ **Đa phương thức và tương tác thời gian thực** | Mở rộng từ văn bản sang giọng nói, GUI, thế giới vật lý: ba mô thức giọng nói, Computer Use, robot | [Đọc](../../book-vi/chapter9.vi.md) | [12](../../chapter9/README.vi.md) |
-| 10 | 🤝 **Cộng tác đa Agent** | Trí tuệ tập thể cao hơn cá thể: khung cộng tác, chia sẻ/cô lập ngữ cảnh, "xã hội Agent" nổi lên | [Đọc](../../book-vi/chapter10.vi.md) | [7](../../chapter10/README.vi.md) |
-
+| 6 | 🎙️ **Tương tác: mở rộng không gian quan sát và hành động** | Mở rộng không gian quan sát và hành động của Agent theo hai chiều phương thức và thời gian: hệ thống bất đồng bộ hướng sự kiện, giọng nói, Computer Use và robot | [Đọc](../../book-vi/chapter6.vi.md) | [13](../../chapter6/README.vi.md) |
+| 7 | 🎯 **Đánh giá Agent** | Biến biểu hiện thành tín hiệu so sánh được: môi trường, chỉ số, ý nghĩa thống kê, chọn mô hình dựa trên đánh giá | [Đọc](../../book-vi/chapter7.vi.md) | [13](../../chapter7/README.vi.md) |
+| 8 | 🧠 **Hậu huấn luyện mô hình** | Tiền huấn luyện/SFT/RL ba giai đoạn: khi nào SFT, khi nào RL, nội tại hóa gọi công cụ, hiệu quả mẫu | [Đọc](../../book-vi/chapter8.vi.md) | [19](../../chapter8/README.vi.md) |
+| 9 | 🔄 **Sự tiến hóa liên tục của Agent** | Chuyển quỹ đạo vận hành thành tín hiệu học tập để cập nhật tri thức, chỉ dẫn, chương trình và tham số | [Đọc](../../book-vi/chapter9.vi.md) | [9](../../chapter9/README.vi.md) |
+| 10 | 🤝 **Cộng tác đa Agent** | Trí tuệ tập thể cao hơn cá thể: khung cộng tác, chia sẻ/cô lập ngữ cảnh, "xã hội Agent" nổi lên | [Đọc](../../book-vi/chapter10.vi.md) | [6](../../chapter10/README.vi.md) |
 
 > 💡 **Đọc** = đọc nội dung chương trên GitHub (markdown); **N** = số dự án đi kèm, nhấp để xem code. Phân loại (✅ Chạy độc lập / 📖 Tái hiện / 🚧 Thiết kế) xem README từng chương.
 >
@@ -117,7 +118,7 @@ Krill dành ưu đãi đặc biệt cho độc giả của sách: đăng ký qua
 
 ## 📦 Phụ lục · Lấy kho ngoài
 
-23 kho ngoài cho benchmark, framework huấn luyện, nền tảng robot ở Chương 6, 7, 9, 10 **không được đóng gói** (do kích thước và bản quyền), cần tự clone vào thư mục tương ứng.
+23 kho ngoài cho benchmark, framework huấn luyện, nền tảng robot ở Chương 6, 7, 8, 10 **không được đóng gói** (do kích thước và bản quyền), cần tự clone vào thư mục tương ứng.
 
 ### Script clone một lần
 
@@ -125,32 +126,32 @@ Krill dành ưu đãi đặc biệt cho độc giả của sách: đăng ký qua
 <summary><b>🔧 Mở rộng lệnh clone</b> (23 kho ngoài)</summary>
 
 ```bash
-# Chương 6 · Benchmark đánh giá
-git clone https://github.com/google-research/android_world.git         chapter6/android_world
-git clone https://huggingface.co/datasets/gaia-benchmark/GAIA          chapter6/GAIA
-git clone https://github.com/xlang-ai/OSWorld.git                      chapter6/OSWorld
-git clone https://github.com/SWE-bench/SWE-bench.git                   chapter6/SWE-bench
-git clone https://github.com/sierra-research/tau2-bench.git            chapter6/tau2-bench
-git clone https://github.com/laude-institute/terminal-bench.git        chapter6/terminal-bench
+# Chương 7 · Benchmark đánh giá
+git clone https://github.com/google-research/android_world.git         chapter7/android_world
+git clone https://huggingface.co/datasets/gaia-benchmark/GAIA          chapter7/GAIA
+git clone https://github.com/xlang-ai/OSWorld.git                      chapter7/OSWorld
+git clone https://github.com/SWE-bench/SWE-bench.git                   chapter7/SWE-bench
+git clone https://github.com/sierra-research/tau2-bench.git            chapter7/tau2-bench
+git clone https://github.com/laude-institute/terminal-bench.git        chapter7/terminal-bench
 
-# Chương 7 · Framework huấn luyện (bojieli/* là fork phù hợp với sách)
-git clone https://github.com/bojieli/minimind.git                      chapter7/MiniMind-pretrain/minimind      # Exp 7-3 train LLM from scratch
-git clone https://github.com/bojieli/minimind-v.git                    chapter7/MiniMind-pretrain/minimind-v    # Exp 7-4 train VLM (projection layer)
-git clone https://github.com/bojieli/AdaptThink.git                    chapter7/AdaptThink-original
-git clone https://github.com/bojieli/AWorld.git                        chapter7/AWorld
-git clone https://github.com/bojieli/SFTvsRL.git                       chapter7/SFTvsRL
-git clone https://github.com/bojieli/verl.git                          chapter7/verl
-git clone https://github.com/bojieli/SandboxFusion.git chapter7/SandboxFusion && git -C chapter7/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c && git -C chapter7/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c && test "$(git -C chapter7/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"  # Exp 7-15 code sandbox
-git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter7/tinker-cookbook
-git clone https://github.com/19PINE-AI/rlvp.git                        chapter7/RLVP/rlvp                       # Exp 7-14 RLVP paper code
-git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter7/SimpleVLA-RL/SimpleVLA-RL       # Exp 7-13 vision-language-action RL
+# Chương 8 · Framework huấn luyện (bojieli/* là fork phù hợp với sách)
+git clone https://github.com/bojieli/minimind.git                      chapter8/MiniMind-pretrain/minimind      # Exp 8-3 train LLM from scratch
+git clone https://github.com/bojieli/minimind-v.git                    chapter8/MiniMind-pretrain/minimind-v    # Exp 8-4 train VLM (projection layer)
+git clone https://github.com/bojieli/AdaptThink.git                    chapter8/AdaptThink-original
+git clone https://github.com/bojieli/AWorld.git                        chapter8/AWorld
+git clone https://github.com/bojieli/SFTvsRL.git                       chapter8/SFTvsRL
+git clone https://github.com/bojieli/verl.git                          chapter8/verl
+git clone https://github.com/bojieli/SandboxFusion.git chapter8/SandboxFusion && git -C chapter8/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c && git -C chapter8/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c && test "$(git -C chapter8/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"  # Exp 8-14 code sandbox
+git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter8/tinker-cookbook
+git clone https://github.com/19PINE-AI/rlvp.git                        chapter8/RLVP/rlvp                       # Exp 8-16 RLVP paper code
+git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter8/SimpleVLA-RL/SimpleVLA-RL       # Exp 8-13 vision-language-action RL
 
-# Chương 9 · Tự động hóa trình duyệt & ví dụ Claude
-git clone https://github.com/browser-use/browser-use.git               chapter9/browser-use
-git clone https://github.com/anthropics/claude-quickstarts.git         chapter9/claude-quickstarts
-git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot && git -C chapter9/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter9/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter9/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 9-7/9-9 shared
-git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter9/RoboCrew && git -C chapter9/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter9/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter9/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 9-8/9-9; RoboCrew v0.3.1
-git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-sim2real && git -C chapter9/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter9/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter9/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 9-11
+# Chương 6 · Tự động hóa trình duyệt & ví dụ Claude
+git clone https://github.com/browser-use/browser-use.git               chapter6/browser-use
+git clone https://github.com/anthropics/claude-quickstarts.git         chapter6/claude-quickstarts
+git clone https://github.com/Vector-Wangel/XLeRobot.git chapter6/XLeRobot && git -C chapter6/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter6/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter6/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 6-9/6-11 shared
+git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter6/RoboCrew && git -C chapter6/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter6/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter6/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 6-10/6-11; RoboCrew v0.3.1
+git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter6/lerobot-sim2real && git -C chapter6/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter6/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter6/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 6-13
 
 # Chương 10 · Kiến trúc đa Agent (đã độc lập thành TalkAct) + Stanford AI Town
 git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10/use-computer-while-calling

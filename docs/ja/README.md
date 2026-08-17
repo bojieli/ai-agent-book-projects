@@ -5,9 +5,11 @@
 
 **[中文](../../README.md) · [English](../en/README.md) · [Español](../es/README.md) · [Bahasa Indonesia](../id/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · 日本語 ← 現在 · [Türkçe](../tr/README.md) · [한국어](../ko/README.md) · [Magyar](../hu/README.md)**
 
-**Agent = LLM + コンテキスト + ツール** — 本書はこの中核となる公式を軸に、全10章を通じて AI エージェントを原理からエンジニアリング実践まで解説します。本文、図版、**93 個の付随実験**はすべてオープンソースです。ぜひ自分の手で実験を動かしてみてください。
+**Agent = LLM + コンテキスト + ツール** — 本書はこの中核となる公式を軸に、全10章を通じて AI エージェントを原理からエンジニアリング実践まで解説します。本文、図版、**103 個の付随実験**はすべてオープンソースです。ぜひ自分の手で実験を動かしてみてください。
 
-| 📚 基礎から本番まで **10 章** の本文 | 📂 **93 個** の付随プロジェクト（70 個以上が単独実行可能） | 🌐 **13 言語**: 中 / 英 / 西 / インドネシア / アラビア / 繁體中文（台灣） / 露 / タミル / 越 / 日 / 土 / 韓 / ハンガリー |
+> 🚧 **バージョン 2.0 への再編を進めています：** 本書はバージョン 1.4 から 2.0 へ移行し、内容を新しい学習経路に沿って再構成しました。第 6〜9 章は現在、「交互作用：観察空間と行動空間の拡張」「Agent の評価」「モデルのポストトレーニング」「Agent の継続的進化」です。公開済み PDF は一時的に旧構成のままの場合があります。章の配置・番号・実験入口については、この README とリポジトリ内の本文を正とします。
+
+| 📚 基礎から本番まで **10 章** の本文 | 📂 **103 個** の付随プロジェクト（70 個以上が単独実行可能） | 🌐 **13 言語**: 中 / 英 / 西 / インドネシア / アラビア / 繁體中文（台灣） / 露 / タミル / 越 / 日 / 土 / 韓 / ハンガリー |
 | :---: | :---: | :---: |
 
 ## 📖 電子書籍
@@ -49,17 +51,16 @@
 
 | 章 | テーマ | 一言でいうと | 本文 | コード |
 | :--: | --- | --- | :--: | :--: |
-| 1 | 🚀 **Agent の基礎知識** | 「モデルこそが Agent」というパラダイム + **Agent = LLM + コンテキスト + ツール**。Harness エンジニアリングこそが真の競争力 | [読む](../../book-ja/chapter1.ja.md) | [4](../../chapter1/README.ja.md) |
-| 2 | 🎯 **コンテキストエンジニアリング** | コンテキストが能力の上限を決める: KV Cache、プロンプトエンジニアリング、Agent Skills、コンテキスト圧縮 | [読む](../../book-ja/chapter2.ja.md) | [9](../../chapter2/README.ja.md) |
+| 1 | 🚀 **AI Agent 入門** | **Agent = LLM + コンテキスト + ツール**。Harness エンジニアリングこそが真の競争力 | [読む](../../book-ja/chapter1.ja.md) | [3](../../chapter1/README.ja.md) |
+| 2 | 🎯 **コンテキストエンジニアリング** | コンテキストが能力の上限を決める: KV Cache、プロンプトエンジニアリング、Agent Skills、コンテキスト圧縮 | [読む](../../book-ja/chapter2.ja.md) | [10](../../chapter2/README.ja.md) |
 | 3 | 📚 **ユーザーメモリと知識ベース** | セッションをまたいでユーザーを記憶し、外部知識を接続する: ユーザーメモリ、RAG、構造化インデックス、ナレッジグラフ | [読む](../../book-ja/chapter3.ja.md) | [12](../../chapter3/README.ja.md) |
-| 4 | 🛠️ **ツール** | ツールは Agent の両手: MCP プロトコル、知覚/実行/協調の3種類のツール、イベント駆動の非同期 Agent、能動的なツール発見 | [読む](../../book-ja/chapter4.ja.md) | [8](../../chapter4/README.ja.md) |
+| 4 | 🛠️ **ツール** | ツールは Agent の手足: MCP、知覚・実行・協調ツール、能動的なツール発見 | [読む](../../book-ja/chapter4.ja.md) | [5](../../chapter4/README.ja.md) |
 | 5 | 💻 **Coding Agent とコード生成** | コードは「新しいツールを生み出せるツール」。本番グレードの Coding Agent の全体像 | [読む](../../book-ja/chapter5.ja.md) | [13](../../chapter5/README.ja.md) |
-| 6 | 🎯 **Agent の評価** | パフォーマンスを比較可能なシグナルに変える: 評価環境、指標、統計的有意性、評価駆動の選定 | [読む](../../book-ja/chapter6.ja.md) | [10](../../chapter6/README.ja.md) |
-| 7 | 🧠 **モデルのポストトレーニング** | 事前学習/SFT/RL の3段階: いつ SFT を選び、いつ RL を選ぶか、ツール呼び出しの内在化、サンプル効率 | [読む](../../book-ja/chapter7.ja.md) | [14](../../chapter7/README.ja.md) |
-| 8 | 🔄 **Agent の自己進化** | 重みを変えずに成長する: 経験からの学習、ツールの利用者から創造者へ | [読む](../../book-ja/chapter8.ja.md) | [9](../../chapter8/README.ja.md) |
-| 9 | 🎙️ **マルチモーダルとリアルタイム対話** | テキストから音声、GUI、物理世界へ拡張する: 音声の3パラダイム、Computer Use、ロボティクス | [読む](../../book-ja/chapter9.ja.md) | [12](../../chapter9/README.ja.md) |
+| 6 | 🎙️ **交互作用：観察空間と行動空間の拡張** | モダリティと時間という二つの次元から Agent の観察・行動空間を拡張する：非同期・イベント駆動、音声対話、Computer Use、ロボティクス | [読む](../../book-ja/chapter6.ja.md) | [13](../../chapter6/README.ja.md) |
+| 7 | 🎯 **Agent の評価** | パフォーマンスを比較可能なシグナルに変える: 評価環境、指標、統計的有意性、評価駆動の選定 | [読む](../../book-ja/chapter7.ja.md) | [13](../../chapter7/README.ja.md) |
+| 8 | 🧠 **モデルのポストトレーニング** | 事前学習/SFT/RL の3段階: いつ SFT を選び、いつ RL を選ぶか、ツール呼び出しの内在化、サンプル効率 | [読む](../../book-ja/chapter8.ja.md) | [19](../../chapter8/README.ja.md) |
+| 9 | 🔄 **Agent の継続的進化** | 運用軌跡を学習シグナルへ変換し、知識・指示・プログラム・パラメータを更新する | [読む](../../book-ja/chapter9.ja.md) | [9](../../chapter9/README.ja.md) |
 | 10 | 🤝 **マルチ Agent 協調** | 集合知は個を上回る: 協調フレームワーク、コンテキストの共有/隔離、創発する「Agent 社会」 | [読む](../../book-ja/chapter10.ja.md) | [6](../../chapter10/README.ja.md) |
-
 > 💡 **読む** = GitHub 上で章の本文（markdown）を読む。**N** = その章の付随プロジェクト数。クリックでコードを表示。プロジェクトの種類（✅ 単独実行 / 📖 再現 / 🚧 設計）は各章の README で説明しています。
 >
 > 📚 本書を効率的に読むには？ **[学習のヒント](LEARNING.md)**（中核となる考え方、学習パス、難易度レベル、実践のヒント）を参照してください。
@@ -115,31 +116,31 @@ uv run python chapter1/context/main.py
 
 ```bash
 # 第6章 · 評価ベンチマーク
-git clone https://github.com/google-research/android_world.git         chapter6/android_world
-git clone https://huggingface.co/datasets/gaia-benchmark/GAIA          chapter6/GAIA
-git clone https://github.com/xlang-ai/OSWorld.git                      chapter6/OSWorld
-git clone https://github.com/SWE-bench/SWE-bench.git                   chapter6/SWE-bench
-git clone https://github.com/sierra-research/tau2-bench.git            chapter6/tau2-bench
-git clone https://github.com/laude-institute/terminal-bench.git        chapter6/terminal-bench
+git clone https://github.com/google-research/android_world.git         chapter7/android_world
+git clone https://huggingface.co/datasets/gaia-benchmark/GAIA          chapter7/GAIA
+git clone https://github.com/xlang-ai/OSWorld.git                      chapter7/OSWorld
+git clone https://github.com/SWE-bench/SWE-bench.git                   chapter7/SWE-bench
+git clone https://github.com/sierra-research/tau2-bench.git            chapter7/tau2-bench
+git clone https://github.com/laude-institute/terminal-bench.git        chapter7/terminal-bench
 
-# 第7章 · 訓練フレームワーク（bojieli/* は書籍向けに調整された fork）
-git clone https://github.com/bojieli/minimind.git                      chapter7/MiniMind-pretrain/minimind      # 実験 7-3 LLM をゼロから訓練
-git clone https://github.com/bojieli/minimind-v.git                    chapter7/MiniMind-pretrain/minimind-v    # 実験 7-4 VLM をゼロから訓練（投影層）
-git clone https://github.com/bojieli/AdaptThink.git                    chapter7/AdaptThink-original
-git clone https://github.com/bojieli/AWorld.git                        chapter7/AWorld
-git clone https://github.com/bojieli/SFTvsRL.git                       chapter7/SFTvsRL
-git clone https://github.com/bojieli/verl.git                          chapter7/verl
-git clone https://github.com/bojieli/SandboxFusion.git chapter7/SandboxFusion && git -C chapter7/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c && git -C chapter7/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c && test "$(git -C chapter7/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"  # Exp 7-15 code sandbox
-git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter7/tinker-cookbook
-git clone https://github.com/19PINE-AI/rlvp.git                        chapter7/RLVP/rlvp                       # 実験 7-14 RLVP 論文コード
-git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter7/SimpleVLA-RL/SimpleVLA-RL       # 実験 7-13 vision-language-action RL
+# 第8章 · 訓練フレームワーク（bojieli/* は書籍向けに調整された fork）
+git clone https://github.com/bojieli/minimind.git                      chapter8/MiniMind-pretrain/minimind      # 実験 8-3 LLM をゼロから訓練
+git clone https://github.com/bojieli/minimind-v.git                    chapter8/MiniMind-pretrain/minimind-v    # 実験 8-4 VLM をゼロから訓練（投影層）
+git clone https://github.com/bojieli/AdaptThink.git                    chapter8/AdaptThink-original
+git clone https://github.com/bojieli/AWorld.git                        chapter8/AWorld
+git clone https://github.com/bojieli/SFTvsRL.git                       chapter8/SFTvsRL
+git clone https://github.com/bojieli/verl.git                          chapter8/verl
+git clone https://github.com/bojieli/SandboxFusion.git chapter8/SandboxFusion && git -C chapter8/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c && git -C chapter8/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c && test "$(git -C chapter8/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"  # Exp 8-14 code sandbox
+git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter8/tinker-cookbook
+git clone https://github.com/19PINE-AI/rlvp.git                        chapter8/RLVP/rlvp                       # 実験 8-16 RLVP 論文コード
+git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter8/SimpleVLA-RL/SimpleVLA-RL       # 実験 8-13 vision-language-action RL
 
 # 第9章 · ブラウザ自動化と Claude サンプル
-git clone https://github.com/browser-use/browser-use.git               chapter9/browser-use
-git clone https://github.com/anthropics/claude-quickstarts.git         chapter9/claude-quickstarts
-git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot && git -C chapter9/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter9/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter9/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 9-7/9-9 shared
-git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter9/RoboCrew && git -C chapter9/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter9/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter9/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 9-8/9-9; RoboCrew v0.3.1
-git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-sim2real && git -C chapter9/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter9/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter9/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 9-11
+git clone https://github.com/browser-use/browser-use.git               chapter6/browser-use
+git clone https://github.com/anthropics/claude-quickstarts.git         chapter6/claude-quickstarts
+git clone https://github.com/Vector-Wangel/XLeRobot.git chapter6/XLeRobot && git -C chapter6/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter6/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter6/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 6-9/6-11 shared
+git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter6/RoboCrew && git -C chapter6/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter6/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter6/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 6-10/6-11; RoboCrew v0.3.1
+git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter6/lerobot-sim2real && git -C chapter6/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter6/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter6/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 6-13
 
 # 第10章 · デュアル Agent アーキテクチャ（現在は独立した TalkAct プロジェクト）+ Stanford AI Town
 git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10/use-computer-while-calling

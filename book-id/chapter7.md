@@ -721,7 +721,7 @@ Inilah disiplin iterasi: bukti hanya membenarkan langkah berikut yang sepadan de
 
 > **Eksperimen 7-12 ★★★: Evaluasi dan Perbaikan di AndroidWorld**
 >
-> Eksperimen ini melatih alur dari laporan evaluasi menuju perbaikan sistem. Mulailah dari laporan historis dan tiga hasil berpasangan yang tersimpan di `chapter6/android-world`.
+> Eksperimen ini melatih alur dari laporan evaluasi menuju perbaikan sistem. Mulailah dari laporan historis dan tiga hasil berpasangan yang tersimpan di `chapter7/android-world`.
 >
 > Langkah 1: Diagnosis. Analisis silang (*Cross-analyze*) tabel per tugas dan matriks *capability tag* untuk memetakan kegagalan tugas tingkat permukaan pada kelemahan kemampuan yang mendasar. Identifikasi *capability tags* dengan tingkat keberhasilan yang lebih rendah dari ekspektasi dan area tugas dengan kegagalan yang terkonsentrasi.
 >
