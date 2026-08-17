@@ -7,9 +7,11 @@
 
 > 📥 **[PDF / EPUB 다운로드](#-전자책)**(권장) — PDF와 EPUB 판본에서 가장 좋은 읽기 경험을 제공합니다. [온라인 판본](https://bojieli.github.io/ai-agent-book/)에서는 언어 전환, 접을 수 있는 장별 탐색, 전체 텍스트 검색을 이용할 수 있습니다.
 
-**에이전트 = LLM + 컨텍스트 + 도구** — 이 책은 이 핵심 공식을 중심으로 10개 장에 걸쳐 AI 에이전트의 원리부터 엔지니어링 실전까지 설명합니다. 본문과 그림, **94개의 연계 실습**을 모두 오픈 소스로 공개합니다.
+**에이전트 = LLM + 컨텍스트 + 도구** — 이 책은 이 핵심 공식을 중심으로 10개 장에 걸쳐 AI 에이전트의 원리부터 엔지니어링 실전까지 설명합니다. 본문과 그림, **103개의 연계 실습**을 모두 오픈 소스로 공개합니다.
 
-| 📚 기초부터 프로덕션까지 **10개 장** | 📂 **94개** 연계 실습(로컬 프로젝트와 외부 재현 트랙 포함) | 🌐 **13개 언어**: 중 / 영 / 스페인 / 인도네시아 / 아랍 / 번체 중국어(대만) / 러 / 타밀 / 베트남 / 일 / 터키 / 한 / 헝가리 |
+> 🚧 **버전 2.0 재구성 진행 중:** 책을 버전 1.4에서 2.0으로 올리고 새로운 학습 경로에 맞춰 내용을 재구성했습니다. 제6~9장은 이제 각각 “상호작용: 관찰 공간과 행동 공간의 확장”, “에이전트 평가”, “모델 사후 학습”, “에이전트의 지속적 진화”입니다. 기존에 배포된 PDF에는 한동안 이전 구성이 남아 있을 수 있으므로, 장의 배치와 번호, 실험 진입점은 이 README와 저장소의 본문을 기준으로 삼아 주세요.
+
+| 📚 기초부터 프로덕션까지 **10개 장** | 📂 **103개** 연계 실습(로컬 프로젝트와 외부 재현 트랙 포함) | 🌐 **13개 언어**: 중 / 영 / 스페인 / 인도네시아 / 아랍 / 번체 중국어(대만) / 러 / 타밀 / 베트남 / 일 / 터키 / 한 / 헝가리 |
 | :---: | :---: | :---: |
 
 ## 📖 전자책
@@ -50,17 +52,16 @@
 
 | 장 | 주제 | 핵심 내용 | 본문 | 코드 |
 | :--: | --- | --- | :--: | :--: |
-| 1 | 🚀 **AI 에이전트 기초** | **에이전트 = LLM + 컨텍스트 + 도구**. 경쟁력의 핵심은 하네스 엔지니어링 | [읽기](../../book-ko/chapter1.ko.md) | [4](../../chapter1/README.ko.md) |
-| 2 | 🎯 **컨텍스트 엔지니어링** | KV Cache, 프롬프트 엔지니어링, Agent Skills, 컨텍스트 압축 | [읽기](../../book-ko/chapter2.ko.md) | [8](../../chapter2/README.ko.md) |
+| 1 | 🚀 **AI 에이전트 입문** | **에이전트 = LLM + 컨텍스트 + 도구**. 경쟁력의 핵심은 하네스 엔지니어링 | [읽기](../../book-ko/chapter1.ko.md) | [3](../../chapter1/README.ko.md) |
+| 2 | 🎯 **컨텍스트 엔지니어링** | KV Cache, 프롬프트 엔지니어링, Agent Skills, 컨텍스트 압축 | [읽기](../../book-ko/chapter2.ko.md) | [10](../../chapter2/README.ko.md) |
 | 3 | 📚 **사용자 메모리와 지식 베이스** | 세션 간 사용자 메모리, RAG, 구조화 색인, 지식 그래프 | [읽기](../../book-ko/chapter3.ko.md) | [12](../../chapter3/README.ko.md) |
-| 4 | 🛠️ **도구** | MCP, 인식·실행·협업 도구, 이벤트 기반 비동기 에이전트, 능동적 도구 탐색 | [읽기](../../book-ko/chapter4.ko.md) | [8](../../chapter4/README.ko.md) |
+| 4 | 🛠️ **도구** | MCP, 인식·실행·협업 도구와 능동적 도구 탐색 | [읽기](../../book-ko/chapter4.ko.md) | [5](../../chapter4/README.ko.md) |
 | 5 | 💻 **코딩 에이전트와 코드 생성** | 코드는 새 도구를 만들 수 있는 도구. 프로덕션급 코딩 에이전트의 전체 구조 | [읽기](../../book-ko/chapter5.ko.md) | [13](../../chapter5/README.ko.md) |
-| 6 | 🎯 **에이전트 평가** | 평가 환경, 지표, 통계적 유의성, 평가 기반 선택 | [읽기](../../book-ko/chapter6.ko.md) | [17](../../chapter6/README.ko.md) |
-| 7 | 🧠 **모델 사후 학습** | 사전 학습·SFT·RL, 도구 호출 내재화, 샘플 효율성 | [읽기](../../book-ko/chapter7.ko.md) | [18](../../chapter7/README.ko.md) |
-| 8 | 🔄 **에이전트의 지속적 진화** | 실행 궤적에서 학습 신호를 얻고 지식·지침·프로그램·파라미터 갱신 | [읽기](../../book-ko/chapter8.ko.md) | [9](../../chapter8/README.ko.md) |
-| 9 | 🎙️ **멀티모달과 실시간 상호작용** | 음성, GUI, Computer Use, 로보틱스 | [읽기](../../book-ko/chapter9.ko.md) | [12](../../chapter9/README.ko.md) |
-| 10 | 🤝 **멀티 에이전트 협업** | 협업 구조, 컨텍스트 공유와 격리, 에이전트 사회 | [읽기](../../book-ko/chapter10.ko.md) | [8](../../chapter10/README.ko.md) |
-
+| 6 | 🎙️ **상호작용: 관찰 공간과 행동 공간의 확장** | 모달리티와 시간이라는 두 차원에서 에이전트의 관찰·행동 공간을 확장한다: 비동기·이벤트 기반 시스템, 음성 상호작용, Computer Use, 로보틱스 | [읽기](../../book-ko/chapter6.ko.md) | [13](../../chapter6/README.ko.md) |
+| 7 | 🎯 **에이전트 평가** | 평가 환경, 지표, 통계적 유의성, 평가 기반 선택 | [읽기](../../book-ko/chapter7.ko.md) | [13](../../chapter7/README.ko.md) |
+| 8 | 🧠 **모델 사후 학습** | 사전 학습·SFT·RL, 도구 호출 내재화, 샘플 효율성 | [읽기](../../book-ko/chapter8.ko.md) | [19](../../chapter8/README.ko.md) |
+| 9 | 🔄 **에이전트의 지속적 진화** | 실행 궤적에서 학습 신호를 얻고 지식·지침·프로그램·파라미터 갱신 | [읽기](../../book-ko/chapter9.ko.md) | [9](../../chapter9/README.ko.md) |
+| 10 | 🤝 **멀티 에이전트 협업** | 협업 구조, 컨텍스트 공유와 격리, 에이전트 사회 | [읽기](../../book-ko/chapter10.ko.md) | [6](../../chapter10/README.ko.md) |
 > 💡 **읽기**는 GitHub에서 장 본문을 여는 링크이며, **N**은 해당 장의 연계 프로젝트 수입니다. 프로젝트 유형(✅ 독립 실행 / 📖 재현 가이드 / 🚧 진행 중)은 각 장의 README에 설명되어 있습니다.
 >
 > 📚 효율적인 학습 순서는 **[학습 가이드](LEARNING.md)**에서 확인하세요.
@@ -94,32 +95,32 @@
 <summary><b>🔧 clone 명령 펼치기</b> (외부 저장소 23개)</summary>
 
 ```bash
-# 제6장 · 평가 벤치마크
-git clone https://github.com/google-research/android_world.git         chapter6/android_world
-git clone https://huggingface.co/datasets/gaia-benchmark/GAIA          chapter6/GAIA
-git clone https://github.com/xlang-ai/OSWorld.git                      chapter6/OSWorld
-git clone https://github.com/SWE-bench/SWE-bench.git                   chapter6/SWE-bench
-git clone https://github.com/sierra-research/tau2-bench.git            chapter6/tau2-bench
-git clone https://github.com/laude-institute/terminal-bench.git        chapter6/terminal-bench
+# 제7장 · 평가 벤치마크
+git clone https://github.com/google-research/android_world.git         chapter7/android_world
+git clone https://huggingface.co/datasets/gaia-benchmark/GAIA          chapter7/GAIA
+git clone https://github.com/xlang-ai/OSWorld.git                      chapter7/OSWorld
+git clone https://github.com/SWE-bench/SWE-bench.git                   chapter7/SWE-bench
+git clone https://github.com/sierra-research/tau2-bench.git            chapter7/tau2-bench
+git clone https://github.com/laude-institute/terminal-bench.git        chapter7/terminal-bench
 
-# 제7장 · 학습 프레임워크(bojieli/*는 책에 맞춘 fork)
-git clone https://github.com/bojieli/minimind.git                      chapter7/MiniMind-pretrain/minimind
-git clone https://github.com/bojieli/minimind-v.git                    chapter7/MiniMind-pretrain/minimind-v
-git clone https://github.com/bojieli/AdaptThink.git                    chapter7/AdaptThink-original
-git clone https://github.com/bojieli/AWorld.git                        chapter7/AWorld
-git clone https://github.com/bojieli/SFTvsRL.git                       chapter7/SFTvsRL
-git clone https://github.com/bojieli/verl.git                          chapter7/verl
-git clone https://github.com/bojieli/SandboxFusion.git chapter7/SandboxFusion && git -C chapter7/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c && git -C chapter7/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c && test "$(git -C chapter7/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"  # 실험 7-15 코드 샌드박스
-git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter7/tinker-cookbook
-git clone https://github.com/19PINE-AI/rlvp.git                        chapter7/RLVP/rlvp
-git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter7/SimpleVLA-RL/SimpleVLA-RL
+# 제8장 · 학습 프레임워크(bojieli/*는 책에 맞춘 fork)
+git clone https://github.com/bojieli/minimind.git                      chapter8/MiniMind-pretrain/minimind
+git clone https://github.com/bojieli/minimind-v.git                    chapter8/MiniMind-pretrain/minimind-v
+git clone https://github.com/bojieli/AdaptThink.git                    chapter8/AdaptThink-original
+git clone https://github.com/bojieli/AWorld.git                        chapter8/AWorld
+git clone https://github.com/bojieli/SFTvsRL.git                       chapter8/SFTvsRL
+git clone https://github.com/bojieli/verl.git                          chapter8/verl
+git clone https://github.com/bojieli/SandboxFusion.git chapter8/SandboxFusion && git -C chapter8/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c && git -C chapter8/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c && test "$(git -C chapter8/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"  # 실험 8-14 코드 샌드박스
+git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter8/tinker-cookbook
+git clone https://github.com/19PINE-AI/rlvp.git                        chapter8/RLVP/rlvp
+git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter8/SimpleVLA-RL/SimpleVLA-RL
 
-# 제9장 · 브라우저 자동화와 Claude 예제
-git clone https://github.com/browser-use/browser-use.git               chapter9/browser-use
-git clone https://github.com/anthropics/claude-quickstarts.git         chapter9/claude-quickstarts
-git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot && git -C chapter9/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter9/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter9/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 9-7/9-9 shared
-git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter9/RoboCrew && git -C chapter9/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter9/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter9/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 9-8/9-9; RoboCrew v0.3.1
-git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-sim2real && git -C chapter9/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter9/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter9/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 9-11
+# 제6장 · 브라우저 자동화와 Claude 예제
+git clone https://github.com/browser-use/browser-use.git               chapter6/browser-use
+git clone https://github.com/anthropics/claude-quickstarts.git         chapter6/claude-quickstarts
+git clone https://github.com/Vector-Wangel/XLeRobot.git chapter6/XLeRobot && git -C chapter6/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter6/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter6/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 6-9/6-11 shared
+git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter6/RoboCrew && git -C chapter6/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter6/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter6/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 6-10/6-11; RoboCrew v0.3.1
+git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter6/lerobot-sim2real && git -C chapter6/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter6/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter6/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 6-13
 
 # 제10장 · 듀얼 에이전트 구조와 Stanford AI Town
 git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10/use-computer-while-calling

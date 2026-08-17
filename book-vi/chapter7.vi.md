@@ -725,7 +725,7 @@ H5C vượt qua bốn nhiệm vụ mới chỉ đủ điều kiện cho một ph
 
 > **Thử nghiệm 7-12 ★★★: Đánh giá và cải tiến trên AndroidWorld**
 >
-> Thử nghiệm này thực hành trọn vẹn con đường từ báo cáo đánh giá đến cải tiến hệ thống. Bắt đầu bằng báo cáo lịch sử và ba cặp chạy đã lưu trong `chapter6/android-world`.
+> Thử nghiệm này thực hành trọn vẹn con đường từ báo cáo đánh giá đến cải tiến hệ thống. Bắt đầu bằng báo cáo lịch sử và ba cặp chạy đã lưu trong `chapter7/android-world`.
 >
 > Bước một: chẩn đoán. Phân tích chéo các bảng theo từng nhiệm vụ và ma trận nhãn khả năng để ánh xạ các lỗi bề ngoài của nhiệm vụ đến những thiếu sót về năng lực sâu bên trong. Xác định các nhãn năng lực có tỷ lệ thành công thấp hơn mong đợi và các lĩnh vực nhiệm vụ tập trung thất bại.
 >

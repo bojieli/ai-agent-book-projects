@@ -7,9 +7,11 @@
 
 > 📥 **[PDF / EPUB பதிவிறக்கம்](#-மின்-புத்தகம்)** (பரிந்துரைக்கப்படுகிறது) — சிறந்த வாசிப்பு அனுபவத்திற்கு PDF / EPUB பதிப்புகளைப் பரிந்துரைக்கிறோம்; [நிகழ்நேரத்திலும் படிக்கலாம்](https://bojieli.github.io/ai-agent-book/) (மொழி மாற்றி, மடிக்கக்கூடிய அத்தியாய மரம், முழு-உரை தேடல்; main கிளைக்கு ஒவ்வொரு push-ம் தானாகவே மீண்டும் கட்டப்படுகிறது).
 
-**Agent = LLM + Context + Tools** — இந்த மையக் கோவையில் 10 அத்தியாயங்களில் AI Agent-ஐ கோட்பாடு முதல் பொறியியல் நடைமுறை வரை கொண்டு செல்கிறது. முழு உரை, விளக்கப்படங்கள் மற்றும் **93 துணை சோதனைகள்** அனைத்தும் திறந்த மூலமாகும்.
+**Agent = LLM + Context + Tools** — இந்த மையக் கோவையில் 10 அத்தியாயங்களில் AI Agent-ஐ கோட்பாடு முதல் பொறியியல் நடைமுறை வரை கொண்டு செல்கிறது. முழு உரை, விளக்கப்படங்கள் மற்றும் **103 துணை சோதனைகள்** அனைத்தும் திறந்த மூலமாகும்.
 
-| 📚 **10 அத்தியாயங்கள்**, அடிப்படை முதல் உற்பத்தி வரை | 📂 **93** துணை திட்டங்கள் (70+ தனித்து இயங்கும்) | 🌐 **13 மொழிகள்**: சீன / ஆங் / ஸ்பானிஷ் / இந்தோனேசிய / அரபு / 繁體中文（台灣） / ரஷ்ய / தமிழ் / வியத் / ஜப் / துருக்கியம் / கொரிய / ஹங்கேரியன் |
+> 🚧 **பதிப்பு 2.0 மறுசீரமைப்பு நடைபெறுகிறது:** நூல் பதிப்பு 1.4 இலிருந்து 2.0 க்கு நகர்ந்து, புதிய கற்றல் பாதைக்கு ஏற்ப உள்ளடக்கம் மறுசீரமைக்கப்பட்டுள்ளது. அத்தியாயங்கள் 6–9 இப்போது முறையே “தொடர்பாடல்: அவதானிப்பு மற்றும் செயல் வெளிகளின் விரிவாக்கம்”, “ஏஜெண்ட் மதிப்பீடு”, “மாதிரி பிந்தைய பயிற்சி”, “ஏஜெண்டின் தொடர்ச்சியான பரிணாமம்” ஆகும். ஏற்கனவே வெளியிடப்பட்ட PDF-களில் பழைய அமைப்பு தற்காலிகமாக இருக்கலாம்; அத்தியாய இடம், எண் மற்றும் சோதனை நுழைவுகளுக்கு இந்த README-யும் களஞ்சிய உரையும் அதிகாரப்பூர்வ ஆதாரங்கள்.
+
+| 📚 **10 அத்தியாயங்கள்**, அடிப்படை முதல் உற்பத்தி வரை | 📂 **103** துணை திட்டங்கள் (70+ தனித்து இயங்கும்) | 🌐 **13 மொழிகள்**: சீன / ஆங் / ஸ்பானிஷ் / இந்தோனேசிய / அரபு / 繁體中文（台灣） / ரஷ்ய / தமிழ் / வியத் / ஜப் / துருக்கியம் / கொரிய / ஹங்கேரியன் |
 | :---: | :---: | :---: |
 
 ## 📖 மின்-புத்தகம்
@@ -52,17 +54,16 @@
 
 | அதி | தலைப்பு | ஒரு வரி சுருக்கம் | உரை | குறியீடு |
 | :--: | --- | --- | :--: | :--: |
-| 1 | 🚀 **ஏஜென்ட் அடிப்படைகள்** | **Agent = LLM + Context + Tools**; Harness பொறியியலே உண்மையான போட்டித் திறன் | [படி](../../book-ta/chapter1.ta.md) | [4](../../chapter1/README.ta.md) |
-| 2 | 🎯 **சூழல் பொறியியல்** | சூழல் ஏஜெண்டின் திறனின் மேல் வரம்பைத் தீர்மானிக்கிறது: KV Cache, prompt engineering, Agent Skills, சூழல் சுருக்கம் | [படி](../../book-ta/chapter2.ta.md) | [9](../../chapter2/README.ta.md) |
+| 1 | 🚀 **AI ஏஜெண்ட் அறிமுகம்** | **Agent = LLM + Context + Tools**; Harness பொறியியலே உண்மையான போட்டித் திறன் | [படி](../../book-ta/chapter1.ta.md) | [3](../../chapter1/README.ta.md) |
+| 2 | 🎯 **சூழல் பொறியியல்** | சூழல் ஏஜெண்டின் திறனின் மேல் வரம்பைத் தீர்மானிக்கிறது: KV Cache, prompt engineering, Agent Skills, சூழல் சுருக்கம் | [படி](../../book-ta/chapter2.ta.md) | [10](../../chapter2/README.ta.md) |
 | 3 | 📚 **பயனர் நினைவகம் & அறிவுத் தளம்** | பயனரை அமர்வுகளுக்கு குறுக்கே நினைவில் வைத்தல் + வெளிப்புற அறிவு: பயனர் நினைவகம், RAG, கட்டமைக்கப்பட்ட குறியீடு, அறிவு வரைபடம் | [படி](../../book-ta/chapter3.ta.md) | [12](../../chapter3/README.ta.md) |
-| 4 | 🛠️ **கருவிகள்** | கருவிகள் ஏஜெண்டின் கைகள்: MCP நெறிமுறை, உணர்வு/செயலாக்கம்/ஒத்துழைப்பு, நிகழ்வு-இயக்கிய ஏஜென்ட், முனைப்பான கருவி கண்டுபிடிப்பு | [படி](../../book-ta/chapter4.ta.md) | [8](../../chapter4/README.ta.md) |
+| 4 | 🛠️ **கருவிகள்** | கருவிகள் ஏஜெண்டின் கைகள்: MCP, உணர்வு, செயலாக்கம், ஒத்துழைப்பு மற்றும் முனைப்பான கருவி கண்டுபிடிப்பு | [படி](../../book-ta/chapter4.ta.md) | [5](../../chapter4/README.ta.md) |
 | 5 | 💻 **Coding Agent & குறியீடு உருவாக்கம்** | குறியீடு "புதிய கருவியை உருவாக்கும் கருவி"; உற்பத்தி தர Coding Agent முழுமையாக | [படி](../../book-ta/chapter5.ta.md) | [13](../../chapter5/README.ta.md) |
-| 6 | 🎯 **ஏஜென்ட் மதிப்பீடு** | செயல்திறனை ஒப்பிடக்கூடிய சமிக்ஞையாக மாற்று: சூழல்கள், அளவீடுகள், புள்ளியியல் முக்கியத்துவம், மதிப்பீடு-இயக்கிய தேர்வு | [படி](../../book-ta/chapter6.ta.md) | [12](../../chapter6/README.ta.md) |
-| 7 | 🧠 **மாதிரி பிந்தைய பயிற்சி** | Pre-training/SFT/RL மூன்று நிலைகள்: SFT vs RL, கருவி அழைப்பை உள்ளடக்குதல், மாதிரி செயல்திறன் | [படி](../../book-ta/chapter7.ta.md) | [16](../../chapter7/README.ta.md) |
-| 8 | 🔄 **ஏஜென்ட் சுய-பரிணாமம்** | எடைகளை மாற்றாமல் வளர்தல்: அனுபவத்திலிருந்து கற்றல், பயனரிலிருந்து உருவாக்குநர் | [படி](../../book-ta/chapter8.ta.md) | [9](../../chapter8/README.ta.md) |
-| 9 | 🎙️ **பல்முக & நிகழ்நேர இடைவினை** | உரையிலிருந்து குரல், GUI, பௌதீக உலகம்: மூன்று குரல் முன்னுதாரணங்கள், Computer Use, ரோபோட்டிக்ஸ் | [படி](../../book-ta/chapter9.ta.md) | [12](../../chapter9/README.ta.md) |
-| 10 | 🤝 **பல-ஏஜென்ட் ஒத்துழைப்பு** | கூட்டு நுண்ணறிவு > தனிப்பட்டது: ஒத்துழைப்பு கட்டமைப்பு, சூழல் பகிர்வு/தனிமைப்படுத்தல், "ஏஜென்ட் சமூகம்" | [படி](../../book-ta/chapter10.ta.md) | [7](../../chapter10/README.ta.md) |
-
+| 6 | 🎙️ **தொடர்பாடல்: அவதானிப்பு மற்றும் செயல் வெளிகளின் விரிவாக்கம்** | ஊடகம் மற்றும் காலம் என்ற இரு பரிமாணங்களில் ஏஜெண்டின் அவதானிப்பு மற்றும் செயல் வெளிகளை விரிவாக்குகிறது: ஒத்திசைவற்ற நிகழ்வு-இயக்கிய அமைப்புகள், குரல், Computer Use மற்றும் ரோபோட்டிக்ஸ் | [படி](../../book-ta/chapter6.ta.md) | [13](../../chapter6/README.ta.md) |
+| 7 | 🎯 **ஏஜென்ட் மதிப்பீடு** | செயல்திறனை ஒப்பிடக்கூடிய சமிக்ஞையாக மாற்று: சூழல்கள், அளவீடுகள், புள்ளியியல் முக்கியத்துவம், மதிப்பீடு-இயக்கிய தேர்வு | [படி](../../book-ta/chapter7.ta.md) | [13](../../chapter7/README.ta.md) |
+| 8 | 🧠 **மாதிரி பிந்தைய பயிற்சி** | Pre-training/SFT/RL மூன்று நிலைகள்: SFT vs RL, கருவி அழைப்பை உள்ளடக்குதல், மாதிரி செயல்திறன் | [படி](../../book-ta/chapter8.ta.md) | [19](../../chapter8/README.ta.md) |
+| 9 | 🔄 **ஏஜெண்டின் தொடர்ச்சியான பரிணாமம்** | இயக்கத் தடங்களை கற்றல் சமிக்ஞைகளாக மாற்றி அறிவு, அறிவுறுத்தல், நிரல் மற்றும் அளவுருக்களைப் புதுப்பிக்கிறது | [படி](../../book-ta/chapter9.ta.md) | [9](../../chapter9/README.ta.md) |
+| 10 | 🤝 **பல-ஏஜென்ட் ஒத்துழைப்பு** | கூட்டு நுண்ணறிவு > தனிப்பட்டது: ஒத்துழைப்பு கட்டமைப்பு, சூழல் பகிர்வு/தனிமைப்படுத்தல், "ஏஜென்ட் சமூகம்" | [படி](../../book-ta/chapter10.ta.md) | [6](../../chapter10/README.ta.md) |
 
 > 💡 **படி** = GitHub-இல் அத்தியாய உரையைப் படிக்க (markdown); **N** = துணை திட்டங்களின் எண்ணிக்கை, குறியீட்டுக்கு சொடுக்கவும். திட்ட வகைகள் (✅ தனித்து / 📖 மறு உருவாக்கம் / 🚧 வடிவமைப்பு) ஒவ்வொரு அத்தியாய README-இல்.
 >
@@ -117,7 +118,7 @@ uv run python chapter1/context/main.py
 
 ## 📦 பின்னிணைப்பு · வெளிப்புற களஞ்சியங்களைப் பெறுதல்
 
-அத்தியாயம் 6, 7, 9, 10-இல் உள்ள benchmark, பயிற்சி framework, ரோபோ தளங்களுக்கான 23 வெளிப்புற களஞ்சியங்கள் **சேர்க்கப்படவில்லை** (அளவு மற்றும் உரிமம் காரணமாக), தாங்களாகவே clone செய்ய வேண்டும்.
+அத்தியாயம் 6, 7, 8, 10-இல் உள்ள benchmark, பயிற்சி framework, ரோபோ தளங்களுக்கான 23 வெளிப்புற களஞ்சியங்கள் **சேர்க்கப்படவில்லை** (அளவு மற்றும் உரிமம் காரணமாக), தாங்களாகவே clone செய்ய வேண்டும்.
 
 ### ஒரே நேரத்தில் clone ச்கிரிப்ட்
 
@@ -125,32 +126,32 @@ uv run python chapter1/context/main.py
 <summary><b>🔧 clone கட்டளைகளை விரிவாக்கு</b> (23 வெளிப்புற களஞ்சியங்கள்)</summary>
 
 ```bash
-# அத்தியாயம் 6 · மதிப்பீட்டு Benchmarks
-git clone https://github.com/google-research/android_world.git         chapter6/android_world
-git clone https://huggingface.co/datasets/gaia-benchmark/GAIA          chapter6/GAIA
-git clone https://github.com/xlang-ai/OSWorld.git                      chapter6/OSWorld
-git clone https://github.com/SWE-bench/SWE-bench.git                   chapter6/SWE-bench
-git clone https://github.com/sierra-research/tau2-bench.git            chapter6/tau2-bench
-git clone https://github.com/laude-institute/terminal-bench.git        chapter6/terminal-bench
+# அத்தியாயம் 7 · மதிப்பீட்டு Benchmarks
+git clone https://github.com/google-research/android_world.git         chapter7/android_world
+git clone https://huggingface.co/datasets/gaia-benchmark/GAIA          chapter7/GAIA
+git clone https://github.com/xlang-ai/OSWorld.git                      chapter7/OSWorld
+git clone https://github.com/SWE-bench/SWE-bench.git                   chapter7/SWE-bench
+git clone https://github.com/sierra-research/tau2-bench.git            chapter7/tau2-bench
+git clone https://github.com/laude-institute/terminal-bench.git        chapter7/terminal-bench
 
-# அத்தியாயம் 7 · பயிற்சி Frameworks (bojieli/* புத்தகத்திற்கு ஏற்ற forks)
-git clone https://github.com/bojieli/minimind.git                      chapter7/MiniMind-pretrain/minimind      # Exp 7-3 train LLM from scratch
-git clone https://github.com/bojieli/minimind-v.git                    chapter7/MiniMind-pretrain/minimind-v    # Exp 7-4 train VLM (projection layer)
-git clone https://github.com/bojieli/AdaptThink.git                    chapter7/AdaptThink-original
-git clone https://github.com/bojieli/AWorld.git                        chapter7/AWorld
-git clone https://github.com/bojieli/SFTvsRL.git                       chapter7/SFTvsRL
-git clone https://github.com/bojieli/verl.git                          chapter7/verl
-git clone https://github.com/bojieli/SandboxFusion.git chapter7/SandboxFusion && git -C chapter7/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c && git -C chapter7/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c && test "$(git -C chapter7/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"  # Exp 7-15 code sandbox
-git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter7/tinker-cookbook
-git clone https://github.com/19PINE-AI/rlvp.git                        chapter7/RLVP/rlvp                       # Exp 7-14 RLVP paper code
-git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter7/SimpleVLA-RL/SimpleVLA-RL       # Exp 7-13 vision-language-action RL
+# அத்தியாயம் 8 · பயிற்சி Frameworks (bojieli/* புத்தகத்திற்கு ஏற்ற forks)
+git clone https://github.com/bojieli/minimind.git                      chapter8/MiniMind-pretrain/minimind      # Exp 8-3 train LLM from scratch
+git clone https://github.com/bojieli/minimind-v.git                    chapter8/MiniMind-pretrain/minimind-v    # Exp 8-4 train VLM (projection layer)
+git clone https://github.com/bojieli/AdaptThink.git                    chapter8/AdaptThink-original
+git clone https://github.com/bojieli/AWorld.git                        chapter8/AWorld
+git clone https://github.com/bojieli/SFTvsRL.git                       chapter8/SFTvsRL
+git clone https://github.com/bojieli/verl.git                          chapter8/verl
+git clone https://github.com/bojieli/SandboxFusion.git chapter8/SandboxFusion && git -C chapter8/SandboxFusion fetch origin 4a0d573ebd64c98234c190a9d1d49e4276199a0c && git -C chapter8/SandboxFusion checkout --detach 4a0d573ebd64c98234c190a9d1d49e4276199a0c && test "$(git -C chapter8/SandboxFusion rev-parse HEAD)" = "4a0d573ebd64c98234c190a9d1d49e4276199a0c"  # Exp 8-14 code sandbox
+git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter8/tinker-cookbook
+git clone https://github.com/19PINE-AI/rlvp.git                        chapter8/RLVP/rlvp                       # Exp 8-16 RLVP paper code
+git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter8/SimpleVLA-RL/SimpleVLA-RL       # Exp 8-13 vision-language-action RL
 
-# அத்தியாயம் 9 · உலாவி தானியக்கம் & Claude எடுத்துக்காட்டுகள்
-git clone https://github.com/browser-use/browser-use.git               chapter9/browser-use
-git clone https://github.com/anthropics/claude-quickstarts.git         chapter9/claude-quickstarts
-git clone https://github.com/Vector-Wangel/XLeRobot.git chapter9/XLeRobot && git -C chapter9/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter9/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter9/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 9-7/9-9 shared
-git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter9/RoboCrew && git -C chapter9/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter9/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter9/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 9-8/9-9; RoboCrew v0.3.1
-git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter9/lerobot-sim2real && git -C chapter9/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter9/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter9/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 9-11
+# அத்தியாயம் 6 · உலாவி தானியக்கம் & Claude எடுத்துக்காட்டுகள்
+git clone https://github.com/browser-use/browser-use.git               chapter6/browser-use
+git clone https://github.com/anthropics/claude-quickstarts.git         chapter6/claude-quickstarts
+git clone https://github.com/Vector-Wangel/XLeRobot.git chapter6/XLeRobot && git -C chapter6/XLeRobot fetch origin 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && git -C chapter6/XLeRobot checkout --detach 3d14695e40c9c68229c0aacffca6053c75cd3eb6 && test "$(git -C chapter6/XLeRobot rev-parse HEAD)" = "3d14695e40c9c68229c0aacffca6053c75cd3eb6"  # Exp 6-9/6-11 shared
+git clone https://github.com/Grigorij-Dudnik/RoboCrew.git chapter6/RoboCrew && git -C chapter6/RoboCrew fetch origin c749148f29bd14e61347f9fc3530c343fff0d994 && git -C chapter6/RoboCrew checkout --detach c749148f29bd14e61347f9fc3530c343fff0d994 && test "$(git -C chapter6/RoboCrew rev-parse HEAD)" = "c749148f29bd14e61347f9fc3530c343fff0d994"  # Exp 6-10/6-11; RoboCrew v0.3.1
+git clone https://github.com/StoneT2000/lerobot-sim2real.git chapter6/lerobot-sim2real && git -C chapter6/lerobot-sim2real fetch origin 87d6c1d969f6e0ca4dc5697940804e231118a63a && git -C chapter6/lerobot-sim2real checkout --detach 87d6c1d969f6e0ca4dc5697940804e231118a63a && test "$(git -C chapter6/lerobot-sim2real rev-parse HEAD)" = "87d6c1d969f6e0ca4dc5697940804e231118a63a"  # Exp 6-13
 
 # அத்தியாயம் 10 · இரட்டை-ஏஜென்ட் கட்டமைப்பு (TalkAct-ஆக தனியாக உருவாகியது) + Stanford AI Town
 git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10/use-computer-while-calling

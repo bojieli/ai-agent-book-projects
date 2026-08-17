@@ -726,7 +726,7 @@ A folyamatos iteráció ezt jelenti: minden kör bizonyítéka csak a hatókör�
 
 > **7-12. kísérlet ★★★: Kiértékelés és Fejlesztés AndroidWorldön**
 >
-> Ez a kísérlet a kiértékelési jelentéstől a rendszerfejlesztésig vezető teljes utat gyakorolja. Kezdd a történeti jelentéssel és a `chapter6/android-world` három mentett páros futásával.
+> Ez a kísérlet a kiértékelési jelentéstől a rendszerfejlesztésig vezető teljes utat gyakorolja. Kezdd a történeti jelentéssel és a `chapter7/android-world` három mentett páros futásával.
 >
 > 1. lépés: Diagnózis. Elemezd keresztbe a feladatonkénti táblázatot és a képességcímke-mátrixot, hogy a felszíni feladathibákat mélyebb képességhiányokra vezesd vissza. Azonosítsd a vártnál alacsonyabb sikerességi arányú képességcímkéket és a koncentrált hibákkal rendelkező feladatterületeket.
 >

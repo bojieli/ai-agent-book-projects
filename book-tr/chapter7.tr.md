@@ -725,7 +725,7 @@ Sürekli yineleme pratikte budur: bir turun kanıtı yalnızca kapsamının dest
 
 > **Deney 7-12 ★★★: AndroidWorld'de Değerlendirme ve İyileştirme**
 >
-> Bu deney, değerlendirme raporundan sistem iyileştirmesine kadar olan yolu uygular. `chapter6/android-world` içindeki tarihsel rapor ve saklanmış üç eşleştirilmiş koşuyla başlayın.
+> Bu deney, değerlendirme raporundan sistem iyileştirmesine kadar olan yolu uygular. `chapter7/android-world` içindeki tarihsel rapor ve saklanmış üç eşleştirilmiş koşuyla başlayın.
 >
 > Birinci adım: teşhis. Görev bazlı tabloyu ve yetenek etiketi matrisini çapraz çözümleyerek yüzeydeki görev başarısızlıklarını derindeki yetenek eksikliklerine eşleyin. Başarı oranı beklenenin altında kalan yetenek etiketlerini ve başarısızlığın yoğunlaştığı görev bölgelerini belirleyin.
 >
