@@ -53,20 +53,6 @@ Sau khi đào tạo trước, mô hình có kiến thức nhưng không dễ s�
 
 Sau khi hiểu được điều này, "bộ nhớ SFT" trở nên hợp lý: mục tiêu tối ưu hóa của SFT là làm cho xác suất gắn nhãn từng mã thông báo trong câu trả lời càng cao càng tốt - nói một cách thẳng thắn thì đó là "ghi nhớ câu trả lời chuẩn này". Với cùng một vấn đề, nó được đào tạo để tái tạo lại phần trình diễn nguyên văn nhất có thể. Điều này cực kỳ hiệu quả đối với các nhiệm vụ có mục tiêu rõ ràng và định dạng cố định (nó hoạt động với vài nghìn ví dụ), nhưng ranh giới của các khả năng cũng được gắn chặt với dữ liệu trình diễn: nó chưa học được các tình huống không có trong bản trình diễn; một khi các câu trả lời trong phần trình diễn không còn áp dụng được nữa (môi trường đã thay đổi), nó vẫn ghi nhớ chúng.
 
-Nén việc này thành một bộ khung huấn luyện tối giản, mấu chốt không nằm ở API của một khung huấn luyện nào, mà ở ranh giới: **token của prompt không cung cấp giám sát, token của câu trả lời thì có**.
-
-```python
-for sample in dataset:
-    prompt_tokens = tokenize(sample.prompt)
-    answer_tokens = tokenize(sample.answer)
-    tokens = prompt_tokens + answer_tokens
-    labels = [-100] * len(prompt_tokens) + answer_tokens
-    loss = causal_lm_loss(tokens, labels)
-    update_parameters(loss)
-```
-
-Số `-100` ở đây chỉ đánh dấu mặt nạ mất mát, chứ không phải xóa prompt khỏi đầu vào của mô hình; mô hình vẫn phải đọc câu hỏi thì mới học được giao thức trả lời.
-
 Một câu tóm tắt bản chất của SFT: sử dụng hiệu suất mẫu cực cao để củng cố một tập hợp các giao thức và ánh xạ "đầu vào→đầu ra" ổn định thành các tham số. **Nó củng cố** kiến thức giao thức **(cách nói và làm) chẳng hạn như "định dạng, văn phong và quy trình" thay vì một lượng lớn** kiến thức thực tế **(những điều cần biết) - kiến thức sau dựa vào đào tạo trước hoặc RAG (tôi sẽ quay lại điểm khác biệt này ở cuối chương này).
 
 > **Chi phí đào tạo: Tinh chỉnh các thông số LoRA một cách hiệu quả**. SFT ở trên và RL sau đây đều cần cập nhật các tham số mô hình và tinh chỉnh tham số đầy đủ có yêu cầu cao về bộ nhớ video (gradient và trạng thái tối ưu hóa phải được lưu trữ cho hàng tỷ tham số). **LoRA**(Low-Rank Thích ứng, thích ứng cấp thấp) là cách tiết kiệm tiền được sử dụng phổ biến nhất: ma trận trọng số lớn ban đầu được giữ nguyên và chỉ treo một "bản vá" nhỏ (ma trận cấp thấp) bên cạnh để học nhiệm vụ. Số lượng tham số chỉ chiếm 1%–5% so với ban đầu nhưng có thể gần đạt hiệu quả tinh chỉnh toàn tham số. Vì trọng lượng ban đầu được cố định nên LoRA ít bị ảnh hưởng hơn đối với khả năng hiện có của cơ sở và nguy cơ quên thảm họa cũng thấp hơn. Một số kinh nghiệm thực tế đã được xác minh [^ch8-1]: **Phải** áp dụng LoRA cho tất cả các ma trận trọng số chính (đặc biệt là lớp MLP có tỷ lệ tham số lớn nhất). Chỉ thêm nó vào lớp chú ý sẽ làm mất điểm; **Tốc độ học tối ưu gấp khoảng 10 lần so với tinh chỉnh tham số đầy đủ**(SFT, RL (tất cả đều đã được thiết lập, đó là một quy tắc di chuyển rất thực tế); SFT sử dụng thứ hạng trung bình và cao (64–256) và RL sử dụng thứ hạng nhỏ (8–32) hoặc thậm chí là thứ hạng=1 vì lượng thông tin trong mỗi vòng là rất nhỏ. Trong quá trình triển khai, một máy chủ suy luận có thể tải nhiều bộ điều hợp LoRA cùng lúc để cung cấp các dịch vụ cho nhiều người thuê. Cuốn sách này coi LoRA là mục mặc định về mặt kỹ thuật trong tất cả các phương pháp post-training và sẽ không được phát triển riêng biệt.
@@ -372,7 +358,7 @@ Khi đưa ra quyết định thực tế, bạn có thể xem xét chúng theo t
 
 Trước khi bước vào thử nghiệm, trước tiên hãy thiết lập một chút **trực giác tối thiểu** về thuật toán RL để hiểu thuật ngữ xuất hiện trong các thử nghiệm tiếp theo (công thức hoàn chỉnh và so sánh được để lại trong phần "So sánh các thuật toán học tăng cường" ở phần sau của chương này). Việc đào tạo RL trong chương này chủ yếu dựa trên **Policy gradient**: Hãy để mô hình tạo ra nhiều câu trả lời hơn cho cùng một câu hỏi. Câu trả lời có phần thưởng cao sẽ làm tăng xác suất xuất hiện của nó, còn câu trả lời có phần thưởng thấp sẽ làm giảm khả năng xuất hiện - "đi nhiều hơn về hướng phần thưởng cao và ít đi về hướng phần thưởng thấp". Để tránh sai lệch mô hình nếu biên độ cập nhật đơn quá lớn, thuật toán **PPO** chính thống sẽ cắt biên độ cập nhật của từng bước ("PPO với mạng giá trị" xuất hiện trong các thử nghiệm sau này đề cập đến điều này, mạng giá trị được sử dụng để ước tính đường cơ sở và tính toán các lợi thế chi tiết hơn); còn **GRPO** thì không đào tạo mạng giá trị mà "nhiều câu trả lời cho cùng một câu hỏi được so sánh với nhau" để đánh giá chất lượng tương đối của mỗi câu trả lời. Hãy ghi nhớ trực giác này là đủ để hiểu hai thí nghiệm tiếp theo.
 
-Cùng một cơ chế có thể biểu diễn bằng bộ khung kiểu Python dưới đây. Nó lược bỏ việc song song hóa lấy mẫu, chính quy hóa KL và chi tiết bộ tối ưu, chỉ nêu chuỗi nhân quả từ một lần rollout đến một lần cập nhật tham số:
+Cùng một cơ chế có thể biểu diễn bằng mã giả kiểu Python dưới đây. Nó lược bỏ việc song song hóa lấy mẫu, chính quy hóa KL và chi tiết bộ tối ưu, chỉ nêu chuỗi nhân quả từ một lần rollout đến một lần cập nhật tham số:
 
 ```python
 for prompt in batch:
@@ -524,18 +510,6 @@ Search-R1[^ch8-25] đại diện cho hướng tăng cường truy hồi: mô hì
 
 Quỹ đạo có công cụ còn có một chi tiết cài đặt then chốt: token do môi trường trả về không phải do chính sách sinh ra, nên khi tính gradient chính sách thì phải che những token phản hồi ấy đi, chỉ truyền gradient qua phần suy nghĩ của chính mô hình và các tham số của lượt gọi công cụ. Nếu không, mô hình sẽ bị huấn luyện để dự đoán đầu ra của sandbox thay vì học cách dùng công cụ.
 
-Ranh giới này có thể viết thành một mặt nạ rất ngắn ở cấp quỹ đạo:
-
-```python
-for token in trajectory:
-    if token.source == ENVIRONMENT:
-        loss_mask[token] = 0
-    else:                                      # model thought / tool arguments
-        loss_mask[token] = 1
-```
-
-Điều này không có nghĩa phản hồi của môi trường không quan trọng; phản hồi đảm nhiệm việc tính phần thưởng và lợi thế, chỉ là không nên xem nó như chuỗi mục tiêu mà chính sách phải tái hiện. Thông điệp công cụ bắt buộc phải giữ dấu nguồn và phải phân biệt được với đầu ra của chính sách trong môi trường thực thi.
-
 > **Thử nghiệm 8-14 ★★★: ReTool — trình thông dịch mã tăng cường cho giải toán**
 >
 > ![Hình 8-17 Vòng phản hồi của ReTool: suy nghĩ đan xen văn bản-mã và thực thi trong sandbox](images/fig8-17.svg)
@@ -628,7 +602,7 @@ On-Policy Distillation để học trò sinh quỹ đạo bằng chính sách c�
 
 Cách làm cụ thể là kéo phân phối dự đoán của học trò sát với phân phối của giáo viên, thường bằng cách cực tiểu hóa **phân kỳ KL** giữa hai bên. Chẳng hạn khi học trò đang sinh "truy vấn API trước, rồi phân tích giá trị trả về…", giáo viên có thể đưa ra ở vị trí đó phân phối 80% "truy vấn", 15% "gọi", 5% còn lại. So với phần thưởng nhị phân ở cuối, việc khớp theo từng token cung cấp tín hiệu học dày hơn nhiều và phương sai thấp hơn nhiều; cái giá là chi phí suy luận của giáo viên, nên nó đặc biệt đáng khi tương tác với môi trường tốn kém.
 
-Luồng điều khiển của nó có thể nén lại thế này: học trò cứ đi lối của mình, còn giáo viên chỉ cung cấp phân phối tại những trạng thái học trò thực sự ghé qua, chứ không phát lại thay học trò một câu trả lời off-policy.
+Mã giả cơ bản của on-policy distillation như sau:
 
 ```python
 student_trajectory = rollout(student, task)
@@ -638,8 +612,6 @@ for state in student_trajectory:
     loss += KL(student_logits(state), teacher_logits)
 update_student(loss)
 ```
-
-Bộ khung ở đây chỉ dùng để phân biệt trạng thái on-policy với giám sát theo từng token.
 
 Ở những nhiệm vụ như toán, số bước huấn luyện cần để đạt hiệu năng tương đương chỉ khoảng **1/10** so với RL thuần. Trong Agent nhiều vòng, khi tín hiệu thành/bại đến muộn hơn và thưa hơn, phân phối theo từng token của giáo viên có thể trực tiếp dẫn dắt các quyết định trung gian; nhưng tiền đề là môi trường mô phỏng phải đủ chân thực để những trạng thái học trò khám phá gần với phân phối lúc triển khai, nếu không thì điểm số của giáo viên cho những trạng thái lệch lạc xa lạ cũng không đáng tin.
 
@@ -651,7 +623,7 @@ Sức mạnh của On-Policy Distillation đến từ giáo viên, nhưng cũng 
 
 Một hướng gỡ khéo léo là **On-Policy Self-Distillation (OPSD, tự chưng cất trên quỹ đạo)**[^ch8-15]: **cùng một mô hình đóng cả vai giáo viên lẫn học trò, nhưng thấy ngữ cảnh khác nhau.** Bản giáo viên được thấy "thông tin đặc quyền" — đáp án chuẩn hoặc lời giải đúng đã kiểm chứng; bản học trò chỉ thấy đề bài, nhưng khớp theo từng token với phân phối của bản giáo viên trên chính những quỹ đạo mà nó tự lấy mẫu. Nhìn đáp án mà giải thích lối đi học trò vừa đi thường dễ hơn tự mò một mình, nên một rollout vẫn sinh ra được giám sát dày đặc.
 
-OPSD có thể xem như một biến thể bị ràng buộc của bộ khung ở trên:
+OPSD có thể xem như một biến thể bị ràng buộc của mã giả ở trên:
 
 ```python
 student_trajectory = rollout(model, task_without_answer)

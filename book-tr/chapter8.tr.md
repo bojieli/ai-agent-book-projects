@@ -53,20 +53,6 @@ Bu bölümde aşılması gereken ilk kilit kavrayış şudur: **SFT, matematikse
 
 Bunu kavradığınızda "SFT ezberler" iddiası kendiliğinden yerine oturur: SFT'nin optimizasyon hedefi, **etiketlenmiş yanıttaki her token'ın olasılığını olabildiğince yükseltmektir** — açık söylemek gerekirse "bu standart cevabı ezberlemektir". Aynı soru verildiğinde model, gösterimi harfi harfine yeniden üretmek üzere eğitilmiştir. Hedefi net, formatı sabit görevlerde bu son derece verimlidir (birkaç bin örnek sonuç vermeye yeter), ama yetenek sınırı da gösterim verisine çakılıp kalır: gösterimde bulunmayan durumları hiç öğrenmemiştir; gösterimdeki yanıt artık geçerli değilse bile (ortam değiştiyse) onu ezberden okumayı sürdürür.
 
-Bunu en yalın eğitim iskeletine indirgediğinizde asıl mesele herhangi bir eğitim çatısının API'si değil, şu sınırdır: **prompt token'ları denetim sağlamaz, cevap token'ları sağlar**.
-
-```python
-for sample in dataset:
-    prompt_tokens = tokenize(sample.prompt)
-    answer_tokens = tokenize(sample.answer)
-    tokens = prompt_tokens + answer_tokens
-    labels = [-100] * len(prompt_tokens) + answer_tokens
-    loss = causal_lm_loss(tokens, labels)
-    update_parameters(loss)
-```
-
-Buradaki `-100` yalnızca kayıp maskesini işaretler; prompt'u modelin girdisinden çıkarmaz. Model, cevaplama protokolünü öğrenebilmek için soruyu yine de okumak zorundadır.
-
 SFT'nin özü tek cümlede: **son derece yüksek bir örneklem verimliliğiyle, kararlı bir "girdi→çıktı" eşlemesini ve protokolü parametrelere kalıcı olarak yazar.** Kalıcılaştırdığı şey "format, üslup, akış" türünden **protokole ait bilgidir** (nasıl söylenir, nasıl yapılır), büyük miktarda **olgusal bilgi** (ne bilindiği) değil — ikincisi pre-training'e ya da RAG'a kalır (bölümün sonunda bu ayrıma döneceğiz).
 
 > **Eğitim maliyeti: LoRA ile parametre-verimli ince ayar**. Yukarıdaki SFT de sonraki RL de model parametrelerini güncellemeyi gerektirir, oysa tam parametreli ince ayarın VRAM ihtiyacı çok yüksektir (milyarlarca parametrenin hepsi için gradyan ve optimizer durumu saklanmalıdır). **LoRA** (Low-Rank Adaptation, düşük ranklı uyarlama) en yaygın tasarruf yöntemidir: orijinal büyük ağırlık matrislerine dokunmaz, yalnızca yanlarına görevi öğrenecek küçücük bir "yama" (düşük ranklı matris) asar; parametre sayısı orijinalin yalnızca %1–5'i kadardır ama tam parametreli ince ayara yakın bir sonuç verir. Orijinal ağırlıklar dondurulduğu için LoRA'nın temel modelin mevcut yeteneklerinde yarattığı sarsıntı da daha küçüktür, catastrophic forgetting riski daha düşüktür. Doğrulanmış birkaç pratik ders[^ch8-1]: LoRA'yı bütün ana ağırlık matrislerine (özellikle parametrenin en büyük payını tutan MLP katmanlarına) uygulamak **zorunludur**, yalnızca attention katmanlarına eklerseniz puan kaybedersiniz; **en iyi öğrenme oranı, tam parametreli ince ayarınkinin yaklaşık 10 katıdır** (hem SFT hem RL için geçerli, son derece kullanışlı bir aktarım kuralı); SFT'de orta-yüksek rank (64–256) kullanılır, RL'de ise her turun taşıdığı bilgi çok az olduğu için küçük rank (8–32), hatta rank=1 bile yeter. Konuşlandırmada tek bir çıkarım sunucusu aynı anda birden fazla LoRA adapter yükleyip çok kiracılı hizmet verebilir. Bu kitap LoRA'yı bütün post-training yöntemlerini kesen bir mühendislik varsayılanı olarak alıyor ve ayrıca açmıyor.
@@ -372,7 +358,7 @@ Pratikte karar verirken şu sırayı izleyebilirsiniz:
 
 Deneylere geçmeden önce, sonraki deneylerde geçen terimleri anlayabilmek adına RL algoritmalarına dair **asgari bir sezgi** kuralım (eksiksiz formüller ve karşılaştırma, bölümün ilerisindeki "Pekiştirmeli Öğrenme Algoritmalarının Karşılaştırması" kesimine bırakıldı). Bu bölümdeki RL eğitimlerinin çoğu **policy gradient** temellidir: modele aynı soru için birkaç yanıt ürettirilir, ödülü yüksek olan yanıtların ortaya çıkma olasılığı yükseltilir, ödülü düşük olanlarınki düşürülür — "ödülün yüksek olduğu yöne çok, düşük olduğu yöne az git". Tek seferlik güncellemenin fazla büyük olup modeli yoldan çıkarmaması için ana akım **PPO** algoritması her adımdaki güncelleme genliğini kırpar (ilerideki deneylerde geçen "değer ağı olan PPO" bunu kasteder; değer ağı bir taban çizgisi kestirip daha ince bir avantaj hesabı çıkarmaya yarar). Bir diğer algoritma olan **GRPO** ise değer ağı eğitmez; onun yerine "aynı sorunun birden çok yanıtını birbiriyle karşılaştırarak" her birinin göreli iyiliğini belirler. Bu sezgiyi aklınızda tutmanız sonraki iki deneyi anlamaya yeter.
 
-Aynı mekanizma aşağıdaki Python tarzı iskeletle gösterilebilir. Örnekleme paralelliği, KL düzenlileştirmesi ve optimize edici ayrıntıları atlanmış; yalnızca bir rollout'tan parametre güncellemesine giden nedensel zincir işaretlenmiştir:
+Aynı mekanizma aşağıdaki Python tarzı sözde kodla gösterilebilir. Örnekleme paralelliği, KL düzenlileştirmesi ve optimize edici ayrıntıları atlanmış; yalnızca bir rollout'tan parametre güncellemesine giden nedensel zincir işaretlenmiştir:
 
 ```python
 for prompt in batch:
@@ -524,18 +510,6 @@ Search-R1[^ch8-25] geri getirmeyle güçlendirme yolunu temsil eder: model ne za
 
 Araçlı yörüngelerin kritik bir uygulama ayrıntısı vardır: ortamın döndürdüğü token'ları politika üretmemiştir, bu yüzden politika gradyanı hesaplanırken bu geri bildirim token'ları maskelenmeli ve gradyanlar yalnızca modelin kendi düşüncesi ile araç çağrısı argümanları üzerinden geri yayılmalıdır. Aksi hâlde model, araç kullanmayı öğrenmek yerine kum havuzunun çıktısını tahmin etmek üzere eğitilir.
 
-Bu sınır çok kısa, yörünge düzeyinde bir maske olarak yazılabilir:
-
-```python
-for token in trajectory:
-    if token.source == ENVIRONMENT:
-        loss_mask[token] = 0
-    else:                                      # model thought / tool arguments
-        loss_mask[token] = 1
-```
-
-Bu, ortam geri bildiriminin önemsiz olduğu anlamına gelmez; geri bildirim ödülü ve avantajı hesaplar, yalnızca politikanın yeniden üretmesi gereken bir hedef dizi olarak görülmemelidir. Araç mesajları kaynak işaretlerini korumalı ve yürütme ortamı içinde politika çıktısından ayırt edilebilir kalmalıdır.
-
 > **Deney 8-14 ★★★: ReTool — kod yorumlayıcısıyla güçlendirilmiş matematik çözümü**
 >
 > ![Şekil 8-17 ReTool'un metin-kod iç içe düşünmesi ve kum havuzu yürütme geri bildirim döngüsü](images/fig8-17.svg)
@@ -628,7 +602,7 @@ On-Policy Distillation önce öğrenciye kendi politikasıyla yörüngeler üret
 
 Somut olarak öğrencinin tahmin dağılımı öğretmeninkine yaklaştırılır; bu genellikle ikisi arasındaki **KL ıraksaması** en küçültülerek yapılır. Örneğin öğrenci "önce API'yi sorgula, sonra dönen değeri ayrıştır…" üretirken öğretmen o konumda %80 "sorgula", %15 "çağır", kalan %5 biçiminde bir dağılım verebilir. Sondaki ikili ödüle kıyasla token düzeyinde hizalama çok daha yoğun ve çok daha düşük varyanslı bir öğrenme sinyali sağlar; bedeli öğretmenin çıkarım maliyetidir ve ortam etkileşimi pahalı olduğunda bu özellikle kârlıdır.
 
-Denetim akışı şöyle sıkıştırılabilir: öğrenci kendi yolunda yürür, öğretmen yalnızca öğrencinin fiilen uğradığı durumlarda dağılım sağlar ve öğrencinin yerine off-policy bir cevabı yeniden oynatmaz.
+On-policy damıtmanın temel sözde kodu şöyledir:
 
 ```python
 student_trajectory = rollout(student, task)
@@ -638,8 +612,6 @@ for state in student_trajectory:
     loss += KL(student_logits(state), teacher_logits)
 update_student(loss)
 ```
-
-Buradaki iskelet yalnızca on-policy durumları token düzeyindeki denetimden ayırmaya yarıyor.
 
 Matematik gibi görevlerde eşdeğer başarıma ulaşmak için gereken eğitim adımı sayısı, saf RL'inkinin yaklaşık **onda biridir**. Çok turlu Agent'larda başarı sinyali daha geç ve daha seyrek geldiğinden öğretmenin token düzeyindeki dağılımı ara kararları doğrudan yönlendirebilir; ama koşulu, simülasyon ortamının yeterince gerçekçi olması ve öğrencinin keşfettiği durumların konuşlandırma dağılımına yakın olmasıdır — yoksa öğretmenin yabancı ve yanlı durumlara verdiği puanlar da güvenilmez olur.
 
@@ -651,7 +623,7 @@ On-Policy Distillation'ın gücü öğretmenden gelir, ama bu yüzden sert bir �
 
 Zekice bir çıkış yolu **On-Policy Self-Distillation (OPSD, on-policy öz-damıtma)**[^ch8-15]: **aynı model hem öğretmen hem öğrenci rolünü oynar, ama gördükleri bağlam farklıdır.** Öğretmen sürümü "ayrıcalıklı bilgiyi" — standart cevabı ya da doğrulanmış doğru çözümü — görebilir; öğrenci sürümü yalnızca soruyu görür, ama kendi örneklediği yörüngeler üzerinde öğretmen sürümünün token düzeyindeki dağılımına hizalanır. Cevap elinizdeyken öğrencinin az önce yürüdüğü yolu açıklamak, tek başına keşfetmekten genellikle daha kolaydır; bu yüzden bir rollout yine yoğun denetim üretebilir.
 
-OPSD, yukarıdaki iskeletin kısıtlı bir çeşidi olarak okunabilir:
+OPSD, yukarıdaki sözde kodun kısıtlı bir çeşidi olarak okunabilir:
 
 ```python
 student_trajectory = rollout(model, task_without_answer)

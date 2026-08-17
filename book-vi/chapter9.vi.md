@@ -26,19 +26,6 @@ Nhiều nhiệm vụ hơn không có một đáp án đúng duy nhất. Nhân vi
 
 Hình 9-2 trình bày một cấu trúc xác minh ba tầng. Bộ xác minh kết quả ở tầng dưới đọc kết quả kiểm thử, trạng thái cơ sở dữ liệu và phản hồi của công cụ để trả lời “việc đó có thực sự được hoàn thành hay không”; bộ xác minh quá trình ở tầng giữa kiểm tra quy tắc nghiệp vụ, quyền hạn và chuỗi hành động để trả lời “việc đó có được hoàn thành theo cách được phép hay không”; bộ xác minh chất lượng ở tầng trên đánh giá ngôn ngữ và chiến lược theo Rubric để trả lời “việc đó có được xử lý phù hợp hay không”. Chỉ số càng gần tầng dưới càng nên dựa vào mã và chân trị của môi trường; chỉ những phần khó hình thức hóa mới nên giao cho mô hình ngôn ngữ.
 
-**Xác minh trajectory ba lớp:**
-
-```python
-outcome = verify_environment_state(trajectory)
-process = verify_actions_and_permissions(trajectory)
-quality = judge_with_rubric(trajectory, cite_evidence = true)
-
-if not outcome.pass or not process.pass:
-    reject_as_learning_example(outcome, process, quality)
-else:
-    emit_structured_diagnosis(outcome, process, quality)
-```
-
 ![Hình 9-2 Xác minh quỹ đạo ba tầng từ kết quả môi trường đến LLM Rubric](images/fig9-2.svg)
 
 Lấy Agent chăm sóc khách hàng làm ví dụ, một Rubric hữu ích tối thiểu phải bao quát các chiều trong Bảng 9-1. Năm mục đầu chủ yếu ràng buộc giới hạn tối thiểu, hai mục cuối đo lường chất lượng dịch vụ. Cách phân tách này có giá trị chẩn đoán cao hơn câu hỏi “người dùng có hài lòng hay không”: người dùng có thể hài lòng vì Agent hoàn tiền trái quy định, cũng có thể không hài lòng vì các hạn chế tuân thủ; một chỉ số hài lòng duy nhất không thể phân biệt hai trường hợp.
@@ -55,23 +42,11 @@ Bảng 9-1 Các chiều đánh giá quỹ đạo của Agent chăm sóc khách h
 | Chất lượng diễn đạt | Có tự nhiên, súc tích, tránh lặp lại và khuôn mẫu hay không | Toàn bộ hội thoại, Rubric ngôn ngữ |
 | Linh hoạt trong tuân thủ | Khi phương án ban đầu không khả thi, có tìm được lộ trình thay thế được phép hay không | Mục tiêu người dùng, chính sách và hành động tiếp theo |
 
-Trong đó, “tính nhất quán giữa cam kết và hành động” đặc biệt phù hợp với bối cảnh Agent. Đánh giá văn bản truyền thống chỉ đọc phản hồi cuối cùng nên dễ coi “tôi đã gửi yêu cầu hoàn tiền cho bạn” là dịch vụ tốt; đánh giá quỹ đạo sẽ tiếp tục kiểm tra công cụ hoàn tiền có thực sự được gọi hay không, lệnh gọi có thành công hay không và trạng thái đơn hàng có thay đổi hay không. “Linh hoạt trong tuân thủ” cũng không nhằm khuyến khích mô hình tùy tiện vượt qua quy tắc, mà yêu cầu nó hiểu mục tiêu thực sự của người dùng và kiểm tra các lựa chọn hợp lệ như đổi lịch, gia hạn hoặc bồi thường một phần khi không thể hoàn tiền.
-
-Kết quả xác minh không nên bị nén thành một đại lượng vô hướng. Một lần đánh giá quỹ đạo giống một bản chẩn đoán có cấu trúc hơn: nhiệm vụ thành công một phần, tuân thủ quy tắc đạt yêu cầu, nhưng có một phát biểu không có bằng chứng, một cam kết sai sự thật và phần phản hồi còn lặp lại lời giải thích chính sách ba lần. Tín hiệu đa chiều vừa giữ lại bản chất vấn đề, vừa giữ lại vị trí bằng chứng. Chỉ khi đó mô-đun phía sau mới có thể tiếp tục phán đoán: phát biểu không có bằng chứng là do thiếu tri thức, thiếu yêu cầu trích dẫn hay năng lực mô hình chưa đủ; cam kết sai sự thật nên được sửa trong Prompt hay cần bổ sung kiểm tra tính nhất quán giữa phản hồi và trạng thái công cụ trong Harness.
-
-Bản thân bộ xác minh LLM cũng cần được hiệu chuẩn. Hệ thống sản xuất thường chuẩn bị một tập nhỏ quỹ đạo do chuyên gia gán nhãn để kiểm tra tính nhất quán của bộ xác minh trên từng chiều; các trường hợp rủi ro cao hoặc độ tin cậy thấp được chuyển cho mô hình thứ hai hoặc con người rà soát; sau khi thay đổi phiên bản mô hình, tập hiệu chuẩn được chạy lại. Bộ xác minh chịu trách nhiệm đưa ra đánh giá và bằng chứng; còn việc cần sửa đổi phần nào của Agent phải do mô-đun chẩn đoán và tiến hóa độc lập quyết định, tránh để cùng một mô hình vừa làm trọng tài vừa trực tiếp viết lại quy tắc.
-
 > **Thí nghiệm 9-1 ★★: Xây dựng bộ xác minh quỹ đạo cho Agent chăm sóc khách hàng**
 >
 > **Mục tiêu thí nghiệm**: Chuyển một quỹ đạo vận hành chăm sóc khách hàng thành chẩn đoán có cấu trúc dùng được cho việc học về sau, đồng thời xác minh liệu “kết luận đa chiều kèm bằng chứng” có định vị nguyên nhân gốc tốt hơn một tổng điểm duy nhất hay không.
 >
-> **Dữ liệu và quy trình**: Chuẩn bị bốn loại quỹ đạo có nhãn chuyên gia: hoàn tiền bình thường, cam kết sai sự thật, rò rỉ quyền riêng tư và từ chối quá mức. Tầng một đọc trạng thái cuối của đơn hàng và nhật ký công cụ để xác định việc hoàn tiền hoặc đổi lịch có thực sự diễn ra hay không. Tầng hai đối chiếu từng bước với chính sách nghiệp vụ để kiểm tra quyền hạn, quy trình bắt buộc, quyền riêng tư, căn cứ sự kiện và tính nhất quán giữa cam kết với hành động. Tầng ba dùng Rubric ở Bảng 9-1 để đánh giá chất lượng diễn đạt và linh hoạt trong tuân thủ, đồng thời giữ lại lượt hội thoại làm bằng chứng cho kết luận thất bại. Judge chất lượng mặc định dùng quy tắc xác định; hệ thống cũng cung cấp LLM Judge thực. Dù tầng trên dùng mô hình nào, tầng kết quả và tầng quy tắc cũng không được giao cho mô hình ngôn ngữ phỏng đoán.
->
-> **Đối chứng và chỉ số**: Đường cơ sở chỉ xuất một tổng điểm; nhóm thí nghiệm xuất `pass`, `fail` hoặc `uncertain`, bằng chứng và độ tin cậy cho từng chiều. Trong giai đoạn hiệu chuẩn, tính precision và recall nhận diện thất bại theo từng chiều, đồng thời báo cáo tỷ lệ khớp hoàn toàn với nhãn chuyên gia. Cũng cần kiểm tra các thất bại như cam kết sai sự thật có bằng chứng không rỗng, thay vì chỉ có kết luận.
->
-> **Tiêu chí nghiệm thu**: Bộ xác minh phải ổn định nhận diện vi phạm trọng yếu, cam kết sai sự thật và từ chối quá mức. Một tổng điểm cao không được che giấu thất bại ở chiều quyền riêng tư hoặc quy tắc. Trường hợp độ tin cậy thấp hay rủi ro cao phải được chuyển sang bộ xác minh thứ hai hoặc con người rà soát, thay vì tự động trở thành tín hiệu học tập.
->
-> Phần triển khai đi kèm nằm tại [`trajectory-verifier`](../chapter9/trajectory-verifier/), mặc định sử dụng Judge chất lượng có thể tái lập ngoại tuyến; dùng `--judge llm` để chạy bộ xác minh LLM thực đã được triển khai.
+> **Mô tả thực nghiệm:** So sánh cách “chỉ xuất một điểm tổng” với cách “xuất kết luận, chứng cứ và độ tin cậy theo từng chiều”, rồi quan sát cách nào phân biệt tốt hơn thất bại tác vụ, vi phạm quy tắc, lời hứa giả và vấn đề diễn đạt. Tiến hóa liên tục không thể chỉ dựa vào tỷ lệ thành công hay một điểm số. Chỉ khi giữ lại sai ở đâu, vì sao và chứng cứ nằm ở đâu, mô-đun sau mới biết nên cập nhật tri thức, Prompt, chương trình hay tham số; trường hợp độ tin cậy thấp cũng không nên tự động vào tập học.
 
 ## Bốn phương pháp tiến hóa liên tục của Agent
 
@@ -89,19 +64,6 @@ Bảng 9-2 Phạm vi áp dụng của bốn phương thức tiến hóa liên t�
 | Prompt và Skill | Nguyên tắc phán đoán và quy phạm thao tác có thể ngôn ngữ hóa | Có thể giải thích, phạm vi tác động có thể kiểm soát | Dễ phình to, xung đột hoặc bị bỏ qua |
 | Chương trình và Harness | Quy trình xác định, công cụ và ràng buộc cứng | Có thể kiểm thử, thực thi ổn định, chi phí thấp | Chi phí phát triển và bảo trì tương đối cao |
 | Tham số mô hình | Tri giác nhiều chiều, phong cách sinh và chiến lược ngầm | Năng lực khái quát hóa mạnh, chi phí suy luận thấp | Chi phí cập nhật và hồi quy cao |
-
-**Định tuyến kinh nghiệm → năng lực:**
-
-```python
-if experience.is_factual and experience.has_sources:
-    target = KNOWLEDGE
-elif experience.can_be_expressed_as_contextual_language_rule:
-    target = PROMPT_OR_SKILL
-elif experience.is_deterministic or experience.is_hard_safety_constraint:
-    target = PROGRAM_OR_HARNESS
-else:
-    target = MODEL_PARAMETERS
-```
 
 ### Kết tinh kinh nghiệm thành tri thức
 
@@ -248,6 +210,26 @@ Thí nghiệm 9-8 áp dụng cùng giao thức vào lớp xác minh. Chỉ tạo
 >
 > Dùng ba tín hiệu và trajectory đối chứng trong `failure_trajectories.json`. Ứng viên `gpt-4o-mini` thật không qua replay nhiệm vụ chưa hoàn thành, thao tác bình thường và token một lần nên bị cổng an toàn từ chối. Ứng viên xác định vượt qua và nhận `release_to_canary`; ghi lại kiểm tra, quyết định và hash thư mục ổn định. Xem [`harness-safety-gate`](../chapter9/harness-safety-gate/).
 
+#### Trường hợp: DeepSeek Harness tự tiến hóa, nơi mọi thứ đều là plugin
+
+Bảng ở Chương 1 xếp DeepSeek Harness (`dsh`) vào loại “framework tự tiến hóa cho Agent”[^dsh-2026]. Bài báo nền tảng Cordis chỉ ra rằng composition truyền thống là **tĩnh**: lời gọi hàm, import mô-đun và kế thừa lớp được ấn định khi biên dịch. Hệ plugin và Harness tự tiến hóa cần **composition động**, nơi thành phần được nạp, gỡ và cấu hình lại trong runtime[^cordis-2026]. Mỗi lần Agent tự sửa về bản chất là một composition động.
+
+Bài báo tách composition động thành hai chiều trực giao. **Khả năng kết hợp theo thời gian** hỏi liệu khi gỡ thành phần, mọi thay đổi của nó lên môi trường dùng chung có thể được hoàn tác đầy đủ, an toàn hay không; runtime phải theo dõi mọi cấp phát tài nguyên, đăng ký sự kiện và đổi trạng thái. **Khả năng kết hợp theo không gian** hỏi liệu các thành phần có thể khai báo, khám phá và giải quyết dependency một cách có cấu trúc, kiểm chứng được, đồng thời điều phối vòng đời khi dependency thay đổi hay không. Chiều trước quan tâm **đã đổi gì**; chiều sau **phụ thuộc gì**.
+
+Harness tự tiến hóa là trường hợp gay gắt nhất. Side effect cần hoàn tác sống lâu và có trạng thái; dependency xuất hiện, biến mất hoặc đổi danh tính trong runtime. Thiếu khả năng theo thời gian, mỗi lần sửa cần khởi động lại toàn bộ, mất trạng thái trong tiến trình và ngắt tác vụ. Thiếu khả năng theo không gian, mỗi mô-đun phải tự ứng biến để phát hiện dependency, và thay mã đơn giản có thể âm thầm phá thành phần phụ thuộc hoặc tạo chu kỳ.
+
+Cordis đưa hai khái niệm compile-time lên runtime. Effect system, vốn suy luận cách tính toán đổi môi trường, trở thành **effect có thể đảo**: mỗi biến đổi context mang một phép nghịch đảo tường minh do runtime theo dõi để phục hồi khi gỡ thành phần. Coeffect system, vốn suy luận tính toán cần gì từ môi trường, trở thành **coeffect phản ứng**: thành phần khai báo dependency thành đặc tả, và mỗi thay đổi context báo nó kích hoạt, mất hiệu lực hay không liên quan. Một phép tính composition động mở rộng tính chất này tới hệ thành phần đan xen—khả năng kết hợp phải có tính bắc cầu.
+
+**Giới hạn tự tiến hóa không phụ thuộc mô hình viết mã tốt đến đâu mà phụ thuộc hệ thống chứa nó có thể kết hợp đến mức nào.** Vì vậy `dsh` biến adapter mô hình, registry công cụ, log phiên và cả vòng lặp chính của Agent thành plugin: **không có kernel đặc quyền chỉ con người mới bảo trì được**.
+
+Khả năng kết hợp giải quyết việc có thể nạp/gỡ an toàn hay không, không giải quyết có nên nạp hay không. Plugin do mô hình viết chỉ sống trong bộ nhớ tiến trình và biến mất khi khởi động lại; nó **không thể tự động được nâng thành plugin chính thức**. Muốn tồn tại, nó phải đi theo lộ trình worktree + Pull Request chậm hơn đã nói trước.
+
+Tiến hóa cũng có chi phí. Plugin đang chạy thay đổi tập công cụ và mảnh Prompt mà mô hình nhìn thấy. Khi tiền tố request đổi, KV Cache ở Chương 2 mất hiệu lực từ điểm đó. Tài liệu plugin `dsh` cần mô tả tác động lên context và KV Cache.
+
+[^dsh-2026]: DeepSeek AI, *DeepSeek Harness: Everything is a Plugin*, 2026. https://github.com/deepseek-ai/deepseek-harness. `docs/architecture.md` mô tả lớp plugin và patch; `docs/subsystems/extensions.md` cùng `packages/extensions/README.md` mô tả vòng đời, sandbox và tuyên bố tin cậy của công cụ tự sửa. Phát hành tháng 8/2026, dự án ở bản developer preview trong phần này.
+
+[^cordis-2026]: Shi, Yifan, Wei Zhang, and Tianyi Cui. *A Programming Paradigm for Spatiotemporal Composability.* Bản thảo preprint, 13 tháng 8 năm 2026. https://github.com/cordiverse/paper
+
 ### Ghi kinh nghiệm vào tham số
 
 Tri thức, chỉ dẫn và chương trình đều dựa trên một tiền đề: năng lực mục tiêu có thể được biểu đạt tương đối đầy đủ bằng ký hiệu bên ngoài. Tuy nhiên, những năng lực như hiểu ảnh y khoa, ngữ điệu giọng nói tự nhiên, loại bỏ “chất AI” khuôn mẫu trong văn bản và lập kế hoạch dài hạn rất khó nén thành vài quy tắc hoặc quy trình công việc. Những năng lực này phải được ghi vào tham số mô hình thông qua hậu huấn luyện.
@@ -268,8 +250,6 @@ Ra ngoài một tầng, đối tượng tối ưu không chỉ là “ngữ cả
 
 Ý tưởng này mở rộng tới quy trình công việc và toàn bộ Harness. AFlow biểu diễn quy trình gồm nhiều lần gọi LLM thành đồ thị mã và dùng phản hồi thực thi để tìm tổ hợp nút cùng luồng điều khiển[^aflow-2025]. Meta-Harness để Coding Agent đọc mã nguồn, điểm số và quỹ đạo của Harness ứng viên rồi tìm kiếm mã quyết định cách lưu, truy xuất và trình bày thông tin[^meta-harness-2026]. Chương 5 đã xem mã là ngôn ngữ chung biểu đạt cấu trúc hệ thống Agent; điểm mới ở đây là mã cùng lịch sử đánh giá có thể trở thành đối tượng tìm kiếm liên tục, không chỉ là đầu ra một lần.
 
-Tầng cao hơn không mặc nhiên tốt hơn. Tìm một quy tắc cục bộ có thể chỉ cần vài ca biên; tìm toàn bộ quy trình hoặc Harness phải đối mặt với không gian ứng viên lớn hơn, chi phí đánh giá cao hơn và khó quy kết hơn. Một lỗi rõ ràng, lặp lại và định vị được ở một thành phần nên được sửa trước bằng bản vá cục bộ có thể kiểm toán. Chỉ khi sửa cục bộ lâu dài không giải quyết được vấn đề xuyên thành phần, hoặc chính phương pháp quản lý đã thành nút thắt, mới nên nâng lên tầng quy trình, Harness hay bộ tối ưu. Ở mọi tầng, bộ đánh giá, ranh giới quyền và tập kiểm thử giữ lại phải nằm ngoài vùng có thể sửa — không gian tìm kiếm càng lớn, gốc tin cậy này càng quan trọng.
-
 > **Thí nghiệm 9-6 ★★★: Đưa cuốn sách này cho Hermes: nó có thể tự nâng cấp không?**
 >
 > **Mục tiêu**: Kiểm tra liệu một Agent có thể biến tri thức bên ngoài thành một bản cập nhật thật cho chính năng lực của mình hay không. Thí nghiệm không nêu sẵn vấn đề hay danh sách tính năng. Hermes nhận cả mười chương và mã nguồn của mình, rồi phải hiểu nguyên tắc, xem lại cách triển khai và tự chọn một cải tiến đáng làm.
@@ -288,33 +268,13 @@ Chỉ khi đi vào cùng một chu trình tự chủ, bốn phương thức cậ
 
 Voyager[^voyager-2023] minh họa một vòng tiến hóa liên tục tương đối hoàn chỉnh. Trong Minecraft, nó lựa chọn mục tiêu mới dựa trên năng lực hiện tại, lặp chương trình theo phản hồi môi trường, lưu mã vào kho kỹ năng sau khi xác minh thành công, rồi kết hợp các kỹ năng cũ để giải quyết nhiệm vụ khó hơn. Chương trình học tự động, kỹ năng có thể thực thi và xác minh môi trường đều không thể thiếu: chỉ có kho kỹ năng mà không có chương trình học thì Agent không biết bước tiếp theo nên học gì; chỉ có tự phản tư mà không có xác minh môi trường thì kho kỹ năng sẽ tích lũy sai sót; chỉ có khám phá mà không có lưu giữ lâu dài thì mỗi nhiệm vụ vẫn phải bắt đầu lại từ đầu. Dù tri thức, Prompt, công cụ và tham số của Agent thực tế phức tạp hơn, quá trình học cơ bản vẫn tương tự.
 
-Cụ thể, Voyager gồm ba cơ chế ăn khớp với nhau. **Bộ sinh chương trình học tự động** đề xuất mục tiêu tiếp theo có độ khó vừa phải dựa trên vật phẩm hiện có, môi trường và kỹ năng đã thành thạo, để việc khám phá không trở thành lang thang ngẫu nhiên. **Kho kỹ năng** lưu chương trình thành công dưới dạng mã có thể truy xuất và kết hợp; chẳng hạn kỹ năng thu thập nâng cao có thể gọi các kỹ năng cơ sở như di chuyển và chế tạo. **Cơ chế Prompt lặp** đưa quan sát môi trường, lỗi thực thi và kết quả tự xác minh trở lại vòng sinh mã tiếp theo cho đến khi nhiệm vụ thật sự vượt qua. Bài báo cho biết so với các đường cơ sở thời đó, Voyager thu được số vật phẩm độc nhất gấp 3,3 lần, khám phá quãng đường gấp 2,3 lần, mở các cột mốc quan trọng của cây công nghệ nhanh hơn tới 15,3 lần, và có thể chuyển kho kỹ năng sang thế giới Minecraft mới. Các chỉ số này đo đường cong năng lực tăng theo kinh nghiệm, chứ không phải điểm thi một lần của Agent đóng băng.
+Cụ thể, Voyager có ba cơ chế ăn khớp. **Bộ sinh chương trình học tự động** đề xuất mục tiêu tiếp theo có độ khó vừa phải từ vật phẩm, môi trường và kỹ năng hiện tại, tránh khám phá ngẫu nhiên. **Thư viện kỹ năng** lưu chương trình thành công dưới dạng mã có thể truy xuất và kết hợp; kỹ năng thu thập nâng cao có thể gọi kỹ năng di chuyển và chế tạo cơ bản. **Cơ chế prompting lặp** đưa quan sát môi trường, lỗi thực thi và kết quả tự kiểm chứng vào vòng sinh mã tiếp theo cho đến khi tác vụ thực sự đạt.
 
-### Từ định vị vấn đề đến kết tinh kinh nghiệm
+**Vòng lặp khám phá: giả thuyết, thực nghiệm, đánh giá, phản hồi.** Các hệ Agent tự tiến hóa như Voyager tuân theo vòng lặp này, tức phương pháp khoa học được bồi đắp qua nhiều thế kỷ. Discovery Loop do Jeff Dean cùng cộng sự mới thành lập đề xuất tự động hóa toàn bộ quá trình: đề xuất thực nghiệm, hiện thực, đánh giá, lấy kết quả rồi đưa sang vòng tiếp theo[^ch1-discovery-loop]. Đây chính là tự tiến hóa Agent áp dụng vào khoa học. Để tránh tự kể chuyện rồi tự chấm mình tốt, tiến hóa trong chương này phải tuân theo phương pháp khoa học.
 
-Cùng một vấn đề bề mặt có thể cần những cách sửa đổi khác nhau. Hiện tượng Agent chăm sóc khách hàng bịa đặt sự kiện có thể do kho tri thức thiếu thông tin, cũng có thể do Prompt không yêu cầu trích dẫn; khi chưa hoàn thành nhiệm vụ mà Agent đã đưa ra cam kết sai sự thật rằng “đã hoàn thành”, vấn đề có thể được sửa bằng chỉ dẫn hoặc Harness có thể cưỡng chế kiểm tra phản hồi so với trạng thái công cụ. Mô-đun tiến hóa trước tiên phải định vị nguyên nhân gốc, sau đó chọn đối tượng sửa đổi tối thiểu, dễ xác minh và dễ khôi phục nhất. Sự cố ngẫu nhiên thiếu bằng chứng không nên lập tức kích hoạt học tập mà cần tiếp tục tích lũy mẫu.
+[^ch1-discovery-loop]: Discovery Loop được Jeff Dean, Sanjay Ghemawat, Quoc Le và Oriol Vinyals công bố ngày 5 tháng 8 năm 2026 dưới dạng công ty vì lợi ích công. Mô tả công khai của họ là tự động hóa vòng lặp thực nghiệm hoàn chỉnh và song song hóa ở quy mô lớn các thực nghiệm trước đây chạy nối tiếp.
 
-Lựa chọn này cũng có thể thay đổi khi kinh nghiệm tăng lên. Một chiến lược mới được phát hiện trước tiên được cung cấp để truy xuất dưới dạng tài liệu kinh nghiệm; sau khi được nhiều trường hợp xác minh lặp lại, nó có thể được nâng thành tri thức. Tri thức có ba cách biểu đạt: quy tắc có thể mô tả rõ bằng ngôn ngữ tự nhiên có thể được kết tinh thành Skill; nếu các bước ổn định và không cần năng lực hiểu ngôn ngữ tự nhiên thì có thể được biên dịch thành mã công cụ; nếu thực chất nó phản ánh năng lực quyết định ngầm có phạm vi rộng thì có thể đi vào hậu huấn luyện.
-
-### Xác minh, phát hành và khôi phục
-
-Mọi sửa đổi trước tiên đều tạo năng lực ứng viên hoặc Agent ứng viên, thay vì trực tiếp ghi đè phiên bản sản xuất. Tài liệu tri thức phải được xác minh xem sau khi truy xuất có nâng cao hiệu quả nhiệm vụ mới hay không; Prompt và Skill phải được kiểm tra trên trường hợp biên và hồi quy nhiệm vụ cũ; chương trình phải chạy kiểm thử trong sandbox và môi trường đã đặt lại; cập nhật tham số phải được kiểm tra về quên, an toàn và nhiệm vụ ngoài phân phối. Sau khi vượt qua xác minh, phiên bản vẫn phải được phát hành canary để quan sát lưu lượng thực; khi các chỉ số trọng yếu suy giảm, hệ thống tự động khôi phục về phiên bản an toàn đã biết.
-
-**Phát hành đã xác minh và rollback:**
-
-```python
-candidate = propose_minimal_update(evidence, current_version)
-
-if not verify(candidate, boundary_set): reject(candidate)
-elif not verify(candidate, retention_set): reject(candidate)
-elif not verify(candidate, safety_set): reject(candidate)
-else:
-    canary = deploy_to_small_traffic(candidate)
-    if canary.metrics_regress: rollback(current_version)
-    else: promote(candidate)
-```
-
-Xác minh còn phải tách hai năng lực thường bị trộn lẫn. **Năng lực cập nhật Harness** (harness-updating) là tạo ra thay đổi bền vững có giá trị từ quỹ đạo; **năng lực hưởng lợi từ Harness** (harness-benefit) là Agent làm nhiệm vụ có thể tìm, kích hoạt và dùng đúng thay đổi đó về sau. Một Skill có thể hoàn toàn đúng, nhưng mô hình yếu không tải nó trong đúng tình huống hoặc không thể tuân theo trong quỹ đạo dài; cả hai đều khiến điểm cuối trông như “không tiến hóa”. Vì vậy, không thể chỉ dùng điểm đầu-cuối để suy ra chất lượng bộ cập nhật. Thí nghiệm hoán đổi mô hình của Lin và cộng sự cho thấy hai năng lực này có quan hệ khác nhau với năng lực mô hình nền[^harness-benefit-2026]. Quan hệ cụ thể còn cần được kiểm chứng trên nhiều nhiệm vụ hơn, nhưng tách chúng khi đánh giá là nguyên tắc dùng được rộng rãi.
+Trong tiến hóa liên tục, phải tách hai năng lực thường bị trộn lẫn. **Harness updating** tạo thay đổi bền vững có giá trị từ trajectory; **Harness benefit** là khả năng Agent tác vụ tìm, kích hoạt và dùng đúng thay đổi đó ở lần chạy sau. Một Skill có thể được viết hoàn hảo nhưng mô hình yếu không tải nó đúng tình huống hoặc không tuân theo lâu dài, khiến điểm cuối trông như “chưa tiến hóa”. Vì vậy điểm end-to-end không thể tự nó chẩn đoán updater. Thực nghiệm hoán đổi mô hình của Lin và cộng sự cho thấy hai năng lực liên hệ khác nhau với năng lực mô hình nền[^harness-benefit-2026].
 
 Bảng 9-3 Các chỉ số đánh giá phân tầng cho tiến hóa liên tục
 
@@ -323,9 +283,7 @@ Bảng 9-3 Các chỉ số đánh giá phân tầng cho tiến hóa liên tục
 | Tỷ lệ thay đổi ứng viên hữu hiệu | Bộ cập nhật có đề xuất thay đổi có giá trị không? | Tỷ lệ chấp nhận và mức tăng trong xác minh độc lập |
 | Tỷ lệ kích hoạt tạo tác | Agent có tải Skill, bộ nhớ hoặc công cụ mới đúng lúc không? | Quỹ đạo truy xuất, định tuyến và gọi công cụ |
 | Tỷ lệ tuân thủ thành công | Sau khi kích hoạt, Agent có làm theo quy tắc hoặc quy trình mới không? | Chuỗi hành động và bộ xác minh quá trình |
-| Mức tăng trên nhiệm vụ giữ lại | Hệ thống có cải thiện trên nhiệm vụ không tham gia tiến hóa không? | Thành công, chất lượng và chi phí held-out |
-
-Để chẩn đoán, có thể cố định một Harness ứng viên và chỉ thay mô hình làm nhiệm vụ. Nếu mô hình mạnh hưởng lợi nhưng mô hình yếu không bao giờ kích hoạt tạo tác mới, nút thắt nằm ở truy xuất hoặc định tuyến. Nếu cả hai đều kích hoạt nhưng chỉ mô hình mạnh thực thi đúng, nút thắt nằm ở tuân thủ chỉ dẫn hoặc lập kế hoạch dài hạn. Nếu mọi mô hình đều suy giảm, chính thay đổi đáng nghi hơn. Ngược lại, cố định mô hình nhiệm vụ và thay mô hình đề xuất sửa đổi cho phép so sánh riêng chất lượng bộ cập nhật. Hoán đổi hai chiều này giúp xác định nơi nên đầu tư ngân sách năng lực rõ hơn một điểm tổng sau tiến hóa.
+| Mức tăng trên tập duy trì | Hệ thống có cải thiện trên tác vụ không tham gia tiến hóa và có khái quát hóa không? | Tỷ lệ thành công, chất lượng và chi phí trên tập duy trì |
 
 Đánh giá không phải kỳ thi sau khi học xong, mà là một phần không thể thiếu của quá trình tự tiến hóa. Đánh giá dài hạn tối thiểu phải đồng thời quan sát năm loại kết quả:
 
@@ -350,8 +308,6 @@ Các nhiệm vụ này đòi hỏi thay đổi cấu trúc bằng chứng và gi
 - **Duy trì đa dạng tìm kiếm**: tìm kiếm mở không nên chỉ giữ chuỗi đang có điểm cao nhất. Kho ứng viên còn phải giữ một số nhánh điểm tạm thấp nhưng khác biệt về cơ chế, độ mới của mã hoặc loại giả thuyết, tránh mọi phương án hội tụ vào cùng một mẫu dễ lấy điểm.
 - **Đưa con người lên tầng cao hơn**: vai trò của con người không chỉ là bấm phê duyệt trước lệnh nguy hiểm, mà còn là định nghĩa vấn đề, xem xét tiêu chuẩn đánh giá, diễn giải kết quả bất thường và quyết định khi nào dừng. Với phản hồi mơ hồ, những phán đoán tầng cao này khó tự động hóa và có giá trị hơn việc tiếp quản từng bước thực thi.
 
-Giới hạn tương tự tồn tại trong kỹ thuật phần mềm thông thường: mọi kiểm thử đơn vị đều qua chỉ chứng minh hành vi quan sát được hiện tại thỏa kiểm thử, không chứng minh kho mã vẫn dễ bảo trì sau vài tháng. Vì vậy, chất lượng kỹ thuật dài hạn phải là chỉ số độc lập chứ không thể kỳ vọng tỷ lệ thành công hiện tại bao phủ các ngoại tác đến muộn. Trần của tiến hóa liên tục cuối cùng phụ thuộc vào việc hệ thống có đánh giá được mục tiêu thật sự quan tâm hay chỉ đo proxy dễ nhất.
-
 ### Ranh giới an toàn của tiến hóa liên tục
 
 Năng lực tự tiến hóa của Agent có thể biến một sai sót thành rủi ro dài hạn. Nếu **tấn công chèn Prompt trong trang web, email hoặc đầu ra công cụ bị tóm tắt thành kinh nghiệm**, nó có thể phát huy tác dụng lặp lại qua nhiều phiên. Nếu một gói độc hại được tự động tìm thấy rồi đóng gói thành công cụ, tác động sẽ lan từ một lần chạy sandbox sang mọi nhiệm vụ sau. Một bộ xác minh có lỗi còn có thể liên tục phê duyệt phiên bản ứng viên trông như tiến bộ nhưng thực ra suy giảm. Vì vậy, ngoài xác minh “có mạnh hơn hay không”, hệ thống tự tiến hóa còn phải giới hạn “ai được sửa gì và căn cứ đến từ đâu”.
@@ -373,17 +329,6 @@ Một chu kỳ học trong giấc ngủ điển hình gồm năm bước:
 3. **Thu thập và hợp nhất**: Tìm tín hiệu mới từ các quỹ đạo đã đánh giá gần đây, hợp nhất nội dung trùng lặp, đánh dấu xung đột cùng điều kiện áp dụng và ưu tiên sinh bản vá cục bộ.
 4. **Xác minh và phê duyệt**: Đánh giá ứng viên trên tập chuyển giao, tập lưu giữ và tập an toàn; nội dung ghi có rủi ro cao chờ con người phê duyệt.
 5. **Cắt tỉa và lập chỉ mục**: Cập nhật chỉ mục truy xuất; đánh dấu năng lực lâu không dùng hoặc bị bằng chứng mới bác bỏ là hết hạn, lưu trữ hoặc xóa, đồng thời giữ nguồn và phiên bản khôi phục.
-
-**Hợp nhất khi rảnh:**
-
-```python
-while sleep_gate_is_open():
-    batch = load_new_evaluated_trajectories()
-    proposals = consolidate(batch, current_capabilities)
-    for proposal in proposals:
-        validate_canary_and_promote_or_rollback(proposal)
-    prune_stale_entries_but_keep_provenance()
-```
 
 Bộ nhớ người dùng là ví dụ trực quan nhất, nhưng cần phân biệt với kinh nghiệm hành động. Bộ nhớ tự động của Claude Code duy trì chỉ mục `MEMORY.md` và các tệp chi tiết chia theo chủ đề cho từng dự án. Khi bắt đầu phiên, nó chỉ nạp phần đầu có giới hạn của chỉ mục; phần còn lại được đọc theo nhu cầu. Khi chỉ mục gần giới hạn, hệ thống yêu cầu Agent hợp nhất hoặc chuyển chi tiết đi nơi khác. Điều này cho thấy bộ nhớ văn bản thuần cũng cần giới hạn dung lượng, nạp phân tầng và chủ động tổ chức; nhưng cơ chế công khai hiện tại chủ yếu liên tục ghi trong phiên và không thể đơn giản coi là một tác vụ nền cố định chạy ban đêm[^claude-code-memory].
 

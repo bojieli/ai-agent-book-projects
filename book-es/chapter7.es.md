@@ -144,16 +144,7 @@ Un entorno de evaluación consta de cinco elementos (las secciones posteriores p
 
 **Protocolo de interacción (Interaction Protocol)**: Establece el modo de interacción y las condiciones de terminación.
 
-**Bucle de evaluación reproducible:**
-
-```python
-for task in dataset:
-    environment.reset(task.initial_state)
-    trajectory = agent.run(task.prompt, environment.tools)
-    outcome = environment.snapshot()
-    score = verifier(task, trajectory, outcome)
-    record(task, trajectory, outcome, score)
-```
+Los cinco elementos en conjunto forman un bucle de evaluación reproducible.
 
 ![Figura 7-2 Entornos de Evaluación de Llamada a Herramientas e Interacción Humano-Computadora](images/fig7-2.svg)
 
@@ -369,17 +360,6 @@ rubric:
 ```
 
 **Rúbrica buena frente a Rúbrica mala**: Cada nivel de puntuación anterior proporciona comportamientos verificables específicos ("responder con precisión Dr. Chen") en lugar de descripciones imposibles de juzgar objetivamente como "demuestra una comprensión profunda de la memoria". El ítem de veto define la línea roja: incluso con puntuación máxima en las demás dimensiones, la presencia de alucinación resulta en cero puntos.
-
-**Veto determinista antes del juicio con rúbrica:**
-
-```python
-deterministic = verify_state_policy_and_claims(trajectory, outcome)
-if deterministic.veto:
-    return FAIL(reason = deterministic.evidence)
-
-rubric_result = judge(answer, rubric, evidence)
-return aggregate_with_confidence(rubric_result)
-```
 
 Al enviar la rúbrica junto con la respuesta real del Agente, el modelo evaluador puntúa cada dimensión y explica el motivo. Al reunir decenas de casos y volver sobre las trayectorias peor puntuadas, una caída genérica de la tasa de éxito se convierte en un diagnóstico concreto: faltó recuperar un dato, se relacionaron mal las personas o se añadió información sin respaldo. La rúbrica, por tanto, no se limita a decir cuánto falló el sistema; también orienta la siguiente mejora.
 

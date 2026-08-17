@@ -38,11 +38,9 @@ Bốn mục dùng chung một bộ nguyên thuỷ — **đánh thức, điểm a
 
 **Về thứ tự đọc có một sắp đặt cố ý: chương này dành cho giọng nói dung lượng nhiều hơn hẳn hai bối cảnh sau.** Trên đường tiến hoá của tương tác thời gian thực, giọng nói là nhánh đi trọn vẹn nhất và đáng lấy làm hệ quy chiếu nhất: xuất phát từ vấn đề "đường ống tuần tự có độ trễ quá cao", đi qua một loạt giải pháp end-to-end, song công toàn phần, vừa nghĩ vừa nói, cho tới cục diện tương đối định hình hôm nay — toàn bộ hành trình vấn đề → giải pháp → cục diện đều đã được đi hết. Vì vậy chúng ta nói cho thấu, để Computer Use và robot ở phía sau đều có thể đối chiếu với mạch này — mỗi bên đã đi tới đoạn nào của đường tiến hoá ấy và đang mắc ở đâu.
 
-Còn việc chương này mở đầu bằng **không đồng bộ và hướng sự kiện** là vì nó gần người đọc nhất: phương thức vẫn là văn bản thuần, chỉ thời điểm thay đổi. Đó là bước đầu tiên rời khỏi thế giới theo lượt của năm chương trước, cũng là nơi mệnh đề "giả định lượt phiên" lần đầu chạm đất.
-
 ## Không đồng bộ và hướng sự kiện: khi thế giới chủ động tìm đến
 
-Ba loại công cụ mà Chương 4 bàn tới — nhận thức, thực thi, cộng tác — đều do chính Agent gọi: nó quyết định khi nào nhìn, khi nào ra tay. Mục này chuyển sang đầu chậm nhất của trục thời điểm: Agent quản lý những nhiệm vụ kéo dài hàng giờ thậm chí hàng ngày ra sao, và đáp ứng những sự kiện bên ngoài có thể ập đến bất cứ lúc nào thế nào? Điều đó cần kiến trúc không đồng bộ hướng sự kiện làm nền; và hai loại còn lại trong năm loại công cụ ở Chương 1 — công cụ kích hoạt sự kiện và công cụ giao tiếp người dùng — chính là dựa vào kiến trúc này để phát huy tác dụng, nên cũng được bàn chung trong mục này.
+Các công cụ nhận thức, thực thi và cộng tác ở Chương 4 đều do Agent chủ động gọi. Agent phải phản ứng thế nào với sự kiện bên ngoài có thể đến bất cứ lúc nào? Điều này đòi hỏi kiến trúc bất đồng bộ hướng sự kiện. Hai loại công cụ còn lại ở Chương 1—công cụ kích hoạt sự kiện và công cụ giao tiếp với người dùng—dựa trên kiến trúc này nên cũng được trình bày tại đây.
 
 ### Tại sao cần có tính năng không đồng bộ
 
@@ -176,23 +174,6 @@ Các quy tắc được mã hóa cứng có những hạn chế và ngữ nghĩa
 
 Sau đây là thử nghiệm Agent xử lý email theo hướng sự kiện để triển khai chiến lược xử lý sự kiện trên thành một triển khai có thể chạy được.
 
-**Định tuyến event loop:**
-
-```python
-while runtime.is_alive:
-    events = queue.take_batch()
-
-    if any(is_urgent(event) for event in events):
-        cancel_at_safe_point(current_work)
-    elif has_independent_fast_query(events):
-        start_parallel_session(events)
-    else:
-        append_to_trajectory(events)
-
-    decision = LLM(context + trajectory)
-    dispatch(decision)
-```
-
 > **6-1 thử nghiệm ★★★: Xử lý email theo sự kiện Agent**
 >
 >
@@ -300,11 +281,9 @@ Các mô hình VLA (Vision-Language-Action, Tầm nhìn-Ngôn ngữ-Hành độn
 
 Để đạt được loại hình đào tạo RL không đồng bộ này đòi hỏi cơ sở hạ tầng mới: trình mô phỏng môi trường không đồng bộ (tạo ra các tình huống như trả lại công cụ bị trì hoãn, gián đoạn người dùng ngẫu nhiên, v.v.) và phần thưởng đặc biệt cho khả năng không đồng bộ (hiểu đúng về trajectory không theo thứ tự, phục hồi thành công suy nghĩ bị gián đoạn, tránh ảo giác, xử lý toàn diện các sự kiện hàng loạt).
 
-Tuy nhiên, "tư duy liên tục" không phải đợi đến thế hệ mô hình tiếp theo - với lớp logic điều phối rất mỏng (khoảng hai trăm dòng), một mô hình tư duy văn bản **làm sẵn** có thể được biến thành **tư duy liên tục (continuous-time)** Agent[^ch6-async-1] ngay tại chỗ, chỉ kết nối hai nửa "phương pháp kỹ thuật" và "mô hình" ở trên tiến hóa”. Cơ chế của nó là phiên bản nâng cấp của quy tắc 4 trước đó: thay vì **loại bỏ** một nửa suy nghĩ của bạn khi bị gián đoạn, tốt hơn là xây dựng toàn bộ tương tác thành **luồng suy nghĩ không bị gián đoạn** - bạn có thể đóng mạnh khối `<think>` mà mô hình đang ghi bất kỳ lúc nào và đưa vào các quan sát mới đến (trả về công cụ, gián đoạn người dùng, kết quả nhận dạng mới) dưới dạng thông báo thông thường và sau đó để mô hình tiếp tục giải mã. Nó tận dụng một nguồn tài nguyên thường bị lãng phí: mô hình có thể tạo ra hàng nghìn mã thông báo mỗi giây và một cuộc gọi công cụ hoặc một cuộc trò chuyện của người dùng thường mất vài giây - những lần "chờ đợi" này là **lãng phí sức mạnh tính toán** cho mô hình, có thể được sử dụng để suy nghĩ trước. Từ đó xuất hiện hai hành vi: **suy nghĩ trong khi chờ đợi** - không đợi công cụ quay lại hoặc đợi người dùng nói xong, sau đó suy nghĩ về nó dựa trên một nửa thông tin hiện có và thậm chí gọi trước công cụ tiếp theo (xu hướng "suy nghĩ trước" này đã được tái hiện trong nhiều họ mô hình trong thử nghiệm, xem bài viết tương ứng ở chú thích cuối trang để biết dữ liệu cụ thể); và **suy nghĩ trong khi làm** - tiếp tục suy nghĩ trong khi đưa ra kết quả và có thể tự điều chỉnh ngay giữa hành động.
+“Suy nghĩ liên tục” không nhất thiết phải chờ thế hệ mô hình tiếp theo. Khoảng hai trăm dòng điều phối có thể biến một mô hình suy luận văn bản **hiện có** thành Agent **continuous-time**, nối giải pháp kỹ thuật tạm thời ở trên với sự tiến hóa của mô hình. Đây là bản nâng cấp của quy tắc 4: thay vì vứt bỏ nửa dòng suy nghĩ khi bị ngắt, hãy xây dựng toàn bộ tương tác thành một dòng suy nghĩ liên tục. Runtime có thể buộc đóng khối `<think>` đang viết, chèn quan sát mới—kết quả công cụ, lời ngắt của người dùng hoặc cập nhật nhận dạng—như một thông điệp bình thường rồi tiếp tục giải mã.
 
-Nhưng phần quan trọng hơn của nghiên cứu này là về **đào tạo**, điều này đáp ứng chính xác lời kêu gọi "mong đợi sự tiến hóa của mô hình" ở trên: chỉ riêng sự phối hợp chỉ giúp khả năng suy nghĩ liên tục **và để làm cho nó thực sự** hữu ích **, nó phụ thuộc vào cách đưa ra tín hiệu đào tạo. Nghiên cứu đã phát hiện ra rằng nếu bạn sử dụng phần thưởng kiểu "LLM làm trọng tài" cho quá trình huấn luyện, mÃ´ hÃ¬nh sẽ học cách che giấu suy nghĩ của mình và đổi sự im lặng để lấy lời khen của trọng tài, và các chỉ số khách quan sẽ kém hơn; chỉ bằng cách sử dụng các mục tiêu có thể kiểm chứng được và có thể duy trì mức độ bao phủ thông tin, việc suy nghĩ liên tục mới mang lại lợi ích thực sự. Nói một cách ngắn gọn:** Sự điều phối giúp hành vi trở nên khả thi và đào tạo giúp hành vi tốt hơn ** - Điều này cũng khẳng định nhận định trong phần này. Khả năng không đồng bộ cuối cùng phải được củng cố bằng cách đào tạo phù hợp, thay vì luôn dựa vào việc vá lỗi bằng các dự án kịp thời.
-
-[^ch6-async-1]: Sử dụng khoảng hai trăm dòng lập trình để biến mô hình tư duy làm sẵn thành tư duy liên tục Agent và kết luận rằng "các tín hiệu huấn luyện quyết định tư duy liên tục có hữu ích hay không", xem Li, Bojie và Noah Shi. *Không ngừng suy nghĩ: Ngôn ngữ Continuous-Time Agents.* 2026 (sẽ được xuất bản).
+Cơ chế này tận dụng một tài nguyên thường bị lãng phí: mô hình có thể sinh hàng trăm token mỗi giây, trong khi một lời gọi công cụ hoặc lượt nói của người dùng có thể mất vài giây. Thời gian chờ đó có thể dùng để suy nghĩ. Vì vậy Agent có thể **vừa chờ vừa nghĩ**—tiếp tục từ thông tin chưa đầy đủ, thậm chí gọi trước công cụ tiếp theo—và **vừa làm vừa nghĩ**—tiếp tục suy luận trong lúc xuất kết quả và tự sửa giữa chừng.
 
 > **Thử nghiệm 6-2 ★★★: Agent không đồng bộ với khả năng thực thi và ngắt song song**
 >
@@ -322,6 +301,8 @@ Nhưng phần quan trọng hơn của nghiên cứu này là về **đào tạo*
 >
 > **4. Hủy và truy vấn trạng thái của các công cụ song song**: Sau khi hoàn thành công cụ không đồng bộ, kết quả thực sẽ được đưa vào cuộc trò chuyện thông qua các sự kiện mới và hỗ trợ hủy hoặc truy vấn tiến trình thông qua ID tác vụ. **Tình huống xác minh**: Người dùng yêu cầu "Giúp tôi chạy ba tập lệnh này cùng lúc. Cái nào hoàn thành trước, hãy xem tiến độ của các tập lệnh còn lại như thế nào. Nếu chưa vượt quá 50% thì hãy hủy nó." Ba tập lệnh mô phỏng quá trình phân tích và liên tục xuất ra tiến trình khi chạy. Tốc độ lần lượt là 3%, 2% và 1% mỗi giây. Agent khởi động ba lệnh đầu cuối không đồng bộ cùng một lúc. Khi 3% tập lệnh mỗi giây được hoàn thành trong khoảng 33 giây, Agent truy vấn trạng thái của hai thiết bị đầu cuối còn lại và nhận thấy rằng một thiết bị đầu cuối được thực thi ở khoảng 66% và thiết bị kia ở khoảng 33%, do đó, thiết bị đầu cuối không vượt quá 50% sẽ bị hủy. Sau khi cả hai thiết bị đầu cuối được hoàn thành, kết quả sẽ được kết hợp để tạo ra một báo cáo đầy đủ.
 >
+
+Thực thi bất đồng bộ hướng sự kiện cho phép thế giới đánh thức Agent bất cứ lúc nào, nhưng giả định mô hình có thể nghĩ xong rồi mới phản hồi. Ba phần tiếp theo thách thức giả định đó: khi môi trường thay đổi nhanh bằng hoặc nhanh hơn tốc độ sinh của mô hình, “nghĩ xong rồi mới nói” tự nó trở thành độ trễ không thể chấp nhận.
 
 ## Giọng nói: giao diện người–máy tự nhiên nhất
 
@@ -343,21 +324,7 @@ Bài giới thiệu GPT-Live của OpenAI nêu ba mô hình tương tác bằng 
 
 [^ch6-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/ Phân loại cascade / turn-based / full-duplex xuất phát từ phần tóm tắt ba thế hệ ChatGPT Voice; thuật ngữ “end-to-end omnimodal (Omni)” tương ứng với nhóm “turn-based voice models”.
 
-**Hủy streaming:**
-
-```python
-while audio_is_arriving:
-    partial = asr.push(audio_chunk)
-    if endpoint_is_probable(partial):
-        candidate = llm.start(partial)
-        if later_audio_changes_meaning(partial):
-            cancel(candidate)                 # speculative cancellation
-        else:
-            tts.enqueue_stable_segments(candidate)
-
-on_final_transcript(text):
-    commit_or_restart(text)
-```
+Khi hệ thống cascade chuyển từ thực thi tuần tự sang streaming, điều quan trọng nhất không phải là biến mọi hàm thành `async`, mà là cho phép **kết quả gia tăng trở nên mất hiệu lực và bị hủy**.
 
 ### Mô hình 1 · Pipeline cascade
 
@@ -380,11 +347,7 @@ Với câu trả lời ngắn không reasoning, thời gian chờ của VAD, ASR
 
 > **Thử nghiệm 6-3 ★: Xây dựng Agent thoại truyền thống**
 >
-> Kết nối microphone, Silero VAD, Whisper cục bộ, LLM streaming và Fish S1 TTS qua WebSocket để lập đường cơ sở cascade. Bằng chứng thực của một lượt còn lại cho thấy chuỗi media và mô hình chạy end-to-end; đây không phải benchmark về đồng thời hay tải sản xuất. Mã và hồ sơ nghiệm thu ở [chapter6/live-audio](../chapter6/live-audio/).
-
-> **Bổ sung: Xây dựng Agent thoại WebRTC “gọi cho người dùng”**
->
-> Phone Agent không cần PSTN. WebRTC trên trình duyệt có thể tái hiện vòng lặp mở phiên, hỏi thông tin thiếu, đọc lại để xác nhận và lưu kết quả có cấu trúc. Khi cần liên hệ tổ chức bên ngoài, thay hợp đồng công cụ bằng nhà cung cấp PSTN/SIP phù hợp. Đường truyền media, so sánh direct/ReAct và bằng chứng nghiệm thu ở [chapter6/phone-agent](../chapter6/phone-agent/). Dự án giữ các run identifier lịch sử \`exp9-2\`, nhưng không còn là một thử nghiệm được đánh số trong bản thảo.
+> Kết nối microphone, Silero VAD, Whisper cục bộ, LLM dạng streaming và Fish S1 TTS qua WebSocket để thiết lập baseline dạng chuỗi.
 
 #### Từ tuần tự đến nhận biết streaming
 
@@ -394,11 +357,13 @@ Streaming thông thường cũng không bỏ được thời gian chờ im lặn
 
 Ngoài token văn bản, luồng có thể phát \`speak_start/end\`, \`interrupt\` (ranh giới lời nói và ý định ngắt), \`emotion\` (cảm xúc và do dự), \`laugh\`, \`sigh\`, \`noise\` (âm thanh cận ngôn ngữ và môi trường). Nhờ vậy Agent không phải nén mọi sự kiện âm thanh thành văn bản thường.
 
+Nếu mục tiêu chỉ là xác định người dùng đã nói xong hay chưa, quyết định kết thúc lượt có thể được tích hợp trực tiếp vào bộ nhận dạng streaming. Nhãn huấn luyện chỉ được dùng thông tin nhìn thấy tại thời điểm ra quyết định; nếu không, thông tin nhìn lại sẽ tạo ra phán đoán không thể tái hiện trực tuyến[^ch6-11]. Cách này nhẹ hơn một LLM âm thanh hoàn chỉnh.
+
 [^ch6-11]: Về việc đưa phán đoán lượt vào bộ nhận dạng và vấn đề nhãn sử dụng thông tin tương lai, xem Bojie Li và Noah Shi, *The Trade-off Was in the Labels: Causal Supervision for Turn-Aware Streaming ASR*, 2026 (sắp xuất bản).
 
 > **Thử nghiệm 6-4 ★: Mô phỏng nhận biết giọng nói streaming bằng Qwen2-Audio**
 >
-> Bản thân Qwen2-Audio không phải mô hình streaming. Thử nghiệm mô phỏng nhận biết liên tục bằng các prefix âm thanh tăng dần và so sánh với VAD 600 ms + Whisper. Canonical run vượt qua các cổng thực thi và provenance nhưng chỉ tái hiện 2/6 hành vi: các lệnh prefix mất 8,4–11,3 giây, mẫu pause bỏ sót \`silence\`, và mẫu noise vẫn phân loại sai \`cough/laughter\`. Đây là kết quả âm tính để kiểm tra cơ chế và lỗi; không phải bằng chứng cho nhận biết streaming thật 100–200 ms. Toàn bộ hồ sơ ở [chapter6/streaming-speech](../chapter6/streaming-speech/).
+> Bản thân Qwen2-Audio không phải mô hình streaming. Thực nghiệm dùng tiền tố âm thanh tăng dần để mô phỏng nhận thức liên tục và so sánh với VAD 600 ms + Whisper.
 
 ### Mô hình 2 · Mô hình omnimodal end-to-end (Omni)
 
@@ -414,17 +379,7 @@ Realtime speech API nằm giữa cascade và Omni: mô hình xử lý âm thanh 
 
 > **Thử nghiệm 6-5 ★★: Chạy MiniCPM-o 4.5 cục bộ — end-to-end so với self-cascade**
 >
-> Cố định một revision cục bộ, tắt chế độ suy nghĩ, rồi so sánh câu trả lời trực tiếp từ audio với self-cascade (transcribe trước, trả lời từ transcript sau). Đo khả năng giữ thông tin âm thanh, **không** đo khả năng “vừa nói vừa suy nghĩ” về sau.
-> Bảng 6-1 Kết quả chạy MiniCPM-o 4.5 cục bộ: end-to-end so với tự xếp tầng (bốn phép kiểm tra cơ chế, không phải benchmark)
->
->
-> | Loại nhiệm vụ | End-to-end | Self-cascade | Quan sát |
-> | --- | ---: | ---: | --- |
-> | Số học ngữ nghĩa (2) | 1/2 | 2/2 | Self-cascade sửa một lỗi phiên âm |
-> | Tốc độ nói cận ngôn ngữ (2) | 2/2 | 1/2 | Transcript văn bản xóa khác biệt nhanh/chậm |
-> | Tổng | 3/4 | 3/4 | Tổng bằng nhau, lỗi bổ sung |
->
-> Mẫu nhỏ nên không chứng minh đường nào thường chính xác hay nhanh hơn. Phiên bản, đầu ra thô và bằng chứng audio-to-audio ở [chapter6/end-to-end-speech](../chapter6/end-to-end-speech/).
+> Chạy MiniCPM-o 4.5 cục bộ, tắt thinking mode, rồi so sánh trả lời trực tiếp từ âm thanh với self-cascade dùng cùng mô hình để phiên âm trước rồi mới trả lời. Thực nghiệm đo xem thông tin âm thanh có được giữ lại hay không, **không phải** “vừa nghĩ vừa nói” ở phần sau.
 
 Step-Audio 2 cho thấy đường end-to-end xử lý audio thô và phát văn bản lẫn giọng nói, chú ý đến cảm xúc, tốc độ, ngữ điệu và âm thanh môi trường. Step-Audio R1 đưa suy luận vào mô hình âm thanh và làm ví dụ cho “vừa suy nghĩ vừa nói”.
 
@@ -433,8 +388,6 @@ Step-Audio 2 cho thấy đường end-to-end xử lý audio thô và phát văn 
 Omni vẫn tách “người dùng nói” và “mô hình nói”, nhưng phiên dịch đồng thời cần chồng lấp. Full-duplex lắng nghe và nói liên tục, liên tiếp quyết định có tiếp tục, dừng, ngắt hay gọi công cụ. Moshi của Kyutai là một ví dụ nghiên cứu sớm. Thinking Machines Lab gọi đây là **Interaction Model**[^ch6-14]: tương tác được xây trong mô hình thay vì lắp quanh VAD. GPT-Live đưa hướng này lên quy mô sản xuất và ủy thác việc phức tạp cho mô hình suy luận nền trong khi mô hình tiền cảnh giữ cuộc trò chuyện.
 
 [^ch6-14]: Thinking Machines Lab, “Interaction Models: A Scalable Approach to Human-AI Collaboration”, 2026-05. https://thinkingmachines.ai/blog/interaction-models/
-
-Đường tiến hóa là: cascade đoán lượt bằng ngưỡng im lặng; nhận biết streaming nâng phán đoán lên mức ngữ nghĩa; full-duplex biến việc đổi lượt thành quyết định liên tục.
 
 ### Thời gian nhận thức: tương tác thời gian thực và suy nghĩ sâu
 
@@ -464,10 +417,7 @@ Giải pháp ba đưa năng lực suy nghĩ vào thẳng bên trong mô hình â
 
 Lý tưởng nhất, mô hình nên đánh giá cảm xúc từ cao độ, nhịp điệu và ngữ điệu, chứ không chỉ nhìn văn bản đã chuyển tự. Cái gọi là "suy nghĩ thay thế bằng văn bản" là khi mô hình dùng những từ tiêu cực trong lời bài hát để thay cho việc phân tích giai điệu và đặc trưng âm học. MGRD lọc ra những chuỗi suy nghĩ thật sự viện dẫn đặc trưng âm học, rồi dùng dữ liệu đó huấn luyện mô hình, đồng thời dùng học tăng cường để ngăn mô hình bỏ qua suy nghĩ mà đoán thẳng đáp án.
 
-MPS khiến não hình thành ý liên tục sinh ra các mảnh suy nghĩ; não biểu đạt nhận được mảnh nào thì kết hợp ngay với phần đã trả lời để sinh tiếng nói. Hai bên chạy song song theo kiểu đường ống, nên không cần chờ toàn bộ suy nghĩ kết thúc mới cho người dùng nghe câu đầu tiên (Hình 6-11).
-
-
-![Hình 6-11: Kiến trúc song não MGRD và MPS của Step-Audio R1](images/fig6-11.svg)
+MPS khiến não hình thành ý liên tục sinh ra các mảnh suy nghĩ; não biểu đạt nhận được mảnh nào thì kết hợp ngay với phần đã trả lời để sinh tiếng nói. Hai bên chạy song song theo kiểu đường ống, nên không cần chờ toàn bộ suy nghĩ kết thúc mới cho người dùng nghe câu đầu tiên.
 
 
 Mô hình hợp nhất hiện thực hoá "vừa nghĩ vừa nói" chặt chẽ nhất, cái giá là suy nghĩ và biểu đạt thời gian thực phải huấn luyện lại cùng nhau; hướng tách rời dễ thay não nền hơn, còn hướng hợp nhất phù hợp hơn với những kịch bản chuyên biệt theo đuổi độ tự nhiên tối đa. Hai bên là một đánh đổi, không đơn giản thay thế lẫn nhau.
@@ -485,40 +435,26 @@ Khi đọc điều này, bạn có thể nhận thấy rằng chương này dàn
 
 Ba kịch bản này có vẻ khác nhau nhưng chúng phải đối mặt với những thách thức cốt lõi giống nhau: nhận thức theo thời gian thực, ra quyết định có độ trễ thấp và tương tác liên tục. Hãy xem cách các chủ đề kỹ thuật này được tái tạo trong tương tác trực quan (Computer Use) và tương tác vật lý (robot) – trước tiên bằng cách mở rộng góc nhìn từ phương thức thính giác sang phương thức thị giác: Điều gì sẽ xảy ra nếu Agent không chỉ hiểu được lời nói mà còn có thể “đọc” màn hình và vận hành giao diện đồ họa?
 
-Computer Use (còn gọi là GUI Automation Agent) cho phép AI sử dụng phần mềm giống con người bằng cách quan sát màn hình và thao tác chuột, bàn phím - chẳng hạn như mở trình duyệt để tìm kiếm thông tin, điền dữ liệu vào phần mềm bảng tính hoặc điều chỉnh cấu hình trong cài đặt hệ thống. Cốt lõi của nó là một chu trình nhận thức-suy nghĩ-hành động (Hình 6-12):
+Computer Use (còn gọi là GUI Automation Agent) cho phép AI sử dụng phần mềm giống con người bằng cách quan sát màn hình và thao tác chuột, bàn phím - chẳng hạn như mở trình duyệt để tìm kiếm thông tin, điền dữ liệu vào phần mềm bảng tính hoặc điều chỉnh cấu hình trong cài đặt hệ thống. Cốt lõi của nó là một chu trình nhận thức-suy nghĩ-hành động (Hình 6-11):
 
 1. Agent chụp ảnh màn hình hiện tại
 2. Mô hình đa phương thức nhận ảnh chụp màn hình và hướng dẫn nhiệm vụ, đồng thời đưa ra suy nghĩ và hành động cụ thể.
 3. Lớp thực thi thực hiện hành động trong môi trường thực (di chuyển chuột, nhấp chuột, nhập văn bản, v.v.)
 4. Đợi giao diện phản hồi rồi chụp ảnh màn hình lại để vào chu kỳ tiếp theo.
 
-**Vòng lặp an toàn Computer Use:**
+Ở đây cần phân biệt **hiểu giao diện** với **hoàn thành tác vụ**. Vế đầu gần với năng lực hiểu đa phương thức hơn và có thể đo bằng hỏi đáp trên một ảnh chụp màn hình; vế sau đòi hỏi mô hình đưa việc hiểu và sinh hành động vào một vòng lặp khép kín, xử lý tải trang, thay đổi trạng thái, thao tác sai và hậu quả không thể đảo ngược. Vì vậy, khó khăn của Computer Use không chỉ là trả lời đúng về ảnh chụp màn hình, mà còn là xác nhận lại sau mỗi bước rằng thực tế vẫn phù hợp với kế hoạch.
 
-```python
-observation = capture_screenshot_and_accessibility_tree()
-proposal = model.decide(task, observation)
-action = validate_schema_and_coordinates(proposal)
-
-if action.is_irreversible and not user_or_policy_approval(action):
-    stop("approval required")
-else:
-    execute_in_sandbox_or_scoped_session(action)
-    new_observation = capture_after_settle()
-    if not verify_goal_progress(new_observation, action):
-        rollback_if_possible_or_replan()
-```
-
-![Hình 6-12 Chu trình nhận thức-suy nghĩ-hành động của Tác nhân sử dụng máy tính ](images/fig6-12.svg)
+![Hình 6-11 Chu trình nhận thức-suy nghĩ-hành động của Tác nhân sử dụng máy tính ](images/fig6-11.svg)
 
 
 Có ba chiều thiết kế chính trong chu trình này: **không gian hành động**(những thao tác mà Agent có thể thực hiện), **định vị trực quan**(cách tìm phần tử mục tiêu trong ảnh chụp màn hình) và **kiến trúc mô hình**(cách tạo hành động chính xác từ ảnh chụp màn hình).
 
 ### Thiết kế không gian hành động
 
-Anthropic xác định ba loại công cụ để hình thành khả năng tương tác hoàn chỉnh (Hình 6-13):
+Bản triển khai tham chiếu của Anthropic chia khả năng tương tác hoàn chỉnh thành ba loại công cụ (Hình 6-12). Đây là một thiết kế không gian hành động rõ ràng, nhưng không phải giao thức riêng mà nhà cung cấp mô hình buộc phải tuân theo: miễn là Harness chuyển cùng ảnh chụp màn hình, ràng buộc hành động và kết quả thực thi thành thông điệp cùng đầu ra có cấu trúc mà mô hình đích hỗ trợ, Claude, mô hình thị giác trọng số mở và endpoint tự lưu trữ đều có thể vận hành cùng chu trình nhận thức-suy nghĩ-hành động.
 
 
-![Hình 6-13 Máy tính Sử dụng không gian hành động ](images/fig6-13.svg)
+![Hình 6-12 Máy tính Sử dụng không gian hành động ](images/fig6-12.svg)
 
 
 **GUI Operation Tool**(công cụ máy tính): Thao tác chuột bao gồm di chuyển (mouse_move), nhấp chuột trái/phải/giữa, nhấp đúp/ba lần, kéo (left_click_drag) và nhấn/nhả chi tiết hơn (left_mouse_down/up). Cuộn hỗ trợ bốn hướng và có thể được sử dụng với các phím bổ trợ. Thao tác trên bàn phím bao gồm nhập từng từ (loại, mỗi ký tự cách nhau 12 mili giây để mô phỏng thao tác gõ thực), tổ hợp phím (phím, chẳng hạn như Ctrl+C) và nhấn và giữ (hold_key). Các hành động được nhận biết: ảnh chụp màn hình (ảnh chụp màn hình), lấy vị trí con trỏ (cursor_position), chờ (wait).
@@ -531,10 +467,7 @@ Anthropic xác định ba loại công cụ để hình thành khả năng tươ
 >
 > Lộ trình A sử dụng Anthropic Computer Use Demo. Container đóng gói một môi trường desktop Ubuntu hoàn chỉnh, gồm trình duyệt, terminal và các công cụ thông dụng khác. Frontend nhận tác vụ; backend gửi hướng dẫn và ảnh chụp màn hình đến Claude, rồi thực thi các thao tác chuột, bàn phím, terminal hoặc chỉnh sửa do mô hình trả về. Lộ trình này dùng để tìm hiểu giao thức công cụ `computer` nguyên bản; không yêu cầu mọi độc giả đều phải có quyền truy cập Anthropic API.
 >
-> Lộ trình B sử dụng dự án đi kèm sách [`chapter6/computer-use-open-model`](../chapter6/computer-use-open-model/). Theo mặc định, dự án điều khiển browser-use bằng mô hình trọng số mở Qwen3-VL 32B Instruct, qua API được OpenRouter lưu trữ hoặc bằng cách trỏ `OPEN_MODEL_BASE_URL` đến vLLM/SGLang tự lưu trữ hay endpoint tương thích khác. Endpoint phải nhận được ảnh chụp màn hình và hỗ trợ JSON Schema nguyên bản; nếu chỉ hỗ trợ JSON thông thường, có thể bật rõ ràng chế độ tương thích schema-in-prompt.
->
-> Hai lộ trình dùng cùng một tác vụ chỉ đọc và cùng một hợp đồng nghiệm thu: tối đa 25 bước, mỗi bước chỉ thực hiện một hành động, đồng thời lưu danh tính mô hình/endpoint, phản hồi nguyên gốc của nhà cung cấp, ảnh chụp từng bước, chuỗi hành động, câu trả lời cuối cùng và lý do dừng. Các mô hình khác nhau phải được báo cáo như những nhánh thí nghiệm riêng; không được trình bày kết quả mô hình mở như một lần tái lập Claude, cũng không được coi “container khởi động thành công” là hoàn thành tác vụ. Khoảng thời gian giữa hành động và chất lượng lập kế hoạch là kết quả đo được, không phải giả định trước rằng khoảng thời gian là 2–5 giây hoặc mô hình chắc chắn vượt trội hơn các mô hình khác.
->
+> Lộ trình B dùng mã ví dụ tại [`chapter6/computer-use-open-model`](../chapter6/computer-use-open-model/). Mặc định, nó điều khiển browser-use bằng Qwen3-VL 32B Instruct trọng số mở qua API được OpenRouter lưu trữ, hoặc trỏ `OPEN_MODEL_BASE_URL` tới vLLM/SGLang tự lưu trữ hay endpoint tương thích khác.
 
 ### Định vị trực quan (Nối đất)
 
@@ -546,7 +479,7 @@ Set-of-Mark (SoM) ban đầu được Microsoft Research đề xuất vào năm 
 
 **Chỉ mục phần tử có cấu trúc: Triển khai có cấu trúc các ý tưởng SoM trên Web.**
 
-Chú thích có thể được thực hiện chính xác hơn khi chính giao diện cung cấp thông tin có cấu trúc. Các trang web hiện đại có cấu trúc thành phần hoàn chỉnh (cây DOM) và các vai trò ngữ nghĩa (là nút, là hộp nhập liệu) được xác định trước khi hiển thị. Cây trợ năng cung cấp thông tin tương tự cho nhiều ứng dụng trên máy tính để bàn. Thay vì yêu cầu mô hình phân đoạn đoán "nút là khu vực nào" trong pixel, tốt hơn là bạn nên hỏi trực tiếp chính giao diện "bạn có những yếu tố nào có thể nhấp vào được?". Giải pháp Web Agent do dự án browser-use đại diện thực hiện chính xác điều này: liệt kê và đánh số các phần tử tương tác từ DOM, có thể được coi là triển khai có cấu trúc các ý tưởng SoM trên Web (Hình 6-14). Quá trình này được chia thành bốn bước:
+Chú thích có thể được thực hiện chính xác hơn khi chính giao diện cung cấp thông tin có cấu trúc. Các trang web hiện đại có cấu trúc thành phần hoàn chỉnh (cây DOM) và các vai trò ngữ nghĩa (là nút, là hộp nhập liệu) được xác định trước khi hiển thị. Cây trợ năng cung cấp thông tin tương tự cho nhiều ứng dụng trên máy tính để bàn. Thay vì yêu cầu mô hình phân đoạn đoán "nút là khu vực nào" trong pixel, tốt hơn là bạn nên hỏi trực tiếp chính giao diện "bạn có những yếu tố nào có thể nhấp vào được?". Giải pháp Web Agent do dự án browser-use đại diện thực hiện chính xác điều này: liệt kê và đánh số các phần tử tương tác từ DOM, có thể được coi là triển khai có cấu trúc các ý tưởng SoM trên Web (Hình 6-13). Quá trình này được chia thành bốn bước:
 
 1. Lấy biểu diễn có cấu trúc (DOM tree) và thông tin truy cập của trang web thông qua giao diện gỡ lỗi trình duyệt (CDP, Chrome DevTools Protocol)
 2. Tự động phát hiện những thành phần nào có thể tương tác (nút, hộp nhập liệu, liên kết, v.v.)
@@ -566,37 +499,33 @@ Elements:
 Mô hình chỉ cần xuất số ID và hệ thống sẽ tự động sử dụng tọa độ trung tâm của phần tử để thực hiện nhấp chuột. Loại giải pháp này không lưu mã thông báo (vì tất cả thông tin chú thích phải được gửi đến mô hình), nhưng định vị chính xác và ổn định, đồng thời tránh được các phát hiện bị bỏ sót và phát hiện sai có thể do mô hình phân đoạn đưa ra.
 
 
-![Hình 6-14 Bộ đánh dấu và chỉ mục phần tử có cấu trúc (triển khai sử dụng trình duyệt) ](images/fig6-14.svg)
+![Hình 6-13 Bộ đánh dấu và chỉ mục phần tử có cấu trúc (triển khai sử dụng trình duyệt) ](images/fig6-13.svg)
 
 **Dự đoán tọa độ thuần túy.**
 
 Tuyến thứ ba không thực hiện bất kỳ chú thích nào và trực tiếp cho phép mô hình xuất tọa độ. Lấy việc sử dụng **SeeClick** và Claude của máy tính làm ví dụ: đào tạo mô hình trực quan dựa trên dữ liệu được ghép nối của các ảnh chụp màn hình và vị trí phần tử GUI khổng lồ, đồng thời cho phép mô hình học cách ánh xạ các mô tả ngôn ngữ tự nhiên (chẳng hạn như "nhấp vào nút gửi") trực tiếp tới tọa độ chính xác trong ảnh chụp màn hình - giống như người dùng con người, hoàn toàn dựa vào "tìm kiếm" để tìm vị trí cần nhấp.
 
-Trong sơ đồ dự đoán tọa độ, sự hiểu biết của mô hình về tọa độ phụ thuộc nhiều vào độ phân giải được sử dụng trong quá trình huấn luyện (Hình 6-15). Claude được đào tạo bằng XGA (1024x768), WXGA (1280x800) và FWXGA (1366x768). Nếu độ phân giải ảnh chụp màn hình đầu vào không khớp, tọa độ mà mô hình dự đoán sẽ được bù một cách có hệ thống - giống như đo khoảng cách trên bản đồ nhỏ và sau đó sử dụng trực tiếp trên bản đồ lớn. Do đó, cần triển khai cơ chế chia tỷ lệ tọa độ hai chiều trên lớp công cụ và chọn độ phân giải mục tiêu theo tỷ lệ khung hình để tránh kéo dài không đẳng cự làm biến dạng hình ảnh và làm sai lệch phán đoán tọa độ. Ví dụ: nếu độ phân giải màn hình thực là 2560×1440 (16:9), bạn nên chọn một trong ba mức được Claude hỗ trợ với tỷ lệ khung hình cũng gần 16:9 – FWXGA (1366×768) là phù hợp nhất. Khi chụp ảnh màn hình, hãy chia tỷ lệ màn hình thành 1366×768 và gửi cho mô hình; sau khi mô hình xuất ra tọa độ nhấp chuột (683, 384), nó sẽ được ánh xạ ngược sang tọa độ thực (683×2560/1366, 384×1440/768) ≈ (1280, 720). Ngược lại, nếu bạn kéo căng mạnh 16:9 thành 4:3 1024×768, màn hình sẽ bị nén theo chiều ngang và tọa độ mà mô hình dự đoán sẽ bị dịch chuyển một cách có hệ thống.
+Trong sơ đồ dự đoán tọa độ, sự hiểu biết của mô hình về tọa độ phụ thuộc nhiều vào độ phân giải được sử dụng trong quá trình huấn luyện (Hình 6-14). Claude được đào tạo bằng XGA (1024x768), WXGA (1280x800) và FWXGA (1366x768). Nếu độ phân giải ảnh chụp màn hình đầu vào không khớp, tọa độ mà mô hình dự đoán sẽ được bù một cách có hệ thống - giống như đo khoảng cách trên bản đồ nhỏ và sau đó sử dụng trực tiếp trên bản đồ lớn. Do đó, cần triển khai cơ chế chia tỷ lệ tọa độ hai chiều trên lớp công cụ và chọn độ phân giải mục tiêu theo tỷ lệ khung hình để tránh kéo dài không đẳng cự làm biến dạng hình ảnh và làm sai lệch phán đoán tọa độ. Ví dụ: nếu độ phân giải màn hình thực là 2560×1440 (16:9), bạn nên chọn một trong ba mức được Claude hỗ trợ với tỷ lệ khung hình cũng gần 16:9 – FWXGA (1366×768) là phù hợp nhất. Khi chụp ảnh màn hình, hãy chia tỷ lệ màn hình thành 1366×768 và gửi cho mô hình; sau khi mô hình xuất ra tọa độ nhấp chuột (683, 384), nó sẽ được ánh xạ ngược sang tọa độ thực (683×2560/1366, 384×1440/768) ≈ (1280, 720). Ngược lại, nếu bạn kéo căng mạnh 16:9 thành 4:3 1024×768, màn hình sẽ bị nén theo chiều ngang và tọa độ mà mô hình dự đoán sẽ bị dịch chuyển một cách có hệ thống.
 
 
-![Hình 6-15 Khớp độ phân giải và chia tỷ lệ tọa độ hai chiều ](images/fig6-15.svg)
+![Hình 6-14 Khớp độ phân giải và chia tỷ lệ tọa độ hai chiều ](images/fig6-14.svg)
 
 
 Logic lựa chọn của ba tuyến đường có thể được tóm tắt như sau: **Khi có sẵn thông tin có cấu trúc, chỉ mục Cây DOM/Accessibility** được sử dụng đầu tiên và vị trí là chính xác và ổn định nhất; **Khi không có sẵn**(phần mềm máy tính gốc như Photoshop, giao diện kết xuất Canvas/WebGL, trò chơi), **Bạn có thể sử dụng chú thích trực quan (tuyến SoM gốc) hoặc dự đoán tọa độ**. Chú thích trực quan biến việc định vị thành một câu hỏi trắc nghiệm, thân thiện hơn với các mô hình tổng quát chưa được đào tạo đặc biệt; dự đoán tọa độ loại bỏ bước chú thích và trực tiếp hơn đối với các mô hình đã trải qua khóa đào tạo định vị GUI. Vẫn còn khoảng cách về độ chính xác giữa hai yếu tố này trên các phần tử nhỏ và giao diện dày đặc.
 
 > **Thử nghiệm 6-8 ★: Sử dụng browser-use để đạt được hoạt động trình duyệt tự động**
 >
-> Kết hợp Playwright, một framework tự động hóa trình duyệt, với mô hình đa phương thức để triển khai thao tác trình duyệt được điều khiển bằng ngôn ngữ tự nhiên. Bật trực quan hóa SoM và lưu ảnh chụp màn hình có hộp giới hạn được chú thích trước mỗi quyết định. Giao diện mô hình không bị giới hạn ở OpenAI hay Anthropic; sách cung cấp cấu hình API cho mô hình mở Qwen3-VL và giữ một base URL tổng quát tương thích OpenAI cho các dịch vụ lưu trữ khác hoặc suy luận tự lưu trữ.
+> Kết hợp Playwright, một framework tự động hóa trình duyệt, với mô hình đa phương thức để thực hiện thao tác trình duyệt bằng ngôn ngữ tự nhiên. Bật trực quan hóa SoM và lưu ảnh chụp có khung chú thích trước mỗi quyết định.
 >
-> Nhiệm vụ kiểm tra “Mở Google và tìm thời tiết San Francisco”: sau khi khởi động, ảnh chụp màn hình hiển thị trang tìm kiếm Google với các phần tử tương tác được đánh số. Mô hình chọn hộp tìm kiếm, nhập “San Francisco weather today”, gửi tìm kiếm rồi trích xuất nhiệt độ và điều kiện thời tiết từ trang kết quả. Khi nghiệm thu, cần kiểm tra độc lập câu trả lời và quỹ đạo, đồng thời ghi trung thực số bước thực tế và thời gian đã dùng. “5 bước, khoảng 20 giây” chỉ có thể là giá trị quan sát của một lần chạy cụ thể, không phải kết quả cố định nếu không có biên nhận thực thi.
->
-> Lần chạy chính thức của mô hình mở được lưu trong sách sử dụng `qwen/qwen3-vl-32b-instruct` trên OpenRouter. Khi gặp CAPTCHA ở bước 4 của Google Search, mô hình không tuyên bố thành công mà chuyển sang weather.com; đến bước 16, nó đọc từ trang Today của San Francisco: 64°F, Sunny, cảm giác như 62°F, cao nhất 74°F và thấp nhất 55°F. Cả 16/16 phản hồi API đều báo đúng mô hình Qwen3-VL được yêu cầu; 15 ảnh chụp bước hợp lệ cùng quỹ đạo hành động chỉ đọc đã vượt qua nghiệm thu quyết định độc lập. Kết quả này chứng minh lộ trình API mô hình mở có thể chạy được; nó không đồng nghĩa với việc đã tái lập nhánh sử dụng công cụ `computer` nguyên bản của Anthropic.
+> Tác vụ kiểm thử “Mở Google và tìm thời tiết San Francisco”: sau khi khởi động, ảnh chụp hiển thị trang Google với các phần tử tương tác được đánh số. Mô hình chọn ô tìm kiếm, nhập “San Francisco weather today”, gửi truy vấn rồi trích xuất nhiệt độ và điều kiện thời tiết từ trang kết quả.
 
 ### Có thể xem hoạt hình và nghe âm thanh Computer Use Agent
 
-Cho đến nay, nhận thức về Computer Use dựa trên một giả định ngầm: **Màn hình tĩnh**—chụp ảnh, suy nghĩ về một bước, nhấp chuột rồi chụp ảnh. Nhưng trên thực tế, màn hình sẽ phát video, các thông báo thoáng qua sẽ bật lên và giọng nói trong cuộc họp sẽ được phát. Agent, chỉ mở mắt sau mỗi 3–5 giây và hoàn toàn không có tai, không thể nhìn hay nghe thấy "những điều xảy ra giữa các khung hình" này. Xem các bản ghi màn hình, theo dõi các cuộc họp, nghe lời nhắc bằng giọng nói và xử lý các hộp thoại thoáng qua—toàn bộ danh mục hoạt động máy tính hàng ngày này gần như bị giới hạn đối với Computer Use Agent ngày nay.
+Cho đến đây, nhận thức của Computer Use dựa trên một giả định ngầm: **màn hình đứng yên**—chụp ảnh, nghĩ một bước, nhấp, rồi chụp ảnh tiếp theo. Màn hình thực tế phát video, hiện thông báo thoáng qua và phát tiếng nói trong cuộc họp. Agent chỉ mở mắt mỗi 3–5 giây một lần và hoàn toàn không có tai sẽ không thấy hoặc nghe được những gì xảy ra giữa hai khung hình.
 
-Thứ thực sự cần được thiết kế lại ở đây không phải là "giao diện hành động", mà là " **giao diện quan sát**" [^ch6-9]. Ý tưởng cốt lõi là tách **quan sát**(liên tục, thích ứng, đa phương thức) khỏi **hành động**(rời rạc) và tạo một lớp phần mềm trung gian nhận thức (có thể gọi là Agent-Giao diện quan sát máy tính, AOI) được chèn giữa môi trường và bất kỳ mô hình Computer Use nào được tạo sẵn mà không cần đào tạo lại. Nó có ba thành phần "cổng theo yêu cầu": Đầu tiên, **Chụp khung hình chính giữa các khung** - đầu tiên sử dụng cổng pixel cực rẻ để bỏ qua hình ảnh gần như không thay đổi, sau đó sử dụng một mô hình nhỏ để xác định xem hình ảnh có những thay đổi có ý nghĩa hay không và chỉ chặn một khung hình khi có thay đổi, chi phí gần như bằng 0 đối với ảnh tĩnh; thứ hai, **Phiên âm giọng nói có kiểm soát âm lượng** - chỉ nhận dạng giọng nói khi có âm thanh, hãy để Agent Lần đầu tiên "mọc tai"; thứ ba, và quan trọng nhất, **tường thuật bức ảnh thành văn bản lâu dài** - hãy để mô hình mô tả khung hình đã chụp thành một câu ("Lời nhắc vừa xuất hiện cho biết ngày phát hành đã được thay đổi thành ngày 28 tháng 4") và **ngay cả khi hình ảnh gốc sau đó bị xóa khỏi ngữ cảnh, văn bản này vẫn còn trong bộ nhớ**, mang thông tin động xuống dưới dạng văn bản.
+Thứ cần thiết kế lại không phải giao diện hành động mà là **giao diện quan sát**[^ch6-9]. Giao diện quan sát Agent–máy tính (AOI) chuyển quan sát môi trường liên tục thành các sự kiện rời rạc mà mô hình dễ xử lý. Các kỹ thuật chính gồm: **chụp khung hình chính giữa các frame**, bỏ qua màn hình gần như không đổi và dùng mô hình nhỏ chỉ giữ thay đổi có ý nghĩa; **phiên âm giọng nói theo ngưỡng âm lượng**, chỉ gọi nhận dạng khi có tiếng; và **mô tả frame thành văn bản**, để mô tả vẫn ở trong bộ nhớ sau khi ảnh gốc bị loại khỏi ngữ cảnh, qua đó nén lịch sử tương tác đa phương thức.
 
-Một khám phá phản trực giác là điều thực sự quan trọng không phải là "nên chọn khung nào" mà là " **tường thuật các khung thành văn bản có thể được giữ lại trong thời gian dài**" - văn bản là phương thức mà LLM Agent xử lý tốt nhất. Trên tám mô hình từ quy mô 7B đến quy mô tiên tiến, lớp phần mềm trung gian này mang lại sự cải thiện từ +17 đến +48 điểm phần trăm mà không cần đào tạo lại. Trong số đó, khoảng cách là khác biệt nhất đối với các tác vụ lời nói: với việc bổ sung lớp nhận thức này, Agent có thể thực hiện tất cả các tác vụ lời nói mà ban đầu "nghe được nhưng không thể di chuyển". Nhưng không phải cấu hình cố định có thể chinh phục thế giới - trên một số mẫu máy mới hơn, việc nhồi quá nhiều mã thông báo hình ảnh sẽ lấn át khả năng lý luận và kéo giảm hiệu suất, vì vậy các thành phần này cần phải được chọn từng thành phần một theo mô hình, thay vì sử dụng tất cả cùng một lúc. Điều này giống như lựa chọn trước đây giữa Set-of-Mark và dự đoán tọa độ: không có viên đạn bạc trong sơ đồ nhận thức và nó phải được khớp theo đặc điểm của mô hình.
-
-[^ch6-9]: Ba thành phần của khung hình chính, phiên âm theo yêu cầu và khung tường thuật thành văn bản cố định. Cơ chế hoàn chỉnh và sự cắt bỏ theo từng mô hình được tìm thấy ở Li, Bojie và Noah Shi. *Agent-Giao diện quan sát trên máy tính kích hoạt Computer Use động.* arXiv:2606.29472, 2026.
+[^ch6-9]: Xem Li, Bojie and Noah Shi. *Agent-Computer Observation Interfaces Enable Dynamic Computer Use.* arXiv:2606.29472, 2026.
 
 ### Mô hình thế giới cho Computer Use
 
@@ -719,21 +648,6 @@ RT-2 và OpenVLA cắt hành động liên tục thành các token rời rạc r
 
 Mô hình lớn thường chỉ suy luận được 1—10 lần mỗi giây, trong khi bộ điều khiển truyền thống có thể cập nhật vài chục đến vài nghìn lần mỗi giây. Một cách làm thông dụng trong kỹ thuật là "chia đoạn hành động" (action chunking): mô hình sinh một lần một đoạn ngắn các hành động tương lai, luồng điều khiển thực thi đoạn ấy ở tần số cao, còn mô hình chuẩn bị đoạn kế tiếp ở phía sau. Nhờ vậy một phần thời gian chờ suy luận được giấu vào trong thời gian thực thi hành động. Cái giá phải trả là: đoạn càng dài thì chuyển động càng mượt, nhưng trong quãng ấy mô hình càng ít thấy khung cảnh mới. Nếu XLeRobot đang vươn tay định lấy cốc mà giữa chừng cốc bị va lệch đi, nó vẫn có thể tiếp tục thực thi những hành động sinh ra từ hình ảnh cũ. Vậy nên chia đoạn hành động là một sự đánh đổi giữa độ mượt và tốc độ phản ứng, chứ không phải một cách tăng tốc không mất gì.
 
-Chia đoạn hành động thường cần một bộ khung "dự đoán—thực thi—chen ngang" thay vì chạy đoạn cho tới hết:
-
-```python
-chunk = vla(current_observation, skill)
-for action in chunk:
-    low_level.execute(action)
-    if safety_event() or observation_changed_significantly():
-        low_level.stop()
-        discard_remaining(chunk)
-        reobserve_and_replan()
-        break
-```
-
-Đoạn ngắn phản ứng nhanh nhưng làm số lần gọi mô hình tăng lên; đoạn dài mượt hơn nhưng dễ dùng phải quan sát đã cũ. Thử nghiệm 6-12 so sánh loại đánh đổi này trong bộ mô phỏng, còn thứ chạm tới ranh giới an toàn của phần cứng thật là Thử nghiệm 6-11.
-
 ### Giới hạn của VLA
 
 "Lập kế hoạch dài hạn + VLA" là một phương án nền dùng được, nhưng vẫn để lại vài vấn đề dễ bị bỏ sót.
@@ -794,9 +708,7 @@ Thử nghiệm 6-12 ổn định trong bộ mô phỏng không có nghĩa chiế
 
 ## Tóm tắt chương này
 
-Thứ mà chương này gỡ bỏ chính là tiền đề mà năm chương trước vẫn luôn mặc định: Agent và thế giới lần lượt phát biểu.
-
-Nhìn dọc theo hai trục **phương thức** và **thời điểm**, bốn mục thực ra là cùng một mệnh đề triển khai trên bốn thang thời gian. **Không đồng bộ và hướng sự kiện** mở rộng quan sát từ "Agent chủ động đi lấy" thành "thế giới chủ động đẩy tới", mở rộng hành động từ "làm xong trong lượt" thành "khởi động trước, sau đó nhờ sự kiện khép lại"; phương thức không đổi, chỉ thời điểm đổi. **Giọng nói** nén thang xuống mili giây, và mạch tiến hoá chính của ba mô thức — xếp tầng, Omni end-to-end và song công toàn phần — chính là đi từ "nói luân phiên" dần sang nghe nói liên tục, đồng thời phân công giữa tương tác thời gian thực ở tiền cảnh và suy nghĩ sâu ở hậu cảnh. **Computer Use** mang cùng vòng khép kín ấy lên màn hình, nút thắt đã mở rộng từ "có hoàn thành được nhiệm vụ không" sang hiệu suất thao tác, hiểu thị giác liên tục và xác nhận trạng thái sau hành động. **Robot** thì đẩy nó vào thế giới vật lý, chia khối hành động phải đánh đổi giữa độ mượt và tốc độ phản ứng, còn rốt cuộc có hoàn thành hay không vẫn phải do một quan sát mới phán định.
+Nhìn theo hai trục **phương thức** và **thời điểm thực thi**, **bất đồng bộ hướng sự kiện** mở rộng quan sát từ “Agent chủ động lấy” thành “thế giới đẩy tới”, và hành động từ “hoàn tất trong lượt” thành “khởi động trước, hoàn tất bằng sự kiện sau”. **Giọng nói** nén thang thời gian xuống mili giây, chuyển từ luân phiên phát biểu sang nghe–nói liên tục, đồng thời phân chia tương tác tiền cảnh thời gian thực và suy nghĩ hậu cảnh sâu hơn. **Computer Use** đưa vòng lặp lên màn hình, nơi nút thắt gồm hiệu quả thao tác, hiểu hình ảnh liên tục và xác nhận trạng thái sau hành động. **Robot** đưa nó vào thế giới vật lý, nơi action chunking đánh đổi độ mượt với khả năng phản ứng và việc hoàn tất vẫn phải được đánh giá bằng quan sát mới.
 
 Bốn mục dùng chung một bộ khung điều khiển:
 
@@ -809,9 +721,7 @@ cảm nhận liên tục
   → tiếp tục, sửa chữa, thử lại, dừng hoặc hoạch định lại
 ```
 
-Cũng dùng chung một bộ nguyên thuỷ — đánh thức, điểm an toàn, huỷ, giành quyền, tách nhanh/chậm. "Kiểm tra tín hiệu huỷ tại điểm an toàn" trong vòng lặp sự kiện, và "phát hiện bất thường thì bỏ phần hành động còn lại, quan sát lại" trong chia khối hành động, là cùng một cơ chế được hiện thực hai lần trên hai thang thời gian cách nhau năm bậc độ lớn; sự phân công giữa mô hình nhanh ở tiền cảnh và mô hình chậm ở hậu cảnh, với "trả về ID nhiệm vụ trước, sau đó để sự kiện khép lại" trong Agent không đồng bộ, cũng là hai cách viết của cùng một chuyện.
-
-Cần lưu ý rằng phần lớn các cơ chế này hiện vẫn là giải pháp tình thế về mặt kỹ thuật. Giao thức chỗ giữ chỗ, dấu sự kiện trên thanh trạng thái, việc huỷ và hoàn tác suy nghĩ đi trước — về bản chất đều đang dùng logic điều phối để bù cho kinh nghiệm không đồng bộ còn thiếu trong phân bố huấn luyện của mô hình. Tiến bộ ở phía mô hình đang thu một phần trong đó vào tham số — mô hình tương tác đã đưa ngắt lời và chen lời vào bên trong mô hình, suy nghĩ liên tục khiến "vừa nghe vừa nghĩ" không phải chờ thế hệ mô hình sau — nhưng chừng nào ngữ liệu huấn luyện còn chủ yếu theo lượt, tầng bù đắp này sẽ không biến mất, chỉ liên tục dời sang biên giới mới theo đà tiến của năng lực mô hình.
+Chúng cũng dùng chung các primitive—đánh thức, điểm an toàn, hủy, giành quyền và tách nhanh/chậm.
 
 Chương này hoàn tất mảnh cuối cùng của phần "xây dựng Agent": không gian quan sát và không gian hành động đã trải ra trên cả ba hướng nội dung, phương thức và thời điểm. Ba chương tiếp theo chuyển sang một câu hỏi khác — làm sao biết tất cả những thứ đó được xây đúng, và làm sao khiến nó liên tục tốt lên.
 

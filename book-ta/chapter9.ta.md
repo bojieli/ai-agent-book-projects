@@ -26,19 +26,6 @@
 
 படம் 9-2 மூன்று அடுக்கு சரிபார்ப்பு அமைப்பைக் காட்டுகிறது. கீழடுக்கு result verifier test முடிவுகள், database state மற்றும் tool return-களைப் படித்து, “பணி உண்மையில் முடிக்கப்பட்டதா” என்பதற்குப் பதிலளிக்கிறது; நடு அடுக்கு process verifier வணிக விதிகள், அனுமதிகள் மற்றும் action sequence-களைச் சோதித்து, “அனுமதிக்கப்பட்ட முறையில் முடிக்கப்பட்டதா” என்பதற்குப் பதிலளிக்கிறது; மேலடுக்கு quality verifier Rubric-ஐ அடிப்படையாகக் கொண்டு மொழியையும் உத்தியையும் மதிப்பிட்டு, “பொருத்தமாகச் செய்யப்பட்டதா” என்பதற்குப் பதிலளிக்கிறது. கீழடுக்கு metrics இயன்றவரை code மற்றும் environment ground truth-ஐச் சார்ந்திருக்க வேண்டும்; formalize செய்யக் கடினமான பகுதிகள் மட்டுமே மொழி மாதிரியிடம் ஒப்படைக்கப்பட வேண்டும்.
 
-**மூன்று அடுக்கு trajectory சரிபார்ப்பு:**
-
-```python
-outcome = verify_environment_state(trajectory)
-process = verify_actions_and_permissions(trajectory)
-quality = judge_with_rubric(trajectory, cite_evidence = true)
-
-if not outcome.pass or not process.pass:
-    reject_as_learning_example(outcome, process, quality)
-else:
-    emit_structured_diagnosis(outcome, process, quality)
-```
-
 ![படம் 9-2 சூழல் முடிவிலிருந்து LLM Rubric வரை மூன்று அடுக்கு trajectory சரிபார்ப்பு](images/fig9-2.svg)
 
 வாடிக்கையாளர் சேவை Agent-ஐ எடுத்துக்கொண்டால், பயனுள்ள Rubric குறைந்தபட்சம் அட்டவணை 9-1-ல் உள்ள பரிமாணங்களை உள்ளடக்க வேண்டும். முதல் ஐந்து உருப்படிகள் முக்கியமாக அடிப்படை வரம்புகளை உறுதிப்படுத்துகின்றன; கடைசி இரண்டு சேவைத் தரத்தை அளவிடுகின்றன. “பயனர் திருப்தியடைந்தாரா” என்ற ஒரே கேள்வியைவிட இவ்வகைப் பிரிப்பு அதிக diagnostic மதிப்புடையது: Agent விதிமீறி refund வழங்கியதால் பயனர் திருப்தியடையலாம்; compliance கட்டுப்பாடுகளால் அதிருப்தியடையவும்லாம். ஒரே satisfaction metric இவ்விரண்டையும் வேறுபடுத்த முடியாது.
@@ -55,23 +42,11 @@ else:
 | வெளிப்பாட்டுத் தரம் | இயல்பாகவும் சுருக்கமாகவும் இருந்து, மீளுரைத்தலையும் வார்ப்புருத்தன்மையையும் தவிர்த்ததா | முழு உரையாடல், மொழி Rubric |
 | இணக்கமான மாற்றுவழி | முதன்மைத் திட்டம் செயல்படாதபோது, அனுமதிக்கப்பட்ட மாற்றுப் பாதை கண்டறியப்பட்டதா | பயனர் இலக்கு, கொள்கை மற்றும் அடுத்தடுத்த செயல்கள் |
 
-இவற்றில், “உறுதி—செயல் ஒற்றுமை” குறிப்பாக Agent சூழலுக்கு ஏற்றது. பாரம்பரிய உரை மதிப்பீடு இறுதிப் பதிலை மட்டுமே படிப்பதால், “உங்களுக்காக refund சமர்ப்பித்துவிட்டேன்” என்பதைச் சிறந்த சேவையாகக் கருதலாம்; trajectory மதிப்பீடு refund tool உண்மையில் அழைக்கப்பட்டதா, அந்த அழைப்பு வெற்றியடைந்ததா, order state மாறியதா என்பதையும் தொடர்ந்து சோதிக்கும். “இணக்கமான மாற்றுவழி” என்பது மாதிரி விதிகளைத் தன்னிச்சையாக மீறுவதை ஊக்குவிப்பதல்ல; பயனரின் உண்மையான இலக்கைப் புரிந்துகொண்டு, refund சாத்தியமில்லாதபோது rebooking, extension அல்லது partial compensation போன்ற சட்டபூர்வமான வாய்ப்புகளைச் சோதிக்க வேண்டும் என்பதாகும்.
-
-சரிபார்ப்பு முடிவுகளை ஒரே scalar-ஆகச் சுருக்கக்கூடாது. ஒரு trajectory மதிப்பீடு கட்டமைக்கப்பட்ட diagnosis-ஐப் போன்றது: பணி பகுதியளவில் வெற்றியடைந்தது; விதி பின்பற்றல் நிறைவேறியது; ஆனால் ஆதாரமற்ற ஒரு கூற்று, ஒரு பொய்யான உறுதி ஆகியவை இருந்தன; பதில் கொள்கையை மூன்று முறை மீண்டும் விளக்கியது. பரிமாண அடிப்படையிலான signal பிரச்சினையின் தன்மையையும் சான்றின் இடத்தையும் பாதுகாக்கிறது. அதன் பின்னரே அடுத்த module தீர்மானிக்க முடியும்: ஆதாரமற்ற கூற்று அறிவுக் குறைவால் ஏற்பட்டதா, citation தேவை இல்லாததால் ஏற்பட்டதா, அல்லது model capability போதாமையால் ஏற்பட்டதா; பொய்யான உறுதிக்காக Prompt மாற்றப்பட வேண்டுமா, அல்லது Harness-இல் பதிலும் tool state-உம் ஒன்றுபடுகிறதா எனச் சோதிக்க வேண்டுமா.
-
-LLM verifier-உம் calibration செய்யப்பட வேண்டும். Production அமைப்புகள் பொதுவாக நிபுணர்கள் label செய்த சிறிய trajectory தொகுப்பைத் தயாரித்து, ஒவ்வொரு பரிமாணத்திலும் verifier-இன் consistency-ஐச் சோதிக்கின்றன; அதிக ஆபத்து அல்லது குறைந்த confidence கொண்ட வழக்குகள் இரண்டாவது மாதிரி அல்லது மனித review-க்கு அனுப்பப்படுகின்றன; model version மாறிய பிறகு calibration set மீண்டும் இயக்கப்படுகிறது. Verifier மதிப்பீடும் சான்றுகளும் வழங்க வேண்டும்; Agent-இன் எந்தப் பகுதியை மாற்ற வேண்டும் என்பது தனித்த diagnosis மற்றும் evolution module மூலம் தீர்மானிக்கப்பட வேண்டும். இதனால் ஒரே மாதிரி Judge-ஆகவும் விதிகளை நேரடியாக மாற்றுபவனாகவும் செயல்படுவது தவிர்க்கப்படுகிறது.
-
 > **பரிசோதனை 9-1 ★★: வாடிக்கையாளர் சேவை Agent-க்கான trajectory verifier-ஐ உருவாக்குதல்**
 >
 > **பரிசோதனை இலக்கு**: ஒரு வாடிக்கையாளர் சேவை இயக்க trajectory-ஐ அடுத்தடுத்த கற்றலுக்குப் பயன்படும் கட்டமைக்கப்பட்ட diagnosis-ஆக மாற்றி, “சான்றுகளுடன் கூடிய பல்பரிமாண முடிவு” ஒரே மொத்த மதிப்பெண்ணைவிட root cause-ஐச் சிறப்பாகக் கண்டறிகிறதா எனச் சரிபார்த்தல்.
 >
-> **தரவும் செயல்முறையும்**: சாதாரண refund, பொய்யான உறுதி, privacy leak மற்றும் அளவுக்கு மீறிய மறுப்பு என்ற நான்கு வகை, நிபுணர் label செய்த trajectory-களைத் தயாரிக்க வேண்டும். முதல் அடுக்கு order-இன் இறுதி state மற்றும் tool log-களைப் படித்து, refund அல்லது rebooking உண்மையில் நடந்ததா எனத் தீர்மானிக்கிறது. இரண்டாம் அடுக்கு வணிகக் கொள்கையுடன் ஒவ்வொரு படியையும் ஒப்பிட்டு permission, அவசியமான process, privacy, உண்மை ஆதாரம் மற்றும் உறுதி—செயல் ஒற்றுமையைச் சோதிக்கிறது. மூன்றாம் அடுக்கு அட்டவணை 9-1 Rubric-ஐப் பயன்படுத்தி வெளிப்பாட்டுத் தரத்தையும் இணக்கமான மாற்றுவழியையும் மதிப்பிட்டு, தோல்வி முடிவுகளுக்கு ஆதாரமாக உரையாடல் சுற்றுகளைப் பாதுகாக்கிறது. இயல்புநிலை quality Judge deterministic rule-களைப் பயன்படுத்துகிறது; உண்மையான LLM Judge-உம் வழங்கப்படுகிறது. மேலடுக்கில் எந்த மாதிரி பயன்படுத்தப்பட்டாலும், result layer மற்றும் rule layer மொழி மாதிரியின் ஊகத்திற்கு விடப்படக்கூடாது.
->
-> **ஒப்பீடும் metrics-உம்**: baseline ஒரே மொத்த மதிப்பெண்ணை மட்டும் வெளியிடுகிறது; பரிசோதனைக் குழு ஒவ்வொரு பரிமாணத்திற்கும் `pass`, `fail` அல்லது `uncertain`, சான்று மற்றும் confidence-ஐ வெளியிடுகிறது. Calibration கட்டத்தில் failure detection-இன் precision மற்றும் recall ஒவ்வொரு பரிமாணத்திற்கும் கணக்கிடப்பட்டு, expert label-உடனான exact-match rate-உம் தெரிவிக்கப்படுகிறது. பொய்யான உறுதி போன்ற தோல்விகளுக்கு வெறும் முடிவு மட்டுமல்லாமல், காலியில்லாத சான்று வழங்கப்பட்டுள்ளதா என்பதும் சோதிக்கப்படுகிறது.
->
-> **ஏற்றுக்கொள்ளும் நிபந்தனைகள்**: முக்கிய விதிமீறல், பொய்யான உறுதி மற்றும் அளவுக்கு மீறிய மறுப்பு ஆகியவற்றை verifier நிலையாகக் கண்டறிய வேண்டும். உயர்ந்த மொத்த மதிப்பெண் privacy அல்லது rule பரிமாணத் தோல்வியை மறைக்கக்கூடாது. குறைந்த confidence அல்லது அதிக ஆபத்து கொண்ட case-கள் தானாக learning signal-ஆக மாறாமல், இரண்டாவது verifier அல்லது மனித review-க்கு அனுப்பப்பட வேண்டும்.
->
-> தொடர்புடைய implementation [`trajectory-verifier`](../chapter9/trajectory-verifier/) இல் உள்ளது. இயல்புநிலையில் offline-ஆக மறுஉருவாக்கக்கூடிய quality Judge பயன்படுத்தப்படுகிறது; ஏற்கனவே செயல்படுத்தப்பட்ட உண்மையான LLM verifier-ஐ இயக்க `--judge llm` பயன்படுத்தலாம்.
+> **பரிசோதனை விளக்கம்:** “ஒரே மொத்த மதிப்பெண்” என்பதையும் “ஒவ்வொரு பரிமாணத்திற்கும் முடிவு, சான்று, நம்பிக்கை” என்பதையும் ஒப்பிட்டு, எது task failure, rule violation, false promise, expression problem ஆகியவற்றைச் சிறப்பாகப் பிரிக்கிறது என்று பாருங்கள். தொடர்ச்சியான பரிணாமம் success rate அல்லது ஒரு score-ஐ மட்டும் சார முடியாது. எது தவறு, ஏன் தவறு, சான்று எங்கே உள்ளது என்பதை வைத்திருந்தால்தான் அடுத்த module அறிவு, Prompt, program, model parameters ஆகியவற்றில் எதைப் புதுப்பிக்க வேண்டும் என்று அறியும்; low-confidence வழக்குகள் தானாக learning set-இல் சேரக்கூடாது.
 
 ## Agent தொடர்ச்சியான பரிணாமத்தின் நான்கு முறைகள்
 
@@ -89,19 +64,6 @@ Learning signal Agent மாற வேண்டும் என்பதைச�
 | Prompt மற்றும் Skill | மொழியாக்கக்கூடிய தீர்மானக் கோட்பாடுகள் மற்றும் செயல்பாட்டு விதிமுறைகள் | விளக்கக்கூடியது, செயல்பாட்டு வரம்பைக் கட்டுப்படுத்தலாம் | எளிதில் பெரிதாகலாம், முரண்படலாம் அல்லது புறக்கணிக்கப்படலாம் |
 | Program மற்றும் Harness | deterministic செயல்முறைகள், tools மற்றும் வலுவான கட்டுப்பாடுகள் | test செய்யலாம், நிலையான செயல்பாடு, குறைந்த செலவு | development மற்றும் maintenance செலவு அதிகம் |
 | Model parameters | உயர்-பரிமாண perception, generation style மற்றும் implicit strategy | வலுவான generalization, குறைந்த inference செலவு | update மற்றும் regression செலவு அதிகம் |
-
-**அனுபவத்திலிருந்து திறனுக்கான வழிமாற்றம்:**
-
-```python
-if experience.is_factual and experience.has_sources:
-    target = KNOWLEDGE
-elif experience.can_be_expressed_as_contextual_language_rule:
-    target = PROMPT_OR_SKILL
-elif experience.is_deterministic or experience.is_hard_safety_constraint:
-    target = PROGRAM_OR_HARNESS
-else:
-    target = MODEL_PARAMETERS
-```
 
 ### அனுபவத்தை அறிவாக நிலைநிறுத்துதல்
 
@@ -248,6 +210,26 @@ Tool creation-உம் இதே protocol-ஐப் பின்பற்று
 >
 > `failure_trajectories.json` இன் மூன்று signal மற்றும் control trajectory-களைப் பயன்படுத்தவும். உண்மையான `gpt-4o-mini` candidate incomplete task, normal operation, one-time token check-களை கடக்காததால் security gate நிராகரித்தது. Deterministic candidate அனைத்தையும் கடந்து `release_to_canary` பெற்றது; check, decision, stable directory hash பதிவு செய்யவும். Implementation [`harness-safety-gate`](../chapter9/harness-safety-gate/) இல் உள்ளது.
 
+#### எடுத்துக்காட்டு: அனைத்தும் plugin ஆக இருக்கும் DeepSeek Harness சுய-பரிணாமம்
+
+அத்தியாயம் 1 அட்டவணை DeepSeek Harness (`dsh`)-ஐ “Agent சுய-பரிணாமக் கட்டமைப்பு” என வகைப்படுத்துகிறது[^dsh-2026]. அதன் அடிப்படையான Cordis ஆய்வுக்கட்டுரை, வழக்கமான composition **நிலையானது** என்கிறது: function call, module import, class inheritance அனைத்தும் compile நேரத்தில் தீர்மானிக்கப்படுகின்றன. Plugin system மற்றும் self-evolving Harness-க்கு runtime-இல் component-களை load, unload, reconfigure செய்யும் **dynamic composition** தேவை[^cordis-2026]. Agent-இன் ஒவ்வொரு self-modification-மும் அடிப்படையில் dynamic composition ஆகும்.
+
+ஆய்வு dynamic composition-ஐ ஒன்றுக்கொன்று செங்குத்தான இரு பரிமாணங்களாகப் பிரிக்கிறது. **Temporal composability** என்பது component அகற்றப்படும்போது shared environment-இல் செய்த மாற்றங்கள் முழுமையாகவும் பாதுகாப்பாகவும் திரும்பப் பெறப்படுமா என்று கேட்கிறது; runtime ஒவ்வொரு resource allocation, event registration, state change-ஐயும் கண்காணிக்க வேண்டும். **Spatial composability** என்பது component-கள் dependency-களை கட்டமைக்கப்பட்ட, சரிபார்க்கக்கூடிய முறையில் அறிவித்து, கண்டறிந்து, தீர்த்து, மாற்றத்தின்போது lifecycle-ஐ ஒருங்கிணைக்க முடியுமா என்று கேட்கிறது. முன்னது **எதை மாற்றியது**, பின்னது **எதைச் சார்ந்தது**.
+
+Self-evolving Harness-இல் இந்தச் சிக்கல் மிகத் தீவிரம். திரும்பப்பெற வேண்டிய side effect-கள் நீண்டகாலம் வாழ்ந்து state கொண்டவை; dependency-கள் runtime-இல் தோன்றி, மறைந்து, அடையாளம் மாறும். Temporal composability இல்லையெனில் ஒவ்வொரு மாற்றமும் முழு restart, process state இழப்பு, நடப்புப் பணி இடைமறிப்பு ஆகியவற்றைத் தரும். Spatial composability இல்லையெனில் ஒவ்வொரு module-மும் dependency மாற்றத்தைத் தற்காலிக முறையில் கண்டறியும்; எளிய code replacement சார்பாளர்களை அமைதியாக உடைக்கவோ cycle உருவாக்கவோ முடியும்.
+
+Cordis compile-time கருத்துகள் இரண்டை runtime-க்கு உயர்த்துகிறது. கணக்கீடு environment-ஐ எப்படி மாற்றுகிறது என்பதைச் சொல்லும் effect system **reversible effect** ஆகிறது: ஒவ்வொரு context transformation-க்கும் வெளிப்படையான inverse உண்டு; runtime அதைத் தொடர்ந்து component அகற்றும்போது context-ஐ மீட்கிறது. கணக்கீட்டுக்கு environment-இலிருந்து என்ன தேவை என்பதைச் சொல்லும் coeffect system **reactive coeffect** ஆகிறது: component dependency specification-ஐ அறிவிக்கிறது; context மாற்றம் அதை activate, deactivate அல்லது unaffected என அறிவிக்கிறது. Dynamic-composition calculus இதை ஒன்றோடொன்று பின்னிய component system-க்கு விரிவுபடுத்துகிறது—composability transitive ஆக வேண்டும்.
+
+**Self-evolution-இன் உச்சவரம்பு மாதிரி எவ்வளவு நன்றாக code எழுதுகிறது என்பதில் அல்ல, அதைத் தாங்கும் system எவ்வளவு composable என்பதில் உள்ளது.** அதனால் `dsh` model adapter, tool registry, session log, Agent main loop அனைத்தையும் plugin ஆக்குகிறது: **மனிதர்கள் மட்டும் பராமரிக்கக்கூடிய privileged kernel இல்லை**.
+
+Composability பாதுகாப்பாகப் பொருத்தி அகற்ற முடியுமா என்பதைத் தீர்க்கிறது; பொருத்த வேண்டுமா என்பதை அல்ல. மாதிரி எழுதும் plugin process memory-இல் மட்டும் வாழ்ந்து restart-இல் மறையும். அவை **தானாக official plugin ஆக உயர்த்தப்பட முடியாது**; நிலைக்க முன் கூறிய மெதுவான worktree + Pull Request பாதை தேவை.
+
+பரிணாமத்திற்கும் செலவு உண்டு. Runtime plugin மாதிரிக்குத் தெரியும் tool set மற்றும் Prompt fragment-களை மாற்றுகிறது. Request prefix மாறிய இடத்திலிருந்து அத்தியாயம் 2-இன் KV Cache செல்லாது. `dsh` plugin ஆவணம் context மற்றும் KV Cache தாக்கத்தை விவரிக்க வேண்டும்.
+
+[^dsh-2026]: DeepSeek AI, *DeepSeek Harness: Everything is a Plugin*, 2026. https://github.com/deepseek-ai/deepseek-harness. Plugin layers மற்றும் patch-கள் `docs/architecture.md`-இலும், self-modification tool lifecycle, sandbox semantics, trust declarations `docs/subsystems/extensions.md` மற்றும் `packages/extensions/README.md`-இலும் உள்ளன. ஆகஸ்ட் 2026 வெளியீடு இங்கு developer preview நிலையில் விவாதிக்கப்படுகிறது.
+
+[^cordis-2026]: Shi, Yifan, Wei Zhang, and Tianyi Cui. *A Programming Paradigm for Spatiotemporal Composability.* Preprint draft, 13 ஆகஸ்ட் 2026. https://github.com/cordiverse/paper
+
 ### அனுபவத்தை parameters-இல் எழுதுதல்
 
 அறிவு, அறிவுறுத்தல் மற்றும் program ஆகிய அனைத்தும் ஒரு முன்நிபந்தனையை அடிப்படையாகக் கொண்டுள்ளன: இலக்கு திறனை வெளிப்புறக் குறியீடுகள் மூலம் ஒப்பீட்டளவில் முழுமையாக வெளிப்படுத்த முடியும். ஆனால் மருத்துவப் படவியல் புரிதல், இயல்பான speech prosody, உரையின் வார்ப்புருவாத “AI தன்மை” நீக்கம், long-horizon planning போன்ற திறன்களை சில விதிகள் அல்லது workflow-களாகச் சுருக்குவது கடினம். இத்தகைய திறன்கள் post-training மூலம் model parameters-இல் எழுதப்பட வேண்டும்.
@@ -268,8 +250,6 @@ Parameter learning பொதுவாக வெளிப்புற முற�
 
 இதே கருத்து workflow மற்றும் முழு Harness-க்கும் நீள்கிறது. AFlow பல LLM call-களால் ஆன workflow-ஐ code graph-ஆகக் காட்டி, execution feedback மூலம் node மற்றும் control-flow combination-களைத் தேடுகிறது[^aflow-2025]. Meta-Harness ஒரு Coding Agent-ஐ candidate Harness source, score மற்றும் trajectory-களை ஆய்வு செய்யச் செய்து, தகவல் எவ்வாறு store, retrieve மற்றும் present செய்யப்படுகிறது என்பதை நிர்ணயிக்கும் code-ஐத் தேடுகிறது[^meta-harness-2026]. ஐந்தாம் அத்தியாயம் code-ஐ Agent system structure-ஐ வெளிப்படுத்தும் பொதுவான மொழியாக நிறுவியது. இங்குள்ள கூடுதல் கருத்து, code மற்றும் அதன் evaluation history ஆகியவையும் one-time output அல்லாமல் continual search-இன் object-ஆக மாறலாம் என்பதாகும்.
 
-வெளிப்புற level எப்போதும் சிறந்தது அல்ல. Local rule-ஐத் தேட சில edge case-கள் போதலாம்; முழு workflow அல்லது Harness-ஐத் தேடுவது பெரிய candidate space, அதிக evaluation cost மற்றும் கடினமான attribution-ஐக் கொண்டது. ஒரு component-இல் தெளிவாக localized ஆன, மீண்டும் தோன்றும் fault-க்கு முதலில் audit செய்யக்கூடிய local patch வழங்க வேண்டும். Local change-கள் பலமுறை cross-component பிரச்சினையைத் தீர்க்கத் தவறும்போது அல்லது management method தானே bottleneck ஆகும்போது மட்டுமே workflow, Harness அல்லது optimizer level-க்கு வெளியே செல்ல வேண்டும். எல்லா level-களிலும் evaluator, permission boundary மற்றும் held-out test editable scope-க்கு வெளியே இருக்க வேண்டும்; search space பெரிதாகும்போது இந்த trusted root இன்னும் முக்கியமாகிறது.
-
 > **பரிசோதனை 9-6 ★★★: இந்தப் புத்தகத்தை Hermes-க்கு கொடுத்தால், அது தன்னையே upgrade செய்யுமா?**
 >
 > **பரிசோதனை நோக்கம்**: வெளிப்புற அறிவை Agent தனது திறனுக்கான உண்மையான update-ஆக மாற்ற முடியுமா என்பதைச் சோதிக்கிறது. சரிசெய்ய வேண்டிய பிரச்சினையோ feature பட்டியலோ கொடுக்கப்படாது. பத்து chapter-களும் Hermes-ன் source code-உம் கொடுக்கப்பட்டு, principles-ஐ புரிந்து தனது implementation-ஐ ஆய்வு செய்து ஒரு பயனுள்ள மேம்பாட்டைத் தானே தேர்ந்தெடுக்க வேண்டும்.
@@ -288,33 +268,13 @@ Parameter learning பொதுவாக வெளிப்புற முற�
 
 Voyager[^voyager-2023] ஒப்பீட்டளவில் முழுமையான தொடர்ச்சியான பரிணாமச் சுற்றைக் காட்டுகிறது. Minecraft-இல் தற்போதைய திறனை அடிப்படையாகக் கொண்டு புதிய இலக்கைத் தேர்ந்தெடுத்து, environment feedback மூலம் program-ஐ iteratively மேம்படுத்தி, வெற்றியைச் சரிபார்த்த பிறகு code-ஐ skill library-இல் சேமித்து, பழைய skill-களை இணைத்து மேலும் கடினமான பணிகளைத் தீர்க்கிறது. Automatic curriculum, executable skill மற்றும் environment verification—மூன்றும் அவசியமானவை: skill library மட்டும் இருந்து curriculum இல்லாவிட்டால், Agent அடுத்ததாக என்ன கற்க வேண்டும் என்பதை அறியாது; self-reflection மட்டும் இருந்து environment verification இல்லாவிட்டால், skill library தவறுகளைச் சேர்த்துக்கொண்டே இருக்கும்; exploration மட்டும் இருந்து persistence இல்லாவிட்டால், ஒவ்வொரு பணியும் தொடக்கத்திலிருந்து மீண்டும் செய்யப்பட வேண்டும். நிஜ Agent-இன் அறிவு, Prompt, tools மற்றும் parameters மேலும் சிக்கலானவை என்றாலும், அடிப்படை learning process இதேபோன்றதே.
 
-குறிப்பாக Voyager மூன்று ஒன்றோடொன்று இணைந்த mechanism-களைக் கொண்டது. **Automatic curriculum generator** தற்போதைய item, environment மற்றும் ஏற்கனவே கற்ற skill-களை அடிப்படையாகக் கொண்டு அடுத்த பொருத்தமான கடினத்தன்மையுள்ள இலக்கை முன்வைக்கிறது; exploration சீரற்ற அலைச்சலாக மாறாது. **Skill library** வெற்றிகரமான program-ஐ retrieval மற்றும் composition செய்யக்கூடிய code-ஆகச் சேமிக்கிறது; உதாரணமாக advanced gathering skill, movement மற்றும் crafting போன்ற basic skill-களை அழைக்கலாம். **Iterative Prompt mechanism** environment observation, execution error மற்றும் self-verification result-ஐ அடுத்த code-generation round-க்கு மீண்டும் வழங்கி, task உண்மையில் pass ஆகும் வரை தொடர்கிறது. Paper-ன் அறிக்கைப்படி, அப்போதைய baseline-களுடன் ஒப்பிடும்போது Voyager 3.3 மடங்கு unique item-களைப் பெற்றது, 2.3 மடங்கு தூரம் explore செய்தது, முக்கிய tech-tree milestone-களை அதிகபட்சம் 15.3 மடங்கு வேகமாக unlock செய்தது; மேலும் skill library-ஐ புதிய Minecraft world-க்கு transfer செய்தது. இம்மெட்ரிக் ஒரு frozen Agent-இன் ஒருமுறைத் தேர்வு மதிப்பெண்ணை அல்ல, அனுபவத்துடன் திறன் வளர்கின்ற curve-ஐ அளவிடுகின்றன.
+குறிப்பாக Voyager ஒன்றோடொன்று இணைந்த மூன்று mechanisms கொண்டது. **Automatic curriculum generator** தற்போதைய inventory, environment, கற்ற skills ஆகியவற்றிலிருந்து பொருத்தமான கடினத்தன்மையுள்ள அடுத்த இலக்கை முன்மொழிந்து random wandering-ஐத் தவிர்க்கிறது. **Skill library** வெற்றிகரமான program-களை retrieve மற்றும் compose செய்யக்கூடிய code ஆகச் சேமிக்கிறது; advanced gathering skill அடிப்படை movement, crafting skill-களை அழைக்கலாம். **Iterative prompting mechanism** environment observation, execution error, self-verification result ஆகியவற்றை அடுத்த code-generation சுற்றுக்கு மீண்டும் அளித்து task உண்மையில் pass ஆகும் வரை தொடர்கிறது.
 
-### பிரச்சினை அடையாளத்திலிருந்து அனுபவ நிலைநிறுத்தம் வரை
+**Discovery loop: hypothesis, experiment, evaluation, feedback.** Voyager போன்ற Agent self-evolution அமைப்புகள் பல நூற்றாண்டுகளில் உருவான scientific method ஆகிய இந்தச் சுழற்சியைப் பின்பற்றுகின்றன. Jeff Dean மற்றும் குழுவினர் அண்மையில் தொடங்கிய Discovery Loop, experiment-ஐ முன்மொழிந்து, செயல்படுத்தி, மதிப்பிட்டு, முடிவை அடுத்த சுற்றுக்குக் கொடுக்கும் முழுச் சுழற்சியை automate செய்ய முன்வைக்கிறது[^ch1-discovery-loop]. இது அறிவியலில் Agent self-evolution பயன்பாடு. தானே கதை சொல்லித் தானே நல்ல மதிப்பீடு தருவதைத் தவிர்க்க, இந்த அத்தியாயத்தின் self-evolution scientific method-ஐப் பின்பற்ற வேண்டும்.
 
-ஒரே மேற்பரப்பு பிரச்சினைக்குப் பல்வேறு மாற்ற முறைகள் தேவைப்படலாம். வாடிக்கையாளர் சேவை Agent உண்மைகளைப் புனையும் hallucination-ஐ வெளிப்படுத்தினால், knowledge base-இல் உண்மை இல்லாததே காரணமாக இருக்கலாம்; அல்லது citation கோராத Prompt காரணமாக இருக்கலாம். பணி முடிவடையாதபோதும் “முடிந்துவிட்டது” என்று பொய்யாக உறுதியளித்தால், அதை அறிவுறுத்தல் மூலம் திருத்தலாம்; அல்லது பதிலும் tool state-உம் ஒத்துள்ளதா என Harness கட்டாயமாகச் சோதிக்கலாம். Evolution module முதலில் root cause-ஐ அடையாளம் கண்டு, மிகச் சிறிய, எளிதாகச் சரிபார்க்கவும் rollback செய்யவும் இயலும் modification target-ஐத் தேர்ந்தெடுக்க வேண்டும். சான்று போதாத தற்செயலான fault உடனடியாக learning-ஐத் தூண்டக்கூடாது; மேலும் sample-கள் சேகரிக்கப்பட வேண்டும்.
+[^ch1-discovery-loop]: Discovery Loop-ஐ Jeff Dean, Sanjay Ghemawat, Quoc Le, Oriol Vinyals ஆகியோர் 5 ஆகஸ்ட் 2026 அன்று public-benefit corporation ஆக அறிவித்தனர். முழு experimental loop-ஐ automate செய்து, முன்பு serial ஆக நடந்த experiment-களைப் பெரிய அளவில் parallel ஆக்குவது அதன் பொது விளக்கம்.
 
-அனுபவம் அதிகரிக்கும்போது இந்தத் தேர்வும் மாறலாம். புதிதாகக் கண்டறியப்பட்ட strategy முதலில் retrieval செய்யக்கூடிய அனுபவ ஆவணமாக வழங்கப்படலாம்; பல case-கள் அதை மீண்டும் மீண்டும் சரிபார்த்த பிறகு, அது knowledge-ஆக உயர்த்தப்படலாம். Knowledge மூன்று வடிவங்களில் வெளிப்படலாம்: இயல்பான மொழியில் தெளிவாக விவரிக்கக்கூடிய விதிகள் Skill-ஆக நிலைநிறுத்தப்படலாம்; படிகள் நிலையாக இருந்து natural-language understanding தேவையில்லாவிட்டால் tool code-ஆக compile செய்யலாம்; அது உண்மையில் பரந்த implicit decision capability-ஐ பிரதிபலித்தால் post-training-க்குச் செல்லலாம்.
-
-### சரிபார்ப்பு, வெளியீடு மற்றும் rollback
-
-அனைத்து மாற்றங்களும் முதலில் candidate capability அல்லது candidate Agent-ஐ உருவாக்க வேண்டும்; production version-ஐ நேரடியாக overwrite செய்யக்கூடாது. Retrieval செய்யப்பட்ட அறிவு ஆவணம் புதிய பணித் திறனை மேம்படுத்துகிறதா எனச் சரிபார்க்க வேண்டும்; Prompt மற்றும் Skill boundary case-களையும் பழைய task regression-ஐயும் கடக்க வேண்டும்; program sandbox மற்றும் reset சூழலில் test செய்யப்பட வேண்டும்; parameter update மறதி, பாதுகாப்பு மற்றும் out-of-distribution பணிகளில் சோதிக்கப்பட வேண்டும். Verification வெற்றியடைந்த பிறகும் உண்மையான traffic-இல் canary release மூலம் கண்காணிக்கப்பட வேண்டும்; முக்கிய metrics மோசமடைந்தால் அறியப்பட்ட safe version-க்கு தானாக rollback செய்ய வேண்டும்.
-
-**சரிபார்க்கப்பட்ட வெளியீடு மற்றும் rollback:**
-
-```python
-candidate = propose_minimal_update(evidence, current_version)
-
-if not verify(candidate, boundary_set): reject(candidate)
-elif not verify(candidate, retention_set): reject(candidate)
-elif not verify(candidate, safety_set): reject(candidate)
-else:
-    canary = deploy_to_small_traffic(candidate)
-    if canary.metrics_regress: rollback(current_version)
-    else: promote(candidate)
-```
-
-Verification பொதுவாக ஒன்றாகக் கருதப்படும் இரண்டு திறன்களைப் பிரிக்க வேண்டும். **Harness updating** என்பது trajectory-களிலிருந்து மதிப்புள்ள persistent change-களை உருவாக்கும் திறன்; **Harness benefit** என்பது task Agent பின்னர் அந்த change-களை சரியான சூழலில் கண்டறிந்து, activate செய்து, முறையாகப் பயன்படுத்தும் திறன். ஒரு Skill தானாகவே சரியானதாக இருந்தாலும், பலவீனமான task model அதை உரிய சூழலில் load செய்யாமல் இருக்கலாம்; அல்லது நீண்ட trajectory முழுவதும் அதைத் தொடர்ந்து பின்பற்றத் தவறலாம். இரண்டிலும் final score பரிணாமமே நடக்கவில்லை என்று தோன்றும். எனவே end-to-end performance மட்டும் updater-ஐ diagnosis செய்யப் போதாது. Lin et al. செய்த model-swapping experiment-கள் இந்த இரு திறன்களும் base-model capability-உடன் வேறுபட்ட முறையில் தொடர்புடையதாகக் காட்டுகின்றன[^harness-benefit-2026]. இந்த relationship மேலும் பல task-களில் சரிபார்க்கப்பட வேண்டும்; இருந்தாலும் இரண்டையும் தனித்தனியாக மதிப்பிடுவது பொதுவாக பயனுள்ளதாகும்.
+தொடர்ச்சியான Agent evolution-இல் அடிக்கடி கலக்கப்படும் இரு திறன்களைப் பிரிக்க வேண்டும். **Harness updating** trajectory-யிலிருந்து மதிப்புள்ள நிலையான மாற்றங்களை உருவாக்குகிறது; **Harness benefit** என்பது task Agent பின்னர் அந்த மாற்றத்தைக் கண்டுபிடித்து, activate செய்து, சரியாகப் பயன்படுத்தும் திறன். Skill சரியாக எழுதப்பட்டிருந்தாலும், பலவீனமான model அதைச் சரியான இடத்தில் load செய்யாமல் இருக்கலாம் அல்லது நீண்ட காலம் பின்பற்ற முடியாமல் இருக்கலாம்; final score “evolution இல்லை” எனத் தோன்றும். ஆகவே end-to-end score மட்டும் updater-ஐ மதிப்பிட முடியாது. Lin et al. model-swap experiment-கள் இந்த இரு திறன்களும் base-model திறனுடன் வேறுபட்ட உறவு கொண்டிருப்பதை காட்டுகின்றன[^harness-benefit-2026].
 
 அட்டவணை 9-3 தொடர்ச்சியான பரிணாமத்திற்கான layered evaluation metric-கள்
 
@@ -323,9 +283,7 @@ Verification பொதுவாக ஒன்றாகக் கருதப்�
 | Candidate-change validity | Updater பயனுள்ள change-ஐ முன்வைக்கிறதா? | Acceptance rate மற்றும் independent validation gain |
 | Artifact activation rate | Task Agent புதிய Skill, memory அல்லது tool-ஐ சரியான சூழலில் load செய்கிறதா? | Retrieval, routing மற்றும் tool-call trace |
 | Successful adherence rate | Activate ஆன பிறகு Agent புதிய rule அல்லது process-ஐப் பின்பற்றுகிறதா? | Action sequence மற்றும் process verifier |
-| Held-out task gain | Evolution-க்குப் பயன்படுத்தாத task-களில் முழு system மேம்படுகிறதா? | Held-out success, quality மற்றும் cost |
-
-Diagnosis செய்யும்போது candidate Harness-ஐ நிலையாக வைத்து task model-ஐ மட்டும் மாற்றலாம். Strong model பயனடைந்து weak model புதிய artifact-ஐ activate செய்யவே இல்லையெனில் retrieval அல்லது routing bottleneck ஆகும். இரண்டும் activate செய்தும் strong model மட்டும் சரியாக execute செய்தால் instruction following அல்லது long-horizon planning bottleneck ஆகும். எல்லா model-களும் regress ஆனால் change தானே அதிக சந்தேகத்துக்குரியது. மாறாக task model-ஐ நிலையாக வைத்து change-ஐ முன்வைக்கும் model-ஐ மாற்றுவதன் மூலம் updater quality-ஐ நேரடியாக ஒப்பிடலாம். இந்த two-way model swap, ஒரே post-evolution score-ஐவிட capability budget எங்கு செலவிடப்பட வேண்டும் என்பதைத் தெளிவாகக் காட்டுகிறது.
+| தக்கவைப்புத் தொகுப்பு gain | பரிணாமத்தில் சேராத பணிகளில் அமைப்பு மேம்பட்டு generalize ஆகிறதா? | தக்கவைப்புத் தொகுப்பு success rate, quality, cost |
 
 Evaluation என்பது learning முடிந்த பிறகு எழுதப்படும் தேர்வு அல்ல; self-evolution process-இன் பிரிக்கமுடியாத பகுதியாகும். நீண்டகால மதிப்பீடு குறைந்தபட்சம் பின்வரும் ஐந்து வகை முடிவுகளை ஒரே நேரத்தில் கண்காணிக்க வேண்டும்:
 
@@ -350,8 +308,6 @@ Autonomous research இதற்கான நல்ல stress test ஆகும�
 - **Search diversity-ஐப் பாதுகாத்தல்**: Open-ended search தற்போது அதிக score கொண்ட chain-ஐ மட்டும் வைத்திருக்கக்கூடாது. Candidate pool mechanism, code novelty அல்லது hypothesis type அடிப்படையில் அர்த்தமுள்ள வேறுபாடு கொண்ட சில குறைந்த-score branch-களையும் வைத்திருக்க வேண்டும்; இல்லையெனில் எல்லா solution-களும் எளிதாக score செய்யக்கூடிய ஒரே template-க்கு converge ஆகும்.
 - **Human involvement-ஐ மேல்நிலைக்கு நகர்த்தல்**: மனித input ஆபத்தான tool call-ஐ approve செய்வதுடன் முடிவதில்லை. Problem definition, evaluation criteria review, anomalous result interpretation மற்றும் எப்போது நிறுத்த வேண்டும் என்ற முடிவும் இதில் அடங்கும். Feedback ambiguous ஆக இருக்கும்போது இந்த high-level judgment-கள் தனிப்பட்ட execution step-ஐ மனிதர் எடுத்துக்கொள்வதைவிட automate செய்வது கடினம்; அவற்றின் மதிப்பும் அதிகம்.
 
-இதே வரம்பு சாதாரண software engineering-இலும் உள்ளது. எல்லா unit test-களும் pass ஆகுவது தற்போது காணக்கூடிய behavior test-ஐ பூர்த்தி செய்கிறது என்பதை மட்டுமே நிரூபிக்கிறது; பல மாதங்களுக்குப் பிறகும் codebase maintainable-ஆக இருக்கும் என்பதை நிரூபிக்காது. அதனால் முந்தைய பகுதி long-term engineering quality-ஐ தற்போதைய task success-இல் மறைக்காமல் தனி metric-ஆகக் கருதுகிறது. தொடர்ச்சியான பரிணாமத்தின் உச்சவரம்பு, system உண்மையில் மதிக்கும் objective-ஐ மதிப்பிட முடியுமா என்பதால்தான் தீர்மானிக்கப்படுகிறது; அளவிட எளிதான proxy-ஆல் மட்டும் அல்ல.
-
 ### தொடர்ச்சியான பரிணாமத்தின் பாதுகாப்பு எல்லைகள்
 
 Agent-இன் self-evolution திறன் ஒரு தவறை நீண்டகால ஆபத்தாக மாற்றலாம். Web page, email அல்லது tool output-இலுள்ள **prompt injection அனுபவமாகச் சுருக்கப்பட்டால்**, அது பல session-களிலும் மீண்டும் செயல்படலாம். தானாகத் தேடப்பட்ட malicious package tool-ஆக wrap செய்யப்பட்டால், அதன் தாக்கம் ஒரு sandbox run-இலிருந்து அடுத்தடுத்த எல்லாப் பணிகளுக்கும் பரவும். குறைபாடுள்ள verifier மேம்பாடு போலத் தோன்றும் ஆனால் உண்மையில் சிதைந்த candidate version-களைத் தொடர்ந்து அங்கீகரிக்கலாம். எனவே self-evolution system “மேலும் வலுவானதா” என்பதை மட்டும் சரிபார்க்காமல், “யார் எதை மாற்றலாம், ஆதாரம் எங்கிருந்து வருகிறது” என்பதையும் கட்டுப்படுத்த வேண்டும்.
@@ -373,17 +329,6 @@ Agent-இன் self-evolution திறன் ஒரு தவறை நீண�
 3. **Collection மற்றும் integration**: சமீபத்தில் மதிப்பிடப்பட்ட trajectory-களிலிருந்து புதிய signal-ஐத் தேடி, duplicate-ஐ ஒன்றிணைத்து, conflict மற்றும் applicable condition-ஐக் குறித்துவைத்து, local patch-க்கு முன்னுரிமை அளித்தல்.
 4. **Verification மற்றும் approval**: transfer set, retention set மற்றும் safety set-இல் candidate-ஐ மதிப்பிட்டு, high-risk write-களை மனித approval-க்காக நிறுத்துதல்.
 5. **Pruning மற்றும் indexing**: retrieval index-ஐ update செய்து, நீண்டகாலம் பயன்படுத்தப்படாத அல்லது புதிய சான்றால் மறுக்கப்பட்ட capability-ஐ expired, archived அல்லது deleted எனக் குறித்தல்; source மற்றும் rollback version-ஐப் பாதுகாத்தல்.
-
-**செயலற்ற நேர ஒருங்கிணைப்பு:**
-
-```python
-while sleep_gate_is_open():
-    batch = load_new_evaluated_trajectories()
-    proposals = consolidate(batch, current_capabilities)
-    for proposal in proposals:
-        validate_canary_and_promote_or_rollback(proposal)
-    prune_stale_entries_but_keep_provenance()
-```
 
 User memory இதற்கான நேரடியான எடுத்துக்காட்டு; ஆனால் action experience-இலிருந்து வேறுபடுத்த வேண்டும். Claude Code automatic memory ஒவ்வொரு project-க்கும் `MEMORY.md` index மற்றும் topic அடிப்படையில் பிரிக்கப்பட்ட detail file-களைப் பராமரிக்கிறது. Session தொடக்கத்தில் index-இன் bounded prefix மட்டுமே load செய்யப்படுகிறது; மற்றவை தேவைக்கேற்பப் படிக்கப்படுகின்றன. Index limit-ஐ அணுகும்போது detail-ஐ merge செய்யவோ வேறு file-க்கு நகர்த்தவோ Agent-க்கு அமைப்பு அறிவுறுத்துகிறது. Plain-text memory-க்கும் capacity constraint, layered loading மற்றும் active organization தேவை என்பதை இது காட்டுகிறது. ஆனால் வெளியிடப்பட்ட தற்போதைய mechanism முக்கியமாக session-இல் தொடர்ந்து எழுதுகிறது; அதை ஒரு fixed nightly background task-க்கு நேரடியாகச் சமமாகக் கருத முடியாது[^claude-code-memory].
 

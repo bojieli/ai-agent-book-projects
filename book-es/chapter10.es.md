@@ -170,23 +170,6 @@ Unificar las cuatro categorías de áreas en el mismo árbol de directorios repr
 
 El sistema de archivos resuelve el problema del **intercambio de artefactos** entre Agentes, pero la colaboración también necesita un **plano de control**. Ahí es precisamente donde entran en juego las distintas filas del ciclo de vida de la tabla 10-2: el conjunto de primitivas de herramientas presentado en el capítulo 4 para crear (`spawn_subagent`), enviar mensajes (`send_message_to_subagent`), cancelar (`cancel_subagent`) y descubrir (`list_agents`) se corresponde, en el mundo de los procesos, con fork, mensajes, kill y ps. Esta sección no repite las definiciones de las interfaces, sino que se centra en cuatro capacidades de las que depende la colaboración entre múltiples Agentes y que, sin embargo, suelen pasarse por alto.
 
-**Sobre de mensajes y ciclo de vida del worker:**
-
-```python
-envelope = {
-    id, trace_id, sender, recipient, type,
-    payload, created_at, deadline, schema_version
-}
-
-worker = spawn(task, budget, cancellation_token)
-publish(task_assigned(envelope, worker))
-while worker.is_running:
-    accept(status_update | artifact | needs_input)
-    if deadline_expired or cancellation_token.is_set:
-        request_graceful_stop(worker)
-await worker.ack_or_timeout()
-```
-
 **Uno: transmisión de mensajes.** La forma más sencilla es la comunicación punto a punto: el Agente A invoca directamente `send_message_to_agent_b(content)`, algo adecuado para escenarios con una topología fija y pocos Agentes, como el sistema dual de teléfono + ordenador del experimento 10-3 de este capítulo. Cuando aumenta el número de Agentes y se necesita paralelismo asíncrono, la cantidad de conexiones punto a punto crece de forma cuadrática con el número de Agentes y, además, exige que emisor y receptor estén conectados al mismo tiempo; en ese caso, conviene utilizar un **bus de mensajes** (véase más adelante en este capítulo «Forma de coordinación paralela»): los Agentes publican mensajes en el bus, que los reenvía según las suscripciones, sin que el emisor tenga que conocer a los consumidores. Tanto en la comunicación punto a punto como a través de un bus, los mensajes suelen incluir un **sobre** estructurado (envelope): ID del emisor, destino —un Agente concreto o una difusión—, tipo de mensaje —como `task_assigned`/`status_update`/`result`/`terminate`— y una carga JSON. Un formato de sobre unificado permite que el receptor enrute y analice los mensajes de forma fiable, y hace trazable la cadena de colaboración—algo esencial para depurar sistemas multiagente.
 
 **Dos: consulta de estado.** Este es el componente más fácil de infravalorar dentro del plano de control. Después de que el Agente principal envíe un subagente, si no tiene forma de conocer su progreso, no podrá decidir si debe seguir esperando ni intervenir a tiempo cuando este se bloquee. La solución intuitiva consiste en copiar el modelo RPC y definir una interfaz de consulta `get_subagent_status(agent_id)` que devuelva «en ejecución/completado/fallido» junto con un porcentaje de progreso. Sin embargo, la utilidad práctica de esta interfaz de sondeo es mucho menor de lo esperado: un subagente comienza a ejecutarse inmediatamente después de su creación y continúa hasta completar la tarea o fallar; no pasa por una sucesión de estados de cola como los trabajos de un sistema tradicional de procesamiento por lotes—del mismo modo que, en la programación Unix, rara vez es necesario consultar repetidamente por PID el estado de ejecución de otro proceso. El sondeo también presenta un dilema inherente: si se realiza con demasiada frecuencia, desperdicia tokens; si se realiza con poca frecuencia, deja de ser oportuno. Una forma más natural de obtener el estado consiste en volver a los dos grandes paradigmas de comunicación presentados al comienzo de este capítulo.

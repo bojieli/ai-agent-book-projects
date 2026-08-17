@@ -171,23 +171,6 @@ Nilai dari **"file path sebagai antarmuka universal"** terletak pada perlakuan p
 
 Sementara file system menyelesaikan masalah **pertukaran artifact** antar Agent, kolaborasi juga membutuhkan **control plane**. Di sinilah baris lifecycle pada Tabel 10-2 berperan: primitif tool yang diberikan pada Bab 4—membuat (`spawn_subagent`), mengirim pesan (`send_message_to_subagent`), membatalkan (`cancel_subagent`), dan menemukan (`list_agents`)—berkorespondensi dengan fork, message, kill, dan ps di dunia process. Bagian ini tidak mengulangi definisi antarmuka tersebut melainkan berfokus pada empat kemampuan yang sering terabaikan yang esensial untuk kolaborasi multi-agent.
 
-**Envelope pesan dan siklus hidup worker:**
-
-```python
-envelope = {
-    id, trace_id, sender, recipient, type,
-    payload, created_at, deadline, schema_version
-}
-
-worker = spawn(task, budget, cancellation_token)
-publish(task_assigned(envelope, worker))
-while worker.is_running:
-    accept(status_update | artifact | needs_input)
-    if deadline_expired or cancellation_token.is_set:
-        request_graceful_stop(worker)
-await worker.ack_or_timeout()
-```
-
 **I. Message Passing.** Bentuk yang paling sederhana adalah point-to-point: Agent A secara langsung memanggil `send_message_to_agent_b(content)`. Hal ini cocok untuk skenario dengan topologi tetap dan jumlah Agent yang sedikit (misalnya, pengaturan dual-agent telepon + komputer pada Eksperimen 10-3 di bab ini). Ketika jumlah Agent meningkat dan asynchronous parallelism diperlukan, jumlah koneksi point-to-point tumbuh secara kuadratik dengan jumlah Agent, dan baik pengirim maupun penerima harus online secara bersamaan. Dalam kasus seperti itu, sebuah **message bus** harus digunakan (dirinci lebih lanjut di bab ini di bawah "Parallel Coordination Pattern"): Agent memublikasikan pesan ke bus, yang meneruskannya berdasarkan langganan, sehingga pengirim tidak perlu mengetahui siapa saja pelanggannya. Baik secara point-to-point maupun melalui bus, pesan pada umumnya harus membawa **envelope** yang terstruktur: ID pengirim, target (Agent spesifik atau broadcast), tipe pesan (misalnya, `task_assigned`/`status_update`/`result`/`terminate`), dan sebuah JSON payload. Format envelope yang terpadu memastikan perutean dan parsing yang andal oleh penerima serta membuat rantai kolaborasi dapat dilacak—sebuah aspek kunci dari debugging multi-agent system.
 
 **II. Status Query.** Ini adalah bagian dari control plane yang paling sering diremehkan. Setelah sebuah main Agent mengirimkan sebuah sub-agent, ia membutuhkan visibilitas ke dalam kemajuan sub-agent tersebut; jika tidak, ia tidak dapat memutuskan apakah harus terus menunggu atau melakukan intervensi ketika sub-agent mengalami kebuntuan. Pendekatan yang intuitif adalah dengan meminjam dari RPC dan mendefinisikan antarmuka query `get_subagent_status(agent_id)` yang mengembalikan "running/completed/failed" plus persentase kemajuan. Namun, antarmuka pull semacam itu ternyata jauh kurang berguna dari yang diharapkan: sub-agent mulai mengeksekusi pada saat ia dibuat dan berjalan hingga selesai atau gagal. Ia tidak melewati serangkaian queued states seperti halnya job dalam batch system tradisional, sama seperti pemrograman Unix jarang perlu melakukan polling terhadap proses lain menggunakan PID-nya untuk mengetahui status yang berjalan. Polling juga membawa dilema bawaan: polling terlalu sering dan Anda akan membuang-buang token; polling terlalu jarang dan Anda akan merespons terlambat. Cara yang lebih alami untuk mendapatkan status adalah kembali ke dua paradigma komunikasi yang diperkenalkan di awal bab ini.

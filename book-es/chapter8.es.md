@@ -53,20 +53,6 @@ Esta es la primera noción clave que se debe asimilar: **matemáticamente, el SF
 
 Comprendiendo este punto, la "memorización del SFT" resulta evidente: el objetivo de optimización del SFT es **maximizar la probabilidad de cada token en la respuesta anotada**, lo que equivale a "memorizar de memoria la respuesta estándar". Dada la misma pregunta, se le entrena para reproducir la demostración palabra por palabra en la medida de lo posible. Esto es sumamente eficiente en tareas con objetivos claros y formatos fijos (efectivo con solo unos pocos miles de ejemplos), pero los límites de su capacidad quedan fijados por los datos de demostración: no sabe manejar situaciones ausentes en las demostraciones y, cuando las respuestas de la demostración dejan de ser aplicables por un cambio de entorno, sigue aplicando la memoria mecánicamente.
 
-Comprimido en un esqueleto mínimo de entrenamiento, lo esencial no es la API de un framework concreto, sino esta frontera: **los tokens del prompt no aportan supervisión y los de la respuesta sí**.
-
-```python
-for sample in dataset:
-    prompt_tokens = tokenize(sample.prompt)
-    answer_tokens = tokenize(sample.answer)
-    tokens = prompt_tokens + answer_tokens
-    labels = [-100] * len(prompt_tokens) + answer_tokens
-    loss = causal_lm_loss(tokens, labels)
-    update_parameters(loss)
-```
-
-El `-100` de aquí solo marca la máscara de pérdida; no elimina el prompt de la entrada del modelo. El modelo sigue teniendo que leer la pregunta para aprender el protocolo de respuesta.
-
 En resumen, la esencia del SFT es: **utilizar una eficiencia de muestra extremadamente alta para consolidar en los parámetros un mapeo y protocolo estables de "entrada → salida".** Lo que consolida es el **conocimiento protocolar** sobre "formato, estilo y flujo" (cómo hablar y actuar), y no una gran cantidad de **conocimiento fáctico** (qué se sabe), este último dependiente del pre-entrenamiento o de RAG (concepto al que volveremos al final del capítulo).
 
 > **Costo de entrenamiento: ajuste fino eficiente en parámetros con LoRA**. Tanto el SFT como el RL posterior requieren actualizar los parámetros del modelo, mientras que el ajuste fino de parámetros completos impone exigencias de memoria VRAM muy altas (debido a la necesidad de almacenar gradientes y estados del optimizador para miles de millones de parámetros). **LoRA** (Low-Rank Adaptation, Adaptación de Bajo Rango) es el método más común para ahorrar recursos: en lugar de modificar las grandes matrices de pesos originales, se añade a un lado un "parche" muy pequeño (matrices de bajo rango) para aprender la tarea. El volumen de parámetros representa solo entre el 1% y el 5% del original, logrando un rendimiento cercano al ajuste completo. Dado que los pesos originales permanecen congelados, LoRA altera en menor medida las capacidades previas de la base, reduciendo el riesgo de olvido catastrófico. Algunas experiencias prácticas comprobadas [^ch8-1]: **debes** aplicar LoRA a todas las matrices de pesos principales (especialmente a las capas MLP, que concentran la mayor proporción de parámetros); aplicarlo únicamente a las capas de atención degrada el rendimiento; **la tasa de aprendizaje óptima es aproximadamente 10 veces mayor que la del ajuste completo** (regla empírica muy práctica que aplica tanto a SFT como a RL); SFT suele emplear rangos medios a altos (64 a 256), mientras que RL, al recibir una menor cantidad de información por iteración, funciona bien con rangos pequeños (8 a 32) o incluso rank=1. Durante el despliegue, un único servidor de inferencia puede cargar simultáneamente múltiples adaptadores LoRA para ofrecer servicios multitenant. Este libro trata a LoRA como la opción por defecto de ingeniería en todos los métodos de post-entrenamiento, por lo que no se detallará por separado.
@@ -368,7 +354,7 @@ Un escenario de "un solo turno" implica que la tarea se completa en una única i
 
 Antes de abordar los experimentos, construyamos una **intuición mínima** sobre los algoritmos de RL para comprender la terminología posterior (las fórmulas completas y comparativas se reservan para la sección "Comparación de algoritmos de aprendizaje por refuerzo"). El entrenamiento de RL en este capítulo se basa principalmente en el **gradiente de política**: se deja que el modelo genere varias respuestas para una misma pregunta; las respuestas con alta recompensa incrementan su probabilidad de aparición, mientras que las de baja recompensa la reducen ("avanzar más en la dirección de alta recompensa y menos en la de baja recompensa"). Para evitar que una actualización individual excesiva desvíe al modelo, el algoritmo dominante **PPO** recorta el margen de actualización de cada paso (a esto se refiere la mención posterior a "PPO con red de valor", donde la red de valor estimar la línea base para calcular ventajas más precisas); por su parte, **GRPO** prescinde de entrenar una red de valor y compara las múltiples respuestas de una misma pregunta entre sí para determinar su calidad relativa. Retener esta intuición basta para seguir los dos experimentos siguientes.
 
-El mismo mecanismo puede escribirse como el esqueleto en estilo Python de abajo. Omite el paralelismo de muestreo, la regularización KL y los detalles del optimizador, y marca solo la cadena causal que va de un rollout a una actualización de parámetros:
+El mismo mecanismo puede escribirse como el pseudocódigo en estilo Python de abajo. Omite el paralelismo de muestreo, la regularización KL y los detalles del optimizador, y marca solo la cadena causal que va de un rollout a una actualización de parámetros:
 
 ```python
 for prompt in batch:
@@ -518,18 +504,6 @@ Search-R1[^ch8-25] representa la vía de la generación aumentada por recuperaci
 
 Las trayectorias con herramientas tienen un detalle de implementación crucial: los tokens que devuelve el entorno no los genera la política, así que al calcular el gradiente de política esos tokens de retroalimentación deben enmascararse y los gradientes propagarse solo por el pensamiento propio del modelo y por los argumentos de sus llamadas a herramientas. De lo contrario se entrena al modelo para predecir la salida del sandbox en vez de para aprender a usar herramientas.
 
-Esta frontera puede escribirse como una máscara muy corta a nivel de trayectoria:
-
-```python
-for token in trajectory:
-    if token.source == ENVIRONMENT:
-        loss_mask[token] = 0
-    else:                                      # model thought / tool arguments
-        loss_mask[token] = 1
-```
-
-Esto no significa que la retroalimentación del entorno no importe: es la que calcula la recompensa y la ventaja, simplemente no debe tratarse como una secuencia objetivo que la política deba reproducir. Los mensajes de herramienta deben conservar sus marcas de origen y seguir siendo distinguibles de la salida de la política dentro del entorno de ejecución.
-
 > **Experimento 8-14 ★★★: ReTool — resolución de problemas matemáticos potenciada por un intérprete de código**
 >
 > ![Figura 8-17 Bucle de retroalimentación de ReTool con pensamiento texto-código entrelazado y ejecución en sandbox](images/fig8-17.svg)
@@ -624,7 +598,7 @@ On-Policy Distillation hace que el estudiante genere primero trayectorias con su
 
 En concreto, la distribución predicha por el estudiante se acerca a la del profesor, normalmente minimizando la **divergencia KL** entre ambas. Por ejemplo, cuando el estudiante genera "primero consulto la API, después analizo el valor devuelto…", el profesor puede dar en esa posición una distribución de 80 % "consultar", 15 % "llamar" y 5 % para todo lo demás. Frente a una recompensa binaria al final de la tarea, el alineamiento token a token aporta una señal de aprendizaje mucho más densa y de menor varianza; el costo es la inferencia del profesor, que compensa especialmente cuando la interacción con el entorno es cara.
 
-El flujo de control se comprime así: el estudiante recorre su propio camino y el profesor aporta una distribución solo en los estados que el estudiante visitó realmente, sin reproducir en su lugar una respuesta off-policy.
+El pseudocódigo básico de la destilación on-policy es:
 
 ```python
 student_trajectory = rollout(student, task)
@@ -634,8 +608,6 @@ for state in student_trajectory:
     loss += KL(student_logits(state), teacher_logits)
 update_student(loss)
 ```
-
-Este esqueleto sirve solo para distinguir los estados on-policy de la supervisión token a token.
 
 En tareas como las matemáticas, alcanzar un rendimiento equivalente cuesta alrededor de **una décima parte** de los pasos de entrenamiento del RL puro. En Agentes multiturno, donde la señal de éxito llega más tarde y más dispersa, la distribución token a token del profesor puede guiar directamente las decisiones intermedias; pero solo si el entorno de simulación es lo bastante realista como para que los estados que explora el estudiante se parezcan a la distribución de despliegue; de lo contrario, las puntuaciones del profesor sobre estados desconocidos y sesgados tampoco son fiables.
 
@@ -647,7 +619,7 @@ La potencia de On-Policy Distillation viene del profesor, y eso le impone un req
 
 Una salida ingeniosa es la **On-Policy Self-Distillation (OPSD, auto-destilación en política)**[^ch8-15]: **el mismo modelo hace de profesor y de estudiante, pero ve contextos distintos.** La versión profesora ve "información privilegiada" —una respuesta de referencia o una solución correcta ya verificada—; la versión estudiante ve solo el problema, pero se alinea con la distribución token a token de la versión profesora sobre trayectorias que ella misma muestreó. Explicar un camino que el estudiante acaba de recorrer teniendo la respuesta delante suele ser más fácil que explorar por cuenta propia, así que un rollout sigue produciendo supervisión densa.
 
-OPSD puede leerse como una variante restringida del esqueleto anterior:
+OPSD puede leerse como una variante restringida del pseudocódigo anterior:
 
 ```python
 student_trajectory = rollout(model, task_without_answer)

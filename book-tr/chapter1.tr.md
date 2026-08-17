@@ -279,27 +279,7 @@ Bir denklem olarak genişletildiğinde, eksiksiz üretim düzeyindeki bileşim �
 >
 > **Agent ↔ Ortam**
 
-**Harness üretim sınırı:**
-
-```python
-decision = Model(Harness.build_context(state, trajectory))
-allowed_action = Harness.constrain(decision)
-observation = Environment.apply(allowed_action)
-evidence = Harness.verify(allowed_action, observation)
-
-if evidence passes:
-    trajectory.append(observation)
-else:
-    trajectory.append(Harness.correct(evidence))
-```
-
-Minimal, çalışan bir Agent yalnızca LLM, context ve tools ile yürür. Uzun vadede üretimde güvenilir biçimde çalışmaya devam etmesi için üç dış mühendislik katmanına da ihtiyacı vardır—aşırıya kaçmayı önlemek için constrain, hataları yakalamak için verify, arızalardan kurtulmak için correct. Başka bir deyişle: minimal formül demo bakış açısıdır, genişletilmiş formül ise üretim bakış açısıdır—ikincisi birincisini tamamen içerir ve etrafına bir güvenlik ağı ekler.
-
-Sınırları netleştirmek için bir örnek: iade politikasını context'e gömmek "Context"tir, iade tutarının sipariş toplamını aşmadığını kontrol etmek ise "Constrain"dir. Bir API çağrısını yürütmek "Tools"tur, API zaman aşımına uğradıktan sonra otomatik olarak yeniden denemek ise "Correct"tir. Model, temel anlama ve reasoning yeteneğini sağlar; Harness ise bu yetenekleri güvenilir görev yürütümüne yönlendirir, kısıtlar ve güçlendirir. Modelin dışındaki bu altyapıyı tasarlama ve optimize etme mühendislik pratiğine **Harness Engineering** denir.
-
-Somut bir örnek, Harness'in değerini gösterir. Bir Agent'tan, kullanıcının 3 gün önce verdiği bir siparişi iade etmesini istediğinizi varsayın. **Harness olmadan**: model iade politikasını göremez (context yok), hangi API'yi çağıracağını bilmez (tools yok), kullanıcı için bir iade sonucu uydurur (doğrulama yok) ve kullanıcı iadenin hiç gerçekleşmediğini fark eder (düzeltme yok). **Harness ile**: system prompt 7 günlük iade politikasını açıkça belirtir (context), Agent işi yapmak için `query_order` ve `process_refund` araçlarını çağırır (tools), çerçeve iadenin sipariş toplamını aşmadığını kontrol eder (constrain), veritabanına karşı iadenin gerçekleştiğini teyit eder (verify) ve API çağrısı zaman aşımına uğrarsa otomatik olarak yeniden dener (correct). Aynı model—Harness'li ve Harness'siz halleri arasında sonuçlar gece ile gündüz gibi farklıdır.
-
-Bu bölümün başındaki koşum takımı (harness) benzetmesine dönersek: Harness'siz bir model, dizginsiz bir at gibidir—muazzam yetenekli, ama görevleri güvenilir biçimde tamamlayamaz.
+Asgari bir demo için yalnızca bir Model ile context oluşturup tools sunabilen bir Harness yeterlidir; üretim sistemi aynı sınırın içinde constrain, verify ve correct katmanlarını da eklemelidir. Örneğin bir iade Agent'ı politikayı context'e koyabilir, çağrıları yetki ve tutar kurallarıyla sınırlayabilir, sonucu veritabanı durumundan doğrulayabilir ve zaman aşımında yeniden deneyebilir ya da yedek yola dönebilir. Harness engineering tam olarak “modelin dışında, environment'ın içinde” kalan bu çalışma ve yönetişim kodunu inceler.
 
 Daha kesin olarak söylemek gerekirse, Harness modelin dışındaki her şey değildir; **Agent sınırları içinde ve Model'in dışında bulunan çalıştırma ve yönetişim katmanıdır**. Model–Ortam etkileşimine aracılık eder, ancak Ortam'ın kendisini içermez. Araç tanımları, çağrı adaptörleri, sandbox izinleri ve sıfırlama mekanizmaları Harness'e aittir; sandbox içinde değişen dosyalar ve süreçler, harici veritabanları, web sayfaları, kullanıcılar ve fiziksel dünya ise Ortam'a aittir. Dağıtım konumu bu kavramsal sınırı değiştirmez. Harness'in özü Context yönetimi ve araç arayüzleridir; bunların etrafında üç tür mühendislik güvenlik önlemi inşa edilir:
 
@@ -310,6 +290,24 @@ Daha kesin olarak söylemek gerekirse, Harness modelin dışındaki her şey de�
 | **Constrain** | Davranışsal sınırlar koyar—neyin yapılıp neyin yapılamayacağı; Güvenli Varsayılanlar (Fail-Safe Defaults): Tüm yetenekler varsayılan olarak kapalıdır ve açıkça etkinleştirilmelidir (mobil uygulama izin yönetimine benzer) | Claude Code'da her araç, çalıştırılmadan önce varsayılan olarak kullanıcı yetkilendirmesi gerektirir | Bölüm 4 |
 | **Verify** | İşlem sonuçlarının doğruluğuna otomatik olarak karar verir; Girdi İzolasyonu: Güvenlik kontrolleri yalnızca yapılandırılmış verilere (örn. araçların döndürdüğü JSON alanları) bakar, modelin ürettiği serbest formatlı metne bakmaz (çünkü saldırganlar prompt injection yoluyla model çıktısını manipüle edebilir) | Linter kontrolleri, tip sistemleri, araç çağrısı sonucu doğrulaması | Bölüm 5 & 6 |
 | **Correct** | Sorun bulunduğunda otomatik olarak düzeltir veya geri alır; Bir arıza kurtarılamaz olduğu doğrulanana kadar ara durumları açığa çıkarmayın (örn. kullanıcıya yarım kalmış bir sonuç göstermek yerine başarısız bir araç çağrısını sessizce yeniden deneyin) | Sessiz yeniden denemeler, devam üretimi, ardışık başarısızlıklarda insan yargısına geri dönüş (circuit breaker mekanizması) | Bölüm 2 & 5 |
+
+Model kontrol döngüsünün temel akışı aşağıdaki sözde kodda gösterilmiştir:
+
+```python
+observation = Environment.observe()
+trajectory = [observation]
+while true:
+	actions = Model(Harness.build_context(trajectory))
+	if len(actions) == 0:
+		break
+	allowed_actions = Harness.constrain(actions)
+	observation = Environment.apply(allowed_actions)
+	if not Harness.verify(Environment):
+		observation = Harness.correct(Environment)
+	trajectory.append(allowed_actions, observation)
+```
+
+Bu iskelet uygulama ayrıntılarını bilinçli olarak dışarıda bırakır. Tam API mesaj döngüsü Bölüm 2'de; tools ve otomatik doğrulama sırasıyla Bölüm 4 ve 5'te ele alınır.
 
 Context ve Tools, Agent'ın "işi yapmasını" sağlar—görevi anlamasını ve ona göre eylemesini. Constrain, Verify ve Correct ise "işi yanlış yapmamasını" sağlar—Context ve Tools'tan ayrı bir şey değil, bunların üretimde güvenilir biçimde çalışmasını sağlayan mühendisliktir. Ve Agent ürünlerinin olgunluk eğrisi boyunca bu iki grubun ağırlığı değişir.
 
@@ -432,8 +430,10 @@ Aşağıdaki tablo, okuyucuların kendi senaryoları için doğru olanı hızla 
 | **Dify** | LLM uygulama geliştirme platformu | Workflow + Konuşmalı | Düşük kod (görsel + API) | Kurumsal düzeyde RAG, bilgi tabanı uygulamaları |
 | **CrewAI** | Rol tabanlı multi-agent orkestrasyonu | Multi-Agent iş birliği | Kod öncelikli | Ekip bazlı görev ayrıştırma ve yürütme |
 | **OpenClaw** | Açık kaynak hepsi bir arada kişisel Agent | Autonomous + Olay güdümlü | Yapılandırma + Kod (self-hosted) | Kişisel asistan, Deep Research, Computer Use, çok platformlu mesaj entegrasyonu |
+| **DeepSeek Harness** | Agent öz-evrim çerçevesi | Her şey bir eklentidir | Kod öncelikli, kolay özelleştirme | Agent geliştiricileri, araştırmacılar |
+| **Pi** | Minimal Coding Agent çerçevesi | Otonom | Kod öncelikli, kolay özelleştirme | Agent geliştiricileri |
 
-"Model as Agent" eğilimi derinleştikçe, bir çerçevenin temel değeri artık "LLM çağrılarını orkestre etmekte" yatmıyor—modeller giderek kendi kararlarını kendileri veriyor. Daha da önem kazanan şey modelin etrafındaki Harness engineering'dir: context yönetimi, araç ekosistemi, güvenlik kısıtları, hata kurtarma. Bir çerçeve seçerken soru, çerçevenin ne kadar sofistike olduğu değil, iş mantığına mümkün olan en ince soyutlama katmanı üzerinden odaklanmanıza izin verip vermediğidir.
+Agent çerçeveleri hızla gelişir. Siz bu kitabı okurken bunların bazıları eskimiş, yeni çerçeveler popülerleşmiş olabilir. Bu yüzden belirli bir çerçevenin API'sini öğrenmek önemli değildir. Seçimde asıl ölçüt çerçevenin karmaşıklığı değil, iş mantığına odaklanmanızı sağlayacak kadar ince bir soyutlama katmanı sunup sunmadığıdır.
 
 Orkestrasyon kalıpları, Harness içindeki context ve tools'un organizasyonunu çözer—LLM çağrılarının, araçların ve veri akışlarının nasıl bağlandığını. Ama işi yapmak yeterli değildir; aynı zamanda doğru ve güvenli biçimde yapılması gerekir. Bu yüzden şimdi constrain, verify ve correct mekanizmalarının pratikte nasıl hayata geçtiğinin başlıca yolu olan guardrail'lere dönüyoruz.
 
@@ -453,17 +453,15 @@ Konumlandırıldıkları yere göre guardrail'ler üç katmana ayrılır: **bağ
 
 **Bağlam katmanı** guardrail'leri **modelin neyi görebileceğini** yönetir ve içeriği bağlama girmeden önce keser. Genellikle dört mekanizmadan oluşur. **İlgililik sınıflandırıcısı** konu dışı sorguları işaretler; örneğin bir kodlama asistanına "Empire State binası kaç metre?" diye sorulması. **Güvenlik sınıflandırıcısı** jailbreak'i (Jailbreak, modeli güvenlik sınırlarını aşmaya yöneltmek) ve prompt injection'ı (Prompt Injection, girdiye kötü niyetli talimat gömmek) tespit eder; aradaki temel fark, jailbreak'te kullanıcının kendisinin modelin güvenlik sınırlarını aşmaya çalışması, prompt injection'da ise saldırganın web sayfası veya belge gibi dış veriler üzerinden modelin davranışını dolaylı olarak yönlendirmesidir. **İçerik denetimi** şiddet veya ayrımcılık içeren zararlı ya da uygunsuz girdileri işaretler. **Kural tabanlı koruma** ise kara listeler, girdi uzunluğu sınırları ve düzenli ifade filtreleri gibi belirlenimci önlemlerle SQL enjeksiyonu gibi bilinen tehditleri savuşturur. Kaynak etiketleme ve "talimat / veri" ayrımı da bu katmana aittir; Bölüm 2 bunları açar.
 
+Sınıflandırıcı guardrail'lerinin endüstrideki önemli örneklerinden biri Anthropic'in Constitutional Classifiers sistemidir[^ch1-3]. Temel mekanizması üç parçadan oluşur. Birincisi **kural güdümlüdür**: hangi içeriğe izin verilip hangisinin yasaklandığını doğal dille yazılmış kurallar, girdi ve çıktı sınıflandırıcılarını eğitmek için sentetik veri üretir. İkincisi **sorgu ile bağlamı birlikte değerlendirir**: yeni nesil sistem, tek başına zararsız görünen bir yanıtın aslında kullanıcının sorusuyla birlikte okunduğunda örtülü bir saldırıya hizmet edip etmediğini anlamak için kullanıcı sorgusunu ve model yanıtını birlikte inceler. Üçüncüsü **iki aşamalı taramadır**: çok hafif bir sonda tüm konuşmaları neredeyse sıfır ek maliyetle kontrol eder, yalnızca şüpheli durumları daha güçlü sınıflandırıcıya gönderir. Böylece ilk aşamadaki yanlış pozitifler kullanıcı deneyimini doğrudan bozmaz ve toplam maliyet düşük kalır.
+
+[^ch1-3]: Anthropic. “Next-generation Constitutional Classifiers: More efficient protection against universal jailbreaks”, 2026. https://www.anthropic.com/research/next-generation-constitutional-classifiers; Cunningham et al., “Constitutional Classifiers++: Efficient Production-Grade Defenses against Universal Jailbreaks”, arXiv:2601.04603.
+
 Ancak bu katmanın yapısal bir tavanı vardır: **aynı bağlamın içinde duran bir Agent, kendisine zaten enjeksiyon yapılıp yapılmadığını güçlükle anlar**. Bu yüzden bağlam katmanı saldırının başarı oranını düşürebilir ama güvence veremez; alttaki iki katmanın zorunlu olmasının nedeni tam da budur.
 
 **Yürütme katmanı** guardrail'leri **modelin ne yapabileceğini** yönetir ve eylem gerçekten etkili olmadan önce doğrular. Çekirdeği **araç risk derecelendirmesidir**: her araca, işlemin geri alınabilirliğine, yetki düzeyine ve mali etkisine göre bir risk derecesi (düşük/orta/yüksek) verilir; yüksek riskli işlemler ek inceleme ya da insan onayı gerektirir. Kritik nokta, bu incelemenin **bağlamın dışındaki** bir mekanizmayla yapılması gerektiğidir—bağımsız bir inceleme süreci, en az ayrıcalıklı kimlik bilgileri, sandbox yalıtımı, döngüdeki insan—aksi hâlde enjeksiyona uğramış Agent'la birlikte düşer. Kullanıcıya döndürülen yanıtın kendisi de bir eylemdir (Bölüm 4 onu kullanıcı iletişim aracı olarak sınıflar), dolayısıyla **çıktı denetimleri** de bu katmana aittir: **PII filtresi** çıktıdaki kişisel kimlik bilgilerini (kimlik numarası, telefon numarası) tarayarak gereksiz ifşayı önler; **çıktı doğrulaması** ise içerik denetimiyle yanıtların marka değerleriyle uyumunu güvence altına alır.
 
 **Veri katmanı** guardrail'leri **dünyanın nihayetinde neye dönüştürülebileceğini** yönetir ve "kimin hangi veriye ne yapabileceği" kararını istikrarlı, insan denetiminden geçmiş bir mekanizmaya bırakır: veritabanının satır düzeyi güvenlik politikaları, kısıtlar ve doğrulayıcılar, denetimli görünümler ve saklı yordamlar, ayrıca güvenilir çalışma zamanının bağladığı, taklit edilemeyen bir erişim bağlamı. Bu katmanın değeri tam da üstteki iki katmanın doğruluğuna bağlı olmamasındadır: prompt injection tutsa ve üretilen kod yetki denetimini tümüyle atlasa bile, yetki aşan işlem yine veri katmanında reddedilir. Bölüm 5 bu katmanı dinamik üretilen yazılım örneğiyle açar.
-
-Şuna dikkat etmek gerekir: aynı mekanizma birden çok katmanda görünebilir—kural tabanlı düzenli ifade filtresi hem girdiyi hem çıktıyı eleyebilir—yukarıdaki sınıflama, mekanizmanın güvenceyi sağladığı yere göre yapılmıştır. Üç katman birbirinin alternatifi değil, üst üste binen katmanlardır: üsttekiler saldırıların çoğunu dışarıda tutar ve erken geri bildirim verir, alttakiler üsttekiler düştüğünde çiğnenemez sınırı korur.
-
-Sınıflandırıcı guardrail'lerinin endüstrideki önemli örneklerinden biri Anthropic'in Constitutional Classifiers sistemidir[^ch1-3]. Temel mekanizması üç parçadan oluşur. Birincisi **kural güdümlüdür**: hangi içeriğe izin verilip hangisinin yasaklandığını doğal dille belirleyen bir “anayasa”, girdi ve çıktı sınıflandırıcılarını eğitmek için sentetik veri üretir. İkincisi **sorgu ile bağlamı birlikte değerlendirir**: yeni nesil sistem, tek başına zararsız görünen bir yanıtın aslında kullanıcının sorusuyla birlikte okunduğunda örtülü bir saldırıya hizmet edip etmediğini anlamak için kullanıcı sorgusunu ve model yanıtını birlikte inceler. Üçüncüsü **iki aşamalı taramadır**: çok hafif bir sonda tüm konuşmaları neredeyse sıfır ek maliyetle kontrol eder, yalnızca şüpheli durumları daha güçlü sınıflandırıcıya gönderir. Böylece ilk aşamadaki yanlış pozitifler kullanıcı deneyimini doğrudan bozmaz ve toplam maliyet düşük kalır.
-
-[^ch1-3]: Anthropic. “Next-generation Constitutional Classifiers: More efficient protection against universal jailbreaks”, 2026. https://www.anthropic.com/research/next-generation-constitutional-classifiers; Cunningham et al., “Constitutional Classifiers++: Efficient Production-Grade Defenses against Universal Jailbreaks”, arXiv:2601.04603.
 
 #### İnsan Müdahalesi
 
@@ -502,7 +500,7 @@ Anthropic'in uzun süre çalışan Agent'lar inşa etme pratiği, Harness tasar�
 
 ## Kitap Boyunca Tekrarlanan Tasarım Örüntüleri
 
-Sonraki dokuz bölüm aynı avuç dolusu yapıya defalarca başvurur. Bunlar tek bir bölüme ait değildir; aynı kısıt altındaki yinelenen çözümlerdir. Bu yüzden burada bir kez adlandırıp her birine ölçünlü bir tanım veriyoruz. Sonraki bölümler onları adıyla çağırır ve yalnızca kendi varyantını anlatır.
+Sonraki bölümler aynı tasarım örüntülerini tekrar tekrar kullanacağından, burada onları bir kez adlandırıp standart tanımlarını veriyoruz.
 
 **Öneren-İnceleyen (Proposer-Reviewer)**: üretim ile yargı, bağlamı paylaşmayan iki rol tarafından ayrı ayrı üstlenilir ve yargılayan taraf üretenin akıl yürütmesini değil, ürünün kendisini görür—render edilmiş sonuç, test çıktısı, yapılandırılmış çağrı argümanları. Dayandığı önkabul, **öz-incelemenin güvenilmez olduğudur**: aynı bağlamın içindeki bir model, aklına gelmeyeni aklına getiremez; kendisine zaten enjeksiyon yapılıp yapılmadığını da güçlükle anlar. Bölüm 3 bunu bilgi güncellemede, Bölüm 4 araç çağrılarının ön onayı ve sonradan doğrulanmasında kullanır (Sidecar onun salt-okunur bir varyantıdır); Bölüm 5'teki sunum, video ve günlük deneylerinin üçü de bu örüntüyü iskelet alır; Bölüm 7 arayüz değerlendirmesinde, Bölüm 9 güncelleme önerilerinin incelenmesinde kullanır; Bölüm 10 ise onun eşler arası iş birliğindeki biçimini ve neden aynı Agent'ın kendini inceleyemeyeceğini tartışır.
 
@@ -512,32 +510,7 @@ Sonraki dokuz bölüm aynı avuç dolusu yapıya defalarca başvurur. Bunlar tek
 
 **Sınır Kümesi + Koruma Kümesi (Boundary Set + Retention Set)**: her değişiklik hem "değiştirmesi gereken örnekler" hem de "etkilememesi gereken örnekler" üzerinde doğrulanmalıdır. Yalnızca ilkini ölçmek aşırı uyumu ilerleme sanmaktır; yalnızca ikincisini ölçmek etkisiz bir değişikliği güvenli sanmaktır. Bölüm 7'nin regresyon görevleri, Bölüm 8'in eğitim/değerlendirme yalıtımı ve Bölüm 9'un güncelleme önerisi doğrulaması bu küme çiftinin üzerinde durur.
 
-**En Küçük Diff + Geri Alınabilir (Minimal Diff, Reversible)**: her değişiklik olabildiğince küçük olsun, kaynağını taşısın ve tek başına geri alınabilsin; toptan yeniden yazılmasın. Atfetmeyi mümkün kılan budur—bir şey bozulduğunda hangi değişiklik olduğu saptanabilir. Bölüm 3'ün bilgi güncellemeleri, Bölüm 5'in kod yamaları, Bölüm 9'un prompt ve program güncellemeleri bunu izler; bu bölümün başında verilen üç güncelleme yolu da (bağlam içi uyarlama, dış ürün güncellemesi, parametre güncellemesi) tam olarak geri alınabilirliğe göre sıralanmıştır.
-
-Bu beş örüntü aynı ana temayı paylaşır: **yargıyı "modelin kendisi karar verir"den "modelin dışındaki bir mekanizma karar verir"e taşımak**—inceleyen bağlamın dışında, katalog gövde metnin dışında, önbellek değişikliğin dışında, koruma kümesi sınır kümesinin dışında, geri alma commit'in dışındadır. Bu bölümde daha önce verilen üç katmanlı guardrail, bu temanın güvenliğe uygulanmış hâlidir. İleride bunlarla yeniden karşılaşıldığında kitap yalnızca örüntünün adını ve o bölümdeki farkı belirtir, yeniden türetmez.
-
-## Keşif Döngüsü: Kanıt, Öneri, Deney, Geri Bildirim
-
-Önceki bölümdeki beş örüntü yerel yapılardır. Üç bölüme yayılan daha büyük bir yapı daha vardır; ne var ki parça parça kurulduğu için kolayca birbirinden bağımsız üç boru hattı sanılır.
-
-Bölüm 7'nin, başarısız bir yörüngedeki ilk hatayı bulup türünü belirlemesi gerekir. Bölüm 3'ün, yeni bir kanıtı bilgi tabanında olabildiğince küçük ve gerekçeli bir değişikliğe dönüştürmesi gerekir. Bölüm 9'un, bir değişikliğin sistemi gerçekten iyileştirip iyileştirmediğine karar vermesi, sonra yayınlamayı ya da geri almayı seçmesi gerekir. Bu üçü tamamen farklı düzenekler kullanır—atıf, rubriklere ve ilk hatanın yerini saptamaya; öneri, Öneren-İnceleyen'e; doğrulama ise sınır ve koruma kümelerine, kanarya yayınına ve geri almaya dayanır. Dolayısıyla bunlar **tek bir düzeneğin üç kez yinelenmesi değildir**; sözcüklerini zorla birleştirmek, asıl önemli farkları örter.
-
-Gerçekten ortak olan şey konumdur: her biri aynı döngünün bir kesitini tutar.
-
-```text
-Kanıt (Bölüm 7): başarısız yörünge → ilk hata + hata sınıfı
-  → Öneri (Bölüm 3): kanıt → en küçük, incelenebilir, geri alınabilir tek bir değişiklik
-  → Deney (Bölüm 9): sınır ve koruma kümelerinde ölçüm, kanarya yayını
-  → Geri bildirim: ölçüm sonuçları ve yeni başarısız yörüngeler kanıt kesitine döner
-```
-
-Bu döngü yakın zamanda Jeff Dean ve arkadaşlarının kurduğu Discovery Loop tarafından adlandırıldı ve otomasyona doğru itildi: bir deney öner, gerekenleri gerçekle, değerlendir, sonucu bir sonraki tura taşı ve eskiden seri işleyen bir süreci paralelleştir[^ch1-discovery-loop]. Açıkça söylemek gerekir ki şirket Ağustos 2026'da kuruldu ve şimdiye dek yalnızca misyonunu yayımladı; kamuya açık teknik sonucu yok. Bu kitap onu **döngüye verdiği ad** için anıyor, kanıt olarak değil—Bölüm 7'nin ısrarla vurgulayacağı ayrımın ta kendisi.
-
-Bir Agent sisteminin bu döngüsünü saf bir araştırma döngüsünün yanına koyunca ilkinde iki ek kısıt beliriyor; kitabın geri kalanının büyük bölümü tam da bunlarla uğraşır. **Birincisi, deney gerçek gözleme dayanmalıdır.** Araştırma döngüsünde "deney" bir eğitim koşusu olabilir; Agent sisteminde ise hâlihazırda kullanıcıya hizmet veren bir sistemi değiştirir, bu yüzden hüküm ortamın gerçek durumundan gelmelidir—testler geçiyor mu, veritabanının son durumu, aracın döndürdüğü şey—modelin kendi davranışını yeniden anlatmasından değil. **İkincisi, her deney "neyi düzeltti" ve "neyi bozdu" sorularının ikisine birden yanıt vermelidir.** Araştırma döngüsü çoğunlukla yalnızca metriğin yükselmesini ister; Agent sistemi ayrıca zaten doğru olan davranışı bozmadığını da göstermek zorundadır. Önceki bölümdeki sınır kümesi ile koruma kümesinin varlık nedeni budur.
-
-Sonraki üç bölüm yalnızca kendi kesitini ele alır, döngünün tamamını yeniden anlatmaz: Bölüm 3 bir önerinin ne zaman gerekçeli sayıldığını, Bölüm 7 bir kanıtın ne zaman güvenilir sayıldığını, Bölüm 9 deney ile geri bildirimin uzun vadede dağılmadan nasıl döndüğünü anlatır.
-
-[^ch1-discovery-loop]: Discovery Loop'un kuruluşu 5 Ağustos 2026'da Jeff Dean, Sanjay Ghemawat, Quoc Le ve Oriol Vinyals tarafından duyuruldu; makine öğrenmesini, bilimi ve mühendisliği otomatikleştirmeyi misyon edinen bir public benefit corporation. Kamuya açık tanımı, eksiksiz deney döngülerini otomatikleştirmek ve eskiden seri koşan deneyleri büyük ölçekte paralelleştirmektir. Bkz. https://techcrunch.com/2026/08/05/jeff-dean-and-other-top-ai-researchers-are-leaving-google-to-launch-their-own-startup/ . Bu kitabın yazıldığı tarihte yeniden üretilebilir bir teknik sonuç yayımlamış değildir.
+**En küçük diff + geri alınabilirlik**: her değişiklik olabildiğince küçük olsun, kaynağını taşısın ve tek başına geri alınabilsin; toptan yeniden yazılmasın. Atfetmeyi mümkün kılan budur—bir şey bozulduğunda hangi değişiklik olduğu saptanabilir. Bölüm 3'ün bilgi güncellemeleri, Bölüm 5'in kod yamaları, Bölüm 9'un prompt ve program güncellemeleri bunu izler; bu bölümün başında verilen üç güncelleme yolu da (bağlam içi uyarlama, dış ürün güncellemesi, parametre güncellemesi) tam olarak geri alınabilirliğe göre sıralanmıştır.
 
 ## Bölüm Özeti
 
@@ -553,11 +526,9 @@ Bu bölüm, pratikten başlayarak AI Agent'ları anlamak ve inşa etmek için te
 
 **Workflow'dan Autonomous Agent'a**: Önce prompt'lar, sonra workflow'lar, en son autonomous Agent'lar—bu sıralama, sürpriz riskini düşük tutmanın en pratik yoludur. Her orkestrasyon kalıbının kendi doğal alanı vardır; hiçbiri her yerde en iyisi değildir.
 
-**Beş örüntü kitap boyunca tekrarlanır**: Öneren-İnceleyen, aşamalı açıklama, yalnızca ekle, sınır kümesi + koruma kümesi ve en küçük diff / geri alınabilirlik—hepsi aynı temayı paylaşır: yargıyı modelin kendisinden modelin dışındaki bir mekanizmaya taşımak. Sonraki bölümler bunları adıyla çağırır, yeniden türetmez.
+**Beş tasarım örüntüsü kitap boyunca tekrarlanır**: Öneren-İnceleyen, aşamalı açıklama, yalnızca ekle, sınır kümesi + koruma kümesi ve en küçük diff + geri alınabilirlik.
 
-**Keşif döngüsü üç bölüme yayılır**: kanıt (Bölüm 7'deki hata atfı) → öneri (Bölüm 3'teki bilgi güncellemesi) → deney ve geri bildirim (Bölüm 9'daki doğrulama ve yayın). Üç kesit gerçekten farklı düzenekler kullanır; ortak olan sözcükler değil, konumdur. Saf bir araştırma döngüsüne kıyasla Agent sisteminin döngüsü iki kısıt daha taşır: deney gerçek gözleme dayanmalı ve her tur hem neyi düzelttiğini hem neyi bozduğunu yanıtlamalıdır.
-
-**Güvenlik Mimari Bir Meseledir**: Guardrail'ler, human-in-the-loop müdahalesi, alignment (modelin davranışını insan niyetiyle tutarlı tutmak)—güvenlik, lansmandan önce yamalanacak bir şey değil, kodun ilk satırından itibaren tasarlanması gereken bir şeydir. Guardrail'ler atlatılma zorluğuna göre üç katmana ayrılır—bağlam, yürütme ve veri—ve sonraki bölümlerin güvenlik tartışmaları bu iskelete asılır.
+**Güvenlik mimari bir meseledir**: Lansmandan önce yamalanacak bir şey değil, kodun ilk satırından itibaren düşünülmelidir. Guardrail'ler aşılma zorluğuna göre bağlam, yürütme ve veri katmanlarına ayrılır; sonraki güvenlik tartışmalarının tümü bu iskeleti izler.
 
 Sonraki bölüm, Harness'in en merkezi bileşenine—context engineering'e—derinlemesine iner. Agent kavramının pekiştirmeli öğrenmedeki akademik köklerine ve geleneksel RL ile modern LLM Agent'larının daha kapsamlı bir karşılaştırmasına gelince, Bölüm 8 ikisini de sistematik olarak ele alır.
 

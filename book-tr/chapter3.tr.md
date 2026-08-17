@@ -40,23 +40,6 @@ Bu konuşma bittikten sonra, Agent çerçevesi diyaloğu analiz etmek ve uzun va
 - Kullanıcının Tokyo'ya seyahat planları var (son etkinlik)
 ```
 
-**Bellek yaşam döngüsü:**
-
-```python
-when answering(user_request):
-    recent_turns = conversation.tail()
-    relevant_memory = memory.search(user_request)
-    answer = LLM(recent_turns + relevant_memory)
-    return answer
-
-after conversation (background job):
-    candidates = extract_memory_candidates(conversation)
-    verified = verify_against_sources_and_policy(candidates, conversation)
-    memory.append_or_update(verified)
-```
-
-Bu çıkarım sürecinin birkaç kilit özelliğine dikkat edin:
-
 **Seçicilik**—Agent, "arama 3 seçenek döndürdü" gibi geçici bilgileri değil, yalnızca gelecekte yararlı olacak gerçekleri hatırlar.
 
 **Soyutlama**—"Pencere kenarı koltuk tercih ederim" ifadesi, belirli bir uçuşa bağlı olmayan genel bir tercihe dönüştürülür.
@@ -65,7 +48,7 @@ Bu çıkarım sürecinin birkaç kilit özelliğine dikkat edin:
 
 ### Bellek Yeteneklerini Değerlendirmek: Üç Seviyeli Bir Çerçeve
 
-Bir bellek sistemi tasarlamadan önce, önce şu soruyu yanıtlayın: bir bellek sistemini "iyi" yapan nedir? Değerlendirme kriterlerini baştan belirlemek, sonra tartışılacak her tasarım için ortak bir ölçüt verir. Birkaç kamuya açık benchmark mevcuttur; temsili bir tanesi **LoCoMo**'dur (Long-term Conversational Memory; Maharana ve diğerleri, 2024, arXiv:2402.17753). En fazla 35 oturuma yayılan, ortalama yaklaşık 300 turluk son derece uzun diyaloglar oluşturur ve bir modelin uzun menzilli konuşmaya dair belleğini ve anlayışını üç görev ailesi aracılığıyla araştırır: soru yanıtlama (tek sıçramalı, çok sıçramalı, zamansal reasoning, açık alan ve çelişik sorulara ayrılır), olay özetleme ve çok modlu diyalog üretimi.
+Bir bellek sistemi tasarlamadan önce, önce şu soruyu yanıtlayın: bir bellek sistemini "iyi" yapan nedir? Değerlendirme kriterlerini baştan belirlemek, sonra tartışılacak her tasarım için ortak bir ölçüt verir. Birkaç kamuya açık benchmark mevcuttur; temsili bir tanesi **LoCoMo**'dur (Long-term Conversational Memory). En fazla 35 oturuma yayılan, ortalama yaklaşık 300 turluk son derece uzun diyaloglar oluşturur ve bir modelin uzun menzilli konuşmaya dair belleğini ve anlayışını üç görev ailesi aracılığıyla araştırır: soru yanıtlama (tek sıçramalı, çok sıçramalı, zamansal reasoning, açık alan ve çelişik sorulara ayrılır), olay özetleme ve çok modlu diyalog üretimi.
 
 LoCoMo ve benzerlerinden, ticari bellek ürünlerinin pratiğiyle birlikte yararlanarak, kullanıcı belleği yeteneği sekiz maddeye damıtılabilir (yazarın sentezi, herhangi bir tek benchmark'ın orijinal sınıflandırması değil):
 
@@ -90,7 +73,7 @@ Buna dayanarak, bellek yeteneklerini kademeli seviyelere ayrıştıran, Agent se
 >
 > Yukarıdaki üç seviyeli çerçeveyi izleyen bir değerlendirme kümesi inşa ettik: seviye başına 20 test durumu, her biri zengin gerçek ayrıntılar içerir. Seviye 1 durumları tipik olarak tek bir oturumdan oluşur; Seviye 2 ve 3 durumları farklı zamanlardan ve kaynaklardan gelen birden fazla oturumdan oluşur (durum başına toplam yaklaşık 50 tur iletişim). Değerlendirme sırasında, test edilen Agent'ın ilk oturuma dayanarak bellekler üretmesi, ardından sonraki oturumlara dayanarak (yalnızca belleğe erişimle, orijinal konuşma geçmişine değil) bellekleri değiştirmesi istenir, o durum için tüm oturumlar işlenene kadar. Bellek üretiminden sonra, Agent'tan belleğe dayanarak yeni bir kullanıcı sorusunu yanıtlaması istenir. Ardından bir LLM-as-a-judge yöntemi (yanıt kalitesini puanlamak için başka bir LLM'i hakem olarak kullanmak) kullanılarak yanıt bir referans yanıtla karşılaştırılır ve o test durumu için bir ödül puanı elde edilir.
 >
-> Bu değerlendirme kümesi ve değerlendirme betiği, eşlik eden depodaki `user-memory` projesine dahildir (sonraki Deney 3-2 ile aynı taşıyıcı). Okuyucular her seviye için test durumlarının eksiksiz tanımlarını orada görebilir.
+> Bu değerlendirme kümesi ve değerlendirme betiği, eşlik eden depodaki `user-memory` projesine dahildir. Okuyucular her seviye için test durumlarının eksiksiz tanımlarını orada görebilir.
 
 ### Belleğin Hiyerarşik Yapısı
 
@@ -141,21 +124,6 @@ Yukarıda tartışılan dört format, ister basit ister karmaşık olsun, özün
 Bellek güncellemelerini iki aşamaya ayırır[^uac]: **bellek aşaması** (her oturumdan sonra, LLM konuşmadan gerçekleri birer birer dizeler olarak çıkarır, bunları append-only bir gerçek günlüğüne ekler) ve **yapılandırma aşaması** (periyodik olarak, LLM eksiksiz gerçek günlüğünden tüm tipli Python temsilini yeniden üretir—gerçekleri dataclass'lara organize eder, tarihler için `date()`, koleksiyonlar için tipli listeler ve tiplemesi zor çeşitli öğeler için `notes: list[str]` kullanır). Bu, veritabanlarından gelen klasik "write-ahead log + periyodik checkpoint" tasarımının LLM belleğine ilk kez uygulanmasıdır: append-only günlük hiçbir gerçeğin kaybolmamasını sağlar, periyodik checkpoint ise bunları temiz, sorgulanabilir bir yapıya sıkıştırır. (Bu periyodik yeniden inşa süreci, bu bölümde daha sonra tartışılacak "bellek sıkıştırma ve organizasyon mekanizması" ile tutarlıdır, tek fark çıktının metin değil kod olmasıdır.)
 
 Aşağıda basitleştirilmiş bir örnek var. Yapılandırma aşaması, kullanıcının pasaportunu ve gezilerini tipli durum olarak depolar:
-
-**Yalnızca eklemeli günlük ve checkpoint:**
-
-```python
-append_only_log += extract_facts(conversation)
-
-if checkpoint_due():
-    proposed_state = rebuild_typed_state(append_only_log)
-    if type_check(proposed_state) and source_review(proposed_state):
-        publish_checkpoint(proposed_state)
-    else:
-        keep_previous_checkpoint()
-```
-
-**Tipli kullanıcı durumu:**
 
 ```python
 state = {
@@ -269,15 +237,15 @@ Bu referans mimarisi, bilişsel bilimin bellek sınıflandırmalarının mühend
 
 Etkileşim devam ettikçe, bir bellek sistemi depolama alanı ve retrieval verimliliğinin ikiz baskısıyla karşı karşıya kalır. Her şeyi basitçe biriktirmek bellek patlamasına yol açar—depolamayı tüketir ve retrieval doğruluğunu düşürür.
 
-Pratikte, çok katmanlı bir sıkıştırma stratejisi iyi çalışır. İlk katman, bellekleri önem puanına göre filtreler. Önem puanlamasına yaygın bir yaklaşım dört faktörü dikkate alır: erişim sıklığı (sık getirilen bellekler daha önemlidir), zaman çürümesi (daha eski bellekler unutulmaya daha yatkındır), duygusal yoğunluk (güçlü duygusal işaretlere sahip bellekler tutulmaya daha yatkındır) ve bilgi benzersizliği (tekrarlanan bilginin önemi azalır). Bir eşiğin altındaki bellekler sıkıştırılabilir veya silinebilir olarak işaretlenir. Örneğin, 5 kez erişilmiş, 3 gün önce oluşturulmuş, güçlü bir duygusal işareti olan ve tekrarı olmayan bir bellek yüksek bir önem puanı alır. Buna karşılık, yalnızca bir kez erişilmiş, 90 gün önce oluşturulmuş, duygusal işareti olmayan ve 3 diğer bellekle yüksek oranda tekrarlanan bir bellek, sıkıştırma eşiğinin altına düşebilir.
+Pratikte, çok katmanlı bir sıkıştırma stratejisi iyi çalışır.
 
-İkinci katman kümeleme yapar. Benzer bellekler gruplandırılır ve her grup için temsili bir özet üretilir (örn. hava durumuyla ilgili birden fazla konuşma "Kullanıcı sık sık hava durumunu soruyor, özellikle yağmur konusunda endişeli" şeklinde sıkıştırılır). Orijinal ayrıntılı bellekler ikincil depolamaya arşivlenebilir.
+1. İlk katman, bellekleri önem puanına göre filtreler. Önem puanlamasına yaygın bir yaklaşım dört faktörü dikkate alır: erişim sıklığı (sık getirilen bellekler daha önemlidir), zaman çürümesi (daha eski bellekler unutulmaya daha yatkındır), duygusal yoğunluk (güçlü duygusal işaretlere sahip bellekler tutulmaya daha yatkındır) ve bilgi benzersizliği (tekrarlanan bilginin önemi azalır). Bir eşiğin altındaki bellekler sıkıştırılabilir veya silinebilir olarak işaretlenir. Örneğin, 5 kez erişilmiş, 3 gün önce oluşturulmuş, güçlü bir duygusal işareti olan ve tekrarı olmayan bir bellek yüksek bir önem puanı alır. Buna karşılık, yalnızca bir kez erişilmiş, 90 gün önce oluşturulmuş, duygusal işareti olmayan ve 3 diğer bellekle yüksek oranda tekrarlanan bir bellek, sıkıştırma eşiğinin altına düşebilir.
 
-Üçüncü katman soyutlar ve genelleştirir—belirli episodic bellekten genel kurallar çıkarır ve bunları semantic veya procedural belleğe dönüştürür. Örneğin, birden fazla alışveriş konuşmasından, sistem "Uygun maliyetli ürünleri tercih ediyor ve kullanıcı yorumlarına değer veriyor" öğrenebilir.
+2. İkinci katman kümeleme yapar. Benzer bellekler gruplandırılır ve her grup için temsili bir özet üretilir (örn. hava durumuyla ilgili birden fazla konuşma "Kullanıcı sık sık hava durumunu soruyor, özellikle yağmur konusunda endişeli" şeklinde sıkıştırılır). Orijinal ayrıntılı bellekler ikincil depolamaya arşivlenebilir.
+
+3. Üçüncü katman soyutlar ve genelleştirir—belirli episodic bellekten genel kurallar çıkarır ve bunları semantic veya procedural belleğe dönüştürür. Örneğin, birden fazla alışveriş konuşmasından, sistem "Uygun maliyetli ürünleri tercih ediyor ve kullanıcı yorumlarına değer veriyor" öğrenebilir.
 
 Çelişki tespiti bir sürümleme yaklaşımı kullanır—geçmiş sürümler tutulurken en son sürüm işaretlenir. Belirli bilgiler için (örn. mevcut adres), yalnızca en son sürüm tutulur; diğer bilgiler için (örn. iş geçmişi), eksiksiz geçmiş korunur.
-
-Son olarak, diğer bölümlerle karışıklığı önlemek için bir sınır netleştirilmelidir. Bu bölüm bellek **depolama katmanındaki** düzenleme algoritmalarını—hangi belleklerin seçileceğini, kümeleneceğini ve hangi biçimlere soyutlanacağını—ele alır. Bölüm 2'deki context sıkıştırma, tek bir oturum içindeki pencere sorununu çözer; iki mekanizma farklı düzeylerde çalışır. Bilginin depolanması, indekslenmesi ve getirilmesi de bu bölümün sorumluluğundadır. Bölüm 9 ise “kanıtı çevrimiçi ekle, çevrimdışı pekiştir” şeklindeki iki aşamalı kalıbı Agent davranışının evrimine geneller ve hangi operasyonel kanıtın kalıcı güncellemeleri tetiklemek için yeterli olduğunu inceler.
 
 ### Gizlilik Koruması: Günlük Temizleme (Log Sanitization)
 
@@ -295,31 +263,9 @@ Bir kullanıcı belleği sistemi inşa ederken, temel zorluk, Agent'ın kişisel
 
 Paylaşılan bir bilgi tabanı inşa etmenin temel teknolojisi Retrieval-Augmented Generation'dır (RAG). Merkezi fikir, büyük dil modellerinin düşünme ve üretme yeteneklerini bir dış bilgi tabanının genişliği ve güncelliğiyle birleştirmektir—modelin eğitim verisinin bir kesim tarihi vardır, bilgi tabanı ise her an güncellenebilir.
 
-Tipik bir RAG sistemi iki parçadan oluşur: bilgi tabanından ilgili parçaları bulan bir retriever (getirici) ve bu parçaları context olarak kullanarak bir yanıt üreten bir generator (üretici, genellikle bir LLM). Önce iki örnek üzerinden RAG'ın nasıl çalıştığına dair sezgisel bir his edinelim, ardından retriever'ın teknik ayrıntılarına derinlemesine inelim.
+Tipik bir RAG sistemi iki parçadan oluşur: bilgi tabanından ilgili parçaları bulan bir retriever (getirici) ve bu parçaları context olarak kullanarak bir yanıt üreten bir generator (üretici, genellikle bir LLM).
 
-**Örnek 1: Wikipedia Bilgi Tabanı.** Bir kullanıcı sorar: "Kuantum dolanıklığı nedir? En son deneysel gelişmeler nelerdir?" Temel modelin eğitim verisi en son deneysel sonuçları içermeyebilir. RAG süreci şöyledir:
-
-```python
-# 1. Kullanıcı sorgusu
-query = "Kuantum dolanıklığı nedir? En son deneysel gelişmeler nelerdir?"
-
-# 2. Retrieval: Wikipedia bilgi tabanından en ilgili parçaları bul
-results = retriever.search(query, top_k=3)
-# results = [
-# "Kuantum dolanıklığı, iki parçacığın kuantum durumlarının ilişkili olduğu bir kuantum mekaniği olgusudur...",
-# "2022 Nobel Fizik Ödülü, kuantum dolanıklığı deneyleri için üç bilim insanına verildi...",
-# "Bell eşitsizliği deneyleri, kuantum dolanıklığının yerel olmayan doğasını göstermiştir..."
-# ]
-
-# 3. Generation: LLM'in bir yanıt üretmesi için getirilen sonuçları context olarak kullan
-answer = llm.generate(
-    system="Kullanıcının sorusunu aşağıdaki referans materyallere dayanarak yanıtla. Materyaller yetersizse, bunu açıkça belirt.",
-    context=results,   # ← Context'e enjekte edilen getirilmiş bilgi parçaları
-    question=query
-)
-```
-
-**Örnek 2: Şirket Bilgi Tabanı.** Bir kullanıcı sorar: "Bir şey satın aldım ve iade istiyorum. Süreç nedir?":
+Önce bir şirket bilgi tabanı örneğiyle RAG'ın nasıl çalıştığını sezgisel olarak görelim: bir kullanıcı sorar: "Bir şey satın aldım ve iade istiyorum. Süreç nedir?":
 
 ```python
 query = "İade süreci"
@@ -589,7 +535,9 @@ Temel tasarım **L0/L1/L2 üç katmanlı context ihtiyaç halinde yüklemedir**.
 
 **Bilginin temel temsili olarak özel bir veritabanı yerine Markdown düz metnini seçmek**, görünüşte sezgiye aykırı ama dikkatle düşünülmüş bir mühendislik kararıdır. Düz metin, kullanıcıların Agent'ın bilgisini doğrudan okuyup düzenleyebilmesi ve düzeltebilmesi; Git ile sürüm kontrolü ve geri alma yapabilmesi anlamına gelir. Daha da önemlisi, `write_file` yeteneğiyle Agent bilgiyi bir çalışma dalında otonom olarak kaydedip organize edebilir, ardından aşağıdaki inceleme süreciyle ana tabana birleştirebilir. Oturum sonunda sistem, kullanıcı tercihlerinin `user/memories/`e ve operasyon kayıtlarının `agent/memories/`e yazılmasını önerebilir. İlki bu bölümdeki kullanıcı bilgisi yönetimidir. İkincisi ancak sonuç değerlendirmesi, trajectory'ler arası genelleme ve sonraki doğrulamadan sonra Bölüm 9 anlamında deneyim öğrenmesine dönüşür; gelişigüzel tek bir operasyon güvenilir deneyim sayılamaz.
 
-Ancak, bu düz metin, dosya sistemi tarzı organizasyonu benimsemenin, kolayca gözden kaçırılan ama retrieval başarısını doğrudan belirleyen bir ön koşulu vardır: **dosyalar arasında bağlantılar ve indeksler kurulmalıdır**. Daha önce bahsedilen `.abstract`/`.overview` dosyaları dikey, hiyerarşik özetlemeyi ele alır. Burada vurgulanan şey yatay ilişkilendirmedir—bilgi basitçe bir dizinde düz biçimde yerleştirilmiş, aralarında herhangi bir çapraz referans olmayan bağımsız metin dosyaları yığınına bölünürse, tüm dosyaları sırayla taramak veya vektör retrieval kullanmak dışında, Agent'ın ilgili girdiler arasında gezinmesinin neredeyse hiçbir yolu yoktur. Ne kadar çok bilgi varsa, bu dağınık dosya yığınının getirilmesi o kadar zorlaşır. Doğru yaklaşım, bilgi tabanını Wikipedia gibi organize etmektir: bir girdi başka birinden bahsettiğinde, oraya bağlantı verir, girdi sayfaları ve indeks sayfalarıyla desteklenir, böylece Agent bir kavramdan komşularına yürüyebilir—hafif dosya bağlantıları, GraphRAG'ın varlık-ilişki grafının gezinme gücünün bir kısmını satın alır. Burada önemli bir pratik fark da vardır: **farklı modellerin bu tür bağlantıları proaktif olarak kurma isteği ve yeteneği farklıdır**. Daha güçlü modeller, yeni bilgi yazarken, kendiliğinden mevcut girdilere geri başvuracak ve indeksleri koruyacaktır. Ancak, birçok model bunu proaktif olarak yapmaz, dosyaları basitçe izole biçimde ekler. Bu yüzden, bilgi yazmaktan sorumlu prompt bunu açıkça talep etmelidir—eklenen her yeni girdi için, sistem önce ilgili mevcut girdileri getirip bağlantı vermeli ve ait olduğu dizinin indeks sayfasını güncellemeli, bilginin bağlantısız adalara çürümesine izin vermek yerine, çift yönlü ulaşılabilir bir referans ağı oluşturmalıdır.
+Ancak, bu düz metin, dosya sistemi tarzı organizasyonu benimsemenin, kolayca gözden kaçırılan ama retrieval başarısını doğrudan belirleyen bir ön koşulu vardır: **dosyalar arasında bağlantılar ve indeksler kurulmalıdır**. Daha önce bahsedilen `.abstract`/`.overview` dosyaları dikey, hiyerarşik özetlemeyi ele alır. Burada vurgulanan şey yatay ilişkilendirmedir—bilgi basitçe bir dizinde düz biçimde yerleştirilmiş, aralarında herhangi bir çapraz referans olmayan bağımsız metin dosyaları yığınına bölünürse, tüm dosyaları sırayla taramak veya vektör retrieval kullanmak dışında, Agent'ın ilgili girdiler arasında gezinmesinin neredeyse hiçbir yolu yoktur. Ne kadar çok bilgi varsa, bu dağınık dosya yığınının getirilmesi o kadar zorlaşır. Doğru yaklaşım, bilgi tabanını Wikipedia gibi organize etmektir: bir girdi başka birinden bahsettiğinde, oraya bağlantı verir, girdi sayfaları ve indeks sayfalarıyla desteklenir, böylece Agent bir kavramdan komşularına yürüyebilir—hafif dosya bağlantıları, GraphRAG'ın varlık-ilişki grafının gezinme gücünün bir kısmını satın alır.
+
+Burada önemli bir pratik fark da vardır: **farklı modellerin bu tür bağlantıları proaktif olarak kurma isteği ve yeteneği farklıdır**. Daha güçlü modeller, yeni bilgi yazarken, kendiliğinden mevcut girdilere geri başvuracak ve indeksleri koruyacaktır. Ancak, birçok model bunu proaktif olarak yapmaz, dosyaları basitçe izole biçimde ekler. Bu yüzden, bilgi yazmaktan sorumlu prompt bunu açıkça talep etmelidir—eklenen her yeni girdi için, sistem önce ilgili mevcut girdileri getirip bağlantı vermeli ve ait olduğu dizinin indeks sayfasını güncellemeli, bilginin bağlantısız adalara çürümesine izin vermek yerine, çift yönlü ulaşılabilir bir referans ağı oluşturmalıdır.
 
 ### Bilgi Nasıl Güncellenmelidir?
 
@@ -706,7 +654,7 @@ Yöntemin zarafeti, her iki retrieval modunu da aynı anda güçlendirmesidir. B
 >
 > Bir kullanıcı belirli bir bağlam gerektiren bir sorgu girdiğinde, örneğin "ACME Corporation'ın son gelir artışı nedir?", fark hemen belirgin hale gelir. **Bağlamsız** bilgi tabanında, sorgu "gelir artışı" anahtar kelimelerini içeren ama farklı şirketlerden, farklı yıllardan, hatta genel sektör analizinden gelen birçok metin bloğuyla eşleşebilir, bu da düşük ilgi ve yüksek gürültüye yol açar. **Bağlama duyarlı** bilgi tabanında, her metin bloğu hassas bir "kimlik etiketine" sahip olduğundan, sorgu yalnızca anahtar kelimeleri içeren değil, aynı zamanda sorgunun niyetiyle eşleşen bir bağlam ön ekine ("ACME Corporation", "son") sahip metin bloklarına doğru biçimde yönlendirilir. Deney logları, bağlama duyarlı retrieval sonuçlarının bağlamsız sonuçlardan önemli ölçüde daha yüksek puan aldığını ve döndürülen metin bloklarının çok daha isabetli olduğunu net biçimde gösteriyor.
 >
-> Bu performans iyileştirmesinin maliyeti, indeksleme aşamasındaki ek LLM çağrılarıdır. Ancak, bu prompt caching (Bölüm 2'de tanıtılan istekler arası önbellekleme mekanizması, aynı ön ek için tekrarlanan çağrılar orijinalin yaklaşık 1/10'una mal olur) aracılığıyla tamamen kontrol edilebilir, milyon doküman token'ı başına yaklaşık 1 dolara mal olur. Anthropic araştırmasına göre, bu tekniği BM25 ile birleştirmek retrieval başarısızlık oranını ("Retrieval Kalitesi Nasıl Ölçülür?"de bahsedilen top-20 kaçırma oranı, 1 − recall@20) %49 azaltabilir ve bir reranker ile birleştirildiğinde %67 azaltabilir. Deney güçlü bir gerekçe sunar: üretim düzeyinde RAG inşa ederken, bilginin daha akıllı, bağlama duyarlı ön işlemesine yatırım yapmak, orantısız bir getirisi olan bir mühendislik kararıdır.
+> Bu performans iyileştirmesinin maliyeti, indeksleme aşamasındaki ek LLM çağrılarıdır. Ancak, bu prompt caching (Bölüm 2'de tanıtılan istekler arası önbellekleme mekanizması, aynı ön ek için tekrarlanan çağrılar orijinalin yaklaşık 1/10'una mal olur) aracılığıyla tamamen kontrol edilebilir, milyon doküman token'ı başına yaklaşık 1 dolara mal olur. Anthropic araştırmasına göre, bu tekniği BM25 ile birleştirmek retrieval başarısızlık oranını %49 azaltabilir ve bir reranker ile birleştirildiğinde %67 azaltabilir. Deney güçlü bir gerekçe sunar: üretim düzeyinde RAG inşa ederken, bilginin daha akıllı, bağlama duyarlı ön işlemesine yatırım yapmak, orantısız bir getirisi olan bir mühendislik kararıdır.
 
 Bu, Contextual Retrieval'ı doküman bilgi tabanlarında doğrular. Aynı tekniği kullanıcı belleği senaryosuna döndürmek bize bir sonraki deneyi verir.
 

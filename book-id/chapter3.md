@@ -38,23 +38,6 @@ Memori yang diekstrak:
 - Pengguna punya rencana bepergian ke Tokyo (aktivitas terbaru)
 ```
 
-**Siklus hidup memori:**
-
-```python
-when answering(user_request):
-    recent_turns = conversation.tail()
-    relevant_memory = memory.search(user_request)
-    answer = LLM(recent_turns + relevant_memory)
-    return answer
-
-after conversation (background job):
-    candidates = extract_memory_candidates(conversation)
-    verified = verify_against_sources_and_policy(candidates, conversation)
-    memory.append_or_update(verified)
-```
-
-Perhatikan beberapa sifat utama proses ekstraksi ini:
-
 **Selektivitas**—Agent tidak mengingat informasi sementara seperti "pencarian menghasilkan 3 opsi", melainkan hanya fakta yang berguna kelak.
 
 **Abstraksi**—"Saya suka kursi dekat jendela" disaring menjadi preferensi umum, bukan diikat pada penerbangan tertentu.
@@ -63,7 +46,7 @@ Perhatikan beberapa sifat utama proses ekstraksi ini:
 
 ### Menilai Kemampuan Memori: Kerangka Tiga Tingkat
 
-Sebelum merancang sistem memori, kita harus tahu: apa yang membuat sistem memori "bagus"? Menentukan kriteria penilaian di awal akan memberi kita standar ukur untuk setiap desain nanti. Ada beberapa pengujian (benchmark) publik; salah satunya adalah **LoCoMo** (Long-term Conversational Memory; Maharana et al., 2024, arXiv:2402.17753). Mereka merancang dialog sangat panjang (rata-rata 300 balasan di maksimal 35 sesi) dan menguji pemahaman memori jarak jauh model menggunakan tiga jenis tugas: tanya jawab (dibagi jadi satu langkah, multi langkah, logika waktu, ranah terbuka, dan pertanyaan jebakan), ringkasan acara, dan pembuatan dialog multimodal.
+Sebelum merancang sistem memori, kita harus tahu: apa yang membuat sistem memori "bagus"? Menentukan kriteria penilaian di awal akan memberi kita standar ukur untuk setiap desain nanti. Ada beberapa pengujian (benchmark) publik; salah satunya adalah **LoCoMo** (Long-term Conversational Memory). Mereka merancang dialog sangat panjang (rata-rata 300 balasan di maksimal 35 sesi) dan menguji pemahaman memori jarak jauh model menggunakan tiga jenis tugas: tanya jawab (dibagi jadi satu langkah, multi langkah, logika waktu, ranah terbuka, dan pertanyaan jebakan), ringkasan acara, dan pembuatan dialog multimodal.
 
 Mengacu pada LoCoMo dan sejenisnya, serta praktik produk memori komersial, kemampuan memori pengguna dapat disaring menjadi delapan kategori (ini sintesis penulis, bukan dari satu benchmark asli):
 
@@ -88,7 +71,7 @@ Berdasarkan hal ini, kami menyusun kerangka evaluasi tiga tingkat yang lebih ses
 >
 > Kami membangun set evaluasi berdasarkan kerangka tiga tingkat di atas: 20 pengujian untuk setiap tingkat, masing-masing dengan detail realistis. Kasus tingkat 1 biasanya terdiri dari satu sesi; kasus tingkat 2 dan 3 mencakup beberapa sesi pada waktu dan topik yang berbeda (sekitar 50 putaran per kasus). Dalam pengujian, Agent harus membuat memori dari sesi pertama, lalu memperbaruinya setelah setiap sesi berikutnya hanya dengan melihat memori tersebut, bukan riwayat percakapan asli. Setelah seluruh rangkaian sesi selesai, Agent menjawab pertanyaan baru berdasarkan memorinya. Metode LLM-as-a-Judge membandingkan kualitas jawaban dengan jawaban acuan dan menghasilkan skor untuk setiap pengujian.
 >
-> Kasus pengujian dan alat evaluasinya tersedia dalam skrip proyek `user-memory` di direktori proyek pendamping repositori ini; proyek yang sama juga digunakan dalam Eksperimen 3-2. Pembaca dapat memeriksa format kasus pengujian untuk setiap tingkat melalui tautan tersebut.
+> Kasus pengujian dan alat evaluasinya tersedia dalam skrip proyek `user-memory` di direktori proyek pendamping repositori ini. Pembaca dapat memeriksa format kasus pengujian untuk setiap tingkat melalui tautan tersebut.
 
 ### Struktur Hirarki Memori
 
@@ -139,21 +122,6 @@ Keempat format yang dibahas sebelumnya, baik sederhana maupun kompleks, pada das
 Konsep tersebut membagi pembaruan memori ke dalam dua tahapan[^uac]: tahap memori atau **memory phase** (setelah sesi berakhir, LLM mengekstraksi fakta-fakta percakapan ke dalam catatan berformat string, lalu menambahkannya ke penyimpanan bergaya jurnal) dan fase strukturisasi atau **structuring phase** (secara berkala, LLM merangkum seluruh fakta yang terfragmentasi ini menjadi objek Python dengan tipe data yang ketat—mengelompokkan fakta terkait ke dalam dataclasses, menggunakan objek `date()` yang sebenarnya untuk kalender, daftar bertipe (typed lists) untuk himpunan data, dan sebuah senarai `notes: list[str]` untuk ragam informasi yang tak dapat diklasifikasikan dengan rapi). Ini merupakan arsitektur klasik "write-ahead log + periodic checkpoint" dari sistem basis data yang diterapkan pada memori LLM: log aslinya menjamin tidak ada fakta yang hilang, dan checkpoint berkala memampatkannya menjadi struktur yang dapat dikueri. (Waktu pelaksanaan checkpoint berkala ini sejalan dengan "mekanisme kompresi dan organisasi memori" yang akan dibahas nanti di bab ini, hanya saja output-nya berupa kode alih-alih teks).
 
 Berikut contoh ringkasnya. Pada fase strukturisasi, sistem menyimpan dokumen perjalanan dan paspor pengguna sebagai state bertipe yang ketat:
-
-**Log append-only dan checkpoint:**
-
-```python
-append_only_log += extract_facts(conversation)
-
-if checkpoint_due():
-    proposed_state = rebuild_typed_state(append_only_log)
-    if type_check(proposed_state) and source_review(proposed_state):
-        publish_checkpoint(proposed_state)
-    else:
-        keep_previous_checkpoint()
-```
-
-**State pengguna bertipe:**
 
 ```python
 state = {
@@ -263,15 +231,15 @@ Arsitektur referensi ini menunjukkan bagaimana klasifikasi memori ilmu kognitif 
 
 Seiring berlanjutnya interaksi, sistem memori menghadapi tekanan ganda dari ruang penyimpanan dan efisiensi pengambilan. Sekadar mengakumulasi segala sesuatu menyebabkan pertumbuhan memori yang tak terbatas—ini memakan penyimpanan dan menurunkan akurasi pencarian.
 
-Dalam praktiknya, strategi kompresi multi-tingkat (multi-tier) berfungsi dengan baik. Tingkat pertama memfilter memori berdasarkan skor kepentingan. Pendekatan umum untuk penilaian skor kepentingan mempertimbangkan empat faktor: frekuensi akses (memori yang sering diambil adalah yang lebih penting), peluruhan waktu (memori yang lebih tua lebih mungkin untuk dilupakan), intensitas emosional (memori dengan penanda emosional yang kuat lebih mungkin untuk dipertahankan), dan keunikan informasi (kepentingan informasi duplikat akan menurun). Memori di bawah ambang batas ditandai sebagai dapat dikompresi atau dapat dihapus. Sebagai contoh, memori yang diakses 5 kali, dibuat 3 hari yang lalu, dengan penanda emosional yang kuat, dan tidak ada duplikat akan menerima skor kepentingan yang tinggi. Sebaliknya, memori yang diakses hanya sekali, dibuat 90 hari yang lalu, tanpa penanda emosional, dan dengan tiga kemiripan duplikat mungkin jatuh di bawah ambang batas kompresi.
+Dalam praktiknya, strategi kompresi multi-tingkat (multi-tier) berfungsi dengan baik.
 
-Tingkat kedua melakukan klasterisasi. Memori yang serupa dikelompokkan, dan ringkasan yang mewakili dibuat untuk setiap grup (misalnya, beberapa percakapan terkait cuaca dikompresi menjadi "Pengguna sering bertanya tentang cuaca, dengan perhatian khusus mengenai hujan"). Memori terperinci yang asli dapat diarsipkan ke penyimpanan sekunder.
+1. Tingkat pertama memfilter memori berdasarkan skor kepentingan. Pendekatan umum untuk penilaian skor kepentingan mempertimbangkan empat faktor: frekuensi akses (memori yang sering diambil adalah yang lebih penting), peluruhan waktu (memori yang lebih tua lebih mungkin untuk dilupakan), intensitas emosional (memori dengan penanda emosional yang kuat lebih mungkin untuk dipertahankan), dan keunikan informasi (kepentingan informasi duplikat akan menurun). Memori di bawah ambang batas ditandai sebagai dapat dikompresi atau dapat dihapus. Sebagai contoh, memori yang diakses 5 kali, dibuat 3 hari yang lalu, dengan penanda emosional yang kuat, dan tidak ada duplikat akan menerima skor kepentingan yang tinggi. Sebaliknya, memori yang diakses hanya sekali, dibuat 90 hari yang lalu, tanpa penanda emosional, dan dengan tiga kemiripan duplikat mungkin jatuh di bawah ambang batas kompresi.
 
-Tingkat ketiga mengabstraksi dan menggeneralisasi—mengekstrak aturan umum dari Episodic Memory spesifik dan mengubahnya menjadi Semantic atau Procedural Memory. Misalnya, dari berbagai percakapan belanja, sistem mungkin mempelajari "Lebih menyukai produk hemat biaya dan menghargai ulasan pengguna."
+2. Tingkat kedua melakukan klasterisasi. Memori yang serupa dikelompokkan, dan ringkasan yang mewakili dibuat untuk setiap grup (misalnya, beberapa percakapan terkait cuaca dikompresi menjadi "Pengguna sering bertanya tentang cuaca, dengan perhatian khusus mengenai hujan"). Memori terperinci yang asli dapat diarsipkan ke penyimpanan sekunder.
+
+3. Tingkat ketiga mengabstraksi dan menggeneralisasi—mengekstrak aturan umum dari Episodic Memory spesifik dan mengubahnya menjadi Semantic atau Procedural Memory. Misalnya, dari berbagai percakapan belanja, sistem mungkin mempelajari "Lebih menyukai produk hemat biaya dan menghargai ulasan pengguna."
 
 Deteksi konflik menggunakan pendekatan pembuatan versi—versi historis dipertahankan sementara versi terbaru ditandai. Untuk informasi tertentu (misalnya, alamat saat ini), hanya versi terbaru yang disimpan; untuk informasi lain (misalnya, riwayat pekerjaan), riwayat lengkapnya dipertahankan.
-
-Terakhir, batas harus ditarik untuk menghindari kebingungan dengan bab-bab lain. Bagian ini membahas algoritma organisasi pada **lapisan penyimpanan** memori—memori mana yang akan dipilih, diklasterisasi, dan diabstraksikan, serta dalam bentuk apa. Kompresi konteks dalam Bab 2 membahas masalah jendela dalam sesi tunggal; kedua mekanisme tersebut beroperasi pada level yang berbeda. Bab ini juga bertanggung jawab atas penyimpanan, pengindeksan, dan pengambilan Knowledge Base. Bab 9 menggeneralisasikan pola dua tahap "tambahkan bukti secara online, konsolidasikan secara offline" ("append evidence online, consolidate it offline") terhadap evolusi perilaku Agent, meneliti bukti operasional apa yang cukup untuk memicu pembaruan yang persisten.
 
 ### Perlindungan Privasi: Pembersihan Log (Log Sanitization)
 
@@ -289,31 +257,9 @@ Sejauh ini kita berfokus pada **representasi dan manajemen** memori—dalam form
 
 Teknologi inti untuk membangun Knowledge Base yang dibagikan adalah Retrieval-Augmented Generation (RAG). Gagasan utamanya adalah untuk menggabungkan kemampuan berpikir dan generasi (pembuatan) dari Large Language Models dengan keluasan dan ketepatan waktu dari Knowledge Base eksternal—data pelatihan model memiliki tanggal batas, sedangkan Knowledge Base dapat diperbarui kapan saja.
 
-Sistem RAG yang khas terdiri dari dua bagian: sebuah retriever (pengambil), yang menemukan fragmen relevan dari Knowledge Base, dan sebuah generator (biasanya LLM), yang menggunakan fragmen-fragmen ini sebagai konteks untuk menghasilkan sebuah jawaban. Mari kita rasakan terlebih dahulu secara intuitif bagaimana RAG bekerja melalui dua contoh, kemudian pelajari detail teknis dari retriever tersebut.
+Sistem RAG yang khas terdiri dari dua bagian: sebuah retriever (pengambil), yang menemukan fragmen relevan dari Knowledge Base, dan sebuah generator (biasanya LLM), yang menggunakan fragmen-fragmen ini sebagai konteks untuk menghasilkan sebuah jawaban.
 
-**Contoh 1: Knowledge Base Wikipedia.** Seorang pengguna bertanya, "Apa itu keterikatan kuantum (quantum entanglement)?" Data pelatihan model dasar mungkin tidak menyertakan hasil eksperimen terbaru. Proses RAG adalah sebagai berikut:
-
-```python
-# 1. Kueri pengguna
-query = "What is quantum entanglement? What are the latest experimental advances?"
-
-# 2. Retrieval: Temukan fragmen paling relevan dari Knowledge Base Wikipedia
-results = retriever.search(query, top_k=3)
-# results = [
-# "Quantum entanglement is a quantum mechanical phenomenon where the quantum states of two particles are correlated...",
-# "The 2022 Nobel Prize in Physics was awarded to three scientists for experiments with quantum entanglement...",
-# "Bell's inequality experiments have demonstrated the non-locality of quantum entanglement..."
-# ]
-
-# 3. Generation: Gunakan hasil yang di-retrieve sebagai konteks untuk LLM menghasilkan jawaban
-answer = llm.generate(
-    system="Jawab pertanyaan pengguna berdasarkan materi referensi berikut. Jika materi tidak mencukupi, nyatakan dengan jelas.",
-    context=results,   # ← Fragmen Knowledge Base yang di-retrieve disuntikkan ke dalam konteks
-    question=query
-)
-```
-
-**Contoh 2: Company Knowledge Base.** Seorang pengguna bertanya, "Saya membeli sesuatu dan ingin pengembalian dana. Bagaimana prosesnya?":
+Mari kita rasakan dulu secara intuitif bagaimana RAG bekerja melalui satu contoh company knowledge base: seorang pengguna bertanya, "Saya membeli sesuatu dan ingin pengembalian dana. Bagaimana prosesnya?":
 
 ```python
 query = "Proses pengembalian dana"
@@ -570,7 +516,9 @@ Desain intinya adalah **pemuatan berdasarkan permintaan (on-demand loading) kont
 
 **Memilih teks biasa Markdown alih-alih database khusus sebagai representasi dasar pengetahuan** merupakan keputusan rekayasa yang tampaknya berlawanan dengan intuisi tetapi dipertimbangkan dengan cermat. Teks biasa memungkinkan pengguna membaca, mengedit, dan mengoreksi pengetahuan Agent secara langsung; Git menyediakan version control dan rollback; dan yang lebih penting, dengan kemampuan `write_file`, Agent dapat mencatat serta mengatur pengetahuan secara otonom di working branch sebelum menggabungkannya ke basis utama melalui proses review yang dijelaskan nanti. Pada akhir sesi, sistem dapat mengusulkan pembaruan preferensi pengguna ke `user/memories/` dan catatan operasional ke `agent/memories/`. Yang pertama tetap merupakan manajemen pengetahuan pengguna dalam bab ini; yang kedua baru menjadi experience learning dalam pengertian Bab 9 setelah outcome evaluation, generalisasi lintas trajectory, dan validasi berikutnya—bukan dengan memperlakukan operasi sembarang sebagai pengalaman yang andal.
 
-Namun, mengadopsi organisasi bergaya sistem file teks biasa ini memiliki prasyarat yang mudah diabaikan tetapi secara langsung menentukan keberhasilan retrieval: **tautan dan indeks harus dibuat di antara file-file**. File `.abstract`/`.overview` yang disebutkan sebelumnya menangani peringkasan hierarkis yang vertikal. Apa yang ditekankan di sini adalah asosiasi horizontal—jika pengetahuan sekadar dipisah menjadi tumpukan file teks independen yang ditata datar di dalam sebuah direktori tanpa referensi silang di antara mereka, maka, selain dari memindai semua file secara berurutan atau menggunakan vektor retrieval, Agent hampir tidak memiliki cara untuk menavigasi di antara entri-entri yang terkait. Semakin banyak pengetahuannya, semakin sulit tumpukan file yang tersebar ini untuk ditarik. Pendekatan yang tepat adalah mengatur Knowledge Base seperti Wikipedia: setiap kali sebuah entri menyebutkan entri lain, ia menautkan ke entri tersebut, dilengkapi dengan halaman entri dan halaman indeks, sehingga Agent dapat berjalan dari satu konsep ke tetangganya—tautan file ringan memberikan beberapa kekuatan navigasi dari grafik entitas-hubungan milik GraphRAG. Ada juga perbedaan praktis yang krusial di sini: **model bervariasi dalam seberapa andal mereka membuat dan memelihara tautan tersebut**. Model yang lebih kuat, saat menulis pengetahuan baru, secara spontan akan merujuk kembali ke entri yang ada dan memelihara indeks. Namun, banyak model tidak melakukan ini secara proaktif, dan hanya menambahkan (append) file secara terisolasi. Oleh karena itu, prompt penulisan pengetahuan harus secara eksplisit mewajibkan hal ini—untuk setiap entri baru yang ditambahkan, sistem harus terlebih dahulu menarik dan menautkan ke entri yang sudah ada yang relevan, dan memperbarui halaman indeks dari direktori tempatnya berada, membentuk jaringan referensi yang dapat dijangkau secara dua arah, alih-alih membiarkan pengetahuan tersebut menjadi entri yang terputus.
+Namun, mengadopsi organisasi bergaya sistem file teks biasa ini memiliki prasyarat yang mudah diabaikan tetapi secara langsung menentukan keberhasilan retrieval: **tautan dan indeks harus dibuat di antara file-file**. File `.abstract`/`.overview` yang disebutkan sebelumnya menangani peringkasan hierarkis yang vertikal. Apa yang ditekankan di sini adalah asosiasi horizontal—jika pengetahuan sekadar dipisah menjadi tumpukan file teks independen yang ditata datar di dalam sebuah direktori tanpa referensi silang di antara mereka, maka, selain dari memindai semua file secara berurutan atau menggunakan vektor retrieval, Agent hampir tidak memiliki cara untuk menavigasi di antara entri-entri yang terkait. Semakin banyak pengetahuannya, semakin sulit tumpukan file yang tersebar ini untuk ditarik. Pendekatan yang tepat adalah mengatur Knowledge Base seperti Wikipedia: setiap kali sebuah entri menyebutkan entri lain, ia menautkan ke entri tersebut, dilengkapi dengan halaman entri dan halaman indeks, sehingga Agent dapat berjalan dari satu konsep ke tetangganya—tautan file ringan memberikan beberapa kekuatan navigasi dari grafik entitas-hubungan milik GraphRAG.
+
+Ada juga perbedaan praktis yang krusial di sini: **model bervariasi dalam seberapa andal mereka membuat dan memelihara tautan tersebut**. Model yang lebih kuat, saat menulis pengetahuan baru, secara spontan akan merujuk kembali ke entri yang ada dan memelihara indeks. Namun, banyak model tidak melakukan ini secara proaktif, dan hanya menambahkan (append) file secara terisolasi. Oleh karena itu, prompt penulisan pengetahuan harus secara eksplisit mewajibkan hal ini—untuk setiap entri baru yang ditambahkan, sistem harus terlebih dahulu menarik dan menautkan ke entri yang sudah ada yang relevan, dan memperbarui halaman indeks dari direktori tempatnya berada, membentuk jaringan referensi yang dapat dijangkau secara dua arah, alih-alih membiarkan pengetahuan tersebut menjadi entri yang terputus.
 
 ### Bagaimana Pengetahuan Harus Diperbarui
 
@@ -681,7 +629,7 @@ Keanggunan metode ini adalah memperkuat kedua mode *retrieval* sekaligus. Untuk 
 >
 > Ketika pengguna memasukkan kueri yang membutuhkan *context* spesifik, seperti "Berapa pertumbuhan pendapatan ACME Corporation baru-baru ini?", perbedaannya langsung terlihat. Di dalam Knowledge Base ***context-free***, kueri tersebut mungkin mencocokkan banyak blok teks yang berisi kata kunci "pertumbuhan pendapatan" tetapi dari perusahaan yang berbeda, tahun yang berbeda, atau bahkan analisis industri umum, menghasilkan relevansi yang rendah dan *noise* yang tinggi. Di dalam Knowledge Base ***context-aware***, karena setiap blok teks memiliki "tag identitas" yang presisi, *retrieval* dipandu secara akurat menuju blok teks yang tidak hanya mengandung kata kunci tersebut tetapi juga memiliki *context prefix* yang cocok dengan maksud kueri ("ACME Corporation", "baru-baru ini"). Catatan eksperimen dengan jelas menunjukkan bahwa hasil *context-aware retrieval* mendapatkan skor yang jauh lebih tinggi daripada hasil *context-free*, dan blok teks yang dikembalikan jauh lebih presisi.
 >
-> Biaya dari peningkatan performa ini adalah tambahan panggilan LLM selama fase *indexing*. Namun, hal ini sepenuhnya dapat dikontrol melalui *prompt caching* (mekanisme *caching* lintas-permintaan yang diperkenalkan pada Bab 2, di mana panggilan berulang untuk *prompt prefix* yang sama memakan biaya sekitar 1/10 dari aslinya), sehingga biayanya menjadi sekitar $1 per juta token dokumen. Menurut riset Anthropic, menggabungkan teknik ini dengan BM25 dapat mengurangi tingkat kegagalan *retrieval* (yaitu, tingkat kegagalan top-20 yang disebutkan dalam "How to Measure Retrieval Quality", 1 − recall@20) sebesar 49%, dan sebesar 67% jika digabungkan dengan sebuah *reranker*. Eksperimen ini memberikan argumen yang kuat: ketika membangun RAG kelas-produksi (*production-grade*), berinvestasi dalam prapemrosesan pengetahuan yang lebih cerdas dan sadar konteks (*context-aware*) adalah keputusan *engineering* dengan tingkat pengembalian yang luar biasa.
+> Biaya dari peningkatan performa ini adalah tambahan panggilan LLM selama fase *indexing*. Namun, hal ini sepenuhnya dapat dikontrol melalui *prompt caching* (mekanisme *caching* lintas-permintaan yang diperkenalkan pada Bab 2, di mana panggilan berulang untuk *prompt prefix* yang sama memakan biaya sekitar 1/10 dari aslinya), sehingga biayanya menjadi sekitar $1 per juta token dokumen. Menurut riset Anthropic, menggabungkan teknik ini dengan BM25 dapat mengurangi tingkat kegagalan *retrieval* sebesar 49%, dan sebesar 67% jika digabungkan dengan sebuah *reranker*. Eksperimen ini memberikan argumen yang kuat: ketika membangun RAG kelas-produksi (*production-grade*), berinvestasi dalam prapemrosesan pengetahuan yang lebih cerdas dan sadar konteks (*context-aware*) adalah keputusan *engineering* dengan tingkat pengembalian yang luar biasa.
 
 Hal itu memvalidasi Contextual Retrieval pada Knowledge Base dokumen. Menerapkan teknik yang sama pada skenario User Memory memberi kita eksperimen berikutnya.
 

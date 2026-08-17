@@ -38,11 +38,9 @@ Dört kısım aynı ilkel kümesini paylaşır—**uyandırma, güvenli nokta, i
 
 **Okuma sırasında bilinçli bir düzenleme var: bu bölüm sese, kendisinden sonraki iki senaryodan belirgin biçimde daha çok yer ayırıyor.** Gerçek zamanlı etkileşimin evrim hattında ses, en uzağa gitmiş ve referans çerçevesi olarak en değerli örnektir: "seri boru hattının gecikmesi çok yüksek" sorunundan yola çıkıp uçtan uca, tam çift yönlü ve konuşurken düşünme gibi bir dizi çözümden geçerek bugünün görece oturmuş nihai tablosuna varır; sorun → çözüm → nihai tablo yolculuğunun tamamı çoktan kat edilmiştir. Bu yüzden onu enine boyuna anlatıyoruz; sonraki Computer Use ve robot bölümleri bu hatla karşılaştırılarak okunabilir—her biri bu evrim hattının neresine gelmiş ve nerede takılmıştır.
 
-Bölümün **asenkron ve olay güdümlü** ile açılması ise okura en yakın konu olmasındandır: kip hâlâ saf metindir, değişen yalnızca zamanlamadır. Önceki beş bölümün sıralı tur dünyasından atılan ilk adımdır ve "sıralı tur varsayımı" savının ilk kez yere bastığı yerdir.
-
 ## Asenkron ve Olay Güdümlü: Dünya Kapınızı Çaldığında
 
-Bölüm 4'te ele alınan algı, yürütme ve iş birliği araçlarının üçü de Agent'ın kendisi tarafından çağrılır—ne zaman bakacağına ve ne zaman harekete geçeceğine o karar verir. Bu kısım, zamanlama ekseninin en yavaş ucuna geçiyor: Agent saatler hatta günler süren görevleri nasıl yönetir ve her an gelebilecek dış olaylara nasıl yanıt verir? Bunun için olay güdümlü asenkron bir mimari gerekir; Bölüm 1'deki beş araç kategorisinden kalan ikisi—olay tetikleyici araçlar ve kullanıcı iletişim araçları—tam da bu mimariye dayanarak işlediği için burada birlikte ele alınıyor.
+Bölüm 4'te ele alınan algılama, yürütme ve işbirliği araçlarının tümünü Agent etkin biçimde çağırır. Peki Agent, herhangi bir anda gelebilecek dış olaylara nasıl yanıt vermelidir? Bunun için olay güdümlü asenkron bir mimari gerekir. Bölüm 1'de kalan iki araç sınıfı—olay tetikleme ve kullanıcı iletişimi araçları—da bu mimariye dayanır; bu yüzden burada birlikte ele alınır.
 
 ### Asenkronluk Neden Gereklidir
 
@@ -176,23 +174,6 @@ Sabit kodlanmış kuralların sınırlamaları vardır; olayın semantiği işle
 
 Aşağıdaki deney, olay güdümlü bir e-posta işleme Agent'ı, yukarıda tartışılan olay işleme stratejilerini çalıştırılabilir bir uygulamaya dönüştürür.
 
-**Olay döngüsü yönlendirmesi:**
-
-```python
-while runtime.is_alive:
-    events = queue.take_batch()
-
-    if any(is_urgent(event) for event in events):
-        cancel_at_safe_point(current_work)
-    elif has_independent_fast_query(events):
-        start_parallel_session(events)
-    else:
-        append_to_trajectory(events)
-
-    decision = LLM(context + trajectory)
-    dispatch(decision)
-```
-
 > **Deney 6-1 ★★★: Olay Güdümlü E-posta İşleme Agent'ı**
 >
 >
@@ -300,11 +281,9 @@ Robotik alanındaki VLA (Vision-Language-Action, bkz. Bölüm 6) modelleri zaten
 
 Bu asenkron RL eğitimini gerçekleştirmek yeni altyapı gerektirir: bir asenkron ortam simülatörü (geciktirilmiş araç dönüşleri, rastgele kullanıcı kesintileri gibi senaryolar üretmek) ve asenkron yetenekler için özel ödüller (sırasız trajectory'leri doğru anlamak, kesintiye uğramış düşünceleri başarıyla devam ettirmek, halüsinasyonlardan kaçınmak, toplu olayları kapsamlı biçimde işlemek).
 
-Ancak, sürekli düşünme bir sonraki nesil modelleri beklemek zorunda değildir. İnce bir orkestrasyon mantığı katmanı (yaklaşık iki yüz satır), **hazır** bir metin-düşünen modeli yerinde **sürekli zamanlı** bir Agent'a dönüştürebilir[^ch6-async-1]—yukarıdaki "mühendislik çaresi" ve "model evrimi" yarılarını düzgün biçimde köprüler. Mekanizma, yükseltilmiş Kural 4'tür: bir kesinti üzerine yarım kalmış bir düşünceyi **atmak** yerine, tüm etkileşimi **tek, kesintisiz bir düşünce akışı** olarak inşa edin—herhangi bir anda, modelin yazmakta olduğu `<think>` bloğunu zorla kapatın, yeni gelen gözlemi (bir araç dönüşü, bir kullanıcı kesintisi, taze bir tanıma sonucu) sıradan bir mesaj olarak enjekte edin ve modelin çözmeye devam etmesine izin verin. Bu, genellikle boşa giden bir kaynaktan yararlanır: bir model saniyede binlerce token üretebilir, bir tool call veya bir kullanıcı ifadesi ise birkaç saniye sürer—bu beklemeler **ücretsiz hesaplamadır**, önceden düşünmek için kullanılabilir. İki davranış ortaya çıkar: **beklerken düşünme**—aracın dönmesini veya kullanıcının konuşmayı bitirmesini beklemek yerine, model zaten sahip olduğu kısmi bilgi üzerinde reasoning yapar, hatta bir sonraki tool call'ı erkenden ateşler (bu "öngörücü düşünme" eğilimi birden fazla model ailesinde sıfır-atış olarak yeniden üretildi; veriler için dipnottaki makaleye bakın); ve **yaparken düşünme**—çıktı üretirken düşünmeye devam etmek, eylem ortasında kendini düzeltebilmek.
+Sürekli düşünmek için yeni nesil modelleri beklemek gerekmez. Yaklaşık iki yüz satırlık orkestrasyon, **mevcut** bir metin akıl yürütme modelini **continuous-time** Agent'a dönüştürerek yukarıdaki mühendislik çözümüyle model evrimini birbirine bağlayabilir. Bu, Kural 4'ün yükseltilmiş hâlidir: kesilen yarım düşünceyi atmak yerine tüm etkileşimi kesintisiz bir düşünce akışı olarak kurar. Çalışma zamanı modelin yazdığı `<think>` bloğunu zorla kapatabilir, yeni gelen araç sonucunu, kullanıcı kesmesini veya tanıma güncellemesini sıradan mesaj olarak ekleyip decoding'e devam edebilir.
 
-Ama bu araştırmanın daha kritik yarısı **eğitimle** ilgilidir ve yukarıdaki "model evrimini öngörme" çağrısını yanıtlar: yalnızca orkestrasyon sürekli düşünmeyi **mümkün** kılar; bunun **faydalı** hale gelip gelmeyeceği eğitim sinyaline bağlıdır. Araştırma, "LLM-as-judge" tarzı bir ödülle, modelin düşüncelerini gizlemeyi öğrendiğini buldu—sessizliği hakemin onayıyla takas ederken, nesnel metrikler aslında kötüleşiyor; yalnızca bilgi kapsamını koruyan doğrulanabilir hedefler sürekli düşünmeyi karlı kılıyor. Özetle: **orkestrasyon davranışı mümkün kılar; eğitim davranışı iyi kılar**—bu da bu bölümün, asenkron yeteneğin nihayetinde doğru eğitim yoluyla pekiştirilmesi gerektiği, sonsuza dek prompt engineering ile yamanmaması gerektiği yargısını doğrular.
-
-[^ch6-async-1]: Yaklaşık iki yüz satırlık orkestrasyonun hazır bir düşünen modeli sürekli zamanlı bir Agent'a dönüştürebileceği ve "eğitim sinyalinin sürekli düşünmenin faydalı olup olmadığını belirlediği" iddiası şuradan gelir: Li, Bojie and Noah Shi. *Never Stop Thinking: Continuous-Time Language Agents.* 2026 (yayınlanacak).
+Bu mekanizma çoğu zaman boşa giden bir kaynağı kullanır: model saniyede yüzlerce token üretebilirken bir araç çağrısı veya kullanıcının konuşması birkaç saniye sürebilir. Bu bekleme süresi düşünmeye ayrılabilir. Böylece Agent **beklerken düşünebilir**—kısmi bilgiden ilerleyip bir sonraki aracı erkenden başlatabilir—ve **eylemdeyken düşünebilir**—çıktı üretirken akıl yürütmeyi sürdürüp eylemin ortasında kendini düzeltebilir.
 
 > **Deney 6-2 ★★★: Paralel Yürütme ve Kesinti Yetenekleriyle Asenkron Agent**
 >
@@ -322,6 +301,8 @@ Ama bu araştırmanın daha kritik yarısı **eğitimle** ilgilidir ve yukarıda
 >
 > **4. Paralel Araçlar için İptal ve Durum Sorgusu**: Bir asenkron araç tamamlandıktan sonra, gerçek sonuç yeni bir olay aracılığıyla konuşmaya enjekte edilir. Görev ID'si aracılığıyla iptal veya ilerleme sorgusunu destekler. **Doğrulama Senaryosu**: Kullanıcı "Bu üç betiği benim için eş zamanlı çalıştır. Hangisi önce biterse, kalan betiklerin ilerlemesini kontrol et. Herhangi biri %50'yi aşmadıysa, iptal et" diye ister. Üç betik, sırasıyla saniyede %3, %2 ve %1 hızlarında sürekli ilerleme çıktısı vererek analiz süreçlerini simüle eder. Agent, üç asenkron terminal komutunu eş zamanlı olarak başlatır. Saniyede %3'lük betik yaklaşık 33 saniyede bittiğinde, Agent kalan iki terminalin durumunu sorgular, birinin yaklaşık %66'da, diğerinin ise yaklaşık %33'te olduğunu bulur. Ardından %50'yi aşmayanı iptal eder. Her iki terminal de tamamlandıktan sonra, sonuçları eksiksiz bir rapor üretmek için entegre eder.
 >
+
+Asenkron ve olay güdümlü yürütme, dünyanın Agent'ı her an uyandırmasını sağlar; ancak modelin yanıt vermeden önce düşünmesini bitirebileceğini varsayar. Sonraki üç bölüm bu varsayıma meydan okur: ortam model üretimi kadar hızlı veya daha hızlı değiştiğinde, “önce düşünüp sonra konuşmak” kabul edilemez bir gecikmeye dönüşür.
 
 ## Ses: En Doğal İnsan-Makine Arayüzü
 
@@ -343,21 +324,7 @@ Ortak hedef, insanların mutlaka sırayla konuşması ve VAD'nin kimin söz hakk
 
 [^ch6-12]: OpenAI, *Introducing GPT-Live*, 2026-07-08. https://openai.com/index/introducing-gpt-live/ Kaskad / sıra tabanlı / full-duplex sınıflandırması, yazının ChatGPT Voice'un üç kuşağına dair özetinden gelir; “uçtan uca omnimodal (Omni)” terimi “turn-based voice models” kategorisine karşılık gelir.
 
-**Akış iptali:**
-
-```python
-while audio_is_arriving:
-    partial = asr.push(audio_chunk)
-    if endpoint_is_probable(partial):
-        candidate = llm.start(partial)
-        if later_audio_changes_meaning(partial):
-            cancel(candidate)                 # speculative cancellation
-        else:
-            tts.enqueue_stable_segments(candidate)
-
-on_final_transcript(text):
-    commit_or_restart(text)
-```
+Kaskad sistem seri yürütmeden akışa geçerken en önemli değişiklik her işlevi `async` yapmak değil, **artımlı sonuçların geçersizleşip iptal edilebilmesine izin vermektir**.
 
 ### Paradigma 1 · Kaskad boru hattı
 
@@ -380,11 +347,7 @@ Reasoning içermeyen kısa bir yanıtta VAD, ASR, LLM ve TTS beklemeleri seri bi
 
 > **Deney 6-3 ★: Geleneksel bir sesli Agent inşa etmek**
 >
-> Mikrofonu, Silero VAD'yi, yerel Whisper'ı, akışlı bir LLM'i ve Fish S1 TTS'yi WebSocket üzerinden bağlayarak kaskad temel hattını kurun. Saklanan gerçek tek turlu kanıt, medya ve model zincirinin uçtan uca çalıştığını gösterir; eşzamanlılık veya üretim yükü benchmark'ı değildir. Kod ve kabul kaydı: [chapter6/live-audio](../chapter6/live-audio/).
-
-> **Ek: WebRTC ile “kullanıcıyı arayan” bir sesli Agent**
->
-> Telefon Agent'ı için PSTN şart değildir. Tarayıcı WebRTC'si oturum açma, eksik bilgileri isteme, teyit için tekrarlama ve yapılandırılmış sonuç kaydetme döngüsünü yeniden üretir. Harici bir kuruluşla bağlantı gerektiğinde aynı tool sözleşmesi uygun bir PSTN/SIP sağlayıcısına bağlanabilir. Tam medya yolu, direct/ReAct karşılaştırması ve kabul kanıtı [chapter6/phone-agent](../chapter6/phone-agent/) içindedir. Proje tarihsel \`exp9-2\` çalıştırma kimliklerini korur, ancak artık metinde numaralı bir deney değildir.
+> Mikrofonu, Silero VAD'ı, yerel Whisper'ı, akışlı bir LLM'i ve Fish S1 TTS'i WebSocket üzerinden bağlayarak kademeli baseline'ı kurun.
 
 #### Seriden akışlı algıya
 
@@ -394,11 +357,13 @@ Sıradan streaming, VAD'nin sessizlik beklemesini de ortadan kaldırmaz. VAD + A
 
 Metin belirteçlerine ek olarak \`speak_start/end\`, \`interrupt\`, \`emotion\`, \`laugh\`, \`sigh\` ve \`noise\` işaretleri konuşma sınırlarını, kesme niyetini, duyguyu, tereddüdü ve çevresel sesi taşıyabilir. Böylece her akustik olay düz metne sıkıştırılmaz.
 
+Amaç yalnızca kullanıcının konuşmayı bitirip bitirmediğine karar vermekse, sıra sonu kararı doğrudan akışlı tanıyıcıya yerleştirilebilir. Eğitim etiketleri yalnızca karar anında görülebilen bilgileri kullanmalıdır; aksi hâlde sonradan edinilen bilgi, çevrimiçi ortamda yeniden üretilemeyecek bir karar doğurur[^ch6-11]. Bu yol, eksiksiz bir ses LLM'sinden daha hafiftir.
+
 [^ch6-11]: Tur kararını tanıyıcıya gömme ve geleceğe bakan etiketler sorununa ilişkin teşhis için bkz. Bojie Li ve Noah Shi, *The Trade-off Was in the Labels: Causal Supervision for Turn-Aware Streaming ASR*, 2026 (yayına hazırlanıyor).
 
 > **Deney 6-4 ★: Qwen2-Audio ile akışlı konuşma algısını simüle etmek**
 >
-> Qwen2-Audio kendi başına bir streaming modeli değildir. Deney, artan ses önekleriyle sürekli algıyı simüle eder ve 600 ms VAD + Whisper ile karşılaştırır. Canonical run tüm yürütme ve provenance kapılarını geçti, ancak beklenen altı davranıştan yalnızca ikisini yeniden üretti: önek çağrıları 8,4–11,3 saniye sürdü, pause örneğinde \`silence\` kaçırıldı ve noise örneği \`cough/laughter\` olarak yanlış sınıflandırıldı. Bu mekanizma ve hata kiplerini sınayan negatif bir sonuçtur; 100–200 ms gerçek streaming algısının kanıtı değildir. Tam kayıt: [chapter6/streaming-speech](../chapter6/streaming-speech/).
+> Qwen2-Audio kendi başına akışlı bir model değildir. Bu deney, büyüyen ses önekleriyle sürekli algıyı simüle eder ve 600 ms VAD + Whisper ile karşılaştırır.
 
 ### Paradigma 2 · Uçtan uca omnimodal modeller (Omni)
 
@@ -414,17 +379,7 @@ Gerçek zamanlı konuşma API'leri kaskad ile Omni arasında durur: model sesi d
 
 > **Deney 6-5 ★★: MiniCPM-o 4.5'i yerel çalıştırmak — uçtan uca ve öz-kaskad**
 >
-> Tek bir yerel revizyonu sabitleyin, düşünme modunu kapatın ve sese doğrudan yanıtı aynı modelin öz-kaskadıyla (önce transkript, sonra metinden yanıt) karşılaştırın. Bu ölçüm ses bilgisinin korunmasını ölçer; daha sonraki “konuşurken düşünme” yeteneğini değil.
-> Tablo 6-1 MiniCPM-o 4.5 yerel sonuçları: uçtan uca ve öz-kademe (dört mekanizma kontrolü, bir benchmark değil)
->
->
-> | Görev türü | Uçtan uca | Öz-kaskad | Gözlem |
-> | --- | ---: | ---: | --- |
-> | Anlamsal aritmetik (2) | 1/2 | 2/2 | Öz-kaskad bir transkripsiyon hatasını düzeltti |
-> | Paralinguistik konuşma hızı (2) | 2/2 | 1/2 | Düz metin hızlı/yavaş ayrımını sildi |
-> | Toplam | 3/4 | 3/4 | Eşit toplam, birbirini tamamlayan hatalar |
->
-> Örneklem küçüktür; hangi yolun genel olarak daha doğru veya hızlı olduğunu kanıtlamaz. Sürümler, ham çıktılar ve gerçek audio-to-audio kanıtı [chapter6/end-to-end-speech](../chapter6/end-to-end-speech/) içindedir.
+> MiniCPM-o 4.5'i thinking mode kapalı olarak yerelde çalıştırın; sesten doğrudan yanıtı, aynı modelin önce yazıya döküp sonra yanıtladığı self-cascade ile karşılaştırın. Bu, ses bilgisinin korunup korunmadığını ölçer; ilerideki **“konuşurken düşünme”yi değil**.
 
 Step-Audio 2 ham sesi işleyerek metin ve konuşma çıkaran uçtan uca yolu gösterir; duygu, konuşma hızı, tonlama ve ortam sesine odaklanır. Step-Audio R1 düşünmeyi ses modelinin içine alır ve “konuşurken düşünme” örneğini sağlar.
 
@@ -433,8 +388,6 @@ Step-Audio 2 ham sesi işleyerek metin ve konuşma çıkaran uçtan uca yolu gö
 Omni “kullanıcı konuşur” ve “model konuşur” ayrımını korur, ancak simultane çeviri gibi görevler örtüşme ister. Full-duplex model sürekli dinler ve konuşur; devam etme, durma, araya girme veya tool çağırma kararını yinelemeli olarak verir. Kyutai'nin Moshi'si erken bir araştırma örneğidir. Thinking Machines Lab bu yaklaşımı **Interaction Model**[^ch6-14] olarak adlandırır: etkileşim VAD çevresinde dışarıdan kurulmaz, modelin içine yerleştirilir. GPT-Live bunu üretim ölçeğine taşır ve ön plandaki model sohbeti sürdürürken karmaşık işi arka plan reasoning modeline devreder.
 
 [^ch6-14]: Thinking Machines Lab, “Interaction Models: A Scalable Approach to Human-AI Collaboration”, 2026-05. https://thinkingmachines.ai/blog/interaction-models/
-
-Gelişim çizgisi şöyledir: kaskad sessizlik eşikleriyle turları tahmin eder; akışlı algı kararı anlamsal düzeye taşır; full-duplex ise sıra değişimini sürekli bir model kararına dönüştürür.
 
 ### Bilişsel zaman: gerçek zamanlı etkileşim ve derin düşünme
 
@@ -464,10 +417,7 @@ Hızlı düşünme birkaç yüz milisaniye içinde bir dolgu yanıtı verebilirk
 
 İdealde model duyguyu perde, ritim ve tonlamadan çıkarmalı, yalnızca deşifre metnine bakmamalıdır. "Metin vekilli düşünme" denen şey, modelin ezgi ve akustik öznitelik analizinin yerine şarkı sözlerindeki olumsuz kelimeleri koymasıdır. MGRD gerçekten akustik özniteliklere atıf yapan düşünme süreçlerini süzer, bu veriyle modeli eğitir ve pekiştirmeli öğrenmeyle modelin düşünmeyi atlayıp doğrudan yanıtı tahmin etmesini engeller.
 
-MPS'de tasarlayan beyin sürekli düşünce parçaları üretir; ifade eden beyin bir parçayı alır almaz, verdiği yanıtla birleştirerek hemen konuşma üretir. İkisi bir boru hattı gibi paralel çalıştığı için, kullanıcının ilk cümleyi duyması adına düşünmenin tümüyle bitmesini beklemek gerekmez (Şekil 6-11).
-
-
-![Şekil 6-11: Step-Audio R1'in MGRD ve MPS çift beyin mimarisi](images/fig6-11.svg)
+MPS'de tasarlayan beyin sürekli düşünce parçaları üretir; ifade eden beyin bir parçayı alır almaz, verdiği yanıtla birleştirerek hemen konuşma üretir. İkisi bir boru hattı gibi paralel çalıştığı için, kullanıcının ilk cümleyi duyması adına düşünmenin tümüyle bitmesini beklemek gerekmez.
 
 
 Birleşik model "konuşurken düşünmeyi" en sıkı biçimde gerçekleştirir; bedeli, düşünme ile gerçek zamanlı ifadenin birlikte yeniden eğitilmesi gerekmesidir. Ayrıştırılmış yolda arka plan beynini değiştirmek daha kolaydır; birleşik yol ise azami doğallık peşindeki özel senaryolara daha uygundur. İkisi bir ödünleşimdir, birbirinin basit ikamesi değil.
@@ -485,40 +435,26 @@ Buraya kadar okuyunca, bu bölümün sese ayırdığı yerin sonraki iki senaryo
 
 Bu üç senaryo görünüşte birbirinden çok farklıdır, ama aynı temel zorluklarla yüzleşir: gerçek zamanlı algı, düşük gecikmeli karar verme ve sürekli etkileşim. Şimdi bu teknik temaların görsel etkileşimde (Computer Use) ve fiziksel etkileşimde (robotik) nasıl yeniden ortaya çıktığına bakalım — önce bakış açısını işitsel modaliteden görsel modaliteye genişletelim: ya bir Agent yalnızca konuşmayı anlamakla kalmayıp ekranı da "görebilseydi" ve grafik arayüzü kullanabilseydi?
 
-Computer Use (GUI otomasyonu Agent'ı olarak da anılır), yapay zekanın tıpkı bir insan gibi ekranı gözleyerek ve fare ile klavyeyi kullanarak yazılım çalıştırmasını sağlar — örneğin bilgi aramak için tarayıcı açmak, bir tablo yazılımına veri girmek veya sistem ayarlarında bir yapılandırmayı değiştirmek. Özünde bir **algılama-düşünme-eylem** döngüsü vardır (Şekil 6-12):
+Computer Use (GUI otomasyonu Agent'ı olarak da anılır), yapay zekanın tıpkı bir insan gibi ekranı gözleyerek ve fare ile klavyeyi kullanarak yazılım çalıştırmasını sağlar — örneğin bilgi aramak için tarayıcı açmak, bir tablo yazılımına veri girmek veya sistem ayarlarında bir yapılandırmayı değiştirmek. Özünde bir **algılama-düşünme-eylem** döngüsü vardır (Şekil 6-11):
 
 1. Agent o anki ekranın görüntüsünü alır
 2. Çok modlu model ekran görüntüsünü ve görev talimatını alır, bir düşünme parçası ve somut bir eylem üretir
 3. Yürütme katmanı bu eylemi gerçek ortamda uygular (fareyi hareket ettirmek, tıklamak, metin girmek vb.)
 4. Arayüzün yanıt vermesini bekledikten sonra yeniden ekran görüntüsü alır ve döngünün bir sonraki turuna girer
 
-**Computer Use güvenlik döngüsü:**
+Burada **arayüzü anlamak** ile **görevi tamamlamak** birbirinden ayrılmalıdır. İlki çok modlu anlamaya daha yakındır ve tek bir ekran görüntüsü üzerinde soru-cevapla ölçülebilir; ikincisi ise modelin anlama ve eylem üretimini sayfa yüklenmesini, durum değişikliklerini, hatalı işlemleri ve geri döndürülemez sonuçları ele alan kapalı bir döngüye yerleştirmesini gerektirir. Dolayısıyla Computer Use'ın zorluğu yalnızca ekran görüntüsü hakkında doğru yanıt vermek değil, her adımdan sonra gerçeğin hâlâ planla uyuştuğunu yeniden doğrulamaktır.
 
-```python
-observation = capture_screenshot_and_accessibility_tree()
-proposal = model.decide(task, observation)
-action = validate_schema_and_coordinates(proposal)
-
-if action.is_irreversible and not user_or_policy_approval(action):
-    stop("approval required")
-else:
-    execute_in_sandbox_or_scoped_session(action)
-    new_observation = capture_after_settle()
-    if not verify_goal_progress(new_observation, action):
-        rollback_if_possible_or_replan()
-```
-
-![Şekil 6-12: Computer Use Agent'ının algılama-düşünme-eylem döngüsü](images/fig6-12.svg)
+![Şekil 6-11: Computer Use Agent'ının algılama-düşünme-eylem döngüsü](images/fig6-11.svg)
 
 
 Bu döngüde üç kritik tasarım boyutu vardır: **action space** (eylem alanı — Agent'ın hangi işlemleri yürütebildiği), **görsel konumlandırma** (ekran görüntüsünde hedef öğenin nasıl bulunacağı) ve **model mimarisi** (ekran görüntüsünden doğru eylemin nasıl üretileceği).
 
 ### Action Space Tasarımı
 
-Anthropic, eksiksiz bir etkileşim yeteneği oluşturan üç tür araç tanımlar (Şekil 6-13):
+Anthropic'in referans uygulaması eksiksiz etkileşim yeteneğini üç araç türüne ayırır (Şekil 6-12). Bu açık bir action-space tasarımıdır, ancak model sağlayıcılarının uyması gereken özel bir protokol değildir: Harness aynı ekran görüntülerini, eylem kısıtlarını ve yürütme sonuçlarını hedef modelin desteklediği mesajlara ve yapılandırılmış çıktılara çevirebildiği sürece Claude, açık ağırlıklı görsel modeller ve kendi barındırılan endpoint'ler aynı algılama-düşünme-eylem döngüsünü çalıştırabilir.
 
 
-![Şekil 6-13: Computer Use action space'i](images/fig6-13.svg)
+![Şekil 6-12: Computer Use action space'i](images/fig6-12.svg)
 
 
 **GUI işlem aracı** (computer tool): Fare işlemleri arasında hareket ettirme (mouse_move), sol/sağ/orta tuş tıklaması, çift/üçlü tıklama, sürükleme (left_click_drag) ve daha ince taneli basma/bırakma (left_mouse_down/up) yer alır. Kaydırma (scroll) dört yönü destekler ve değiştirici tuşlarla birlikte kullanılabilir. Klavye işlemleri arasında karakter karakter yazma (type; gerçek klavye kullanımını taklit etmek için her karakter arasında 12 ms aralıkla), tuş kombinasyonları (key, örneğin Ctrl+C) ve tuşu basılı tutma (hold_key) bulunur. Algı eylemleri: ekran görüntüsü alma (screenshot), imleç konumunu okuma (cursor_position) ve bekleme (wait).
@@ -531,10 +467,7 @@ Anthropic, eksiksiz bir etkileşim yeteneği oluşturan üç tür araç tanımla
 >
 > A yolu Anthropic Computer Use Demo'yu kullanır. Konteyner, tarayıcı, terminal ve diğer yaygın araçları içeren eksiksiz bir Ubuntu masaüstü ortamı sunar. Ön uç görevi alır; arka uç talimatları ve ekran görüntülerini Claude'a gönderir, ardından modelin döndürdüğü fare, klavye, terminal veya düzenleme eylemlerini yürütür. Bu yol, yerleşik `computer` aracı protokolünü anlamaya yöneliktir; her okuyucunun Anthropic API erişimine sahip olmasını gerektirmez.
 >
-> B yolu, kitabın [`chapter6/computer-use-open-model`](../chapter6/computer-use-open-model/) eşlikçi projesini kullanır. Varsayılan olarak browser-use'ı açık ağırlıklı Qwen3-VL 32B Instruct ile çalıştırır; OpenRouter barındırılan API'si kullanılabilir veya `OPEN_MODEL_BASE_URL`, kendi barındırdığınız vLLM/SGLang ya da başka bir uyumlu uç noktaya yönlendirilebilir. Uç nokta ekran görüntülerini kabul etmeli ve yerleşik JSON Schema'yı desteklemelidir; yalnızca normal JSON destekliyorsa schema-in-prompt uyumluluk modu açıkça etkinleştirilebilir.
->
-> İki yol da aynı salt okunur görevi ve aynı kabul sözleşmesini kullanır: en fazla 25 adım, adım başına tek bir eylem ve model/uç nokta kimliğinin, ham sağlayıcı yanıtlarının, adım adım ekran görüntülerinin, eylem dizisinin, nihai yanıtın ve durma nedeninin saklanması. Farklı modeller ayrı deney kolları olarak raporlanmalıdır; açık model sonucu Claude yeniden üretimi gibi sunulmamalı, “konteyner başarıyla başladı” ifadesi görev tamamlandı sayılmamalıdır. Eylem aralıkları ve planlama kalitesi ölçülen sonuçlardır; 2–5 saniye olacağı veya diğer modellerden mutlaka üstün olacağı önceden varsayılmaz.
->
+> B Yolu, [`chapter6/computer-use-open-model`](../chapter6/computer-use-open-model/) örnek kodunu kullanır. Varsayılan olarak browser-use'u açık ağırlıklı Qwen3-VL 32B Instruct ile, OpenRouter'ın barındırılan API'si üzerinden ya da `OPEN_MODEL_BASE_URL` self-hosted vLLM/SGLang veya başka bir uyumlu uç noktaya yönlendirilerek çalıştırır.
 
 ### Görsel Konumlandırma (Grounding)
 
@@ -546,7 +479,7 @@ Orijinal Set-of-Mark (SoM), 2023'te Microsoft Research tarafından, başlangıç
 
 **Yapısal öğe indeksleme: SoM fikrinin Web üzerindeki yapısal uygulaması.**
 
-Arayüzün kendisi yapısal bilgi sunabildiğinde işaretleme çok daha kesin yapılabilir. Modern web sayfaları, render edilmeden önce zaten eksiksiz bir öğe yapısı (DOM ağacı) ve semantik roller (hangisi düğme, hangisi giriş kutusu) tanımlar; erişilebilirlik arayüzü (Accessibility Tree) birçok masaüstü uygulaması için benzer bilgiyi sağlar. Bir segmentasyon modelinin piksellerden "hangi bölge düğme" diye tahmin yürütmesindense, doğrudan arayüzün kendisine "tıklanabilir hangi öğelerin var?" diye sormak daha iyidir. browser-use projesinin temsil ettiği Web Agent çözümleri tam olarak bunu yapar: etkileşimli öğeleri DOM'dan numaralandırarak listeler; bu, SoM fikrinin Web üzerindeki yapısal uygulaması sayılabilir (Şekil 6-14). Süreç dört adımdan oluşur:
+Arayüzün kendisi yapısal bilgi sunabildiğinde işaretleme çok daha kesin yapılabilir. Modern web sayfaları, render edilmeden önce zaten eksiksiz bir öğe yapısı (DOM ağacı) ve semantik roller (hangisi düğme, hangisi giriş kutusu) tanımlar; erişilebilirlik arayüzü (Accessibility Tree) birçok masaüstü uygulaması için benzer bilgiyi sağlar. Bir segmentasyon modelinin piksellerden "hangi bölge düğme" diye tahmin yürütmesindense, doğrudan arayüzün kendisine "tıklanabilir hangi öğelerin var?" diye sormak daha iyidir. browser-use projesinin temsil ettiği Web Agent çözümleri tam olarak bunu yapar: etkileşimli öğeleri DOM'dan numaralandırarak listeler; bu, SoM fikrinin Web üzerindeki yapısal uygulaması sayılabilir (Şekil 6-13). Süreç dört adımdan oluşur:
 
 1. Tarayıcının hata ayıklama arayüzü (CDP, Chrome DevTools Protocol) üzerinden sayfanın yapısal temsilini (DOM ağacı) ve erişilebilirlik bilgilerini elde etmek
 2. Hangi öğelerin etkileşimli olduğunu otomatik olarak tespit etmek (düğmeler, giriş kutuları, bağlantılar vb.)
@@ -566,37 +499,33 @@ Elements:
 Modelin yalnızca bir ID numarası üretmesi yeterlidir; sistem otomatik olarak o öğenin merkez koordinatını kullanarak tıklamayı gerçekleştirir. Bu tür çözümler token tasarrufu sağlamaz (çünkü tüm işaretleme bilgisinin modele gönderilmesi gerekir), ama konumlandırması kesin ve kararlıdır; üstelik segmentasyon modelinin yol açabileceği atlanmış ve yanlış tespitleri de ortadan kaldırır.
 
 
-![Şekil 6-14: Set-of-Mark ile yapısal öğe indeksleme (browser-use uygulaması)](images/fig6-14.svg)
+![Şekil 6-13: Set-of-Mark ile yapısal öğe indeksleme (browser-use uygulaması)](images/fig6-13.svg)
 
 **Saf koordinat tahmini.**
 
 Üçüncü yol hiçbir işaretleme yapmaz, doğrudan modelin koordinat üretmesini ister. **SeeClick** ve Claude'un computer use'u bunun temsilcileridir: devasa miktarda GUI ekran görüntüsü ve öğe konumu eşleşmesinden oluşan veriyle görsel modeller eğitilir ve modelin doğal dil betimlemelerini (örneğin "gönder düğmesine tıkla") doğrudan ekran görüntüsündeki kesin koordinatlara eşlemeyi öğrenmesi sağlanır — tıpkı bir insan kullanıcı gibi, tıklanacak yeri saf görme yoluyla bulur.
 
-Koordinat tahmini çözümlerinde modelin koordinatları kavrayışı, eğitim sırasında kullanılan çözünürlüğe yüksek oranda bağımlıdır (Şekil 6-15). Claude'un eğitiminde XGA (1024x768), WXGA (1280x800) ve FWXGA (1366x768) kullanılmıştır; girdi olarak verilen ekran görüntüsünün çözünürlüğü bunlarla uyuşmazsa modelin tahmin ettiği koordinatlar sistematik biçimde kayar — tıpkı küçük bir haritada ölçülen mesafeyi doğrudan büyük haritaya uygulamak gibi. Bu nedenle araç katmanında çift yönlü bir koordinat ölçekleme mekanizması gerekir ve hedef çözünürlük **en-boy oranına göre seçilmelidir**; aksi hâlde orantısız gerdirme görüntüyü bozar ve koordinat değerlendirmesini de saptırır. Örneğin gerçek ekran çözünürlüğü 2560×1440 (16:9) ise, Claude'un desteklediği üç seçenek arasından en-boy oranı 16:9'a en yakın olanı — FWXGA (1366×768) — seçilmelidir. Ekran görüntüsü orantılı biçimde 1366×768'e ölçeklenip modele verilir; model tıklama koordinatı olarak (683, 384) ürettiğinde bu değer ters yönde gerçek koordinata eşlenir: (683×2560/1366, 384×1440/768) ≈ (1280, 720). Buna karşılık 16:9'luk bir görüntü zorla 4:3'lük 1024×768'e gerdirilirse görüntü yatayda ezilir ve modelin tahmin ettiği koordinatlar sistematik olarak kayar.
+Koordinat tahmini çözümlerinde modelin koordinatları kavrayışı, eğitim sırasında kullanılan çözünürlüğe yüksek oranda bağımlıdır (Şekil 6-14). Claude'un eğitiminde XGA (1024x768), WXGA (1280x800) ve FWXGA (1366x768) kullanılmıştır; girdi olarak verilen ekran görüntüsünün çözünürlüğü bunlarla uyuşmazsa modelin tahmin ettiği koordinatlar sistematik biçimde kayar — tıpkı küçük bir haritada ölçülen mesafeyi doğrudan büyük haritaya uygulamak gibi. Bu nedenle araç katmanında çift yönlü bir koordinat ölçekleme mekanizması gerekir ve hedef çözünürlük **en-boy oranına göre seçilmelidir**; aksi hâlde orantısız gerdirme görüntüyü bozar ve koordinat değerlendirmesini de saptırır. Örneğin gerçek ekran çözünürlüğü 2560×1440 (16:9) ise, Claude'un desteklediği üç seçenek arasından en-boy oranı 16:9'a en yakın olanı — FWXGA (1366×768) — seçilmelidir. Ekran görüntüsü orantılı biçimde 1366×768'e ölçeklenip modele verilir; model tıklama koordinatı olarak (683, 384) ürettiğinde bu değer ters yönde gerçek koordinata eşlenir: (683×2560/1366, 384×1440/768) ≈ (1280, 720). Buna karşılık 16:9'luk bir görüntü zorla 4:3'lük 1024×768'e gerdirilirse görüntü yatayda ezilir ve modelin tahmin ettiği koordinatlar sistematik olarak kayar.
 
 
-![Şekil 6-15: Çözünürlük eşleştirme ve çift yönlü koordinat ölçekleme](images/fig6-15.svg)
+![Şekil 6-14: Çözünürlük eşleştirme ve çift yönlü koordinat ölçekleme](images/fig6-14.svg)
 
 
 Üç yol arasındaki seçim mantığı şöyle özetlenebilir: **yapısal bilgi elde edilebiliyorsa öncelikle DOM/Accessibility Tree indekslemesi kullanılmalıdır**; konumlandırması en kesin ve en kararlı olan budur. **Elde edilemiyorsa** (Photoshop gibi yerel masaüstü yazılımları, Canvas/WebGL ile render edilen arayüzler, oyunlar) **hem görsel işaretleme (orijinal SoM yolu) hem de koordinat tahmini kullanılabilir**. Görsel işaretleme konumlandırmayı çoktan seçmeli bir soruya dönüştürdüğü için, özel olarak eğitilmemiş genel amaçlı modellere daha dosttur; koordinat tahmini ise işaretleme adımını ortadan kaldırdığı için, GUI konumlandırma eğitimi almış modeller açısından daha doğrudandır. Küçük öğelerde ve yoğun arayüzlerde her ikisinin de doğruluğu hâlâ yetersizdir.
 
 > **Deney 6-8 ★: browser-use ile Otomatik Tarayıcı İşlemleri**
 >
-> Tarayıcı otomasyon çerçevesi Playwright'ı çok modlu bir modelle birleştirerek doğal dille yönlendirilen tarayıcı işlemlerini gerçekleştirin. SoM görselleştirmesini etkinleştirin ve her karardan önce açıklamalı sınırlayıcı kutular içeren ekran görüntüsünü kaydedin. Model arayüzü OpenAI veya Anthropic ile sınırlı değildir; kitap, açık Qwen3-VL modeli için API yapılandırması sağlar ve diğer barındırılan hizmetler ya da kendi barındırdığınız çıkarım için genel bir OpenAI uyumlu base URL sunar.
+> Tarayıcı otomasyon çerçevesi Playwright'ı çok modlu bir modelle birleştirerek doğal dille yönlendirilen tarayıcı işlemlerini uygulayın. SoM görselleştirmesini açın ve her karardan önce açıklama kutuları bulunan bir ekran görüntüsü kaydedin.
 >
-> “Google'ı aç ve San Francisco hava durumunu sorgula” test görevi: Başlatma sonrasında ekran görüntüsü, numaralandırılmış etkileşimli öğelerle Google arama sayfasını gösterir. Model arama kutusunu seçer, “San Francisco weather today” yazar, aramayı gönderir ve sonuç sayfasından sıcaklık ile hava koşullarını çıkarır. Kabul sırasında yanıt ve iz bağımsız olarak doğrulanır; gerçek adım sayısı ve geçen süre olduğu gibi kaydedilir. “5 adım, yaklaşık 20 saniye” yalnızca belirli bir çalışmanın gözlem değeri olabilir; yürütme kaydı olmadan sabit sonuç sayılamaz.
->
-> Kitapta saklanan resmi açık model çalışması, OpenRouter üzerindeki `qwen/qwen3-vl-32b-instruct` modelini kullandı. Model Google Search'ün 4. adımında CAPTCHA ile karşılaştığında başarılı olduğunu iddia etmedi; weather.com'a geçti ve 16. adımda San Francisco Today sayfasından 64°F, Sunny, hissedilen 62°F, en yüksek 74°F ve en düşük 55°F bilgilerini okudu. 16 API yanıtının tamamı istenen Qwen3-VL modelini bildirdi; 15 geçerli adım ekran görüntüsü ve salt okunur eylem izi bağımsız deterministik kabulden geçti. Bu sonuç açık model API yolunun çalıştığını kanıtlar; Anthropic'in yerleşik `computer` aracı kolunun yeniden üretildiği anlamına gelmez.
+> Test görevi “Google'ı açıp San Francisco hava durumunu ara”: başlangıçta ekran görüntüsü, etkileşimli öğeleri numaralanmış Google arama sayfasını gösterir. Model arama kutusunu seçer, “San Francisco weather today” yazar, aramayı gönderir ve sonuç sayfasından sıcaklık ile hava durumunu çıkarır.
 
 ### Animasyon Görebilen, Ses Duyabilen Computer Use Agent'ı
 
-Buraya kadar Computer Use'un algısı örtük bir varsayıma dayanıyordu: **ekran durağandır** — bir görüntü al, bir adım düşün, bir kez tıkla, sonra bir görüntü daha al. Oysa gerçek ekranlarda video oynar, göz açıp kapayıncaya kadar kaybolan bildirimler belirir, toplantılardaki insan sesleri duyulur. Her 3–5 saniyede bir gözünü açan ve hiç kulağı olmayan bir Agent, "iki kare arasında olup bitenleri" ne görebilir ne de duyabilir. Ekran kaydı izlemek, bir toplantıyı takip etmek, sesli bir uyarıyı dinlemek, bir anda gelip geçen bir iletişim kutusuna yetişmek — bu gündelik bilgisayar işlerinin tamamı bugünün Computer Use Agent'ı için neredeyse yasak bölgedir.
+Computer Use algısı şimdiye kadar örtük bir varsayıma dayandı: **ekran sabittir**—ekran görüntüsü al, bir adım düşün, tıkla, sonra yeniden görüntü al. Gerçek ekranlar video oynatır, kısa ömürlü bildirimler gösterir ve toplantı sesleri verir. Gözlerini yalnızca 3–5 saniyede bir açan ve hiç kulağı olmayan bir Agent, iki kare arasında olanları göremez ve duyamaz.
 
-Burada asıl yeniden tasarlanması gereken şey "eylem arayüzü" değil, "**gözlem arayüzü**"dür[^ch6-9]. Temel fikir, **gözlemi** (sürekli, uyarlanabilir, çok modlu) **eylemden** (ayrık) ayrıştırmak ve ortam ile herhangi bir hazır Computer Use modeli arasına yerleşen, yeniden eğitim gerektirmeyen bir algı ara katmanı hâline getirmektir (buna Agent–bilgisayar gözlem arayüzü, AOI denebilir). Bu katmanın "ihtiyaç oldukça kapağı açılan" üç bileşeni vardır. Birincisi, **kareler arası anahtar kare yakalama**: önce son derece ucuz bir piksel kapısıyla neredeyse hiç değişmeyen kareler atlanır, ardından küçük bir model görüntüde anlamlı bir değişiklik olup olmadığına karar verir ve yalnızca değişiklik varken bir kare yakalanır; durağan görüntüde maliyet neredeyse sıfırdır. İkincisi, **ses seviyesiyle kapılanan konuşma transkripsiyonu**: yalnızca ses varken konuşma tanıma çağrılır ve Agent ilk kez "kulak sahibi olur". Üçüncüsü — ve en kritiği — **görüntüyü kalıcı metne dönüştürmek**: model, yakalanan kareyi tek bir cümleyle betimler ("Az önce çıkan bildirimde yayın tarihinin 28 Nisan'a alındığı yazıyor") ve **orijinal görsel daha sonra context'ten temizlense bile bu cümle bellekte kalır**, yani dinamik bilgi metin biçiminde ileriye taşınır.
+Yeniden tasarlanması gereken action interface değil, **observation interface'tir**[^ch6-9]. Agent–bilgisayar gözlem arayüzü (AOI), ortamın sürekli gözlemini modelin işleyebileceği ayrık olaylara dönüştürür. Temel teknikleri şunlardır: neredeyse değişmeyen ekranları atlayıp küçük bir modelle yalnızca anlamlı değişimleri tutan **kareler arası anahtar kare yakalama**; yalnızca ses varken tanımayı çağıran **ses düzeyi kapılı konuşma dökümü**; ve özgün görüntü context'ten çıktıktan sonra da açıklamayı bellekte tutup çok modlu etkileşim geçmişini sıkıştıran **kareleri metin olarak anlatma**.
 
-Sezgiye aykırı bir bulgu şudur: asıl işe yarayan şey "hangi karelerin seçildiği" değil, "**karelerin uzun süre saklanabilecek metne dönüştürülmesi**"dir — çünkü metin, LLM Agent'larının en iyi işlediği modalitedir. 7B'den öncü ölçeğe uzanan sekiz model üzerinde bu ara katman, hiçbir yeniden eğitim gerektirmeden +17 ila +48 yüzde puanlık iyileşme sağladı; aradaki en büyük fark sesli görevlerde görüldü: bu algı katmanı eklendiğinde Agent, daha önce "duyulabilir ama üzerinde işlem yapılamaz" olan sesli görevleri tamamlayabildi. Ne var ki bu, her duruma uyan sabit bir yapılandırma değildir — bazı daha yeni modellerde çok fazla görsel token yüklemek akıl yürütmeyi sıkıştırıp performansı düşürebiliyor. Dolayısıyla bu bileşenler toptan açılmak yerine **model model seçilmelidir**. Bu, daha önceki Set-of-Mark ile koordinat tahmini arasındaki tercihle aynı derstir: algı çözümlerinin gümüş kurşunu yoktur, yapılandırma modelin huyuna göre ayarlanır.
-
-[^ch6-9]: Kapılı anahtar kare, ihtiyaç hâlinde transkripsiyon ve kareleri kalıcı metne dönüştürme biçimindeki üç bileşenin eksiksiz mekanizması ve model bazlı ablation çalışması için bkz. Li, Bojie and Noah Shi. *Agent-Computer Observation Interfaces Enable Dynamic Computer Use.* arXiv:2606.29472, 2026.
+[^ch6-9]: Bkz. Li, Bojie and Noah Shi. *Agent-Computer Observation Interfaces Enable Dynamic Computer Use.* arXiv:2606.29472, 2026.
 
 ### Computer Use için Dünya Modelleri
 
@@ -719,21 +648,6 @@ RT-2 ve OpenVLA sürekli eylemi ayrık token'lara böler ve tıpkı cümle üret
 
 Büyük bir model genellikle saniyede yalnızca 1—10 kez çıkarım yapabilirken, geleneksel bir denetleyici saniyede onlarca ila binlerce kez güncellenebilir. Mühendislikte yaygın bir uygulama "eylem parçalama"dır (action chunking): model gelecekteki eylemlerin kısa bir dilimini tek seferde üretir, kontrol iş parçacığı bu dilimi yüksek frekansla yürütür ve model arkada bir sonraki dilimi hazırlar. Böylece çıkarım beklemesinin bir kısmı eylem yürütme süresinin içine gizlenir. Bedeli şudur: dilim uzadıkça hareket pürüzsüzleşir, ama model bu aralıkta daha az yeni sahne görür. XLeRobot bardağı almak için kolunu uzatırken bardak yolda çarpılıp kayarsa, eski görüntüden üretilmiş eylemleri yürütmeyi sürdürebilir. Dolayısıyla eylem parçalama, pürüzsüzlük ile tepki hızı arasında bir ödünleşimdir; bedelsiz bir hızlanma değil.
 
-Eylem parçalama genellikle dilimi sonuna kadar götürmek yerine "kestir—yürüt—kes" iskeletine ihtiyaç duyar:
-
-```python
-chunk = vla(current_observation, skill)
-for action in chunk:
-    low_level.execute(action)
-    if safety_event() or observation_changed_significantly():
-        low_level.stop()
-        discard_remaining(chunk)
-        reobserve_and_replan()
-        break
-```
-
-Kısa dilimler daha hızlı tepki verir ama model çağrılarını çoğaltır; uzun dilimler daha pürüzsüzdür ama bayatlamış gözlemleri kullanmaya yatkındır. Deney 6-12 bu tür ödünleşimleri benzetimde karşılaştırır; gerçek donanımın güvenlik sınırına dokunan ise Deney 6-11'dur.
-
 ### VLA'nın Sınırları
 
 "Uzun ufuklu planlama + VLA" kullanılabilir bir temel tasarımdır, ama gözden kaçması kolay birkaç sorun bırakır.
@@ -794,9 +708,7 @@ Deney 6-12'un benzetimde kararlı olması, Deney 6-11'daki gerçek XLeRobot'un d
 
 ## Bölüm Özeti
 
-Bu bölümün kaldırdığı şey, önceki beş bölümün sürekli varsaydığı önkabuldü: Agent ile dünyanın sırayla konuşması.
-
-**Kip** ve **zamanlama** eksenleri boyunca bakıldığında, dört kısım aslında aynı savın dört zaman ölçeğinde açılmasıdır. **Asenkron ve olay güdümlü**, gözlemi "Agent gidip alır"dan "dünya iter"e, eylemi ise "tur içinde biter"den "önce başlat, sonrasını olay kapatsın"a genişletir; kip değişmez, değişen yalnızca zamanlamadır. **Ses** ölçeği milisaniyeye indirir; kademeli, uçtan uca Omni ve tam çift yönlü paradigmalarının evrim ana hattı, "sırayla konuşma"dan sürekli dinleme ve konuşmaya geçmek ve ön plandaki gerçek zamanlı etkileşim ile arka plandaki derin düşünme arasında iş bölümü kurmaktır. **Computer Use** aynı kapalı döngüyü ekrana taşır; darboğaz "görev tamamlanabiliyor mu"dan işlem verimliliğine, sürekli görsel anlamaya ve eylem sonrası durum doğrulamasına doğru genişlemiştir. **Robot** ise onu fiziksel dünyaya iter; eylem parçalama, akıcılık ile tepki hızı arasında bir ödünleşmedir ve sonunda görevin tamamlanıp tamamlanmadığına yine yeni bir gözlem karar vermek zorundadır.
+**Modalite** ve **yürütme zamanlaması** eksenlerinde bakıldığında **asenkron ve olay güdümlü yürütme**, gözlemi “Agent'ın gidip alması”ndan “dünyanın itmesi”ne; eylemi “tur içinde bitirmek”ten “şimdi başlatıp sonraki olaylarla tamamlamak”a genişletir. **Ses**, ölçeği milisaniyelere indirir, sırayla konuşmaktan sürekli dinleyip konuşmaya ilerler ve gerçek zamanlı ön plan etkileşimini daha derin arka plan düşüncesinden ayırır. **Computer Use** döngüyü ekrana taşır; verimlilik, sürekli görsel anlama ve eylem sonrası durum doğrulaması da darboğaza dönüşür. **Robotik** onu fiziksel dünyaya taşır; action chunking akıcılık ile tepki hızı arasında denge kurar ve tamamlanma yine yeni bir gözlemle değerlendirilir.
 
 Dört kısım aynı denetim iskeletini paylaşır:
 
@@ -809,9 +721,7 @@ sürekli algıla
   → devam et, düzelt, yeniden dene, dur ya da yeniden planla
 ```
 
-Aynı ilkel kümesini de paylaşırlar: uyandırma, güvenli nokta, iptal, öne geçme, hızlı/yavaş ayrımı. Olay döngüsündeki "güvenli noktada iptal sinyalini kontrol et" ile eylem parçalamadaki "anormallik görünce kalan eylemleri at ve yeniden gözlemle", beş büyüklük mertebesi uzaklıktaki zaman ölçeklerinde aynı mekanizmanın iki kez uygulanmasıdır; ön plandaki hızlı model ile arka plandaki yavaş modelin iş bölümü ve asenkron Agent'taki "önce görev kimliğini döndür, gerisini olay kapatsın" da aynı şeyin iki farklı yazımıdır.
-
-Şunu belirtmek gerekir: bu mekanizmaların çoğu şimdilik hâlâ mühendislik çaresidir. Yer tutucu protokolleri, durum çubuğundaki olay işaretleri, öngörülü düşünmenin iptali ve geri alınması—hepsi özünde, modelin eğitim dağılımında eksik olan asenkron deneyimi orkestrasyon mantığıyla telafi etmektedir. Model tarafındaki ilerleme bunun bir kısmını parametrelere çekiyor—etkileşim modelleri kesme ve araya girmeyi modelin içine koydu, sürekli düşünme "dinlerken düşünmeyi" bir sonraki nesli beklemeden mümkün kıldı—ama eğitim külliyatı ağırlıkla sıralı turlu kaldığı sürece bu telafi katmanı ortadan kalkmayacak; yalnızca model yeteneği ilerledikçe yeni sınıra doğru göç edecek.
+Aynı temel öğeleri de paylaşırlar: uyandırma, güvenli noktalar, iptal, öncelikli kesme ve hızlı/yavaş ayrımı.
 
 Bu bölüm, "Agent inşa etme" kısmının son parçasını tamamladı: gözlem ve eylem uzayları artık içerik, kip ve zamanlama olmak üzere üç yönde de açılmış durumda. Sonraki üç bölüm başka bir soruya dönüyor: bütün bunların doğru inşa edilip edilmediğini nasıl bileceğiz ve onu nasıl sürekli daha iyi hâle getireceğiz?
 

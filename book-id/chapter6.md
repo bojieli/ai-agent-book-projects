@@ -38,11 +38,9 @@ Keempat subbab berbagi satu set primitif yang sama—**membangunkan, titik aman,
 
 **Ada satu penataan yang disengaja dalam urutan baca: bab ini memberi porsi jauh lebih besar kepada suara ketimbang dua skenario sesudahnya.** Pada garis evolusi interaksi real-time, suara adalah yang melangkah paling jauh dan paling layak dijadikan kerangka acuan: berangkat dari masalah "pipeline serial terlalu tinggi latensinya", melewati rangkaian solusi end-to-end, full duplex, dan berpikir sambil berbicara, hingga sampai pada babak akhir yang relatif mapan—perjalanan masalah → solusi → babak akhir sudah dilalui seluruhnya. Karena itu kita bahas tuntas, sehingga Computer Use dan robot di belakang dapat dibaca dengan membandingkan garis ini—masing-masing sudah sampai di titik mana dan tersendat di mana.
 
-Adapun bab ini dibuka dengan **asinkron dan berbasis peristiwa** karena ia paling dekat dengan pembaca: modalitasnya masih teks murni, yang berubah hanyalah waktunya. Ia adalah langkah pertama keluar dari dunia bergiliran pada lima bab sebelumnya, sekaligus tempat proposisi "asumsi giliran" pertama kali menyentuh tanah.
-
 ## Asinkron dan Berbasis Peristiwa: Ketika Dunia Datang Menghampiri
 
-Tiga kategori tool yang dibahas di Bab 4—persepsi, eksekusi, kolaborasi—semuanya dipanggil sendiri oleh Agent: dialah yang menentukan kapan melihat dan kapan bertindak. Subbab ini beralih ke ujung paling lambat pada sumbu waktu: bagaimana Agent mengelola tugas yang memakan waktu berjam-jam bahkan berhari-hari, dan bagaimana ia menanggapi peristiwa eksternal yang bisa datang kapan saja? Ini memerlukan sokongan arsitektur asinkron berbasis peristiwa; dan dua kategori sisa dari lima kategori tool di Bab 1—alat pemicu peristiwa dan alat komunikasi pengguna—justru bekerja dengan bersandar pada arsitektur ini, sehingga dibahas sekalian di subbab ini.
+Tool persepsi, eksekusi, dan kolaborasi yang dibahas di Bab 4 semuanya dipanggil secara proaktif oleh Agent. Bagaimana Agent menanggapi event eksternal yang dapat tiba kapan saja? Hal ini memerlukan arsitektur asynchronous berbasis event. Dua kelas tool yang tersisa dari Bab 1—tool pemicu event dan tool komunikasi pengguna—bergantung pada arsitektur ini, sehingga keduanya juga dibahas di bagian ini.
 
 ### Mengapa Asinkroni Diperlukan
 
@@ -176,23 +174,6 @@ Hardcoded rules memiliki keterbatasan; semantik event menentukan metode penangan
 
 Eksperimen berikut, yakni event-driven Agent pemroses email, mengimplementasikan strategi event handling yang dibahas di atas menjadi implementasi yang dapat dijalankan.
 
-**Routing event loop:**
-
-```python
-while runtime.is_alive:
-    events = queue.take_batch()
-
-    if any(is_urgent(event) for event in events):
-        cancel_at_safe_point(current_work)
-    elif has_independent_fast_query(events):
-        start_parallel_session(events)
-    else:
-        append_to_trajectory(events)
-
-    decision = LLM(context + trajectory)
-    dispatch(decision)
-```
-
 > **Eksperimen 6-1 ★★★: Event-Driven Email Processing Agent**
 >
 >
@@ -300,11 +281,9 @@ Model VLA (Vision-Language-Action, lihat Bab 6) di bidang robotika sudah mulai m
 
 Mencapai pelatihan RL asinkron ini membutuhkan infrastruktur baru: simulator lingkungan asinkron (menghasilkan skenario seperti penundaan pengembalian tool, interupsi pengguna secara acak, dll.) dan reward khusus untuk kemampuan asinkron (memahami trajectory out-of-order dengan benar, berhasil melanjutkan pemikiran yang terinterupsi, menghindari halusinasi, dan memproses event batch secara komprehensif).
 
-Pemikiran yang berkesinambungan (continuous thinking), bagaimanapun juga, tidak perlu menunggu generasi model berikutnya. Lapisan tipis dari logika orkestrasi (sekitar dua ratus baris) dapat mengubah model pemikiran teks **yang sudah ada di pasaran (off-the-shelf)** menjadi Agent **waktu kontinu (continuous-time)** seketika[^ch6-async-1]—dengan rapi menjembatani antara separuh "solusi rekayasa" dan "evolusi model" di atas. Mekanismenya adalah Aturan 4, yang ditingkatkan: daripada **membuang** pemikiran yang setengah selesai pada saat interupsi, bangun seluruh interaksi sebagai **satu aliran pemikiran yang tidak terputus (uninterrupted stream of thought)**—kapan saja, tutup paksa blok `<think>` yang sedang ditulis model, suntikkan observasi yang baru tiba (pengembalian tool, interupsi pengguna, hasil pengenalan yang baru) sebagai pesan biasa, dan biarkan model terus melakukan dekode (decoding). Hal ini memanfaatkan sumber daya yang biasanya terbuang sia-sia: model dapat menghasilkan ribuan token per detik, sementara pemanggilan tool atau ucapan pengguna membutuhkan beberapa detik—waktu tunggu tersebut adalah **komputasi gratis**, yang dapat digunakan untuk berpikir jauh ke depan. Dua perilaku muncul: **berpikir sambil menunggu (thinking while waiting)**—alih-alih menunggu tool mengembalikan hasil atau pengguna selesai berbicara, model menalar informasi parsial yang sudah dimilikinya, bahkan meluncurkan pemanggilan tool berikutnya lebih awal (kecenderungan "pemikiran antisipatif" ini direproduksi secara zero-shot di beberapa keluarga model; lihat makalah yang dikutip di catatan kaki untuk datanya); dan **berpikir sambil bertindak (thinking while doing)**—terus berpikir saat menghasilkan output, mampu mengoreksi dirinya sendiri di tengah-tengah tindakan.
+Continuous thinking tidak harus menunggu generasi model berikutnya. Sekitar dua ratus baris logika orkestrasi dapat mengubah model penalaran teks yang **sudah ada** menjadi Agent **continuous-time**, menghubungkan solusi engineering sementara di atas dengan evolusi model. Ini adalah peningkatan Aturan 4: alih-alih membuang pemikiran parsial saat terinterupsi, bangun seluruh interaksi sebagai satu aliran pemikiran tanpa putus. Runtime dapat menutup paksa blok `<think>` yang sedang ditulis, menyisipkan observasi baru—hasil tool, interupsi pengguna, atau pembaruan pengenalan—sebagai pesan biasa, lalu melanjutkan decoding.
 
-Namun paruh yang lebih kritis dari penelitian ini berkaitan dengan **pelatihan (training)**, dan ini menjawab seruan "mengantisipasi evolusi model" di atas: orkestrasi saja membuat pemikiran berkesinambungan menjadi **mungkin**; apakah itu menjadi **berguna** tergantung pada sinyal pelatihan. Penelitian tersebut menemukan bahwa dengan gaya reward "LLM-as-judge", model belajar menyembunyikan pemikirannya—menukar kebungkaman demi persetujuan penilai (judge)—sementara metrik objektif justru memburuk; hanya tujuan yang dapat diverifikasi (verifiable objectives) yang menjaga cakupan informasi yang membuat pemikiran berkesinambungan terbayarkan. Singkatnya: **orkestrasi membuat perilaku tersebut menjadi mungkin; pelatihan membuat perilaku tersebut menjadi baik**—yang mengonfirmasi penilaian bagian ini bahwa kemampuan asinkron pada akhirnya harus dikonsolidasikan melalui pelatihan yang tepat, bukan ditambal selamanya dengan prompt engineering.
-
-[^ch6-async-1]: Klaim bahwa sekitar dua ratus baris orkestrasi dapat mengubah model pemikiran yang sudah ada di pasaran menjadi Agent waktu kontinu, dan bahwa "sinyal pelatihan menentukan apakah pemikiran berkesinambungan berguna," berasal dari Li, Bojie dan Noah Shi. *Never Stop Thinking: Continuous-Time Language Agents.* 2026 (akan terbit).
+Mekanisme ini memanfaatkan sumber daya yang sering terbuang: model dapat menghasilkan ratusan token per detik, sedangkan satu pemanggilan tool atau ucapan pengguna bisa memakan beberapa detik. Waktu tunggu tersebut dapat dipakai untuk berpikir. Agent dapat **berpikir sambil menunggu**—melanjutkan dari informasi parsial dan bahkan memulai tool berikutnya lebih awal—serta **berpikir sambil bertindak**—terus menalar saat menghasilkan output dan mengoreksi diri di tengah tindakan.
 
 > **Eksperimen 6-2 ★★★: Agent Asinkron dengan Eksekusi Paralel dan Kemampuan Interupsi**
 >
@@ -322,6 +301,8 @@ Namun paruh yang lebih kritis dari penelitian ini berkaitan dengan **pelatihan (
 >
 > **4. Pembatalan dan Kueri Status untuk Tool Paralel**: Setelah tool asinkron selesai, hasil nyata disuntikkan ke dalam percakapan melalui event baru. Mendukung pembatalan atau kueri kemajuan melalui task ID. **Skenario Validasi**: Pengguna meminta, "Jalankan ketiga skrip ini secara bersamaan untuk saya. Mana saja yang selesai lebih dulu, periksa kemajuan skrip yang tersisa. Jika ada yang belum melebihi 50%, batalkan." Ketiga skrip mensimulasikan proses analisis, mengeluarkan kemajuan terus menerus dengan kecepatan masing-masing 3%, 2%, dan 1% per detik. Agent memulai tiga perintah terminal asinkron secara bersamaan. Ketika skrip pada 3% per detik selesai dalam sekitar 33 detik, Agent melakukan kueri status dari dua terminal yang tersisa, menemukan satu sekitar 66% dan yang lainnya sekitar 33%. Agent kemudian membatalkan yang belum melebihi 50%. Setelah kedua terminal selesai, Agent mengintegrasikan hasil untuk menghasilkan laporan lengkap.
 >
+
+Eksekusi asynchronous berbasis event memungkinkan dunia membangunkan Agent kapan saja, tetapi mengasumsikan model dapat menyelesaikan pemikiran sebelum merespons. Tiga bagian berikut menantang asumsi ini: ketika environment berubah secepat atau lebih cepat daripada generasi model, “berpikir dahulu, lalu berbicara” menjadi latensi yang tidak dapat diterima.
 
 ## Suara: Antarmuka Manusia-Mesin yang Paling Alami
 
@@ -343,21 +324,7 @@ Benang merahnya adalah keluar dari asumsi bahwa orang harus berbicara bergantian
 
 [^ch6-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/. Klasifikasi ini berasal dari rangkuman tiga generasi ChatGPT Voice; Omni end-to-end sesuai dengan kategori “turn-based voice models”.
 
-**Pembatalan streaming:**
-
-```python
-while audio_is_arriving:
-    partial = asr.push(audio_chunk)
-    if endpoint_is_probable(partial):
-        candidate = llm.start(partial)
-        if later_audio_changes_meaning(partial):
-            cancel(candidate)                 # speculative cancellation
-        else:
-            tts.enqueue_stable_segments(candidate)
-
-on_final_transcript(text):
-    commit_or_restart(text)
-```
+Ketika sistem cascade beralih dari eksekusi serial ke streaming, hal terpenting bukanlah mengubah setiap fungsi menjadi `async`, melainkan memungkinkan **hasil inkremental menjadi tidak berlaku dan dibatalkan**.
 
 ### Paradigma 1 · Pipeline cascade
 
@@ -380,11 +347,7 @@ Pada jawaban singkat, waktu tunggu VAD, ASR, LLM, dan TTS terakumulasi secara se
 
 > **Eksperimen 6-3 ★: Membangun voice Agent tradisional**
 >
-> Hubungkan mikrofon, Silero VAD, Whisper lokal, LLM streaming, dan Fish S1 TTS melalui WebSocket untuk membuat baseline cascade. Bukti satu giliran yang dipertahankan menunjukkan rantai media dan model berjalan end-to-end, bukan benchmark konkurensi atau beban produksi. Kode dan penerimaan ada di [chapter6/live-audio](../chapter6/live-audio/).
-
-> **Proyek tambahan: voice Agent WebRTC yang “menelepon pengguna”**
->
-> PSTN tidak diperlukan. WebRTC browser dapat membuka sesi, menanyakan informasi yang kurang, mengulanginya untuk konfirmasi, dan menyimpan hasil terstruktur. Untuk menghubungi organisasi eksternal, ganti kontrak alat yang sama dengan penyedia PSTN/SIP yang patuh. Proyek ini mempertahankan identitas run historis exp9-2, tetapi tidak lagi menjadi nomor eksperimen di manuskrip. Lihat [chapter6/phone-agent](../chapter6/phone-agent/).
+> Hubungkan mikrofon, Silero VAD, Whisper lokal, LLM streaming, dan Fish S1 TTS melalui WebSocket untuk membangun baseline berantai.
 
 #### Dari serial ke persepsi streaming
 
@@ -392,11 +355,13 @@ ASR dapat menghasilkan transkrip sementara saat pengguna berbicara, LLM mengirim
 
 Front-end VAD + ASR menimbulkan akumulasi latensi karena menunggu hening, kehilangan keraguan, emosi, backchannel, dan suara lingkungan, serta memutus konteks nama atau alamat email. Model streaming sejati membutuhkan encoder kausal/ber-chunk dan decoding inkremental; encoder Whisper menunggu segmen audio lengkap. Model audio berbasis LLM dapat mengeluarkan teks dan event semantik, tetapi simulasi prefix bukan jaminan performa kausal. Marker speak_start/end, interrupt, emotion, laugh, sigh, dan noise mempertahankan sinyal nonteks.
 
+Jika tujuannya hanya menentukan apakah pengguna sudah selesai berbicara, penilaian akhir giliran dapat ditanamkan langsung ke recognizer streaming. Label pelatihan hanya boleh memakai informasi yang terlihat pada saat keputusan dibuat; jika tidak, informasi masa depan akan menghasilkan penilaian yang tidak dapat direproduksi secara online[^ch6-11]. Jalur ini lebih ringan daripada LLM audio lengkap.
+
 [^ch6-11]: Diagnosis penanaman penilaian giliran ke recognizer dan masalah label dengan informasi masa depan lihat Li, Bojie dan Noah Shi. *The Trade-off Was in the Labels: Causal Supervision for Turn-Aware Streaming ASR.* 2026 (akan terbit).
 
 > **Eksperimen 6-4 ★: Mensimulasikan persepsi suara streaming dengan Qwen2-Audio**
 >
-> Qwen2-Audio bukan model streaming. Gunakan prefix audio yang makin panjang dan bandingkan dengan VAD 600 ms + Whisper. Canonical run melewati semua gate tetapi hanya mereproduksi 2/6 perilaku: panggilan prefix memerlukan 8,4–11,3 detik, sampel pause melewatkan silence, dan sampel noise salah mengklasifikasikan cough/laughter. Ini menguji mekanisme dan mode kegagalan, bukan klaim persepsi streaming 100–200 ms. Catatan lengkap ada di [chapter6/streaming-speech](../chapter6/streaming-speech/).
+> Qwen2-Audio bukan model streaming. Eksperimen ini menyimulasikan persepsi kontinu dengan prefix audio yang terus bertambah dan membandingkannya dengan VAD 600 ms + Whisper.
 
 ### Paradigma 2 · Model omnimodal end-to-end (Omni)
 
@@ -410,17 +375,7 @@ API suara real-time berada di tengah: audio diproses native, tetapi kontrol masi
 
 > **Eksperimen 6-5 ★★: Menjalankan MiniCPM-o 4.5 secara lokal, end-to-end versus self-cascade**
 >
-> Tetapkan satu revision, matikan thinking mode, lalu bandingkan jawaban langsung dari audio dengan transkripsi kemudian jawaban. Ini mengukur pelestarian informasi audio, bukan kemampuan “berpikir sambil berbicara”.
-> Tabel 6-1 Hasil MiniCPM-o 4.5 lokal: end-to-end versus self-cascade (empat pemeriksaan mekanisme, bukan benchmark)
->
->
-> | Tugas | End-to-end | Self-cascade | Pengamatan |
-> | --- | ---: | ---: | --- |
-> | Aritmetika semantik (2) | 1/2 | 2/2 | Self-cascade memperbaiki satu kesalahan transkripsi |
-> | Kecepatan paralinguistik (2) | 2/2 | 1/2 | Transkrip teks menghapus perbedaan cepat/lambat |
-> | Total | 3/4 | 3/4 | Total sama, kegagalan saling melengkapi |
->
-> Sampel kecil; tidak dapat menetapkan jalur mana yang umumnya lebih akurat atau cepat. Bukti lengkap ada di [chapter6/end-to-end-speech](../chapter6/end-to-end-speech/).
+> Jalankan MiniCPM-o 4.5 secara lokal dengan thinking mode dimatikan, lalu bandingkan jawaban langsung dari audio dengan self-cascade yang mentranskripsikan terlebih dahulu dan menjawab memakai model yang sama. Ini mengukur apakah informasi audio dipertahankan, **bukan** “berpikir sambil berbicara” yang dibahas kemudian.
 
 Step-Audio 2 memproses audio mentah dan menghasilkan teks serta suara; Step-Audio R1 menginternalisasi penalaran dalam model audio.
 
@@ -429,8 +384,6 @@ Step-Audio 2 memproses audio mentah dan menghasilkan teks serta suara; Step-Audi
 Omni memisahkan “pengguna berbicara” dan “model berbicara”, tetapi penerjemahan simultan memerlukan tumpang tindih. Full-duplex terus mendengar dan berbicara sambil memutuskan lanjut, berhenti, menyela, atau memanggil alat. Moshi dari Kyutai adalah contoh awal; Thinking Machines Lab menyebut jalur ini Interaction Model[^ch6-14] dan membangun interaksi di dalam model, bukan di sekitar VAD. GPT-Live membawanya ke skala produksi.
 
 [^ch6-14]: Thinking Machines Lab, “Interaction Models: A Scalable Approach to Human-AI Collaboration,” 2026-05. https://thinkingmachines.ai/blog/interaction-models/
-
-Urutannya jelas: cascade menebak giliran dari ambang hening, streaming menaikkan keputusan ke tingkat semantik, dan full-duplex menjadikan pergantian giliran keputusan kontinu.
 
 ### Waktu kognitif: interaksi real-time dan pemikiran mendalam
 
@@ -460,10 +413,7 @@ Solusi ketiga menginternalisasi kemampuan bernalar langsung ke dalam model audio
 
 Idealnya, model menilai emosi dari nada, ritme, dan intonasi, bukan hanya dari teks transkripsi. Yang disebut "penalaran proksi teks" adalah ketika model mengganti analisis melodi dan fitur akustik dengan kata-kata negatif dalam lirik. MGRD menyaring proses penalaran yang benar-benar merujuk pada fitur akustik, melatih model dengan data tersebut, dan melalui reinforcement learning mencegah model melompati penalaran lalu langsung menebak jawaban.
 
-MPS membuat otak perumus terus menghasilkan fragmen penalaran, dan otak ekspresi, begitu menerima fragmen, langsung menghasilkan suara dengan menggabungkannya dengan jawaban yang sudah ada. Keduanya berjalan paralel bak jalur pipa, sehingga tidak perlu menunggu seluruh penalaran selesai sebelum pengguna mendengar kalimat pertama (Gambar 6-11).
-
-
-![Gambar 6-11: Arsitektur dua otak MGRD dan MPS pada Step-Audio R1](images/fig6-11.svg)
+MPS membuat otak perumus terus menghasilkan fragmen penalaran, dan otak ekspresi, begitu menerima fragmen, langsung menghasilkan suara dengan menggabungkannya dengan jawaban yang sudah ada. Keduanya berjalan paralel bak jalur pipa, sehingga tidak perlu menunggu seluruh penalaran selesai sebelum pengguna mendengar kalimat pertama.
 
 
 Model terpadu paling erat mewujudkan "berpikir sambil berbicara", dengan biaya bahwa penalaran dan ekspresi real-time harus dilatih ulang bersama-sama; jalur terpisah lebih mudah untuk mengganti otak latar belakang, sedangkan jalur terpadu lebih cocok untuk skenario khusus yang mengejar kealamian maksimal. Keduanya adalah trade-off, bukan sekadar saling menggantikan.
@@ -489,31 +439,17 @@ Computer Use, juga dikenal sebagai otomatisasi GUI, memungkinkan AI untuk menggu
 3.  Lapisan eksekusi melakukan tindakan di lingkungan nyata (menggerakkan mouse, mengklik, mengetik teks, dll.).
 4.  Menunggu antarmuka merespons, mengambil tangkapan layar lagi, dan memasuki iterasi loop berikutnya.
 
-**Loop keamanan Computer Use:**
+Di sini perlu dibedakan antara **memahami antarmuka** dan **menyelesaikan tugas**. Yang pertama lebih dekat dengan pemahaman multimodal dan dapat diukur melalui tanya jawab atas satu tangkapan layar; yang kedua mengharuskan model menempatkan pemahaman dan pembuatan tindakan dalam loop tertutup yang menangani pemuatan halaman, perubahan keadaan, kesalahan, dan konsekuensi yang tidak dapat dibatalkan. Karena itu, kesulitan Computer Use bukan sekadar menjawab dengan benar tentang tangkapan layar, melainkan memastikan kembali setelah setiap langkah bahwa keadaan nyata masih sesuai dengan rencana.
 
-```python
-observation = capture_screenshot_and_accessibility_tree()
-proposal = model.decide(task, observation)
-action = validate_schema_and_coordinates(proposal)
-
-if action.is_irreversible and not user_or_policy_approval(action):
-    stop("approval required")
-else:
-    execute_in_sandbox_or_scoped_session(action)
-    new_observation = capture_after_settle()
-    if not verify_goal_progress(new_observation, action):
-        rollback_if_possible_or_replan()
-```
-
-![Gambar 6-12: Loop Perceive-Think-Act dari Computer Use Agent](images/fig6-12.svg)
+![Gambar 6-11: Loop Perceive-Think-Act dari Computer Use Agent](images/fig6-11.svg)
 
 Ada tiga dimensi desain utama dalam loop ini: **Action Space** (operasi apa yang dapat dilakukan Agent), **Visual Grounding** (bagaimana menemukan elemen target dalam tangkapan layar), dan **Model Architecture** (bagaimana menghasilkan tindakan yang benar dari tangkapan layar).
 
 ### Desain Action Space
 
-Anthropic mendefinisikan tiga jenis alat yang membentuk kemampuan interaksi lengkap (Gambar 6-12):
+Implementasi referensi Anthropic membagi kemampuan interaksi lengkap menjadi tiga jenis alat (Gambar 6-12). Ini adalah desain action space yang jelas, tetapi bukan protokol privat yang wajib diikuti penyedia model: selama Harness dapat menerjemahkan tangkapan layar, batasan tindakan, dan hasil eksekusi yang sama menjadi pesan serta keluaran terstruktur yang didukung model sasaran, Claude, model visi berbobot terbuka, dan endpoint swakelola semuanya dapat menggerakkan loop Perceive-Think-Act yang sama.
 
-![Gambar 6-13: Action Space dari Computer Use](images/fig6-13.svg)
+![Gambar 6-12: Action Space dari Computer Use](images/fig6-12.svg)
 
 **GUI Operation Tool** (alat `computer`): Operasi mouse mencakup menggerakkan (`mouse_move`), klik kiri/kanan/tengah, klik ganda atau klik tiga kali, menyeret (`left_click_drag`), dan tindakan tekan/lepas yang lebih presisi (`left_mouse_down` dan `left_mouse_up`). Menggulir (`scroll`) mendukung empat arah dan dapat dikombinasikan dengan tombol pengubah. Operasi keyboard mencakup mengetik karakter demi karakter (`type`, dengan interval 12ms antar karakter untuk menyimulasikan pengetikan nyata), kombinasi tombol (`key`, mis., `Ctrl+C`), dan menahan tombol (`hold_key`). Tindakan persepsi mencakup mengambil tangkapan layar, mengambil posisi kursor (`cursor_position`), dan menunggu (`wait`).
 
@@ -525,9 +461,7 @@ Anthropic mendefinisikan tiga jenis alat yang membentuk kemampuan interaksi leng
 >
 > Jalur A menggunakan Demo Anthropic Computer Use. Kontainernya mengemas lingkungan desktop Ubuntu lengkap, termasuk browser, terminal, dan tool umum lainnya. Frontend menerima tugas, sedangkan backend mengirim instruksi dan tangkapan layar ke Claude, lalu menjalankan tindakan mouse, keyboard, terminal, atau pengeditan yang dikembalikan model. Jalur ini ditujukan untuk memahami protokol tool `computer` native; tidak semua pembaca diwajibkan memiliki akses ke Anthropic API.
 >
-> Jalur B menggunakan proyek pendamping buku [`chapter6/computer-use-open-model`](../chapter6/computer-use-open-model/). Secara default, proyek ini menggerakkan browser-use dengan model berbobot terbuka Qwen3-VL 32B Instruct, baik melalui API hosting OpenRouter maupun dengan mengarahkan `OPEN_MODEL_BASE_URL` ke vLLM/SGLang yang di-host sendiri atau endpoint kompatibel lainnya. Endpoint harus menerima tangkapan layar dan mendukung JSON Schema native; jika hanya mendukung JSON biasa, mode kompatibilitas schema-in-prompt dapat diaktifkan secara eksplisit.
->
-> Kedua jalur memakai tugas read-only dan kontrak penerimaan yang sama: maksimal 25 langkah, hanya satu tindakan per langkah, serta menyimpan identitas model/endpoint, respons mentah penyedia, tangkapan layar tiap langkah, urutan tindakan, jawaban akhir, dan alasan berhenti. Model yang berbeda harus dilaporkan sebagai lengan eksperimen terpisah; hasil model terbuka tidak boleh disajikan sebagai reproduksi Claude, dan “kontainer berhasil dimulai” tidak boleh dianggap sebagai penyelesaian tugas. Interval tindakan dan kualitas perencanaan adalah hasil yang diukur, bukan asumsi 2–5 detik ataupun kepastian bahwa model tersebut lebih unggul dari model lain.
+> Jalur B memakai kode contoh di [`chapter6/computer-use-open-model`](../chapter6/computer-use-open-model/). Secara default, jalur ini menjalankan browser-use dengan Qwen3-VL 32B Instruct open-weight melalui API hosted OpenRouter, atau dengan mengarahkan `OPEN_MODEL_BASE_URL` ke vLLM/SGLang self-hosted maupun endpoint kompatibel lain.
 
 ### Visual Grounding
 
@@ -558,7 +492,7 @@ Elemen:
 
 Model hanya perlu menghasilkan ID, dan sistem secara otomatis mengklik bagian tengah elemen yang sesuai. Pendekatan ini tidak menghemat token karena semua data anotasi tetap harus dikirim ke model, tetapi memberikan pelokalan yang akurat dan stabil sembari menghindari deteksi yang terlewat dan positif palsu yang dapat diperkenalkan oleh model segmentasi.
 
-![Gambar 6-14: Set-of-Mark vs. Pengindeksan Elemen Terstruktur (implementasi browser-use)](images/fig6-14.svg)
+![Gambar 6-13: Set-of-Mark vs. Pengindeksan Elemen Terstruktur (implementasi browser-use)](images/fig6-13.svg)
 
 **Prediksi Koordinat Murni.**
 
@@ -566,27 +500,23 @@ Rute ketiga melewatkan anotasi dan meminta model untuk mengeluarkan koordinat se
 
 Dalam skema prediksi koordinat, pemahaman model tentang koordinat sangat bergantung pada resolusi yang digunakan selama pelatihan (Gambar 6-14). Claude dilatih menggunakan XGA (1024×768), WXGA (1280×800), dan FWXGA (1366×768). Jika resolusi tangkapan layar input tidak cocok, prediksi koordinat model akan bergeser secara sistematis—seperti mengukur jarak di peta kecil dan kemudian menerapkannya secara langsung ke peta besar. Oleh karena itu, mekanisme penskalaan koordinat dua arah harus diimplementasikan pada lapisan alat, dan resolusi target harus **dipilih berdasarkan rasio aspek** untuk menghindari peregangan tidak seragam yang mendistorsi gambar dan akibatnya membiaskan penilaian koordinat. Misalnya, jika resolusi layar sebenarnya adalah 2560×1440 (16:9), target yang paling sesuai di antara tiga opsi yang didukung Claude adalah FWXGA (1366×768), yang memiliki rasio aspek terdekat dengan 16:9. Tangkapan layar diskalakan secara proporsional menjadi 1366×768 dan diumpankan ke model; setelah model mengeluarkan koordinat klik (683, 384), koordinat tersebut dipetakan secara terbalik ke koordinat sebenarnya (683×2560/1366, 384×1440/768) ≈ (1280, 720). Sebaliknya, jika gambar 16:9 diregangkan secara paksa ke 4:3 1024×768, gambar akan dikompresi secara horizontal, menyebabkan prediksi koordinat model bergeser secara sistematis.
 
-![Gambar 6-15: Pencocokan Resolusi dan Penskalaan Koordinat Dua Arah](images/fig6-15.svg)
+![Gambar 6-14: Pencocokan Resolusi dan Penskalaan Koordinat Dua Arah](images/fig6-14.svg)
 
 Pilihan di antara ketiga rute tersebut dapat diringkas sebagai berikut: **ketika informasi terstruktur tersedia, prioritaskan pengindeksan DOM/accessibility-tree** untuk pelokalan yang paling akurat dan stabil. **Ketika tidak tersedia**—dalam perangkat lunak desktop asli seperti Photoshop, antarmuka yang dirender canvas/WebGL, atau game—**gunakan anotasi visual (rute SoM asli) atau prediksi koordinat**. Anotasi visual mengubah pelokalan menjadi masalah pilihan ganda, membuatnya lebih ramah terhadap model serbaguna tanpa pelatihan khusus. Prediksi koordinat menghilangkan langkah anotasi dan lebih langsung untuk model yang dilatih khusus pada pelokalan GUI. Kedua pendekatan ini masih kesulitan dengan elemen kecil dan antarmuka yang padat.
 
 > **Eksperimen 6-8 ★: Menggunakan browser-use untuk Mengimplementasikan Operasi Browser Otomatis**
 >
-> Gabungkan Playwright, framework otomatisasi browser, dengan model multimodal untuk mengimplementasikan operasi browser yang digerakkan bahasa alami. Aktifkan visualisasi SoM dan simpan tangkapan layar dengan anotasi bounding box sebelum setiap keputusan. Antarmuka model tidak terbatas pada OpenAI atau Anthropic; buku ini menyediakan konfigurasi API untuk model terbuka Qwen3-VL dan mempertahankan base URL generik yang kompatibel dengan OpenAI untuk layanan hosting lain atau inferensi yang di-host sendiri.
+> Gabungkan Playwright, framework otomasi browser, dengan model multimodal untuk menjalankan operasi browser berbasis bahasa alami. Aktifkan visualisasi SoM dan simpan screenshot dengan kotak anotasi sebelum setiap keputusan.
 >
-> Tugas pengujian “Buka Google dan cari cuaca San Francisco”: setelah startup, tangkapan layar menampilkan halaman pencarian Google dengan elemen interaktif bernomor. Model memilih kotak pencarian, memasukkan “San Francisco weather today”, mengirim pencarian, lalu mengekstrak suhu dan kondisi cuaca dari halaman hasil. Saat penerimaan, verifikasi jawaban dan trajectory secara independen serta catat jumlah langkah dan durasi aktual apa adanya. “5 langkah, sekitar 20 detik” hanya boleh menjadi hasil pengamatan dari satu proses tertentu, bukan hasil tetap tanpa bukti eksekusi.
->
-> Proses resmi model terbuka yang disimpan buku menggunakan `qwen/qwen3-vl-32b-instruct` di OpenRouter. Saat menemui CAPTCHA di Google Search pada langkah 4, model tidak mengklaim berhasil; model beralih ke weather.com dan pada langkah 16 membaca 64°F, Sunny, terasa seperti 62°F, tertinggi 74°F, dan terendah 55°F dari halaman Today San Francisco. Seluruh 16 dari 16 respons API melaporkan model Qwen3-VL yang diminta, dan 15 tangkapan layar langkah yang valid beserta trajectory tindakan read-only lolos penerimaan deterministik independen. Hasil ini membuktikan bahwa jalur API model terbuka dapat dijalankan; bukan berarti lengan tool `computer` native Anthropic telah direproduksi.
+> Tugas uji “Buka Google dan cari cuaca San Francisco”: setelah startup, screenshot menampilkan Google dengan elemen interaktif bernomor. Model memilih kotak pencarian, memasukkan “San Francisco weather today”, mengirim pencarian, lalu mengekstrak suhu dan kondisi dari halaman hasil.
 
 ### Computer Use Agent yang Dapat Menonton Animasi dan Mendengar Suara
 
-Sejauh ini, persepsi Computer Use didasarkan pada asumsi implisit: **layar bersifat statis**—ambil tangkapan layar, pikirkan langkah berikutnya, klik, dan ambil tangkapan layar berikutnya. Layar yang sebenarnya memutar video, menampilkan notifikasi kilat yang menghilang dalam hitungan detik, dan memutar audio dari rapat. Sebuah Agent yang membuka matanya hanya setiap 3–5 detik sekali dan sama sekali tidak memiliki telinga akan buta dan tuli terhadap semua yang terjadi di antara dua frame. Menonton rekaman layar, bergabung ke rapat, mengikuti petunjuk suara, menangkap kotak dialog sebelum menghilang—seluruh kategori pekerjaan komputer sehari-hari ini secara efektif terlarang bagi Computer Use Agent saat ini.
+Sejauh ini, persepsi Computer Use bertumpu pada asumsi implisit: **layar bersifat statis**—ambil screenshot, pikirkan satu langkah, klik, lalu ambil screenshot berikutnya. Layar nyata memutar video, menampilkan notifikasi singkat, dan mengeluarkan suara rapat. Agent yang hanya membuka mata setiap 3–5 detik dan tidak memiliki telinga tidak dapat melihat atau mendengar apa yang terjadi di antara dua frame.
 
-Apa yang benar-benar perlu didesain ulang di sini bukanlah "antarmuka tindakan", melainkan "**antarmuka pengamatan**"[^ch6-9]. Ide intinya adalah memisahkan **pengamatan** (berkelanjutan, adaptif, multimodal) dari **tindakan** (diskrit), menciptakan lapisan middleware perseptual yang berada di antara lingkungan dan model Computer Use mana pun tanpa memerlukan pelatihan ulang. Kita dapat menyebutnya Agent–Computer Observation Interface (AOI). Antarmuka ini memiliki tiga komponen yang "dikendalikan oleh gerbang" (gated): Pertama, **pengambilan keyframe antar-frame**—menggunakan gerbang piksel yang sangat murah untuk melewati frame yang hampir tidak berubah, kemudian menggunakan model kecil untuk menentukan apakah ada perubahan bermakna yang terjadi, mengambil frame hanya saat ada perubahan, menghasilkan biaya yang hampir nol untuk layar statis; Kedua, **transkripsi ucapan dengan gerbang volume**—hanya memanggil pengenalan ucapan saat ada suara, memberi Agent "telinga" untuk pertama kalinya; Ketiga, dan yang paling kritis, **mengubah pengamatan menjadi deskripsi tekstual yang persisten**—meminta model mendeskripsikan frame yang ditangkap dalam satu kalimat (mis., "Munculan tersebut baru saja mengatakan bahwa tanggal rilis telah diubah menjadi 28 April"), dan **bahkan jika gambar asli kemudian dihapus dari konteks, teks ini tetap berada di dalam memori**, meneruskan informasi dinamis tersebut dalam bentuk tekstual.
+Yang perlu didesain ulang bukan action interface, melainkan **observation interface**[^ch6-9]. Agent–computer observation interface (AOI) mengubah observasi environment yang kontinu menjadi event diskret yang mudah diproses model. Teknik utamanya: **penangkapan keyframe antark bingkai**, yang melewati layar nyaris tidak berubah dan memakai model kecil untuk menyimpan perubahan bermakna saja; **transkripsi ucapan berbasis volume**, yang memanggil pengenalan hanya saat ada suara; dan **mendeskripsikan frame sebagai teks**, sehingga deskripsi tetap berada dalam memori setelah gambar asli keluar dari context dan memampatkan riwayat interaksi multimodal.
 
-Temuan yang berlawanan dengan intuisi adalah bahwa hal yang benar-benar penting bukanlah pemilihan frame, melainkan konversi frame yang dipilih menjadi teks yang persisten, karena teks adalah modalitas yang paling baik ditangani oleh LLM Agent. Pada delapan model, mulai dari model berparameter 7B hingga sistem skala perbatasan (frontier-scale), middleware ini memberikan peningkatan +17 hingga +48 poin persentase tanpa pelatihan ulang apa pun, dengan celah terlebar pada tugas-tugas suara: dengan adanya lapisan perseptual ini, Agent akhirnya dapat menyelesaikan tugas-tugas suara yang sebelumnya "dapat didengar tetapi tidak dapat ditindaklanjuti". Namun, ini bukanlah konfigurasi yang berlaku untuk semua—pada beberapa model yang lebih baru, memasukkan terlalu banyak token gambar akan mengganggu proses penalaran dan menurunkan performa. Jadi komponen-komponennya harus **dipilih per model**, tidak dinyalakan secara keseluruhan. Ini adalah pelajaran yang sama dengan trade-off antara Set-of-Mark versus prediksi koordinat: tidak ada solusi instan (silver bullet) dalam skema persepsi; Anda harus mengonfigurasinya agar sesuai dengan temperamen model.
-
-[^ch6-9]: Untuk mekanisme lengkap dan ablasi per model dari ketiga komponen—gated keyframes, on-demand transcription, dan narrating frames into persistent text—lihat Bojie Li dan Noah Shi. *Agent-Computer Observation Interfaces Enable Dynamic Computer Use.* arXiv:2606.29472, 2026.
+[^ch6-9]: Lihat Li, Bojie and Noah Shi. *Agent-Computer Observation Interfaces Enable Dynamic Computer Use.* arXiv:2606.29472, 2026.
 
 ### World Model untuk Computer Use
 
@@ -700,21 +630,6 @@ RT-2 dan OpenVLA memotong aksi kontinu menjadi token diskret dan mengeluarkannya
 
 Model besar biasanya hanya sanggup berinferensi 1—10 kali per detik, sedangkan pengendali tradisional bisa memperbarui puluhan sampai ribuan kali per detik. Praktik rekayasa yang lazim adalah "pemenggalan aksi" (action chunking): model sekali jalan menghasilkan sepenggal pendek aksi masa depan, utas kendali menjalankan penggalan itu pada frekuensi tinggi, dan model menyiapkan penggalan berikutnya di belakang layar. Dengan begitu sebagian waktu tunggu inferensi tersembunyi di dalam waktu pelaksanaan aksi. Harganya: makin panjang penggalannya, makin mulus geraknya, tetapi makin sedikit pemandangan baru yang dilihat model selama selang itu. Bila XLeRobot menjulurkan lengan hendak mengambil cangkir lalu cangkirnya tersenggol dan bergeser di tengah jalan, ia mungkin tetap menjalankan aksi yang dihasilkan dari gambar lama. Jadi pemenggalan aksi adalah pertukaran antara kemulusan dan kecepatan tanggap, bukan percepatan tanpa ongkos.
 
-Pemenggalan aksi umumnya memerlukan kerangka "prediksi—jalankan—sela", bukan menghabiskan penggalan sampai ujung:
-
-```python
-chunk = vla(current_observation, skill)
-for action in chunk:
-    low_level.execute(action)
-    if safety_event() or observation_changed_significantly():
-        low_level.stop()
-        discard_remaining(chunk)
-        reobserve_and_replan()
-        break
-```
-
-Penggalan pendek lebih gesit tetapi memperbanyak panggilan model; penggalan panjang lebih mulus tetapi gampang memakai pengamatan yang basi. Eksperimen 6-12 membandingkan pertukaran semacam ini di simulator, sedangkan yang menyentuh batas keselamatan perangkat keras nyata adalah Eksperimen 6-11.
-
 ### Batas Kemampuan VLA
 
 "Perencanaan jangka panjang + VLA" adalah rancangan dasar yang bisa dipakai, tetapi menyisakan beberapa persoalan yang mudah terlewat.
@@ -775,9 +690,7 @@ Eksperimen 6-12 yang stabil di simulator tidak berarti XLeRobot fisik pada Ekspe
 
 ## Ringkasan Bab
 
-Yang dicabut bab ini adalah premis yang selama lima bab sebelumnya selalu diandaikan: Agent dan dunia berbicara bergantian.
-
-Dibaca menurut dua sumbu **modalitas** dan **waktu**, keempat subbab sebenarnya adalah satu proposisi yang terbentang pada empat skala waktu. **Asinkron dan berbasis peristiwa** memperluas observasi dari "Agent mengambilnya sendiri" menjadi "dunia mendorongnya", dan aksi dari "selesai dalam satu giliran" menjadi "mulai dahulu, selesai kemudian lewat peristiwa"; modalitas tak berubah, yang berubah hanya waktunya. **Suara** memampatkan skala hingga milidetik, dan alur utama evolusi tiga paradigma—kaskade, Omni end-to-end, dan full duplex—justru bergerak dari "berbicara bergantian" menuju mendengar dan berbicara secara terus-menerus, sambil membagi peran antara interaksi real-time di depan dan pemikiran mendalam di belakang. **Computer Use** memindahkan lingkar tertutup yang sama ke layar, dan hambatannya meluas dari "bisakah tugas diselesaikan" menjadi efisiensi operasi, pemahaman visual berkelanjutan, dan konfirmasi keadaan setelah aksi. **Robot** mendorongnya ke dunia fisik, di mana pemotongan aksi menimbang antara kehalusan dan kecepatan reaksi, sedangkan apakah akhirnya tuntas tetap harus diputuskan oleh observasi yang baru.
+Dilihat pada dua sumbu **modalitas** dan **waktu eksekusi**, **asynchronous dan event-driven** memperluas observasi dari “Agent mengambil” menjadi “dunia mendorong”, serta tindakan dari “selesai dalam giliran” menjadi “mulai sekarang dan dituntaskan oleh event berikutnya”. **Suara** memampatkan skala ke milidetik, bergerak dari bergantian bicara menuju mendengar dan berbicara terus-menerus, sambil membagi interaksi foreground realtime dari pemikiran background yang lebih dalam. **Computer Use** memindahkan loop ke layar, dengan bottleneck berupa efisiensi, pemahaman visual kontinu, dan konfirmasi status setelah tindakan. **Robotika** membawanya ke dunia fisik, tempat action chunking menukar kelancaran dengan responsivitas dan keberhasilan tetap harus dinilai dari observasi baru.
 
 Keempat subbab berbagi satu kerangka kendali yang sama:
 
@@ -790,9 +703,7 @@ mengindra terus-menerus
   → melanjutkan, mengoreksi, mencoba lagi, berhenti, atau merencanakan ulang
 ```
 
-Juga berbagi satu set primitif yang sama—membangunkan, titik aman, pembatalan, pendahuluan, pemisahan cepat/lambat. "Memeriksa sinyal pembatalan di titik aman" pada event loop dan "begitu menemukan anomali, buang sisa aksi lalu amati ulang" pada pemotongan aksi adalah mekanisme yang sama, diimplementasikan dua kali pada skala waktu berselisih lima orde besaran; pembagian peran antara model cepat di depan dan model lambat di belakang, serta "kembalikan dulu ID tugas, biar peristiwa menyelesaikannya nanti" pada Agent asinkron, sama-sama dua cara menulis satu hal yang sama.
-
-Perlu dicatat, sebagian besar mekanisme ini untuk saat ini masih berupa siasat rekayasa. Protokol placeholder, penanda peristiwa pada status bar, pembatalan dan rollback pemikiran yang mendahului—pada dasarnya semuanya memakai logika orkestrasi untuk menambal pengalaman asinkron yang absen dari distribusi pelatihan model. Kemajuan di sisi model sedang menarik sebagian di antaranya ke dalam parameter—model interaktif menaruh interupsi dan sela bicara ke dalam model itu sendiri, dan pemikiran berkelanjutan membuat "berpikir sambil mendengar" tak perlu menunggu model generasi berikutnya—tetapi selama korpus pelatihan masih didominasi giliran, lapisan kompensasi ini tak akan lenyap; ia hanya akan terus berpindah ke batas yang baru seiring kemampuan model maju.
+Keempatnya juga berbagi primitive yang sama—wake-up, safe point, pembatalan, preemption, dan pemisahan cepat/lambat.
 
 Bab ini merampungkan kepingan terakhir bagian "membangun Agent": ruang observasi dan ruang aksi kini telah terbentang pada tiga arah sekaligus—isi, modalitas, dan waktu. Tiga bab berikutnya beralih ke persoalan lain: bagaimana kita tahu semuanya dibangun dengan benar, dan bagaimana membuatnya terus membaik.
 

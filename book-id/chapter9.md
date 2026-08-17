@@ -26,19 +26,6 @@ Banyak tugas lain tidak memiliki jawaban tunggal yang benar. Apakah layanan pela
 
 Gambar 9-2 menyajikan struktur verifikasi tiga lapis. Verifikator hasil (outcome verifier) lapisan bawah membaca hasil pengujian, state basis data, dan balasan tool untuk menjawab, “Apakah tugas tersebut benar-benar diselesaikan?” Verifikator proses (process verifier) lapisan tengah memeriksa aturan bisnis, izin, dan urutan tindakan untuk menjawab, “Apakah itu diselesaikan dengan cara yang diizinkan?” Verifikator kualitas (quality verifier) lapisan atas mengevaluasi bahasa dan strategi menurut Rubric untuk menjawab, “Apakah itu ditangani dengan tepat?” Metrik tingkat bawah harus lebih bergantung pada kode dan kebenaran dasar lingkungan (environmental ground truth); hanya aspek-aspek yang sulit diformalkan yang harus didelegasikan ke model bahasa.
 
-**Verifikasi trajektori tiga lapis:**
-
-```python
-outcome = verify_environment_state(trajectory)
-process = verify_actions_and_permissions(trajectory)
-quality = judge_with_rubric(trajectory, cite_evidence = true)
-
-if not outcome.pass or not process.pass:
-    reject_as_learning_example(outcome, process, quality)
-else:
-    emit_structured_diagnosis(outcome, process, quality)
-```
-
 ![Gambar 9-2 Verifikasi lintasan tiga lapis dari hasil lingkungan ke LLM Rubric](images/fig9-2.svg)
 
 Untuk Agent layanan pelanggan, sebuah Rubric yang berguna setidaknya harus mencakup dimensi-dimensi yang tercantum dalam Tabel 9-1. Lima yang pertama terutama menegakkan persyaratan dasar, sementara dua yang terakhir mengukur kualitas layanan. Dekomposisi ini secara diagnostik lebih berguna daripada menanyakan apakah pengguna merasa puas: pengguna mungkin puas karena Agent menerbitkan pengembalian dana yang tidak patuh aturan, atau tidak puas karena pembatasan kepatuhan. Skor kepuasan tunggal tidak dapat membedakan keduanya.
@@ -55,23 +42,11 @@ Tabel 9-1 Dimensi evaluasi lintasan (trajectory evaluation) untuk Agent layanan 
 | Kualitas ekspresi | Apakah bahasanya alami dan ringkas, tanpa pengulangan atau susunan kata berbasis templat? | Percakapan penuh, bahasa Rubric |
 | Alternatif patuh aturan | Ketika rencana asli tidak memungkinkan, apakah alternatif yang diizinkan ditemukan? | Tujuan pengguna, kebijakan, dan tindakan berikutnya |
 
-“Konsistensi janji-tindakan” (Promise–action consistency) sangat cocok untuk skenario Agent. Evaluasi teks tradisional hanya membaca respons akhir dan mungkin dengan mudah menganggap “Saya telah mengirimkan pengembalian dana Anda” sebagai layanan yang baik. Evaluasi lintasan (trajectory evaluation) sebaliknya dilanjutkan dengan memeriksa apakah tool pengembalian dana benar-benar dipanggil, apakah pemanggilannya berhasil, dan apakah status pesanan berubah. “Alternatif patuh aturan” tidak mendorong model untuk mengabaikan aturan sesuka hati; ini mengharuskan model untuk memahami tujuan sebenarnya pengguna dan, saat pengembalian dana tidak tersedia, memeriksa opsi yang sah seperti penjadwalan ulang, perpanjangan, atau kompensasi sebagian.
-
-Hasil verifikasi tidak boleh dikompresi menjadi skalar. Sebuah evaluasi lintasan lebih dekat ke diagnosis terstruktur: tugas sebagian berhasil dan kepatuhan aturan lulus, tetapi ada satu pernyataan yang tidak didukung, satu janji palsu, dan respons mengulangi penjelasan kebijakan tiga kali. Sinyal dimensi (dimensional signals) mempertahankan sifat dari setiap masalah dan lokasi buktinya. Hanya dengan begitu modul hilir (downstream modules) dapat menentukan apakah pernyataan yang tidak didukung mencerminkan kurangnya pengetahuan, tidak adanya persyaratan kutipan, atau kemampuan model yang tidak mencukupi, dan apakah janji palsu membutuhkan revisi Prompt atau pemeriksaan konsistensi antara respons dan state tool di dalam Harness.
-
-LLM verifiers juga memerlukan kalibrasi. Sistem produksi biasanya memelihara sekumpulan kecil lintasan yang dianotasi pakar (expert-annotated trajectories) untuk memeriksa konsistensi pemverifikasi di setiap dimensi; kasus berisiko tinggi atau dengan keyakinan rendah dirujuk ke model kedua atau peninjau manusia; dan set kalibrasi dijalankan ulang setelah perubahan versi model. Pemverifikasi harus memberikan evaluasi dan bukti, sementara modul diagnosis dan evolusi independen harus memutuskan bagian mana dari Agent yang akan dimodifikasi. Hal ini mencegah model yang sama bertindak sebagai Judge sambil menulis ulang aturan secara langsung.
-
 > **Eksperimen 9-1 ★★: Membangun Pemverifikasi Lintasan (Trajectory Verifier) untuk Agent Layanan Pelanggan**
 >
 > **Tujuan:** Mengubah lintasan layanan pelanggan menjadi diagnosis terstruktur yang dapat mendukung pembelajaran selanjutnya, dan menguji apakah “kesimpulan multidimensi dengan bukti” mengidentifikasi akar penyebab lebih baik daripada satu skor keseluruhan.
 >
-> **Data dan prosedur:** Siapkan lintasan berlabel pakar (expert-labeled trajectories) yang mencakup empat kategori: pengembalian dana normal, janji palsu, pengungkapan privasi, dan penolakan berlebihan. Lapisan pertama membaca state pesanan akhir dan log tool untuk menentukan apakah pengembalian dana atau penjadwalan ulang benar-benar terjadi. Lapisan kedua memeriksa setiap langkah terhadap kebijakan bisnis, termasuk izin, prosedur wajib, privasi, dukungan faktual, dan konsistensi janji-tindakan. Lapisan ketiga mengevaluasi kualitas bahasa dan alternatif yang patuh aturan terhadap Rubric di Tabel 9-1 dan mempertahankan giliran (turns) yang relevan sebagai bukti untuk setiap kegagalan. Judge kualitas default menggunakan aturan deterministik, dengan LLM Judge nyata juga tersedia. Terlepas dari model lapisan atas, hasil dan lapisan aturan tidak boleh diserahkan pada model bahasa untuk ditebak.
->
-> **Kontrol dan metrik:** Baseline hanya mengeluarkan skor keseluruhan; kondisi eksperimental mengeluarkan `pass`, `fail`, atau `uncertain` untuk setiap dimensi, bersama dengan bukti dan keyakinan (confidence). Selama kalibrasi, ukur presisi dan recall untuk mendeteksi kegagalan di setiap dimensi dan laporkan kecocokan yang tepat (exact agreement) dengan label pakar. Verifikasikan juga bahwa kegagalan seperti janji palsu mengandung bukti tidak kosong (nonempty evidence) daripada sekadar kesimpulan yang tidak didukung.
->
-> **Kriteria penerimaan (Acceptance criteria):** Pemverifikasi harus secara andal mendeteksi pelanggaran kritis, janji palsu, dan penolakan berlebihan. Skor keseluruhan yang tinggi tidak boleh menyembunyikan kegagalan privasi atau kebijakan. Kasus berkeyakinan rendah (low-confidence) dan berisiko tinggi harus dikirim ke pemverifikasi kedua atau tinjauan manusia alih-alih secara otomatis menjadi sinyal pembelajaran.
->
-> Implementasi yang menyertai tersedia di [`trajectory-verifier`](../chapter9/trajectory-verifier/). Secara default, ini menggunakan Judge kualitas yang dapat direproduksi secara offline; gunakan `--judge llm` untuk menjalankan pemverifikasi LLM nyata yang diimplementasikan.
+> **Deskripsi eksperimen:** Bandingkan “satu skor total” dengan “kesimpulan, bukti, dan confidence per dimensi”, lalu amati mana yang lebih mudah membedakan kegagalan tugas, pelanggaran aturan, janji palsu, dan masalah bahasa. Evolusi kontinu tidak dapat hanya mengandalkan success rate atau satu skor. Hanya dengan mempertahankan apa yang salah, mengapa, dan di mana buktinya, modul berikutnya dapat menentukan apakah knowledge, Prompt, program, atau parameter model yang harus diperbarui; kasus ber-confidence rendah juga tidak boleh otomatis masuk learning set.
 
 ## Empat Metode untuk Evolusi Agent secara Kontinual
 
@@ -89,19 +64,6 @@ Tabel 9-2 Batasan yang berlaku dari empat metode evolusi kontinual
 | Prompt dan Skill | Prinsip penilaian yang dapat diekspresikan secara linguistik dan prosedur operasi | Dapat diinterpretasikan, ruang lingkup yang dapat dikontrol | Rentan terhadap pembengkakan (bloat), konflik, atau diabaikan |
 | Program dan Harness | Prosedur deterministik, tool, dan kendala ketat (hard constraints) | Dapat diuji, eksekusi stabil, biaya rendah | Biaya pengembangan dan pemeliharaan lebih tinggi |
 | Parameter model | Persepsi dimensi tinggi, gaya generasi, dan strategi implisit | Generalisasi kuat, overhead inferensi rendah | Biaya pembaruan dan regresi tinggi |
-
-**Routing pengalaman ke kapabilitas:**
-
-```python
-if experience.is_factual and experience.has_sources:
-    target = KNOWLEDGE
-elif experience.can_be_expressed_as_contextual_language_rule:
-    target = PROMPT_OR_SKILL
-elif experience.is_deterministic or experience.is_hard_safety_constraint:
-    target = PROGRAM_OR_HARNESS
-else:
-    target = MODEL_PARAMETERS
-```
 
 ### Mengkonsolidasikan Pengalaman menjadi Pengetahuan
 
@@ -250,6 +212,26 @@ Eksperimen 9-8 menerapkan protokol yang sama pada lapisan verifikasi. Permintaan
 >
 > Gunakan tiga sinyal dan trajectory kontrol dari `failure_trajectories.json`. Kandidat `gpt-4o-mini` nyata gagal pada replay tugas belum selesai, operasi normal, dan token sekali pakai sehingga ditolak gerbang keamanan. Kandidat deterministik lulus dan mendapat `release_to_canary`; catat pemeriksaan, keputusan, dan hash direktori stabil. Implementasi: [`harness-safety-gate`](../chapter9/harness-safety-gate/).
 
+#### Kasus: evolusi mandiri DeepSeek Harness, ketika semuanya adalah plugin
+
+Tabel Bab 1 menggolongkan DeepSeek Harness (`dsh`) sebagai “framework evolusi mandiri Agent”[^dsh-2026]. Landasannya, paper Cordis, menyatakan bahwa komposisi konvensional bersifat **statis**: pemanggilan fungsi, import modul, dan inheritance ditetapkan saat compile. Sistem plugin dan Harness yang berevolusi sendiri membutuhkan **komposisi dinamis**, yakni komponen dimuat, dilepas, dan dikonfigurasi ulang saat runtime[^cordis-2026]. Setiap modifikasi diri Agent pada dasarnya adalah komposisi dinamis.
+
+Paper tersebut memisahkan dua dimensi ortogonal. **Komposabilitas temporal** menanyakan apakah semua perubahan komponen pada environment bersama dapat dibatalkan secara lengkap dan aman saat komponen dilepas; runtime harus melacak setiap alokasi resource, registrasi event, dan perubahan state. **Komposabilitas spasial** menanyakan apakah komponen dapat mendeklarasikan, menemukan, dan menyelesaikan dependency secara terstruktur dan terverifikasi, serta mengoordinasikan lifecycle saat dependency berubah. Yang pertama tentang **apa yang berubah**; yang kedua **bergantung pada apa**.
+
+Harness yang berevolusi sendiri adalah bentuk paling tajam dari masalah ini. Side effect yang harus dibatalkan berumur panjang dan stateful; dependency dapat muncul, hilang, atau berubah identitas saat runtime. Tanpa komposabilitas temporal, setiap modifikasi diri perlu restart penuh, membuang state proses dan memutus tugas. Tanpa komposabilitas spasial, tiap modul harus mendeteksi perubahan dependency dengan cara sementara, dan penggantian kode sederhana dapat diam-diam merusak dependents atau menciptakan siklus.
+
+Cordis mengangkat dua konsep compile-time ke runtime. Effect system menjadi **effect yang dapat dibalik**: tiap transformasi context membawa inverse eksplisit yang dilacak runtime, sehingga context pulih saat komponen dilepas. Coeffect system menjadi **coeffect reaktif**: komponen menyatakan dependency sebagai spesifikasi, lalu tiap perubahan context memberi tahu apakah ia aktif, nonaktif, atau tidak terpengaruh. Kalkulus komposisi dinamis memperluas sifat ini ke sistem komponen yang saling bersilangan—komposabilitas harus transitif.
+
+**Batas evolusi mandiri tidak ditentukan oleh sebaik apa model menulis kode, melainkan oleh seberapa composable sistem yang menampungnya.** Karena itu `dsh` menjadikan adapter model, registry tool, log sesi, bahkan main loop Agent sebagai plugin: **tidak ada kernel istimewa yang hanya dapat dipelihara manusia**.
+
+Komposabilitas menjawab apakah pemasangan dan pelepasan aman, bukan apakah sesuatu layak dipasang. Plugin buatan model hanya hidup di memori proses dan hilang saat restart; ia **tidak dapat otomatis dipromosikan menjadi plugin resmi**. Agar bertahan, ia harus melalui jalur worktree dan Pull Request yang lebih lambat.
+
+Evolusi juga memiliki biaya. Plugin runtime mengubah tool dan fragmen Prompt yang terlihat oleh model. Saat prefix request berubah, KV Cache Bab 2 tidak valid sejak titik itu. Dokumentasi plugin `dsh` perlu menjelaskan dampaknya pada context dan KV Cache.
+
+[^dsh-2026]: DeepSeek AI, *DeepSeek Harness: Everything is a Plugin*, 2026. https://github.com/deepseek-ai/deepseek-harness. `docs/architecture.md` menjelaskan lapisan dan patch; `docs/subsystems/extensions.md` serta `packages/extensions/README.md` menjelaskan lifecycle, sandbox, dan deklarasi trust untuk tool modifikasi diri. Dirilis Agustus 2026, proyek ini masih developer preview dalam pembahasan ini.
+
+[^cordis-2026]: Shi, Yifan, Wei Zhang, and Tianyi Cui. *A Programming Paradigm for Spatiotemporal Composability.* Draf preprint, 13 Agustus 2026. https://github.com/cordiverse/paper
+
 ### Mengodekan Pengalaman dalam Parameter
 
 Pengetahuan, instruksi, dan program semuanya bertumpu pada satu premis: kapabilitas target dapat diekspresikan secara relatif lengkap melalui simbol-simbol eksternal. Namun kapabilitas seperti pemahaman citra medis, prosodi ucapan alami, menghilangkan "rasa AI" yang kaku dari teks, dan perencanaan jangka panjang (*long-horizon planning*) sulit untuk dikompresi ke dalam beberapa aturan atau alur kerja (*workflows*). Kapabilitas semacam ini harus ditulis ke dalam parameter model melalui *post-training*.
@@ -270,8 +252,6 @@ Pada tingkat berikutnya, target optimasinya bukan lagi semata-mata apa yang terk
 
 Gagasan yang sama meluas ke alur kerja dan seluruh Harness. AFlow merepresentasikan alur kerja yang terdiri dari beberapa pemanggilan LLM sebagai graf kode dan mencari melalui kombinasi *nodes* dan *control flow* menggunakan umpan balik eksekusi[^aflow-2025]. Meta-Harness memiliki sebuah Coding Agent yang memeriksa kode sumber Harness kandidat, skor, dan trajektori untuk menelusuri kode yang menentukan bagaimana informasi disimpan, diambil, dan disajikan[^meta-harness-2026]. Bab 5 telah menetapkan kode sebagai bahasa umum untuk mengekspresikan struktur sistem Agent. Poin tambahan di sini adalah bahwa kode, bersama dengan riwayat evaluasinya, itu sendiri bisa menjadi objek pencarian berkelanjutan dan bukan sekadar keluaran satu kali.
 
-Tingkat yang lebih tinggi tidak otomatis menjadi lebih baik. Mencari aturan lokal mungkin hanya memerlukan beberapa *edge cases*, sedangkan mencari seluruh alur kerja atau Harness berhadapan dengan ruang kandidat yang jauh lebih besar, biaya evaluasi yang lebih tinggi, dan atribusi yang lebih sulit. Kesalahan yang jelas dan berulang yang terlokalisasi pada satu komponen pertama-tama harus menerima *patch* lokal yang dapat diaudit. Hanya ketika perubahan lokal berulang kali gagal mengatasi masalah lintas-komponen, atau ketika metode manajemen saat ini itu sendiri menjadi *bottleneck*, barulah layak untuk bergerak ke arah luar menuju alur kerja, Harness, atau *optimizer*. Pada setiap tingkat, evaluator, batas izin (*permission boundaries*), dan tes terpisah (*held-out tests*) harus tetap berada di luar ruang lingkup yang dapat diedit—semakin besar ruang pencarian, semakin penting *trusted root* ini.
-
 > **Eksperimen 9-6 ★★★: Berikan Buku Ini kepada Hermes: Bisakah Ia Meng-upgrade Dirinya Sendiri?**
 >
 > **Tujuan:** Menguji apakah Agent dapat mengubah pengetahuan eksternal menjadi pembaruan nyata bagi kemampuannya sendiri. Eksperimen tidak memberi daftar masalah atau fitur. Hermes menerima sepuluh bab dan source code-nya, lalu harus memahami prinsip, meninjau implementasinya, dan memilih sendiri satu peningkatan yang layak.
@@ -290,33 +270,13 @@ Keempat metode pembaruan tersebut menjadi evolusi berkelanjutan alih-alih optima
 
 Voyager[^voyager-2023] mendemonstrasikan sebuah *continual-evolution loop* yang relatif lengkap. Di dalam Minecraft, Voyager memilih tujuan-tujuan baru berdasarkan kapabilitasnya saat ini, secara iteratif menyempurnakan program menggunakan umpan balik lingkungan, menyimpan kode yang berhasil divalidasi dalam pustaka keahlian (*skill library*), dan kemudian menggabungkan keahlian-keahlian yang ada untuk memecahkan tugas yang lebih sulit. Kurikulum otomatis, keahlian yang dapat dieksekusi, dan validasi lingkungan semuanya sangat diperlukan: dengan pustaka keahlian tetapi tanpa kurikulum, Agent tidak tahu apa yang harus dipelajari selanjutnya; dengan refleksi diri tetapi tanpa validasi lingkungan, pustaka keahlian akan menumpuk kesalahan; dengan eksplorasi tetapi tanpa persistensi, setiap tugas masih harus dimulai dari awal. Meskipun pengetahuan, Prompt, *tools*, dan parameter dari Agent dunia nyata lebih kompleks, proses pembelajaran dasarnya serupa.
 
-Secara lebih spesifik, Voyager terdiri dari tiga mekanisme yang saling terkait. **Generator kurikulum otomatis** mengusulkan tujuan selanjutnya yang cukup menantang dari inventaris saat ini, lingkungan, dan keahlian yang telah diperoleh, sehingga eksplorasi tidak menjadi pengembaraan acak. **Pustaka keahlian** menyimpan program yang berhasil sebagai kode yang dapat diambil (*retrievable*) dan dapat disusun (*composable*); keahlian mengumpulkan (*gathering*) tingkat lanjut, misalnya, dapat memanggil keahlian gerakan dan merakit (*crafting*) dasar. **Mekanisme *iterative prompting*** mengumpankan observasi lingkungan, kesalahan eksekusi, dan hasil verifikasi diri kembali ke putaran generasi kode berikutnya sampai tugas tersebut benar-benar lulus. Dibandingkan dengan *baselines* yang digunakan dalam makalah, Voyager memperoleh barang unik 3,3 kali lipat lebih banyak, melakukan perjalanan 2,3 kali lipat lebih jauh, membuka tonggak pencapaian *technology-tree* utama hingga 15,3 kali lipat lebih cepat, dan mentransfer pustaka keahliannya ke dunia Minecraft yang baru. Metrik-metrik ini mengukur bagaimana kapabilitas tumbuh seiring dengan pengalaman dan bukan bagaimana sebuah Agent yang kaku (beku/*frozen*) melakukan suatu ujian tunggal.
+Secara khusus, Voyager memiliki tiga mekanisme yang saling mengunci. **Generator kurikulum otomatis** mengusulkan tujuan berikutnya dengan kesulitan yang tepat dari inventory, environment, dan skill saat ini agar eksplorasi tidak acak. **Skill library** menyimpan program yang berhasil sebagai kode yang dapat di-retrieve dan dikomposisikan; skill pengumpulan tingkat lanjut dapat memanggil skill gerak dan crafting dasar. **Mekanisme prompting iteratif** membawa observasi environment, error eksekusi, dan hasil verifikasi diri ke putaran generasi kode berikutnya sampai tugas benar-benar lolos.
 
-### Dari Diagnosis Masalah hingga Konsolidasi Pengalaman
+**Loop penemuan: hipotesis, eksperimen, evaluasi, feedback.** Sistem evolusi mandiri seperti Voyager mengikuti loop yang merupakan metode ilmiah hasil pematangan berabad-abad. Discovery Loop, yang baru didirikan Jeff Dean dan kolega, mengusulkan otomatisasi: ajukan eksperimen, implementasikan, evaluasi, ambil hasilnya, lalu masukkan ke putaran berikut[^ch1-discovery-loop]. Ini adalah evolusi mandiri Agent yang diterapkan pada sains. Agar tidak terjebak dalam narasi dan penilaian diri sendiri, evolusi dalam bab ini harus mengikuti metode ilmiah.
 
-Masalah tingkat permukaan yang sama mungkin memerlukan bentuk modifikasi yang berbeda. Ketika Agent layanan pelanggan berhalusinasi dengan membuat-buat fakta, penyebabnya mungkin karena kurangnya informasi di dalam Knowledge Base, atau Prompt mungkin gagal mengharuskan adanya kutipan. Ketika Agent secara keliru menjanjikan "ini telah selesai" sebelum menyelesaikan sebuah tugas, masalah tersebut dapat diperbaiki melalui instruksi atau dengan membuat Harness menerapkan konsistensi antara respons dan *tool state*. Modul evolusi pertama-tama harus mengidentifikasi akar penyebab dan kemudian memilih target modifikasi terkecil yang paling mudah divalidasi dan di-*roll back*. Kegagalan sporadis dengan bukti yang tidak mencukupi tidak boleh langsung memicu pembelajaran; sebaliknya sistem harus terus mengumpulkan contoh-contoh.
+[^ch1-discovery-loop]: Discovery Loop diumumkan pada 5 Agustus 2026 oleh Jeff Dean, Sanjay Ghemawat, Quoc Le, dan Oriol Vinyals sebagai public-benefit corporation. Deskripsi publiknya adalah mengotomatiskan loop eksperimen lengkap dan memparalelkan secara besar-besaran eksperimen yang sebelumnya serial.
 
-Pilihan ini mungkin juga berubah seiring dengan bertumpuknya pengalaman. Strategi yang baru ditemukan pada awalnya dapat disimpan sebagai dokumen pengalaman untuk pengambilan (*retrieval*); setelah divalidasi berulang kali di berbagai kasus, ini dapat dipromosikan menjadi pengetahuan. Pengetahuan dapat diekspresikan dalam tiga cara: aturan yang dapat dijelaskan dengan jelas dalam bahasa alami dapat dikonsolidasikan menjadi sebuah Skill; prosedur stabil yang tidak memerlukan pemahaman bahasa alami dapat dikompilasi menjadi kode *tool*; dan kapabilitas yang sebenarnya mencerminkan pengambilan keputusan yang implisit dan luas dapat dimasukkan ke dalam *post-training*.
-
-### Validasi, Rilis, dan Rollback
-
-Setiap modifikasi pertama-tama harus menghasilkan kapabilitas kandidat atau kandidat Agent dan bukan langsung menimpa versi produksi. Dokumen pengetahuan harus diuji untuk menentukan apakah pengambilan (*retrieval*) meningkatkan kinerja pada tugas-tugas baru; Prompts dan Skills harus diperiksa terhadap *edge cases* dan untuk regresi pada tugas-tugas sebelumnya; program harus diuji di dalam *sandboxes* dan *reset environments*; serta pembaruan parameter harus dievaluasi untuk lupa (*forgetting*), keamanan, dan kinerja *out-of-distribution*. Bahkan setelah divalidasi, versi baru harus dirilis secara bertahap dan dipantau pada lalu lintas nyata; jika metrik utama memburuk, sistem harus secara otomatis men-*roll back* ke versi aman yang diketahui.
-
-**Rilis tervalidasi dan rollback:**
-
-```python
-candidate = propose_minimal_update(evidence, current_version)
-
-if not verify(candidate, boundary_set): reject(candidate)
-elif not verify(candidate, retention_set): reject(candidate)
-elif not verify(candidate, safety_set): reject(candidate)
-else:
-    canary = deploy_to_small_traffic(candidate)
-    if canary.metrics_regress: rollback(current_version)
-    else: promote(candidate)
-```
-
-Validasi juga harus memisahkan dua kapabilitas yang sering disamakan. **Harness updating** adalah kemampuan untuk menghasilkan perubahan persisten yang berharga dari trajektori; **Harness benefit** adalah kemampuan Task Agent untuk menemukan, mengaktifkan, dan menggunakan perubahan tersebut dengan benar nantinya. Sebuah Skill mungkin sudah benar pada dirinya sendiri, namun model tugas yang lebih lemah mungkin gagal memuatnya pada situasi yang tepat atau gagal mengikutinya selama trajektori yang panjang. Kegagalan mana pun membuat skor akhir terlihat seolah-olah tidak terjadi evolusi. Oleh karena itu, kinerja *end-to-end* saja tidak dapat mendiagnosis si *updater*. Eksperimen penukaran model (*model-swapping*) oleh Lin dkk. menunjukkan bahwa kedua kemampuan ini berhubungan secara berbeda terhadap kapabilitas *base-model*[^harness-benefit-2026]. Hubungan pastinya memerlukan validasi pada lebih banyak tugas, tetapi mengevaluasi keduanya secara terpisah secara luas sangat berguna.
+Dalam evolusi kontinu, dua kemampuan yang sering tercampur harus dipisahkan. **Harness updating** menghasilkan perubahan persisten yang bernilai dari trajectory; **Harness benefit** adalah kemampuan Agent tugas untuk menemukan, mengaktifkan, dan memakai perubahan itu dengan benar pada run berikutnya. Sebuah Skill bisa ditulis sempurna, tetapi model tugas yang lebih lemah mungkin tidak memuatnya pada situasi yang tepat atau tidak dapat mengikutinya dalam horizon panjang, sehingga skor akhir tampak “tidak berevolusi”. Karena itu skor end-to-end saja tidak dapat mendiagnosis updater. Eksperimen pertukaran model Lin dkk. menunjukkan kedua kemampuan memiliki hubungan berbeda dengan kemampuan base model[^harness-benefit-2026].
 
 Tabel 9-3 Metrik evaluasi berlapis untuk evolusi berkelanjutan
 
@@ -325,9 +285,7 @@ Tabel 9-3 Metrik evaluasi berlapis untuk evolusi berkelanjutan
 | Candidate-change validity | Apakah *updater* mengusulkan perubahan yang berguna? | Tingkat penerimaan (*acceptance rate*) dan perolehan (*gain*) dalam validasi independen |
 | Artifact activation rate | Apakah tugas Agent memuat Skill, memori, atau *tool* baru dalam situasi yang tepat? | Jejak *retrieval*, rute, dan *tool-call* |
 | Successful adherence rate | Setelah aktivasi, apakah Agent mengikuti aturan atau proses baru tersebut? | Urutan tindakan (*action sequences*) dan *process verifiers* |
-| Held-out task gain | Apakah seluruh sistem membaik pada tugas-tugas yang tidak digunakan selama evolusi? | Keberhasilan pada tugas yang disisihkan (*held-out*), kualitas, dan biaya |
-
-Untuk diagnosis, pertahankan sebuah kandidat Harness agar tetap (*fixed*) dan tukar hanya model tugasnya. Jika model yang kuat memperoleh manfaat sementara model yang lemah tidak pernah mengaktifkan artefak baru tersebut, maka pengambilan atau perutean (*routing*) adalah *bottleneck*-nya. Jika keduanya mengaktifkan tetapi hanya model yang kuat yang mengeksekusinya dengan benar, maka kepatuhan pada instruksi (*instruction following*) atau *long-horizon planning* adalah *bottleneck*-nya. Jika setiap model mengalami regresi, perubahan itu sendiri lebih dicurigai. Sebaliknya, pertahankan model tugas tetap dan tukar model yang mengusulkan perubahan untuk membandingkan kualitas *updater* secara langsung. Penukaran model dua arah (*two-way model swap*) ini menempatkan di mana anggaran kapabilitas harus dihabiskan dengan lebih efektif daripada sebuah skor *post-evolution* tunggal.
+| Gain pada himpunan retensi | Apakah sistem membaik pada tugas yang tidak ikut evolusi dan mampu generalisasi? | Success rate, kualitas, dan biaya himpunan retensi |
 
 Evaluasi bukanlah ujian yang dilakukan setelah pembelajaran berakhir, melainkan bagian yang sangat penting dari evolusi diri (*self-evolution*). Evaluasi jangka panjang harus mengamati setidaknya lima jenis hasil secara bersamaan:
 
@@ -347,10 +305,10 @@ Penelitian otonom adalah tes tekanan (*stress test*) yang berguna. Trehan dan Ch
 
 Tugas-tugas ini memerlukan perubahan pada bukti dan struktur pengawasan, bukan hanya sebuah model yang menulis makalah dengan lebih baik:
 
-- **Pisahkan klaim dari bukti:** Catat asal-usul (*provenance*) secara terpisah untuk kutipan, angka, metode, dan kesimpulan; dokumen akhir hanyalah salah satu penyajian (*rendering*) dari graf bukti. Desain Chain-of-Evidence dari ScientistOne menautkan setiap kelas klaim ke sumber-sumber yang dapat diaudit. Ini meningkatkan keterlacakan tetapi dengan sendirinya tidak membuat pertanyaan penelitian menjadi berharga[^scientistone-2026].
-- **Pertahankan hasil negatif:** Tulis eksperimen yang gagal, kandidat yang ditolak, dan alasan berhenti ke sebuah *log* abadi (*immutable log*) dengan status *retrieval* yang sama dengan kesuksesan. Jika tidak, modul evolusi hanya melihat yang bertahan, menelusuri kembali jalur yang telah disangkal, dan belajar menafsirkan hasil yang ambigu sebagai kesuksesan.
-- **Lestarikan keragaman pencarian:** Pencarian *open-ended* tidak boleh hanya mempertahankan *chain* dengan skor tertinggi saat ini. Kumpulan kandidat juga harus melestarikan beberapa cabang dengan skor lebih rendah tetapi berbeda secara bermakna menurut mekanisme, kebaruan kode, atau jenis hipotesis, sehingga setiap solusi tidak konvergen pada templat yang sama yang mudah dinilai.
-- **Pindahkan keterlibatan manusia ke tingkat atas:** Input manusia tidak terbatas pada menyetujui pemanggilan *tool* (*tool calls*) yang berbahaya. Ia juga mencakup mendefinisikan masalah, meninjau kriteria evaluasi, menafsirkan hasil yang anomali, dan memutuskan kapan harus berhenti. Dengan umpan balik yang ambigu, penilaian tingkat tinggi ini lebih sulit untuk diotomatisasi—dan lebih berharga—daripada mengambil alih langkah-langkah eksekusi individu.
+- **Pisahkan kesimpulan dari bukti:** Catat sumber bukti untuk kutipan, angka, metode, dan kesimpulan secara terpisah; naskah akhir hanyalah salah satu penyajian graf bukti. Desain Chain-of-Evidence ScientistOne menautkan setiap jenis klaim ke sumber yang dapat diaudit. Ini meningkatkan keterlacakan, tetapi tidak otomatis menjamin bahwa pertanyaan risetnya bernilai[^scientistone-2026].
+- **Pertahankan hasil negatif:** Catat eksperimen yang gagal, usulan yang ditolak, dan alasan penghentian. Jika tidak, modul evolusi hanya melihat solusi yang bertahan dan akan mengulang jalur yang sudah terbukti salah.
+- **Pelihara keragaman pencarian:** Jangan hanya mempertahankan satu rangkaian dengan skor tertinggi saat ini. Kumpulan kandidat juga perlu menyimpan beberapa cabang yang skornya sementara lebih rendah tetapi berbeda secara substantif, agar semua solusi tidak berkonvergensi pada templat sama yang mudah diberi skor.
+- **Pindahkan keterlibatan manusia ke tingkat yang lebih tinggi:** Peran manusia tidak terbatas pada menyetujui pemanggilan tool yang berbahaya; peran itu juga mencakup mendefinisikan masalah, meninjau kriteria evaluasi, menafsirkan hasil anomali, dan memutuskan kapan harus berhenti.
 
 ### Batas Keamanan untuk Evolusi Berkelanjutan
 
@@ -373,17 +331,6 @@ Siklus sleep-learning khas memiliki lima langkah:
 3. **Collect and consolidate:** Menemukan sinyal baru dalam trajectories yang baru dievaluasi, menggabungkan duplikat, menandai konflik dan kondisi keberlakuan, dan memprioritaskan local patches.
 4. **Validate and approve:** Mengevaluasi kandidat pada set transfer, retention, dan safety; penulisan berisiko tinggi menunggu persetujuan manusia.
 5. **Prune and index:** Memperbarui retrieval indexes dan menandai kapabilitas yang lama tidak digunakan atau bertentangan dengan bukti baru sebagai kedaluwarsa, diarsipkan, atau dihapus, sambil mempertahankan provenance dan versi untuk rollback.
-
-**Konsolidasi saat idle:**
-
-```python
-while sleep_gate_is_open():
-    batch = load_new_evaluated_trajectories()
-    proposals = consolidate(batch, current_capabilities)
-    for proposal in proposals:
-        validate_canary_and_promote_or_rollback(proposal)
-    prune_stale_entries_but_keep_provenance()
-```
 
 User memory adalah contoh yang paling intuitif, tetapi ini harus dibedakan dari action experience. Auto memory pada Claude Code mempertahankan indeks `MEMORY.md` dan file detail spesifik topik untuk setiap proyek. Pada saat memulai sesi, sistem hanya memuat prefix terbatas dari indeks dan membaca konten yang tersisa on demand; ketika indeks mendekati batasnya, Agent diinstruksikan untuk menggabungkan atau memindahkan detail ke tempat lain. Ini menunjukkan bahwa plain-text memory pun memerlukan batas kapasitas, layered loading, dan pengorganisasian aktif. Mekanisme yang saat ini didokumentasikan terutama menulis memori selama sesi dan tidak boleh sekadar disamakan dengan background task malam hari yang tetap[^claude-code-memory].
 

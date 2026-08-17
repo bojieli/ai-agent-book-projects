@@ -878,27 +878,13 @@ The Agent Status Bar addresses this problem by deliberately placing key meta-inf
 > Attention is highly concentrated on the status bar information. The reasoning process directly uses the already distilled information, no longer computing statistics from the raw data. For a small model like Qwen3-0.6B, Control Group A frequently violates the constraint and continues calling, while Control Group B consistently adheres to the constraint.
 >
 
-Experiment 2-8 is a small qualitative demonstration that provides intuition. To quantify the value and limits of this "precompute and access directly" approach, the author and collaborators evaluated it with a dedicated benchmark[^ch2-8]. This approach has a general name: **Context Distillation**. The Agent Status Bar is its most common form. The results:
-
-- **For weak models, a precomputed status bar recovers accuracy.** The weakest models saw accuracy gains of 40 to 54 percentage points, and on these tasks a local 2B model even matched a frontier model that had no status bar.
-- **For strong models that already answer correctly, it improves efficiency.** The same status bar reduces the reasoning effort, latency, and cost per query by roughly an order of magnitude (reasoning tokens are cut by 80–90% or more).
-- The most fundamental change is: without a status bar, the reasoning effort per query **grows continuously** as the context lengthens; with a status bar, it becomes **essentially constant**. No matter how long the context gets, the model only "glances" at those few status entries.
-
-However, **how the precomputation is performed matters greatly**. Three lessons:
-
-**1. Maintain the status bar with code, not with an LLM.** It may seem natural to ask another LLM to read the history and summarize the status bar, but the experiment found that this performed poorly. A 20-line regular-expression function achieved ground-truth-level accuracy, whereas a frontier model that processed the full history in one batch produced many incorrect entries and reduced downstream accuracy below the no-status-bar baseline. Asking an LLM to summarize a long history in one pass merely moves the original context-scanning problem elsewhere. A viable alternative is to **use code whenever possible**; if an LLM is necessary, have it **extract items one by one and then aggregate them with code, rather than summarizing the entire history in a single pass**.
-
-**2. Do not delete the original context.** The status bar is a **lossy projection** of the original context: it only precomputes the dimensions you *anticipate* will be relevant. If the status bar is sufficient, as it is for tasks such as counting and state tracking, the original records can be deleted and only the status bar retained, saving many tokens. But if even one question falls outside the dimensions represented in the status bar, retaining only the status bar can cause accuracy to collapse.
-
-**3. Monitor the accuracy of the status bar as a first-line production metric.** The experiment found that **the model almost unconditionally trusts the status bar**. If it says "called 3 times," the model accepts that value without checking or recalculating it. This trust makes the status bar effective, but it also allows errors to flow **directly** into the final answer. This also means the **status bar poisoning** risk discussed earlier deserves serious attention.
+Experiments show[^ch2-8] that giving a model a **precomputed status bar** can bring **the accuracy of smaller open models close to that of frontier large models**. In addition, **a status bar can greatly improve reasoning efficiency**, reducing the reasoning tokens, latency, and cost of each Agent iteration by roughly an order of magnitude. Without a status bar, the reasoning required for each query **keeps growing** as the context gets longer; with one, it becomes **roughly constant**.
 
 [^ch2-8]: Li, Bojie and Noah Shi. *Distill, Don't Retrieve: Inference-Time Context Distillation for LLM Agent Reasoning.* 2026. https://01.me/research/context-distillation
 
-Seen from this perspective, the Loop Engineering introduced at the end of Chapter 1's evolutionary arc, and developed further in Chapter 10 alongside multi-agent collaboration systems, turns this third axis of interaction into engineering practice. Each iteration makes real progress only when verification writes observations of the external world back into the context. Without that step, the model merely rearranges existing information. Thus, the claim that "the verifier, not the model, is the bottleneck" and the finding that the measuring instrument must be grounded in real observations express the same principle.
-
 ### Composition of the Agent Status Bar
 
-Based on the theoretical foundation above, the Agent Status Bar includes the following types of information:
+The Agent Status Bar includes the following types of information:
 
 **Task Planning**: When an Agent handles complex, multi-step tasks, the trajectory can become very long. The Agent tends to focus excessively on the current local sub-task, forgetting the user's original request, core constraints, and subsequent work. Placing a TODO list that breaks the task into clear steps at the end of the trajectory continually reminds the model of its current progress and future goals, helping align its actions with the overall plan.
 
@@ -974,6 +960,14 @@ A rough model gives the break-even point. Let each status contain $S$ tokens, le
 
 The Agent Status Bar has a practical advantage: all meta-information appears in the context in a human-readable form, allowing developers to inspect what information the Agent received and what decisions it made. More importantly, the approach requires no changes to the model. No fine-tuning is needed; it works with any language model.
 
+Maintaining the status bar requires attention to two points:
+
+1. **Maintain the status bar with code whenever possible. If an LLM is unavoidable, extract items one by one and aggregate them with code; never ask it to perform a batch count in one shot**. Experiments find that **models trust the status bar almost unconditionally**: write “3 calls made,” and the model accepts three without recalculating. LLMs are already prone to counting errors, which also makes the **status-bar poisoning** risk mentioned earlier worth taking seriously.
+
+2. **Do not delete the original context**. A status bar is a **lossy projection** of the original context: it precomputes only the dimensions you expected to be queried. If the bar is sufficient—as it is for counting and state tracking—you can delete the raw record and save many tokens. But if even one question falls outside the dimensions represented there, accuracy collapses when only the status bar remains.
+
+The Agent Status Bar is one form of **context compression**. The next section introduces additional context-compression techniques.
+
 ## Context Compression Strategies
 
 The previous sections discussed what to include in context: prompt engineering determines what to write, Skills determine what to load on demand, and the Agent Status Bar determines what meta-information to inject. As multi-turn interactions deepen, however, the context keeps expanding. This section turns to the opposite problem: **how to reduce content in the context**—when to compress, how to compress, and why compression can be useful even before the context window is full.
@@ -1037,14 +1031,14 @@ The key is understanding the **timing and location** of compression. Compression
 >
 > **Strategies 2 & 3: Non-Task-Aware Compression** — Individual Summarization generates a 2–3 paragraph summary for each search result independently, with a compression ratio of 10.9% (in this book, compression ratio refers to "compressed volume / original volume"; a smaller number means more aggressive compression). It can complete the task but requires 12 iterations and 276,608 tokens. The main problem is information fragmentation—multiple pages repeatedly describe the same event, wasting context space. Combined Summarization merges all results into a single comprehensive summary, with a compression ratio of 4.3%, requiring 10 iterations and 93,449 tokens. However, when the input is extremely long, it must be truncated, potentially losing information at the end. The common flaw of both is a lack of semantic understanding, making it impossible to distinguish the relevance of information.
 >
-> **Strategy 4: Context-Aware Compression** — The core innovation is incorporating the current query intent and accumulated information into the compression decision process. By specifying "Given the search query: {query}" and "Current context: {context}" in the compression prompt, the model is guided to generate targeted summaries. The result requires only 7 iterations and 40,157 tokens, with an overall compression ratio of about 3.0%. In one compression instance, compressing 147,877 characters to 1,963 characters (about 1.3%) still retained key information like founder names and position changes; subsequent searches could intelligently extract key information like position changes and new companies, filtering out irrelevant historical background and duplicate content. This success is based on a key insight: in multi-step tasks, the required information density and type vary at different stages—early stages need broad information gathering, middle stages need precise fact verification, and later stages need comprehensive information synthesis. Context-aware compression maximizes information value by dynamically adjusting the focus of compression.
+> **Strategy 4: Context-Aware Compression** — The core innovation is incorporating the current query intent and accumulated information into the compression decision process. By specifying "Given the search query: {query}" and "Current context: {context}" in the compression prompt, the model is guided to generate targeted summaries. The result requires only 7 iterations and 40,157 tokens, with an overall compression ratio of about 3.0%. In one instance, roughly 150K characters were compressed to 2K while retaining the key information needed by the later task, such as founder names and position changes.
 >
-> **Strategy 5: Context-Aware with Citations** — Adds information provenance to intelligent compression, with each fact accompanied by a source URL citation marker. Token usage increases to 222,992, with a compression ratio of 4.1%, but the citations enable verification. This combines lossy semantic compression with lossless indexing: although the content is compressed, retained source links allow the system to return to the original material.
+> **Strategy 5: Context-Aware with Citations** — Adds information provenance to intelligent compression, with each fact accompanied by a source URL citation marker. The content is semantically compressed (lossy), but retaining source links provides a lossless index that can theoretically return to the original information at any time.
 >
 > **Strategy 6: Adaptive Windowing** — Based on a key insight: early in the task, context space is abundant, so there is no need to rush compression. The compression mechanism is only activated when approaching the capacity limit, thereby preserving the integrity of the original information as much as possible. The specific implementation includes three core mechanisms:
 >
-> - **Threshold Trigger**: Continuously monitors context usage. Compression is activated only when the prompt token count exceeds 80% of the window (102,400 tokens for a 128K window).
-> - **Batch Compression**: When triggered, compresses all unmarked tool results at once. For example, around the fourth iteration, when the context is detected to exceed the 102,400 token threshold (triggered at approximately 135,600 tokens in practice), all 10 uncompressed tool messages are compressed immediately.
+> - **Threshold Trigger**: Continuously monitors context usage and activates compression only when the prompt token count exceeds 80% of the window.
+> - **Batch Compression**: When triggered, compresses all unmarked tool results at once. For example, after detecting that the context exceeds the 102,400-token threshold, it immediately compresses all 10 uncompressed tool messages
 > - **Duplicate Prevention**: Adds a `[COMPRESSED]` marker to ensure compressed content is never processed again.
 >
 > Although the total token usage is relatively high (174,601), the first few iterations retain the complete original information, providing maximum flexibility for broad initial information gathering.
@@ -1075,13 +1069,7 @@ We have already analyzed the two motivations for compression—controlling lengt
 
 Although compression adds computational overhead because each compression requires an extra LLM call, its return on investment can be extremely high relative to the resulting token-cost savings and improvements in task success. Experiments show that context-aware compression reduces token usage by over 75%.
 
-What compression most easily loses is not the details themselves, but **early architectural decisions, the reasoning behind constraints, and failed paths**—LLMs typically prioritize deleting information that seems like it could be re-acquired. In production-grade Agent systems, it is recommended to explicitly define retention priorities during compression:
-
-1.  **Architectural Decisions and Key Constraints**: Must not be summarized.
-2.  **List of Modified Files and Key Change Records**: Preserve in full.
-3.  **Verification Status** (pass/fail): Must be retained.
-4.  **Unresolved TODOs and Rollback Notes**: Must be retained.
-5.  **Tool Output**: Can be deleted, retaining only the pass/fail conclusion.
+What compression loses most easily is early architectural decisions, the reasons behind constraints, and failed paths. Therefore, **the Agent should frequently save progress in documents** rather than scattering all information through its execution history. Just as important company information belongs in documents rather than chat logs, an Agent needs the habit of writing and updating documentation. If your model lacks that habit, reinforce it through prompts and skills.
 
 ### Isolation Over Compression: Sub-Agent Context Isolation
 

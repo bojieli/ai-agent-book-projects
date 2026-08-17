@@ -254,33 +254,6 @@ Pi Coding Agent는 이 아이디어를 더 과감한 아키텍처 절충으로 �
 
 보안 사이드카에는 **거부 회로 차단기**도 필요합니다. 분류기가 작업을 연달아 거부하면 무한히 다시 시도해서는 안 됩니다. 자원을 낭비하고 사용자를 반복 루프에 가둘 수 있기 때문입니다. 대신 사용자에게 직접 판단을 요청하는 방식으로 폴백해야 합니다. 이는 1장의 하네스 “교정” 기능을 적용한 전형적인 사례입니다.
 
-**도구 안전 게이트:**
-
-```python
-proposal = model.tool_call()
-call = parse_and_validate_schema(proposal)
-
-if call is INVALID:
-    return structured_error("invalid arguments")
-
-if not permission_policy.allows(actor, call):
-    return structured_error("permission denied")
-
-risk = classify_risk(call.tool, call.args)
-if risk == HIGH:
-    review = independent_reviewer(
-        trusted_policy,
-        trusted_task_summary,
-        sanitize_and_tag_untrusted_fields(call)
-    )
-    if review != ALLOW:
-        return reject_or_escalate(review)
-
-result = sandbox.execute(call, scope = least_privilege_scope(call))
-checked = verify_result(call, result, observe_environment())
-return checked
-```
-
 **자동 검증과 피드백 루프.**
 
 실행 도구의 또 다른 중요한 설계 원칙은 **작업 결과를 검증할 수 있다면 자동으로 검증해야 한다**는 것입니다. 코드 쓰기를 예로 들면 에이전트가 `write_file`로 코드 파일을 생성하거나 수정했을 때 도구는 콘텐츠를 쓴 뒤 “성공”이라고만 반환해서는 안 됩니다. 파일 유형에 맞는 linter(정적 코드 분석 도구)를 호출하여 곧바로 구문을 검사하고, 출력을 구조화된 오류 목록으로 파싱하여 도구 반환값에 포함해야 합니다.
@@ -396,20 +369,6 @@ AI 에이전트가 점점 강력해져도 일부 핵심 의사결정에는 여�
 ![그림 4-2 계층형 도구 매칭(서버 수준 → 도구 수준의 2단계 의미 검색)](images/fig4-2.svg)
 
 **계층형 매칭과 폴백.** 효율적인 매칭은 도구가 이미 계층적으로 구성되어 있다는 점을 활용합니다. MCP 같은 프로토콜에서 도구는 휴대전화의 앱처럼 관련 기능을 하나로 묶은 **서버** 단위로 그룹화됩니다. 따라서 먼저 기능 설명으로 관련 서버를 찾고, 그 서버 안에서 구체적인 도구를 매칭하는 두 단계 검색을 수행할 수 있습니다. 검색 공간이 “수천 개 도구”에서 “수십 개 서버 × 서버마다 수십 개 도구”로 줄어들어 연산량을 아끼고 도메인 간 의미 혼동도 줄입니다. 실무에서는 오프라인에서 만든 뒤 점진적으로 갱신하는 임베딩 인덱스를 기반으로 합니다. 두 단계 모두에서 후보 점수가 임계값보다 낮으면 시스템은 명시적인 “찾을 수 없음”을 반환해야 합니다. 그러면 에이전트는 요청을 다르게 표현해 다시 시도하거나, 기본 도구로 직접 구현하거나, 아예 새 도구를 만들 수 있습니다. 도구 생성은 9장의 주제입니다.
-
-**능동적 도구 탐색:**
-
-```python
-if capability_is_missing(task):
-    server = search_server_index(capability)
-    tool = search_tool_index(server, capability)
-
-    if tool == NOT_FOUND:
-        retry_with_rewritten_request_or_escalate()
-    else:
-        append_tool_schema_to_trajectory(tool)
-        continue
-```
 
 ![그림 4-3 동적 도구 로딩을 위한 KV Cache 최적화](images/fig4-3.svg)
 

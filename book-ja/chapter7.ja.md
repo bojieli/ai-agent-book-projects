@@ -145,16 +145,7 @@ Agent の評価には、繰り返し実行できる自動化された環境が�
 
 **実行プロトコル（Interaction Protocol）** はインタラクションのモードと終了条件を規定します。
 
-**再現可能な評価ループ:**
-
-```python
-for task in dataset:
-    environment.reset(task.initial_state)
-    trajectory = agent.run(task.prompt, environment.tools)
-    outcome = environment.snapshot()
-    score = verifier(task, trajectory, outcome)
-    record(task, trajectory, outcome, score)
-```
+この 5 つの要素が合わさって、再現可能な評価ループになります。
 
 ![図7-2 ツール呼び出し型と人間・機械インタラクション型の評価環境](images/fig7-2.svg)
 
@@ -373,17 +364,6 @@ rubric:
 ```
 
 **良い Rubric 対 悪い Rubric**：上記の各採点段階は検証可能な具体的行動（「Dr. Chen と正確に回答」）を示しており、「メモリへの深い理解を示した」のような客観的に判定不能な記述ではありません。否決項は底線を明確にしています。他の次元がすべて満点でも、ハルシネーションが 1 回でも現れたら直接ゼロと判定します。
-
-**rubric 判定前の決定的 veto:**
-
-```python
-deterministic = verify_state_policy_and_claims(trajectory, outcome)
-if deterministic.veto:
-    return FAIL(reason = deterministic.evidence)
-
-rubric_result = judge(answer, rubric, evidence)
-return aggregate_with_confidence(rubric_result)
-```
 
 Rubric と Agent の回答を評価モデルに渡すと、各項目の点数と根拠が返ります。数十件の結果を集計し、低得点の軌跡を読み直せば、漠然とした「成功率の低下」を具体的な原因に分解できます。情報を取得できなかったのか、人物関係を取り違えたのか、それとも根拠のない内容を補ったのか。Rubric は点数を付けるだけでなく、次に直すべき場所を示す診断器になります。
 

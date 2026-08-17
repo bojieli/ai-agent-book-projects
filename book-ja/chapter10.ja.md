@@ -175,23 +175,6 @@ IPC の 2 つのパラダイムに対応させると、共有ファイルシス�
 
 ファイルシステムは Agent 間の**生成物交換**の問題を解決しますが、協調にはもう一つ**コントロールプレーン**が必要です。ここでこそ表10-2 のライフサイクルの各行が力を発揮します。作成（`spawn_subagent`）、メッセージ送信（`send_message_to_subagent`）、キャンセル（`cancel_subagent`）、発見（`list_agents`）という第 4 章で示された一群のツールのプリミティブは、プロセス世界の fork、メッセージ、kill、ps に対応します。本節はインターフェース定義を繰り返さず、マルチ Agent 協調が依存しながらもしばしば見過ごされる 4 つの能力に焦点を当てます。
 
-**メッセージエンベロープと worker のライフサイクル:**
-
-```python
-envelope = {
-    id, trace_id, sender, recipient, type,
-    payload, created_at, deadline, schema_version
-}
-
-worker = spawn(task, budget, cancellation_token)
-publish(task_assigned(envelope, worker))
-while worker.is_running:
-    accept(status_update | artifact | needs_input)
-    if deadline_expired or cancellation_token.is_set:
-        request_graceful_stop(worker)
-await worker.ack_or_timeout()
-```
-
 **一、メッセージ受け渡し。** 最も単純な形態はポイントツーポイントです。Agent A が直接 `send_message_to_agent_b(content)` を呼び出すもので、トポロジーが固定で Agent 数が少ない場面（本章の実験 10-3 の電話＋パソコンの 2 Agent など）に適します。Agent 数が増え、非同期並列が必要になると、ポイントツーポイントの接続数は Agent 数に対して二乗で増え、しかも送受信の双方が同時にオンラインであることを要します。このときは**メッセージバス**に切り替えるべきです（本章後半の「並列協調形態」を参照）。Agent はメッセージをバスに発行し、バスが購読関係に従って転送するので、送信側は消費者を知る必要がありません。ポイントツーポイントであれバス経由であれ、メッセージは通常、構造化された**エンベロープ**（envelope）を携えるべきです。送信者 ID、宛先（指定 Agent かブロードキャストか）、メッセージ種別（`task_assigned`/`status_update`/`result`/`terminate` など）、および JSON ペイロードです。統一されたエンベロープ形式は、受信側が確実にルーティング・解析できることを保証し、協調経路を追跡可能にします。これはマルチ Agent システムのデバッグの鍵です。
 
 **二、状態照会。** これはコントロールプレーンで最も過小評価されがちな一環です。メイン Agent がサブ Agent を送り出したあと、その進捗を知る術がなければ、待ち続けるべきか判断することも、ブロックしたときに適時介入することもできません。直感的なやり方は RPC をそのまま持ち込み、`get_subagent_status(agent_id)` という照会インターフェースを定義して「実行中／完了済み／失敗」に進捗のパーセンテージを添えて返すことです。しかしこのプル式のインターフェースの実際の用途は予想よりはるかに小さいのです。サブ Agent はいったん作成されると直ちに実行を始め、完了または失敗するまで走り続けるのであって、従来のバッチ処理システムのジョブのように一連のキュー状態の間を遷移するわけではありません——ちょうど Unix プログラミングで、PID を指定して別のプロセスの実行状態をポーリングする必要がめったにないのと同じです。ポーリングにはさらに固有のジレンマがあります。密すぎれば token を浪費し、疎すぎれば適時性を欠くのです。状態取得のより自然なやり方は、本章冒頭の 2 つの大きな通信パラダイムに立ち返ることです。
