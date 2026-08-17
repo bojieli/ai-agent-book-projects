@@ -19,7 +19,7 @@
 | 事件触发工具 | Agent 注册、外部触发 | 驱动 Agent 开始执行 |
 
 
-**感知工具**是 Agent 主动获取信息、感知世界的方式。例如，网络搜索工具（web_search）、内部知识库检索工具（knowledge_base_search）、阅读网页工具（fetch_url）、搜索文件名工具（find_file）、搜索文件内容工具（grep_file）、读文件工具（read_file）。感知工具的设计关键在于粒度权衡和输出信息量的控制。
+**感知工具**是 Agent 主动获取信息、感知世界的方式。例如，网络搜索工具（web_search）、内部知识库检索工具（knowledge_base_search）、阅读网页工具（fetch_url）、搜索文件名工具（find_file）、搜索文件内容工具（grep_file）、读文件工具（read_file）。感知工具的设计关键在于控制输出信息量，防止上下文爆炸。
 
 **执行工具**是 Agent 改变外部世界的方式。例如，命令行工具（shell_exec）、代码解释器工具（code_interpreter）、写文件工具（write_file）、编辑文件工具（edit_file）、发送邮件工具（send_email）。与感知工具不同，执行工具的错误代价可能极高，安全约束是其设计的核心。
 
@@ -259,35 +259,6 @@ Sidecar 与提议者-审核者机制都引入了第二视角，但二者的执�
 
 Sidecar 模式的另一个典型应用是**构造和补充上下文**：主模型在思考的同时，Sidecar 模型旁路调用并行地筛选相关的用户记忆、为较长的工具输出生成摘要、从数据库中提取用户的最新信息等。这些结果在主模型需要时就已经准备好了，用户感受不到额外的延迟。
 
-把执行层的安全边界压缩成一个可审查的骨架：
-
-```python
-proposal = model.tool_call()
-call = parse_and_validate_schema(proposal)
-
-if call is INVALID:
-    return structured_error("invalid arguments")
-
-if not permission_policy.allows(actor, call):
-    return structured_error("permission denied")
-
-risk = classify_risk(call.tool, call.args)
-if risk == HIGH:
-    review = independent_reviewer(
-        trusted_policy,
-        trusted_task_summary,
-        sanitize_and_tag_untrusted_fields(call)
-    )
-    if review != ALLOW:
-        return reject_or_escalate(review)
-
-result = sandbox.execute(call, scope = least_privilege_scope(call))
-checked = verify_result(call, result, observe_environment())
-return checked
-```
-
-这里的输入隔离是关键边界：Reviewer 看到工具名、解析后的参数和权限元数据，而不是可能携带提示注入的完整轨迹；必须传递的自由文本要标成数据而不是指令，并经过长度、编码和内容策略检查。
-
 **自动验证与反馈闭环。**
 
 执行工具的另一个重要设计原则是：**如果操作结果可以被验证，就应该自动验证**。以代码编写为例，当 Agent 调用 `write_file` 创建或修改代码文件时，工具不应只写入内容然后返回 “成功”，而应在写入后立即执行语法检查：根据文件类型调用相应的 linter（代码静态检查工具），将输出解析为结构化的错误列表，作为工具返回值的一部分返回给 Agent。
@@ -408,20 +379,6 @@ return checked
 ![图4-2 层次化工具匹配（服务器级→工具级两层语义搜索）](images/fig4-2.svg)
 
 **层次化匹配与降级。** 高效匹配的关键在于工具组织本身具有层次结构：在 MCP 等协议中，工具按**服务器**分组（类似手机上的 App，每个 App 提供一组相关功能），于是匹配可分两层——先按能力描述定位相关服务器，再在服务器内匹配具体工具，把搜索空间从 “数千个工具” 缩小为 “数十个服务器 × 每个服务器数十个工具”，既省算力也减少跨领域的语义混淆。工程上这依赖一个离线构建、支持增量更新的嵌入索引；若两层匹配的候选相似度都低于阈值，则应明确返回 “未找到”，让 Agent 改写需求重试、用基础工具手工实现，或干脆创造一个新工具（创造工具是第九章的主题）。
-
-主动发现的控制流可以写成更短的伪代码：
-
-```python
-if capability_is_missing(task):
-    server = search_server_index(capability)
-    tool = search_tool_index(server, capability)
-
-    if tool == NOT_FOUND:
-        retry_with_rewritten_request_or_escalate()
-    else:
-        append_tool_schema_to_trajectory(tool)
-        continue
-```
 
 首次加载后的 schema 固定在轨迹原位置，静态前缀仍可复用。
 

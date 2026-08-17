@@ -137,18 +137,7 @@ Agent 评估需要一个可重复运行的自动化环境——能在开发阶�
 
 **执行协议（Interaction Protocol）**规定交互模式和终止条件。
 
-五个要素合起来，就是一个可重复的评估循环：
-
-```python
-for task in dataset:
-    environment.reset(task.initial_state)
-    trajectory = agent.run(task.prompt, environment.tools)
-    outcome = environment.snapshot()
-    score = verifier(task, trajectory, outcome)
-    record(task, trajectory, outcome, score)
-```
-
-`reset`、完整轨迹和最终状态缺一不可：没有重置就无法公平复跑，只看回复会漏掉“说了但没做”，只看最终状态又无法定位过程违规。
+五个要素合起来，就是一个可重复的评估循环。
 
 ![图7-2 工具调用型与人机交互型评估环境](images/fig7-2.svg)
 
@@ -369,20 +358,7 @@ rubric:
     - "如果记忆中同时存在'Dr. Chen'和'陈医生'，应识别为同一人"
 ```
 
-**好的 Rubric vs 坏的 Rubric**：上面每个评分档都给出了可验证的具体行为（“准确回答 Dr. Chen”），而非“展示了对记忆的深刻理解”这类无法客观判定的描述。一票否决项明确了底线：即使其他维度全部满分，一旦出现幻觉就直接判零。
-
-因此，确定性检查和模型评判不应被揉成一次“总分”调用。更稳妥的聚合骨架是：
-
-```python
-deterministic = verify_state_policy_and_claims(trajectory, outcome)
-if deterministic.veto:
-    return FAIL(reason = deterministic.evidence)
-
-rubric_result = judge(answer, rubric, evidence)
-return aggregate_with_confidence(rubric_result)
-```
-
-底线项先由环境真值或规则否决，LLM 只评价难以形式化的质量维度；低置信度或评委分歧进入人工复核，而不是自动放行。
+**好的 Rubric vs 坏的 Rubric**：上面每个评分档都给出了可验证的具体行为（“准确回答 Dr. Chen”），而非“展示了对记忆的深刻理解”这类无法客观判定的描述。一票否决项明确了底线：即使其他维度全部满分，一旦出现幻觉就直接判零分。
 
 将这个 Rubric 和 Agent 的实际回答一起交给评判模型，模型会逐项打分并说明理由。把几十个用例的结果汇总起来，再回看其中的低分轨迹，原本笼统的“成功率下降”就能拆成几类具体问题：是没检索到信息，还是把人物关系想错了，抑或补充了没有依据的内容。这样一来，Rubric 不只告诉我们“得了多少分”，还会告诉我们下一步该改哪里。
 
