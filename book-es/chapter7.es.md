@@ -1,5 +1,7 @@
 # Evaluación de Agentes
 
+Los seis primeros capítulos han desplegado la construcción de un solo Agente: contexto, conocimiento, herramientas, capacidad de programación y espacios de observación y acción. Pero terminar de construirlo no significa haberlo construido correctamente; solo una medición estable puede orientar de forma fiable el posterior entrenamiento del modelo y la evolución del sistema.
+
 Al construir un sistema de Agentes, los desarrolladores se enfrentan a una gran cantidad de decisiones de diseño que a menudo carecen de respuestas correctas obvias:
 
 - ¿Qué modelo utilizar?

@@ -723,7 +723,7 @@ cảm nhận liên tục
 
 Chúng cũng dùng chung các primitive—đánh thức, điểm an toàn, hủy, giành quyền và tách nhanh/chậm.
 
-Chương này hoàn tất mảnh cuối cùng của phần "xây dựng Agent": không gian quan sát và không gian hành động đã trải ra trên cả ba hướng nội dung, phương thức và thời điểm. Ba chương tiếp theo chuyển sang một câu hỏi khác — làm sao biết tất cả những thứ đó được xây đúng, và làm sao khiến nó liên tục tốt lên.
+Chương này hoàn tất mảnh ghép cuối cùng của phần “xây dựng Agent”: không gian quan sát và không gian hành động đã được mở rộng theo cả ba hướng—nội dung, phương thức và thời điểm. Tiếp theo, Chương 7 trả lời cách xác định hệ thống có được xây dựng đúng hay không; Chương 8 thảo luận cách cập nhật tham số mô hình thông qua post-training; Chương 9 tổ chức trajectory vận hành, đánh giá và nhiều phương tiện cập nhật thành vòng kín tiến hóa liên tục. Sau đó, Chương 10 chuyển từ nền tảng Agent đơn hoàn chỉnh này sang cộng tác multi-Agent.
 
 [^ch6-16]: Meta AI, “Introducing the V-JEPA 2 world model and new benchmarks for physical reasoning,” 2025-06-11. https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/; V-JEPA 2 technical report：arXiv:2506.09985, https://arxiv.org/abs/2506.09985
 [^ch6-21]: Jack Parker-Holder and Shlomi Fruchter, Google DeepMind, “Genie 3: A new frontier for world models,” 2025-08-05. https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/; Zachary Lin et al. *Cosmos World Foundation Model Platform for Physical AI.* arXiv:2501.03575, 2025. https://arxiv.org/abs/2501.03575 。

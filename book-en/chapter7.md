@@ -1,5 +1,7 @@
 # Evaluating Agents
 
+The first six chapters laid out how to build a single Agent: its context, knowledge, tools, coding capabilities, and observation and action spaces. But completing a build does not mean the build is correct; only stable measurement can give subsequent model training and system evolution a reliable direction.
+
 When building an Agent system, developers face numerous design choices that often lack obvious correct answers:
 
 - Which model should be used?

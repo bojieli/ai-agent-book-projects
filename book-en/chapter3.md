@@ -87,7 +87,7 @@ The trajectory is the complete raw record of a single session, appended chronolo
 
 **User Long-Term Memory** is persistent storage across sessions and instances, typically bound to a specific user ID via key-value pairs. It stores preference settings, historical interaction summaries, and extracted facts. The Agent explicitly reads and updates long-term memory through specific tool calls, enabling cross-session personalization and continuity.
 
-Additionally, some Agents support **Business State**—high-level state abstractions defined by developers, representing the logical stage of a task (e.g., "needs clarification," "processing request," "awaiting payment," "request completed"). This type of state abstraction is particularly important in event-driven Agent architectures (Chapter 4 will discuss event-driven architecture design).
+Additionally, some Agents support **Business State**—high-level state abstractions defined by developers, representing the logical stage of a task (e.g., "needs clarification," "processing request," "awaiting payment," "request completed"). This type of state abstraction is particularly important in event-driven Agent architectures (Chapter 6 will discuss event-driven architecture design).
 
 This chapter focuses on the two core levels: trajectory and user long-term memory. The layered design ensures the Agent can efficiently handle current tasks (relying on trajectory) while possessing long-term personalization capabilities (relying on long-term memory).
 
@@ -595,7 +595,7 @@ Agentic RAG fuses retrieval and reasoning through the Agent's own decisions: it 
 >
 > The comparison makes a strong case that agentic RAG's value lies in "solving problems," not merely "answering questions". It trades some response speed for robustness and answer quality on hard problems—and in this experiment's sentencing scenario, the shift from passive pipeline to active explorer shows up directly as a significant gain in multi-hop accuracy.
 
-This chapter and the preceding one both address Context—one within a single session, the other across multiple sessions. What this chapter primarily consolidates is declarative knowledge about users and the world. Chapter 9 reuses the same extraction and retrieval infrastructure, but applies it to behavioral knowledge supported by operational successes and failures: “under what conditions should the Agent do what?” The next chapter turns to Tools: how Agents interact with the external world through tool design, the MCP interoperability standard, and event-driven architectures.
+This chapter and the preceding one both address Context—one within a single session, the other across multiple sessions. What this chapter primarily consolidates is declarative knowledge about users and the world. Chapter 9 reuses the same extraction and retrieval infrastructure, but applies it to behavioral knowledge supported by operational successes and failures: “under what conditions should the Agent do what?” The next chapter turns to Tools: how Agents interact with the external world through tool design and the MCP interoperability standard. Chapter 6 covers the event-driven runtime.
 
 > **Experiment 3-9 ★★: Building User Memory with Agentic RAG**
 >
@@ -707,7 +707,7 @@ For **knowledge understanding**, we moved past flat document chunking: RAPTOR's 
 
 For **knowledge updating**, the system needs two rhythms: incremental updates promptly absorb new evidence, while periodic reorganization returns to the complete knowledge and raw data to deduplicate, retire, merge, restructure, check omissions, and qualify scenarios. Whether the knowledge is represented as Markdown or Python, both paths should have a Proposer Agent submit an evidence-grounded diff and a heterogeneous Reviewer Agent audit it independently. Only after approval should the PR merge and the derived indexes be rebuilt.
 
-This chapter and the previous one both address the "context" problem—one within a single session, the other across multiple sessions. This chapter primarily distills declarative knowledge about users and the world. Chapter 9 will reuse the same extraction and retrieval infrastructure for behavioral knowledge supported by successful and failed runs: what should be done under which conditions. The next chapter turns to "tools": how Agents interact with the external world through tools, including tool design, the MCP interoperability standard, and event-driven architecture.
+This chapter and the previous one both address the "context" problem—one within a single session, the other across multiple sessions. This chapter primarily distills declarative knowledge about users and the world. Chapter 9 will reuse the same extraction and retrieval infrastructure for behavioral knowledge supported by successful and failed runs: what should be done under which conditions. The next chapter turns to "tools": how Agents interact with the external world through tools, including tool design and the MCP interoperability standard. Chapter 6 covers the event-driven runtime.
 
 ## Thought Questions
 

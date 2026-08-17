@@ -705,7 +705,7 @@ XLeRobot-இன் மேசைப் பணிக்குத் திரு�
 
 அவை ஒரே primitives-ஐயும் பகிர்கின்றன—விழிப்பு, safe points, cancellation, preemption, fast/slow separation.
 
-இந்த அத்தியாயம் "ஏஜெண்டைக் கட்டமைத்தல்" என்ற பகுதியின் கடைசித் துண்டை நிறைவு செய்தது: அவதானிப்பு மற்றும் செயல் வெளிகள் உள்ளடக்கம், முறைமை, நேரம் என்ற மூன்று திசைகளிலும் விரிந்துவிட்டன. அடுத்த மூன்று அத்தியாயங்கள் வேறொரு கேள்விக்குத் திரும்புகின்றன — இவை அனைத்தும் சரியாகக் கட்டமைக்கப்பட்டுள்ளனவா என்பதை எப்படி அறிவது, மேலும் அதைத் தொடர்ந்து சிறப்பாக்குவது எப்படி.
+இந்த அத்தியாயம் “Agent-ஐ கட்டமைத்தல்” என்ற பகுதியின் கடைசித் துண்டை நிறைவு செய்தது: observation space மற்றும் action space உள்ளடக்கம், முறைமை, நேரம் என்ற மூன்று திசைகளிலும் விரிந்துவிட்டன. அடுத்து, அத்தியாயம் 7 அமைப்பு சரியாகக் கட்டமைக்கப்பட்டுள்ளதா என்பதை எப்படித் தீர்மானிப்பது என்று விளக்குகிறது; அத்தியாயம் 8 post-training மூலம் மாதிரி அளவுருக்களை எவ்வாறு புதுப்பிப்பது என்பதை விவாதிக்கிறது; அத்தியாயம் 9 இயக்க trajectory-கள், மதிப்பீடு, பல்வேறு புதுப்பிப்பு ஊடகங்கள் ஆகியவற்றை தொடர்ச்சியான பரிணாம மூடிய சுழற்சியாக அமைக்கிறது. அத்தியாயம் 10 இந்த முழுமையான ஒற்றை-Agent அடித்தளத்திலிருந்து multi-Agent ஒத்துழைப்புக்குச் செல்கிறது.
 
 [^ch6-16]: Meta AI, “Introducing the V-JEPA 2 world model and new benchmarks for physical reasoning,” 2025-06-11. https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/; V-JEPA 2 technical report：arXiv:2506.09985, https://arxiv.org/abs/2506.09985
 [^ch6-21]: Jack Parker-Holder and Shlomi Fruchter, Google DeepMind, “Genie 3: A new frontier for world models,” 2025-08-05. https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/; Zachary Lin et al. *Cosmos World Foundation Model Platform for Physical AI.* arXiv:2501.03575, 2025. https://arxiv.org/abs/2501.03575 。

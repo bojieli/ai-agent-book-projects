@@ -723,7 +723,7 @@ RT-2 和 OpenVLA 把連續動作切成離散的 token，再像生成文字一樣
 
 也共享同一組原語——喚醒、安全點、取消、搶佔、快慢分離。
 
-本章完成了「建構 Agent」這一部分的最後一塊：觀察與動作空間在內容、模態和時機三個方向上都已經展開。接下來的三章轉向另一個問題——怎麼知道這一切建構得對不對，以及如何讓它持續變好。
+本章完成了「建構 Agent」這一部分的最後一塊：觀察與動作空間在內容、模態和時機三個方向上都已經展開。接下來，第七章先回答如何判斷系統建構得對不對；第八章討論如何透過後訓練更新模型參數；第九章再把執行軌跡、評估與多種更新載體組織成持續進化閉環。第十章則在這個完整的單 Agent 基礎上轉向多 Agent 協作。
 
 [^ch6-16]: Meta AI, “Introducing the V-JEPA 2 world model and new benchmarks for physical reasoning,” 2025-06-11. https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/; V-JEPA 2 技術報告：arXiv:2506.09985, https://arxiv.org/abs/2506.09985
 [^ch6-21]: Jack Parker-Holder and Shlomi Fruchter, Google DeepMind, “Genie 3: A new frontier for world models,” 2025-08-05. https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/; Zachary Lin et al. *Cosmos World Foundation Model Platform for Physical AI.* arXiv:2501.03575, 2025. https://arxiv.org/abs/2501.03575 。

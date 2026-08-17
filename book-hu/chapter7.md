@@ -1,5 +1,7 @@
 # Ügynökök kiértékelése
 
+Az első hat fejezet bemutatta egyetlen Ágens felépítését: a kontextust, a tudást, az eszközöket, a kódolási képességet, valamint a megfigyelési és cselekvési teret. Az építés befejezése azonban nem jelenti azt, hogy a rendszer helyesen épült fel; csak a stabil mérés adhat megbízható irányt a későbbi modelltanításhoz és rendszerfejlődéshez.
+
 Egy Ügynökrendszer építése során a fejlesztők számos tervezési döntéssel szembesülnek, amelyekre gyakran nincs nyilvánvaló helyes válasz:
 
 - Melyik modellt érdemes használni?

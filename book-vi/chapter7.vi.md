@@ -1,5 +1,7 @@
 # Đánh giá Agent
 
+Sáu chương đầu đã trình bày cách xây dựng một Agent đơn: ngữ cảnh, tri thức, công cụ, năng lực coding, cùng không gian quan sát và hành động. Tuy nhiên, xây dựng xong không có nghĩa là xây dựng đúng; chỉ khi kết quả được đo lường ổn định thì quá trình training mô hình và tiến hóa hệ thống sau đó mới có phương hướng đáng tin cậy.
+
 Khi xây dựng hệ thống Agent, các nhà phát triển phải đối mặt với một số lựa chọn thiết kế, thường không có câu trả lời đúng rõ ràng:
 
 - Sử dụng mô hình nào?

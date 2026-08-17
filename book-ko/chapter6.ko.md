@@ -710,7 +710,7 @@ XLeRobot의 책상 과제로 돌아오자. 노란 휴지가 빨간 컵에 일부
 
 또한 깨우기, 안전 지점, 취소, 선점, 빠른/느린 처리 분리라는 같은 프리미티브를 공유합니다.
 
-이 장은 "에이전트 구축"이라는 부분의 마지막 조각을 완성했습니다. 관찰 공간과 행동 공간이 내용·모달리티·타이밍이라는 세 방향 모두에서 펼쳐졌습니다. 이어지는 세 장은 다른 물음으로 향합니다. 이 모든 것이 제대로 만들어졌는지 어떻게 알 수 있으며, 어떻게 계속 좋아지게 만들 것인가.
+이 장은 “에이전트 구축”이라는 부분의 마지막 조각을 완성했습니다. 관찰 공간과 행동 공간이 내용·모달리티·타이밍이라는 세 방향 모두에서 펼쳐졌습니다. 이어서 7장은 시스템이 올바르게 구축되었는지 판단하는 방법을, 8장은 사후 학습으로 모델 매개변수를 갱신하는 방법을 다룹니다. 9장은 실행 궤적, 평가, 여러 갱신 매체를 지속적 진화의 폐루프로 조직합니다. 10장은 이렇게 완성된 단일 에이전트 기반에서 멀티 에이전트 협업으로 전환합니다.
 
 [^ch6-16]: Meta AI, “Introducing the V-JEPA 2 world model and new benchmarks for physical reasoning,” 2025-06-11. https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/; V-JEPA 2 technical report：arXiv:2506.09985, https://arxiv.org/abs/2506.09985
 [^ch6-21]: Jack Parker-Holder and Shlomi Fruchter, Google DeepMind, “Genie 3: A new frontier for world models,” 2025-08-05. https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/; Zachary Lin et al. *Cosmos World Foundation Model Platform for Physical AI.* arXiv:2501.03575, 2025. https://arxiv.org/abs/2501.03575 。

@@ -1,5 +1,7 @@
 # Agent'ın Değerlendirmesi
 
+İlk altı bölüm tek bir Agent'ın nasıl inşa edileceğini açtı: context, bilgi, araçlar, coding yeteneği ile gözlem ve eylem uzayları. Ancak inşanın tamamlanmış olması doğru yapıldığı anlamına gelmez; sonraki model eğitimi ve sistem evrimi ancak sonuçlar istikrarlı biçimde ölçülebildiğinde güvenilir bir yön kazanır.
+
 Bir Agent sistemi kurarken geliştiriciler, çoğu zaman apaçık bir doğru yanıtı olmayan çok sayıda tasarım seçimiyle karşılaşır:
 
 - Hangi model kullanılmalı?

@@ -711,7 +711,7 @@ folyamatos érzékelés
 
 Ugyanazokon a primitíveken is osztoznak: ébresztés, biztonságos pontok, megszakítás, kiszorítás, valamint gyors/lassú szétválasztás.
 
-Ez a fejezet befejezte az „Ügynök építése" rész utolsó darabját: a megfigyelési és a cselekvési tér mindhárom irányban — tartalom, modalitás és időzítés — kibontakozott. A következő három fejezet más kérdés felé fordul: honnan tudjuk, hogy mindez jól épült-e meg, és hogyan tesszük folyamatosan jobbá.
+Ez a fejezet befejezte az „Ügynök építése” rész utolsó darabját: a megfigyelési és a cselekvési tér mindhárom irányban — tartalom, modalitás és időzítés — kibontakozott. Ezután a 7. fejezet azt kérdezi, hogyan állapítható meg, hogy a rendszer helyesen épült-e fel; a 8. fejezet bemutatja, hogyan frissíti az utótanítás a modell paramétereit; a 9. fejezet pedig a futási trajektóriákat, az értékelést és a különféle frissítési hordozókat folyamatos fejlődési hurokká szervezi. A 10. fejezet erre a teljes egy-Ágenses alapra építve tér át a több-Ágenses együttműködésre.
 
 [^ch6-16]: Meta AI, “Introducing the V-JEPA 2 world model and new benchmarks for physical reasoning,” 2025-06-11. https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/; V-JEPA 2 technical report：arXiv:2506.09985, https://arxiv.org/abs/2506.09985
 [^ch6-21]: Jack Parker-Holder and Shlomi Fruchter, Google DeepMind, “Genie 3: A new frontier for world models,” 2025-08-05. https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/; Zachary Lin et al. *Cosmos World Foundation Model Platform for Physical AI.* arXiv:2501.03575, 2025. https://arxiv.org/abs/2501.03575 。

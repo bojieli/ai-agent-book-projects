@@ -87,7 +87,7 @@ A trajektória egyetlen szekció teljes nyers rekordja, időrendben hozzáfűzve
 
 **Felhasználói hosszú távú memória** perzisztens tárolás szekciók és példányok között, jellemzően egy adott felhasználói azonosítóhoz kötve kulcs-érték párokkal. Preferencia-beállításokat, történeti interakció-összefoglalókat és kinyert tényeket tárol. Az Ágens explicit módon olvassa és frissíti a hosszú távú memóriát meghatározott eszközhívásokon keresztül, lehetővé téve a szekciókon átívelő személyre szabást és folytonosságot.
 
-Emellett egyes Ágensek támogatják az "Üzleti állapotot" – a fejlesztők által definiált magas szintű állapot-absztrakciókat, amelyek egy feladat logikai szakaszát reprezentálják (pl. "tisztázásra vár", "kérés feldolgozása", "fizetésre vár", "kérés teljesítve"). Ez a fajta állapot-absztrakció különösen fontos az eseményvezérelt Ágens-architektúrákban (a 4. fejezet az eseményvezérelt architektúra tervezését tárgyalja).
+Emellett egyes Ágensek támogatják az "Üzleti állapotot" – a fejlesztők által definiált magas szintű állapot-absztrakciókat, amelyek egy feladat logikai szakaszát reprezentálják (pl. "tisztázásra vár", "kérés feldolgozása", "fizetésre vár", "kérés teljesítve"). Ez a fajta állapot-absztrakció különösen fontos az eseményvezérelt Ágens-architektúrákban (a 6. fejezet az eseményvezérelt architektúra tervezését tárgyalja).
 
 Ez a fejezet a két központi szintre összpontosít: a trajektóriára és a felhasználói hosszú távú memóriára. A réteges kialakítás biztosítja, hogy az Ágens hatékonyan tudja kezelni az aktuális feladatokat (a trajektóriára támaszkodva), miközben hosszú távú személyre szabási képességekkel rendelkezik (a hosszú távú memóriára támaszkodva).
 
@@ -596,7 +596,7 @@ Az Ágens RAG összeolvasztja a visszakeresést és a következtetést az Ágens
 >
 > Az összehasonlítás meggyőzően mutatja, hogy az Ágens RAG értéke a "problémamegoldásban", nem csupán a "kérdések megválaszolásában" rejlik. Némi válaszsebességet áldoz fel a robusztusságért és a válaszminőségért a nehéz problémákon – és ebben a kísérletben, az ítélkezési forgatókönyvben, a passzív csővezetékről az aktív felfedezőre való váltás közvetlenül, szignifikáns többugrásos pontosságnövekedésként jelentkezik.
 
-Ez a fejezet és az előző egyaránt a Kontextussal foglalkozik – az egyik egyetlen szekción belül, a másik több szekción keresztül. Amit ez a fejezet elsősorban konszolidál, az a deklaratív tudás a felhasználókról és a világról. A 9. fejezet újra felhasználja ugyanazt a kinyerési és visszakeresési infrastruktúrát, de a műveleti sikerek és kudarcok által alátámasztott viselkedési tudásra alkalmazza: "milyen feltételek mellett mit tegyen az Ágens?" A következő fejezet az Eszközökre tér át: hogyan lépnek kapcsolatba az Ágensek a külvilággal eszköztervezésen, az MCP interoperabilitási szabványon és eseményvezérelt architektúrákon keresztül.
+Ez a fejezet és az előző egyaránt a Kontextussal foglalkozik – az egyik egyetlen szekción belül, a másik több szekción keresztül. Amit ez a fejezet elsősorban konszolidál, az a deklaratív tudás a felhasználókról és a világról. A 9. fejezet újra felhasználja ugyanazt a kinyerési és visszakeresési infrastruktúrát, de a műveleti sikerek és kudarcok által alátámasztott viselkedési tudásra alkalmazza: "milyen feltételek mellett mit tegyen az Ágens?" A következő fejezet az Eszközökre tér át: hogyan lépnek kapcsolatba az Ágensek a külvilággal eszköztervezésen és az MCP interoperabilitási szabványon keresztül. Az eseményvezérelt futtatókörnyezetet a 6. fejezet tárgyalja.
 
 > **3-9. kísérlet ★★: Felhasználói memória építése Ágens RAG segítségével**
 >
@@ -708,7 +708,7 @@ A "tudás megértéséhez" túlléptünk a lapos dokumentumdaraboláson: a RAPTO
 
 A **tudásfrissítés** két eltérő ritmust igényel: a növekményes frissítés gyorsan befogadja az új bizonyítékot, a rendszeres átszervezés pedig a teljes tudást és az eredeti adatokat újravizsgálva duplikációt szüntet meg, elavult elemeket von ki, összevon, átrendezi a szerkezetet, ellenőrzi a kihagyásokat és pontosítja az alkalmazási köröket. Akár Markdown, akár Python képviseli a tudást, mindkét útvonalon egy Proposer Agent nyújtja be a nyers bizonyítékra épülő diffet, egy másik modellcsaládból származó Reviewer Agent pedig önállóan ellenőrzi azt; csak jóváhagyás után olvasztható be a PR és építhetők újra a származtatott indexek.
 
-Ez a fejezet és az előző egyaránt a "kontextus" problémával foglalkozik – az egyik egyetlen szekción belül, a másik több szekción keresztül. A következő fejezet az "eszközökre" tér át: hogyan lépnek kapcsolatba az Ágensek a külvilággal eszközökön keresztül, beleértve az eszköztervezést, az MCP interoperabilitási szabványt és az eseményvezérelt architektúrát.
+Ez a fejezet és az előző egyaránt a "kontextus" problémával foglalkozik – az egyik egyetlen szekción belül, a másik több szekción keresztül. A következő fejezet az "eszközökre" tér át: hogyan lépnek kapcsolatba az Ágensek a külvilággal eszközökön keresztül, beleértve az eszköztervezést és az MCP interoperabilitási szabványt. Az eseményvezérelt futtatókörnyezetet a 6. fejezet tárgyalja.
 
 ## Gondolatébresztő kérdések
 

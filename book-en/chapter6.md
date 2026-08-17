@@ -748,7 +748,7 @@ keep perceiving
 
 They also share the same primitives—wake-up, safe points, cancellation, preemption, and fast/slow separation.
 
-This chapter completes the last piece of the "building an Agent" part: the observation and action spaces have now been expanded in all three directions—content, modality, and timing. The next three chapters turn to a different question: how do we know any of it was built correctly, and how do we keep making it better?
+This chapter completes the last piece of the “building an Agent” part: the observation and action spaces have now been expanded in all three directions—content, modality, and timing. Next, Chapter 7 asks how to determine whether the system was built correctly; Chapter 8 explains how post-training updates model parameters; and Chapter 9 organizes runtime trajectories, evaluation, and multiple update carriers into a continual-evolution loop. Chapter 10 then moves from this complete single-Agent foundation to multi-Agent collaboration.
 
 [^ch6-16]: Meta AI, “Introducing the V-JEPA 2 world model and new benchmarks for physical reasoning,” 2025-06-11. https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/; V-JEPA 2 technical report：arXiv:2506.09985, https://arxiv.org/abs/2506.09985
 [^ch6-21]: Jack Parker-Holder and Shlomi Fruchter, Google DeepMind, “Genie 3: A new frontier for world models,” 2025-08-05. https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/; Zachary Lin et al. *Cosmos World Foundation Model Platform for Physical AI.* arXiv:2501.03575, 2025. https://arxiv.org/abs/2501.03575 。
