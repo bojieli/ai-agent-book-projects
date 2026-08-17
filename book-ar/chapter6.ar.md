@@ -714,7 +714,7 @@ VLA اختصار لـ Vision-Language-Action، أي «نموذج الرؤية—
 
 كما تتشارك البدائيات نفسها—الإيقاظ، والنقاط الآمنة، والإلغاء، والمقاطعة، والفصل بين السريع والبطيء.
 
-بهذا يُتمّ الفصل آخر قطعة من جزء "بناء Agent": فقد انبسط فضاءا الملاحظة والفعل في الاتجاهات الثلاثة جميعًا — المضمون والوسيط والتوقيت. وتتحوّل الفصول الثلاثة التالية إلى سؤال آخر: كيف نعرف أن هذا كله بُني على الوجه الصحيح، وكيف نجعله يتحسّن باستمرار.
+بهذا يُتمّ الفصل آخر قطعة من جزء «بناء Agent»: فقد انبسط فضاءا الملاحظة والفعل في الاتجاهات الثلاثة جميعًا — المضمون والوسيط والتوقيت. بعد ذلك يجيب الفصل السابع عن كيفية التحقق من أن النظام بُني على الوجه الصحيح؛ ويناقش الفصل الثامن تحديث معلمات النموذج عبر ما بعد التدريب؛ ثم ينظم الفصل التاسع مسارات التشغيل والتقييم ووسائط التحديث المختلفة في حلقة مغلقة للتطور المستمر. وينتقل الفصل العاشر من هذا الأساس المكتمل لوكيل واحد إلى التعاون متعدد الوكلاء.
 
 [^ch6-16]: Meta AI, “Introducing the V-JEPA 2 world model and new benchmarks for physical reasoning,” 2025-06-11. https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/; V-JEPA 2 technical report：arXiv:2506.09985, https://arxiv.org/abs/2506.09985
 [^ch6-21]: Jack Parker-Holder and Shlomi Fruchter, Google DeepMind, “Genie 3: A new frontier for world models,” 2025-08-05. https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/; Zachary Lin et al. *Cosmos World Foundation Model Platform for Physical AI.* arXiv:2501.03575, 2025. https://arxiv.org/abs/2501.03575 。

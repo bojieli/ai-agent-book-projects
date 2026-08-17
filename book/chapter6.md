@@ -763,7 +763,7 @@ RT-2 和 OpenVLA 把连续动作切成离散的 token，再像生成文字一样
 
 也共享同一组原语——唤醒、安全点、取消、抢占、快慢分离。
 
-本章完成了“构建 Agent”这一部分的最后一块：观察与动作空间在内容、模态和时机三个方向上都已经展开。接下来的三章转向另一个问题——怎么知道这一切构建得对不对，以及如何让它持续变好。
+本章完成了“构建 Agent”这一部分的最后一块：观察与动作空间在内容、模态和时机三个方向上都已经展开。接下来，第七章先回答如何判断系统构建得对不对；第八章讨论如何通过后训练更新模型参数；第九章再把运行轨迹、评估与多种更新载体组织成持续进化闭环。第十章则在这个完整的单 Agent 基础上转向多 Agent 协作。
 
 [^ch6-1]: XLeRobot, “Teleop 文档”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html
 [^ch6-2]: Google DeepMind, “Gemini Robotics-ER 1.5”. https://deepmind.google/models/gemini-robotics/gemini-robotics-er/；XLeRobot, “LLM Agent 控制”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html 。XLeRobot 上游示例展示模型与工具调用的编排方式；本节保持同一编排原则，但把动作工具限定为经过标定的桌面抓取、放置、检查和停止原语。

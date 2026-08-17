@@ -1,5 +1,7 @@
 # Mengevaluasi Agent
 
+Enam bab pertama telah menguraikan cara membangun satu Agent: konteks, pengetahuan, alat, kemampuan coding, serta ruang observasi dan ruang aksinya. Namun, selesai dibangun tidak berarti dibangun dengan benar; hanya pengukuran yang stabil yang dapat memberi arah tepercaya bagi training model dan evolusi sistem selanjutnya.
+
 Saat membangun sistem Agent, pengembang dihadapkan pada banyak pilihan desain yang seringkali tidak memiliki jawaban benar yang jelas:
 
 - Model mana yang harus digunakan?

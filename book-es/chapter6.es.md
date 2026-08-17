@@ -713,7 +713,7 @@ percibir de forma continua
 
 También comparten las mismas primitivas—activación, puntos seguros, cancelación, expropiación y separación rápida/lenta.
 
-Este capítulo cierra la última pieza de la parte dedicada a «construir Agentes»: los espacios de observación y de acción ya se han desplegado en las tres direcciones —contenido, modalidad y momento—. Los tres capítulos siguientes giran hacia otra pregunta: cómo saber si todo esto se construyó bien y cómo lograr que siga mejorando.
+Este capítulo cierra la última pieza de la parte dedicada a «construir Agentes»: los espacios de observación y de acción ya se han desplegado en las tres direcciones —contenido, modalidad y momento—. A continuación, el Capítulo 7 pregunta cómo determinar si el sistema se construyó correctamente; el Capítulo 8 explica cómo actualizar los parámetros del modelo mediante post-entrenamiento; y el Capítulo 9 organiza las trayectorias de ejecución, la evaluación y los distintos soportes de actualización en un ciclo de evolución continua. El Capítulo 10 parte entonces de esta base completa de un solo Agente para abordar la colaboración multi-Agente.
 
 [^ch6-16]: Meta AI, “Introducing the V-JEPA 2 world model and new benchmarks for physical reasoning,” 2025-06-11. https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/; V-JEPA 2 technical report：arXiv:2506.09985, https://arxiv.org/abs/2506.09985
 [^ch6-21]: Jack Parker-Holder and Shlomi Fruchter, Google DeepMind, “Genie 3: A new frontier for world models,” 2025-08-05. https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/; Zachary Lin et al. *Cosmos World Foundation Model Platform for Physical AI.* arXiv:2501.03575, 2025. https://arxiv.org/abs/2501.03575 。

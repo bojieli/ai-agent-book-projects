@@ -87,7 +87,7 @@ Trajectory là bản ghi gốc hoàn chỉnh của một phiên duy nhất, đư
 
 **Bộ nhớ dài hạn của người dùng** là bộ lưu trữ liên tục xuyên nhiều phiên và nhiều thể hiện, thường ở dạng cặp khóa-giá trị được liên kết với một ID người dùng cụ thể. Lưu trữ các tùy chọn, tóm tắt tương tác lịch sử và các điểm kiến thức được trích xuất. Agent đọc và cập nhật bộ nhớ dài hạn một cách rõ ràng thông qua các lệnh gọi công cụ cụ thể, cho phép cá nhân hóa và liên tục giữa các phiên.
 
-Ngoài ra, một số Agent cũng hỗ trợ **Trạng thái kinh doanh** - tóm tắt trạng thái cấp cao do nhà phát triển xác định thể hiện các giai đoạn logic của một nhiệm vụ (ví dụ: "Cần làm rõ", "Đang xử lý yêu cầu", "Đang chờ thanh toán", "Yêu cầu đã hoàn thành"). Kiểu trừu tượng hóa trạng thái này đặc biệt quan trọng trong kiến trúc Agent hướng sự kiện (Chương 4 thảo luận về thiết kế kiến trúc hướng sự kiện).
+Ngoài ra, một số Agent cũng hỗ trợ **Trạng thái kinh doanh** - tóm tắt trạng thái cấp cao do nhà phát triển xác định thể hiện các giai đoạn logic của một nhiệm vụ (ví dụ: "Cần làm rõ", "Đang xử lý yêu cầu", "Đang chờ thanh toán", "Yêu cầu đã hoàn thành"). Kiểu trừu tượng hóa trạng thái này đặc biệt quan trọng trong kiến trúc Agent hướng sự kiện (Chương 6 thảo luận về thiết kế kiến trúc hướng sự kiện).
 
 Chương này tập trung vào hai cấp độ cốt lõi của trajectory và trí nhớ dài hạn của người dùng. Thiết kế phân lớp không chỉ đảm bảo Agent có thể xử lý hiệu quả các tác vụ hiện tại (tùy thuộc vào trajectory) mà còn cho phép nó có khả năng cá nhân hóa lâu dài (tùy thuộc vào bộ nhớ dài hạn).
 
@@ -729,7 +729,7 @@ Xét theo cấu trúc toàn sách, chương này dựng đoạn **đề xuất**
 
 Ở cấp độ **cập nhật tri thức**, hệ thống cần đồng thời vận hành theo hai nhịp: cập nhật gia tăng để kịp thời tiếp nhận bằng chứng mới, còn tái tổ chức định kỳ quay lại toàn bộ tri thức và dữ liệu gốc để khử trùng lặp, loại bỏ nội dung cũ, hợp nhất, sắp xếp lại cấu trúc, kiểm tra thiếu sót và giới hạn phạm vi áp dụng. Dù tri thức được biểu diễn bằng Markdown hay Python, cả hai đường đều phải để Proposer Agent gửi diff dựa trên bằng chứng thô và một Reviewer Agent khác nguồn kiểm duyệt độc lập; chỉ sau khi được duyệt mới hợp nhất PR và xây dựng lại chỉ mục dẫn xuất.
 
-Chương này và chương trước đều xử lý vấn đề “ngữ cảnh”—một chương trong một phiên, chương kia xuyên nhiều phiên. Phần chính được kết tinh trong chương này là tri thức khai báo về người dùng và thế giới; Chương 9 sẽ dùng lại cùng hạ tầng trích xuất và truy xuất, nhưng đối tượng của nó là tri thức hành vi được nâng đỡ bởi thành công hoặc thất bại khi chạy, tức “trong điều kiện nào thì nên làm gì”. Chương tiếp theo chuyển sang “công cụ”: cách Agent tương tác với thế giới bên ngoài qua công cụ, bao gồm thiết kế công cụ, tiêu chuẩn tương tác MCP và kiến trúc hướng sự kiện.
+Chương này và chương trước đều xử lý vấn đề “ngữ cảnh”—một chương trong một phiên, chương kia xuyên nhiều phiên. Phần chính được kết tinh trong chương này là tri thức khai báo về người dùng và thế giới; Chương 9 sẽ dùng lại cùng hạ tầng trích xuất và truy xuất, nhưng đối tượng của nó là tri thức hành vi được nâng đỡ bởi thành công hoặc thất bại khi chạy, tức “trong điều kiện nào thì nên làm gì”. Chương tiếp theo chuyển sang “công cụ”: cách Agent tương tác với thế giới bên ngoài qua công cụ, bao gồm thiết kế công cụ và tiêu chuẩn tương tác MCP. Môi trường thực thi hướng sự kiện được trình bày ở Chương 6.
 
 ## Câu hỏi tư duy
 

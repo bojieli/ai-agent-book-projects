@@ -712,7 +712,7 @@ XLeRobot の机タスクに戻りましょう。黄色い紙くずが赤いカ�
 
 また、起動、安全点、キャンセル、プリエンプション、速い／遅い処理の分離という同じプリミティブを共有します。
 
-本章は「Agent を構築する」という部分の最後の一片を仕上げました。観察空間と動作空間は、内容・モダリティ・タイミングという三つの方向すべてにおいて展開されたのです。続く三つの章は別の問いへ向かいます——これらすべてが正しく構築されたとどうすれば分かるのか、そしてどうすればそれを継続的に良くしていけるのか。
+本章は「Agent を構築する」という部分の最後の一片を仕上げました。観察空間と動作空間は、内容・モダリティ・タイミングという三つの方向すべてに展開されました。続いて、第 7 章はシステムが正しく構築されたかをどう判断するかに答え、第 8 章はポストトレーニングによるモデルパラメータの更新を扱い、第 9 章は実行軌跡、評価、複数の更新媒体を継続的進化の閉ループとして組み立てます。第 10 章は、この完成した単一 Agent の基盤からマルチ Agent 協調へ進みます。
 
 [^ch6-16]: Meta AI, “Introducing the V-JEPA 2 world model and new benchmarks for physical reasoning,” 2025-06-11. https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/; V-JEPA 2 テクニカルレポート：arXiv:2506.09985, https://arxiv.org/abs/2506.09985
 [^ch6-21]: Jack Parker-Holder and Shlomi Fruchter, Google DeepMind, “Genie 3: A new frontier for world models,” 2025-08-05. https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/; Zachary Lin et al. *Cosmos World Foundation Model Platform for Physical AI.* arXiv:2501.03575, 2025. https://arxiv.org/abs/2501.03575 。

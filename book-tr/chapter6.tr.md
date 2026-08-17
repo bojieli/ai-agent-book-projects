@@ -723,7 +723,7 @@ sürekli algıla
 
 Aynı temel öğeleri de paylaşırlar: uyandırma, güvenli noktalar, iptal, öncelikli kesme ve hızlı/yavaş ayrımı.
 
-Bu bölüm, "Agent inşa etme" kısmının son parçasını tamamladı: gözlem ve eylem uzayları artık içerik, kip ve zamanlama olmak üzere üç yönde de açılmış durumda. Sonraki üç bölüm başka bir soruya dönüyor: bütün bunların doğru inşa edilip edilmediğini nasıl bileceğiz ve onu nasıl sürekli daha iyi hâle getireceğiz?
+Bu bölüm, “Agent inşa etme” kısmının son parçasını tamamladı: gözlem ve eylem uzayları artık içerik, kip ve zamanlama olmak üzere üç yönde de açılmış durumda. Ardından Bölüm 7, sistemin doğru kurulup kurulmadığını nasıl belirleyeceğimizi; Bölüm 8, post-training yoluyla model parametrelerinin nasıl güncelleneceğini ele alır. Bölüm 9 ise çalışma trajectory'lerini, değerlendirmeyi ve farklı güncelleme taşıyıcılarını sürekli evrim için kapalı bir döngü hâlinde düzenler. Bölüm 10, bu eksiksiz tek-Agent temelinden multi-Agent iş birliğine geçer.
 
 [^ch6-16]: Meta AI, “Introducing the V-JEPA 2 world model and new benchmarks for physical reasoning,” 2025-06-11. https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/; V-JEPA 2 technical report：arXiv:2506.09985, https://arxiv.org/abs/2506.09985
 [^ch6-21]: Jack Parker-Holder and Shlomi Fruchter, Google DeepMind, “Genie 3: A new frontier for world models,” 2025-08-05. https://deepmind.google/blog/genie-3-a-new-frontier-for-world-models/; Zachary Lin et al. *Cosmos World Foundation Model Platform for Physical AI.* arXiv:2501.03575, 2025. https://arxiv.org/abs/2501.03575 。

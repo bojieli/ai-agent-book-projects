@@ -87,7 +87,7 @@ Trajectory, tek bir oturumun eksiksiz ham kaydıdır, kronolojik olarak eklenir 
 
 **Kullanıcı Uzun Vadeli Belleği**, oturumlar ve örnekler arasında kalıcı depolamadır, tipik olarak anahtar-değer çiftleri aracılığıyla belirli bir kullanıcı ID'sine bağlıdır. Tercih ayarlarını, geçmiş etkileşim özetlerini ve çıkarılan bilgi noktalarını depolar. Agent, belirli tool call'lar aracılığıyla uzun vadeli belleği açıkça okur ve günceller, oturumlar arası kişiselleştirmeyi ve sürekliliği mümkün kılar.
 
-Ayrıca, bazı Agent'lar **İş Durumunu (Business State)** destekler—geliştiriciler tarafından tanımlanan, bir görevin mantıksal aşamasını temsil eden yüksek düzeyli durum soyutlamaları (örn. "netleştirme gerekiyor", "isteği işliyor", "ödeme bekleniyor", "istek tamamlandı"). Bu tür durum soyutlaması, olay güdümlü Agent mimarilerinde özellikle önemlidir (Bölüm 4, olay güdümlü mimari tasarımını tartışacak).
+Ayrıca, bazı Agent'lar **İş Durumunu (Business State)** destekler—geliştiriciler tarafından tanımlanan, bir görevin mantıksal aşamasını temsil eden yüksek düzeyli durum soyutlamaları (örn. "netleştirme gerekiyor", "isteği işliyor", "ödeme bekleniyor", "istek tamamlandı"). Bu tür durum soyutlaması, olay güdümlü Agent mimarilerinde özellikle önemlidir (Bölüm 6, olay güdümlü mimari tasarımını tartışacak).
 
 Bu bölüm iki temel seviyeye odaklanır: trajectory ve kullanıcı uzun vadeli belleği. Katmanlı tasarım, Agent'ın mevcut görevleri verimli biçimde ele alabilmesini (trajectory'ye dayanarak) sağlarken uzun vadeli kişiselleştirme yeteneklerine de sahip olmasını (uzun vadeli belleğe dayanarak) sağlar.
 
@@ -729,7 +729,7 @@ Kitabın bütünsel yapısı açısından bu bölüm, Bölüm 1'deki keşif dön
 
 **Bilgi güncelleme** için sistemin iki ritme ihtiyacı vardır: artımlı güncellemeler yeni kanıtı hızla alır; dönemsel düzenleme ise tekilleştirmek, kullanım dışı bırakmak, birleştirmek, yeniden yapılandırmak, ihmalleri kontrol etmek ve senaryoları nitelemek için eksiksiz bilgiye ve ham veriye döner. Bilgi Markdown veya Python olarak temsil edilsin, Proposer Agent kanıta dayalı bir diff sunmalı ve heterojen Reviewer Agent bunu bağımsız olarak denetlemelidir. PR ancak onaydan sonra birleştirilmeli, türetilmiş indeksler de bundan sonra yeniden oluşturulmalıdır.
 
-Bu bölüm ve önceki bölüm Context'i ele alır—biri tek bir oturum içinde, diğeri birden fazla oturum boyunca. Bu bölümün öncelikle pekiştirdiği şey, kullanıcılar ve dünya hakkındaki bildirimsel bilgidir. Bölüm 9 aynı çıkarım ve retrieval altyapısını yeniden kullanır, ancak onu başarılı ve başarısız çalıştırmalarla desteklenen davranış bilgisine uygular: “Agent hangi koşullarda ne yapmalıdır?” Bir sonraki bölüm Tools'a döner: Agent'ların araç tasarımı, MCP birlikte çalışabilirlik standardı ve olay güdümlü mimariler aracılığıyla dış dünyayla nasıl etkileşime girdiğini inceler.
+Bu bölüm ve önceki bölüm Context'i ele alır—biri tek bir oturum içinde, diğeri birden fazla oturum boyunca. Bu bölümün öncelikle pekiştirdiği şey, kullanıcılar ve dünya hakkındaki bildirimsel bilgidir. Bölüm 9 aynı çıkarım ve retrieval altyapısını yeniden kullanır, ancak onu başarılı ve başarısız çalıştırmalarla desteklenen davranış bilgisine uygular: “Agent hangi koşullarda ne yapmalıdır?” Bir sonraki bölüm Tools'a döner: Agent'ların araç tasarımı ve MCP birlikte çalışabilirlik standardı aracılığıyla dış dünyayla nasıl etkileşime girdiğini inceler. Olay güdümlü çalışma zamanı Bölüm 6'da ele alınır.
 
 ## Düşünce Soruları
 
