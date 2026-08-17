@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "run_id": "exp10-2-kimi-k2.5-tavily-receipts-20260730-v3",
-  "run_directory": "validation/runs/exp10-2-kimi-k2.5-tavily-receipts-20260730-v3",
-  "manifest_sha256": "000693672dab8f84d51e2f9e160cc907b0fb2f7db53e9da150dea06ad571fd14",
+  "run_id": "exp10-1-kimi-k2.5-tavily-receipts-20260730-v3",
+  "run_directory": "validation/runs/exp10-1-kimi-k2.5-tavily-receipts-20260730-v3",
+  "manifest_sha256": "d2329fd4cd52b224451dec6f5ba89b40296b260b81073870f0b8e3a580a8cf9f",
   "overall_status": "pass"
 }

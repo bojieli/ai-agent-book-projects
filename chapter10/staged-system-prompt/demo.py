@@ -1,5 +1,5 @@
 """
-实验 10-1 演示入口：一条命令跑通“需求澄清 -> 代码实现 -> 代码审查”三阶段。
+阶段化系统提示词附加项目 演示入口：一条命令跑通“需求澄清 -> 代码实现 -> 代码审查”三阶段。
 
     python demo.py                 # 默认任务、默认模型、最多 3 次审查回退
     python demo.py --list-stages   # 离线查看三阶段配置（无需 API Key）
@@ -26,7 +26,7 @@ def parse_args() -> argparse.Namespace:
         prog="demo.py",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=(
-            "实验 10-1：阶段化系统提示词（需求澄清 -> 代码实现 -> 代码审查）演示。\n"
+            "阶段化系统提示词附加项目：阶段化系统提示词（需求澄清 -> 代码实现 -> 代码审查）演示。\n"
             "同一个 Agent 在三个阶段切换系统提示词与工具集，扮演不同角色，\n"
             "而对话历史与任务状态跨阶段连续共享。不加参数运行即为默认演示。"
         ),

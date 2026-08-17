@@ -1,0 +1,109 @@
+{
+  "id": "async_command_and_immediate_question",
+  "placeholder_latency_seconds": 0.000241,
+  "placeholder_at": 0.0,
+  "time_answer_at": 0.502,
+  "completion_event_at": 3.635,
+  "time_answer": "2026-07-30T05:28:26+08:00",
+  "events": [
+    {
+      "elapsed_seconds": 0.0,
+      "source": "TASK",
+      "text": "启动真实子进程任务 T1: `python analyze_logs.py` (速度 4%/逻辑秒)"
+    },
+    {
+      "elapsed_seconds": 0.0,
+      "source": "TOOL",
+      "event": "placeholder_returned",
+      "task_id": "T1",
+      "placeholder_latency_seconds": 0.000241
+    },
+    {
+      "elapsed_seconds": 0.502,
+      "source": "AGENT",
+      "event": "immediate_time_answer",
+      "answer": "2026-07-30T05:28:26+08:00",
+      "task_still_running": true
+    },
+    {
+      "elapsed_seconds": 0.803,
+      "source": "TASK",
+      "text": "T1 `python analyze_logs.py` 进度 22% (pid=92016)"
+    },
+    {
+      "elapsed_seconds": 1.426,
+      "source": "TASK",
+      "text": "T1 `python analyze_logs.py` 进度 40% (pid=92016)"
+    },
+    {
+      "elapsed_seconds": 2.207,
+      "source": "TASK",
+      "text": "T1 `python analyze_logs.py` 进度 63% (pid=92016)"
+    },
+    {
+      "elapsed_seconds": 2.84,
+      "source": "TASK",
+      "text": "T1 `python analyze_logs.py` 进度 81% (pid=92016)"
+    },
+    {
+      "elapsed_seconds": 3.622,
+      "source": "TASK",
+      "text": "T1 `python analyze_logs.py` 进度 100% (pid=92016)"
+    },
+    {
+      "elapsed_seconds": 3.635,
+      "source": "TASK",
+      "text": "T1 完成 ✅ (pid=92016, returncode=0)"
+    },
+    {
+      "elapsed_seconds": 3.635,
+      "source": "SYSTEM",
+      "event": "async_result_injected",
+      "task_id": "T1"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "T1",
+      "command": "python analyze_logs.py",
+      "status": "completed",
+      "progress": 100.0,
+      "pid": 92016,
+      "returncode": 0,
+      "started_at": 1785360505.728322,
+      "completed_at": 1785360509.363023,
+      "elapsed_seconds": 3.635,
+      "stdout_sha256": "7da29da059869ca8f939dd6d0d4c4a299d9e02a53592773c71517971af545ebd",
+      "stderr_tail": "",
+      "result": {
+        "async_mentions": 69,
+        "bytes": 106193,
+        "error_keyword_count": 20,
+        "experiment_mentions": 37,
+        "heading_count": 27,
+        "input_path": "/Users/boj/book/ai-agent-book/book/chapter6.md",
+        "input_sha256": "4184460334544d326bb7ad4db349b8c583790195d51efc28ef325284c41d7fdd",
+        "job": "logs",
+        "lines": 679
+      },
+      "executable": {
+        "mode": "real_subprocess",
+        "shell": false,
+        "worker": "/Users/boj/book/ai-agent-book/chapter6/async-agent/analysis_worker.py",
+        "worker_sha256": "ab700e034f63e4b8f83dfb4a6156745b7ab7c9352750c63a900f2632acb134c7",
+        "input": "/Users/boj/book/ai-agent-book/book/chapter6.md",
+        "input_sha256": "4184460334544d326bb7ad4db349b8c583790195d51efc28ef325284c41d7fdd",
+        "job": "logs",
+        "rate_percent_per_logical_second": 4.5,
+        "tick_real_seconds": 0.15,
+        "argv_sha256": "1c6aa3b4072446e8286dce865f45c6bb1c93733319bf7501adbb555bc6a7973c",
+        "pid": 92016,
+        "returncode": 0,
+        "stdout_sha256": "7da29da059869ca8f939dd6d0d4c4a299d9e02a53592773c71517971af545ebd",
+        "stdout_lines": 24,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "elapsed_seconds": 3.635
+      }
+    }
+  ]
+}

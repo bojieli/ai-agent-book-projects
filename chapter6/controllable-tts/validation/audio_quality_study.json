@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "experiment": "9-5",
+  "experiment": "6-6",
   "timestamp_utc": "2026-07-30T04:17:59.570927+00:00",
   "provider": "Mistral Voxtral API",
   "model": "voxtral-small-latest",

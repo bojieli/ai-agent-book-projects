@@ -1,7 +1,7 @@
 # Event-Triggered AI Agent with MCP Tools / 事件驱动 AI Agent（MCP 工具）
 
-> Companion code for *AI Agents in Depth*, Chapter 4 — **Experiment 4-5 ★★★**. FastAPI event-driven Agent with async MCP tool loading from collaboration / execution / perception servers.  
-> 配套《深入理解 AI Agent》第 4 章 **实验 4-5 ★★★**。FastAPI 事件驱动 Agent，异步加载协作/执行/感知 MCP 工具。
+> Companion code for *AI Agents in Depth*, Chapter 6 — **Experiment 6-1 ★★★**. FastAPI event-driven Agent with async MCP tool loading from collaboration / execution / perception servers.
+> 配套《深入理解 AI Agent》第 4 章 **实验 6-1 ★★★**。FastAPI 事件驱动 Agent，异步加载协作/执行/感知 MCP 工具。
 
 ← [Chapter 4 index / 返回第 4 章目录](../README.md)
 
@@ -98,7 +98,7 @@ python event_loop_demo.py --trigger timer --provider dashscope
 
 Full flags: `python event_loop_demo.py --help`.
 
-### Exact Experiment 4-5: real mailbox listener
+### Exact Experiment 6-1: real mailbox listener
 
 `unipile_mailbox_experiment.py` implements the manuscript's complete
 three-email acceptance scenario against Unipile's real Email and Calendar
@@ -128,7 +128,7 @@ python unipile_mailbox_experiment.py --recipient 'test-mailbox@example.com'
 ```
 
 Every run writes a redacted, hash-manifested bundle under
-`validation/experiment_4_5/`. Invalid credentials produce `status: blocked`
+`validation/experiment_6_1/`. Invalid credentials produce `status: blocked`
 with the observed HTTP receipt; they are never treated as experiment evidence.
 The official endpoint versions used by the implementation are pinned in
 `experiment_protocol.json`.

@@ -1,4 +1,4 @@
-# 实验 8-9：把「AI 味」反馈内化为写作 Skill
+# AI 写作风格 Skill 附加项目：把「AI 味」反馈内化为写作 Skill
 
 本项目演示持续进化中最难的一类问题：用户说「这段文字 AI 味太重」，这是一条模糊的主观反馈，Agent 没法直接执行。本实验把它走完整个循环——收集用户纠正的 before/after 对，把「AI 味」提炼成可检查的具体规则（破折号密度、「不是……而是……」句式、排比堆砌、「让我们」开头、「首先/其次/最后」模板、emoji 密度、「在……的今天」开头、空洞比喻），沉淀为写作 Skill，并用评估集防止规则膨胀与误伤。
 
@@ -7,8 +7,8 @@
 ```bash
 python -m pytest -q test_pipeline.py
 python demo.py                      # 离线教学演示全流程
-python run_experiment_8_9.py        # 离线验收入口
-python run_experiment_8_9.py \
+python run_ai_style_skill.py        # 离线验收入口
+python run_ai_style_skill.py \
   --provider ark --model doubao-seed-1-6-250615   # 真实 LLM 路径
 ```
 
@@ -25,10 +25,10 @@ cd chapter8/ai-style-skill
 # python -m pip install -r requirements.txt
 
 export ARK_API_KEY=your_api_key_here
-python run_experiment_8_9.py --provider ark --model doubao-seed-1-6-250615
+python run_ai_style_skill.py --provider ark --model doubao-seed-1-6-250615
 
 # 也可改用 OpenAI 直连或 OpenRouter：
-# python run_experiment_8_9.py --provider openai --model gpt-4o-mini
+# python run_ai_style_skill.py --provider openai --model gpt-4o-mini
 ```
 
 真实模式的原始请求、原始响应、Token 用量、延迟、请求/响应哈希保存在 `validation/<run>/evidence.json`，`validation/latest.json` 指向最近一次完整证据。**当前仓库尚未包含真实 LLM 运行**——上面的真实路径需要在有凭据的机器上执行，离线路径的所有数字都是真实跑出来的。
@@ -44,7 +44,7 @@ python run_experiment_8_9.py --provider ark --model doubao-seed-1-6-250615
 
 ## 离线路径的真实运行结果
 
-以下是本仓库离线确定性路径实际跑出的数字（`python run_experiment_8_9.py` 与 `python evaluate.py`）：
+以下是本仓库离线确定性路径实际跑出的数字（`python run_ai_style_skill.py` 与 `python evaluate.py`）：
 
 - 规则增长曲线（3 批反馈顺序进入）：批次 1 提炼 7 条规则草案 → 7 条规则；批次 2 提炼 7 条规则草案 → 全部合并进已有规则，仍 7 条；批次 3 提炼 7 条规则草案 → 新增 1 条（空洞比喻），共 8 条。**21 条原始规则草案合并为 8 条规则**，规则数不随反馈条数线性膨胀。
 - 未完成任务集检出率 8/8，正常文本保留集误伤率 0/8，八条规则在评估集上的精确率与召回率均为 1.0。

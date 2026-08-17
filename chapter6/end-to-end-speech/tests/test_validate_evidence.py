@@ -15,7 +15,7 @@ def test_complete_evidence_passes(tmp_path):
         handle.writeframes(b"\x00\x00" * 2400)
     arm = {"response": "ok", "transcript": "spoken words"}
     evidence = {
-        "experiment": "9-4",
+        "experiment": "6-5",
         "model": {
             "model_id": MODEL_ID,
             "model_revision": MODEL_REVISION,
@@ -49,5 +49,5 @@ def test_complete_evidence_passes(tmp_path):
 
 def test_missing_direct_response_fails(tmp_path):
     path = tmp_path / "evidence.json"
-    path.write_text(json.dumps({"experiment": "9-4", "cases": []}), encoding="utf-8")
+    path.write_text(json.dumps({"experiment": "6-5", "cases": []}), encoding="utf-8")
     assert validate(path)["passed"] is False

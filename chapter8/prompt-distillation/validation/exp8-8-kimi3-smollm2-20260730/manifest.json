@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "experiment_id": "8-8",
+  "status": "complete",
+  "created_at": "2026-08-02T16:55:07.929987+00:00",
+  "command": "/Users/boj/book/ai-agent-book/.venv/bin/python run_experiment_8_8.py --run-dir validation/exp8-8-kimi3-smollm2-20260730 --phase package",
+  "host": {
+    "platform": "darwin",
+    "python": "3.11.4 (main, Jul  5 2023, 08:40:20) [Clang 14.0.6 ]",
+    "credential_env": "MOONSHOT_API_KEY"
+  },
+  "student": {
+    "model": "HuggingFaceTB/SmolLM2-135M-Instruct",
+    "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac"
+  },
+  "teacher": {
+    "model": "kimi-k3",
+    "base_url": "https://api.moonshot.cn/v1",
+    "pricing": {
+      "input_per_million": 20.0,
+      "cached_input_per_million": 2.0,
+      "output_per_million": 100.0,
+      "currency": "CNY",
+      "source_url": "https://platform.kimi.com/docs/pricing/chat-k3.md",
+      "as_of": "2026-07-29",
+      "usd_per_currency_unit": 0.1477922077922078,
+      "fx_source_url": "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
+      "fx_as_of": "2026-07-29"
+    }
+  },
+  "gates": {
+    "disjoint_heldout": true,
+    "real_teacher_receipts": true,
+    "real_parameter_training": true,
+    "before_after_quality": true,
+    "quality_near_teacher": true,
+    "measured_latency": true,
+    "measured_tokens": true,
+    "dollar_accounting": true
+  },
+  "comparison": {
+    "heldout_rows": 80,
+    "train_test_exact_text_overlap": 0,
+    "teacher_gold_accuracy": 1.0,
+    "baseline_gold_accuracy": 0.0,
+    "trained_gold_accuracy": 0.95,
+    "trained_absolute_uplift": 0.95,
+    "trained_teacher_agreement": 0.95,
+    "teacher_mean_latency_seconds": 4.143897417721019,
+    "trained_mean_latency_seconds": 0.021054333343636246,
+    "latency_speedup": 196.81921769199724,
+    "teacher_input_tokens": 30898,
+    "trained_input_tokens": 7738,
+    "input_token_reduction": 0.7495630785164089,
+    "teacher_provider_cost_usd": 0.13577433662337665,
+    "trained_provider_charge_usd": 0.0,
+    "cost_scope_note": "Local inference made no provider API calls; electricity/hardware amortization is excluded."
+  },
+  "artifacts": {
+    "benchmark_test_gold.jsonl": {
+      "sha256": "8ae7f2966c7f955b76af51f7996a0ed626eb7eb595fdc8f594e4b46ec960b33f",
+      "bytes": 19022
+    },
+    "benchmark_train_gold.jsonl": {
+      "sha256": "fe617c0fbe0344685976f95cef7335a77c17f526381927b9f3af321276a298fb",
+      "bytes": 45810
+    },
+    "comparison.json": {
+      "sha256": "baad4abd94d3284125b1bf148e88c12f9e70dc5f7125f00f87b8c93b235b6659",
+      "bytes": 700
+    },
+    "dataset_provenance.json": {
+      "sha256": "ab9d83cefc1bcf019707a454593deaf98ca97b9101518648345e7c87bec9a6ba",
+      "bytes": 643
+    },
+    "student_adapter/README.md": {
+      "sha256": "f9b48a87d653b2af6971a2240d29ab5a8929fe7e156cc566102f50da655aefa2",
+      "bytes": 5224
+    },
+    "student_adapter/adapter_config.json": {
+      "sha256": "1e72f90088e3c7a25d624b6fee8e5275f3d7b67be3d4664e44e0d3e8d010135a",
+      "bytes": 1036
+    },
+    "student_adapter/adapter_model.safetensors": {
+      "sha256": "88e7e5844b34cc2f14bded556bcbd19fb8b532d90c3db6c0772bdc9350257e25",
+      "bytes": 3702168
+    },
+    "student_adapter/chat_template.jinja": {
+      "sha256": "872be49dbb638044ad01b60388f48d469ff2980e5f0dccdc22ec907db54d0788",
+      "bytes": 368
+    },
+    "student_adapter/tokenizer.json": {
+      "sha256": "bf346d64f6f0fbcefb4c1b6928a98241467dff36c6fbae5fe1785c4ff90667f4",
+      "bytes": 3522871
+    },
+    "student_adapter/tokenizer_config.json": {
+      "sha256": "3e9c0d0aff40796f26a2986e6ed1b5e03646765272eb20bacd2492bd020e6c98",
+      "bytes": 453
+    },
+    "student_baseline_heldout.jsonl": {
+      "sha256": "20ed17a02e0847adc2cf4b6d54928a43f166adf7901f0717dd43241684413b8e",
+      "bytes": 17363
+    },
+    "student_baseline_summary.json": {
+      "sha256": "4c5984e0e84972bcdc8996029275f882274c171fc2f60d9f69783efc765883dd",
+      "bytes": 434
+    },
+    "student_train.jsonl": {
+      "sha256": "2e79dacebb153c68d0509e9106b8f194d97a157143194c85f2399eaafde97306",
+      "bytes": 61010
+    },
+    "student_trained_heldout.jsonl": {
+      "sha256": "1f35f16f4b0be3f3790483d71bff743ee523c84a6a52d4f1e83c97cefeea2f6d",
+      "bytes": 16005
+    },
+    "student_trained_summary.json": {
+      "sha256": "74274043a580c902e8267069e7307a9bf092032858f11d6385838767fcc3d698",
+      "bytes": 437
+    },
+    "teacher_receipts.jsonl": {
+      "sha256": "133440abe4fb41905b1fceff46e561ff212521b4530c0917480c96aa49c16119",
+      "bytes": 343657
+    },
+    "teacher_summary.json": {
+      "sha256": "12e7ed9fc21a531f5e8817f30dc664d28ebe137170cdd20dda9b7de0e1960788",
+      "bytes": 1457
+    },
+    "training_receipt.json": {
+      "sha256": "ac07644a977ee45c0985f52fb013388375f1d0b126ff19de773f691260fe8e3e",
+      "bytes": 5824
+    }
+  },
+  "credential_values_retained": false
+}

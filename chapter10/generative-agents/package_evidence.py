@@ -121,7 +121,7 @@ def main() -> int:
     ).splitlines()
     environment = {
         "schema_version": 1,
-        "experiment": "10-7",
+        "experiment": "10-5",
         "source_commit": upstream_commit,
         "source_clean": not upstream_status,
         "source_status": upstream_status,
@@ -150,7 +150,7 @@ def main() -> int:
         )
     manifest = {
         "schema_version": 1,
-        "experiment": "10-7",
+        "experiment": "10-5",
         "run_id": destination.name,
         "files": files,
     }

@@ -1,6 +1,6 @@
-# 实验 8-4 实现与验收边界
+# 实验 9-5 实现与验收边界
 
-正文验收入口是 `run_experiment_8_4.py`。`workflow_validation_demo.py` 与单元测试只是离线预检，不能替代真实模型、真实 HTTP 页面和真实 Chromium 运行。
+正文验收入口是 `run_experiment_9_5.py`。`workflow_validation_demo.py` 与单元测试只是离线预检，不能替代真实模型、真实 HTTP 页面和真实 Chromium 运行。
 
 ## 可信边界
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Experiment 9-10: RGB domain-transfer benchmark on the local GPU.
+"""Experiment 6-13: RGB domain-transfer benchmark on the local GPU.
 
 The benchmark is intentionally self-contained.  It trains a small RGB policy
 on a source visual domain and evaluates it on a shifted target domain, with
@@ -203,7 +203,7 @@ def main() -> int:
     write_json(matrix_path, {"rows": rows, "summary": grouped})
     metrics_path = args.output_dir / "metrics.json"
     write_json(metrics_path, metrics)
-    evidence = {"schema_version": "3.0", "experiment_id": "9-10", "status": "complete", "kind": "local_gpu_rgb_domain_transfer", "seed": seeds[0], "metrics": metrics, "artifacts": [{"kind": "checkpoint", "path": relative_or_absolute(checkpoint_path, args.output_dir), "sha256": sha256(checkpoint_path)}, {"kind": "metrics", "path": relative_or_absolute(metrics_path, args.output_dir), "sha256": sha256(metrics_path)}, {"kind": "matrix", "path": relative_or_absolute(matrix_path, args.output_dir), "sha256": sha256(matrix_path)}, {"kind": "source_preview", "path": relative_or_absolute(preview_source, args.output_dir), "sha256": sha256(preview_source)}, {"kind": "target_preview", "path": relative_or_absolute(preview_target, args.output_dir), "sha256": sha256(preview_target)}], "hardware_extension": {"status": "gated", "actuation_attempted": False, "upstream": "StoneT2000/lerobot-sim2real"}, "blockers": [] if not args.allow_cpu else ["CPU debug mode is not a GPU acceptance run"]}
+    evidence = {"schema_version": "3.0", "experiment_id": "6-13", "status": "complete", "kind": "local_gpu_rgb_domain_transfer", "seed": seeds[0], "metrics": metrics, "artifacts": [{"kind": "checkpoint", "path": relative_or_absolute(checkpoint_path, args.output_dir), "sha256": sha256(checkpoint_path)}, {"kind": "metrics", "path": relative_or_absolute(metrics_path, args.output_dir), "sha256": sha256(metrics_path)}, {"kind": "matrix", "path": relative_or_absolute(matrix_path, args.output_dir), "sha256": sha256(matrix_path)}, {"kind": "source_preview", "path": relative_or_absolute(preview_source, args.output_dir), "sha256": sha256(preview_source)}, {"kind": "target_preview", "path": relative_or_absolute(preview_target, args.output_dir), "sha256": sha256(preview_target)}], "hardware_extension": {"status": "gated", "actuation_attempted": False, "upstream": "StoneT2000/lerobot-sim2real"}, "blockers": [] if not args.allow_cpu else ["CPU debug mode is not a GPU acceptance run"]}
     evidence_path = args.output_dir / "evidence.json"
     write_json(evidence_path, evidence)
     print(json.dumps(evidence, indent=2))

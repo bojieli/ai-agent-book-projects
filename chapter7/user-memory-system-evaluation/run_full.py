@@ -73,7 +73,7 @@ def valid_checkpoint(
         elif row.get("status") == "error":
             identity = (row.get("embedding"), row.get("reranker"), row.get("main_model"))
             if (
-                experiment == "6-4"
+                experiment == "7-4"
                 or not row.get("error")
                 or required_ok_cells is None
                 or identity in required_ok_cells
@@ -81,7 +81,7 @@ def valid_checkpoint(
                 return False
         else:
             return False
-        if experiment == "6-11":
+        if experiment == "7-11":
             observed_cells.append((row.get("embedding"), row.get("reranker"), row.get("main_model")))
         else:
             observed_cells.append((row.get("system"),))
@@ -94,7 +94,7 @@ def valid_checkpoint(
 
 def required_611_cells(config: Dict[str, Any], readiness: Optional[Dict[str, Any]]) -> Set[Cell]:
     """Return matrix cells whose backends passed preflight and must complete live."""
-    matrix = config["experiment_6_11"]
+    matrix = config["experiment_7_11"]
     blocked = {
         (row["component"], row["name"])
         for row in (readiness or {}).get("probes", [])
@@ -144,7 +144,7 @@ def run_case(
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("experiment", choices=["6-4", "6-11"])
+    parser.add_argument("experiment", choices=["7-4", "7-11"])
     parser.add_argument("--config", type=Path, default=HERE / "default_config.yaml")
     parser.add_argument("--workers", type=int, default=4)
     parser.add_argument("--checkpoint-dir", type=Path)
@@ -160,9 +160,9 @@ def main() -> int:
         json.loads(args.readiness.resolve().read_text(encoding="utf-8"))
         if args.readiness else None
     )
-    if args.experiment == "6-11":
+    if args.experiment == "7-11":
         if readiness_data is None:
-            parser.error("exact Experiment 6-11 requires --readiness from probe_backends.py")
+            parser.error("exact Experiment 7-11 requires --readiness from probe_backends.py")
         readiness_errors = validate_readiness(config, readiness_data)
         if readiness_errors:
             parser.error("invalid readiness evidence: " + "; ".join(readiness_errors))
@@ -175,7 +175,7 @@ def main() -> int:
         }
         if not readiness_data.get("summary", {}).get("all_required_backends_ready"):
             parser.error(
-                "exact Experiment 6-11 campaign is blocked: every required real backend "
+                "exact Experiment 7-11 campaign is blocked: every required real backend "
                 "must pass probe_backends.py before launch"
             )
     framework = UserMemoryEvaluationFramework(str(EVAL_DIR / "test_cases"))
@@ -183,7 +183,7 @@ def main() -> int:
     if len(test_ids) != 60:
         parser.error(f"full run requires exactly 60 loaded cases, found {len(test_ids)}")
 
-    if args.experiment == "6-4":
+    if args.experiment == "7-4":
         expected_records = 3
         required_ok_cells = None
         all_matrix_cells = {
@@ -192,10 +192,10 @@ def main() -> int:
             ("hybrid",),
         }
     else:
-        matrix = config["experiment_6_11"]
+        matrix = config["experiment_7_11"]
         shape = (len(matrix["embeddings"]), len(matrix["rerankers"]), len(matrix["main_models"]))
         if shape != (4, 3, 2):
-            parser.error(f"exact Experiment 6-11 requires a 4x3x2 matrix, found {shape}")
+            parser.error(f"exact Experiment 7-11 requires a 4x3x2 matrix, found {shape}")
         expected_records = len(matrix["embeddings"]) * len(matrix["rerankers"]) * len(matrix["main_models"])
         required_ok_cells = required_611_cells(config, readiness_data)
         all_matrix_cells = {
@@ -267,7 +267,7 @@ def main() -> int:
         valid_case_ids.append(test_id)
 
     repricing = None
-    if args.experiment == "6-4":
+    if args.experiment == "7-4":
         repricing = reprice_legacy_64_records(records, config)
     save_report(args.output, args.experiment, records, config)
     merged = json.loads(args.output.read_text(encoding="utf-8"))
@@ -280,10 +280,10 @@ def main() -> int:
         "missing_case_ids": sorted(set(test_ids) - set(valid_case_ids)),
         "subprocess_failures": failures,
         "execution_config_fingerprint": expected_fingerprint,
-        "legacy_6_4_repricing": repricing,
+        "legacy_7_4_repricing": repricing,
     }
     # A complete experiment requires exact case/cell coverage, real successful
-    # trajectories, explicit readiness (6-11), and zero unpriced usage.
+    # trajectories, explicit readiness (7-11), and zero unpriced usage.
     complete = bool(merged["completion"]["evidence_complete"]) and not failures
     if failures:
         merged["completion"]["evidence_complete"] = False

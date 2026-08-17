@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent
-RUN = ROOT / "validation" / "runs" / "exp9-3-qwen2audio-whisper-provenance-20260730-v3"
+RUN = ROOT / "validation" / "runs" / "exp6-4-qwen2audio-whisper-provenance-20260730-v3"
 
 
 def sha256_file(path: Path) -> str:

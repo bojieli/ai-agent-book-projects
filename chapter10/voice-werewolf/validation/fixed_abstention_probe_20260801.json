@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "experiment": "10-8-fixed-abstention-boundary-probe",
+  "experiment": "10-6-fixed-abstention-boundary-probe",
   "synthetic_audio_only": true,
   "spoken_text": "I choose to abstain.",
   "asr_transcript": "I choose to abstain.",

@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "experiment_id": "8-3",
-  "canonical_source": "book/chapter8.md#实验-8-3-基于失败轨迹优化系统提示词",
+  "experiment_id": "9-3",
+  "canonical_source": "book/chapter9.md#实验-9-3-基于失败轨迹优化系统提示词",
   "evidence_mode": "real_task_agent_llm_judge_coding_agent_full_campaign",
   "created_at": "2026-07-29T17:12:17+00:00",
   "provider": "ark",

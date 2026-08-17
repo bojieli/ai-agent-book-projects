@@ -1,4 +1,4 @@
-"""Run Experiment 8-1 without an API key."""
+"""Run Experiment 9-1 without an API key."""
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ ROOT = Path(__file__).parent
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Experiment 8-1 trajectory verifier")
+    parser = argparse.ArgumentParser(description="Experiment 9-1 trajectory verifier")
     parser.add_argument("--judge", choices=("heuristic", "llm"), default="heuristic")
     parser.add_argument("--model", help="real LLM model; defaults to LLM_MODEL or gpt-5.6")
     args = parser.parse_args()
@@ -26,7 +26,7 @@ def main() -> None:
         verifier = TrajectoryVerifier()
     reports = [verifier.evaluate(item) for item in trajectories]
 
-    print(f"Experiment 8-1: three-layer customer-service trajectory verifier (judge={args.judge})\n")
+    print(f"Experiment 9-1: three-layer customer-service trajectory verifier (judge={args.judge})\n")
     for report in reports:
         failed = [
             item["dimension"] for item in report["dimensions"] if item["verdict"] == "fail"

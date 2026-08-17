@@ -1,0 +1,83 @@
+{
+  "acceptance": {
+    "all_64_historical_outputs_retained": true,
+    "all_eight_configuration_cells_retained": true,
+    "checkpoints_not_an_acceptance_artifact": true,
+    "eight_image_aware_arm_blind_judgments": true,
+    "future_reproduction_commands_declared": true,
+    "historical_provenance_limitations_explicit": true,
+    "historical_report_content_hashed": true,
+    "immutable_dataset_clip_and_eval_image_inputs_frozen": true,
+    "immutable_original_and_improved_source_revisions_frozen": true,
+    "passed": true,
+    "raw_judge_requests_responses_ids_usage_latency_retained": true,
+    "request_images_match_pinned_sha256": true,
+    "same_eight_images_present_in_every_cell": true
+  },
+  "artifacts": [
+    {
+      "bytes": 22282,
+      "path": "retained_outputs.json",
+      "sha256": "6333571fcdb95a84bece9fdf65456f328e7e048342ede37f71e3e03c68c38df6"
+    },
+    {
+      "bytes": 10758,
+      "path": "reproduction_contract.json",
+      "sha256": "e530aa559f940a2034e79315432789bf017abf0fc247adba3fb5e802893ea1d7"
+    },
+    {
+      "bytes": 2596470,
+      "path": "judge_receipts.json",
+      "sha256": "c777a01a7a484d7a6184575be101c167c0007442144e2bcb1f7047cee0dbc5f0"
+    },
+    {
+      "bytes": 33310,
+      "path": "summary.json",
+      "sha256": "fa904dfee4e8dbdf0c9986db79b3eba18adc00b3bfd823e9a99fca10e69a3f6d"
+    },
+    {
+      "bytes": 2116,
+      "path": "report.md",
+      "sha256": "0906af01fcf1f6c11528215fe8767c6fd5cad0743286cb0cf94af0df300f3df6"
+    }
+  ],
+  "checkpoint_policy": "not distributed; not an acceptance artifact",
+  "created_at": "2026-08-17T05:34:53.397311+00:00",
+  "experiment": "8-4",
+  "inputs": [
+    {
+      "bytes": 155255,
+      "path": "chapter8/MiniMind-pretrain/README.md",
+      "sha256": "a8e1df1a9ee5cf013995e9ff3b963621485a838c97456b9f30e65ea9fdf55d50"
+    },
+    {
+      "bytes": 14150,
+      "path": "pyproject.toml",
+      "sha256": "33cc27c2759f353663d6907f1a918a41a49fb8d3e4e28370d508136449c3b156"
+    },
+    {
+      "bytes": 1311181,
+      "path": "uv.lock",
+      "sha256": "347fc87f40526372c284c61e5374536ce8d2071936cef8844d350470ecdf0d0b"
+    },
+    {
+      "bytes": 42148,
+      "path": "chapter8/MiniMind-pretrain/validation/run_vlm_training_report_audit.py",
+      "sha256": "d59e8175ce19a1973005263f6f7e4642e1ee11402860b4fadf6a1fd192d4cc7d"
+    },
+    {
+      "bytes": 14797,
+      "path": "chapter8/MiniMind-pretrain/validation/validate_vlm_evidence.py",
+      "sha256": "4ce53d7000d7f45a8e8012db1989374fcf42f5f832fbe134aca098e826b95db5"
+    },
+    {
+      "bytes": 6800,
+      "path": "chapter8/MiniMind-pretrain/validation/test_vlm_training_report_audit.py",
+      "sha256": "6259638aae28d1035f9d597f8f5ea17c7a66bd6ba8e3759ed1c842c94c19d1e1"
+    }
+  ],
+  "run_dir": "validation/runs/exp8-4-training-report-20260731-v1",
+  "run_id": "exp8-4-training-report-20260731-v1",
+  "schema_version": "exp8-4-manifest-v1",
+  "status": "passed"
+}

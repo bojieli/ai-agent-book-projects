@@ -12,7 +12,7 @@
     }
   ],
   "blockers": [],
-  "experiment_id": "9-8",
+  "experiment_id": "6-10",
   "hardware_extension": {
     "actuation_attempted": false,
     "status": "gated",

@@ -433,7 +433,7 @@ Offline regression tests for answer extraction and cached-output parsing live in
 
 ```bash
 # From this repository root:
-python -m pytest chapter7/Intuitor/tests
+python -m pytest chapter8/Intuitor/tests
 ```
 
 **Example Output**:
@@ -1363,7 +1363,7 @@ python3 evaluate_from_cache.py \
 
 ```bash
 # 在本仓库根目录运行：
-python -m pytest chapter7/Intuitor/tests
+python -m pytest chapter8/Intuitor/tests
 ```
 
 **示例输出**：

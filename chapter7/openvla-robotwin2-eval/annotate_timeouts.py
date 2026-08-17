@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create auditable timeout annotations from complete Experiment 6-12 evidence.
+"""Create auditable timeout annotations from complete Experiment 7-13 evidence.
 
 This helper only labels an episode when the upstream recorder says it failed at
 the configured action horizon and an exact failure-video match can be probed.

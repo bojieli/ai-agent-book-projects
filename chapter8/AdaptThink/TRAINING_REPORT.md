@@ -1,4 +1,4 @@
-# Experiment 7-10: AdaptThink training report
+# Experiment 8-10: AdaptThink training report
 
 This report records the historical AdaptThink 1.5B, δ=0.05 training run used by
 the book. It is a training report, not a fresh local reproduction. In accordance
@@ -115,5 +115,5 @@ instead expects `-fl4096` and a different checkpoint directory layout.
 - The results support a descriptive account of the logged run, not a causal or
   universal claim about difficulty awareness.
 
-Within those boundaries, Experiment 7-10 is complete as a checkpoint-free
+Within those boundaries, Experiment 8-10 is complete as a checkpoint-free
 training report.

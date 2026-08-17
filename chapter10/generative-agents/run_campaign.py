@@ -23,7 +23,7 @@ from typing import Any, Callable
 
 SOURCE_COMMIT = "fe05a71d3e4ed7d10bf68aa4eda6dd995ec070f4"
 BASE_SIM = "base_the_ville_n25"
-SEED_SIM = "exp10_7_history_seed"
+SEED_SIM = "exp10_5_history_seed"
 TARGET_STEPS = 17_280
 DEFAULT_CHUNK_STEPS = 360
 ARMS = ("baseline", "custom_goal", "no_reflection")
@@ -158,7 +158,7 @@ def install_task_decomp_compat() -> None:
     from persona.prompt_template import gpt_structure, run_gpt_prompt
 
     current = run_gpt_prompt.safe_generate_response
-    if getattr(current, "_exp10_7_task_decomp_compat", False):
+    if getattr(current, "_exp10_5_task_decomp_compat", False):
         return
 
     def guarded(
@@ -194,7 +194,7 @@ def install_task_decomp_compat() -> None:
             func_clean_up,
         )
 
-    guarded._exp10_7_task_decomp_compat = True  # type: ignore[attr-defined]
+    guarded._exp10_5_task_decomp_compat = True  # type: ignore[attr-defined]
     run_gpt_prompt.safe_generate_response = guarded
 
 
@@ -204,7 +204,7 @@ def install_validated_zero_compat() -> None:
     from persona.prompt_template import run_gpt_prompt
 
     current = run_gpt_prompt.ChatGPT_safe_generate_response
-    if getattr(current, "_exp10_7_validated_zero_compat", False):
+    if getattr(current, "_exp10_5_validated_zero_compat", False):
         return
 
     def guarded(
@@ -229,7 +229,7 @@ def install_validated_zero_compat() -> None:
             return ValidatedZero()
         return output
 
-    guarded._exp10_7_validated_zero_compat = True  # type: ignore[attr-defined]
+    guarded._exp10_5_validated_zero_compat = True  # type: ignore[attr-defined]
     run_gpt_prompt.ChatGPT_safe_generate_response = guarded
 
 
@@ -437,7 +437,7 @@ def prepare_seed(upstream: Path, output: Path) -> None:
     compressed = compress_receipt(receipt_path)
     status = {
         "schema_version": 1,
-        "experiment": "10-7",
+        "experiment": "10-5",
         "complete": True,
         "source_commit": SOURCE_COMMIT,
         "seed_sim": SEED_SIM,
@@ -490,7 +490,7 @@ def run_arm(
     else:
         status = {
             "schema_version": 1,
-            "experiment": "10-7",
+            "experiment": "10-5",
             "source_commit": SOURCE_COMMIT,
             "arm": arm,
             "personas": 25,
@@ -508,7 +508,7 @@ def run_arm(
         start_step = int(status["completed_steps"])
         steps = min(chunk_steps, target_steps - start_step)
         end_step = start_step + steps
-        sim_code = f"exp10_7_{arm}_{end_step:05d}"
+        sim_code = f"exp10_5_{arm}_{end_step:05d}"
         target_dir = storage / sim_code
         if target_dir.exists():
             shutil.rmtree(target_dir)

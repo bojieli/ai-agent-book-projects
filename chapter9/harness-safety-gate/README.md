@@ -1,14 +1,14 @@
-# 实验 8-7：由用户反馈触发的高风险操作确认门禁
+# 实验 9-7：由用户反馈触发的高风险操作确认门禁
 
-本项目演示实验 8-7 的 Harness 安全层自我进化：用户纠正、用户点踩与事后审计三类外部反馈共同指向同一个流程缺陷——`delete_file`、`git_push(force=True)`、`sql_query("DROP TABLE ...")` 等不可逆调用在未经用户确认时就被执行（第六章错误分类中的"流程与规范缺失"；第六章实验 6-5 的"高风险删除前确认"用例正是换更强的模型也照样犯的 Harness 缺约束问题）。系统据此让 Coding Agent 为 Harness 生成"高风险调用确认门禁"提案，经模型外验证门槛后才允许灰度。
+本项目演示实验 9-7 的 Harness 安全层自我进化：用户纠正、用户点踩与事后审计三类外部反馈共同指向同一个流程缺陷——`delete_file`、`git_push(force=True)`、`sql_query("DROP TABLE ...")` 等不可逆调用在未经用户确认时就被执行（第六章错误分类中的"流程与规范缺失"；第六章实验 6-5 的"高风险删除前确认"用例正是换更强的模型也照样犯的 Harness 缺约束问题）。系统据此让 Coding Agent 为 Harness 生成"高风险调用确认门禁"提案，经模型外验证门槛后才允许灰度。
 
-与实验 8-6（[self-modifying-agent](../self-modifying-agent/)）的分工：8-6 改的是**控制层**（重试/熔断代码），失败信号来自**系统内部错误日志**；本实验改的是**安全/验证层**（工具调度确认门禁），失败信号来自**用户反馈与事后审计**。
+与实验 9-6（[self-modifying-agent](../self-modifying-agent/)）的分工：9-6 改的是**控制层**（重试/熔断代码），失败信号来自**系统内部错误日志**；本实验改的是**安全/验证层**（工具调度确认门禁），失败信号来自**用户反馈与事后审计**。
 
 机制单元测试与离线验收不需要 API Key：
 
 ```bash
 python -m pytest -q test_evolution.py
-python run_experiment_8_8.py --quick
+python run_experiment_9_7.py --quick
 python demo.py
 ```
 
@@ -23,13 +23,13 @@ cd chapter8/harness-safety-gate
 # 未安装 uv 时的兜底：python -m pip install -r requirements.txt
 # 所需环境变量见 env.example
 
-python run_experiment_8_8.py --provider ark --model doubao-seed-1-6-250615 --seed 8801
-# 或：python run_experiment_8_8.py --provider openai --model gpt-4o-mini
+python run_experiment_9_7.py --provider ark --model doubao-seed-1-6-250615 --seed 8801
+# 或：python run_experiment_9_7.py --provider openai --model gpt-4o-mini
 ```
 
-`python demo.py` 保留为单提案教学入口；`run_experiment_8_8.py` 才是验收入口：它先保留一个"门禁存在但放行一切"的已拒绝反例，把具体失败原因提供给真实 Coding Agent，再让确定性生成器和真实 Coding Agent 经过同一组模型外门槛。`--quick` 为离线模式：跳过 API 调用，只验证确定性提案与反例，不写 `validation/` 证据目录。
+`python demo.py` 保留为单提案教学入口；`run_experiment_9_7.py` 才是验收入口：它先保留一个"门禁存在但放行一切"的已拒绝反例，把具体失败原因提供给真实 Coding Agent，再让确定性生成器和真实 Coding Agent 经过同一组模型外门槛。`--quick` 为离线模式：跳过 API 调用，只验证确定性提案与反例，不写 `validation/` 证据目录。
 
-## 与实验 8-6 的实现差异：为什么没有 Docker 沙箱
+## 与实验 9-6 的实现差异：为什么没有 Docker 沙箱
 
 8-6 的提案是**覆盖稳定代码的补丁**，必须执行补丁才能验证，因此需要 Docker 安全边界。本实验的提案是**新增的独立模块 `confirmation_gate.py`**，不覆盖稳定代码；验证由两部分组成：
 

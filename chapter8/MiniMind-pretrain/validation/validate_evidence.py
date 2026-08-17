@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail-closed validator for Experiment 7-3 retained training evidence."""
+"""Fail-closed validator for Experiment 8-3 retained training evidence."""
 
 from __future__ import annotations
 
@@ -113,8 +113,8 @@ def find_pair(
 
 def validate(latest_path: Path = LATEST_PATH) -> dict[str, Any]:
     latest = load_json(latest_path)
-    if latest.get("experiment") != "7-3" or latest.get("status") != "passed":
-        raise AssertionError("latest pointer is not a passed Experiment 7-3 run")
+    if latest.get("experiment") != "8-3" or latest.get("status") != "passed":
+        raise AssertionError("latest pointer is not a passed Experiment 8-3 run")
     run_dir = resolve_relative(EXPERIMENT_DIR, latest["run_dir"])
     manifest_path = run_dir / "manifest.json"
     if sha256_file(manifest_path) != latest.get("manifest_sha256"):
@@ -122,8 +122,8 @@ def validate(latest_path: Path = LATEST_PATH) -> dict[str, Any]:
     manifest = load_json(manifest_path)
     if manifest.get("run_id") != latest.get("run_id"):
         raise AssertionError("run ID mismatch between latest and manifest")
-    if manifest.get("experiment") != "7-3" or manifest.get("status") != "passed":
-        raise AssertionError("manifest is not a passed Experiment 7-3 run")
+    if manifest.get("experiment") != "8-3" or manifest.get("status") != "passed":
+        raise AssertionError("manifest is not a passed Experiment 8-3 run")
     if manifest.get("checkpoint_policy") != "not distributed; not an acceptance artifact":
         raise AssertionError("manifest checkpoint policy is incorrect")
 
@@ -289,7 +289,7 @@ def validate(latest_path: Path = LATEST_PATH) -> dict[str, Any]:
                 raise AssertionError(f"possible credential in retained artifact: {path.name}")
 
     return {
-        "experiment": "7-3",
+        "experiment": "8-3",
         "run_id": latest["run_id"],
         "status": "passed",
         "inputs_verified": len(inputs),

@@ -1,11 +1,11 @@
-# 实验 7-19：特殊字符串的精确复述 SFT
+# 实验 8-19：特殊字符串的精确复述 SFT
 
 本实验从 Coding Agent 的 `old_string` 匹配失败出发，区分模型复制错误与 tokenizer、序列化、Harness 和工具层错误，然后用未见过的随机字符串和工具参数任务训练 Qwen3-8B 的 LoRA 适配器。训练目标是 byte-exact 复制，而不是语义相似或“看起来一样”。
 
 ## 运行
 
 ```bash
-cd chapter7/exact-copy-sft
+cd chapter8/exact-copy-sft
 python generate_data.py
 python train_sft.py --model Qwen/Qwen3-8B
 python evaluate.py --model Qwen/Qwen3-8B --adapter output/adapter

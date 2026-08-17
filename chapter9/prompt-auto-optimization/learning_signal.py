@@ -10,9 +10,9 @@ DIMENSIONS = ("rule_compliance", "task_resolution", "compliant_flexibility")
 
 
 def case_dimensions(result: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
-    """Derive the three dimensions used by Experiment 8-3.
+    """Derive the three dimensions used by Experiment 9-3.
 
-    The full project would consume Experiment 8-1 reports.  This compact
+    The full project would consume Experiment 9-1 reports.  This compact
     airline simulation exposes the same dimensions from its deterministic
     labels and the handled/not-handled judge result.
     """

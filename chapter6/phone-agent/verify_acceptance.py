@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Standalone fail-closed verification for Experiment 9-2 retained evidence."""
+"""Standalone fail-closed verification for Phone Agent add-on retained evidence."""
 
 from __future__ import annotations
 
@@ -28,24 +28,24 @@ REQUIRED_ARTIFACTS = {
 }
 REQUIRED_SOURCES = {
     "book/chapter9.md",
-    "chapter9/README.md",
-    "chapter9/phone-agent/README.md",
-    "chapter9/phone-agent/agent.py",
-    "chapter9/phone-agent/demo.py",
-    "chapter9/phone-agent/direct_call.py",
-    "chapter9/phone-agent/env.example",
-    "chapter9/phone-agent/requirements.txt",
-    "chapter9/phone-agent/run_acceptance.py",
-    "chapter9/phone-agent/speech.py",
-    "chapter9/phone-agent/static/app.js",
-    "chapter9/phone-agent/static/index.html",
-    "chapter9/phone-agent/static/style.css",
-    "chapter9/phone-agent/test_agent.py",
-    "chapter9/phone-agent/test_speech.py",
-    "chapter9/phone-agent/test_verify_acceptance.py",
-    "chapter9/phone-agent/test_webrtc_app.py",
-    "chapter9/phone-agent/verify_acceptance.py",
-    "chapter9/phone-agent/webrtc_app.py",
+    "chapter6/README.md",
+    "chapter6/phone-agent/README.md",
+    "chapter6/phone-agent/agent.py",
+    "chapter6/phone-agent/demo.py",
+    "chapter6/phone-agent/direct_call.py",
+    "chapter6/phone-agent/env.example",
+    "chapter6/phone-agent/requirements.txt",
+    "chapter6/phone-agent/run_acceptance.py",
+    "chapter6/phone-agent/speech.py",
+    "chapter6/phone-agent/static/app.js",
+    "chapter6/phone-agent/static/index.html",
+    "chapter6/phone-agent/static/style.css",
+    "chapter6/phone-agent/test_agent.py",
+    "chapter6/phone-agent/test_speech.py",
+    "chapter6/phone-agent/test_verify_acceptance.py",
+    "chapter6/phone-agent/test_webrtc_app.py",
+    "chapter6/phone-agent/verify_acceptance.py",
+    "chapter6/phone-agent/webrtc_app.py",
     "pyproject.toml",
     "uv.lock",
 }

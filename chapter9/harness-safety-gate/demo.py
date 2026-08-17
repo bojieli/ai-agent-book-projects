@@ -1,6 +1,6 @@
-"""实验 8-8 离线教学入口：诊断 → 候选 → 模型外验证 → 发布决定。
+"""实验 9-7 离线教学入口：诊断 → 候选 → 模型外验证 → 发布决定。
 
-单候选演示，不调用任何 API。验收入口是 run_experiment_8_8.py。
+单候选演示，不调用任何 API。验收入口是 run_experiment_9_7.py。
 """
 
 from __future__ import annotations
@@ -22,7 +22,7 @@ ROOT = Path(__file__).parent
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="实验 8-8：用户反馈触发的确认门禁")
+    parser = argparse.ArgumentParser(description="实验 9-7：用户反馈触发的确认门禁")
     parser.add_argument("--generator", choices=("deterministic", "llm"), default="deterministic")
     parser.add_argument("--model", help="真实 LLM 模型；默认取 ARK_MODEL 或 gpt-4o-mini")
     args = parser.parse_args()
@@ -47,7 +47,7 @@ def main() -> None:
         json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8"
     )
 
-    print(f"实验 8-8：用户反馈触发的高风险操作确认门禁（generator={args.generator}）\n")
+    print(f"实验 9-7：用户反馈触发的高风险操作确认门禁（generator={args.generator}）\n")
     print("诊断目标:", diagnosis["target"])
     print("失败簇:")
     for pattern in diagnosis["patterns"]:

@@ -24,7 +24,7 @@ class EvidenceGateTests(unittest.TestCase):
         self.assertEqual(len(payload["episodes"]), data["metrics"]["protocol"]["total_episodes"])
 
     def test_unbounded_tools_are_rejected(self):
-        data = {"schema_version": "3.0", "experiment_id": "9-9", "status": "complete", "kind": "desktop_manipulation_planning", "metrics": {"device": {"device": "mps"}, "protocol": {"seeds": [1, 2, 3], "failure_probabilities": [0.0, 0.25, 0.5], "total_episodes": 3456}, "models": [{"test_mse": 0.01}] * 3, "cells": [], "deterministic_replay": True}, "tool_contract": ["move_anywhere"], "artifacts": [], "xlerobot_robocrew_extension": {"actuation_attempted": False}}
+        data = {"schema_version": "3.0", "experiment_id": "6-12", "status": "complete", "kind": "desktop_manipulation_planning", "metrics": {"device": {"device": "mps"}, "protocol": {"seeds": [1, 2, 3], "failure_probabilities": [0.0, 0.25, 0.5], "total_episodes": 3456}, "models": [{"test_mse": 0.01}] * 3, "cells": [], "deterministic_replay": True}, "tool_contract": ["move_anywhere"], "artifacts": [], "xlerobot_robocrew_extension": {"actuation_attempted": False}}
         self.assertTrue(validate(data))
 
 

@@ -1,4 +1,4 @@
-"""Cross-trajectory Markdown experience documents for Experiment 8-2.
+"""Cross-trajectory Markdown experience documents for Experiment 9-2.
 
 This module is intentionally independent of AWorld so that the learning
 method can be inspected and tested offline. AWorld trajectories only need to

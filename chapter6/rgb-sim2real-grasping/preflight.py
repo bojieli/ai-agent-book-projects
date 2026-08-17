@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only, stage-aware preflight for Experiment 9-10."""
+"""Read-only, stage-aware preflight for Experiment 6-13."""
 
 from __future__ import annotations
 
@@ -70,7 +70,7 @@ def main() -> int:
         readiness[str(stage)] = {"preflight": "ready" if not failed else "blocked", "blockers": failed}
     report = {
         "schema_version": "1.0",
-        "experiment_id": "9-10",
+        "experiment_id": "6-13",
         "kind": "non_actuating_preflight",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "host": platform.node() or "unknown",

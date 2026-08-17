@@ -25,7 +25,7 @@ export extra_mem_bot=8000000
 # Do not let missing macOS-only font probes trigger slow METAFONT attempts.
 export MKTEXTFM=0
 
-OUT="AI-Agents-in-Depth-ko.pdf"
+OUT="AI-Agents-in-Depth-v2.0-ko.pdf"
 CHAPTERS=(
     introduction.ko.md
     chapter1.ko.md

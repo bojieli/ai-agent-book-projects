@@ -1,4 +1,4 @@
-"""Browser-to-aiortc voice Agent for Experiment 9-2.
+"""Browser-to-aiortc voice Agent for Phone Agent add-on.
 
 The browser microphone is the only user-semantic input.  The server buffers its
 decoded RTP audio, runs real Whisper ASR, sends that transcript to a real external
@@ -155,7 +155,7 @@ class CallRuntime:
         self.commit_started = False
 
 
-app = FastAPI(title="Experiment 9-2 WebRTC Voice Agent", version="3.0")
+app = FastAPI(title="Phone Agent add-on WebRTC Voice Agent", version="3.0")
 app.mount("/static", StaticFiles(directory=STATIC), name="static")
 
 
@@ -326,7 +326,7 @@ async def index() -> FileResponse:
 async def health() -> dict[str, Any]:
     return {
         "ok": True,
-        "experiment": "9-2",
+        "experiment": "phone-agent",
         "model_provider": os.getenv("PHONE_MODEL_PROVIDER", "ark"),
         "model_credential_present": bool(
             os.getenv("ARK_API_KEY")
@@ -361,7 +361,7 @@ async def create_call(request: CreateCall) -> dict[str, Any]:
     safe_acceptance = os.getenv("PHONE_SAFE_SYNTHETIC_ACCEPTANCE") == "1"
     record = {
         "schema_version": 3,
-        "experiment": "9-2",
+        "experiment": "phone-agent",
         "call_id": call_id,
         "created_at_utc": _now(),
         "finished_at_utc": None,

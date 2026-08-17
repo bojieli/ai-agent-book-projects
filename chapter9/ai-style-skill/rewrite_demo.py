@@ -102,7 +102,7 @@ def _load_active_rules() -> List[Dict[str, Any]]:
 
     rules_path = Path(__file__).resolve().parent / "skill" / "rules.json"
     if not rules_path.exists():
-        raise SystemExit("请先生成 Skill：python demo.py 或 python run_experiment_8_9.py")
+        raise SystemExit("请先生成 Skill：python demo.py 或 python run_ai_style_skill.py")
     return _json.loads(rules_path.read_text(encoding="utf-8"))
 
 

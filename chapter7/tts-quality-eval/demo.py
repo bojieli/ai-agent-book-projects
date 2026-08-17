@@ -1,4 +1,4 @@
-"""实验 6-5：全自动 TTS 质量评估流水线 —— 一条命令跑通。
+"""实验 7-6：全自动 TTS 质量评估流水线 —— 一条命令跑通。
 
     python demo.py                      # 默认 4 个 OpenAI 配置 x 4 条语料
     python demo.py --providers openai,minimax   # 跨服务商横向对比
@@ -214,7 +214,7 @@ def print_rubric():
 def main():
     global OUT_DIR
     ap = argparse.ArgumentParser(
-        description="全自动 TTS 质量评估流水线（实验 6-5）：多 provider 合成 + 多模态 LLM Rubric 评审",
+        description="全自动 TTS 质量评估流水线（实验 7-6）：多 provider 合成 + 多模态 LLM Rubric 评审",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="示例：\n"
                "  python demo.py                          默认 4 个 OpenAI 配置 × 4 条语料\n"
@@ -318,7 +318,7 @@ def main():
             else f"Whisper 回译 + LLM Rubric（{judge_model}）")
     providers_used = sorted({getattr(c, "provider", "openai") for c in configs})
     print("=" * 72)
-    print(f"实验 6-5：全自动 TTS 质量评估流水线")
+    print(f"实验 7-6：全自动 TTS 质量评估流水线")
     print(f"评审模式：{mode}")
     print(f"参与 provider：{', '.join(providers_used)}")
     print(f"配置数：{len(configs)}   语料数：{len(corpus)}   "
@@ -370,7 +370,7 @@ def main():
     )
     payload = {
         "schema_version": "2.0",
-        "experiment": "6-5",
+        "experiment": "7-6",
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "command_scope": {
             "providers": providers_used,

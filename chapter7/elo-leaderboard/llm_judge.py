@@ -18,7 +18,7 @@ Two backends are supported, selected automatically or via ``backend=``:
 The two backends are interchangeable: the position-bias swap-and-agree logic and
 the A/B/tie response parsing are identical regardless of which one is used.
 
-The book (实验 6-6, 位置偏差 discussion) notes that an LLM judge systematically
+The book (实验 7-7, 位置偏差 discussion) notes that an LLM judge systematically
 favours whichever answer appears in a fixed slot (usually the first). The
 standard mitigation, implemented here, is to judge each pair twice with the
 answers swapped and only record a winner when both judgements agree; a

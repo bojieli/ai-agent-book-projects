@@ -22,7 +22,7 @@ This experiment uses a single "Coding Agent" to chain together three phases:
 
 ## Canonical real-provider result
 
-The strict Kimi K3 campaign is complete: [the v3 manifest](runs/exp10-1-kimi-k3-20260730-v3/manifest.json)
+The strict Kimi K3 campaign is complete: [the v3 manifest](runs/staged-system-prompt-kimi-k3-20260730-v3/manifest.json)
 records 30 real Moonshot calls, all three roles, the exact transition sequence
 requirements → implementation → review → implementation → review → approval,
 one controlled source-level lint defect, its real rejection and repair, clean final
@@ -236,7 +236,7 @@ Two key points:
 
 ## 正式真实 API 结果
 
-严格 Kimi K3 campaign 已完整通过：[v3 manifest](runs/exp10-1-kimi-k3-20260730-v3/manifest.json)
+严格 Kimi K3 campaign 已完整通过：[v3 manifest](runs/staged-system-prompt-kimi-k3-20260730-v3/manifest.json)
 保留 30 次真实 Moonshot 调用、三个角色、完整的“需求 → 实现 → 审查 → 回退实现 →
 再次审查 → 批准”转换链，以及一次受控源码 lint 缺陷的真实拒绝和修复。最终 linter、
 冒烟测试、复杂度检查均通过，共使用 171,001 token，13 项验收门禁全真。当前复算

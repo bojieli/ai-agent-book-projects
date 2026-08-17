@@ -1,4 +1,4 @@
-"""Run the complete, evidence-producing Experiment 6-6 campaign.
+"""Run the complete, evidence-producing Experiment 7-7 campaign.
 
 The public Arena file is deliberately not copied into git.  A canonical run
 binds the exact input by URL, size, record count, and SHA-256, then retains all
@@ -198,7 +198,7 @@ def plot_artifacts(
     top = online.head(20).sort_values("rating")
     fig, ax = plt.subplots(figsize=(11, 8))
     ax.barh(top["model"], top["rating"], color="#3b82f6")
-    ax.set_title("Experiment 6-6: Online Elo leaderboard")
+    ax.set_title("Experiment 7-7: Online Elo leaderboard")
     ax.set_xlabel("Elo rating (K=4, chronological)")
     fig.tight_layout()
     fig.savefig(out / "leaderboard.png", dpi=180)
@@ -302,7 +302,7 @@ def main() -> None:
     accepted = all(gates.values())
     summary = {
         "schema_version": 1,
-        "experiment": "6-6",
+        "experiment": "7-7",
         "status": "passed" if accepted else "noncanonical_test",
         "official_complete": accepted,
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
@@ -354,7 +354,7 @@ def main() -> None:
     ]
     manifest = {
         "schema_version": 1,
-        "experiment": "6-6",
+        "experiment": "7-7",
         "status": summary["status"],
         "official_complete": accepted,
         "input": {

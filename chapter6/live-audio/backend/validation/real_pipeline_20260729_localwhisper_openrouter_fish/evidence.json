@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "experiment": "9-1",
-  "run_id": "exp9-1-20260729T153226031Z",
+  "experiment": "6-3",
+  "run_id": "exp6-3-20260729T153226031Z",
   "generated_at_utc": "2026-07-29T15:32:26.031Z",
   "credentials_persisted": false,
   "provenance": {
@@ -83,7 +83,7 @@
     }
   },
   "experiment_complete": false,
-  "error": "Error: Real LLM failed: Request failed with status code 401\n    at runLlm (/Users/boj/book/ai-agent-book/chapter9/live-audio/backend/run_real_validation.js:234:30)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async main (/Users/boj/book/ai-agent-book/chapter9/live-audio/backend/run_real_validation.js:407:27)",
+  "error": "Error: Real LLM failed: Request failed with status code 401\n    at runLlm (/Users/boj/book/ai-agent-book/chapter6/live-audio/backend/run_real_validation.js:234:30)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async main (/Users/boj/book/ai-agent-book/chapter6/live-audio/backend/run_real_validation.js:407:27)",
   "acceptance": {
     "gates": {
       "schema_and_scope": true,

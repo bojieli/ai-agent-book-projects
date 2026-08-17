@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministically validate retained Experiment 9-6 evidence."""
+"""Deterministically validate retained Experiment 6-7 evidence."""
 
 from __future__ import annotations
 
@@ -133,7 +133,7 @@ def main() -> int:
 
     acceptance = {
         "schema_version": 1,
-        "experiment": "9-6",
+        "experiment": "6-7",
         "run_dir": run_dir.name,
         "passed": all(gates.values()),
         "gates": gates,
@@ -146,7 +146,7 @@ def main() -> int:
     }
     manifest = {
         "schema_version": 1,
-        "experiment": "9-6",
+        "experiment": "6-7",
         "run_dir": run_dir.name,
         "files": files,
     }

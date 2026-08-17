@@ -105,7 +105,7 @@ EXPECTED_EVENTS = {
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Experiment 9-3: actual Qwen2-Audio growing-prefix inference")
+    parser = argparse.ArgumentParser(description="Experiment 6-4: actual Qwen2-Audio growing-prefix inference")
     parser.add_argument("--audio", action="append", required=True, help="Audio path; repeat for normal/pause/noise cases")
     parser.add_argument("--reference", action="append", required=True, help="Reference transcript matching each --audio")
     parser.add_argument("--scenario", action="append", choices=["normal", "pause", "noise"], required=True)
@@ -173,7 +173,7 @@ def main() -> int:
     }
     evidence = {
         "schema_version": 2,
-        "experiment": "9-3",
+        "experiment": "6-4",
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
         "model": args.model,
         "device": recognizer.device,

@@ -1,5 +1,5 @@
 {
-  "experiment": "6-5",
+  "experiment": "7-5",
   "title": "Known-memory policy use on trajectory prefixes",
   "model": "openai/gpt-5.6-sol",
   "memory_formats": [

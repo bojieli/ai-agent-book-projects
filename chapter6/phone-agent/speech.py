@@ -1,4 +1,4 @@
-"""Real speech synthesis and microphone-audio ASR for Experiment 9-2."""
+"""Real speech synthesis and microphone-audio ASR for Phone Agent add-on."""
 
 from __future__ import annotations
 
@@ -89,7 +89,7 @@ class SystemSpeechSynthesizer:
         if not cleaned:
             raise ValueError("TTS text must not be empty")
         started = time.monotonic()
-        with tempfile.TemporaryDirectory(prefix="exp9-2-tts-") as directory:
+        with tempfile.TemporaryDirectory(prefix="phone-agent-tts-") as directory:
             directory_path = Path(directory)
             source = directory_path / ("speech.aiff" if self.kind == "say" else "speech.wav")
             target = directory_path / "speech.wav"
@@ -192,7 +192,7 @@ class WhisperASR:
             source_path = retained_wav_path
         else:
             with tempfile.NamedTemporaryFile(
-                prefix="exp9-2-asr-", suffix=".wav", delete=False
+                prefix="phone-agent-asr-", suffix=".wav", delete=False
             ) as temporary:
                 temporary.write(wav)
                 source_path = Path(temporary.name)

@@ -1,5 +1,5 @@
 """
-Regression test for filter_data on empty input (实验 6-6 排行榜).
+Regression test for filter_data on empty input (实验 7-7 排行榜).
 
 An empty arena data file (e.g. a failed/truncated download saved as `[]`) used to
 crash with ZeroDivisionError at the "After filtering" percentage print.

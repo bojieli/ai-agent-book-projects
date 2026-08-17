@@ -1,5 +1,5 @@
 # Prefer the repository's locked Chapter 9 environment:
-#   uv sync --locked --extra ch9 --extra dev
+#   uv sync --locked --extra ch6 --extra dev
 openai>=1.68
 python-dotenv>=1.0
 fastapi>=0.110

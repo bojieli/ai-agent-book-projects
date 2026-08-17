@@ -1,4 +1,4 @@
-"""实验 8-8 的真实 Coding Agent 路径（OpenAI 兼容 API）。
+"""实验 9-7 的真实 Coding Agent 路径（OpenAI 兼容 API）。
 
 读取失败诊断与稳定版调度器源码，让模型产出候选 confirmation_gate.py。
 输出只能写入 validation/<run>/candidates/ 隔离目录；静态检查、回放验证、

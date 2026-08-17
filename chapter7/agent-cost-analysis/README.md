@@ -1,4 +1,4 @@
-# Agent End-to-End Cost Analysis / Agent 任务端到端成本分析（实验 6-7）
+# Agent End-to-End Cost Analysis / Agent 任务端到端成本分析（实验 7-9）
 
 ## English
 
@@ -55,7 +55,7 @@ source .venv/bin/activate
 # pip fallback when uv is not installed:
 # python -m pip install -e ".[ch6]"
 
-cd chapter6/agent-cost-analysis
+cd chapter7/agent-cost-analysis
 
 # Single-project compatibility path, still supported during migration:
 # python -m pip install -r requirements.txt
@@ -76,7 +76,7 @@ uv sync --locked --python 3.12 --extra ch6 --extra dev
 # pip testing fallback:
 # python -m pip install -e ".[ch6,dev]"
 
-cd chapter6/agent-cost-analysis
+cd chapter7/agent-cost-analysis
 python -m pytest tests
 ```
 
@@ -128,9 +128,9 @@ Offline mode reads `sample_trace.json` and re-runs only cost arithmetic, enablin
 
 ## 中文
 
-# 实验 6-7：Agent 任务的端到端成本分析
+# 实验 7-9：Agent 任务的端到端成本分析
 
-配套《深入理解 AI Agent》第 6 章「实验 6-7 ★：Agent 任务的端到端成本分析」。
+配套《深入理解 AI Agent》第 6 章「实验 7-9 ★：Agent 任务的端到端成本分析」。
 
 对一个典型的多轮 Agent 任务（客服退款）做**全链路成本拆解**，用**自建的轻量 tracing / 可观测系统**记录每次 LLM 调用的输入/输出/缓存 token、时延与成本：按步骤聚合出「哪一步最贵」，按**成本构成**拆出「未缓存输入 / 缓存输入 / 输出各占多少、工具返回注入了多少 token」，并给出**单步成本分布（p50/p95/p99）**；再做完整 **2×2 A/B 对比**，量化 **KV-cache 复用** 与 **上下文压缩** 两个杠杆各自及叠加后的真实成本差异。
 
@@ -165,7 +165,7 @@ source .venv/bin/activate
 # 未安装 uv 时可用 pip 兜底：
 # python -m pip install -e ".[ch6]"
 
-cd chapter6/agent-cost-analysis
+cd chapter7/agent-cost-analysis
 
 # 迁移期间仍支持单项目兼容路径：
 # python -m pip install -r requirements.txt
@@ -191,7 +191,7 @@ uv sync --locked --python 3.12 --extra ch6 --extra dev
 # pip 测试兜底路径：
 # python -m pip install -e ".[ch6,dev]"
 
-cd chapter6/agent-cost-analysis
+cd chapter7/agent-cost-analysis
 python -m pytest tests
 ```
 

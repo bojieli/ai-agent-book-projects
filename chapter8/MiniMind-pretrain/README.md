@@ -1,32 +1,32 @@
-# Experiments 7-3 / 7-4 reproduction anchor
+# Experiments 8-3 / 8-4 reproduction anchor
 
-- Experiment 7-3 source: [`bojieli/minimind`](https://github.com/bojieli/minimind) → `chapter7/MiniMind-pretrain/minimind`
-- Experiment 7-3 canonical evidence: [`validation/runs/exp7-3-training-report-20260731-v1/`](validation/runs/exp7-3-training-report-20260731-v1/) retains all 49 historical outputs across original/QK-Norm+Muon × pretrain/SFT/DPO, eight raw arm-blind ARK judge receipts, exact hashes, and the future reproduction contract. Checkpoints are intentionally not distributed and are not acceptance artifacts.
-- Experiment 7-4 source: [`bojieli/minimind-v`](https://github.com/bojieli/minimind-v) → `chapter7/MiniMind-pretrain/minimind-v`
-- Current workspace state: both external source checkouts are absent. The checkpoint-free historical training reports are the accepted book artifacts for 7-3 and 7-4; each explicitly separates retained outputs and independent judgments from unavailable historical source/data/checkpoint identities and stepwise logs.
+- Experiment 8-3 source: [`bojieli/minimind`](https://github.com/bojieli/minimind) → `chapter8/MiniMind-pretrain/minimind`
+- Experiment 8-3 canonical evidence: [`validation/runs/exp8-3-training-report-20260731-v1/`](validation/runs/exp8-3-training-report-20260731-v1/) retains all 49 historical outputs across original/QK-Norm+Muon × pretrain/SFT/DPO, eight raw arm-blind ARK judge receipts, exact hashes, and the future reproduction contract. Checkpoints are intentionally not distributed and are not acceptance artifacts.
+- Experiment 8-4 source: [`bojieli/minimind-v`](https://github.com/bojieli/minimind-v) → `chapter8/MiniMind-pretrain/minimind-v`
+- Current workspace state: both external source checkouts are absent. The checkpoint-free historical training reports are the accepted book artifacts for 8-3 and 8-4; each explicitly separates retained outputs and independent judgments from unavailable historical source/data/checkpoint identities and stepwise logs.
 
 Run from the book repository root:
 
 ```bash
-git clone https://github.com/bojieli/minimind.git chapter7/MiniMind-pretrain/minimind
-git -C chapter7/MiniMind-pretrain/minimind fetch origin 8bdc5d97d5845a8c1ac2ed56a5b8b4c0d0fb0795
-git -C chapter7/MiniMind-pretrain/minimind checkout --detach 8bdc5d97d5845a8c1ac2ed56a5b8b4c0d0fb0795
-git -C chapter7/MiniMind-pretrain/minimind rev-parse HEAD
-test "$(git -C chapter7/MiniMind-pretrain/minimind rev-parse HEAD)" = "8bdc5d97d5845a8c1ac2ed56a5b8b4c0d0fb0795"
+git clone https://github.com/bojieli/minimind.git chapter8/MiniMind-pretrain/minimind
+git -C chapter8/MiniMind-pretrain/minimind fetch origin 8bdc5d97d5845a8c1ac2ed56a5b8b4c0d0fb0795
+git -C chapter8/MiniMind-pretrain/minimind checkout --detach 8bdc5d97d5845a8c1ac2ed56a5b8b4c0d0fb0795
+git -C chapter8/MiniMind-pretrain/minimind rev-parse HEAD
+test "$(git -C chapter8/MiniMind-pretrain/minimind rev-parse HEAD)" = "8bdc5d97d5845a8c1ac2ed56a5b8b4c0d0fb0795"
 
-git clone https://github.com/bojieli/minimind-v.git chapter7/MiniMind-pretrain/minimind-v
-git -C chapter7/MiniMind-pretrain/minimind-v fetch origin ead791c530fa5f9a3549dbfe9e11ec732d18d2e5
-git -C chapter7/MiniMind-pretrain/minimind-v checkout --detach ead791c530fa5f9a3549dbfe9e11ec732d18d2e5
-git -C chapter7/MiniMind-pretrain/minimind-v rev-parse HEAD
-test "$(git -C chapter7/MiniMind-pretrain/minimind-v rev-parse HEAD)" = "ead791c530fa5f9a3549dbfe9e11ec732d18d2e5"
+git clone https://github.com/bojieli/minimind-v.git chapter8/MiniMind-pretrain/minimind-v
+git -C chapter8/MiniMind-pretrain/minimind-v fetch origin ead791c530fa5f9a3549dbfe9e11ec732d18d2e5
+git -C chapter8/MiniMind-pretrain/minimind-v checkout --detach ead791c530fa5f9a3549dbfe9e11ec732d18d2e5
+git -C chapter8/MiniMind-pretrain/minimind-v rev-parse HEAD
+test "$(git -C chapter8/MiniMind-pretrain/minimind-v rev-parse HEAD)" = "ead791c530fa5f9a3549dbfe9e11ec732d18d2e5"
 ```
 
-At these revisions, the audited 7-3 entrypoints are `trainer/train_pretrain_muon.py`, `trainer/train_full_sft_muon.py`, `trainer/train_dpo.py`, and `eval_model.py`. The audited 7-4 entrypoints are `trainer/train_pretrain_vlm_muon.py`, `trainer/train_sft_vlm_muon.py`, and `eval_vlm.py`. The historical outputs below are bound into the two canonical evidence packages; they do not prove byte identity of the historical checkouts or checkpoints.
+At these revisions, the audited 8-3 entrypoints are `trainer/train_pretrain_muon.py`, `trainer/train_full_sft_muon.py`, `trainer/train_dpo.py`, and `eval_model.py`. The audited 8-4 entrypoints are `trainer/train_pretrain_vlm_muon.py`, `trainer/train_sft_vlm_muon.py`, and `eval_vlm.py`. The historical outputs below are bound into the two canonical evidence packages; they do not prove byte identity of the historical checkouts or checkpoints.
 
-## Experiment 7-4 canonical retained-training report
+## Experiment 8-4 canonical retained-training report
 
 The canonical checkpoint-free report is
-[`validation/runs/exp7-4-training-report-20260731-v1/report.md`](validation/runs/exp7-4-training-report-20260731-v1/report.md).
+[`validation/runs/exp8-4-training-report-20260731-v1/report.md`](validation/runs/exp8-4-training-report-20260731-v1/report.md).
 It extracts all **64** historical captions from the eight configurations below,
 binds the same eight evaluation images by SHA-256, and retains eight real
 image-aware, configuration-blind ARK judge requests and responses with unique
@@ -49,15 +49,15 @@ checkpoints intentionally remain local and are not an acceptance artifact.
 Validate the retained package without a credential:
 
 ```bash
-python chapter7/MiniMind-pretrain/validation/validate_vlm_evidence.py
-pytest -q chapter7/MiniMind-pretrain/validation/test_vlm_training_report_audit.py
+python chapter8/MiniMind-pretrain/validation/validate_vlm_evidence.py
+pytest -q chapter8/MiniMind-pretrain/validation/test_vlm_training_report_audit.py
 ```
 
 ## English
 
 # Training an LLM from Scratch
 
-> 📖 **The complete training code for this experiment (Experiment 7-3 Training an LLM from Scratch, Experiment 7-4 Training a VLM from Scratch) is in the author's forked external repositories:**
+> 📖 **The complete training code for this experiment (Experiment 8-3 Training an LLM from Scratch, Experiment 8-4 Training a VLM from Scratch) is in the author's forked external repositories:**
 > - LLM: [`github.com/bojieli/minimind`](https://github.com/bojieli/minimind) (forked from jingyaogong/minimind)
 > - VLM (projection layer trained from scratch): [`github.com/bojieli/minimind-v`](https://github.com/bojieli/minimind-v) (forked from jingyaogong/minimind-v)
 >
@@ -1042,7 +1042,7 @@ Based on the comprehensive testing in this experiment, we offer the following pr
 
 # 从头训练 LLM
 
-> 📖 **本实验（实验 7-3 从零训 LLM、实验 7-4 从零训 VLM）的完整训练代码在作者 fork 的外部仓库：**
+> 📖 **本实验（实验 8-3 从零训 LLM、实验 8-4 从零训 VLM）的完整训练代码在作者 fork 的外部仓库：**
 > - LLM：[`github.com/bojieli/minimind`](https://github.com/bojieli/minimind)（fork 自 jingyaogong/minimind）
 > - VLM（投影层从零训）：[`github.com/bojieli/minimind-v`](https://github.com/bojieli/minimind-v)（fork 自 jingyaogong/minimind-v）
 >

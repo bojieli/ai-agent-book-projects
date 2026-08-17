@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "experiment": "6-11",
+  "experiment": "7-12",
   "status": "complete",
   "generated_at_utc": "2026-08-04T09:35:34.274750+00:00",
-  "run_dir": "chapter6/android-world/validation",
+  "run_dir": "chapter7/android-world/validation",
   "git_commit": "0d0df3e758872c7e73a998e57d2e529b16ece095",
   "command": "Five isolated Pixel 6/API-33 trial shards used run_controlled_experiment.py with local-vLLM credentials supplied only by environment-variable name; merge_candidate_shards.py strictly merged trials 1-5.",
   "provider_receipt_count": 0,
@@ -16,119 +16,119 @@
   ],
   "inputs": [
     {
-      "path": "chapter6/android-world/experiment_core.py",
+      "path": "chapter7/android-world/experiment_core.py",
       "bytes": 24201,
       "sha256": "752c1f181f0bef3cb0726fcc35eddc8c715624c4804c39b9a2d371518f4b3ac6"
     },
     {
-      "path": "chapter6/android-world/run_controlled_experiment.py",
+      "path": "chapter7/android-world/run_controlled_experiment.py",
       "bytes": 76108,
       "sha256": "ebc5417066fadbcd3de15d878d8b95a6ab9bff7f1b8e9eec392d148dbc59817e"
     },
     {
-      "path": "chapter6/android-world/merge_candidate_shards.py",
+      "path": "chapter7/android-world/merge_candidate_shards.py",
       "bytes": 11368,
       "sha256": "c7b0519c2246e88750f91859603fd34fea72a67f04c1e8eacb8fc5d2d63cd0f1"
     },
     {
-      "path": "chapter6/android-world/t3a_summary.md",
+      "path": "chapter7/android-world/t3a_summary.md",
       "bytes": 28800,
       "sha256": "e5616507e2b0658b64dc5d0e2c08e6207eba12da8345a31d1cb85bf68957f002"
     },
     {
-      "path": "chapter6/android-world/t3a_failed_analysis.md",
+      "path": "chapter7/android-world/t3a_failed_analysis.md",
       "bytes": 14448,
       "sha256": "7486112a3bf0791a17ca72b81b3745dcd92936416b5c3da937618c8d7a6eb00d"
     }
   ],
   "artifacts": [
     {
-      "path": "chapter6/android-world/validation/candidate_h5c_api33_local_qwen_20260804/evidence.json",
+      "path": "chapter7/android-world/validation/candidate_h5c_api33_local_qwen_20260804/evidence.json",
       "bytes": 3932422,
       "sha256": "526e73e061bbafa3802484934dd29512a3b94a6a066d0efa10fc44c3f8138083"
     },
     {
-      "path": "chapter6/android-world/validation/candidate_h5c_api33_local_qwen_20260804/report.md",
+      "path": "chapter7/android-world/validation/candidate_h5c_api33_local_qwen_20260804/report.md",
       "bytes": 70854,
       "sha256": "4b4222ba4597eb57f35f40a30de180284d00a8fa66824e5492c75c4c8ce8b96a"
     },
     {
-      "path": "chapter6/android-world/validation/candidate_h5c_api33_local_shard1/evidence.json",
+      "path": "chapter7/android-world/validation/candidate_h5c_api33_local_shard1/evidence.json",
       "bytes": 833946,
       "sha256": "8c9bad94ee2141c4de2e666e291f41e1f7d7cf7c53a8ad77a73ab17341bb68a3"
     },
     {
-      "path": "chapter6/android-world/validation/candidate_h5c_api33_local_shard1/report.md",
+      "path": "chapter7/android-world/validation/candidate_h5c_api33_local_shard1/report.md",
       "bytes": 23232,
       "sha256": "6113f7d935c4c1f085a53a4a2f0be5e9d8053e47c5aa4434d56a6a5d7c56e6a4"
     },
     {
-      "path": "chapter6/android-world/validation/candidate_h5c_api33_local_shard2/evidence.json",
+      "path": "chapter7/android-world/validation/candidate_h5c_api33_local_shard2/evidence.json",
       "bytes": 805331,
       "sha256": "2cf319e6eb7f99758c7dd093a46d445afa29ff35a919afc5f08f01c0a2085f44"
     },
     {
-      "path": "chapter6/android-world/validation/candidate_h5c_api33_local_shard2/report.md",
+      "path": "chapter7/android-world/validation/candidate_h5c_api33_local_shard2/report.md",
       "bytes": 22455,
       "sha256": "573f6fa57a846d6b231db2702069afff277434f39518deec8b64bdc0720eac92"
     },
     {
-      "path": "chapter6/android-world/validation/candidate_h5c_api33_local_shard3/evidence.json",
+      "path": "chapter7/android-world/validation/candidate_h5c_api33_local_shard3/evidence.json",
       "bytes": 815150,
       "sha256": "9b4bfed4165696044768c9e05fa00d696469ea99a06e9d3f694ea817a1041911"
     },
     {
-      "path": "chapter6/android-world/validation/candidate_h5c_api33_local_shard3/report.md",
+      "path": "chapter7/android-world/validation/candidate_h5c_api33_local_shard3/report.md",
       "bytes": 22157,
       "sha256": "8e37b4fdaf97eaa0bc14a6a161bcf14914ae6512782a94b5901c7bbfc361806a"
     },
     {
-      "path": "chapter6/android-world/validation/candidate_h5c_api33_local_shard4/evidence.json",
+      "path": "chapter7/android-world/validation/candidate_h5c_api33_local_shard4/evidence.json",
       "bytes": 820872,
       "sha256": "4da385617b9b2f7a3d684884fd79184970e23d862583ab6b622b48f975e15696"
     },
     {
-      "path": "chapter6/android-world/validation/candidate_h5c_api33_local_shard4/report.md",
+      "path": "chapter7/android-world/validation/candidate_h5c_api33_local_shard4/report.md",
       "bytes": 21949,
       "sha256": "509a9224d6ce823c6d9ccff15a962fafdc0ed0b9724c053c2d83754517764f02"
     },
     {
-      "path": "chapter6/android-world/validation/candidate_h5c_api33_local_shard5/evidence.json",
+      "path": "chapter7/android-world/validation/candidate_h5c_api33_local_shard5/evidence.json",
       "bytes": 808670,
       "sha256": "245f99f7a8924d1b8340e510a6b12f345ac35ea779099605755d15d180109ce3"
     },
     {
-      "path": "chapter6/android-world/validation/candidate_h5c_api33_local_shard5/report.md",
+      "path": "chapter7/android-world/validation/candidate_h5c_api33_local_shard5/report.md",
       "bytes": 21696,
       "sha256": "4d22f0cdeb7b5f82560241b2f91169b94629c1f9cca2f320de4f54f5f1b99479"
     },
     {
-      "path": "chapter6/android-world/validation/paired_h5_a11y_api35_20260729/evidence.json",
+      "path": "chapter7/android-world/validation/paired_h5_a11y_api35_20260729/evidence.json",
       "bytes": 47072,
       "sha256": "b2276e35e1f58d32775ea70ac04142a7d3075c074b9f31d40b153e1be10f93da"
     },
     {
-      "path": "chapter6/android-world/validation/paired_h5_a11y_api35_20260729/report.md",
+      "path": "chapter7/android-world/validation/paired_h5_a11y_api35_20260729/report.md",
       "bytes": 8239,
       "sha256": "5d5b0db9580020c286096ca53617cbd2d0f7fb811e48c4cf51688212ef638272"
     },
     {
-      "path": "chapter6/android-world/validation/paired_h5c_compact_api35_20260729/evidence.json",
+      "path": "chapter7/android-world/validation/paired_h5c_compact_api35_20260729/evidence.json",
       "bytes": 39643,
       "sha256": "a60204b6c0ac187b0ae9a68182b5ada302420fc31b2fc22c308e10eb1242e390"
     },
     {
-      "path": "chapter6/android-world/validation/paired_h5c_compact_api35_20260729/report.md",
+      "path": "chapter7/android-world/validation/paired_h5c_compact_api35_20260729/report.md",
       "bytes": 8930,
       "sha256": "55abde0ef9a6d5ed090f26bc99e424346c42a5e98036a278bd50edcf4bf48f2e"
     },
     {
-      "path": "chapter6/android-world/validation/paired_wifi_api35_20260729/evidence.json",
+      "path": "chapter7/android-world/validation/paired_wifi_api35_20260729/evidence.json",
       "bytes": 45941,
       "sha256": "a1665bffafed7b8935db03dc4369435015f784d6f6465fe09c7da86fc0504635"
     },
     {
-      "path": "chapter6/android-world/validation/paired_wifi_api35_20260729/report.md",
+      "path": "chapter7/android-world/validation/paired_wifi_api35_20260729/report.md",
       "bytes": 4096,
       "sha256": "067f176e4722082afd45bedbd79a392b26d677d54013a8b14a81cea1fbd70d57"
     }

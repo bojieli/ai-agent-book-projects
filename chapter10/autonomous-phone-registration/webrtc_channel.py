@@ -313,7 +313,7 @@ class SystemGeminiSpeechBackend:
         started = time.monotonic()
 
         def call() -> bytes:
-            with tempfile.TemporaryDirectory(prefix="exp10-5-tts-") as directory:
+            with tempfile.TemporaryDirectory(prefix="exp10-3-tts-") as directory:
                 source = Path(directory) / ("speech.aiff" if self.say else "speech.wav")
                 target = Path(directory) / "speech.wav"
                 if self.say:
@@ -421,7 +421,7 @@ class SystemWhisperSpeechBackend(SystemGeminiSpeechBackend):
         model = os.getenv("WHISPER_MODEL", "tiny")
 
         def call():
-            with tempfile.TemporaryDirectory(prefix="exp10-5-asr-") as directory:
+            with tempfile.TemporaryDirectory(prefix="exp10-3-asr-") as directory:
                 source = Path(directory) / ("answer.webm" if "webm" in mime else "answer.wav")
                 target = Path(directory) / "answer-16k.wav"
                 source.write_bytes(audio)

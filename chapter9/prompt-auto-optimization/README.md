@@ -1,4 +1,4 @@
-# 实验 8-3：基于失败轨迹优化系统 Prompt
+# 实验 9-3：基于失败轨迹优化系统 Prompt
 
 本实验使用航空客服的“过度转接”案例，演示一条受控的 Prompt 学习链路：先评测运行轨迹，再把失败整理为结构化诊断，随后由 Coding Agent 生成最小补丁，最后用边界集与旧任务保留集决定待验证版本是否可以灰度发布。
 
@@ -73,7 +73,7 @@ python -m pytest tests
 正文的正式入口会强制使用完整的 5 条保留任务和 5 条边界任务，不接受 `--quick` 作为验收：
 
 ```bash
-python run_experiment_8_3.py \
+python run_experiment_9_3.py \
   --provider ark \
   --model doubao-seed-1-6-flash-250615 \
   --rounds 3
@@ -107,6 +107,6 @@ ARK 回执合计 73,456 个输入 Token、7,313 个输出 Token、80,769 个 Tok
 | `release_gate.py` | 待验证 manifest、回归门槛和发布决定 |
 | `demo.py` | 串联完整闭环并输出对照结果 |
 | `tests/` | 离线验证诊断、补丁应用、工具空值处理、接受和拒绝路径 |
-| `run_experiment_8_3.py` | 强制完整三组真实验收并保存原始回执与 `acceptance` |
+| `run_experiment_9_3.py` | 强制完整三组真实验收并保存原始回执与 `acceptance` |
 
 本实验使用无外部副作用的航空客服沙盒，以便三份 Prompt 在完全相同的状态和任务上重复执行。它完成了正文规定的实验对照，但不等同于生产航空系统验收；接入生产时仍须把规则遵从连接到正式政策与订单真值，并扩充专家校准和安全留出集。

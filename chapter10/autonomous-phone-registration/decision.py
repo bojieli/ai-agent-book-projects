@@ -179,7 +179,7 @@ async def decide_orchestration(
     if raw_request_path and raw_response_path:
         request_receipt = {
             "schema_version": 1,
-            "experiment": "10-5",
+            "experiment": "10-3",
             "provider": provider,
             "endpoint": str(client.base_url).rstrip("/"),
             "credential_fields_retained": [],
@@ -187,7 +187,7 @@ async def decide_orchestration(
         }
         response_receipt = {
             "schema_version": 1,
-            "experiment": "10-5",
+            "experiment": "10-3",
             "provider": provider,
             "latency_seconds": provider_latency_seconds,
             "response": response.model_dump(mode="json"),

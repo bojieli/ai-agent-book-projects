@@ -109,7 +109,7 @@ Andrej Karpathy 将这种做法称为**系统提示学习**（System Prompt Lear
 
 #### 例子一：基于失败轨迹优化提示词中的规则
 
-[第七章](https://github.com/bojieli/ai-agent-book/blob/main/book/chapter6.md#人机交互型评估环境)用 τ-bench/τ²-bench 说明了航空客服 Agent 的评估方式：用户逐步透露需求，系统既检查订单等环境状态，也检查对话中是否给出了必要信息。该章的失败归因还强调，不能只记录“失败”，而要找到**首个错误步骤**。
+[第七章](https://github.com/bojieli/ai-agent-book/blob/main/book/chapter7.md#人机交互型评估环境)用 τ-bench/τ²-bench 说明了航空客服 Agent 的评估方式：用户逐步透露需求，系统既检查订单等环境状态，也检查对话中是否给出了必要信息。该章的失败归因还强调，不能只记录“失败”，而要找到**首个错误步骤**。
 
 本例的 bad case 是：用户对退票、改签费或行李政策不满，Agent 没有查政策、解释规则或寻找允许的替代方案，就调用 `transfer_to_human`。普通政策争议不需要转接；**用户明确要求人工或出现安全/人身风险时才必须转接**。因此，问题不是“Agent 不够礼貌”，而是 Prompt 没有写清转接边界。
 

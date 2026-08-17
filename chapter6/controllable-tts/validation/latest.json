@@ -1,5 +1,5 @@
 {
-  "experiment": "9-5",
+  "experiment": "6-6",
   "timestamp_utc": "2026-07-29T10:19:56.497167+00:00",
   "provider": "Fish Audio",
   "backend": "s1",
@@ -35,14 +35,14 @@
   ],
   "outputs": {
     "A_no_control_markers": {
-      "path": "/Users/boj/book/ai-agent-book/chapter9/controllable-tts/output/A_no_control_markers.mp3",
+      "path": "/Users/boj/book/ai-agent-book/chapter6/controllable-tts/output/A_no_control_markers.mp3",
       "probe": {
         "duration": "5.355000",
         "size": "85680"
       }
     },
     "B_single_reference": {
-      "path": "/Users/boj/book/ai-agent-book/chapter9/controllable-tts/output/B_single_reference.mp3",
+      "path": "/Users/boj/book/ai-agent-book/chapter6/controllable-tts/output/B_single_reference.mp3",
       "segments": [
         {
           "model": "s1",
@@ -61,7 +61,7 @@
       }
     },
     "C_24_reference_library": {
-      "path": "/Users/boj/book/ai-agent-book/chapter9/controllable-tts/output/C_24_reference_library.mp3",
+      "path": "/Users/boj/book/ai-agent-book/chapter6/controllable-tts/output/C_24_reference_library.mp3",
       "segments": [
         {
           "model": "s1",

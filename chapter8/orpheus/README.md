@@ -35,7 +35,7 @@ Orpheus is a text-to-speech (TTS) model that converts text into natural-sounding
 # From the repository root: use a separate project-local environment for Orpheus.
 # Its audio stack needs a torch/torchaudio pair matched to your CUDA platform,
 # so do not install it into the shared root .venv.
-cd chapter7/orpheus
+cd chapter8/orpheus
 python -m venv .venv-orpheus
 source .venv-orpheus/bin/activate
 # Windows PowerShell: .\.venv-orpheus\Scripts\Activate.ps1
@@ -298,7 +298,7 @@ Contributions are welcome! Please feel free to submit issues or pull requests.
 # 从仓库根目录开始：Orpheus 请使用单独的项目本地环境。
 # 它的音频栈需要与本机 CUDA 平台匹配的 torch/torchaudio 组合，
 # 因此不要安装到共享的根目录 .venv 中。
-cd chapter7/orpheus
+cd chapter8/orpheus
 python -m venv .venv-orpheus
 source .venv-orpheus/bin/activate
 # Windows PowerShell：.\.venv-orpheus\Scripts\Activate.ps1

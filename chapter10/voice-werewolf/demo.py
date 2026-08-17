@@ -376,7 +376,7 @@ def run_game(args):
     ok = bool(e2e_ok and strategy_pass and judge.completed_rounds >= 3)
     report = {
         "schema_version": 2,
-        "experiment": "10-8",
+        "experiment": "10-6",
         "generated_at": __import__("time").strftime("%Y-%m-%dT%H:%M:%S%z"),
         "execution_mode": (
             "simulated_user" if simulated_user else "live_human" if live_human

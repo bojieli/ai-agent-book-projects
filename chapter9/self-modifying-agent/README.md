@@ -1,12 +1,12 @@
-# 实验 8-6：由失败轨迹触发 Agent 自我修改
+# 实验 9-6：由失败轨迹触发 Agent 自我修改
 
-本项目演示实验 8-6 的 Agent 自我修改：生产轨迹显示同一个 `retryable=false` 错误仍被连续调用时，系统应修改 Agent 的重试与熔断控制代码，而不是只在 Prompt 中追加一句“不要重复调用”。
+本项目演示实验 9-6 的 Agent 自我修改：生产轨迹显示同一个 `retryable=false` 错误仍被连续调用时，系统应修改 Agent 的重试与熔断控制代码，而不是只在 Prompt 中追加一句“不要重复调用”。
 
 机制单元测试与真实验收是两条不同路径：
 
 ```bash
 python -m pytest -q test_evolution.py
-python run_experiment_8_5.py \
+python run_experiment_9_6.py \
   --provider ark --model doubao-seed-1-6-250615 --seed 8501
 ```
 
@@ -18,7 +18,7 @@ Linux capabilities、禁止提权，并限制 CPU、内存、进程数、文件�
 输出大小和墙钟时间。超时、OOM、Docker 不可用或协议输出异常都会关闭失败，不能
 进入 Canary。
 
-`python demo.py` 仍保留为单提案教学入口，不能单独关闭真实实验。`run_experiment_8_5.py` 才是验收入口：它先保留一个会禁用所有临时错误重试的已拒绝提案，把具体失败原因提供给真实 Coding Agent，再让确定性生成器和真实 Coding Agent 经过同一组模型外门槛。
+`python demo.py` 仍保留为单提案教学入口，不能单独关闭真实实验。`run_experiment_9_6.py` 才是验收入口：它先保留一个会禁用所有临时错误重试的已拒绝提案，把具体失败原因提供给真实 Coding Agent，再让确定性生成器和真实 Coding Agent 经过同一组模型外门槛。
 
 如需改用 OpenAI 直连：
 
@@ -43,7 +43,7 @@ cd chapter8/self-modifying-agent
 # python -m pip install -r requirements.txt
 
 export OPENAI_API_KEY=your_api_key_here
-python run_experiment_8_5.py --provider openai --model gpt-4o-mini
+python run_experiment_9_6.py --provider openai --model gpt-4o-mini
 ```
 
 真实模式使用 OpenAI 兼容的 Chat Completions API 读取失败诊断和稳定源码，返回完整代码提案。模型输出仍只能写入 `validation/<run>/candidates/` 隔离目录；静态编译、失败重放、旧任务回归、发布决定与回滚版本全部由模型外部代码执行。若 LLM 生成了看似合理但破坏旧重试行为的补丁，命令会明确返回 `reject_candidate`。

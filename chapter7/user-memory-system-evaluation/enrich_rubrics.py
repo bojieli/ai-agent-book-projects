@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Add complete 6-3 rubric evidence to saved 6-4/6-11 case checkpoints."""
+"""Add complete 7-3 rubric evidence to saved 7-4/7-11 case checkpoints."""
 
 from __future__ import annotations
 
@@ -86,7 +86,7 @@ def main() -> int:
             print(f"[{index}/{len(paths)}] {Path(result['path']).stem}: +{result['updated']} rubric records, errors={len(result['errors'])}")
     report = {
         "schema_version": "1.0",
-        "experiment": "6-3 rubric enrichment",
+        "experiment": "7-3 rubric enrichment",
         "generated_at_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "checkpoint_dir": str(args.checkpoint_dir),
         "checkpoint_count": len(paths),

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the strict, hash-verified acceptance package for Experiment 7-6."""
+"""Build the strict, hash-verified acceptance package for Experiment 8-6."""
 
 from __future__ import annotations
 
@@ -212,7 +212,7 @@ def main():
         "sesame_tag_sensitivity_improved_over_base": sesame["adapted_minus_base_mean_tag_sensitivity"] > 0,
     }
     analysis = {
-        "experiment": "7-6",
+        "experiment": "8-6",
         "execution_acceptance": "PASS" if all(gates.values()) else "FAIL",
         "execution_gates": gates,
         "hypothesis_results": hypotheses,
@@ -243,7 +243,7 @@ def main():
 
     gate_lines = "\n".join(f"- {'PASS' if ok else 'FAIL'} — `{name}`" for name, ok in gates.items())
     hypothesis_lines = "\n".join(f"- {'SUPPORTED' if ok else 'NOT SUPPORTED'} — `{name}`" for name, ok in hypotheses.items())
-    report = f"""# Experiment 7-6 strict acceptance report
+    report = f"""# Experiment 8-6 strict acceptance report
 
 Execution acceptance: **{analysis['execution_acceptance']}**
 

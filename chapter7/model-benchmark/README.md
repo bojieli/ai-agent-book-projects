@@ -1,9 +1,9 @@
-# Multi-dimensional Model Benchmarking / 多维度模型性能基准 / 实验 6-8
+# Multi-dimensional Model Benchmarking / 多维度模型性能基准 / 实验 7-10
 
 ## English
 
 This directory contains two layers. `demo.py` is the short interactive sampler;
-`campaign.py` is the **complete, resumable Experiment 6-8 campaign**. The latter
+`campaign.py` is the **complete, resumable Experiment 7-10 campaign**. The latter
 supports OpenAI-compatible, native Anthropic, and native Gemini APIs and records
 every real request in SQLite.
 
@@ -104,7 +104,7 @@ source .venv/bin/activate
 # pip fallback when uv is not installed:
 # python -m pip install -e ".[ch6]"
 
-cd chapter6/model-benchmark
+cd chapter7/model-benchmark
 
 # Single-project compatibility path, still supported during migration:
 # python -m pip install -r requirements.txt
@@ -194,14 +194,14 @@ OpenRouter fallback behavior:
 
 ## 中文
 
-# 多维度模型性能基准测试（实验 6-8 配套代码）
+# 多维度模型性能基准测试（实验 7-10 配套代码）
 
 对多个 OpenAI 兼容的 LLM API 提供商做横向基准测试，一条命令跑出
 **TTFT / 端到端延迟 / 吞吐 / 标准差 / p50 / p95 / p99 / 成功率** 的多维度对比表，
 为模型选型提供实测依据。还支持**并发压测**（逐档加压找限流点，看指标随并发的变化）
 与**离线自检**（`--mock` 合成数据，无需 key/网络即可验证指标聚合）。
 
-对应《深入理解 AI Agent》第 6 章 **实验 6-8：多维度模型性能基准测试**。
+对应《深入理解 AI Agent》第 6 章 **实验 7-10：多维度模型性能基准测试**。
 
 ## 目的
 
@@ -272,7 +272,7 @@ source .venv/bin/activate
 # 未安装 uv 时可用 pip 兜底：
 # python -m pip install -e ".[ch6]"
 
-cd chapter6/model-benchmark
+cd chapter7/model-benchmark
 
 # 迁移期间仍支持单项目兼容路径：
 # python -m pip install -r requirements.txt
@@ -310,7 +310,7 @@ python demo.py --base-url https://api.deepseek.com --model deepseek-chat \
 
 ### 并发压测：逐步加压找限流点
 
-书中实验 6-8 要求"通过逐步提升并发量来找到限流点，记录 RPM/TPM 上限"。
+书中实验 7-10 要求"通过逐步提升并发量来找到限流点，记录 RPM/TPM 上限"。
 `--concurrency-sweep` 对同一模型逐档加压，产出一张随并发变化的指标表
 （p50/p95/p99/std/成功率/RPS/聚合吞吐）：
 
@@ -419,7 +419,7 @@ Doubao/doubao-1.5-pro-32k | 10/10 (100%) | 1097ms   | 1409ms   | 2.32s      | 2.
 
 - **成本控制**：默认 `max_tokens=64`、`N=10`，全跑成本极低。调大参数前请留意计费。
 - **限流**：把并发或 N 调很大时可能触发提供商 RPM/TPM 限流，届时会以失败形式
-  计入可用性下降——这本身也是一种"实测限流阈值"的方式（书中实验 6-8 的一环）。
+  计入可用性下降——这本身也是一种"实测限流阈值"的方式（书中实验 7-10 的一环）。
 - **TTFT 与网络强相关**：跨境访问的服务 TTFT 会显著偏高，结论需结合部署地点解读。
 - **OpenRouter 回退**：未设置 `OPENAI_API_KEY` 时，`OpenAI/*` 条目自动经 OpenRouter 路由
   （需 `OPENROUTER_API_KEY`，`gpt-*` 映射为 `openai/*`）；`gpt-5.x` 只要有 `OPENROUTER_API_KEY`

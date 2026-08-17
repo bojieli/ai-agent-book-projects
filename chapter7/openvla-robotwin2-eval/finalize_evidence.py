@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Finalize and verify the retained Experiment 6-12 evidence package."""
+"""Finalize and verify the retained Experiment 7-13 evidence package."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ import experiment
 
 
 HERE = Path(__file__).resolve().parent
-DEFAULT_RUN = HERE / "validation" / "runs" / "exp6-12-localgpu-20260803-v1"
+DEFAULT_RUN = HERE / "validation" / "runs" / "exp7-13-localgpu-20260803-v1"
 PACKAGE_FILES = (
     "chunk_1/episodes.jsonl",
     "chunk_1/process.json",
@@ -82,10 +82,10 @@ def build_manifest(run_dir: Path) -> dict[str, Any]:
         "experiment.py",
         "finalize_evidence.py",
         "instrument_upstream.py",
-        "task_config_exp6_12_three_view.yml",
+        "task_config_exp7_13_three_view.yml",
         "test_experiment.py",
     ):
-        sources.append(artifact(HERE / name, f"chapter6/openvla-robotwin2-eval/{name}"))
+        sources.append(artifact(HERE / name, f"chapter7/openvla-robotwin2-eval/{name}"))
     checks = {
         "strict_analysis_complete": report["strict_completion"]["complete"] is True,
         "two_256_episode_arms": all(
@@ -104,7 +104,7 @@ def build_manifest(run_dir: Path) -> dict[str, Any]:
     }
     return {
         "schema_version": 1,
-        "experiment": "6-12",
+        "experiment": "7-13",
         "generated_at_utc": experiment.utc_now(),
         "status": "complete" if all(checks.values()) else "incomplete",
         "checks": checks,
@@ -149,7 +149,7 @@ def verify(run_dir: Path) -> None:
         failures.append("manifest does not retain 512 rollout-video identities")
     if failures:
         raise RuntimeError("; ".join(failures))
-    print("Experiment 6-12 retained evidence verification passed")
+    print("Experiment 7-13 retained evidence verification passed")
 
 
 def main() -> int:

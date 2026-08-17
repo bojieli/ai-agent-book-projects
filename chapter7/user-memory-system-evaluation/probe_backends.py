@@ -44,13 +44,13 @@ def main() -> int:
     results = []
 
     required_chat = {
-        config["experiment_6_4"]["main_model"],
-        config["experiment_6_11"]["retrieval_judge_model"],
-        *config["experiment_6_11"]["main_models"],
+        config["experiment_7_4"]["main_model"],
+        config["experiment_7_11"]["retrieval_judge_model"],
+        *config["experiment_7_11"]["main_models"],
         *[
             data["chat_model"]
             for name, data in config["rerankers"].items()
-            if name in config["experiment_6_11"]["rerankers"] and data.get("type") == "llm"
+            if name in config["experiment_7_11"]["rerankers"] and data.get("type") == "llm"
         ],
     }
     for name in sorted(required_chat):
@@ -65,7 +65,7 @@ def main() -> int:
         results.append(row)
 
     required_embeddings = {
-        config["experiment_6_4"]["embedding"], *config["experiment_6_11"]["embeddings"]
+        config["experiment_7_4"]["embedding"], *config["experiment_7_11"]["embeddings"]
     }
     for name in sorted(required_embeddings):
         raw = config["embeddings"][name]
@@ -87,7 +87,7 @@ def main() -> int:
     }
     chunks = [Chunk("a", "probe", "checking account number 123", 1, 1), Chunk("b", "probe", "weather", 2, 2)]
     required_rerankers = {
-        config["experiment_6_4"]["reranker"], *config["experiment_6_11"]["rerankers"]
+        config["experiment_7_4"]["reranker"], *config["experiment_7_11"]["rerankers"]
     }
     for name in sorted(required_rerankers):
         row = {"component": "reranker", "name": name}
@@ -101,10 +101,10 @@ def main() -> int:
 
     payload = {
         "schema_version": "2.0",
-        "experiment": "6-4/6-11 provider readiness",
+        "experiment": "7-4/7-11 provider readiness",
         "generated_at_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "config_file": str(args.config),
-        "execution_config_fingerprint": execution_config_fingerprint(config, "6-11"),
+        "execution_config_fingerprint": execution_config_fingerprint(config, "7-11"),
         "required_components": [
             {"component": component, "name": name}
             for component, name in sorted(required_readiness_components(config))

@@ -1,4 +1,4 @@
-# 实验 9-4：Fish Audio S1 控制标记 TTS
+# 实验 6-6：Fish Audio S1 控制标记 TTS
 
 本项目实际调用 Fish Audio S1，不再使用 OpenAI TTS、固定 `alloy` voice 或拟声词替代。执行层把主 LLM 的控制标记映射到真实的 24 条参考语音，并通过 S1 的零样本 `ReferenceAudio` voice cloning 合成同一说话人、不同情绪/语速/风格的语音。
 
@@ -12,7 +12,7 @@
 ## 1. 构建真实参考语音库
 
 ```bash
-cd chapter9/controllable-tts
+cd chapter6/controllable-tts
 pip install -r requirements.txt
 cp env.example .env
 python build_reference_library.py
@@ -35,7 +35,7 @@ source .venv/bin/activate
 # pip fallback when uv is not installed:
 # python -m pip install -e ".[ch9]"
 
-cd chapter9/controllable-tts
+cd chapter6/controllable-tts
 
 # Install this experiment's Fish SDK runtime dependencies.
 python -m pip install -r requirements.txt
@@ -71,7 +71,7 @@ source .venv/bin/activate
 # Windows PowerShell: .\.venv\Scripts\Activate.ps1
 # Windows cmd: .venv\Scripts\activate.bat
 
-cd chapter9/controllable-tts
+cd chapter6/controllable-tts
 python -m pytest -q
 ```
 

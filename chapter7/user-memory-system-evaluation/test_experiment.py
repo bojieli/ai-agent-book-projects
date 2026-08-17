@@ -232,7 +232,7 @@ def record(**overrides):
     from experiment import RunRecord
 
     data = dict(
-        experiment="6-11", test_id="t", layer="layer1", system="rag", embedding="e1",
+        experiment="7-11", test_id="t", layer="layer1", system="rag", embedding="e1",
         reranker="none", main_model="m1", success=True, reward=0.8, steps=2,
         tool_calls=1, latency_ms=100, cost_usd=0.01, input_tokens=10, output_tokens=2,
         unpriced_tokens=0, retrieval_hit_at_5=1.0, retrieval_recall_at_5=0.5,
@@ -295,9 +295,9 @@ def test_pricing_requires_dated_source_and_three_letter_currency():
             TokenPricing.from_dict(base | override)
 
 
-def exact_611_config(readiness=True):
+def exact_711_config(readiness=True):
     return {
-        "experiment_6_11": {
+        "experiment_7_11": {
             "embeddings": ["e1", "e2", "e3", "e4"],
             "rerankers": ["none", "r1", "r2"],
             "main_models": ["m1", "m2"],
@@ -306,7 +306,7 @@ def exact_611_config(readiness=True):
     }
 
 
-def exact_611_records():
+def exact_711_records():
     return [
         record(
             test_id=f"case-{case:02d}",
@@ -325,12 +325,12 @@ def exact_611_records():
 
 def assess_611(rows, readiness=True):
     return completion_assessment(
-        "6-11", rows, exact_611_config(readiness), pricing_coverage(rows)
+        "7-11", rows, exact_711_config(readiness), pricing_coverage(rows)
     )
 
 
-def test_exact_611_gate_requires_all_1440_real_priced_successes_and_readiness():
-    rows = exact_611_records()
+def test_exact_711_gate_requires_all_1440_real_priced_successes_and_readiness():
+    rows = exact_711_records()
     complete = assess_611(rows)
     assert complete["evidence_complete"] is True
     assert complete["expected_full_trajectory_count"] == 1440

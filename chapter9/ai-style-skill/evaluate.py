@@ -131,7 +131,7 @@ def main() -> int:
     eval_texts = load_eval_texts()
     growth = incremental_growth(pairs)
     rules = growth["rules"]
-    # llm 类规则离线用代理 judge 参与打分；真实校准见 run_experiment_8_9.py。
+    # llm 类规则离线用代理 judge 参与打分；真实校准见 run_ai_style_skill.py。
     llm_judges = {
         r["id"]: proxy_judge(r) for r in rules if r["detector"].get("type") == "llm"
     }

@@ -1,5 +1,5 @@
 """
-Regression tests for judge-response robustness (实验 6-5 TTS 质量评估).
+Regression tests for judge-response robustness (实验 7-6 TTS 质量评估).
 
 Covers two failure classes on LLM/Gemini judge responses:
   - judge_rubric: judge returns "score": null (or a bare null dimension) -> int(None) TypeError

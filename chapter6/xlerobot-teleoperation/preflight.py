@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only preflight for the pinned Experiment 9-8 reproduction track."""
+"""Read-only preflight for the pinned Experiment 6-10 reproduction track."""
 
 from __future__ import annotations
 
@@ -53,7 +53,7 @@ def main() -> int:
     blockers = [str(item["id"]) for item in checks if item["required_for_hardware_run"] and not item["passed"]]
     report = {
         "schema_version": "1.0",
-        "experiment_id": "9-8",
+        "experiment_id": "6-10",
         "kind": "non_actuating_preflight",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "host": platform.node() or "unknown",

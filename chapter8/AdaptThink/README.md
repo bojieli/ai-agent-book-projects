@@ -1,10 +1,10 @@
-# Experiment 7-10 reproduction anchor
+# Experiment 8-10 reproduction anchor
 
-This directory is the book-owned explanation. Executable training code is the external [`bojieli/AdaptThink`](https://github.com/bojieli/AdaptThink) checkout at `chapter7/AdaptThink-original`, verified in the current workspace at commit `0033ad172dd53ac64004b763477407014f21b838`.
+This directory is the book-owned explanation. Executable training code is the external [`bojieli/AdaptThink`](https://github.com/bojieli/AdaptThink) checkout at `chapter8/AdaptThink-original`, verified in the current workspace at commit `0033ad172dd53ac64004b763477407014f21b838`.
 
 ## Canonical training report / 规范训练报告
 
-The canonical Experiment 7-10 result is the checkpoint-free [training report](TRAINING_REPORT.md). It is backed by public W&B run [`wubbn5tj`](https://wandb.ai/bojieli-pine-ai/adapt_think_verl/runs/wubbn5tj); baseline run [`dblyx7cm`](https://wandb.ai/bojieli-pine-ai/adapt_think_verl/runs/dblyx7cm) exactly matches its step-0 validation metrics.
+The canonical Experiment 8-10 result is the checkpoint-free [training report](TRAINING_REPORT.md). It is backed by public W&B run [`wubbn5tj`](https://wandb.ai/bojieli-pine-ai/adapt_think_verl/runs/wubbn5tj); baseline run [`dblyx7cm`](https://wandb.ai/bojieli-pine-ai/adapt_think_verl/runs/dblyx7cm) exactly matches its step-0 validation metrics.
 
 本实验的规范结果是无 checkpoint 的[历史训练报告](TRAINING_REPORT.md)。公开 W&B 主运行是 [`wubbn5tj`](https://wandb.ai/bojieli-pine-ai/adapt_think_verl/runs/wubbn5tj)，基线运行 [`dblyx7cm`](https://wandb.ai/bojieli-pine-ai/adapt_think_verl/runs/dblyx7cm) 的验证指标与主运行 step 0 完全一致。
 
@@ -21,9 +21,9 @@ These aggregate metrics show large response-length reductions on all three datas
 以上结果明确取代下文历史说明中的 `1 epoch / 314 steps`、H800、宽泛取整区间、准确率普遍提升和“完美难度感知”等表述；下文仅保留作方法与历史解读背景。
 
 ```bash
-git clone https://github.com/bojieli/AdaptThink.git chapter7/AdaptThink-original
-git -C chapter7/AdaptThink-original checkout --detach 0033ad172dd53ac64004b763477407014f21b838
-cd chapter7/AdaptThink-original
+git clone https://github.com/bojieli/AdaptThink.git chapter8/AdaptThink-original
+git -C chapter8/AdaptThink-original checkout --detach 0033ad172dd53ac64004b763477407014f21b838
+cd chapter8/AdaptThink-original
 bash scripts/preprocess_dataset.sh
 bash scripts/run_adapt_think_1.5b_deepscaler_16k_delta0.05_btz128_lr2e-6.sh
 bash scripts/run_eval_verl_hf.sh
@@ -346,7 +346,7 @@ conda create -n adapt_think python=3.13
 conda activate adapt_think
 
 # Install dependencies
-cd chapter7/AdaptThink-original
+cd chapter8/AdaptThink-original
 pip install -r requirements.txt
 pip install flash-attn --no-build-isolation
 ```
@@ -580,7 +580,7 @@ This experiment is based on the AdaptThink project by the THU-KEG team at Tsingh
 
 # AdaptThink: 让推理模型学会何时思考
 
-> **历史非规范说明。** 本长篇说明保留作方法背景；其中取整趋势、横向比较和成本估算不属于实验 7-10 的规范结果。若与文首内容冲突，以训练报告及精确 step-300 表格为准。
+> **历史非规范说明。** 本长篇说明保留作方法背景；其中取整趋势、横向比较和成本估算不属于实验 8-10 的规范结果。若与文首内容冲突，以训练报告及精确 step-300 表格为准。
 
 ## 📋 目录
 
@@ -891,7 +891,7 @@ conda create -n adapt_think python=3.13
 conda activate adapt_think
 
 # 安装依赖
-cd chapter7/AdaptThink-original
+cd chapter8/AdaptThink-original
 pip install -r requirements.txt
 pip install flash-attn --no-build-isolation
 ```

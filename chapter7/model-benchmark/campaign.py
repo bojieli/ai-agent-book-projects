@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Full Experiment 6-8 campaign runner.
+"""Full Experiment 7-10 campaign runner.
 
 This is the long-form, resumable experiment described by the book.  It stores
 every real request in SQLite so a 168-hour availability campaign or a large
@@ -31,7 +31,7 @@ from openai import OpenAI
 HERE = Path(__file__).resolve().parent
 DEFAULT_CONFIG = HERE / "campaign_config.json"
 DEFAULT_DB = HERE / "results" / "campaign.sqlite3"
-PROMPT_SCHEMA_VERSION = "experiment-6-8-standard-workload-v2"
+PROMPT_SCHEMA_VERSION = "experiment-7-10-standard-workload-v2"
 
 
 def utc_now() -> str:
@@ -1019,11 +1019,11 @@ def comma_ints(raw: str) -> list[int]:
 
 
 def parser() -> argparse.ArgumentParser:
-    result = argparse.ArgumentParser(description="Full, resumable Experiment 6-8 campaign")
+    result = argparse.ArgumentParser(description="Full, resumable Experiment 7-10 campaign")
     result.add_argument("phase", choices=["workload", "availability", "rate-limit", "agent-cost", "all"])
     result.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
     result.add_argument("--db", type=Path, default=DEFAULT_DB)
-    result.add_argument("--campaign-id", default="experiment-6-8")
+    result.add_argument("--campaign-id", default="experiment-7-10")
     result.add_argument("--provider", action="append", dest="providers", help="Provider display name; repeatable")
     result.add_argument("--requests", type=int)
     result.add_argument("--concurrency", type=int)

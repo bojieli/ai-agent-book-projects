@@ -1,5 +1,5 @@
 """
-Regression test for 'tie (bothbad)' handling in optimized_elo (实验 6-6 排行榜).
+Regression test for 'tie (bothbad)' handling in optimized_elo (实验 7-7 排行榜).
 
 Chatbot Arena battle data has four outcomes; 'tie (bothbad)' was missing from
 the outcome map, so Series.map produced NaN. NaN then propagated through the

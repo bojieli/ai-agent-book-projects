@@ -1,4 +1,4 @@
-"""Model-external four-phase longitudinal evaluator for Experiment 8-7."""
+"""Model-external four-phase longitudinal evaluator for Experiment 9-9."""
 
 from __future__ import annotations
 

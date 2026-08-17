@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Train the Experiment 7-9 student on verified teacher CoT trajectories.
+"""Train the Experiment 8-9 student on verified teacher CoT trajectories.
 
 This is the parameter-update stage missing from the original collection-only
 companion.  It deliberately has no mock training mode: a successful run writes
@@ -111,7 +111,7 @@ def _git_commit(root: Path) -> str | None:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Experiment 7-9: real student SFT on verified CoT trajectories",
+        description="Experiment 8-9: real student SFT on verified CoT trajectories",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument("--train-data", type=Path, default=Path("data/sft_cot_distill_aime_kimi_k3.jsonl"))
@@ -164,7 +164,7 @@ def main() -> None:
         trainer_stack_importable = trainer_stack_error is None
         payload = {
             "schema_version": 1,
-            "experiment": "7-9",
+            "experiment": "8-9",
             "stage": "student_sft_preflight",
             "generated_at_utc": datetime.now(timezone.utc).isoformat(),
             "ready": all(dependencies.values()) and trainer_stack_importable and cuda_available,
@@ -203,7 +203,7 @@ def main() -> None:
         raise SystemExit("PyTorch is missing. Install requirements.txt before training.") from exc
     if not torch.cuda.is_available():
         raise SystemExit(
-            "Experiment 7-9 student SFT requires a CUDA host; this runner has no synthetic/CPU success fallback."
+            "Experiment 8-9 student SFT requires a CUDA host; this runner has no synthetic/CPU success fallback."
         )
     try:
         from torch.utils.data import Dataset
@@ -299,7 +299,7 @@ def main() -> None:
     root = Path(__file__).resolve().parents[2]
     manifest = {
         "schema_version": 1,
-        "experiment": "7-9",
+        "experiment": "8-9",
         "stage": "student_sft",
         "status": "complete",
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),

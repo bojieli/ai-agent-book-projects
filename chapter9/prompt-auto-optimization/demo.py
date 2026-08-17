@@ -1,5 +1,5 @@
 """
-实验 8-3：基于失败轨迹的系统提示词自动优化
+实验 9-3：基于失败轨迹的系统提示词自动优化
 
 一条命令跑通完整流程：
   1. 用【初始 prompt】评测 → 暴露"政策争议就转人工"的过度转接问题；
@@ -85,7 +85,7 @@ def main(cases=None, rounds=3, output=None):
     reset_api_turns()
     campaign_started = time.time()
     print("#" * 74)
-    print("# 实验 8-3：基于失败轨迹的系统提示词自动优化（航空客服场景）")
+    print("# 实验 9-3：基于失败轨迹的系统提示词自动优化（航空客服场景）")
     print(f"# LLM 提供商: {get_provider()}   模型: {get_model()}")
     print(f"# 用例数: {len(cases)}（保留集 + 边界集）   Coding Agent 优化轮数上限: {rounds}")
     print("#" * 74)
@@ -194,8 +194,8 @@ def main(cases=None, rounds=3, output=None):
     }
     summary = {
             "schema_version": 2,
-            "experiment_id": "8-3",
-            "canonical_source": "book/chapter8.md#实验-8-3-基于失败轨迹优化系统提示词",
+            "experiment_id": "9-3",
+            "canonical_source": "book/chapter9.md#实验-9-3-基于失败轨迹优化系统提示词",
             "evidence_mode": "real_task_agent_llm_judge_coding_agent_full_campaign",
             "created_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
             "provider": get_provider(),
@@ -251,7 +251,7 @@ def main(cases=None, rounds=3, output=None):
 def _build_parser():
     parser = argparse.ArgumentParser(
         prog="demo.py",
-        description="实验 8-3：从失败轨迹诊断到候选补丁与发布门槛（航空客服场景）。",
+        description="实验 9-3：从失败轨迹诊断到候选补丁与发布门槛（航空客服场景）。",
         formatter_class=argparse.RawTextHelpFormatter,
         epilog=(
             "示例：\n"

@@ -1,4 +1,4 @@
-"""Focused structural tests for the strict Experiment 10-1 evidence path."""
+"""Focused structural tests for the strict staged system-prompt add-on evidence path."""
 
 from agent import STAGE_PROMPTS, STAGE_TOOLS
 from run_official_experiment import usage_cost, validate_manifest

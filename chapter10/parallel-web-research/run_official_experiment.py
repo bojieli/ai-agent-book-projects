@@ -217,7 +217,7 @@ def parse_args() -> argparse.Namespace:
 
 
 async def main(args: argparse.Namespace) -> int:
-    run_id = args.run_id or f"exp10-6-real-receipts-{datetime.now(timezone.utc):%Y%m%dT%H%M%SZ}"
+    run_id = args.run_id or f"exp10-4-real-receipts-{datetime.now(timezone.utc):%Y%m%dT%H%M%SZ}"
     run_dir = Path(args.output_root).resolve() / run_id
     run_dir.mkdir(parents=True, exist_ok=False)
     started_at = utc_now()
@@ -337,7 +337,7 @@ async def main(args: argparse.Namespace) -> int:
 
     evidence = {
         "schema_version": 2,
-        "experiment": "10-6",
+        "experiment": "10-4",
         "run_id": run_id,
         "run_type": "real_parallel_serial_and_cascade_with_raw_receipts",
         "started_at": started_at,
@@ -377,7 +377,7 @@ async def main(args: argparse.Namespace) -> int:
     artifact_paths = [evidence_path, browser_path, llm_path, bus_path]
     manifest = {
         "schema_version": 1,
-        "experiment": "10-6",
+        "experiment": "10-4",
         "run_id": run_id,
         "generated_at": utc_now(),
         "git_commit": evidence["git_commit"],

@@ -1,5 +1,5 @@
 {
-  "experiment": "4-6",
+  "experiment": "6-2",
   "title": "Real subprocess async execution, queueing, interruption, and progress cancellation",
   "authority": "book/chapter4.md:579",
   "execution": {

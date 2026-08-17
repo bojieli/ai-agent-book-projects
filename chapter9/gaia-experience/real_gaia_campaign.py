@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Real GAIA learning/transfer campaign for manuscript Experiment 8-2.
+"""Real GAIA learning/transfer campaign for manuscript Experiment 9-2.
 
 This runner uses actual GAIA validation questions, externally scores answers
 against the published references, extracts cross-run experience with a real
@@ -432,8 +432,8 @@ def main() -> int:
     dataset_bytes = (ROOT / "gaia-validation.jsonl").read_bytes()
     evidence = {
         "schema_version": 2,
-        "experiment_id": "8-2",
-        "canonical_source": "book/chapter8.md#实验-8-2-从-GAIA-轨迹提炼经验知识文档",
+        "experiment_id": "9-2",
+        "canonical_source": "book/chapter9.md#实验-9-2-从-GAIA-轨迹提炼经验知识文档",
         "evidence_mode": "real_gaia_live_web_llm_transfer_campaign",
         "created_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
         "provider": client.provider,

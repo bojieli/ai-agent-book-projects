@@ -1,4 +1,4 @@
-# Experiment 6-7: Model action thresholds in a fixed coding harness
+# Experiment 7-8: Model action thresholds in a fixed coding harness
 
 This experiment tests whether an explore-first or implement-first tendency
 follows the **model** when the coding harness is held fixed. Both model
@@ -36,11 +36,11 @@ From the repository root:
 ```bash
 uv sync --locked --extra ch6
 export OPENROUTER_API_KEY=...
-uv run python chapter6/model-action-threshold/experiment.py \
+uv run python chapter7/model-action-threshold/experiment.py \
   --models openai/gpt-5.6-sol anthropic/claude-sonnet-5 \
   --trials 3 \
   --policy neutral \
-  --output chapter6/model-action-threshold/results/my-run
+  --output chapter7/model-action-threshold/results/my-run
 ```
 
 The runner alternates model order between trials and checkpoints the campaign
@@ -52,10 +52,10 @@ metrics; and `manifest.json` hashes those three artifacts.
 Run the optional harness ablation separately:
 
 ```bash
-uv run python chapter6/model-action-threshold/experiment.py \
+uv run python chapter7/model-action-threshold/experiment.py \
   --models openai/gpt-5.6-sol anthropic/claude-sonnet-5 \
   --trials 3 --policy explore-first \
-  --output chapter6/model-action-threshold/results/explore-first
+  --output chapter7/model-action-threshold/results/explore-first
 ```
 
 Do not merge neutral and explore-first observations into one model comparison.
@@ -70,7 +70,7 @@ measurement, aggregation, and that every fixture starts in the intended
 failing state:
 
 ```bash
-python -m unittest discover -s chapter6/model-action-threshold/tests -v
+python -m unittest discover -s chapter7/model-action-threshold/tests -v
 ```
 
 The saved validation campaign in `results/` is considered complete only when

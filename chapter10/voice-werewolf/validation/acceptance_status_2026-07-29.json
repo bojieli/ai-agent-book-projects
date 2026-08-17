@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "experiment": "10-8",
+  "experiment": "10-6",
   "audited_at": "2026-07-29T20:29:44+0800",
   "safety": {
     "phone_calls_placed": 0,

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "experiment": "10-8",
+  "experiment": "10-6",
   "generated_at": "2026-07-29T20:29:44+0800",
   "mode": "real_llm_audit_of_offline_all_ai_supplement",
   "acceptance_path": false,

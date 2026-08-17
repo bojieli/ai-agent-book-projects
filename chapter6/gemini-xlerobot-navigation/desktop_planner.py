@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Experiment 9-9: desktop manipulation planning with a local GPU backend.
+"""Experiment 6-12: desktop manipulation planning with a local GPU backend.
 
 The local run keeps the RoboCrew-style tool contract and the XLeRobot adapter
 boundary, but executes against a deterministic tabletop simulator.  This
@@ -274,7 +274,7 @@ def main() -> int:
     metrics = {"device": device_info(device), "protocol": {"seeds": seeds, "failure_probabilities": failure_probabilities, "episodes_per_cell": args.episodes, "total_episodes": len(results) * args.episodes}, "models": model_reports, "cells": results, "deterministic_replay": replay_a == replay_b, "wall_time_ms": round((time.perf_counter() - started) * 1000, 3)}
     metrics_path = args.output_dir / "metrics.json"
     write_json(metrics_path, metrics)
-    evidence = {"schema_version": "3.0", "experiment_id": "9-9", "status": "complete", "kind": "desktop_manipulation_planning", "seed": seeds[0], "tool_contract": list(TOOL_NAMES), "metrics": metrics, "artifacts": [{"kind": "metrics", "path": relative_or_absolute(metrics_path, args.output_dir), "sha256": sha256(metrics_path)}, {"kind": "events", "path": relative_or_absolute(events_path, args.output_dir), "sha256": sha256(events_path)}, {"kind": "scene", "path": relative_or_absolute(scene_path, args.output_dir), "sha256": sha256(scene_path)}], "xlerobot_robocrew_extension": {"status": "gated", "tool_adapter_required": True, "actuation_attempted": False}, "blockers": [] if not args.allow_cpu else ["CPU debug mode is not a GPU acceptance run"]}
+    evidence = {"schema_version": "3.0", "experiment_id": "6-12", "status": "complete", "kind": "desktop_manipulation_planning", "seed": seeds[0], "tool_contract": list(TOOL_NAMES), "metrics": metrics, "artifacts": [{"kind": "metrics", "path": relative_or_absolute(metrics_path, args.output_dir), "sha256": sha256(metrics_path)}, {"kind": "events", "path": relative_or_absolute(events_path, args.output_dir), "sha256": sha256(events_path)}, {"kind": "scene", "path": relative_or_absolute(scene_path, args.output_dir), "sha256": sha256(scene_path)}], "xlerobot_robocrew_extension": {"status": "gated", "tool_adapter_required": True, "actuation_attempted": False}, "blockers": [] if not args.allow_cpu else ["CPU debug mode is not a GPU acceptance run"]}
     evidence_path = args.output_dir / "evidence.json"
     write_json(evidence_path, evidence)
     print(json.dumps(evidence, indent=2))

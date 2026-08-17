@@ -1,4 +1,4 @@
-"""Fail-closed verifier for a saved Experiment 6-6 run."""
+"""Fail-closed verifier for a saved Experiment 7-7 run."""
 
 from __future__ import annotations
 
@@ -25,7 +25,7 @@ def main() -> None:
     manifest_path = args.run_dir / "manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     failures: list[str] = []
-    if manifest.get("experiment") != "6-6":
+    if manifest.get("experiment") != "7-7":
         failures.append("wrong experiment id")
     if manifest.get("status") != "passed" or manifest.get("official_complete") is not True:
         failures.append("run is not officially complete")

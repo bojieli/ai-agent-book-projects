@@ -7,11 +7,11 @@ import argparse
 from pathlib import Path
 
 
-EPISODE_RECORDER = '''        # Experiment 6-12 instrumentation. This patch is applied only to a
+EPISODE_RECORDER = '''        # Experiment 7-13 instrumentation. This patch is applied only to a
         # disposable worktree; the upstream checkout remains clean. Preserve
         # one row per real RoboTwin2 validation episode so the companion can
         # audit paired seeds, action counts and exact environment rewards.
-        evidence_path = os.environ.get("EXP6_12_EPISODE_JSONL")
+        evidence_path = os.environ.get("EXP7_13_EPISODE_JSONL")
         if evidence_path:
             def _ints(name, default=-1):
                 if name not in data.batch:
@@ -31,11 +31,11 @@ EPISODE_RECORDER = '''        # Experiment 6-12 instrumentation. This patch is a
                 for index, complete in enumerate(completes):
                     row = {
                         "schema_version": 1,
-                        "experiment": "6-12",
+                        "experiment": "7-13",
                         "source": "upstream_val_only",
                         "recorded_at_utc": datetime.now(timezone.utc).isoformat(),
-                        "arm": os.environ.get("EXP6_12_ARM"),
-                        "upstream_commit": os.environ.get("EXP6_12_UPSTREAM_COMMIT"),
+                        "arm": os.environ.get("EXP7_13_ARM"),
+                        "upstream_commit": os.environ.get("EXP7_13_UPSTREAM_COMMIT"),
                         "task": self.config.data.task_suite_name,
                         "data_source": str(sources[index]),
                         "trial_id": trial_ids[index],

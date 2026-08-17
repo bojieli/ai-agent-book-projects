@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Analyze the SQLite evidence produced by the full Experiment 6-8 campaign."""
+"""Analyze the SQLite evidence produced by the full Experiment 7-10 campaign."""
 
 from __future__ import annotations
 
@@ -757,7 +757,7 @@ def fmt_pct(value: float | None, digits: int = 1) -> str:
 
 def markdown(report: dict[str, Any]) -> str:
     lines = [
-        f"# Experiment 6-8 campaign: `{report['campaign_id']}`",
+        f"# Experiment 7-10 campaign: `{report['campaign_id']}`",
         "",
         f"Observations: **{report['observation_count']}**",
         f"Official completion: **{report['completion_audit']['official_complete']}**",
@@ -829,7 +829,7 @@ def markdown(report: dict[str, Any]) -> str:
     ])
     return "\n".join(lines)
 def export_campaign_summary(
-    db_path: Path, config_path: Path | None = None, campaign_id: str = "experiment-6-8"
+    db_path: Path, config_path: Path | None = None, campaign_id: str = "experiment-7-10"
 ) -> dict[str, Any]:
     """Export structured JSON and Markdown summary metrics for a campaign database."""
     cfg = config_path or DEFAULT_CONFIG
@@ -843,10 +843,10 @@ def export_campaign_summary(
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Analyze full Experiment 6-8 campaign evidence")
+    parser = argparse.ArgumentParser(description="Analyze full Experiment 7-10 campaign evidence")
     parser.add_argument("--db", type=Path, default=DEFAULT_DB)
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
-    parser.add_argument("--campaign-id", default="experiment-6-8")
+    parser.add_argument("--campaign-id", default="experiment-7-10")
     parser.add_argument("--json", type=Path, default=HERE / "results" / "campaign_report.json")
     parser.add_argument("--markdown", type=Path, default=HERE / "results" / "campaign_report.md")
     args = parser.parse_args()

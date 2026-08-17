@@ -1,10 +1,10 @@
 {
   "schema_version": 2,
-  "experiment_id": "8-1",
-  "canonical_source": "book/chapter8.md#实验-8-1-为客服-Agent-构建轨迹验证器",
+  "experiment_id": "9-1",
+  "canonical_source": "book/chapter9.md#实验-9-1-为客服-Agent-构建轨迹验证器",
   "evidence_mode": "real_provider_customer_service_and_quality_judge",
   "created_at": "2026-07-29T16:33:39+00:00",
-  "command": "python run_experiment_8_1.py --provider ark --model doubao-seed-1-6-250615",
+  "command": "python run_experiment_9_1.py --provider ark --model doubao-seed-1-6-250615",
   "provider": "ark",
   "model": "doubao-seed-1-6-250615",
   "endpoint": "https://ark.cn-beijing.volces.com/api/v3/chat/completions",

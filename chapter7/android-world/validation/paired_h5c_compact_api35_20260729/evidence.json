@@ -160,7 +160,7 @@
   },
   "environment": {
     "a11y_method": "varies_by_arm:uiautomator_vs_uiautomator_compact",
-    "android_world_checkout": "/Users/boj/book/ai-agent-book/chapter6/android_world",
+    "android_world_checkout": "/Users/boj/book/ai-agent-book/chapter7/android_world",
     "android_world_checkout_clean": true,
     "android_world_commit": "0e95d641e244504c22087cc29b013f3b2428a261",
     "api_level": 35,
@@ -747,7 +747,7 @@
       "trial": 1
     }
   ],
-  "experiment": "6-10",
+  "experiment": "7-12",
   "experiment_complete": false,
   "generated_at_utc": "2026-07-29T14:12:27Z",
   "hypothesis": {
@@ -865,8 +865,8 @@
       "promote_to_full_suite_candidate": false,
       "reason": "Treatment produced no paired success gain; keep the upstream control prompt."
     },
-    "source_phase1_evidence": "/Users/boj/book/ai-agent-book/chapter6/android-world/validation/paired_wifi_api35_20260729/evidence.json",
-    "source_phase1_run_id": "exp6-10-20260729T114648Z",
+    "source_phase1_evidence": "/Users/boj/book/ai-agent-book/chapter7/android-world/validation/paired_wifi_api35_20260729/evidence.json",
+    "source_phase1_run_id": "exp7-12-20260729T114648Z",
     "source_phase2_decision": {
       "completed_pairs": 4,
       "deployment_approved": false,
@@ -885,8 +885,8 @@
       "reason": "Treatment improved paired success without regressions, but exceeded the latency/token guardrails (1.50x / 1.50x). Restrict it to targeted follow-up; do not promote it to the full suite yet.",
       "scope_recommendation": "do_not_deploy"
     },
-    "source_phase2_evidence": "/Users/boj/book/ai-agent-book/chapter6/android-world/validation/paired_h5_a11y_api35_20260729/evidence.json",
-    "source_phase2_run_id": "exp6-10-20260729T122904Z"
+    "source_phase2_evidence": "/Users/boj/book/ai-agent-book/chapter7/android-world/validation/paired_h5_a11y_api35_20260729/evidence.json",
+    "source_phase2_run_id": "exp7-12-20260729T122904Z"
   },
   "resume_commands": [
     [
@@ -917,7 +917,7 @@
       "--resume"
     ]
   ],
-  "run_id": "exp6-10-20260729T131911Z",
+  "run_id": "exp7-12-20260729T131911Z",
   "schema_version": 1,
   "scope": {
     "base_pair_seed": 42,

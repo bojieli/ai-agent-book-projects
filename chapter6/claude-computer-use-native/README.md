@@ -1,13 +1,13 @@
-# Experiment 9-5: Anthropic native Computer Use
+# Experiment 6-7: Anthropic native Computer Use
 
-This record covers the provider-specific arm of Experiment 9-5: Anthropic's
+This record covers the provider-specific arm of Experiment 6-7: Anthropic's
 native tool protocol in the official containerized Computer Use Demo. It is
-separate from the completed open-model 9-6 arm. Historical evidence directories
-retain the `exp9-6-*` identifier so existing receipts and hashes remain stable.
+separate from the completed open-model Experiment 6-8 arm. The runner, validator,
+and retained evidence directories consistently use the `exp6-7-*` identifier.
 
 Current status: **complete for the bounded read-only task**. The canonical
-[trajectory](validation/runs/exp9-6-anthropic-native-20260803-v2/trajectory.json)
-and [deterministic acceptance](validation/runs/exp9-6-anthropic-native-20260803-v2/acceptance.json)
+[trajectory](validation/runs/exp6-7-anthropic-native-20260803-v2/trajectory.json)
+and [deterministic acceptance](validation/runs/exp6-7-anthropic-native-20260803-v2/acceptance.json)
 retain a real run of the required task:
 
 > Open Google, search for San Francisco weather today, and report the
@@ -41,20 +41,20 @@ the temperature, code, coordinates, observation time, and units.
 - Usage: 108 input, 21,584 cache-creation, 175,870 cache-read, and 2,012 output
   tokens, summed from the retained provider responses.
 
-The [manifest](validation/runs/exp9-6-anthropic-native-20260803-v2/manifest.json)
+The [manifest](validation/runs/exp6-7-anthropic-native-20260803-v2/manifest.json)
 hashes every canonical artifact. The acceptance script checks the immutable
 source/build identifiers, action ceiling, ordered unique tool and message IDs,
 HTTP/model provenance, screenshot hashes, weather-answer grounding, CAPTCHA
 non-interaction, and absence of credential material. All gates pass:
 
 ```bash
-python3 chapter9/claude-computer-use-native/validate_weather_run.py \
-  chapter9/claude-computer-use-native/validation/runs/exp9-6-anthropic-native-20260803-v2
+python3 chapter6/claude-computer-use-native/validate_weather_run.py \
+  chapter6/claude-computer-use-native/validation/runs/exp6-7-anthropic-native-20260803-v2
 ```
 
 ## Retained failed attempts
 
-The historical 401 [preflight](validation/exp9-6-anthropic-auth-20260803-v1/preflight.json)
+The historical 401 [preflight](validation/exp6-7-anthropic-auth-20260803-v1/preflight.json)
 is retained rather than rewritten. Two subsequent real task attempts are also
 retained under `validation/failed_attempts/`:
 

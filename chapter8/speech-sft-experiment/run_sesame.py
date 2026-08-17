@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the Sesame CSM paralinguistic-tag half of Experiment 7-6."""
+"""Run the Sesame CSM paralinguistic-tag half of Experiment 8-6."""
 
 from __future__ import annotations
 
@@ -71,7 +71,7 @@ def patched_model_snapshot() -> Path:
     weights stay symlinked to the immutable Hugging Face cache.
     """
     source = Path(snapshot_download(BASE_MODEL))
-    target = Path(tempfile.mkdtemp(prefix="exp7-6-csm-"))
+    target = Path(tempfile.mkdtemp(prefix="exp8-6-csm-"))
     copied = {"tokenizer_config.json", "special_tokens_map.json"}
     for item in source.iterdir():
         if item.name in copied:
@@ -183,7 +183,7 @@ def main():
     p.add_argument("--steps", type=int, default=60)
     p.add_argument("--max-audio-seconds", type=float, default=8.0)
     p.add_argument("--generation-tokens", type=int, default=75)
-    p.add_argument("--hf-repo", default="bojieli/exp7-6-sesame-elise-tags-lora")
+    p.add_argument("--hf-repo", default="bojieli/exp8-6-sesame-elise-tags-lora")
     args = p.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
     started = time.time()
@@ -271,7 +271,7 @@ def main():
         if x.is_file()
     ]
     manifest = {
-        "experiment": "7-6",
+        "experiment": "8-6",
         "track": "sesame_paralinguistic_tags",
         "status": "trained_and_generated",
         "seed": SEED,

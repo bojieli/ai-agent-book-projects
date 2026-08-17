@@ -1,13 +1,13 @@
-# 实验 9-11：RGB 视觉策略的跨环境测试
+# 实验 6-13：RGB 视觉策略的跨环境测试
 
-> 重编号说明：正文编号已从原实验 9-12 前移为 9-11；已有 `validation/runs/quality-9-10` 等证据目录保留历史标识，不改写其中的 hash 或 schema。
+本目录对应实验 6-13；运行器、验证器与证据中的实验标识均已统一为 `6-13`。
 
 这是一个可在本地 GPU 上完成的“仿真环境迁移到现实环境”代理实验。它不声称已经在 SO100 真机上完成零样本抓取，而是用可控的 RGB 训练环境和变化后的测试环境，检验训练时扩大画面变化范围是否有助于应对真实相机可能遇到的背景、光照和噪声差异。
 
 ## 运行
 
 ```bash
-cd chapter9/rgb-sim2real-grasping
+cd chapter6/rgb-sim2real-grasping
 python pipeline.py --train-size 4096 --test-size 1024 --epochs 10 --seeds 20260808,20260809,20260810 --output-dir validation/runs/local-gpu
 python validate_evidence.py validation/runs/local-gpu/evidence.json
 ```

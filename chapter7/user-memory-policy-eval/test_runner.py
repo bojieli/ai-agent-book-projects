@@ -50,7 +50,7 @@ def test_saved_campaign_manifest_binds_report_cases_and_runner() -> None:
         return
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     report = json.loads(report_path.read_text(encoding="utf-8"))
-    assert manifest["experiment"] == report["experiment"] == "6-5"
+    assert manifest["experiment"] == report["experiment"] == "7-5"
     assert manifest["report"] == "results/policy_prefix_live.json"
     assert manifest["report_sha256"] == sha256(report_path)
     assert manifest["case_sha256"] == sha256(HERE / "cases.json")

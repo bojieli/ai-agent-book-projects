@@ -1,9 +1,9 @@
 # Experiment 10-3 · Autonomous phone/browser orchestration
 
-This is the autonomous arm of Chapter Experiment 10-3. The retained validation
-artifacts keep the historical `10-5` identifier so their hashes and validators
-remain reproducible; the fixed-topology comparison is kept in
-[`talkact-reproduction`](../talkact-reproduction/) under historical identifier 10-4.
+This is the autonomous arm of Chapter Experiment 10-3. Its retained validation
+artifacts and validators use the current `10-3` identifier; the fixed-topology
+comparison is kept in [`talkact-reproduction`](../talkact-reproduction/) under
+the same chapter experiment number.
 
 This companion implements the autonomous arm of the merged experiment. A real Playwright Computer Use Agent opens an arbitrary registration URL and inspects the rendered form. A real LLM sees the page observation, known user context, and an optional `initiate_phone_call_agent(purpose, required_info)` tool. With `tool_choice=auto`, the model—not a Python field-count rule—decides whether to spawn a Phone Agent.
 
@@ -75,11 +75,11 @@ python run_acceptance.py
 
 # Recompute every retained hash and prove raw ARK request/response consistency.
 python validate_acceptance.py \
-  validation/runs/exp10-5-webrtc-raw-20260731-v4
+  validation/runs/exp10-3-webrtc-raw-20260731-v4
 ```
 
 The formal 2026-07-31 run is committed at
-[`validation/runs/exp10-5-webrtc-raw-20260731-v4/`](validation/runs/exp10-5-webrtc-raw-20260731-v4/).
+[`validation/runs/exp10-3-webrtc-raw-20260731-v4/`](validation/runs/exp10-3-webrtc-raw-20260731-v4/).
 A real ARK response (ID and usage retained) autonomously selected six required fields.
 The call completed one offer, one answer, seven media recordings, 9 TTS turns and 7
 local Whisper turns. Both RTP directions carried packets and bytes. A deliberately
@@ -104,7 +104,7 @@ the same WebRTC path with `--webrtc-answers-json` omitted.
 
 ## 中文说明
 
-本项目实现实验 10-3 的自主模式：Playwright Computer Use Agent 先访问真实注册页并读取表单；真实 LLM 在 `tool_choice=auto` 下自主决定是否调用 `initiate_phone_call_agent(purpose, required_info)`，代码没有用“字段数大于 N”代替模型决策。固定拓扑的并发基线见同章的 TalkAct 复现记录；两边的历史验收标识仍分别保留为 10-5 和 10-4。
+本项目实现实验 10-3 的自主模式：Playwright Computer Use Agent 先访问真实注册页并读取表单；真实 LLM 在 `tool_choice=auto` 下自主决定是否调用 `initiate_phone_call_agent(purpose, required_info)`，代码没有用“字段数大于 N”代替模型决策。固定拓扑的并发基线见同章的 TalkAct 复现记录；两条路径的项目入口、验证器和保留产物均统一使用当前编号 10-3。
 
 默认路径现在是本机浏览器 WebRTC 通话，不需要手机号、PSTN 服务商、公开 webhook 或隧道。页面会完成真实 offer/answer，并用双向 RTP 音轨传输 Agent 语音和用户麦克风；回答只从远端音轨的临时录音进入 ASR，不会通过文本通道旁路，也不会保留原始音频或 transcript。Phone Agent 每拿到一个有效值就立即发给 Computer Agent，然后直接问下一项，不等待网页填写完成；格式错误会反馈并重问，页面错误会阻止提交，`--submit` 仍须显式授权。
 

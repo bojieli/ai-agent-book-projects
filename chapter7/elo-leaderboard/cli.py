@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-实验 6-6：从配对比较数据构建模型排行榜 —— 命令行入口
+实验 7-7：从配对比较数据构建模型排行榜 —— 命令行入口
 
 统一的 argparse 命令行工具，把整个流程拆成三个子命令：
 
@@ -223,7 +223,7 @@ def cmd_leaderboard(args) -> None:
 
 def cmd_pipeline(args) -> None:
     print("=" * 78)
-    print("实验 6-6：对战 -> Elo -> 排行榜（端到端）")
+    print("实验 7-7：对战 -> Elo -> 排行榜（端到端）")
     print("=" * 78)
     battles = _make_battles(args)
     if args.output:
@@ -284,7 +284,7 @@ def _add_rating_args(parser: argparse.ArgumentParser) -> None:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="cli.py",
-        description="实验 6-6：从配对比较数据构建模型排行榜（对战 -> Elo -> 排行榜）",
+        description="实验 7-7：从配对比较数据构建模型排行榜（对战 -> Elo -> 排行榜）",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__,
     )

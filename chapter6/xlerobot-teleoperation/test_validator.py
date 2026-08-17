@@ -18,7 +18,7 @@ class EvidenceGateTests(unittest.TestCase):
     def test_cpu_claim_is_rejected(self):
         data = {
             "schema_version": "3.0",
-            "experiment_id": "9-8",
+            "experiment_id": "6-10",
             "status": "complete",
             "kind": "local_gpu_expert_upper_bound",
             "metrics": {"device": {"device": "cpu"}, "protocol": {"seeds": [1, 2, 3], "object_counts": [1, 2, 3], "total_episodes": 2048}, "cells": [], "worst_cell_success_rate": 1.0, "deterministic_replay": True},

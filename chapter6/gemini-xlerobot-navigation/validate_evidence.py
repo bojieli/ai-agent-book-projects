@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the local GPU desktop-planning evidence for Experiment 9-9."""
+"""Validate the local GPU desktop-planning evidence for Experiment 6-12."""
 
 from __future__ import annotations
 
@@ -29,7 +29,7 @@ def validate(data: dict[str, Any], evidence_dir: Path | None = None) -> list[str
             errors.append(message)
 
     expect(data.get("schema_version") == "3.0", "schema_version must be 3.0")
-    expect(data.get("experiment_id") == "9-9", "experiment_id must be 9-9")
+    expect(data.get("experiment_id") == "6-12", "experiment_id must be 6-12")
     expect(data.get("kind") == "desktop_manipulation_planning", "wrong evidence kind")
     expect(data.get("status") == "complete", "local evidence must be complete")
     metrics = data.get("metrics", {})
@@ -88,7 +88,7 @@ def main() -> int:
         for error in errors:
             print(f"- {error}")
         return 1
-    print("VALID: experiment 9-9 local GPU evidence")
+    print("VALID: experiment 6-12 local GPU evidence")
     return 0
 
 

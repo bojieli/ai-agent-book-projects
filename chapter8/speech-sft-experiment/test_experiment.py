@@ -45,5 +45,5 @@ def test_sesame_collator_stacks_all_model_inputs():
 def test_sha256_is_stable(tmp_path):
     analysis = load("analyze_campaign")
     path = tmp_path / "artifact"
-    path.write_bytes(b"experiment-7-6")
-    assert analysis.sha256(path) == "2318feba157d85bc6dfb79317ded3c820f3ef8ffb9ddc0951aa1aea644a9829b"
+    path.write_bytes(b"experiment-8-6")
+    assert analysis.sha256(path) == "b07a691b33e493299473b6323258c9d643b2981d6de43e8c8adc3c4edc222d15"

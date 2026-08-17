@@ -1,19 +1,19 @@
 ## English
 
-# Experiment 7-15 reproduction anchor
+# Experiment 8-15 reproduction anchor
 
-This directory is the book-owned training guide. The executable GAIA/MCP environment and training integration are in [`bojieli/AWorld`](https://github.com/bojieli/AWorld) at `chapter7/AWorld`, verified at commit `a52d61d6d483e66b22ef16970eae5bbf4f4ab2ec`. The veRL backend is [`bojieli/verl`](https://github.com/bojieli/verl) at `chapter7/verl`, verified at `1593fc3a8cf894debdc3dece2a23ed739c282789`.
+This directory is the book-owned training guide. The executable GAIA/MCP environment and training integration are in [`bojieli/AWorld`](https://github.com/bojieli/AWorld) at `chapter8/AWorld`, verified at commit `a52d61d6d483e66b22ef16970eae5bbf4f4ab2ec`. The veRL backend is [`bojieli/verl`](https://github.com/bojieli/verl) at `chapter8/verl`, verified at `1593fc3a8cf894debdc3dece2a23ed739c282789`.
 
 ```bash
-git clone https://github.com/bojieli/AWorld.git chapter7/AWorld
-git -C chapter7/AWorld checkout --detach a52d61d6d483e66b22ef16970eae5bbf4f4ab2ec
-git clone https://github.com/bojieli/verl.git chapter7/verl
-git -C chapter7/verl checkout --detach 1593fc3a8cf894debdc3dece2a23ed739c282789
+git clone https://github.com/bojieli/AWorld.git chapter8/AWorld
+git -C chapter8/AWorld checkout --detach a52d61d6d483e66b22ef16970eae5bbf4f4ab2ec
+git clone https://github.com/bojieli/verl.git chapter8/verl
+git -C chapter8/verl checkout --detach 1593fc3a8cf894debdc3dece2a23ed739c282789
 
-cd chapter7/AWorld/env
+cd chapter8/AWorld/env
 bash run-local.sh
 # After dataset/reward configuration, in a second shell:
-cd chapter7/AWorld/train/examples/train_gaia_with_aworld_verl
+cd chapter8/AWorld/train/examples/train_gaia_with_aworld_verl
 bash run.sh
 ```
 
@@ -405,13 +405,13 @@ sudo apt-get install -y build-essential git wget
 pip install torch==2.4.0 torchvision==0.19.0 --index-url https://download.pytorch.org/whl/cu121
 
 # 4. Clone the book's verified AWorld fork to the canonical companion path
-git clone https://github.com/bojieli/AWorld.git "${BOOK_ROOT}/chapter7/AWorld"
-git -C "${BOOK_ROOT}/chapter7/AWorld" checkout --detach a52d61d6d483e66b22ef16970eae5bbf4f4ab2ec
+git clone https://github.com/bojieli/AWorld.git "${BOOK_ROOT}/chapter8/AWorld"
+git -C "${BOOK_ROOT}/chapter8/AWorld" checkout --detach a52d61d6d483e66b22ef16970eae5bbf4f4ab2ec
 
 # 5. Clone/install the verified VeRL backend
-git clone https://github.com/bojieli/verl.git "${BOOK_ROOT}/chapter7/verl"
-git -C "${BOOK_ROOT}/chapter7/verl" checkout --detach 1593fc3a8cf894debdc3dece2a23ed739c282789
-pip install -e "${BOOK_ROOT}/chapter7/verl"
+git clone https://github.com/bojieli/verl.git "${BOOK_ROOT}/chapter8/verl"
+git -C "${BOOK_ROOT}/chapter8/verl" checkout --detach 1593fc3a8cf894debdc3dece2a23ed739c282789
+pip install -e "${BOOK_ROOT}/chapter8/verl"
 ```
 
 **Important Note**: Some dependencies of VeRL need to be compiled in a CUDA environment. Please ensure steps 1-2 are completed first.
@@ -426,7 +426,7 @@ The GAIA environment is deployed via Docker and provides MCP (Model Context Prot
 
 ```bash
 # Download the GAIA dataset from Hugging Face
-cd ${BOOK_ROOT}/chapter7/AWorld/env/gaia-mcp-server/docker
+cd ${BOOK_ROOT}/chapter8/AWorld/env/gaia-mcp-server/docker
 mkdir -p gaia_dataset
 
 # Use Hugging Face CLI to download (requires pip install huggingface_hub first)
@@ -436,7 +436,7 @@ huggingface-cli download gaia-benchmark/GAIA --repo-type dataset --local-dir gai
 #### 2. Configure Environment Variables
 
 ```bash
-cd ${BOOK_ROOT}/chapter7/AWorld/env/gaia-mcp-server/mcp_servers
+cd ${BOOK_ROOT}/chapter8/AWorld/env/gaia-mcp-server/mcp_servers
 cp .env_template .env
 
 # Edit the .env file to configure necessary API keys
@@ -460,7 +460,7 @@ E2B_API_KEY=your-e2b-api-key
 #### 3. Start the MCP Server
 
 ```bash
-cd ${BOOK_ROOT}/chapter7/AWorld/env
+cd ${BOOK_ROOT}/chapter8/AWorld/env
 bash run-local.sh
 ```
 
@@ -598,10 +598,10 @@ class MultiAgentLoop(AworldAgentLoop):
 Run the dataset generation script to convert GAIA data into training format:
 
 ```bash
-cd ${BOOK_ROOT}/chapter7/AWorld/train/examples/train_gaia_with_aworld_verl/gaia_datasets
+cd ${BOOK_ROOT}/chapter8/AWorld/train/examples/train_gaia_with_aworld_verl/gaia_datasets
 
 python create_dataset.py \
-  --dataset_path ${BOOK_ROOT}/chapter7/AWorld/env/gaia-mcp-server/docker/gaia_dataset \
+  --dataset_path ${BOOK_ROOT}/chapter8/AWorld/env/gaia-mcp-server/docker/gaia_dataset \
   --output_dir ~/datasets \
   --train_size 300 \
   --test_size 100
@@ -750,7 +750,7 @@ python3 -m verl.trainer.main_ppo \
 ### Single-Node Training
 
 ```bash
-cd ${BOOK_ROOT}/chapter7/AWorld/train/examples/train_gaia_with_aworld_verl
+cd ${BOOK_ROOT}/chapter8/AWorld/train/examples/train_gaia_with_aworld_verl
 
 # Launch training (8 GPUs)
 export DATA_ROOT=~/datasets
@@ -973,7 +973,7 @@ WARNING  coding failed: Error code: 401 - {'error': {'message': 'Incorrect API k
 
 ```bash
 # Method 1: Configure a real OpenAI API Key
-vim ${BOOK_ROOT}/chapter7/AWorld/env/gaia-mcp-server/mcp_servers/.env
+vim ${BOOK_ROOT}/chapter8/AWorld/env/gaia-mcp-server/mcp_servers/.env
 # Add: OPENAI_API_KEY=your-openai-api-key
 
 # Method 2: Use a compatible service like OpenRouter
@@ -982,7 +982,7 @@ LLM_BASE_URL=https://openrouter.ai/api/v1
 OPENAI_API_KEY=your-openrouter-api-key
 
 # Restart the service
-cd ${BOOK_ROOT}/chapter7/AWorld/env
+cd ${BOOK_ROOT}/chapter8/AWorld/env
 bash run-local.sh
 ```
 
@@ -1023,7 +1023,7 @@ WIKIPEDIA_BASE_URL=https://en.wikipedia.org/w/api.php
 
 ```bash
 # Increase timeout configuration
-vim ${BOOK_ROOT}/chapter7/AWorld/env/gaia-mcp-server/mcp_servers/.env
+vim ${BOOK_ROOT}/chapter8/AWorld/env/gaia-mcp-server/mcp_servers/.env
 # Add:
 TOOL_EXECUTION_TIMEOUT=120  # Increase from default 60s to 120s
 
@@ -1614,13 +1614,13 @@ sudo apt-get install -y build-essential git wget
 pip install torch==2.4.0 torchvision==0.19.0 --index-url https://download.pytorch.org/whl/cu121
 
 # 4. 将本书已核验的 AWorld fork 克隆到规范配套路径
-git clone https://github.com/bojieli/AWorld.git "${BOOK_ROOT}/chapter7/AWorld"
-git -C "${BOOK_ROOT}/chapter7/AWorld" checkout --detach a52d61d6d483e66b22ef16970eae5bbf4f4ab2ec
+git clone https://github.com/bojieli/AWorld.git "${BOOK_ROOT}/chapter8/AWorld"
+git -C "${BOOK_ROOT}/chapter8/AWorld" checkout --detach a52d61d6d483e66b22ef16970eae5bbf4f4ab2ec
 
 # 5. 克隆并安装已核验的 VeRL 后端
-git clone https://github.com/bojieli/verl.git "${BOOK_ROOT}/chapter7/verl"
-git -C "${BOOK_ROOT}/chapter7/verl" checkout --detach 1593fc3a8cf894debdc3dece2a23ed739c282789
-pip install -e "${BOOK_ROOT}/chapter7/verl"
+git clone https://github.com/bojieli/verl.git "${BOOK_ROOT}/chapter8/verl"
+git -C "${BOOK_ROOT}/chapter8/verl" checkout --detach 1593fc3a8cf894debdc3dece2a23ed739c282789
+pip install -e "${BOOK_ROOT}/chapter8/verl"
 ```
 
 **重要提示**：VeRL 的某些依赖需要在 CUDA 环境下编译，请确保先完成步骤 1-2。
@@ -1635,7 +1635,7 @@ GAIA 环境通过 Docker 部署，提供 MCP（Model Context Protocol）服务�
 
 ```bash
 # 从 Hugging Face 下载 GAIA 数据集
-cd ${BOOK_ROOT}/chapter7/AWorld/env/gaia-mcp-server/docker
+cd ${BOOK_ROOT}/chapter8/AWorld/env/gaia-mcp-server/docker
 mkdir -p gaia_dataset
 
 # 使用 Hugging Face CLI 下载（需要先 pip install huggingface_hub）
@@ -1645,7 +1645,7 @@ huggingface-cli download gaia-benchmark/GAIA --repo-type dataset --local-dir gai
 #### 2. 配置环境变量
 
 ```bash
-cd ${BOOK_ROOT}/chapter7/AWorld/env/gaia-mcp-server/mcp_servers
+cd ${BOOK_ROOT}/chapter8/AWorld/env/gaia-mcp-server/mcp_servers
 cp .env_template .env
 
 # 编辑 .env 文件，配置必要的 API 密钥
@@ -1669,7 +1669,7 @@ E2B_API_KEY=your-e2b-api-key
 #### 3. 启动 MCP Server
 
 ```bash
-cd ${BOOK_ROOT}/chapter7/AWorld/env
+cd ${BOOK_ROOT}/chapter8/AWorld/env
 bash run-local.sh
 ```
 
@@ -1807,10 +1807,10 @@ class MultiAgentLoop(AworldAgentLoop):
 运行数据集生成脚本，将 GAIA 数据转换为训练格式：
 
 ```bash
-cd ${BOOK_ROOT}/chapter7/AWorld/train/examples/train_gaia_with_aworld_verl/gaia_datasets
+cd ${BOOK_ROOT}/chapter8/AWorld/train/examples/train_gaia_with_aworld_verl/gaia_datasets
 
 python create_dataset.py \
-  --dataset_path ${BOOK_ROOT}/chapter7/AWorld/env/gaia-mcp-server/docker/gaia_dataset \
+  --dataset_path ${BOOK_ROOT}/chapter8/AWorld/env/gaia-mcp-server/docker/gaia_dataset \
   --output_dir ~/datasets \
   --train_size 300 \
   --test_size 100
@@ -1959,7 +1959,7 @@ python3 -m verl.trainer.main_ppo \
 ### 单机训练
 
 ```bash
-cd ${BOOK_ROOT}/chapter7/AWorld/train/examples/train_gaia_with_aworld_verl
+cd ${BOOK_ROOT}/chapter8/AWorld/train/examples/train_gaia_with_aworld_verl
 
 # 启动训练（8卡 GPU）
 export DATA_ROOT=~/datasets
@@ -2184,7 +2184,7 @@ WARNING  coding failed: Error code: 401 - {'error': {'message': 'Incorrect API k
 
 ```bash
 # 方法 1：配置真实 OpenAI API Key
-vim ${BOOK_ROOT}/chapter7/AWorld/env/gaia-mcp-server/mcp_servers/.env
+vim ${BOOK_ROOT}/chapter8/AWorld/env/gaia-mcp-server/mcp_servers/.env
 # 添加：OPENAI_API_KEY=your-openai-api-key
 
 # 方法 2：使用 OpenRouter 等兼容服务
@@ -2193,7 +2193,7 @@ LLM_BASE_URL=https://openrouter.ai/api/v1
 OPENAI_API_KEY=your-openrouter-api-key
 
 # 重启服务
-cd ${BOOK_ROOT}/chapter7/AWorld/env
+cd ${BOOK_ROOT}/chapter8/AWorld/env
 bash run-local.sh
 ```
 
@@ -2234,7 +2234,7 @@ WIKIPEDIA_BASE_URL=https://en.wikipedia.org/w/api.php
 
 ```bash
 # 增加超时配置
-vim ${BOOK_ROOT}/chapter7/AWorld/env/gaia-mcp-server/mcp_servers/.env
+vim ${BOOK_ROOT}/chapter8/AWorld/env/gaia-mcp-server/mcp_servers/.env
 # 添加：
 TOOL_EXECUTION_TIMEOUT=120  # 从默认 60s 增加到 120s
 

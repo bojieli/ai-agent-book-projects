@@ -1,5 +1,5 @@
 """
-Agent trajectory cost-efficiency analyzer (实验 6-9 成本效率分析).
+Agent trajectory cost-efficiency analyzer (实验 7-9 成本效率分析).
 
 Builds on the span/trace model from ``tracer.py``: an agent task is a sequence
 of turns, each turn carrying token usage (prompt / cached / completion), tool

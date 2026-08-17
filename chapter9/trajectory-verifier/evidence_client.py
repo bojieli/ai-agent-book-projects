@@ -1,4 +1,4 @@
-"""Credential-free real chat-completion capture for Experiment 8-1."""
+"""Credential-free real chat-completion capture for Experiment 9-1."""
 
 from __future__ import annotations
 

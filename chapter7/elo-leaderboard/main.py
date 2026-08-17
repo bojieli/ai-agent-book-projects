@@ -1,6 +1,6 @@
 """
 Main script for Model Leaderboard Calculation
-Experiment 6-6: Building Model Leaderboard from Pairwise Comparison Data
+Experiment 7-7: Building Model Leaderboard from Pairwise Comparison Data
 
 Supports two methods (following official Chatbot Arena):
 1. Online Elo (K=4) - Simple but order-dependent
@@ -60,7 +60,7 @@ def main(method: str = 'bradley-terry'):
     """
     
     print("="*80)
-    print("Experiment 6-6: Building Model Leaderboard from Pairwise Comparisons")
+    print("Experiment 7-7: Building Model Leaderboard from Pairwise Comparisons")
     if method == 'bradley-terry':
         print("Method: Bradley-Terry Model with MLE (Official Chatbot Arena)")
     else:

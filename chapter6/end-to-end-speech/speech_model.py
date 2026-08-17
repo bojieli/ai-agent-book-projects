@@ -1,4 +1,4 @@
-"""Native local MiniCPM-o 4.5 inference for Experiment 9-4."""
+"""Native local MiniCPM-o 4.5 inference for Experiment 6-5."""
 
 from __future__ import annotations
 

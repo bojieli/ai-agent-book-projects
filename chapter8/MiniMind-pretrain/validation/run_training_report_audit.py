@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build checkpoint-free retained training evidence for Experiment 7-3.
+"""Build checkpoint-free retained training evidence for Experiment 8-3.
 
 The book already contains the author's historical six-cell evaluation report:
 original versus QK-Norm + Muon at pretrain, SFT, and DPO.  This program does
@@ -35,7 +35,7 @@ REPORT_PATH = EXPERIMENT_DIR / "README.md"
 RUNS_DIR = HERE / "runs"
 LATEST_PATH = HERE / "latest.json"
 
-DEFAULT_RUN_ID = "exp7-3-training-report-20260731-v1"
+DEFAULT_RUN_ID = "exp8-3-training-report-20260731-v1"
 DEFAULT_ENDPOINT = "https://ark.cn-beijing.volces.com/api/v3/chat/completions"
 DEFAULT_MODEL = "doubao-seed-1-6-250615"
 BLIND_SEED = 730731
@@ -193,8 +193,8 @@ def parse_retained_outputs(report_path: Path = REPORT_PATH) -> dict[str, Any]:
             )
 
     return {
-        "schema_version": "exp7-3-retained-outputs-v1",
-        "experiment": "7-3",
+        "schema_version": "exp8-3-retained-outputs-v1",
+        "experiment": "8-3",
         "source_report": str(report_path.relative_to(REPO_ROOT)),
         "source_report_sha256": sha256_file(report_path),
         "arms": list(ARMS),
@@ -376,8 +376,8 @@ def call_judge(
 
 def reproduction_contract() -> dict[str, Any]:
     return {
-        "schema_version": "exp7-3-reproduction-contract-v1",
-        "experiment": "7-3",
+        "schema_version": "exp8-3-reproduction-contract-v1",
+        "experiment": "8-3",
         "historical_evidence_boundary": {
             "historical_training_executed": True,
             "six_historical_evaluation_transcripts_retained": True,
@@ -530,8 +530,8 @@ def summarize(retained: dict[str, Any], receipts: list[dict[str, Any]], contract
     }
     passed = all(acceptance.values())
     return {
-        "schema_version": "exp7-3-summary-v1",
-        "experiment": "7-3",
+        "schema_version": "exp8-3-summary-v1",
+        "experiment": "8-3",
         "status": "passed" if passed else "failed",
         "judge": {
             "provider": "ark",
@@ -567,7 +567,7 @@ def render_report(summary: dict[str, Any]) -> str:
     findings = summary["scientific_findings"]
     return "\n".join(
         [
-            "# Experiment 7-3 retained-training-report audit",
+            "# Experiment 8-3 retained-training-report audit",
             "",
             "## Result",
             "",
@@ -639,8 +639,8 @@ def build_manifest(run_id: str, run_dir: Path, summary: dict[str, Any]) -> dict[
         run_dir / "report.md",
     ]
     return {
-        "schema_version": "exp7-3-manifest-v1",
-        "experiment": "7-3",
+        "schema_version": "exp8-3-manifest-v1",
+        "experiment": "8-3",
         "run_id": run_id,
         "created_at": utc_now(),
         "status": summary["status"],
@@ -693,8 +693,8 @@ def main() -> int:
         summary = json.loads((run_dir / "summary.json").read_text(encoding="utf-8"))
         write_json(run_dir / "manifest.json", build_manifest(args.run_id, run_dir, summary))
         latest = {
-            "schema_version": "exp7-3-latest-v1",
-            "experiment": "7-3",
+            "schema_version": "exp8-3-latest-v1",
+            "experiment": "8-3",
             "run_id": args.run_id,
             "status": summary["status"],
             "run_dir": str(run_dir.relative_to(EXPERIMENT_DIR)),
@@ -733,8 +733,8 @@ def main() -> int:
     write_json(
         run_dir / "judge_receipts.json",
         {
-            "schema_version": "exp7-3-judge-receipts-v1",
-            "experiment": "7-3",
+            "schema_version": "exp8-3-judge-receipts-v1",
+            "experiment": "8-3",
             "credential_headers_retained": False,
             "calls": receipts,
         },
@@ -744,8 +744,8 @@ def main() -> int:
     (run_dir / "report.md").write_text(render_report(summary), encoding="utf-8")
     write_json(run_dir / "manifest.json", build_manifest(args.run_id, run_dir, summary))
     latest = {
-        "schema_version": "exp7-3-latest-v1",
-        "experiment": "7-3",
+        "schema_version": "exp8-3-latest-v1",
+        "experiment": "8-3",
         "run_id": args.run_id,
         "status": summary["status"],
         "run_dir": str(run_dir.relative_to(EXPERIMENT_DIR)),

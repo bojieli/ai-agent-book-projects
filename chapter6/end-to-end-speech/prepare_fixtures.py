@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regenerate the small synthetic WAV fixtures used by Experiment 9-4."""
+"""Regenerate the small synthetic WAV fixtures used by Experiment 6-5."""
 
 from __future__ import annotations
 

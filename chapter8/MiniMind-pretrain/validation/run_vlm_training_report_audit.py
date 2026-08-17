@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build checkpoint-free retained training evidence for Experiment 7-4.
+"""Build checkpoint-free retained training evidence for Experiment 8-4.
 
 The book contains 64 historical MiniMind-V image descriptions: eight model
 configurations evaluated on the same eight images.  This program extracts all
@@ -37,7 +37,7 @@ REPORT_PATH = EXPERIMENT_DIR / "README.md"
 RUNS_DIR = HERE / "runs"
 LATEST_PATH = HERE / "latest_vlm.json"
 
-DEFAULT_RUN_ID = "exp7-4-training-report-20260731-v1"
+DEFAULT_RUN_ID = "exp8-4-training-report-20260731-v1"
 DEFAULT_ENDPOINT = "https://ark.cn-beijing.volces.com/api/v3/chat/completions"
 DEFAULT_MODEL = "doubao-seed-1-6-250615"
 BLIND_SEED = 740731
@@ -293,8 +293,8 @@ def parse_retained_outputs(report_path: Path = REPORT_PATH) -> dict[str, Any]:
     if tuple(cell["config"] for cell in cells) != CONFIGS:
         raise ValueError("historical VLM cells are incomplete or out of order")
     return {
-        "schema_version": "exp7-4-retained-outputs-v1",
-        "experiment": "7-4",
+        "schema_version": "exp8-4-retained-outputs-v1",
+        "experiment": "8-4",
         "source_report": str(report_path.relative_to(REPO_ROOT)),
         "source_report_sha256": sha256_file(report_path),
         "cell_count": len(cells),
@@ -506,8 +506,8 @@ def call_judge(
 
 def reproduction_contract() -> dict[str, Any]:
     return {
-        "schema_version": "exp7-4-reproduction-contract-v1",
-        "experiment": "7-4",
+        "schema_version": "exp8-4-reproduction-contract-v1",
+        "experiment": "8-4",
         "historical_evidence_boundary": {
             "historical_training_executed": True,
             "eight_historical_cells_and_64_outputs_retained": True,
@@ -536,7 +536,7 @@ def reproduction_contract() -> dict[str, Any]:
                 "original_files_sha256": ORIGINAL_LLM_FILES,
                 "qk_norm_muon_revision": IMPROVED_LLM_REVISION,
                 "qk_norm_muon_files_sha256": IMPROVED_LLM_FILES,
-                "dependency": "Use the Experiment 7-3 data/commands to produce original-SFT and improved pretrain/SFT/DPO 768-dimension base checkpoints.",
+                "dependency": "Use the Experiment 8-3 data/commands to produce original-SFT and improved pretrain/SFT/DPO 768-dimension base checkpoints.",
             },
             "vlm_dataset": {
                 "repository": "jingyaogong/minimind-v_dataset",
@@ -558,9 +558,9 @@ def reproduction_contract() -> dict[str, Any]:
                 "improved_source": "git clone https://github.com/bojieli/minimind-v.git sources/qk-norm-muon-minimind-v && git -C sources/qk-norm-muon-minimind-v checkout --detach ead791c530fa5f9a3549dbfe9e11ec732d18d2e5",
                 "dataset": "git clone https://huggingface.co/datasets/jingyaogong/minimind-v_dataset dataset-source && git -C dataset-source checkout --detach ac9d03a3fd26a2d8e74bda374d9a2ddba49e4c1b && cp dataset-source/{pretrain_data.jsonl,sft_data.jsonl} dataset/ && unzip dataset-source/pretrain_images.zip -d dataset && unzip dataset-source/sft_images.zip -d dataset",
                 "vision_encoder": "git clone https://huggingface.co/openai/clip-vit-base-patch16 model/vision_model/clip-vit-base-patch16 && git -C model/vision_model/clip-vit-base-patch16 checkout --detach 57c216476eefef5ab752ec549e440a49ae4ae5f3",
-                "original_pretrain_vlm": "install -m 0644 <exp7-3-original-sft-768.pth> runs/original/out/llm_768.pth && cd trainer && torchrun --nproc_per_node=8 train_pretrain_vlm.py --out_dir ../runs/original/out --epochs 4 --hidden_size 768 --num_hidden_layers 16 --data_path ../dataset/pretrain_data.jsonl --images_path ../dataset/pretrain_images --use_wandb",
+                "original_pretrain_vlm": "install -m 0644 <exp8-3-original-sft-768.pth> runs/original/out/llm_768.pth && cd trainer && torchrun --nproc_per_node=8 train_pretrain_vlm.py --out_dir ../runs/original/out --epochs 4 --hidden_size 768 --num_hidden_layers 16 --data_path ../dataset/pretrain_data.jsonl --images_path ../dataset/pretrain_images --use_wandb",
                 "original_sft_vlm": "cd trainer && torchrun --nproc_per_node=8 train_sft_vlm.py --out_dir ../runs/original/out --epochs 4 --hidden_size 768 --num_hidden_layers 16 --data_path ../dataset/sft_data.jsonl --images_path ../dataset/sft_images --use_wandb",
-                "improved_matrix": "For each BASE in pretrain,sft,dpo, install the corresponding Experiment-7-3 QK-Norm+Muon 768-dimension checkpoint as runs/muon-from-$BASE/out/llm_768.pth, then run train_pretrain_vlm_muon.py and train_sft_vlm_muon.py with the same four-epoch data arguments in that isolated out_dir.",
+                "improved_matrix": "For each BASE in pretrain,sft,dpo, install the corresponding Experiment-8-3 QK-Norm+Muon 768-dimension checkpoint as runs/muon-from-$BASE/out/llm_768.pth, then run train_pretrain_vlm_muon.py and train_sft_vlm_muon.py with the same four-epoch data arguments in that isolated out_dir.",
                 "evaluation": "For every isolated out_dir, preserve both checkpoints, copy the selected *_muon_768.pth name to eval_vlm.py's pretrain_vlm_768.pth or sft_vlm_768.pth compatibility name when needed, then run python eval_vlm.py --load 0 --model_mode 0 and --model_mode 1 on the eight hash-pinned images with seed 1337.",
             },
             "environment": {
@@ -674,8 +674,8 @@ def summarize(
     passed = all(acceptance.values())
     ranking = sorted(CONFIGS, key=lambda config: (-config_averages[config]["overall"], config))
     return {
-        "schema_version": "exp7-4-summary-v1",
-        "experiment": "7-4",
+        "schema_version": "exp8-4-summary-v1",
+        "experiment": "8-4",
         "status": "passed" if passed else "failed",
         "judge": {
             "provider": "ark",
@@ -721,7 +721,7 @@ def summarize(
 
 def render_report(summary: dict[str, Any]) -> str:
     lines = [
-        "# Experiment 7-4 retained-training-report audit",
+        "# Experiment 8-4 retained-training-report audit",
         "",
         "## Result",
         "",
@@ -790,8 +790,8 @@ def build_manifest(run_id: str, run_dir: Path, summary: dict[str, Any]) -> dict[
         )
     ]
     return {
-        "schema_version": "exp7-4-manifest-v1",
-        "experiment": "7-4",
+        "schema_version": "exp8-4-manifest-v1",
+        "experiment": "8-4",
         "run_id": run_id,
         "created_at": utc_now(),
         "status": summary["status"],
@@ -837,8 +837,8 @@ def main() -> int:
         receipts_doc = json.loads((run_dir / "judge_receipts.json").read_text(encoding="utf-8"))
         receipts = receipts_doc.get("calls")
         if (
-            receipts_doc.get("schema_version") != "exp7-4-judge-receipts-v1"
-            or receipts_doc.get("experiment") != "7-4"
+            receipts_doc.get("schema_version") != "exp8-4-judge-receipts-v1"
+            or receipts_doc.get("experiment") != "8-4"
             or not isinstance(receipts, list)
         ):
             raise SystemExit("cannot refresh malformed judge receipts")
@@ -850,8 +850,8 @@ def main() -> int:
         (run_dir / "report.md").write_text(render_report(summary), encoding="utf-8")
         write_json(run_dir / "manifest.json", build_manifest(args.run_id, run_dir, summary))
         latest = {
-            "schema_version": "exp7-4-latest-v1",
-            "experiment": "7-4",
+            "schema_version": "exp8-4-latest-v1",
+            "experiment": "8-4",
             "run_id": args.run_id,
             "status": summary["status"],
             "run_dir": str(run_dir.relative_to(EXPERIMENT_DIR)),
@@ -895,8 +895,8 @@ def main() -> int:
     write_json(
         run_dir / "judge_receipts.json",
         {
-            "schema_version": "exp7-4-judge-receipts-v1",
-            "experiment": "7-4",
+            "schema_version": "exp8-4-judge-receipts-v1",
+            "experiment": "8-4",
             "credential_headers_retained": False,
             "calls": receipts,
         },
@@ -906,8 +906,8 @@ def main() -> int:
     (run_dir / "report.md").write_text(render_report(summary), encoding="utf-8")
     write_json(run_dir / "manifest.json", build_manifest(args.run_id, run_dir, summary))
     latest = {
-        "schema_version": "exp7-4-latest-v1",
-        "experiment": "7-4",
+        "schema_version": "exp8-4-latest-v1",
+        "experiment": "8-4",
         "run_id": args.run_id,
         "status": summary["status"],
         "run_dir": str(run_dir.relative_to(EXPERIMENT_DIR)),

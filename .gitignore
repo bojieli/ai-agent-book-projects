@@ -36,7 +36,7 @@ book*/深入理解-AI-Agent-*.pdf
 # Python packaging build artifacts (editable installs).
 # Anchored to the repository root: unanchored build/ and dist/ patterns would
 # also match vendored web bundles such as
-# chapter8/gaia-experience/AWorld/aworld/cmd/web/webui/dist/, whose assets are
+# chapter9/gaia-experience/AWorld/aworld/cmd/web/webui/dist/, whose assets are
 # tracked, and would silently drop newly generated files from commits.
 /agentbook.egg-info/
 /build/
@@ -49,31 +49,31 @@ ablation_results*.json
 ablation_study_report.md
 ablation_study_results.png
 
-# External benchmark checkout used by Experiment 6-1; retained evidence lives
-# in chapter6/tau2-bench-eval instead.
-/chapter6/tau2-bench/
+# External benchmark checkout used by Experiment 7-1; retained evidence lives
+# in chapter7/tau2-bench-eval instead.
+/chapter7/tau2-bench/
 
-# Experiment 7-6 publishes full adapters to Hugging Face and retains their
+# Experiment 8-6 publishes full adapters to Hugging Face and retains their
 # hashes/configs in Git without duplicating the large binary blobs.
-/chapter7/speech-sft-experiment/validation/*/adapters/*/adapter_model.safetensors
-/chapter7/speech-sft-experiment/validation/*/adapters/*/tokenizer.json
-/chapter7/speech-sft-experiment/validation/*/adapters/*/tokenizer_config.json
-!/chapter7/speech-sft-experiment/validation/*/audio/**/*.wav
+/chapter8/speech-sft-experiment/validation/*/adapters/*/adapter_model.safetensors
+/chapter8/speech-sft-experiment/validation/*/adapters/*/tokenizer.json
+/chapter8/speech-sft-experiment/validation/*/adapters/*/tokenizer_config.json
+!/chapter8/speech-sft-experiment/validation/*/audio/**/*.wav
 /unsloth_compiled_cache/
 
-# Canonical Chapter 6 evidence. Keep ad-hoc run outputs ignored while making
+# Canonical Chapter 7 evidence. Keep ad-hoc run outputs ignored while making
 # the renamed complete matrix and the bounded memory-policy campaign visible
 # to normal `git add` workflows.
-!/chapter6/user-memory-policy-eval/results/
-/chapter6/user-memory-policy-eval/results/*
-!/chapter6/user-memory-policy-eval/results/manifest.json
-!/chapter6/user-memory-policy-eval/results/policy_prefix_live.json
+!/chapter7/user-memory-policy-eval/results/
+/chapter7/user-memory-policy-eval/results/*
+!/chapter7/user-memory-policy-eval/results/manifest.json
+!/chapter7/user-memory-policy-eval/results/policy_prefix_live.json
 
-!/chapter6/user-memory-system-evaluation/results/
-/chapter6/user-memory-system-evaluation/results/*
-!/chapter6/user-memory-system-evaluation/results/full_6_11_60_case_matrix.json
-!/chapter6/user-memory-system-evaluation/results/live_6_11_matrix_layer1.json
-!/chapter6/user-memory-system-evaluation/results/checkpoints/
-/chapter6/user-memory-system-evaluation/results/checkpoints/*
-!/chapter6/user-memory-system-evaluation/results/checkpoints/6_11/
-!/chapter6/user-memory-system-evaluation/results/checkpoints/6_11/**
+!/chapter7/user-memory-system-evaluation/results/
+/chapter7/user-memory-system-evaluation/results/*
+!/chapter7/user-memory-system-evaluation/results/full_7_11_60_case_matrix.json
+!/chapter7/user-memory-system-evaluation/results/live_7_11_matrix_layer1.json
+!/chapter7/user-memory-system-evaluation/results/checkpoints/
+/chapter7/user-memory-system-evaluation/results/checkpoints/*
+!/chapter7/user-memory-system-evaluation/results/checkpoints/7_11/
+!/chapter7/user-memory-system-evaluation/results/checkpoints/7_11/**

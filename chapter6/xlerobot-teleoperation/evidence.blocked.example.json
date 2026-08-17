@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "experiment_id": "9-8",
+  "experiment_id": "6-10",
   "status": "blocked",
   "upstream": {
     "repository": "https://github.com/Vector-Wangel/XLeRobot.git",

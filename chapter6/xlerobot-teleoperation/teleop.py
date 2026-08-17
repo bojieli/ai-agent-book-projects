@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Experiment 9-8: local GPU expert-control upper-bound benchmark.
+"""Experiment 6-10: local GPU expert-control upper-bound benchmark.
 
 This is the reproducible, non-actuating companion for the chapter.  It uses a
 small batched tabletop simulator to measure what a perfect teleoperator-like
@@ -126,7 +126,7 @@ def main() -> int:
     write_json(cells_path, {"cells": cells})
     receipt = {
         "schema_version": "3.0",
-        "experiment_id": "9-8",
+        "experiment_id": "6-10",
         "status": "complete",
         "kind": "local_gpu_expert_upper_bound",
         "seed": seeds[0],

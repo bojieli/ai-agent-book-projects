@@ -1,7 +1,7 @@
 """
-CoT 蒸馏数据采集脚本（实验 7-9 配套代码）
+CoT 蒸馏数据采集脚本（实验 8-9 配套代码）
 
-方法（对应书中实验 7-9 的三步流程之第一步"采集轨迹"）：
+方法（对应书中实验 8-9 的三步流程之第一步"采集轨迹"）：
   1. 从 problems.jsonl 读取带标准答案的数学题（规则可验证的任务分布）；
   2. 通过 OpenRouter 调用前沿教师模型（默认 Claude），开启 reasoning 获取
      完整"思考 + 答案"轨迹（Claude 4 系列返回的是 summarized thinking——由另一个
@@ -116,7 +116,7 @@ def reasoning_extra_body(base_url: str, effort: str, max_tokens: int) -> dict:
     if effort:
         if "api.moonshot.cn" in base_url:
             # Moonshot's native OpenAI-compatible endpoint accepts the same
-            # top-level control used by the Experiment 7-8 Kimi campaign.
+            # top-level control used by the Experiment 8-8 Kimi campaign.
             return {"reasoning_effort": effort}
         return {"reasoning": {"effort": effort}}
     if max_tokens:

@@ -1,5 +1,5 @@
 {
-  "experiment": "6-12",
+  "experiment": "7-13",
   "upstream_path": "../../chapter7/SimpleVLA-RL/SimpleVLA-RL",
   "expected_upstream_commit": "7c51662df27b586f9e8a1ab35fcf849f2b8852f9",
   "expected_robotwin2_commit": "13c3c47ff4312dd62484bcd51be034af55c062d1",
@@ -7,7 +7,7 @@
   "expected_checkpoint_revision": "a1f0ac0aa32d31ffab7131b0eda3e11719f39ee5",
   "task": "move_can_pot",
   "task_suite": "robotwin2_move_can_pot",
-  "task_config": "exp6_12_three_view",
+  "task_config": "exp7_13_three_view",
   "checkpoint_env": "OPENVLA_CHECKPOINT",
   "robotwin2_env": "ROBOTWIN2_PATH",
   "align_path_env": "SIMPLEVLA_ALIGN_PATH",

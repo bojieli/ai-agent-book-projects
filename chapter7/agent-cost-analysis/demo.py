@@ -1,5 +1,5 @@
 """
-实验 6-7：Agent 任务的端到端成本分析（可运行 demo + CLI）。
+实验 7-9：Agent 任务的端到端成本分析（可运行 demo + CLI）。
 
 两种运行方式：
   1) 在线（--live，默认）：真实调用模型（默认 gpt-5.6-luna），token 与 cached_tokens
@@ -205,7 +205,7 @@ def dump_output(path, tracers, pricing, model):
 def build_parser():
     p = argparse.ArgumentParser(
         prog="demo.py",
-        description="实验 6-7：Agent 任务端到端成本分析——对客服退款 Agent 做全链路成本拆解，"
+        description="实验 7-9：Agent 任务端到端成本分析——对客服退款 Agent 做全链路成本拆解，"
                     "并对比 KV-cache / 上下文压缩两个杠杆的成本差异（完整 2×2 A/B）。",
         epilog="示例：\n"
                "  python demo.py                       # 在线，默认跑 A(朴素)+B(优化)\n"

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate real Fish S1 Experiment 9-5 media without making new API calls."""
+"""Validate real Fish S1 Experiment 6-6 media without making new API calls."""
 
 from __future__ import annotations
 
@@ -91,7 +91,7 @@ def main() -> int:
             quality_study_error = str(exc)
     artifact = {
         "schema_version": 3,
-        "experiment": "9-5",
+        "experiment": "6-6",
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
         "artifact_generation": {
             "recorded_timestamp_utc": run["timestamp_utc"],

@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "experiment": "7-9",
+  "status": "incomplete",
+  "generated_at_utc": "2026-07-29T22:31:57.870199+00:00",
+  "run_dir": "chapter7/agent-cost-analysis/runs/exp7-9-kimi25-20260730-v2",
+  "git_commit": "4a7f37cf278bd15948c409f14533017c4c7fbc29",
+  "command": "python demo.py --live --scenario all --model kimi-k2.5 --save-trace TRACE --output REPORT",
+  "provider_receipt_count": 32,
+  "status_reasons": [
+    "The real 2x2 run covers one eight-turn refund workflow; the manuscript asks for several representative task types and aggregate task-level p50/p95/p99.",
+    "Reasoning-token usage and provider response IDs are recorded, but success-quality equivalence across optimizations is not independently judged.",
+    "The 32 measured calls have unique provider response IDs; 16 cache-warmup calls were intentionally excluded from measured traces and do not have retained receipts."
+  ],
+  "inputs": [
+    {
+      "path": "chapter7/agent-cost-analysis/agent.py",
+      "bytes": 17109,
+      "sha256": "30866b34ead7ff2897964aaf1e07867691102982971903f8a2a4172c48bfd718"
+    },
+    {
+      "path": "chapter7/agent-cost-analysis/tracer.py",
+      "bytes": 12309,
+      "sha256": "fb673ac8f10ca037b6df3822e00e6cbb21b8381b731736fb1b2a30748e7226fe"
+    },
+    {
+      "path": "chapter7/agent-cost-analysis/demo.py",
+      "bytes": 13477,
+      "sha256": "75dc27633829fe2a730c5654a38f6af90fd58eceee630dfa985e386fa536c104"
+    },
+    {
+      "path": "chapter7/agent-cost-analysis/config.py",
+      "bytes": 5701,
+      "sha256": "0a92de4849994e74b28e3b5ad6c308cc154a2b984d8827f859b7f15d9fbbb463"
+    },
+    {
+      "path": "chapter7/model-benchmark/campaign_config.json",
+      "bytes": 8103,
+      "sha256": "9a839ad907852798b35af5b4623814c343943ae1596a78d650d1a1affc93b17a"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "chapter7/agent-cost-analysis/runs/exp7-9-kimi25-20260730-v2/report.json",
+      "bytes": 17810,
+      "sha256": "92b0ee29c7df3dd28778d625fe699662dee56a5401141631ead450cd2ca37ace"
+    },
+    {
+      "path": "chapter7/agent-cost-analysis/runs/exp7-9-kimi25-20260730-v2/trace.json",
+      "bytes": 17810,
+      "sha256": "92b0ee29c7df3dd28778d625fe699662dee56a5401141631ead450cd2ca37ace"
+    }
+  ]
+}

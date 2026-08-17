@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail-closed validator for the canonical Experiment 7-4 evidence package."""
+"""Fail-closed validator for the canonical Experiment 8-4 evidence package."""
 
 from __future__ import annotations
 
@@ -100,8 +100,8 @@ def validate_receipts(
     retained: dict[str, Any], receipts_doc: dict[str, Any], summary: dict[str, Any]
 ) -> list[dict[str, Any]]:
     if (
-        receipts_doc.get("schema_version") != "exp7-4-judge-receipts-v1"
-        or receipts_doc.get("experiment") != "7-4"
+        receipts_doc.get("schema_version") != "exp8-4-judge-receipts-v1"
+        or receipts_doc.get("experiment") != "8-4"
     ):
         fail("wrong judge receipt schema or experiment")
     if receipts_doc.get("credential_headers_retained") is not False:
@@ -230,8 +230,8 @@ def validate_run(run_dir: Path, *, verify_latest: bool = True) -> dict[str, Any]
         fail("run directory contains a symlink")
     manifest = load_json(run_dir / "manifest.json")
     if (
-        manifest.get("schema_version") != "exp7-4-manifest-v1"
-        or manifest.get("experiment") != "7-4"
+        manifest.get("schema_version") != "exp8-4-manifest-v1"
+        or manifest.get("experiment") != "8-4"
     ):
         fail("wrong manifest schema or experiment")
     if (
@@ -274,8 +274,8 @@ def validate_run(run_dir: Path, *, verify_latest: bool = True) -> dict[str, Any]
         fail("checkpoint policy was weakened")
 
     summary = load_json(run_dir / "summary.json")
-    if summary.get("schema_version") != "exp7-4-summary-v1" or summary.get("status") != "passed":
-        fail("summary is not a passed Experiment 7-4 report")
+    if summary.get("schema_version") != "exp8-4-summary-v1" or summary.get("status") != "passed":
+        fail("summary is not a passed Experiment 8-4 report")
     receipts_doc = load_json(run_dir / "judge_receipts.json")
     receipts = validate_receipts(retained, receipts_doc, summary)
     recomputed = audit.summarize(retained, receipts, contract)
@@ -296,7 +296,7 @@ def validate_run(run_dir: Path, *, verify_latest: bool = True) -> dict[str, Any]
 
     if verify_latest:
         latest = load_json(audit.LATEST_PATH)
-        if latest.get("schema_version") != "exp7-4-latest-v1" or latest.get("experiment") != "7-4":
+        if latest.get("schema_version") != "exp8-4-latest-v1" or latest.get("experiment") != "8-4":
             fail("latest pointer has wrong schema or experiment")
         if latest.get("run_id") != manifest.get("run_id") or latest.get("status") != "passed":
             fail("latest pointer does not identify this passed run")
@@ -307,7 +307,7 @@ def validate_run(run_dir: Path, *, verify_latest: bool = True) -> dict[str, Any]
             fail("latest pointer resolves to another run")
 
     return {
-        "experiment": "7-4",
+        "experiment": "8-4",
         "status": "passed",
         "run_id": manifest["run_id"],
         "cells": retained["cell_count"],
@@ -345,7 +345,7 @@ def main() -> int:
     except EvidenceError as exc:
         print(
             json.dumps(
-                {"experiment": "7-4", "status": "failed", "error": str(exc)},
+                {"experiment": "8-4", "status": "failed", "error": str(exc)},
                 indent=2,
                 sort_keys=True,
             )

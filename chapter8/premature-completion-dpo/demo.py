@@ -1,4 +1,4 @@
-"""离线端到端教学演示（实验 7-17）。
+"""离线端到端教学演示（实验 8-17）。
 
 不依赖 API key、不依赖 GPU，演示完整链路：
 1. 从过早结束 bad case 构造 DPO 偏好对（离线确定性路径）；
@@ -17,7 +17,7 @@ from evaluate import compute_metrics, load_eval_items, mock_outputs
 
 def main() -> None:
     print("=" * 60)
-    print("实验 7-17：过早结束的 DPO 修复 —— 离线端到端演示")
+    print("实验 8-17：过早结束的 DPO 修复 —— 离线端到端演示")
     print("=" * 60)
 
     # 第一步：构造偏好对（确定性路径，无 API）

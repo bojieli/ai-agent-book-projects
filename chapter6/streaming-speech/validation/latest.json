@@ -1,5 +1,5 @@
 {
-  "experiment": "9-3",
+  "experiment": "6-4",
   "timestamp_utc": "2026-07-29T10:11:30.432848+00:00",
   "model": "mlx-community/Qwen2-Audio-7B-Instruct-4bit",
   "device": "mlx",
