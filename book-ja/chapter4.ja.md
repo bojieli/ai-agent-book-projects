@@ -254,33 +254,6 @@ Sidecar パターンのもう 1 つの典型的な応用は**コンテキスト�
 
 安全性 Sidecar については、さらに**拒否のサーキットブレーカー**を備える必要があります。分類器が連続して複数回操作を拒否したとき、システムは無限にリトライすべきではなく（これはリソースを浪費し、ユーザーを無限ループに陥れかねません）、ユーザーに手動判断を求める方式へフォールバックすべきです。これはまさに第 1 章 Harness の「是正」機能の典型的な実例です。
 
-**ツール安全ゲート:**
-
-```python
-proposal = model.tool_call()
-call = parse_and_validate_schema(proposal)
-
-if call is INVALID:
-    return structured_error("invalid arguments")
-
-if not permission_policy.allows(actor, call):
-    return structured_error("permission denied")
-
-risk = classify_risk(call.tool, call.args)
-if risk == HIGH:
-    review = independent_reviewer(
-        trusted_policy,
-        trusted_task_summary,
-        sanitize_and_tag_untrusted_fields(call)
-    )
-    if review != ALLOW:
-        return reject_or_escalate(review)
-
-result = sandbox.execute(call, scope = least_privilege_scope(call))
-checked = verify_result(call, result, observe_environment())
-return checked
-```
-
 **自動検証とフィードバックの閉ループ。**
 
 実行ツールのもう 1 つの重要な設計原則は、**操作の結果が検証できるなら、自動的に検証すべき**ということです。コード記述を例に取ると、Agent が `write_file` を呼び出してコードファイルを作成または変更するとき、ツールは内容を書き込んで「成功」を返すだけであるべきではなく、書き込み後に直ちに構文チェックを実行すべきです。ファイルの種類に応じて対応する linter（コードの静的検査ツール）を呼び出し、その出力を構造化されたエラーリストにパースし、ツールの返り値の一部として Agent に返すのです。
@@ -396,20 +369,6 @@ AI Agent の能力が日増しに強力になっても、いくつかの重要�
 ![図4-2 階層的なツールマッチング（サーバーレベル→ツールレベルの 2 層の意味検索）](images/fig4-2.svg)
 
 **階層的なマッチングとデグレード。** 効率的なマッチングの鍵は、ツールの組織そのものが階層構造を持つことにあります。MCP などのプロトコルでは、ツールは**サーバー**ごとにグループ化されます（スマホ上の App に似ており、各 App が一群の関連機能を提供する）。そこでマッチングは 2 層に分けられます——まず能力の記述に基づいて関連するサーバーを特定し、それからサーバー内で具体的なツールをマッチングし、検索空間を「数千個のツール」から「数十個のサーバー × 各サーバー数十個のツール」へと縮小します。これは計算力を節約すると同時に、領域横断の意味的な混同も減らします。エンジニアリング上、これはオフラインで構築され、増分更新をサポートする埋め込みインデックスに依存します。もし 2 層のマッチングの候補の類似度がいずれも閾値を下回るなら、明確に「見つからない」を返し、Agent にニーズを書き換えてリトライさせるか、基礎ツールで手作業で実現させるか、いっそ新しいツールを創造させる（ツールの創造は第 9 章のテーマです）べきです。
-
-**プロアクティブなツール探索:**
-
-```python
-if capability_is_missing(task):
-    server = search_server_index(capability)
-    tool = search_tool_index(server, capability)
-
-    if tool == NOT_FOUND:
-        retry_with_rewritten_request_or_escalate()
-    else:
-        append_tool_schema_to_trajectory(tool)
-        continue
-```
 
 ![図4-3 ツールの動的な読み込みの KV Cache 最適化](images/fig4-3.svg)
 

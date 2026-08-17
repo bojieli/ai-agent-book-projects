@@ -171,23 +171,6 @@ OpenAI는 한때 AI 능력을 다섯 단계로 분류했습니다. 1단계 대�
 
 파일 시스템이 에이전트 사이의 **산출물 교환** 문제를 해결하지만 협업에는 **제어 평면**도 필요합니다. 바로 여기서 표 10-2의 생명 주기 관련 행이 쓰입니다. 4장에서 제공한 생성(`spawn_subagent`), 메시지 전송(`send_message_to_subagent`), 취소(`cancel_subagent`), 탐색(`list_agents`) 도구 프리미티브는 프로세스 세계의 fork, message, kill, ps에 해당합니다. 이 절에서는 인터페이스 정의를 반복하지 않고 멀티 에이전트 협업에 필수이지만 흔히 놓치는 네 능력에 초점을 둡니다.
 
-**메시지 envelope와 worker 수명 주기:**
-
-```python
-envelope = {
-    id, trace_id, sender, recipient, type,
-    payload, created_at, deadline, schema_version
-}
-
-worker = spawn(task, budget, cancellation_token)
-publish(task_assigned(envelope, worker))
-while worker.is_running:
-    accept(status_update | artifact | needs_input)
-    if deadline_expired or cancellation_token.is_set:
-        request_graceful_stop(worker)
-await worker.ack_or_timeout()
-```
-
 **I. 메시지 전달.** 가장 단순한 형태는 지점 간 통신으로 에이전트 A가 `send_message_to_agent_b(content)`를 직접 호출합니다. 토폴로지가 고정되어 있고 에이전트가 적은 상황(예: 이 장의 실험 10-3 전화 + 컴퓨터 이중 에이전트 구성)에 적합합니다. 에이전트 수가 늘고 비동기 병렬성이 필요하면 지점 간 연결 수가 에이전트 수의 제곱으로 증가하며 송신자와 수신자가 동시에 온라인이어야 합니다. 이때는 **메시지 버스**를 사용해야 합니다(뒤의 ‘병렬 조율 패턴’에서 자세히 설명). 에이전트가 버스에 메시지를 게시하고 버스가 구독에 따라 전달하므로 송신자는 구독자를 알 필요가 없습니다. 지점 간이든 버스를 통하든 메시지는 일반적으로 구조화된 **봉투(envelope)**를 담아야 합니다. 송신자 ID, 대상(특정 에이전트 또는 브로드캐스트), 메시지 유형(예: `task_assigned`/`status_update`/`result`/`terminate`), JSON 페이로드입니다. 통합 봉투 형식은 신뢰할 수 있는 라우팅과 수신자 파싱을 보장하고 협업 체인을 추적 가능하게 합니다. 이는 멀티 에이전트 시스템 디버깅의 핵심입니다.
 
 **II. 상태 질의.** 제어 평면에서 가장 과소평가되는 부분입니다. 주 에이전트가 하위 에이전트를 보낸 뒤에는 진행 상황을 볼 수 있어야 합니다. 그렇지 않으면 계속 기다릴지 결정할 수도, 하위 에이전트가 막혔을 때 개입할 수도 없습니다. 직관적인 접근법은 RPC에서 빌려 와 `get_subagent_status(agent_id)` 질의 인터페이스를 정의하여 ‘실행 중/완료/실패’와 진행률을 반환하게 하는 것입니다. 하지만 이런 풀 인터페이스는 예상보다 훨씬 덜 유용합니다. 하위 에이전트는 생성되는 순간 실행을 시작해 완료하거나 실패할 때까지 계속 작동합니다. 전통적인 일괄 시스템의 작업처럼 대기 상태를 차례로 순환하지 않습니다. Unix 프로그래밍에서 다른 프로세스의 PID로 실행 상태를 반복 조회할 일이 거의 없는 것과 같습니다. 폴링에도 근본적인 딜레마가 있습니다. 너무 자주 하면 토큰을 낭비하고 너무 드물면 늦게 반응합니다. 더 자연스럽게 상태를 얻으려면 이 장의 시작에서 소개한 두 통신 패러다임으로 돌아가야 합니다.

@@ -1,61 +1,55 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 505" width="780" height="505" style="background:#ffffff">
-<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker><marker id="ah-sm" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto"><polygon points="0 0, 6 2, 0 4" fill="#999999"/></marker></defs>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 340" width="780" height="340" style="background:#ffffff">
+<defs>
+<marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker>
+<marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker>
+</defs>
 
-<rect x="30" y="55" width="350" height="230" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="42" y="73" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">MGRD Modality-Anchored Thought Distillation</text>
-<rect x="45" y="80" width="320" height="56" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="65" y="98" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">① Sampling and Filtering</text>
-<text x="65" y="114" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Current model samples K thought chains</text>
-<text x="65" y="128" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Filter chains based on acoustic features</text>
-<line x1="205" y1="136" x2="205" y2="144" stroke="#999999" stroke-width="2" marker-end="url(#ah-sm)"/>
-<rect x="45" y="144" width="320" height="56" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="65" y="162" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">② Joint SFT</text>
-<text x="65" y="178" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Audio CoT + Text Thought</text>
-<text x="65" y="192" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Joint Fine-Tuning</text>
-<line x1="205" y1="200" x2="205" y2="208" stroke="#999999" stroke-width="2" marker-end="url(#ah-sm)"/>
-<rect x="45" y="208" width="320" height="70" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="65" y="225" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">③ RLVR Optimization</text>
-<text x="65" y="245" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Composite reward: 0.8 accuracy + 0.2 thought format</text>
-<text x="65" y="265" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Iterate T rounds → thought base transfers to acoustic analysis</text>
-<rect x="400" y="55" width="350" height="230" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="412" y="73" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">MPS Mind-Paced Speaking</text>
-<rect x="415" y="82" width="155" height="70" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="492" y="100" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Formulation Brain</text>
-<text x="492" y="118" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Continuous Generation</text>
-<text x="492" y="134" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">think segment</text>
-<rect x="580" y="82" width="155" height="70" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="657" y="100" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Articulation Brain</text>
-<text x="657" y="118" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Receive think → generate</text>
-<text x="657" y="134" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">response segment</text>
-<line x1="570" y1="117" x2="578" y2="117" stroke="#999999" stroke-width="2" marker-end="url(#ah-sm)"/>
-<rect x="415" y="165" width="155" height="40" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="492" y="179" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Think-First</text>
-<text x="492" y="195" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Latency ~80 tok | 93.9%</text>
-<rect x="580" y="165" width="155" height="40" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="657" y="179" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Speak-First</text>
-<text x="657" y="195" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Zero latency | 92.8%</text>
-<text x="575" y="220" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Each brain maintains standard TBS format → semantic coherence</text>
-<rect x="30" y="300" width="720" height="80" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="390" y="318" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Model architecture: Qwen2 audio encoder (25Hz, frozen) → adapter (↓12.5Hz) → Qwen2.5 32B</text>
-<rect x="55" y="335" width="205" height="35" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="157" y="346" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Audio Encoder</text>
-<text x="157" y="360" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">25Hz frame rate</text>
-<line x1="262" y1="352" x2="277" y2="352" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
-<rect x="275" y="335" width="205" height="35" rx="3" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
-<text x="377" y="346" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Audio Adapter</text>
-<text x="377" y="360" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">12.5Hz output</text>
-<line x1="482" y1="352" x2="497" y2="352" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
-<rect x="495" y="335" width="205" height="35" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="597" y="346" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">LLM Decoder</text>
-<text x="597" y="360" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Thought + Response</text>
-<rect x="30" y="395" width="720" height="125" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="390" y="415" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Core insight: text agent thought → acoustic anchored thought</text>
-<rect x="45" y="433" width="330" height="40" rx="3" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
-<text x="210" y="447" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">❌ Text agent: "the lyrics mention sadness"</text>
-<text x="210" y="463" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Transcription-based thought → longer chain yields worse performance</text>
-<rect x="400" y="433" width="340" height="40" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="570" y="447" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ Acoustic anchored: "minor progression + descending melody"</text>
-<text x="570" y="463" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">MGRD iterative distillation → longer thought chain yields higher accuracy</text>
-<text x="390" y="495" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Training: 5M samples cold start + 5K RL samples | Data filtering: pass@8 ∈ [3,6] (moderate difficulty)</text>
-<text x="390" y="510" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Spoken-MQA surpasses Gemini 2.5 Pro (81.5%) | Overall score 83.6%</text>
+<!-- Step ① Screenshot -->
+<rect x="30" y="55" width="190" height="185" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="125" y="78" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">① Screenshot</text>
+
+<rect x="55" y="95" width="140" height="90" rx="4" fill="#ffffff" stroke="#999999" stroke-width="1.5"/>
+<text x="125" y="115" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central">Computer Screen</text>
+<rect x="72" y="128" width="106" height="14" rx="2" fill="#e8e8e8" stroke="none"/>
+<rect x="72" y="146" width="80" height="14" rx="2" fill="#e8e8e8" stroke="none"/>
+<rect x="72" y="164" width="50" height="12" rx="2" fill="#d0d0d0" stroke="none"/>
+
+<text x="125" y="205" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#999999" text-anchor="middle" dominant-baseline="central">Desktop / Browser / Application</text>
+<text x="125" y="225" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#999999" text-anchor="middle" dominant-baseline="central">Take screenshot after interface stabilizes</text>
+
+<line x1="220" y1="130" x2="283" y2="130" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="252" y="118" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central">Screenshot</text>
+
+<!-- Step ② Model Inference -->
+<rect x="295" y="55" width="190" height="185" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="390" y="78" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">② Model Inference</text>
+
+<text x="390" y="103" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Input</text>
+<text x="390" y="121" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central">Screenshot + Task Instruction</text>
+<line x1="310" y1="137" x2="470" y2="137" stroke="#999999" stroke-width="1" stroke-dasharray="4,3"/>
+<text x="390" y="155" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Output</text>
+<text x="390" y="175" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7.5" fill="#666666" text-anchor="middle" dominant-baseline="central">Thought: "Search box is in the center of the screen"</text>
+<text x="390" y="195" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central">Action: click(512, 250)</text>
+<text x="390" y="215" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central">Action: type("weather")</text>
+
+<line x1="485" y1="130" x2="548" y2="130" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="517" y="118" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central">Action</text>
+
+<!-- Step ③ Execute Action -->
+<rect x="560" y="55" width="190" height="185" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="655" y="78" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">③ Execute Action</text>
+
+<text x="655" y="108" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Execution Tool</text>
+<text x="655" y="130" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central">xdotool / Playwright</text>
+<line x1="575" y1="147" x2="735" y2="147" stroke="#999999" stroke-width="1" stroke-dasharray="4,3"/>
+<text x="655" y="165" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central">Mouse: Move, Click, Drag</text>
+<text x="655" y="185" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central">Keyboard: Input, Hotkeys</text>
+<text x="655" y="205" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central">Scroll: Up / Down / Left / Right</text>
+<text x="655" y="225" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central">Wait: Interface Response</text>
+
+<!-- Loop back -->
+<path d="M 655 240 L 655 280 L 125 280 L 125 248" stroke="#333333" stroke-width="2" fill="none" marker-end="url(#ah)"/>
+<text x="390" y="298" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central">④ Interface State Changes → Wait for Stability → Next Screenshot</text>
+<text x="390" y="325" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#999999" text-anchor="middle" dominant-baseline="central">Typical Scenario: Completing a multi-step form may require 10-20 loops</text>
 </svg>

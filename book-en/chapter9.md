@@ -26,19 +26,6 @@ Many other tasks have no single correct answer. Whether customer service is pati
 
 Figure 9-2 presents a three-layer verification structure. The bottom-layer outcome verifier reads test results, database states, and tool returns to answer, “Was the task actually completed?” The middle-layer process verifier checks business rules, permissions, and action sequences to answer, “Was it completed in an allowed manner?” The upper-layer quality verifier evaluates language and strategy according to the Rubric to answer, “Was it handled appropriately?” Lower-level metrics should rely more heavily on code and environmental ground truth; only aspects that are difficult to formalize should be delegated to a language model.
 
-**Three-layer trajectory verification:**
-
-```python
-outcome = verify_environment_state(trajectory)
-process = verify_actions_and_permissions(trajectory)
-quality = judge_with_rubric(trajectory, cite_evidence = true)
-
-if not outcome.pass or not process.pass:
-    reject_as_learning_example(outcome, process, quality)
-else:
-    emit_structured_diagnosis(outcome, process, quality)
-```
-
 ![Figure 9-2 Three-layer trajectory verification from environmental outcomes to an LLM Rubric](images/fig9-2.svg)
 
 For a customer-service Agent, a useful Rubric should cover at least the dimensions listed in Table 9-1. The first five primarily enforce baseline requirements, while the final two measure service quality. This decomposition is more diagnostically useful than asking whether the user was satisfied: a user may be satisfied because the Agent issued a noncompliant refund, or dissatisfied because of a compliance restriction. A single satisfaction score cannot distinguish the two.
@@ -55,23 +42,11 @@ Table 9-1 Trajectory evaluation dimensions for a customer-service Agent
 | Expression quality | Is the language natural and concise, without repetition or templated phrasing? | Full conversation, language Rubric |
 | Compliant alternatives | When the original plan was infeasible, was an allowed alternative found? | User goal, policies, and subsequent actions |
 
-“Promise–action consistency” is particularly suitable for Agent scenarios. Traditional text evaluation reads only the final response and may easily regard “I have submitted your refund” as good service. Trajectory evaluation instead continues by checking whether the refund tool was actually called, whether the call succeeded, and whether the order status changed. “Compliant alternatives” does not encourage the model to disregard rules at will; it requires the model to understand the user’s true goal and, when a refund is unavailable, examine lawful options such as rescheduling, extension, or partial compensation.
-
-Verification results should not be compressed into a scalar. A trajectory evaluation is closer to a structured diagnosis: the task partially succeeded and rule compliance passed, but there was one unsupported statement, one false promise, and the response repeated the policy explanation three times. Dimensional signals preserve both the nature of each issue and the location of its evidence. Only then can downstream modules determine whether an unsupported statement reflects missing knowledge, absent citation requirements, or insufficient model capability, and whether a false promise calls for Prompt revision or a consistency check between responses and tool states in the Harness.
-
-LLM verifiers also require calibration. Production systems typically maintain a small set of expert-annotated trajectories to check verifier consistency on each dimension; high-risk or low-confidence cases are referred to a second model or human reviewer; and the calibration set is rerun after model-version changes. The verifier should provide evaluations and evidence, while an independent diagnosis and evolution module should decide which part of the Agent to modify. This prevents the same model from acting as judge while directly rewriting the rules.
-
 > **Experiment 9-1 ★★: Build a Trajectory Verifier for a Customer-Service Agent**
 >
 > **Objective:** Convert a customer-service trajectory into a structured diagnosis that can support subsequent learning, and test whether “multidimensional conclusions with evidence” identify root causes better than a single overall score.
 >
-> **Data and procedure:** Prepare expert-labeled trajectories covering four categories: normal refunds, false promises, privacy disclosures, and excessive refusals. The first layer reads the final order state and tool logs to determine whether a refund or rescheduling actually occurred. The second checks every step against business policies, including permissions, required procedures, privacy, factual support, and promise–action consistency. The third evaluates language quality and compliant alternatives against the Rubric in Table 9-1 and retains the relevant turns as evidence for each failure. The default quality Judge uses deterministic rules, with a real LLM Judge also available. Regardless of the upper-layer model, the outcome and rule layers must not be left for a language model to guess.
->
-> **Controls and metrics:** The baseline outputs only an overall score; the experimental condition outputs `pass`, `fail`, or `uncertain` for each dimension, together with evidence and confidence. During calibration, measure precision and recall for detecting failures in each dimension and report exact agreement with expert labels. Also verify that failures such as false promises contain nonempty evidence rather than unsupported conclusions.
->
-> **Acceptance criteria:** The verifier should reliably detect critical violations, false promises, and excessive refusals. A high overall score must not conceal a privacy or policy failure. Low-confidence and high-risk cases should be sent to a second verifier or human review instead of automatically becoming learning signals.
->
-> The accompanying implementation is available at [`trajectory-verifier`](../chapter9/trajectory-verifier/). By default, it uses a quality Judge that can be reproduced offline; use `--judge llm` to run the implemented real LLM verifier.
+> **Experiment description:** Compare “one overall score” with “a conclusion, evidence, and confidence for every dimension,” and observe which better distinguishes task failure, rule violations, false promises, and expression problems. Continual evolution cannot rely only on success rate or one score. Only by retaining what went wrong, why, and where the evidence is can later modules determine whether to update knowledge, the Prompt, a program, or model parameters; low-confidence cases should not enter the learning set automatically.
 
 ## Four Methods for Continual Agent Evolution
 
@@ -89,19 +64,6 @@ Table 9-2 Applicable boundaries of four continual evolution methods
 | Prompt and Skill | Linguistically expressible judgment principles and operating procedures | Interpretable, controllable scope | Prone to bloat, conflict, or being ignored |
 | Programs and Harness | Deterministic procedures, tools, and hard constraints | Testable, stable execution, low cost | Higher development and maintenance costs |
 | Model parameters | High-dimensional perception, generation style, and implicit strategies | Strong generalization, low inference overhead | High update and regression costs |
-
-**Experience-to-capability routing:**
-
-```python
-if experience.is_factual and experience.has_sources:
-    target = KNOWLEDGE
-elif experience.can_be_expressed_as_contextual_language_rule:
-    target = PROMPT_OR_SKILL
-elif experience.is_deterministic or experience.is_hard_safety_constraint:
-    target = PROGRAM_OR_HARNESS
-else:
-    target = MODEL_PARAMETERS
-```
 
 ### Consolidating Experience into Knowledge
 
@@ -248,6 +210,26 @@ Experiment 9-8 applies the same protocol to the verification layer. Only repeate
 >
 > Use the three signal types and control trajectories in `failure_trajectories.json`. The real `gpt-4o-mini` candidate failed unfinished-task replay, normal-operation replay, and one-time-token checks, so the safety gate rejected it. The deterministic candidate passed all checks and received `release_to_canary`; record checks, the release decision, and the stable-directory hash. Implementation: [`harness-safety-gate`](../chapter9/harness-safety-gate/).
 
+#### Case: DeepSeek Harness—Self-Evolution Where Everything Is a Plugin
+
+Chapter 1's comparison table classifies DeepSeek Harness (`dsh`) as an “Agent self-evolution framework”[^dsh-2026]. Its foundation paper, Cordis, observes that conventional composition is **static**: function calls, module imports, and class inheritance are fixed at compile time and do not change at runtime. Plugin systems and self-evolving Harnesses instead require **dynamic composition**, with components loaded, unloaded, and reconfigured while running[^cordis-2026]. Every Agent self-modification is, in essence, a dynamic composition.
+
+The paper separates dynamic composition into two orthogonal dimensions. **Temporal composability** asks whether all changes a component made to the shared environment can be undone completely and safely when it is removed; the runtime must track every resource allocation, event registration, and state change. **Spatial composability** asks whether components can declare, discover, and resolve dependencies in a structured, verifiable way and coordinate their lifecycles when those dependencies change. The former concerns **what changed**; the latter, **what is depended on**.
+
+A self-evolving Harness is the sharpest version of this problem. The side effects to undo are long-lived and stateful, while dependencies can appear, disappear, or change identity at runtime. Without temporal composability, every self-modification requires a full restart, discarding accumulated in-process state and repeatedly interrupting active tasks. Without spatial composability, each module must improvise its own detection of dependency changes, and a simple code replacement can silently break dependents or introduce a cycle.
+
+Cordis lifts two concepts normally confined to compile time into the runtime. Effect systems, originally used to reason about how computation changes its environment, become **reversible effects**: every context transformation carries an explicit inverse tracked by the runtime, so removing a component restores the context. Coeffect systems, originally used to reason about what a computation requires from its environment, become **reactive coeffects**: a component declares its dependencies as a specification, and every context change tells it whether to activate, deactivate, or remain unaffected. A dynamic-composition calculus extends this property from one component to interleaved component systems—composability must be transitive.
+
+**The ceiling of self-evolution depends not on how well the model writes code, but on how composable its host system is.** That is why `dsh` makes model adapters, tool registries, session logs, and even the Agent's main loop plugins: **there is no privileged kernel maintainable only by humans**.
+
+Composability answers whether a component can be installed and removed safely, not whether it should be installed. Model-written plugins live only in process memory and disappear on restart. They **cannot be promoted automatically to official plugins**; persistence requires the slower worktree-plus-Pull-Request route described earlier.
+
+Evolution also has a cost. A runtime plugin changes the tools and Prompt fragments visible to the model. Once the request prefix changes, the KV Cache discussed in Chapter 2 is invalid from that point onward. A `dsh` plugin's documentation therefore needs to describe its impact on context and KV Cache.
+
+[^dsh-2026]: DeepSeek AI, *DeepSeek Harness: Everything is a Plugin*, 2026. https://github.com/deepseek-ai/deepseek-harness. Plugin layers and patching are documented in `docs/architecture.md`; lifecycle, sandbox semantics, and trust declarations for model self-modification tools appear in `docs/subsystems/extensions.md` and `packages/extensions/README.md`. Released in August 2026, the project was in developer preview at the time discussed here.
+
+[^cordis-2026]: Shi, Yifan, Wei Zhang, and Tianyi Cui. *A Programming Paradigm for Spatiotemporal Composability.* Preprint draft, 13 August 2026. https://github.com/cordiverse/paper
+
 ### Encoding Experience in Parameters
 
 Knowledge, instructions, and programs all rest on one premise: the target capability can be expressed relatively completely through external symbols. Yet capabilities such as medical-image understanding, natural speech prosody, removing a formulaic “AI feel” from text, and long-horizon planning are difficult to compress into a few rules or workflows. Such capabilities must be written into model parameters through post-training.
@@ -268,8 +250,6 @@ At the next level, the optimization target is no longer merely what context cont
 
 The same idea extends to workflows and the entire Harness. AFlow represents workflows composed of multiple LLM calls as code graphs and searches over combinations of nodes and control flow using execution feedback[^aflow-2025]. Meta-Harness has a Coding Agent inspect candidate Harness source, scores, and trajectories to search the code that determines how information is stored, retrieved, and presented[^meta-harness-2026]. Chapter 5 established code as a general language for expressing Agent system structure. The additional point here is that code, together with its evaluation history, can itself become the object of continual search rather than a one-time output.
 
-Higher levels are not automatically better. Searching for a local rule may require only a few edge cases, whereas searching an entire workflow or Harness faces a much larger candidate space, higher evaluation cost, and harder attribution. A clear, recurring fault localized to one component should first receive an auditable local patch. Only when local changes repeatedly fail to address a cross-component problem, or when the current management method itself becomes the bottleneck, is it worth moving outward to the workflow, Harness, or optimizer. At every level, evaluators, permission boundaries, and held-out tests must remain outside the editable scope—the larger the search space, the more important this trusted root becomes.
-
 > **Experiment 9-6 ★★★: Give Hermes This Book: Can It Upgrade Itself?**
 >
 > **Objective:** Test whether an Agent can turn external knowledge into an update to its own capabilities. The experiment supplies no problem statement and no feature checklist. Hermes receives all ten chapters and its own source, then must understand the principles, inspect its implementation, and choose a worthwhile improvement itself.
@@ -288,33 +268,13 @@ The four update methods become continual evolution rather than one-off optimizat
 
 Voyager[^voyager-2023] demonstrates a relatively complete continual-evolution loop. In Minecraft, it selects new goals based on its current capabilities, iteratively refines programs using environmental feedback, stores successfully validated code in a skill library, and then combines existing skills to solve harder tasks. An automatic curriculum, executable skills, and environmental validation are all indispensable: with a skill library but no curriculum, the Agent does not know what to learn next; with self-reflection but no environmental validation, the skill library accumulates errors; with exploration but no persistence, every task must still begin from scratch. Although the knowledge, Prompt, tools, and parameters of real-world Agents are more complex, the basic learning process is similar.
 
-More specifically, Voyager consists of three interlocking mechanisms. The **automatic curriculum generator** proposes a suitably challenging next objective from the current inventory, environment, and acquired skills, so exploration does not become random wandering. The **skill library** stores successful programs as retrievable, composable code; an advanced gathering skill, for example, can invoke basic movement and crafting skills. The **iterative prompting mechanism** feeds environmental observations, execution errors, and self-verification results back into the next round of code generation until the task actually passes. Compared with the baselines used in the paper, Voyager obtained 3.3× as many unique items, traveled 2.3× as far, unlocked key technology-tree milestones up to 15.3× faster, and transferred its skill library to new Minecraft worlds. These metrics measure how capability grows with experience rather than how a frozen Agent performs on a single examination.
+More specifically, Voyager has three interlocking mechanisms. The **automatic curriculum generator** proposes a suitably challenging next goal from current inventory, environment, and acquired skills, preventing random wandering. The **skill library** stores successful programs as retrievable, composable code—for example, an advanced gathering skill can invoke basic movement and crafting skills. The **iterative prompting mechanism** returns environmental observations, execution errors, and self-verification results to the next round of code generation until the task actually passes.
 
-### From Problem Diagnosis to Experience Consolidation
+**Discovery loop: hypothesis, experiment, evaluation, feedback.** Agent self-evolution systems such as Voyager follow a discovery loop made of hypothesis, experiment, evaluation, and feedback—the scientific method refined over centuries. Discovery Loop, founded recently by Jeff Dean and colleagues, proposes automating that loop: propose an experiment, implement it, evaluate it, take the result, and feed it into the next round[^ch1-discovery-loop]. This is self-evolving Agents applied to science. To avoid self-confirming stories and self-awarded success, the evolution described in this chapter must follow the scientific method.
 
-The same surface-level problem may require different forms of modification. When a customer-service Agent hallucinates fabricated facts, the cause may be missing information in the knowledge base, or the Prompt may fail to require citations. When an Agent falsely promises “it has been completed” before completing a task, the problem can be corrected through instructions or by having the Harness enforce consistency between the response and tool state. The evolution module should first identify the root cause and then select the smallest modification target that is easiest to validate and roll back. Sporadic failures with insufficient evidence should not immediately trigger learning; the system should continue collecting examples instead.
+[^ch1-discovery-loop]: Discovery Loop was announced on 5 August 2026 by Jeff Dean, Sanjay Ghemawat, Quoc Le, and Oriol Vinyals as a public-benefit corporation. Its public description is to automate complete experimental loops and parallelize at scale experiments that previously ran serially.
 
-This choice may also change as experience accumulates. A newly discovered strategy can initially be stored as an experience document for retrieval; after repeated validation across multiple cases, it can be promoted to knowledge. Knowledge can be expressed in three ways: rules that can be clearly described in natural language can be consolidated into a Skill; stable procedures that require no natural-language understanding can be compiled into tool code; and capabilities that actually reflect broad, implicit decision-making can enter post-training.
-
-### Validation, Release, and Rollback
-
-Every modification should first produce a candidate capability or candidate Agent rather than directly overwrite the production version. Knowledge documents must be tested to determine whether retrieval improves performance on new tasks; Prompts and Skills must be checked against edge cases and for regressions on previous tasks; programs must be tested in sandboxes and reset environments; and parameter updates must be evaluated for forgetting, safety, and out-of-distribution performance. Even after validation, a new version should be released gradually and monitored on real traffic; if key metrics deteriorate, the system should automatically roll back to a known safe version.
-
-**Validated release and rollback:**
-
-```python
-candidate = propose_minimal_update(evidence, current_version)
-
-if not verify(candidate, boundary_set): reject(candidate)
-elif not verify(candidate, retention_set): reject(candidate)
-elif not verify(candidate, safety_set): reject(candidate)
-else:
-    canary = deploy_to_small_traffic(candidate)
-    if canary.metrics_regress: rollback(current_version)
-    else: promote(candidate)
-```
-
-Validation must also separate two capabilities that are often conflated. **Harness updating** is the ability to produce valuable persistent changes from trajectories; **Harness benefit** is the task Agent's ability to find, activate, and correctly use those changes later. A Skill may be correct in itself, yet a weaker task model may fail to load it in the right situation or fail to follow it over a long trajectory. Either failure makes the final score look as if no evolution occurred. End-to-end performance alone therefore cannot diagnose the updater. Model-swapping experiments by Lin et al. indicate that the two abilities relate differently to base-model capability[^harness-benefit-2026]. The exact relationship requires validation on more tasks, but evaluating them separately is broadly useful.
+In continual Agent evolution, two capabilities that are often conflated must be separated. **Harness updating** produces valuable persistent changes from trajectories; **Harness benefit** is the task Agent's ability to find, activate, and correctly use those changes later. A Skill may be perfectly written, yet a weaker task model may fail to load it in the right situation or to follow it over a long horizon, making the final score look as if nothing evolved. End-to-end score alone therefore cannot diagnose the updater. Model-swap experiments by Lin et al. show that these abilities relate differently to base-model capability[^harness-benefit-2026].
 
 Table 9-3 Layered evaluation metrics for continual evolution
 
@@ -323,9 +283,7 @@ Table 9-3 Layered evaluation metrics for continual evolution
 | Candidate-change validity | Does the updater propose useful changes? | Acceptance rate and gain in independent validation |
 | Artifact activation rate | Does the task Agent load the new Skill, memory, or tool in the right situation? | Retrieval, routing, and tool-call traces |
 | Successful adherence rate | After activation, does the Agent follow the new rule or process? | Action sequences and process verifiers |
-| Held-out task gain | Does the whole system improve on tasks not used during evolution? | Held-out success, quality, and cost |
-
-For diagnosis, hold a candidate Harness fixed and swap only the task model. If a strong model benefits while a weak model never activates the new artifact, retrieval or routing is the bottleneck. If both activate it but only the strong model executes it correctly, instruction following or long-horizon planning is the bottleneck. If every model regresses, the change itself is more suspect. Conversely, hold the task model fixed and swap the model that proposes changes to compare updater quality directly. This two-way model swap locates where capability budget should be spent more effectively than a single post-evolution score.
+| Retention-set gain | Does the overall system improve on tasks excluded from evolution, and does it generalize? | Retention-set success rate, quality, and cost |
 
 Evaluation is not an examination performed after learning ends, but an indispensable part of self-evolution. Long-term evaluation should observe at least five types of outcomes simultaneously:
 
@@ -350,8 +308,6 @@ These tasks require changes to the evidence and supervision structure, not merel
 - **Preserve search diversity:** Open-ended search should not retain only the currently highest-scoring chain. The candidate pool should also preserve some lower-scoring but meaningfully different branches by mechanism, code novelty, or hypothesis type, so that every solution does not converge on the same easy-to-score template.
 - **Move human involvement upward:** Human input is not limited to approving dangerous tool calls. It also includes defining problems, reviewing evaluation criteria, interpreting anomalous results, and deciding when to stop. With ambiguous feedback, these high-level judgments are harder to automate—and more valuable—than taking over individual execution steps.
 
-The same limitation appears in ordinary software engineering. Passing every unit test proves only that currently observable behavior satisfies the tests; it does not prove that the codebase will remain maintainable months later. That is why the previous section treats long-term engineering quality as an independent metric rather than expecting present task success to cover delayed externalities. The ceiling of continual evolution is ultimately set by whether the system can evaluate what it actually cares about, not merely the easiest proxy to measure.
-
 ### Safety Boundaries for Continual Evolution
 
 An Agent’s self-evolution capability can turn a single error into a long-term risk. **If Prompt injection in web pages, email, or tool output is summarized as experience**, it may take effect repeatedly across sessions. If a malicious package found through automated search is wrapped as a tool, its impact can spread from one sandbox run to every subsequent task. A defective verifier may also continue approving candidates that appear to improve but actually regress. An Agent self-evolution system must therefore ask not only whether a candidate is stronger, but also who may modify what and what evidence justifies the change.
@@ -373,17 +329,6 @@ A typical sleep-learning cycle has five steps:
 3. **Collect and consolidate:** Find new signals in recently evaluated trajectories, merge duplicates, mark conflicts and applicability conditions, and prefer local patches.
 4. **Validate and approve:** Evaluate candidates on transfer, retention, and safety sets; high-risk writes wait for human approval.
 5. **Prune and index:** Update retrieval indexes and mark capabilities that are long unused or contradicted by new evidence as expired, archived, or deleted, while retaining provenance and rollback versions.
-
-**Sleep-time consolidation:**
-
-```python
-while sleep_gate_is_open():
-    batch = load_new_evaluated_trajectories()
-    proposals = consolidate(batch, current_capabilities)
-    for proposal in proposals:
-        validate_canary_and_promote_or_rollback(proposal)
-    prune_stale_entries_but_keep_provenance()
-```
 
 User memory is the most intuitive example, but it must be distinguished from action experience. Claude Code’s auto memory maintains a `MEMORY.md` index and topic-specific detail files for each project. At session startup it loads only a bounded prefix of the index and reads the remaining content on demand; when the index approaches its limit, the Agent is instructed to merge or move details elsewhere. This shows that even plain-text memory requires capacity limits, layered loading, and active organization. The currently documented mechanism primarily writes memory during sessions and should not simply be equated with a fixed nightly background task[^claude-code-memory].
 

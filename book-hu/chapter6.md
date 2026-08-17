@@ -38,11 +38,9 @@ A négy szakasz ugyanazt az alapelem-készletet osztja meg — **ébresztés, bi
 
 **Az olvasási sorrendben van egy szándékos elrendezés: ez a fejezet a hangnak érezhetően több teret szentel, mint az utána következő két forgatókönyvnek.** A valós idejű interakció fejlődési vonalán a hang jutott a legmesszebb, és ez a legérdemesebb vonatkoztatási rendszer: a „soros csővezeték késleltetése túl nagy" problémától indulva, a végponttól végpontig tartó modelleken, a teljes duplexen és a beszéd közbeni gondolkodáson át egészen a mai, viszonylag kiforrott végállapotig — a probléma → megoldás → végállapot út egésze már bejárt. Ezért ezt tárgyaljuk ki alaposan, a későbbi Computer Use és robotika pedig ehhez a vonalhoz mérve olvasható: melyik hol tart rajta, és hol akadt el.
 
-Az pedig, hogy a fejezet az **aszinkronnal és az eseményvezérléssel** nyit, azért van, mert ez áll legközelebb az olvasóhoz: a modalitás még mindig tiszta szöveg, csak az időzítés változik. Ez az első lépés kifelé az előző öt fejezet körökre osztott világából, és az első hely, ahol a „körökre osztottság feltevése" tétel földet ér.
-
 ## Aszinkron és eseményvezérelt: amikor a világ kopogtat be
 
-A 4. fejezetben tárgyalt észlelési, végrehajtási és együttműködési eszközöket mind maga az Ügynök hívja meg — ő dönti el, mikor nézzen oda és mikor cselekedjen. Ez a szakasz az időzítési tengely leglassabb végére vált: hogyan kezel az Ügynök órákig, sőt napokig tartó feladatokat, és hogyan reagál a bármikor beérkezhető külső eseményekre? Ehhez eseményvezérelt aszinkron architektúra kell; az 1. fejezet öt eszközkategóriájából megmaradó kettő pedig — az eseményindított és a felhasználói kommunikációs eszközök — éppen erre az architektúrára támaszkodva fejti ki hatását, ezért ebben a szakaszban együtt tárgyaljuk őket.
+A 4. fejezetben tárgyalt érzékelési, végrehajtási és együttműködési eszközöket mind az ügynök hívja meg. Hogyan reagáljon az ügynök a bármikor beérkező külső eseményekre? Ehhez eseményvezérelt aszinkron architektúra kell. Az 1. fejezet két fennmaradó eszközosztálya—az eseményindító és a felhasználói kommunikációs eszközök—erre az architektúrára épül, ezért ezeket is itt tárgyaljuk.
 
 ### Miért Van Szükség Aszinkron Működésre
 
@@ -176,23 +174,6 @@ A keménykódolt szabályoknak korlátai vannak; az esemény szemantikája dikt�
 
 A következő kísérlet, egy eseményvezérelt e-mail feldolgozó Agent, a fent tárgyalt eseménykezelési stratégiákat valósítja meg futtatható implementációként.
 
-**Eseményhurok-útválasztás:**
-
-```python
-while runtime.is_alive:
-    events = queue.take_batch()
-
-    if any(is_urgent(event) for event in events):
-        cancel_at_safe_point(current_work)
-    elif has_independent_fast_query(events):
-        start_parallel_session(events)
-    else:
-        append_to_trajectory(events)
-
-    decision = LLM(context + trajectory)
-    dispatch(decision)
-```
-
 > **6-1. ★★★ Kísérlet: Eseményvezérelt E-mail Feldolgozó Agent**
 >
 >
@@ -298,11 +279,9 @@ A robotika területén a VLA (Vision-Language-Action, lásd 6. fejezet) modellek
 
 Ennek az aszinkron RL képzésnek az eléréséhez új infrastruktúra szükséges: egy aszinkron környezeti szimulátor (olyan forgatókönyvek generálása, mint a késleltetett eszközvisszatérések, véletlenszerű felhasználói megszakítások, stb.) és specializált jutalmak az aszinkron képességekhez (a rendezetlen trajektóriák helyes megértése, a megszakított gondolatok sikeres folytatása, hallucinációk elkerülése, kötegelt események átfogó feldolgozása).
 
-A folyamatos gondolkodás (continuous thinking) azonban nem kell, hogy megvárja a következő generációs modelleket. Egy vékony réteg összehangolási logika (körülbelül kétszáz sor) képes egy "kész" szöveges gondolkodó modellt azonnal "folyamatos idejű" Agentté alakítani[^ch6-async-1] – szépen áthidalva a fenti "mérnöki megoldás" és "modell evolúció" feleket. A mechanizmus a 4. szabály továbbfejlesztése: ahelyett, hogy "eldobnánk" egy félkész gondolatot a megszakításkor, építsük fel a teljes interakciót "egy megszakítatlan gondolatfolyamként" – bármely pillanatban erőszakosan zárjuk be a `<think>` blokkot, amelyet a modell ír, injektáljuk az újonnan érkezett megfigyelést (egy eszköz visszatérése, egy felhasználói megszakítás, egy friss felismerési eredmény) normál üzenetként, és hagyjuk, hogy a modell folytassa a dekódolást. Ez kihasznál egy olyan erőforrást, amely általában kárba vész: egy modell több ezer tokent képes generálni másodpercenként, míg egy eszközhívás vagy egy felhasználói megnyilvánulás több másodpercig tart – ezek a várakozások "ingyenes számítási kapacitást" jelentenek, amely előre gondolkodásra használható. Két viselkedés jelenik meg: "gondolkodás várakozás közben" – ahelyett, hogy megvárná az eszköz visszatérését vagy a felhasználó befejezését, a modell a már meglévő részleges információkon érvel, akár korán elindítva a következő eszközhívást (ezt a "megelőlegező gondolkodás" tendenciát nulla felvétellel (zero-shot) reprodukálták több modellcsaládban; az adatokért lásd a lábjegyzetben hivatkozott tanulmányt); és "gondolkodás cselekvés közben" – a gondolkodás folytatása a kimenet előállítása közben, képes korrigálni magát a cselekvés során.
+A folyamatos gondolkodáshoz nem kell megvárni a következő modellgenerációt. Mintegy kétszáz sornyi összehangolás egy **meglévő** szöveges érvelőmodellt **folyamatos idejű** ügynökké alakíthat, összekötve a fenti mérnöki kerülőutat a modellfejlődéssel. Ez a 4. szabály továbbfejlesztése: a megszakított gondolattöredék eldobása helyett az interakció egyetlen megszakítás nélküli gondolatfolyam. A futtatókörnyezet lezárhatja az aktuális `<think>` blokkot, közönséges üzenetként beillesztheti az új megfigyelést—eszközeredményt, felhasználói megszakítást vagy felismerési frissítést—, majd folytathatja a dekódolást.
 
-De a kutatás kritikusabb fele a "képzést" érinti, és ez válaszol a fenti "modell evolúció előrejelzése" felhívásra: az összehangolás önmagában lehetővé teszi a folyamatos gondolkodást; hogy az "hasznossá" válik-e, az a képzési jeltől függ. A kutatás azt találta, hogy egy "LLM-as-judge" stílusú jutalommal a modell megtanulja elrejteni gondolatait – csendet cserélve a bíró jóváhagyására –, miközben a objektív mérőszámok valójában romlanak; csak az ellenőrizhető célkitűzések, amelyek védik az információ lefedettséget, teszik kifizetődővé a folyamatos gondolkodást. Dióhéjban: **az összehangolás lehetővé teszi a viselkedést; a képzés teszi jóvá a viselkedést** – ami megerősíti e szakasz ítéletét, hogy az aszinkron képességet végső soron a helyes képzésen keresztül kell megszilárdítani, nem pedig örökké prompt engineeringgel javítgatni.
-
-[^ch6-async-1]: Az az állítás, hogy körülbelül kétszáz sor összehangolás képes egy kész gondolkodó modellt folyamatos idejű Agentté alakítani, és hogy "a képzési jel határozza meg, hogy a folyamatos gondolkodás hasznos-e", Li, Bojie és Noah Shi *Never Stop Thinking: Continuous-Time Language Agents* című, 2026-ban megjelenő művéből származik.
+Egy gyakran elpazarolt erőforrást használ ki: a modell másodpercenként több száz tokent generálhat, miközben egy eszközhívás vagy a felhasználó megszólalása több másodpercig tarthat. Ez a várakozás gondolkodásra fordítható. Az ügynök így **várakozás közben gondolkodhat**—részleges információból folytathatja, sőt korán elindíthatja a következő eszközt—, és **cselekvés közben gondolkodhat**—kimenet közben tovább érvelhet, és félúton javíthatja a cselekvést.
 
 > **6-2. ★★★ Kísérlet: Aszinkron Agent Párhuzamos Végrehajtással és Megszakítási Képességekkel**
 >
@@ -319,6 +298,8 @@ De a kutatás kritikusabb fele a "képzést" érinti, és ez válaszol a fenti "
 > **3. Megszakítási Mechanizmus**: A felhasználó "stop" parancsa azonnal megszakítja a végrehajtási folyamatot, és lemondja az aszinkron eszközt. "Validációs Forgatókönyv": Az Agent egy hosszú feladatot hajt végre. A felhasználó elküldi: "Mégse." Az Agent azonnal leáll, és a trajektória rögzíti a megszakítási eseményt és a lemondási műveletet.
 >
 > **4. Párhuzamos Eszközök Lemondása és Állapotlekérdezése**: Miután egy aszinkron eszköz befejeződött, a valódi eredmény egy új eseményen keresztül kerül a beszélgetésbe. Támogatja a lemondást vagy az előrehaladás lekérdezését feladat azonosító alapján. "Validációs Forgatókönyv": A felhasználó kéri: "Futtasd nekem ezt a három szkriptet egyszerre. Amelyik előbb befejeződik, ellenőrizd a maradék szkriptek előrehaladását. Ha valamelyik nem haladta meg az 50%-ot, mondd le." A három szkript elemzési folyamatokat szimulál, folyamatosan 3%, 2% és 1% sebességgel adva ki az előrehaladást másodpercenként. Az Agent három aszinkron terminálparancsot indít egyszerre. Amikor a 3%/másodperc sebességű szkript körülbelül 33 másodperc alatt befejeződik, az Agent lekérdezi a maradék két terminál állapotát, az egyiket körülbelül 66%-os, a másikat körülbelül 33%-os előrehaladással találva. Ezután lemondja azt, amelyik nem haladta meg az 50%-ot. Miután mindkét terminál befejeződött, integrálja az eredményeket egy teljes jelentés létrehozásához.
+
+Az aszinkron, eseményvezérelt végrehajtás lehetővé teszi, hogy a világ bármikor felébressze az ügynököt, de feltételezi, hogy a modell befejezheti a gondolkodást, mielőtt válaszol. A következő három szakasz ezt kérdőjelezi meg: ha a környezet a modell generálási sebességével azonosan vagy annál gyorsabban változik, az „előbb gondolkodj, aztán beszélj” elfogadhatatlan késleltetéssé válik.
 
 ## Hang: A legtermészetesebb ember-gép interfész
 
@@ -340,21 +321,7 @@ A közös cél az „egymás után beszélünk” feltételezés és a VAD szól
 
 [^ch6-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/. A háromosztatú besorolás a ChatGPT Voice három generációjának összefoglalásából származik; az Omni a „turn-based voice models” kategóriának felel meg.
 
-**Streaming megszakítása:**
-
-```python
-while audio_is_arriving:
-    partial = asr.push(audio_chunk)
-    if endpoint_is_probable(partial):
-        candidate = llm.start(partial)
-        if later_audio_changes_meaning(partial):
-            cancel(candidate)                 # speculative cancellation
-        else:
-            tts.enqueue_stable_segments(candidate)
-
-on_final_transcript(text):
-    commit_or_restart(text)
-```
+Amikor egy kaszkádrendszer soros végrehajtásról streamingre vált, nem az a legfontosabb, hogy minden függvény `async` legyen, hanem hogy **az inkrementális eredmények érvénytelenné válhassanak és megszakíthatók legyenek**.
 
 ### Paradigma 1 · Kaszkádolt csővezeték
 
@@ -377,11 +344,7 @@ Rövid válasznál is sorosan összeadódik a VAD, ASR, LLM és TTS várakozása
 
 > **6-3. kísérlet ★: Hagyományos hangügynök építése**
 >
-> WebSocketen keresztül kapcsoljuk össze a mikrofont, a Silero VAD-ot, a helyi Whisper-t, a streaming LLM-et és a Fish S1 TTS-t. A megőrzött valódi egyfordulós bizonyíték a teljes lánc futását mutatja, nem párhuzamossági vagy éles terhelési benchmark. Kód és elfogadási rekord: [chapter6/live-audio](../chapter6/live-audio/).
-
-> **Kiegészítő projekt: WebRTC-hangügynök, amely „felhívja a felhasználót”**
->
-> PSTN nem szükséges: a böngészős WebRTC megnyitja a munkamenetet, bekéri a hiányzó adatokat, visszamondja azokat megerősítésre, majd strukturált eredményt ment. Külső szervezethez ugyanazt a szerződést megfelelő PSTN/SIP-szolgáltatóra cseréljük. A projekt történeti exp9-2 azonosítókat őriz, de nem foglal számozott helyet a kéziratban. Lásd [chapter6/phone-agent](../chapter6/phone-agent/).
+> WebSocketon keresztül kösd össze a mikrofont, a Silero VAD-ot, a helyi Whispert, egy streamelő LLM-et és a Fish S1 TTS-t a kaszkádos alapvonal felépítéséhez.
 
 #### A sorostól a streaming észlelésig
 
@@ -395,7 +358,7 @@ A végpont eldöntése beépíthető a streaming felismerőbe, de a címkék csa
 
 > **6-4. kísérlet ★: Streaming hangészlelés szimulációja Qwen2-Audio-val**
 >
-> A Qwen2-Audio nem streaming modell. Növekvő hangprefixekkel szimuláljuk a folyamatos észlelést, és 600 ms VAD + Whisper kontrollal hasonlítjuk össze. A canonical run csak 2/6 várt viselkedést reprodukált, 8,4–11,3 másodpercig tartott, a pause mintán kihagyta a silence-t, a noise mintát cough/laughter-ként tévesztette. Ez mechanizmus- és hibamód-vizsgálat, nem 100–200 ms-os streaming ígéret. Lásd [chapter6/streaming-speech](../chapter6/streaming-speech/).
+> A Qwen2-Audio önmagában nem streamelő modell. A kísérlet növekvő hangelőtagokkal szimulálja a folyamatos érzékelést, és 600 ms-os VAD + Whisper megoldással hasonlítja össze.
 
 ### Paradigma 2 · Végponttól végpontig tartó omnimodális modellek (Omni)
 
@@ -409,17 +372,7 @@ A valós idejű hang API-k köztes megoldások: natívan kezelik a hangot, de VA
 
 > **6-5. kísérlet ★★: MiniCPM-o 4.5 helyi futtatása — end-to-end és önkaszkád**
 >
-> Rögzítsünk egy revíziót, kapcsoljuk ki a thinking mode-ot, és hasonlítsuk össze a közvetlen hangválaszt a transzkripció utáni válasszal. Ez az audio-információ megőrzését méri, nem a későbbi „gondolkodás beszéd közben” képességét.
-> 6-1. táblázat: MiniCPM-o 4.5 helyi eredményei: end-to-end és önkaszkád (négy mechanizmus-ellenőrzés, nem benchmark)
->
->
-> | Feladat | End-to-end | Önkaskád | Megfigyelés |
-> | --- | ---: | ---: | --- |
-> | Szemantikus számtan (2) | 1/2 | 2/2 | Egy átírási hibát kijavít |
-> | Paralingvisztikai beszédtempó (2) | 2/2 | 1/2 | A szöveg eltörli a gyors/lassú különbséget |
-> | Összesen | 3/4 | 3/4 | Azonos összeg, kiegészítő hibák |
->
-> A minta kicsi; nem bizonyít általános pontossági vagy sebességi sorrendet. Teljes bizonyíték: [chapter6/end-to-end-speech](../chapter6/end-to-end-speech/).
+> Futtasd helyben a MiniCPM-o 4.5-öt kikapcsolt thinking mode-dal, és hasonlítsd össze a közvetlen hangalapú választ azzal az önkaszkáddal, amely ugyanazzal a modellel előbb átír, majd válaszol. Ez azt méri, megmarad-e a hanginformáció, **nem** a későbbi „beszéd közbeni gondolkodást”.
 
 Step-Audio 2 nyers hangból szöveget és hangot állít elő; a Step-Audio R1 a következtetést is a hangmodellbe építi.
 
@@ -428,8 +381,6 @@ Step-Audio 2 nyers hangból szöveget és hangot állít elő; a Step-Audio R1 a
 Az Omni a „felhasználó beszél” és a „modell beszél” időszakára osztja a párbeszédet, de a szinkrontolmácsolás átfedést igényel. A teljes duplex folyamatosan hallgat és beszél, és eldönti, folytatja-e, szünetel-e, megszakít-e vagy eszközt hív. A Kyutai Moshi korai példa; a Thinking Machines Lab Interaction Modelnek[^ch6-14] nevezi a modellbe épített interakciót. A GPT-Live ezt termelési méretre viszi.
 
 [^ch6-14]: Thinking Machines Lab, “Interaction Models: A Scalable Approach to Human-AI Collaboration,” 2026-05. https://thinkingmachines.ai/blog/interaction-models/
-
-A történet: a kaszkád csendküszöbbel tippeli a fordulót, a streaming szemantikai szintre emeli a döntést, a teljes duplex pedig folytonos döntéssé alakítja az átváltást.
 
 ### Kognitív időzítés: valós idejű interakció és mély gondolkodás
 
@@ -459,10 +410,7 @@ A harmadik terv a gondolkodási képességet közvetlenül a végponttól végpo
 
 Ideális esetben a modellnek a hangmagasságból, a ritmusból és a hanglejtésből kellene megítélnie az érzelmet, nem pusztán az átiratból. Az úgynevezett „szöveggel helyettesített gondolkodás" azt jelenti, hogy a modell a dallam és az akusztikai jellemzők elemzése helyett a dalszöveg negatív szavaira támaszkodik. Az MGRD kiszűri azokat a gondolatmeneteket, amelyek valóban akusztikai jellemzőkre hivatkoznak, ezekkel az adatokkal tanítja a modellt, és megerősítéses tanulással akadályozza meg, hogy a modell átugorja a gondolkodást és egyből tippeljen.
 
-Az MPS-ben a fogalmazó agy folyamatosan gondolatfoszlányokat termel, a kifejező agy pedig, amint megkap egy foszlányt, a már elhangzott válasszal együtt azonnal beszédet generál. A kettő futószalagszerűen párhuzamosan működik, így nem kell megvárni a teljes gondolatmenet végét ahhoz, hogy a felhasználó meghallja az első mondatot (6-11. ábra).
-
-
-![6-11. ábra: A Step-Audio R1 MGRD és MPS kétagyú architektúrája](images/fig6-11.svg)
+Az MPS-ben a fogalmazó agy folyamatosan gondolatfoszlányokat termel, a kifejező agy pedig, amint megkap egy foszlányt, a már elhangzott válasszal együtt azonnal beszédet generál. A kettő futószalagszerűen párhuzamosan működik, így nem kell megvárni a teljes gondolatmenet végét ahhoz, hogy a felhasználó meghallja az első mondatot.
 
 
 Az egyesített modell valósítja meg a legszorosabban a „gondolkodás beszéd közben" elvét, ára viszont az, hogy a gondolkodást és a valós idejű kifejezést együtt kell újratanítani; a szétcsatolt út esetén könnyebb kicserélni a háttéragyat, az egyesített út pedig inkább a végletekig természetes hatásra törekvő, célzott forgatókönyvekhez való. A kettő kompromisszum, nem pedig egyszerű helyettesítője egymásnak.
@@ -488,31 +436,17 @@ A Computer Use, más néven GUI automatizálás, lehetővé teszi a mesterséges
 3.  A végrehajtási réteg végrehajtja a cselekvést a valós környezetben (egér mozgatása, kattintás, szöveg beírása stb.).
 4.  Megvárja a felület válaszát, újabb képernyőképet készít, és belép a ciklus következő iterációjába.
 
-**Computer Use biztonsági ciklus:**
+Itt külön kell választani **a felület megértését** és **a feladat elvégzését**. Az előbbi közelebb áll a multimodális megértéshez, és egyetlen képernyőképre épülő kérdés-válasszal mérhető; az utóbbihoz a modellnek zárt ciklusba kell kapcsolnia a megértést és a cselekvésgenerálást, kezelve az oldalbetöltést, az állapotváltozásokat, a hibákat és a visszafordíthatatlan következményeket. A Computer Use nehézsége ezért nem pusztán a képernyőképre adott helyes válasz, hanem annak minden lépés utáni újbóli ellenőrzése, hogy a valóság még megfelel-e a tervnek.
 
-```python
-observation = capture_screenshot_and_accessibility_tree()
-proposal = model.decide(task, observation)
-action = validate_schema_and_coordinates(proposal)
-
-if action.is_irreversible and not user_or_policy_approval(action):
-    stop("approval required")
-else:
-    execute_in_sandbox_or_scoped_session(action)
-    new_observation = capture_after_settle()
-    if not verify_goal_progress(new_observation, action):
-        rollback_if_possible_or_replan()
-```
-
-![6-12. ábra: Computer Use ügynök Érzékel-Gondolkodj-Cselekedj ciklusa](images/fig6-12.svg)
+![6-11. ábra: Computer Use ügynök Érzékel-Gondolkodj-Cselekedj ciklusa](images/fig6-11.svg)
 
 Ebben a ciklusban három kulcsfontosságú tervezési dimenzió van: "Cselekvési Tér" (milyen műveleteket végezhet az ügynök), "Vizuális Helymeghatározás" (hogyan találja meg a cél elemet a képernyőképen), és "Modell Architektúra" (hogyan generálja a helyes cselekvést a képernyőképből).
 
 ### Cselekvési Tér Tervezése
 
-Az Anthropic három eszköztípust határoz meg, amelyek teljes interakciós képességet alkotnak (6-12. ábra):
+Az Anthropic referencia-megvalósítása három eszköztípusra bontja a teljes interakciós képességet (6-12. ábra). Ez világos cselekvésitér-terv, de nem olyan magánprotokoll, amelyet a modellszolgáltatóknak követniük kell: ha a Harness ugyanazokat a képernyőképeket, cselekvési korlátokat és végrehajtási eredményeket a célmodell által támogatott üzenetekké és strukturált kimenetekké tudja alakítani, akkor Claude, nyílt súlyú látásmodellek és saját üzemeltetésű végpontok is ugyanazt az Érzékel-Gondolkodj-Cselekedj ciklust vezérelhetik.
 
-![6-13. ábra: Computer Use cselekvési tér](images/fig6-13.svg)
+![6-12. ábra: Computer Use cselekvési tér](images/fig6-12.svg)
 
 **GUI Kezelő Eszköz** (`computer` eszköz): Egérműveletek: mozgatás (`mouse_move`), bal/jobb/középső kattintás, dupla- vagy háromszoros kattintás, húzás (`left_click_drag`), és pontosabb lenyomás/elengedés műveletek (`left_mouse_down` és `left_mouse_up`). Görgetés (`scroll`) négy irányt támogat, és kombinálható módosító billentyűkkel. Billentyűzetműveletek: karakterenkénti gépelés (`type`, 12 ms intervallummal a karakterek között a valódi gépelés szimulálására), billentyűkombinációk (`key`, pl. `Ctrl+C`), és billentyű lenyomva tartása (`hold_key`). Érzékelési műveletek: képernyőkép készítése, kurzorpozíció lekérése (`cursor_position`), várakozás (`wait`).
 
@@ -524,10 +458,7 @@ Az Anthropic három eszköztípust határoz meg, amelyek teljes interakciós ké
 >
 > Az A útvonal az Anthropic Computer Use Demót használja. A konténere teljes Ubuntu asztali környezetet csomagol böngészővel, terminállal és más gyakori eszközökkel. A front-end fogadja a feladatot, a back-end elküldi az utasításokat és a képernyőképeket a Claude-nak, majd végrehajtja a modell által visszaadott egér-, billentyűzet-, terminál- vagy szerkesztési műveleteket. Ez az útvonal a natív `computer` eszközprotokoll megértésére szolgál; nem követeli meg, hogy minden olvasó hozzáférjen az Anthropic API-jához.
 >
-> A B útvonal a könyv [`chapter6/computer-use-open-model`](../chapter6/computer-use-open-model/) kísérőprojektjét használja. Alapértelmezésben a nyílt súlyú Qwen3-VL 32B Instruct modellel vezérli a browser-use-t, az OpenRouter hosztolt API-ján keresztül, vagy úgy, hogy az `OPEN_MODEL_BASE_URL` értékét saját üzemeltetésű vLLM/SGLang vagy más kompatibilis végpontra állítja. A végpontnak képernyőképeket kell fogadnia és natív JSON Schema-t kell támogatnia; ha csak hagyományos JSON-t támogat, a schema-in-prompt kompatibilitási mód külön engedélyezhető.
->
-> Mindkét útvonal ugyanazt a csak olvasható feladatot és ugyanazt az elfogadási szerződést használja: legfeljebb 25 lépés, lépésenként egyetlen művelet, továbbá a modell/végpont azonosítójának, a szolgáltató nyers válaszainak, a lépésenkénti képernyőképeknek, a műveletsornak, a végső válasznak és a leállás okának megőrzése. Az eltérő modelleket külön kísérleti ágként kell jelenteni; nyílt modell eredménye nem tüntethető fel Claude-reprodukcióként, és a „konténer sikeresen elindult” sem tekinthető a feladat teljesítésének. A műveletek közötti idő és a tervezés minősége mérési eredmény, nem előzetes 2–5 másodperces feltételezés vagy más modellekkel szembeni szükségszerű fölény.
->
+> A B útvonal a [`chapter6/computer-use-open-model`](../chapter6/computer-use-open-model/) példakódját használja. Alapértelmezésben a nyílt súlyú Qwen3-VL 32B Instruct modellel hajtja a browser-use-t az OpenRouter hosztolt API-ján keresztül, vagy az `OPEN_MODEL_BASE_URL` önálló vLLM/SGLang, illetve más kompatibilis végpontra irányításával.
 
 ### Vizuális Helymeghatározás
 
@@ -558,7 +489,7 @@ Elemek:
 
 A modellnek csak egy azonosítót kell kiadnia, és a rendszer automatikusan rákattint a megfelelő elem középpontjára. Ez a megközelítés nem takarít meg tokeneket, mert minden annotációs adatot el kell küldeni a modellnek, de pontos, stabil lokalizációt biztosít, elkerülve a szegmentációs modellek által bevezethető kihagyásokat és téves pozitívumokat.
 
-![6-14. ábra: Set-of-Mark vs. Strukturált Elemindexálás (browser-use implementáció)](images/fig6-14.svg)
+![6-13. ábra: Set-of-Mark vs. Strukturált Elemindexálás (browser-use implementáció)](images/fig6-13.svg)
 
 **Tiszta Koordináta Előrejelzés.**
 
@@ -566,27 +497,23 @@ A harmadik út kihagyja az annotációt, és megkéri a modellt, hogy közvetlen
 
 A koordináta-előrejelzési sémákban a modell koordináta-megértése nagymértékben függ a tanítás során használt felbontástól (6-14. ábra). A Claude-ot XGA (1024×768), WXGA (1280×800) és FWXGA (1366×768) felbontásokon tanították. Ha a bemeneti képernyőkép felbontása nem egyezik, a modell által előrejelzett koordináták szisztematikusan eltolódnak — mintha egy távolságot egy kis térképen mérnénk meg, majd közvetlenül egy nagy térképre alkalmaznánk. Ezért egy kétirányú koordináta-skálázó mechanizmust kell implementálni az eszköz rétegben, és a célfelbontást "a képarány alapján kell kiválasztani", hogy elkerüljük az egyenlőtlen nyújtást, amely torzítja a képet, és ezáltal torzítja a koordináta-ítéletet. Például, ha a tényleges képernyőfelbontás 2560×1440 (16:9), a Claude három támogatott opciója közül a legmegfelelőbb cél az FWXGA (1366×768), amelynek képaránya a legközelebb van a 16:9-hez. A képernyőképet arányosan 1366×768-ra skálázzák és táplálják a modellbe; miután a modell kiadja a kattintási koordinátákat (683, 384), azokat visszafejtik a valós koordinátákra (683×2560/1366, 384×1440/768) ≈ (1280, 720). Ezzel szemben, ha egy 16:9-es képet erőszakosan 4:3-as 1024×768-ra nyújtanak, a kép vízszintesen összenyomódik, ami a modell által előrejelzett koordináták szisztematikus eltolódását okozza.
 
-![6-15. ábra: Felbontás-illesztés és kétirányú koordináta-skálázás](images/fig6-15.svg)
+![6-14. ábra: Felbontás-illesztés és kétirányú koordináta-skálázás](images/fig6-14.svg)
 
 A három út közötti választás a következőképpen foglalható össze: **ha strukturált információ áll rendelkezésre, részesítsük előnyben a DOM/akadálymentesítési fa indexálást** a legpontosabb és legstabilabb lokalizáció érdekében. "Ha nem áll rendelkezésre" — natív asztali szoftverekben, például Photoshop, canvas/WebGL renderelt felületek vagy játékok esetén — **használjunk vizuális annotációt (az eredeti SoM utat) vagy koordináta előrejelzést**. A vizuális annotáció többválasztásos problémává alakítja a lokalizációt, ami barátságosabbá teszi az általános célú modellek számára specializált tanítás nélkül. A koordináta előrejelzés kiküszöböli az annotációs lépést, és közvetlenebb a kifejezetten GUI lokalizációra tanított modellek számára. Mindkét megközelítés továbbra is küzd a kis elemekkel és a sűrű felületekkel.
 
 > **6-8. kísérlet ★: A browser-use használata automatizált böngészőműveletekhez**
 >
-> A Playwright böngésző-automatizálási keretrendszert multimodális modellel kombinálva természetes nyelvvel vezérelt böngészőműveleteket valósítunk meg. Engedélyezzük az SoM-vizualizációt, és minden döntés előtt elmentjük a jelölt határolókereteket tartalmazó képernyőképet. A modellinterfész nem korlátozódik az OpenAI-ra vagy az Anthropicra; a könyv API-konfigurációt ad a nyílt Qwen3-VL modellhez, és általános, OpenAI-kompatibilis base URL-t tart fenn más hosztolt szolgáltatásokhoz vagy saját üzemeltetésű következtetéshez.
+> A Playwright böngésző-automatizálási keretrendszert multimodális modellel kombinálva valósíts meg természetes nyelvvel vezérelt böngészőműveleteket. Engedélyezd a SoM-megjelenítést, és minden döntés előtt ments jelölőkeretes képernyőképet.
 >
-> Tesztfeladat: „Nyisd meg a Google-t, és keresd meg San Francisco időjárását.” Indítás után a képernyőkép a Google keresőoldalt mutatja számozott interaktív elemekkel. A modell kiválasztja a keresőmezőt, beírja a „San Francisco weather today” szöveget, elküldi a keresést, majd kinyeri a hőmérsékletet és az időjárási viszonyokat az eredményoldalról. Az átvétel során függetlenül ellenőrizni kell a választ és a műveletsort, valamint a tényleges lépésszámot és eltelt időt kell rögzíteni. Az „5 lépés, körülbelül 20 másodperc” csak egy adott futás megfigyelése lehet, végrehajtási bizonylat nélkül nem rögzített eredmény.
->
-> A könyvben megőrzött hivatalos nyíltmodelles futás az OpenRouter `qwen/qwen3-vl-32b-instruct` modelljét használta. Amikor a modell a Google-keresés 4. lépésében CAPTCHA-val találkozott, nem állította, hogy sikerrel járt, hanem átváltott a weather.com oldalra. Végül a 16. lépésben San Francisco Today oldaláról a következőket olvasta ki: 64°F, Sunny, 62°F hőérzet, 74°F maximum és 55°F minimum. Mind a 16 API-válasz a kért Qwen3-VL modellt jelezte, a 15 érvényes lépésképernyőkép és a csak olvasható műveletsor pedig átment a független, determinisztikus átvételen. Ez az eredmény bizonyítja, hogy a nyíltmodell-API útvonala működik; nem jelenti az Anthropic natív `computer` eszközét használó kísérleti ág reprodukálását.
+> Tesztfeladat: „Nyisd meg a Google-t, és keresd meg San Francisco időjárását.” Indítás után a képernyőkép a Google keresőoldalát és számozott interaktív elemeit mutatja. A modell kiválasztja a keresőmezőt, beírja a „San Francisco weather today” szöveget, elküldi a keresést, majd kiolvassa a hőmérsékletet és az időjárást a találati oldalról.
 
 ### Egy Computer Use ügynök, aki animációkat nézhet és hangot hallhat
 
-Eddig a Computer Use érzékelés egy implicit feltételezésen nyugodott: "a képernyő statikus" — készítsünk egy képernyőképet, gondolkodjunk a következő lépésről, kattintsunk, és készítsük a következő képernyőképet. A valódi képernyők videókat játszanak le, másodpercek alatt eltűnő értesítéseket villantanak fel, és hangot játszanak le értekezletekről. Egy ügynök, aki csak 3-5 másodpercenként nyitja ki a szemét, és nincs füle, vak és süket mindenre, ami két képkocka között történik. Képernyőfelvétel nézése, értekezlethez csatlakozás, hangutasítás követése, egy párbeszédablak elkapása, mielőtt eltűnik — a mindennapi számítógépes munka egész kategóriája gyakorlatilag elérhetetlen a mai Computer Use ügynök számára.
+A Computer Use érzékelése eddig egy hallgatólagos feltételezésre épült: **a képernyő áll**—képernyőkép, egy lépés átgondolása, kattintás, majd újabb kép. A valós képernyők videót játszanak, felvillanó értesítéseket és értekezletek hangját közvetítik. Egy ügynök, amely csak 3–5 másodpercenként nyitja ki a szemét, és nincs füle, nem látja és nem hallja, mi történik két képkocka között.
 
-Amit itt valóban újra kell tervezni, az nem a "cselekvési interfész", hanem az „észlelési interfész”[^ch6-9]. A magötlet az "észlelés" (folyamatos, adaptív, multimodális) leválasztása a "cselekvésről" (diszkrét), létrehozva egy perceptuális köztes réteget, amely a környezet és bármely polcról beszerezhető Computer Use modell közé ül anélkül, hogy újratanítást igényelne. Nevezzük ezt Ügynök-Számítógép Észlelési Interfésznek (AOI). Három "kapuzott" komponense van: Először is, "képkockák közötti kulcskocka rögzítés" — használjunk egy nagyon olcsó pixel-kaput a szinte változatlan képkockák kihagyására, majd egy kis modellt annak meghatározására, hogy történt-e értelmes változás, rögzítve egy képkockát csak akkor, ha van változás, ami közel nulla költséget eredményez a statikus képernyőkhöz; Másodszor, "hangerő-kapuzott beszédátírás" — csak akkor hívjuk a beszédfelismerést, ha van hang, először adva "füleket" az ügynöknek; Harmadszor, és ami a legkritikusabb, "az észlelések átalakítása perzisztens szöveges leírásokká" — kérjük meg a modellt, hogy egyetlen mondatban írja le a rögzített képkockát (pl. "A felugró ablak éppen azt mondta, hogy a kiadási dátumot április 28-ra módosították"), és **még ha az eredeti kép később el is távolításra kerül a kontextusból, ez a szöveg megmarad a memóriában**, továbbvíve a dinamikus információt szöveges formában.
+Nem a cselekvési, hanem a **megfigyelési interfészt** kell újratervezni[^ch6-9]. Az ügynök–számítógép megfigyelési interfész (AOI) a környezet folyamatos megfigyelését a modell számára kezelhető diszkrét eseményekké alakítja. Fő technikái: **képkockák közötti kulcskép-rögzítés**, amely átugorja a szinte változatlan képet, és kis modellel csak a jelentős változásokat tartja meg; **hangerővezérelt beszédátírás**, amely csak hang esetén fut; valamint **a képkockák szöveges leírása**, amely az eredeti kép kontextusból való törlése után is megmarad, tömörítve a multimodális előzményt.
 
-A nem intuitív megállapítás az, hogy ami igazán számít, az nem a képkocka kiválasztása, hanem a kiválasztott képkockák átalakítása perzisztens szöveggé, mert a szöveg az a modalitás, amelyet az LLM-ügynökök a legjobban kezelnek. Nyolc modellen keresztül, a 7B paraméteres modellektől a frontvonalbeli rendszerekig, ez a köztes réteg +17 és +48 százalékpont közötti nyereséget biztosított minden újratanítás nélkül, a legnagyobb különbséggel a hangfeladatoknál: az észlelési réteggel az ügynök végre el tudta végezni azokat a hangfeladatokat, amelyek korábban "hallhatók, de nem végrehajthatók" voltak. Azonban nem egy mindenre egyformán jó konfigurációról van szó — néhány újabb modellen a túl sok képkocka token beszúrása kiszorítja az érvelést, és rontja a teljesítményt. Ezért a komponenseket "modellenként kell kiválasztani", nem egyszerre bekapcsolni. Ugyanaz a lecke, mint a Set-of-Mark versus koordináta előrejelzés kompromisszuma: nincs ezüstgolyó az észlelési sémákban; konfigurálni kell őket a modell természetéhez.
-
-[^ch6-9]: A három komponens — kapuzott kulcskockák, igény szerinti átírás, képkockák narrálása perzisztens szöveggé — teljes mechanizmusáért és modellenkénti ablációjáért lásd Bojie Li és Noah Shi. *Agent-Computer Observation Interfaces Enable Dynamic Computer Use.* arXiv:2606.29472, 2026.
+[^ch6-9]: Lásd Li, Bojie and Noah Shi. *Agent-Computer Observation Interfaces Enable Dynamic Computer Use.* arXiv:2606.29472, 2026.
 
 ### Világmodellek a Computer Use-hoz
 
@@ -709,21 +636,6 @@ Az RT-2 és az OpenVLA diszkrét tokenekre szabdalja a folytonos műveletet, és
 
 Egy nagy modell rendszerint csak másodpercenként 1—10 alkalommal tud következtetni, míg egy hagyományos szabályozó másodpercenként több tíztől több ezerszer is frissülhet. Elterjedt mérnöki gyakorlat a „műveletdarabolás” (action chunking): a modell egyszerre a jövőbeli műveleteknek csak egy rövid szakaszát állítja elő, a vezérlőszál ezt a szakaszt nagy frekvenciával hajtja végre, a modell pedig a háttérben készíti elő a következőt. Így a következtetési várakozás egy része elrejthető a műveletek végrehajtási idejében. Az ára ez: minél hosszabb a szakasz, annál simább a mozgás, de annál kevesebb új jelenetet lát a modell ezalatt. Ha az XLeRobot kinyújtja a karját a pohárért, és a poharat útközben meglökik, akár folytathatja is a régi képből előállított műveletek végrehajtását. A műveletdarabolás tehát a simaság és a reakciósebesség közötti alku, nem pedig ingyen gyorsítás.
 
-A műveletdaraboláshoz rendszerint „előrejelzés—végrehajtás—megszakítás” vázra van szükség, nem pedig arra, hogy a szakaszt a végéig lejátsszuk:
-
-```python
-chunk = vla(current_observation, skill)
-for action in chunk:
-    low_level.execute(action)
-    if safety_event() or observation_changed_significantly():
-        low_level.stop()
-        discard_remaining(chunk)
-        reobserve_and_replan()
-        break
-```
-
-A rövid szakaszok gyorsabban reagálnak, de megsokszorozzák a modellhívásokat; a hosszúak simábbak, de hajlamosak elavult megfigyelést használni. A 6-12. kísérlet az ilyen alkukat hasonlítja össze a szimulátorban, a valódi hardver biztonsági határát pedig a 6-11. kísérlet érinti.
-
 ### A VLA Korlátai
 
 A „hosszú távú tervezés + VLA” használható alapterv, de néhány könnyen elnézhető problémát hátrahagy.
@@ -784,9 +696,7 @@ Attól, hogy a 6-12. kísérlet stabil a szimulátorban, a 6-11. kísérlet val�
 
 ## Fejezet Összefoglaló
 
-Amit ez a fejezet felszámolt, az az előző öt fejezet végig fenntartott előfeltevése: hogy az Ügynök és a világ felváltva beszél.
-
-A **modalitás** és az **időzítés** két tengelye mentén nézve a négy szakasz valójában ugyanannak az állításnak a kibontása négy időskálán. Az **aszinkron és eseményvezérelt** a megfigyelést az „Ügynök megy érte"-ből a „világ tolja oda"-ba, a cselekvést a „körön belül befejezni"-ből a „előbb indít, a végét esemény zárja"-ba terjeszti ki; a modalitás nem változik, csak az időzítés. A **hang** ezredmásodpercre szorítja le a skálát, és a kaszkád, a végponttól végpontig tartó Omni, valamint a teljes duplex három paradigmájának fejlődési fővonala éppen a „felváltva beszélés"-től a folyamatos hallgatás és beszéd felé vezet, munkamegosztást teremtve az előtér valós idejű interakciója és a háttér mély gondolkodása között. A **Computer Use** ugyanezt a zárt hurkot viszi a képernyőre, ahol a szűk keresztmetszet a „meg tudja-e csinálni a feladatot"-tól a műveleti hatékonyságig, a folytonos vizuális megértésig és a cselekvés utáni állapot-megerősítésig tágult. A **robotika** pedig a fizikai világba tolja tovább: a cselekvésdarabolás a simaság és a reakciósebesség között választ, a végén pedig azt, hogy elkészült-e, továbbra is új megfigyelésnek kell eldöntenie.
+A **modalitás** és a **végrehajtás időzítése** tengelyén nézve az **aszinkron, eseményvezérelt végrehajtás** a megfigyelést az „ügynök lekéri” formáról a „világ betolja”, a cselekvést pedig a „körön belül befejezi” formáról az „elindítja, majd későbbi események zárják le” formára bővíti. A **hang** ezredmásodpercekre szűkíti a skálát, a körváltástól a folyamatos hallgatás és beszéd felé halad, miközben különválasztja a gyors előtérbeli interakciót és a mélyebb háttérgondolkodást. A **Computer Use** a képernyőre viszi a hurkot, ahol a hatékonyság, a folyamatos vizuális megértés és a cselekvés utáni állapotellenőrzés is szűk keresztmetszet. A **robotika** a fizikai világba tolja, ahol a cselekvésdarabolás a simaságot és a reakcióképességet egyensúlyozza, a sikert pedig továbbra is új megfigyelésből kell megítélni.
 
 A négy szakasz ugyanazt a vezérlési vázat osztja meg:
 
@@ -799,9 +709,7 @@ folyamatos érzékelés
   → folytatás, javítás, újrapróbálás, leállás vagy újratervezés
 ```
 
-És ugyanazt az alapelem-készletet is: ébresztés, biztonságos pont, megszakítás, kiszorítás, gyors/lassú szétválasztás. Az eseményhurokban a „biztonságos ponton ellenőrizd a megszakítási jelet" és a cselekvésdarabolásban a „ha rendellenességet látsz, dobd el a maradékot és figyelj újra" ugyanannak a mechanizmusnak két megvalósítása öt nagyságrendnyi időskála-különbséggel; az előtér gyors és a háttér lassú modelljének munkamegosztása, valamint az aszinkron Ügynök „előbb adj vissza egy feladatazonosítót, a végét majd egy esemény zárja" megoldása szintén ugyanannak a dolognak két írásmódja.
-
-Érdemes észben tartani, hogy e mechanizmusok többsége egyelőre mérnöki kényszermegoldás. A helykitöltő protokollok, az állapotsáv eseményjelölései, az elővételezett gondolkodás megszakítása és visszagörgetése lényegében mind orkesztrációs logikával pótolják azt az aszinkron tapasztalatot, amely hiányzik a modell tréningeloszlásából. A modell oldalán zajló haladás ennek egy részét már a paraméterekbe húzza be — az interakciós modellek a megszakítást és a közbevágást a modell belsejébe építették, a folyamatos gondolkodás pedig lehetővé tette a „hallgatás közbeni gondolkodást" a következő modellgeneráció kivárása nélkül —, de amíg a tréningkorpuszok túlnyomórészt körökre osztottak maradnak, ez a kompenzációs réteg nem tűnik el: csak folyamatosan új határokra vándorol a modellképesség előrehaladtával.
+Ugyanazokon a primitíveken is osztoznak: ébresztés, biztonságos pontok, megszakítás, kiszorítás, valamint gyors/lassú szétválasztás.
 
 Ez a fejezet befejezte az „Ügynök építése" rész utolsó darabját: a megfigyelési és a cselekvési tér mindhárom irányban — tartalom, modalitás és időzítés — kibontakozott. A következő három fejezet más kérdés felé fordul: honnan tudjuk, hogy mindez jól épült-e meg, és hogyan tesszük folyamatosan jobbá.
 

@@ -53,20 +53,6 @@ Ez az első kulcsfontosságú felismerés, amit meg kell érteni ebben a fejezet
 
 Ha ezt megértetted, az "SFT memorizál" természetesen következik: Az SFT optimalizációs célja, hogy **maximalizálja a címkézett válasz minden egyes tokenjének valószínűségét** – leegyszerűsítve "tanuld meg kívülről ezt a standard választ". Ugyanarra a kérdésre a modellt arra tréningezzük, hogy a lehető legpontosabban reprodukálja a demonstrációt. A világos célokkal és rögzített formátumokkal rendelkező feladatoknál ez rendkívül hatékony – néhány ezer példa is elég –, de a képességei szigorúan a demonstrációs adatok által behatároltak: nem tanult olyan helyzeteket, amelyek hiányoznak a demonstrációkból, és amikor egy bemutatott válasz már nem alkalmazható, mert a környezet megváltozott, továbbra is reprodukálja azt a választ.
 
-Ha ezt a legkisebb tréningvázra sűrítjük, a lényeg nem valamelyik tréningkeretrendszer API-ja, hanem ez a határ: **a prompt tokenjei nem adnak felügyeletet, a válasz tokenjei igen**.
-
-```python
-for sample in dataset:
-    prompt_tokens = tokenize(sample.prompt)
-    answer_tokens = tokenize(sample.answer)
-    tokens = prompt_tokens + answer_tokens
-    labels = [-100] * len(prompt_tokens) + answer_tokens
-    loss = causal_lm_loss(tokens, labels)
-    update_parameters(loss)
-```
-
-A `-100` itt csak a veszteségmaszkot jelöli, nem törli a promptot a modell bemenetéből; a modellnek továbbra is el kell olvasnia a kérdést ahhoz, hogy megtanulja a válaszadási protokollt.
-
 Röviden: Az SFT rendkívül magas mintahatékonysággal **egy stabil bemenet-kimenet leképezést és protokollt kódol a modell paramétereibe**. "Protokolltudást" kódol – hogyan kell valamit mondani vagy tenni, beleértve a formátumot, stílust és folyamatot –, nem pedig nagy mennyiségű "ténytudást" – amit a modell tud. Utóbbi a pre-tréningre vagy RAG-re támaszkodik (visszatérünk ehhez a megkülönböztetéshez a fejezet végén).
 
 > **Tréningköltség: LoRA paraméterhatékony finomhangolás.** Mind az SFT, mind a későbbi RL megköveteli a modell paramétereinek frissítését, és a teljes paraméteres finomhangolás nagy VRAM-igényekkel jár (tárolni kell a gradienseket és optimalizátor állapotokat több milliárd paraméterhez). A "LoRA" (Low-Rank Adaptation) a leggyakoribb költségcsökkentő módszer: ahelyett, hogy a nagy eredeti súlymátrixokat módosítaná, egy kis "javítást" (alacsony rangú mátrixot) csatol a feladat megtanulásához. A paraméterszám csak 1–5%-a az eredetiének, mégis megközelítheti a teljes finomhangolás teljesítményét. Mivel az eredeti súlyok fagyasztva vannak, a LoRA kevésbé zavarja az alapmodell meglévő képességeit, csökkentve a katasztrofális felejtés kockázatát. Néhány bevált szabály[^ch8-1]: "Muszáj" a LoRA-t az összes fő súlymátrixra alkalmazni (különösen az MLP rétegekre, amelyek a legtöbb paraméterrel rendelkeznek); ha csak a figyelmi rétegekre alkalmazzuk, az pontosságot veszít. **Az optimális tanulási ráta körülbelül 10-szerese a teljes finomhangolásénak** (igaz mind az SFT-re, mind az RL-re, egy nagyon praktikus átviteli szabály). Az SFT-hez használj közepes-magas rangot (64–256); mivel az RL-ben körönként kevés az információ, kis rang (8–32) vagy akár rang=1 is elegendő. Telepítéskor egyetlen következtető szerver több LoRA adaptert is betölthet egyszerre több-bérlős kiszolgáláshoz. Ez a könyv a LoRA-t tekinti az alapértelmezett mérnöki választásnak minden poszt-tréning módszerhez, és nem tárgyalja külön.
@@ -360,7 +346,7 @@ Az "egymenetes" azt jelenti, hogy a feladat egyetlen interakcióban teljesül: a
 
 A kísérletek előtt építsünk némi "minimális intuíciót" az RL algoritmusokról, elég a felmerülő kifejezések követéséhez (a teljes képletek és összehasonlítások a "Megerősítéses tanulási algoritmusok összehasonlítása" szakaszban várnak). A fejezet RL tréningje többnyire a "policy gradient"-re támaszkodik: a modell több választ generál ugyanarra a problémára, növelve a magas jutalmú válaszok valószínűségét és csökkentve az alacsony jutalmúakét – elmozdulva a jutalmazó irányokba és kevésbé a nem jutalmazókba. Hogy egyetlen nagy frissítés ne sodorja el a modellt, a mainstream "PPO" algoritmus minden lépésben korlátozza a frissítés mértékét (ez a későbbi kísérletek "PPO értékhálózattal" változata; az értékhálózat becsli a bázisszintet a finomabb felbontású előny kiszámításához). A másik módszer, a "GRPO", nem tréningez értékhálózatot; ehelyett több választ hasonlít össze ugyanarra a problémára egymáshoz képest, hogy megítélje mindegyik relatív minőségét. Ennyi intuíció elég a következő két kísérlethez.
 
-Ugyanez a mechanizmus az alábbi Python-stílusú vázzal írható le. Elhagyja a mintavételezés párhuzamosítását, a KL-regularizációt és az optimalizáló részleteit, és csak az egy rollouttól a paraméterfrissítésig vezető oksági láncot jelöli:
+Ugyanez a mechanizmus az alábbi Python-stílusú pszeudokóddal írható le. Elhagyja a mintavételezés párhuzamosítását, a KL-regularizációt és az optimalizáló részleteit, és csak az egy rollouttól a paraméterfrissítésig vezető oksági láncot jelöli:
 
 ```python
 for prompt in batch:
@@ -510,18 +496,6 @@ A Search-R1[^ch8-25] a keresésalapú kiegészítés irányát képviseli: a mod
 
 Az eszközös trajektóriáknak van egy kulcsfontosságú implementációs részlete: a környezet által visszaadott tokeneket nem a politika generálta, ezért a politikagradiens számításánál ezeket a visszajelzési tokeneket ki kell maszkolni, és a gradienst csak a modell saját gondolkodásán és az eszközhívási argumentumain kell visszavezetni. Különben a modell arra tréningeződik, hogy a sandbox kimenetét jósolja meg, ahelyett hogy megtanulná az eszközök használatát.
 
-Ez a határ egy nagyon rövid, trajektóriaszintű maszkként írható le:
-
-```python
-for token in trajectory:
-    if token.source == ENVIRONMENT:
-        loss_mask[token] = 0
-    else:                                      # model thought / tool arguments
-        loss_mask[token] = 1
-```
-
-Ez nem azt jelenti, hogy a környezeti visszajelzés lényegtelen: a visszajelzés végzi a jutalom és az előny kiszámítását, csak éppen nem szabad olyan célsorozatnak tekinteni, amelyet a politikának reprodukálnia kell. Az eszközüzeneteknek meg kell őrizniük a forrásjelölésüket, és a végrehajtási környezetben megkülönböztethetőnek kell maradniuk a politika kimenetétől.
-
 > **8-14. kísérlet ★★★: ReTool — kódinterpreterrel megerősített matematikai feladatmegoldás**
 >
 > ![8-17. ábra: A ReTool egymásba fonódó szöveg-kód gondolkodása és sandbox-végrehajtási visszajelzési hurokja](images/fig8-17.svg)
@@ -614,7 +588,7 @@ Az On-Policy Distillation először a diákkal generáltat trajektóriákat a sa
 
 Konkrétan a diák előrejelzési eloszlását közelítjük a tanítóéhoz, jellemzően a kettő közti **KL-divergencia** minimalizálásával. Amikor például a diák azt generálja, hogy „előbb lekérdezem az API-t, aztán feldolgozom a visszatérési értéket…”, a tanító adhat az adott pozícióban 80% „lekérdez”, 15% „hív”, 5% egyéb eloszlást. A feladat végi bináris jutalomhoz képest a tokenszintű illesztés jóval sűrűbb és kisebb varianciájú tanulási jelet ad; ára a tanító inferenciaköltsége, ami éppen akkor éri meg, amikor a környezeti interakció drága.
 
-A vezérlési folyam így sűríthető: a diák a saját útját járja, a tanító pedig csak azokban az állapotokban ad eloszlást, amelyeket a diák ténylegesen meglátogatott, és nem játszik le helyette egy off-policy választ.
+Az on-policy desztilláció alapvető pszeudokódja:
 
 ```python
 student_trajectory = rollout(student, task)
@@ -624,8 +598,6 @@ for state in student_trajectory:
     loss += KL(student_logits(state), teacher_logits)
 update_student(loss)
 ```
-
-Ez a váz csak arra szolgál, hogy elkülönítse az on-policy állapotokat a tokenszintű felügyelettől.
 
 Az olyan feladatokban, mint a matematika, az azonos teljesítmény eléréséhez szükséges tréninglépések száma nagyjából a tiszta RL **egytizede**. A többmenetes ágensekben, ahol a siker jelzése később és ritkábban érkezik, a tanító tokenszintű eloszlása közvetlenül tudja irányítani a köztes döntéseket; ennek azonban feltétele, hogy a szimulációs környezet elég valósághű legyen, és a diák által bejárt állapotok közel legyenek az éles eloszláshoz — különben a tanító pontszámai is megbízhatatlanok az ismeretlen, torzított állapotokban.
 
@@ -637,7 +609,7 @@ Az On-Policy Distillation ereje a tanítóból jön, és emiatt kemény előfelt
 
 Ötletes kiút az **On-Policy Self-Distillation (OPSD, on-policy önérdesztilláció)**[^ch8-15]: **ugyanaz a modell játssza a tanító és a diák szerepét is, de eltérő kontextust lát.** A tanítóváltozat látja a „privilegizált információt” — a mintamegoldást vagy egy már ellenőrzött helyes megoldást; a diákváltozat csak magát a feladatot látja, mégis a saját maga által mintavételezett trajektóriákon illeszkedik a tanítóváltozat tokenszintű eloszlásához. A választ kézben tartva elmagyarázni a diák épp bejárt útját rendszerint könnyebb, mint önállóan felfedezni, ezért egy rollout továbbra is sűrű felügyeletet ad.
 
-Az OPSD a fenti váz megszorított változataként olvasható:
+Az OPSD a fenti pszeudokód megszorított változataként olvasható:
 
 ```python
 student_trajectory = rollout(model, task_without_answer)

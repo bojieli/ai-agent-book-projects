@@ -40,23 +40,6 @@ Extracted memories:
 - User has travel plans to Tokyo (recent activity)
 ```
 
-**Ciclo de vida de la memoria:**
-
-```python
-when answering(user_request):
-    recent_turns = conversation.tail()
-    relevant_memory = memory.search(user_request)
-    answer = LLM(recent_turns + relevant_memory)
-    return answer
-
-after conversation (background job):
-    candidates = extract_memory_candidates(conversation)
-    verified = verify_against_sources_and_policy(candidates, conversation)
-    memory.append_or_update(verified)
-```
-
-Observemos varias características clave de este proceso de extracción:
-
 **Selectividad**: el Agente no recordará datos temporales como "la búsqueda devolvió 3 opciones", sino solo hechos útiles para el futuro.
 
 **Abstracción**: "I prefer window seats" se sintetiza en una preferencia general, en lugar de quedar vinculada a este vuelo específico.
@@ -65,7 +48,7 @@ Observemos varias características clave de este proceso de extracción:
 
 ### Evaluación de Capacidades de Memoria — Un Marco de Tres Niveles
 
-Antes de diseñar un sistema de memoria, conviene responder a la pregunta: ¿qué define a un "buen" sistema de memoria? Establecer criterios de evaluación previos nos proporciona una vara de medir uniforme para analizar diversos diseños. La comunidad académica ha publicado varios benchmarks públicos, entre los cuales destaca **LoCoMo** (Long-term Conversational Memory; Maharana et al., 2024, arXiv:2402.17753): este benchmark construye conversaciones multiturno de unos 300 turnos y hasta 35 sesiones, evaluando la capacidad de memoria y comprensión en diálogos de largo alcance mediante preguntas y respuestas (subdivididas en salto único, multisalto, razonamiento temporal, dominio abierto y preguntas contradictorias), resúmenes de eventos y generación de diálogos multimodales.
+Antes de diseñar un sistema de memoria, conviene responder a la pregunta: ¿qué define a un "buen" sistema de memoria? Establecer criterios de evaluación previos nos proporciona una vara de medir uniforme para analizar diversos diseños. La comunidad académica ha publicado varios benchmarks públicos, entre los cuales destaca **LoCoMo** (Long-term Conversational Memory): este benchmark construye conversaciones multiturno de unos 300 turnos y hasta 35 sesiones, evaluando la capacidad de memoria y comprensión en diálogos de largo alcance mediante preguntas y respuestas (subdivididas en salto único, multisalto, razonamiento temporal, dominio abierto y preguntas contradictorias), resúmenes de eventos y generación de diálogos multimodales.
 
 Sintetizando diversos benchmarks de memoria como LoCoMo y la práctica de productos comerciales, las capacidades de memoria del usuario se pueden resumir en las siguientes ocho dimensiones (criterio propio del autor, no una clasificación original de un benchmark específico):
 
@@ -90,7 +73,7 @@ Con esta base, diseñamos un marco de evaluación de tres niveles orientado a es
 >
 > Construimos un conjunto de evaluación basado en el marco de tres niveles: 20 casos de prueba por nivel, donde cada caso contiene numerosos detalles fácticos. Los casos del primer nivel constan habitualmente de una sola sesión; los de segundo y tercer nivel se componen de múltiples sesiones a lo largo del tiempo y con distintos interlocutores (unos 50 turnos de conversación por caso). Durante la evaluación, se solicita al Agente probado que genere memorias tras la primera sesión, y luego las modifique en función de las memorias previas y la siguiente sesión (accediendo únicamente a las memorias, sin revisar el diálogo original previo), hasta procesar todas las sesiones. Tras generar las memorias, el Agente responde a una nueva pregunta del usuario. Se utiliza el método LLM-as-a-judge (empleando otro LLM como juez para evaluar la respuesta) comparando la respuesta con la referencia para obtener la puntuación de recompensa.
 >
-> Este conjunto y los scripts de evaluación están disponibles en el proyecto `user-memory` del repositorio adjunto (la misma plataforma del experimento 3-2), donde se pueden consultar las definiciones completas de cada caso.
+> Este conjunto y los scripts de evaluación están disponibles en el proyecto `user-memory` del repositorio adjunto, donde se pueden consultar las definiciones completas de cada caso.
 
 ### La Estructura Jerárquica de la Memoria
 
@@ -141,21 +124,6 @@ Los cuatro formatos anteriores, sean simples o complejos, son en esencia **texto
 User as Code divide la actualización de la memoria en dos fases[^uac]: la **fase de memorización** (tras cada sesión, el LLM extrae los hechos de la conversación en cadenas de texto y los añade a un registro de hechos inalterable que solo admite adiciones) y la **fase de estructuración** (periódicamente, el LLM vuelve a generar un código Python tipado completo a partir del registro de hechos, organizándolos en `dataclass`, utilizando `date()` para fechas, conjuntos para listas tipadas y reservando `notes: list[str]` para datos variados difíciles de tipar). Esta es la aplicación clásica del diseño de bases de datos "write-ahead log + puntos de control periódicos" adaptada a la memoria de los LLM: el registro inmutable garantiza no perder ningún hecho, mientras que el punto de control periódico lo comprime en una estructura limpia y consultable (este proceso de reestructuración periódica está estrechamente ligado al "mecanismo de compresión y organización de la memoria" expuesto más adelante, salvo que el producto final es código en lugar de texto).
 
 A continuación se muestra un ejemplo simplificado. La fase de estructuración guarda el pasaporte y los viajes del usuario como estados tipados:
-
-**Registro de solo anexado y checkpoint:**
-
-```python
-append_only_log += extract_facts(conversation)
-
-if checkpoint_due():
-    proposed_state = rebuild_typed_state(append_only_log)
-    if type_check(proposed_state) and source_review(proposed_state):
-        publish_checkpoint(proposed_state)
-    else:
-        keep_previous_checkpoint()
-```
-
-**Estado de usuario tipado:**
 
 ```python
 state = {
@@ -269,15 +237,15 @@ Esta arquitectura de referencia ilustra cómo transformar las clasificaciones co
 
 A medida que las interacciones se suceden, el sistema de memoria afronta el doble reto del espacio de almacenamiento y la eficiencia en la búsqueda. El almacenamiento acumulativo simple provoca una explosión de memoria que no solo consume almacenamiento, sino que degrada la precisión de la búsqueda.
 
-En la práctica se aplican estrategias de compresión de memoria en múltiples niveles. El primer nivel realiza un filtrado mediante puntuación de importancia. Un enfoque habitual para evaluar la importancia combina cuatro factores: frecuencia de acceso (las memorias consultadas a menudo son más importantes), decaimiento temporal (los recuerdos lejanos se olvidan más fácilmente), intensidad emocional (los recuerdos con marcas emocionales intensas se conservan mejor) y unicidad de la información (la información repetida pierde importancia). Las memorias por debajo del umbral se marcan como compresibles o eliminables. Por ejemplo, una memoria consultada 5 veces, creada hace 3 días, con una marca emocional fuerte y sin duplicados obtendrá una alta puntuación de importancia; en cambio, un registro accedido solo 1 vez, creado hace 90 días, sin contenido emocional y muy similar a otros 3 registros probablemente quedará por debajo del umbral de compresión.
+En la práctica se aplican estrategias de compresión de memoria en múltiples niveles.
 
-El segundo nivel utiliza el agrupamiento (clustering). Las memorias similares se agrupan y se genera un resumen representativo para cada grupo (por ejemplo, múltiples conversaciones sobre el clima se comprimen en "El usuario consulta frecuentemente el tiempo y se preocupa especialmente por la lluvia"). Las memorias detalladas originales pueden archivarse en un almacenamiento secundario.
+1. El primer nivel realiza un filtrado mediante puntuación de importancia. Un enfoque habitual para evaluar la importancia combina cuatro factores: frecuencia de acceso (las memorias consultadas a menudo son más importantes), decaimiento temporal (los recuerdos lejanos se olvidan más fácilmente), intensidad emocional (los recuerdos con marcas emocionales intensas se conservan mejor) y unicidad de la información (la información repetida pierde importancia). Las memorias por debajo del umbral se marcan como compresibles o eliminables. Por ejemplo, una memoria consultada 5 veces, creada hace 3 días, con una marca emocional fuerte y sin duplicados obtendrá una alta puntuación de importancia; en cambio, un registro accedido solo 1 vez, creado hace 90 días, sin contenido emocional y muy similar a otros 3 registros probablemente quedará por debajo del umbral de compresión.
 
-El tercer nivel aborda la abstracción y generalización: extraer patrones generales a partir de recuerdos episódicos concretos para convertirlos en memoria semántica o procedimental. Por ejemplo, aprender de múltiples conversaciones de compras que el usuario "prefiere productos con buena relación calidad-precio y valora las opiniones de otros clientes".
+2. El segundo nivel utiliza el agrupamiento (clustering). Las memorias similares se agrupan y se genera un resumen representativo para cada grupo (por ejemplo, múltiples conversaciones sobre el clima se comprimen en "El usuario consulta frecuentemente el tiempo y se preocupa especialmente por la lluvia"). Las memorias detalladas originales pueden archivarse en un almacenamiento secundario.
+
+3. El tercer nivel aborda la abstracción y generalización: extraer patrones generales a partir de recuerdos episódicos concretos para convertirlos en memoria semántica o procedimental. Por ejemplo, aprender de múltiples conversaciones de compras que el usuario "prefiere productos con buena relación calidad-precio y valora las opiniones de otros clientes".
 
 La detección de conflictos emplea un enfoque basado en versiones: se conservan los historiales marcando la versión más reciente. Para ciertos datos (como la dirección actual) solo se mantiene la versión más reciente, mientras que para otros (como el historial laboral) se guarda el historial completo.
-
-Finalmente, es preciso trazar una frontera clara para no confundir estos conceptos con otros capítulos: aquí analizamos los algoritmos de organización en la **capa de almacenamiento** de la memoria (qué recuerdos filtrar, agrupar o abstraer); la compresión de contexto del Capítulo 2 resuelve el problema de la ventana en una sola sesión, actuando a un nivel distinto. Este capítulo también aborda el almacenamiento, indexación y búsqueda del conocimiento; mientras que el Capítulo 9 extiende la estrategia de dos fases ("registrar evidencia en línea y consolidar fuera de línea") a la evolución del comportamiento del Agente, evaluando qué evidencias operativas justifican una actualización persistente.
 
 ### Protección de la Privacidad: Sanitización de Registros
 
@@ -295,31 +263,9 @@ Hasta aquí nos hemos enfocado en la **representación y gestión** de la memori
 
 La tecnología central para construir bases de conocimiento compartidas es la Generación Aumentada por Recuperación (Retrieval-Augmented Generation, RAG). Su concepto fundamental consiste en combinar la capacidad de pensamiento y generación de los grandes modelos de lenguaje con la amplitud y actualización de una base de conocimiento externa: los datos de entrenamiento del propio modelo tienen una fecha de corte, mientras que la base de conocimiento se puede actualizar en cualquier momento.
 
-Un sistema RAG típico consta de dos partes: el recuperador (retriever), encargado de localizar los fragmentos relevantes en la base de conocimiento; y el generador (generator, habitualmente un LLM), que recibe dichos fragmentos como contexto para generar la respuesta. Veamos dos ejemplos para visualizar el funcionamiento de RAG antes de profundizar en los detalles técnicos del recuperador.
+Un sistema RAG típico consta de dos partes: el recuperador (retriever), encargado de localizar los fragmentos relevantes en la base de conocimiento; y el generador (generator, habitualmente un LLM), que recibe dichos fragmentos como contexto para generar la respuesta.
 
-**Ejemplo 1: Base de conocimiento de Wikipedia**. El usuario pregunta "¿Qué es el entrelazamiento cuántico?", pero los datos de entrenamiento del modelo base pueden no incluir los avances experimentales más recientes. El flujo de RAG es el siguiente:
-
-```python
-# 1. Pregunta del usuario
-query = "¿Qué es el entrelazamiento cuántico y cuáles son los avances experimentales más recientes?"
-
-# 2. Búsqueda: encontrar los fragmentos más relevantes en la base de conocimiento de Wikipedia
-results = retriever.search(query, top_k=3)
-# results = [
-# "El entrelazamiento cuántico es un fenómeno de la mecánica cuántica donde los estados cuánticos de dos partículas están correlacionados...",
-# "El Premio Nobel de Física 2022 fue otorgado a tres científicos por sus verificaciones experimentales del entrelazamiento cuántico...",
-# "Los experimentos de la desigualdad de Bell demostraron la no localidad del entrelazamiento cuántico..."
-# ]
-
-# 3. Generación: utilizar los resultados de búsqueda como contexto para que el LLM genere la respuesta
-answer = llm.generate(
-    system="Responda a la pregunta del usuario basándose en el siguiente material de referencia. Si el material es insuficiente, indíquelo explícitamente.",
-    context=results,   # ← Inyección de los fragmentos de conocimiento recuperados en el contexto
-    question=query
-)
-```
-
-**Ejemplo 2: Base de conocimiento corporativa**. El usuario pregunta "Quiero solicitar un reembolso de mi compra, ¿cuál es el procedimiento?":
+Veamos primero, de forma intuitiva, cómo funciona RAG con un ejemplo de base de conocimiento corporativa: el usuario pregunta "Quiero solicitar un reembolso de mi compra, ¿cuál es el procedimiento?":
 
 ```python
 query = "Procedimiento de reembolso"
@@ -593,7 +539,9 @@ El diseño central radica en la **carga de contexto bajo demanda en tres niveles
 
 **Elegir Markdown en texto plano en lugar de una base de datos especializada como representación subyacente del conocimiento** es una decisión de ingeniería meditada. El texto plano permite al usuario leer, editar y corregir directamente el conocimiento del Agente, admite control de versiones y reversión con Git y, sobre todo, permite al Agente registrar y organizar conocimiento de forma autónoma en una rama de trabajo mediante capacidades como `write_file`, para incorporarlo después a la base principal a través del proceso de revisión descrito más adelante. Al finalizar una sesión, el sistema puede proponer guardar las preferencias en `user/memories/` y los registros operativos en `agent/memories/`. Las primeras pertenecen a la gestión de conocimiento del usuario; los segundos se convertirán en aprendizaje de experiencia (Capítulo 9) únicamente tras evaluar los resultados, sintetizar varias trayectorias y realizar una verificación posterior, evitando tratar cualquier operación aislada como experiencia confiable.
 
-Sin embargo, adoptar esta organización en texto plano y sistema de archivos impone una condición indispensable para el éxito de la búsqueda: **deben establecerse enlaces e índices entre archivos**. Los archivos `.abstract` y `.overview` resuelven la jerarquía vertical, pero se requiere una vinculación horizontal: si el conocimiento se fragmenta en archivos independientes sin referencias cruzadas, el Agente no podrá navegar entre temas relacionados salvo mediante escaneos completos o búsquedas vectoriales; a mayor volumen, más difícil resultará la búsqueda. La forma adecuada es estructurar la base de conocimiento al estilo Wikipedia: cada artículo incluye enlaces hacia otros términos mencionados, complementados con páginas de entrada e índices que permiten al Agente seguir los enlaces de un concepto a otro, replicando la navegación de un grafo de conocimiento de forma ligera. Existe además una diferencia práctica clave: **los distintos modelos poseen habilidades y disposiciones desiguales para crear estos enlaces**. Los modelos más capaces generan espontáneamente enlaces hacia entradas existentes al escribir nuevo conocimiento; mientras que otros modelos añaden archivos aislados sin crear referencias. Por ello, en los prompts de escritura de conocimiento debe exigirse explícitamente: cada nueva entrada debe buscar y enlazarse a entradas existentes relacionadas y actualizar el índice del directorio, construyendo una red de referencias bidireccionales en lugar de acumular islas de información incomunicadas.
+Sin embargo, adoptar esta organización en texto plano y sistema de archivos impone una condición indispensable para el éxito de la búsqueda: **deben establecerse enlaces e índices entre archivos**. Los archivos `.abstract` y `.overview` resuelven la jerarquía vertical, pero se requiere una vinculación horizontal: si el conocimiento se fragmenta en archivos independientes sin referencias cruzadas, el Agente no podrá navegar entre temas relacionados salvo mediante escaneos completos o búsquedas vectoriales; a mayor volumen, más difícil resultará la búsqueda. La forma adecuada es estructurar la base de conocimiento al estilo Wikipedia: cada artículo incluye enlaces hacia otros términos mencionados, complementados con páginas de entrada e índices que permiten al Agente seguir los enlaces de un concepto a otro, replicando la navegación de un grafo de conocimiento de forma ligera.
+
+Existe además una diferencia práctica clave: **los distintos modelos poseen habilidades y disposiciones desiguales para crear estos enlaces**. Los modelos más capaces generan espontáneamente enlaces hacia entradas existentes al escribir nuevo conocimiento; mientras que otros modelos añaden archivos aislados sin crear referencias. Por ello, en los prompts de escritura de conocimiento debe exigirse explícitamente: cada nueva entrada debe buscar y enlazarse a entradas existentes relacionadas y actualizar el índice del directorio, construyendo una red de referencias bidireccionales en lugar de acumular islas de información incomunicadas.
 
 ### Cómo debe actualizarse el conocimiento
 
@@ -709,7 +657,7 @@ La elegancia de este método radica en que potencia simultáneamente la búsqued
 >
 > Ante una consulta que requiere contexto específico como "¿Cómo evolucionaron los ingresos de ACME Corp recientemente?", la diferencia es inmediata. En la base **sin contexto**, la consulta coincide con múltiples bloques que contienen "incremento de ingresos" pero pertenecientes a distintas empresas, años o análisis generales del sector, produciendo resultados de baja relevancia y mucho ruido. En la base **con contexto**, como cada bloque incluye su etiqueta de identidad, la consulta recupera bloques no solo coincidentes en palabras clave, sino cuyo prefijo contextual concuerda con la intención sobre "ACME Corp" y la fecha reciente. Los registros muestran que las puntuaciones de búsqueda consciente del contexto son sensiblemente superiores y los bloques devueltos mucho más precisos.
 >
-> El costo de esta mejora reside en llamadas adicionales al LLM en la fase de indexación, pero resulta altamente controlable mediante prompt caching (el mecanismo de almacenamiento en caché entre peticiones del Capítulo 2, que reduce a ~1/10 el costo de llamadas con prefijos idénticos, situándose en ~$1 por millón de tokens de documento). Según datos de Anthropic, combinar esta técnica con BM25 reduce la tasa de fallos de búsqueda (la tasa de no coincidencia en top-20 vista anteriormente, 1 − recall@20) en un 49%, y alcanza un 67% de reducción al añadir un reordenador. Este experimento demuestra que invertir en una preestructuración inteligente consciente del contexto durante la fase de indexación es una decisión de ingeniería de alta rentabilidad.
+> El costo de esta mejora reside en llamadas adicionales al LLM en la fase de indexación, pero resulta altamente controlable mediante prompt caching (el mecanismo de almacenamiento en caché entre peticiones del Capítulo 2, que reduce a ~1/10 el costo de llamadas con prefijos idénticos, situándose en ~$1 por millón de tokens de documento). Según datos de Anthropic, combinar esta técnica con BM25 reduce la tasa de fallos de búsqueda en un 49%, y alcanza un 67% de reducción al añadir un reordenador. Este experimento demuestra que invertir en una preestructuración inteligente consciente del contexto durante la fase de indexación es una decisión de ingeniería de alta rentabilidad.
 
 Habiendo validado la recuperación consciente del contexto en bases de conocimiento documentales, aplicaremos esta misma técnica a la memoria del usuario en el siguiente experimento.
 

@@ -879,26 +879,13 @@ Agent Status Bar memecahkan masalah ini dengan sengaja menempatkan informasi met
 > Atensi sangat terkonsentrasi pada informasi status bar. Proses penalaran secara langsung menggunakan informasi yang sudah disuling, tidak lagi menghitung statistik dari data mentah. Untuk model kecil seperti Qwen3-0.6B, Kelompok Kontrol A sering kali melanggar batasan dan terus menelepon, sementara Kelompok Kontrol B secara konsisten mematuhi batasan tersebut.
 >
 
-Eksperimen 2-8 adalah demonstrasi kualitatif kecil yang memberi intuisi. Untuk mengukur seberapa berguna pendekatan “hitung lebih dahulu, lalu lihat langsung” ini dan di mana batasnya, penulis dan kolaborator memakai benchmark khusus[^ch2-8] (pendekatan ini bernama **Context Distillation**; Agent Status Bar adalah bentuknya yang paling umum). Kesimpulan:
-
-- Dengan **status bar yang telah dihitung**, **model yang lemah memulihkan akurasinya**. Model-model terlemah meningkat 40 hingga 54 poin persentase, dan pada tugas ini model lokal 2B bahkan menyamai model frontier tanpa status bar.
-- **Model kuat sudah menjawab dengan benar; yang dihemat adalah efisiensi.** Status bar yang sama menurunkan penalaran, latensi, dan biaya per kueri kira-kira satu orde besaran (memangkas 80–90% atau lebih token penalaran).
-- Perubahan paling mendasar adalah: tanpa status bar, penalaran per kueri **terus bertambah** saat context memanjang; dengan status bar, jumlahnya menjadi **hampir konstan**. Sepanjang apa pun context, model hanya perlu “melirik” beberapa kotak status.
-
-
-Namun, prakomputasi yang dilakukan dengan benar dan salah memberikan hasil yang sangat berbeda. Tiga pelajaran:
-
-**1. Pelihara status bar dengan kode, bukan dengan LLM.** Mungkin tampak natural untuk meminta LLM lain untuk membaca riwayat dan meringkas status bar, tetapi eksperimen menemukan bahwa kinerjanya sangat buruk. Fungsi ekspresi reguler 20 baris mencapai tingkat akurasi ground-truth, sedangkan model frontier yang memproses riwayat lengkap dalam satu batch justru menghasilkan banyak entri salah dan mengurangi akurasi hilir di bawah batas acuan (baseline) tanpa status bar. Meminta LLM untuk meringkas riwayat yang panjang dalam satu langkah semata memindahkan masalah asli dari pemindaian context ke tempat lain. Alternatif yang layak adalah **menggunakan kode sebisa mungkin**; jika LLM diperlukan, minta ia untuk **mengekstrak item satu per satu lalu menggabungkannya dengan kode, alih-alih meringkas seluruh riwayat dalam satu proses**.
-
-**2. Jangan hapus context asli.** Status bar adalah **proyeksi lossy** dari context asli: ia hanya menghitung dimensi yang Anda perkirakan akan ditanyakan. Jika status bar sudah cukup untuk tugas seperti penghitungan dan pelacakan state, Anda dapat menghapus catatan asli dan menyimpan status bar saja untuk menghemat banyak token; tetapi jika pertanyaan menyentuh dimensi yang tidak dihitung status bar, akurasi dengan status bar saja akan runtuh.
-
-**3. Pantau akurasi status bar sebagai metrik produksi utama.** Eksperimen menemukan bahwa **model hampir selalu memercayai status bar**: jika tertulis “dipanggil 3 kali”, model menerimanya sebagai tiga kali tanpa memeriksa atau menghitung ulang. Inilah alasan status bar efektif, tetapi kesalahan di dalamnya juga akan diteruskan **apa adanya** ke jawaban akhir. Karena itu, risiko **peracunan status bar** yang disebutkan sebelumnya perlu ditanggapi serius.
+Eksperimen menunjukkan[^ch2-8] bahwa memberi model **status bar yang sudah dihitung sebelumnya** dapat membuat **akurasi model terbuka yang lebih kecil mendekati model besar frontier**. Selain itu, **status bar dapat sangat meningkatkan efisiensi penalaran model**, menurunkan token penalaran, latensi, dan biaya setiap iterasi Agent sekitar satu orde magnitudo. Tanpa status bar, kebutuhan penalaran setiap kueri **terus bertambah** seiring memanjangnya context; dengan status bar, kebutuhannya menjadi **nyaris konstan**.
 
 [^ch2-8]: Li, Bojie dan Noah Shi. *Distill, Don't Retrieve: Inference-Time Context Distillation for LLM Agent Reasoning.* 2026. https://01.me/research/context-distillation
 
 ### Komposisi Agent Status Bar
 
-Berdasarkan dasar teori di atas, Agent Status Bar menyertakan tipe-tipe informasi berikut:
+Agent Status Bar menyertakan tipe-tipe informasi berikut:
 
 **Perencanaan Tugas (Task Planning)**: Ketika Agent menangani tugas multi-langkah yang kompleks, trajectory-nya bisa menjadi sangat panjang. Agent cenderung terlalu fokus pada sub-tugas lokal saat ini, melupakan permintaan awal pengguna, batasan inti, dan pekerjaan selanjutnya. Menempatkan daftar TODO yang memecah tugas menjadi langkah-langkah jelas pada bagian akhir trajectory akan secara terus-menerus mengingatkan model mengenai progres saat ini dan tujuan di masa depan, membantu menyelaraskan tindakannya dengan rencana keseluruhan.
 
@@ -974,6 +961,14 @@ Model perkiraan dapat menunjukkan titik impas. Misalkan setiap status berisi $S$
 
 Teknik Agent Status Bar memiliki satu keunggulan praktis: semua metainformasi muncul di dalam context dalam bentuk yang dapat dibaca manusia, sehingga developer dapat memeriksa kapan saja informasi apa yang diterima Agent dan keputusan apa yang dibuatnya. Yang lebih penting, teknik ini tidak invasif terhadap model—tidak memerlukan fine-tuning dan dapat langsung digunakan pada model bahasa apa pun.
 
+Pemeliharaan status bar perlu memperhatikan dua hal:
+
+1. **Sebisa mungkin, pelihara status bar dengan kode. Jika LLM benar-benar diperlukan, ekstrak butir satu per satu lalu rangkum dengan kode; jangan pernah memintanya menghitung secara batch sekaligus**. Eksperimen menemukan bahwa **model hampir selalu memercayai status bar tanpa syarat**: tulis “3 panggilan telah dilakukan,” dan model akan menerimanya tanpa menghitung ulang. LLM memang mudah keliru saat menghitung, sehingga risiko **status-bar poisoning** yang disebut sebelumnya juga perlu ditanggapi serius.
+
+2. **Jangan hapus context asli**. Status bar adalah **proyeksi lossy** dari context asli: ia hanya menghitung lebih dulu dimensi yang Anda perkirakan akan ditanyakan. Jika status bar sudah cukup—seperti untuk menghitung dan melacak keadaan—rekaman mentah dapat dihapus untuk menghemat banyak token. Namun, bila satu saja pertanyaan berada di luar dimensi tersebut, akurasi akan anjlok jika hanya status bar yang tersisa.
+
+Agent Status Bar adalah salah satu teknik **kompresi context** (Context Compression). Bagian berikut memperkenalkan teknik kompresi context lainnya.
+
 ## Strategi Kompresi Context
 
 Bagian-bagian sebelumnya membahas apa yang perlu disertakan dalam context: prompt engineering menentukan apa yang ditulis, Skills menentukan apa yang dimuat sesuai kebutuhan, dan Agent Status Bar menentukan informasi meta yang diinjeksi. Namun, seiring bertambahnya putaran interaksi, context terus mengembang. Bagian ini beralih ke persoalan sebaliknya: **bagaimana mengurangi konten dalam context**—kapan dan bagaimana melakukan kompresi, serta mengapa kompresi dapat berguna bahkan sebelum context window penuh.
@@ -1039,14 +1034,14 @@ Kuncinya adalah memahami **waktu dan lokasi** kompresi. Kompresi tidak memodifik
 >
 > **Strategi 2 dan 3: Kompresi yang Tidak Sadar Tugas** — *Individual Summarization* membuat ringkasan 2–3 paragraf untuk setiap hasil pencarian secara terpisah, dengan rasio kompresi 10,9% (dalam buku ini, rasio kompresi berarti “ukuran setelah kompresi / ukuran asli”; angka yang lebih kecil berarti kompresi lebih agresif). Strategi ini menyelesaikan tugas, tetapi memerlukan 12 iterasi dan 276.608 token. Masalah utamanya adalah fragmentasi informasi—beberapa halaman berulang kali menjelaskan peristiwa yang sama dan membuang ruang context. *Combined Summarization* menggabungkan seluruh hasil menjadi satu ringkasan lengkap dengan rasio kompresi 4,3%, memerlukan 10 iterasi dan 93.449 token. Namun, input yang sangat panjang harus dipotong dan berisiko menghilangkan informasi di bagian akhir. Kelemahan keduanya adalah tidak memahami semantik sehingga tidak dapat membedakan relevansi informasi.
 >
-> **Strategi 4: Kompresi Sadar Context** — Inovasi intinya adalah memasukkan tujuan kueri saat ini dan informasi yang sudah terkumpul ke dalam proses kompresi. Prompt kompresi memuat “Given the search query: {query}” dan “Current context: {context}” untuk mengarahkan model membuat ringkasan yang terfokus. Hasilnya hanya memerlukan 7 iterasi dan 40.157 token, dengan rasio kompresi keseluruhan sekitar 3,0%. Dalam satu kasus, 147.877 karakter dipadatkan menjadi 1.963 karakter (sekitar 1,3%) sambil tetap mempertahankan informasi penting seperti nama pendiri dan perubahan jabatan. Pencarian berikutnya dapat mengekstraksi perubahan jabatan dan perusahaan baru sambil menyaring latar belakang historis serta konten duplikat. Keberhasilan ini didasarkan pada satu wawasan: dalam tugas multi-langkah, kepadatan dan jenis informasi yang dibutuhkan berubah menurut tahap—tahap awal membutuhkan pengumpulan luas, tahap tengah membutuhkan verifikasi fakta yang presisi, dan tahap akhir membutuhkan sintesis menyeluruh. Kompresi sadar context memaksimalkan nilai informasi dengan menyesuaikan fokusnya secara dinamis.
+> **Strategi 4: Kompresi Sadar Context** — Inovasi intinya adalah memasukkan tujuan kueri saat ini dan informasi yang sudah terkumpul ke dalam proses kompresi. Prompt kompresi memuat “Given the search query: {query}” dan “Current context: {context}” untuk mengarahkan model membuat ringkasan yang terfokus. Hasilnya hanya memerlukan 7 iterasi dan 40.157 token, dengan rasio kompresi keseluruhan sekitar 3,0%. Dalam satu kasus, sekitar 150 ribu karakter dipadatkan menjadi 2 ribu sambil tetap mempertahankan informasi penting yang dibutuhkan tugas berikutnya, seperti nama pendiri dan perubahan jabatan.
 >
-> **Strategi 5: Kompresi Sadar Context dengan Sitasi** — Strategi ini menambahkan asal-usul informasi ke dalam kompresi cerdas; setiap fakta disertai penanda sitasi URL sumber. Penggunaan token meningkat menjadi 222.992 dengan rasio kompresi 4,1%, tetapi sitasi memungkinkan verifikasi. Pendekatan ini menggabungkan kompresi semantik lossy dengan pengindeksan lossless: meskipun kontennya dipadatkan, tautan sumber yang dipertahankan memungkinkan sistem kembali ke materi asli.
+> **Strategi 5: Kompresi Sadar Context dengan Sitasi** — Strategi ini menambahkan asal-usul informasi ke dalam kompresi cerdas; setiap fakta disertai penanda sitasi URL sumber. Konten dipadatkan secara semantik (lossy), tetapi tautan sumber yang dipertahankan menjadi indeks lossless yang secara teori memungkinkan sistem kembali ke informasi asli kapan saja.
 >
 > **Strategi 6: Adaptive Windowing** — Wawasan utamanya adalah bahwa pada awal tugas, ruang context masih longgar sehingga kompresi tidak perlu dilakukan terburu-buru. Mekanisme kompresi baru aktif ketika kapasitas mendekati batas, sehingga integritas informasi asli dipertahankan selama mungkin. Implementasinya mencakup tiga mekanisme:
 >
-> - **Pemicu Ambang Batas**: Memantau penggunaan context secara terus-menerus. Kompresi hanya aktif ketika jumlah token prompt melampaui 80% dari window (102.400 token untuk window 128K).
-> - **Kompresi Batch**: Saat terpicu, seluruh hasil tool yang belum ditandai dikompresi sekaligus. Contohnya, sekitar iterasi keempat, ketika context terdeteksi melampaui ambang 102.400 token (dalam praktiknya terpicu pada sekitar 135.600 token), kesepuluh pesan tool yang belum dikompresi langsung dipadatkan.
+> - **Pemicu Ambang Batas**: Memantau penggunaan context secara terus-menerus dan hanya mengaktifkan kompresi ketika jumlah token prompt melampaui 80% dari window.
+> - **Kompresi Batch**: Saat terpicu, seluruh hasil tool yang belum ditandai dikompresi sekaligus. Contohnya, setelah context terdeteksi melampaui ambang 102.400 token, kesepuluh pesan tool yang belum dikompresi langsung dipadatkan
 > - **Pencegahan Duplikasi**: Menambahkan penanda `[COMPRESSED]` agar konten yang sudah dikompresi tidak diproses kembali.
 >
 > Walaupun total penggunaan token relatif tinggi (174.601), beberapa iterasi awal mempertahankan seluruh informasi asli dan memberikan fleksibilitas maksimum untuk pengumpulan informasi secara luas.
@@ -1074,13 +1069,7 @@ Kita telah membahas alasan kompresi—membatasi panjang dan meningkatkan penalar
 
 Kompresi butuh komputasi tambahan lewat panggilan LLM, namun ia menghemat biaya token dan meningkatkan keberhasilan tugas. Eksperimen menunjukkan kompresi context-aware menghemat token hingga lebih dari 75%.
 
-Yang paling rawan hilang dari kompresi adalah **keputusan arsitektur awal, alasan batas (constraints), dan jalur gagal**. LLM suka menghapus informasi yang dianggap bisa dicari lagi. Di sistem tingkat produksi, tetapkan prioritas penyimpanan:
-
-1.  **Keputusan Arsitektur dan Batasan Kunci**: Tidak boleh diringkas.
-2.  **Daftar File Modifikasi dan Catatan Perubahan**: Simpan penuh.
-3.  **Status Verifikasi** (lolos/gagal): Wajib disimpan.
-4.  **TODO Belum Selesai dan Catatan Rollback**: Wajib disimpan.
-5.  **Output Tool**: Boleh dihapus, sisakan status lolos/gagal.
+Hal yang paling mudah hilang saat kompresi adalah keputusan arsitektur awal, alasan di balik batasan, dan jalur yang gagal. Karena itu, **Agent perlu sering menyimpan kemajuannya dalam bentuk dokumen**, bukan menyebarkan semua informasi di sepanjang riwayat eksekusi. Seperti informasi penting perusahaan yang harus didokumentasikan alih-alih disimpan dalam log chat, Agent juga perlu membiasakan diri menulis dan memperbarui dokumentasi. Jika model yang Anda gunakan tidak memiliki kebiasaan tersebut, ingatkan melalui prompt dan skill.
 
 ### Isolasi Konteks Sub-Agent
 

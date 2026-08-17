@@ -175,23 +175,6 @@ Dört bölgenin aynı dizin ağacı altında birleştirilmesi, tam da "**dosya y
 
 Dosya sistemi Agent'lar arasındaki **ürün alışverişi** sorununu çözer; iş birliği bir de **kontrol düzlemi** gerektirir. Tablo 10-2'teki yaşam döngüsü satırları tam da burada işe yarar: oluşturma (`spawn_subagent`), mesaj gönderme (`send_message_to_subagent`), iptal etme (`cancel_subagent`) ve keşfetme (`list_agents`) — Bölüm 4'te verilen bu araç ilkelleri, process dünyasındaki fork, mesaj, kill ve ps'e karşılık gelir. Bu kısım arayüz tanımlarını tekrarlamayacak; çoklu Agent iş birliğinin dayandığı, ama sıklıkla gözden kaçan dört yeteneğe odaklanacak.
 
-**Mesaj zarfı ve worker yaşam döngüsü:**
-
-```python
-envelope = {
-    id, trace_id, sender, recipient, type,
-    payload, created_at, deadline, schema_version
-}
-
-worker = spawn(task, budget, cancellation_token)
-publish(task_assigned(envelope, worker))
-while worker.is_running:
-    accept(status_update | artifact | needs_input)
-    if deadline_expired or cancellation_token.is_set:
-        request_graceful_stop(worker)
-await worker.ack_or_timeout()
-```
-
 **Bir, mesaj geçirme.** En yalın biçimi noktadan noktayadır: Agent A doğrudan `send_message_to_agent_b(content)` çağırır; topolojinin sabit, Agent sayısının az olduğu senaryolara uygundur (bu bölümdeki Deney 10-3'ün telefon artı bilgisayar ikili Agent'ı gibi). Agent sayısı arttığında ve asenkron paralellik gerektiğinde noktadan noktaya bağlantı sayısı Agent sayısının karesiyle büyür, ayrıca gönderen ile alanın aynı anda çevrimiçi olmasını gerektirir; bu durumda **message bus'a** geçilmelidir (ayrıntı için bu bölümün ilerideki "paralel koordinasyon biçimi" kısmına bakın): Agent mesajı bus'a yayımlar, bus abonelik ilişkisine göre iletir, gönderenin tüketicileri bilmesi gerekmez. İster noktadan noktaya ister bus üzerinden olsun, mesajlar genellikle yapılandırılmış bir **zarf** (envelope) taşımalıdır: gönderen kimliği, hedef (belirli bir Agent veya yayın), mesaj tipi (`task_assigned`/`status_update`/`result`/`terminate` gibi) ve JSON yükü. Tek tip zarf formatı, alıcının güvenilir biçimde yönlendirme ve ayrıştırma yapmasını sağlar, iş birliği zincirini de izlenebilir kılar — bu, çoklu Agent sistemlerinde hata ayıklamanın anahtarıdır.
 
 **İki, durum sorgulama.** Kontrol düzleminin en çok küçümsenen halkası budur. Ana Agent bir alt Agent'ı yola çıkardıktan sonra ilerlemesini öğrenemezse, ne beklemeye devam edip etmeyeceğine karar verebilir ne de alt Agent tıkandığında zamanında müdahale edebilir. Sezgisel yaklaşım RPC'yi olduğu gibi almak, bir `get_subagent_status(agent_id)` sorgu arayüzü tanımlayıp "çalışıyor/tamamlandı/başarısız" bilgisiyle bir ilerleme yüzdesi döndürmektir. Ama bu çekme tarzı arayüzün pratik faydası beklenenin çok altındadır: alt Agent oluşturulur oluşturulmaz yürütmeye başlar ve tamamlanana veya başarısız olana kadar sürer; geleneksel toplu işlem sistemlerindeki işler gibi bir dizi kuyruk durumu arasında dolaşmaz — nitekim Unix programlamada bir process'in çalışma durumunu PID üzerinden yoklamaya çok nadiren ihtiyaç duyulur. Yoklamanın doğasında bir de ikilem vardır: sık yapılırsa token israf eder, seyrek yapılırsa geç kalır. Durum edinmenin daha doğal yolu, bu bölümün başındaki iki iletişim paradigmasına dönmektir.

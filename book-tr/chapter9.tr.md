@@ -26,19 +26,6 @@ Görevlerin daha büyük bölümünün ise tek bir doğru cevabı yoktur. Müşt
 
 Şekil 9-2 üç katmanlı bir doğrulama yapısı sunuyor. En alttaki sonuç doğrulayıcısı test sonuçlarını, veritabanı durumunu ve araç dönüşlerini okur ve "iş gerçekten yapıldı mı" sorusunu yanıtlar; ortadaki süreç doğrulayıcısı iş kurallarını, yetkileri ve eylem dizisini denetler ve "izin verilen biçimde mi yapıldı" sorusunu yanıtlar; üstteki kalite doğrulayıcısı Rubric'e dayanarak dili ve stratejiyi değerlendirir ve "uygun biçimde mi yapıldı" sorusunu yanıtlar. Bir metrik ne kadar alt katmandaysa o kadar çok koda ve ortamın gerçek durumuna dayanmalıdır; yalnızca biçimselleştirilmesi zor olan kısımlar dil modeline bırakılır.
 
-**Üç katmanlı trajectory doğrulaması:**
-
-```python
-outcome = verify_environment_state(trajectory)
-process = verify_actions_and_permissions(trajectory)
-quality = judge_with_rubric(trajectory, cite_evidence = true)
-
-if not outcome.pass or not process.pass:
-    reject_as_learning_example(outcome, process, quality)
-else:
-    emit_structured_diagnosis(outcome, process, quality)
-```
-
 ![Şekil 9-2: Ortam Sonucundan LLM Rubric'ine Üç Katmanlı Trajectory Doğrulaması](images/fig9-2.svg)
 
 Müşteri hizmetleri Agent'ını ele alalım: işe yarar bir Rubric en azından Tablo 9-1'deki boyutları kapsamalıdır. İlk beş madde ağırlıklı olarak asgari sınırları kısıtlar, son ikisi hizmet kalitesini ölçer. Böyle bir ayrıştırma, "kullanıcı memnun oldu mu" sorusundan daha yüksek tanısal değere sahiptir: kullanıcı, Agent kurala aykırı bir iade yaptığı için memnun olabileceği gibi, kurallara uygunluk kısıtı yüzünden memnuniyetsiz de olabilir; tek bir memnuniyet puanı bu ikisini ayırt edemez.
@@ -55,23 +42,11 @@ Tablo 9-1 Müşteri Hizmetleri Agent'ı için Trajectory Değerlendirme Boyutlar
 | İfade kalitesi | Dil doğal ve derli toplu mu, tekrar ve şablonlaşmadan kaçınılmış mı | Konuşmanın tamamı, dil Rubric'i |
 | Kurallara uygun alternatif | Asıl çözüm uygulanamazken izin verilen bir alternatif yol bulundu mu | Kullanıcı hedefi, politikalar ve sonraki eylemler |
 
-Bunların içinde "söz—eylem tutarlılığı" özellikle Agent senaryolarına uygundur. Geleneksel metin değerlendirmesi yalnızca son yanıtı okur ve "iadenizi sizin için gönderdim" cümlesini kolaylıkla iyi hizmet sayar; trajectory değerlendirmesi ise iade aracının gerçekten çağrılıp çağrılmadığını, çağrının başarılı olup olmadığını ve sipariş durumunun değişip değişmediğini de denetlemeyi sürdürür. "Kurallara uygun alternatif" de modeli kuralları keyfî biçimde aşmaya teşvik etmez; ondan kullanıcının gerçek hedefini anlamasını ve iade mümkün olmadığında bilet değişikliği, erteleme veya kısmi telafi gibi meşru seçenekleri incelemesini ister.
-
-Doğrulama sonucu tek bir skalere sıkıştırılmamalıdır. Bir trajectory değerlendirmesi daha çok yapılandırılmış bir tanıya benzer: görev kısmen başarılı, kural uyumu geçti, ama bir yerde kanıtsız bir ifade, bir yerde asılsız bir söz var; üstelik yanıt politikayı üç kez tekrar tekrar açıklamış. Boyutlandırılmış sinyaller hem sorunun niteliğini hem de kanıtın konumunu korur. Ancak bundan sonra alt modüller şu ayrımı yapabilir: kanıtsız ifade bilgi eksikliğinden mi, alıntı zorunluluğunun bulunmamasından mı, yoksa modelin yetersizliğinden mi kaynaklanıyor; asılsız söz için prompt mu değiştirilmeli, yoksa Harness'e yanıt ile araç durumu arasında bir tutarlılık kontrolü mü eklenmeli.
-
-LLM doğrulayıcısının kendisi de kalibrasyon gerektirir. Üretim sistemleri genellikle uzmanlarca etiketlenmiş küçük bir trajectory kümesi hazırlar ve doğrulayıcının her boyuttaki tutarlılığını denetler; yüksek riskli veya düşük güvenli vakalar ikinci bir modele ya da insan incelemesine gider; model sürümü değiştikten sonra kalibrasyon kümesi yeniden çalıştırılır. Doğrulayıcı, değerlendirmeyi ve kanıtı üretmekle yükümlüdür; Agent'ın hangi parçasının değiştirileceğine ise bağımsız bir tanı ve evrim modülü karar vermelidir. Böylece aynı modelin hem hakem olması hem de kuralları doğrudan yeniden yazması önlenir.
-
 > **Deney 9-1 ★★: Müşteri Hizmetleri Agent'ı için Trajectory Doğrulayıcısı İnşa Etmek**
 >
 > **Deney Amacı**: Bir müşteri hizmetleri çalışma trajectory'sini sonraki öğrenmede kullanılabilecek yapılandırılmış bir tanıya dönüştürmek ve "kanıtla birlikte çok boyutlu sonuç"un tek bir toplam puandan daha iyi kök neden bulup bulmadığını doğrulamak.
 >
-> **Veri ve Akış**: Deney; normal iade, asılsız söz, gizlilik ihlali ve aşırı reddetme olmak üzere dört sınıfta uzman etiketli trajectory'ler hazırlar. Birinci katman siparişin nihai durumunu ve araç log'larını okuyarak iadenin ya da bilet değişikliğinin gerçekten olup olmadığını belirler; ikinci katman adım adım iş politikalarıyla karşılaştırarak yetkileri, zorunlu süreçleri, gizliliği, olgusal dayanağı ve söz—eylem tutarlılığını denetler; üçüncü katman Tablo 9-1'deki Rubric'e göre ifade kalitesini ve kurallara uygun alternatifi değerlendirir ve başarısızlık sonuçları için kanıt turlarını saklar. Varsayılan kalite Judge'ı deterministik kurallar kullanır, ayrıca gerçek bir LLM Judge de sunulur; üst katman hangi modeli kullanırsa kullansın, sonuç katmanı ile kural katmanı bir dil modelinin tahminine bırakılmaz.
->
-> **Karşılaştırma ve Metrikler**: Baseline yalnızca tek bir toplam puan verir; deney grubu her boyut için `pass`, `fail` veya `uncertain` değerini, kanıtı ve güven düzeyini üretir. Kalibrasyon aşamasında boyut bazında başarısızlık tespitinin kesinliği (precision) ve duyarlılığı (recall) hesaplanır ve uzman etiketleriyle tam örtüşme oranı raporlanır; ayrıca asılsız söz gibi başarısızlıkların yalnızca bir sonuçtan ibaret kalmayıp boş olmayan kanıt içerdiği kontrol edilir.
->
-> **Kabul Kriterleri**: Doğrulayıcı kritik ihlalleri, asılsız sözleri ve aşırı reddetmeleri kararlı biçimde tespit etmelidir; yüksek bir toplam puan, gizlilik veya kural boyutundaki bir başarısızlığı örtemez; düşük güvenli ve yüksek riskli vakalar otomatik olarak öğrenme sinyaline dönüşmek yerine ikinci bir doğrulayıcıya veya insan incelemesine gitmelidir.
->
-> Eşlik eden uygulama için bkz. [`trajectory-verifier`](../chapter9/trajectory-verifier/); varsayılan olarak çevrimdışı yeniden üretilebilen kalite Judge'ı kullanılır, `--judge llm` ile hâlihazırda uygulanmış gerçek LLM doğrulayıcısı çalıştırılabilir.
+> **Deney açıklaması:** “Tek bir toplam puan” ile “her boyut için sonuç, kanıt ve güven” çıktısını karşılaştırın; hangisinin görev başarısızlığını, kural ihlalini, sahte vaadi ve anlatım sorununu daha iyi ayırdığını gözlemleyin. Sürekli evrim yalnızca başarı oranına veya tek puana dayanamaz. Ne yanlış gitti, neden ve kanıt nerede bilgisi korunursa sonraki modüller bilgi, Prompt, program veya model parametrelerinden hangisini güncelleyeceğini anlayabilir; düşük güvenli vakalar da öğrenme kümesine otomatik girmemelidir.
 
 ## Agent'ın Sürekli Evrimi için Dört Yöntem
 
@@ -89,19 +64,6 @@ Tablo 9-2 Dört Sürekli Evrim Biçiminin Uygulanabilirlik Sınırları
 | Prompt ve Skill | Dille ifade edilebilen yargı ilkeleri ve işleyiş kuralları | Yorumlanabilir, etki alanı denetlenebilir | Kolayca şişer, çelişir veya göz ardı edilir |
 | Program ve Harness | Deterministik süreçler, araçlar ve katı kısıtlar | Test edilebilir, yürütmesi kararlı, maliyeti düşük | Geliştirme ve bakım maliyeti görece yüksek |
 | Model parametreleri | Yüksek boyutlu algı, üretim üslubu ve örtük stratejiler | Genelleme gücü yüksek, çıkarım maliyeti düşük | Güncelleme ve regresyon maliyeti yüksek |
-
-**Deneyimden yeteneğe yönlendirme:**
-
-```python
-if experience.is_factual and experience.has_sources:
-    target = KNOWLEDGE
-elif experience.can_be_expressed_as_contextual_language_rule:
-    target = PROMPT_OR_SKILL
-elif experience.is_deterministic or experience.is_hard_safety_constraint:
-    target = PROGRAM_OR_HARNESS
-else:
-    target = MODEL_PARAMETERS
-```
 
 ### Deneyimi Bilgi Olarak Biriktirmek
 
@@ -248,6 +210,26 @@ Deney 9-8 aynı protokolü doğrulama katmanına uygular. Kullanıcı düzeltmel
 >
 > `failure_trajectories.json` içindeki üç sinyal ve kontrol trajectory'leri kullanılır. Gerçek `gpt-4o-mini` adayı eksik görev, normal işlem ve tek kullanımlık token kontrollerini geçemediği için güvenlik kapısı tarafından reddedildi. Deterministik aday bütün kontrolleri geçip `release_to_canary` oldu; kontroller, karar ve kararlı dizinin hash'i kaydedilir. Uygulama [`harness-safety-gate`](../chapter9/harness-safety-gate/) içindedir.
 
+#### Vaka: Her şeyin eklenti olduğu DeepSeek Harness öz-evrimi
+
+Bölüm 1 tablosu DeepSeek Harness'i (`dsh`) “Agent öz-evrim çerçevesi” olarak sınıflandırır[^dsh-2026]. Temelindeki Cordis makalesi, geleneksel bileşimin **statik** olduğunu belirtir: işlev çağrıları, modül içe aktarımları ve kalıtım derleme zamanında sabitlenir. Eklenti sistemleri ve öz-evrimli Harness ise bileşenlerin çalışma sırasında yüklenip kaldırıldığı ve yeniden yapılandırıldığı **dinamik bileşime** ihtiyaç duyar[^cordis-2026]. Agent'ın her öz-değişikliği özünde dinamik bir bileşimdir.
+
+Makale dinamik bileşimi iki dik boyuta ayırır. **Zamansal bileşebilirlik**, bir bileşen kaldırıldığında ortak ortamda yaptığı her değişikliğin eksiksiz ve güvenli biçimde geri alınıp alınamayacağını sorar; runtime her kaynak tahsisini, olay kaydını ve durum değişimini izlemelidir. **Uzamsal bileşebilirlik**, bileşenlerin bağımlılıkları yapılandırılmış ve doğrulanabilir biçimde bildirip bulup çözebilmesini ve değişimde yaşam döngülerini koordine edebilmesini sorar. İlki **neyi değiştirdiği**, ikincisi **neye bağımlı olduğu** ile ilgilidir.
+
+Öz-evrimli Harness bu sorunun en keskin hâlidir. Geri alınacak yan etkiler uzun ömürlü ve durum tutar; bağımlılıklar runtime'da belirir, kaybolur veya kimlik değiştirir. Zamansal bileşebilirlik yoksa her değişiklik tam yeniden başlatma, süreç içi durum kaybı ve görev kesintisi getirir. Uzamsal bileşebilirlik yoksa her modül bağımlılık değişimini geçici yollarla algılar; basit bir kod değişimi bağımlıları sessizce bozabilir veya döngü yaratabilir.
+
+Cordis derleme zamanına ait iki kavramı runtime'a taşır. Hesabın ortamı nasıl değiştirdiğini açıklayan effect system **geri alınabilir effect** olur: her context dönüşümü, runtime'ın izlediği açık bir ters işlem taşır ve bileşen kaldırılınca context geri yüklenir. Hesabın ortamdan ne istediğini açıklayan coeffect system **reaktif coeffect** olur: bileşen bağımlılıklarını bir spesifikasyonla bildirir; her context değişimi ona etkinleşme, devre dışı kalma veya etkilenmeme durumunu bildirir. Dinamik bileşim hesabı bunu iç içe bileşen sistemlerine genişletir—bileşebilirlik geçişli olmalıdır.
+
+**Öz-evrimin tavanı modelin ne kadar iyi kod yazdığına değil, onu taşıyan sistemin ne kadar bileşebilir olduğuna bağlıdır.** Bu yüzden `dsh` model adaptörlerini, araç kayıtlarını, oturum günlüklerini ve Agent ana döngüsünü bile eklenti yapar: **yalnızca insanların bakımını yapabildiği ayrıcalıklı bir çekirdek yoktur**.
+
+Bileşebilirlik güvenli yükleyip kaldırmayı çözer, yüklenmesi gerekip gerekmediğini değil. Modelin yazdığı eklenti yalnız süreç belleğinde yaşar, yeniden başlatmada kaybolur ve **otomatik olarak resmî eklentiye yükseltilemez**; kalıcı olması için önceki yavaş worktree + Pull Request yolundan geçmelidir.
+
+Evrimin de maliyeti vardır. Çalışan eklenti modelin gördüğü tools ve Prompt parçalarını değiştirir; istek prefix'i değiştiği noktadan Bölüm 2'nin KV Cache'i geçersiz olur. `dsh` eklenti belgeleri context ve KV Cache etkisini açıklamalıdır.
+
+[^dsh-2026]: DeepSeek AI, *DeepSeek Harness: Everything is a Plugin*, 2026. https://github.com/deepseek-ai/deepseek-harness. Eklenti katmanları ve yamalar `docs/architecture.md`; öz-değişiklik araçlarının yaşam döngüsü, sandbox anlamı ve güven bildirimleri `docs/subsystems/extensions.md` ile `packages/extensions/README.md` içinde açıklanır. Ağustos 2026'da yayımlanan proje burada developer preview tasarımıyla ele alınır.
+
+[^cordis-2026]: Shi, Yifan, Wei Zhang, and Tianyi Cui. *A Programming Paradigm for Spatiotemporal Composability.* Ön baskı taslağı, 13 Ağustos 2026. https://github.com/cordiverse/paper
+
 ### Deneyimi Parametrelere Yazmak
 
 Bilgi, talimat ve program bir ön kabule dayanır: hedeflenen yetenek dış simgelerle görece eksiksiz biçimde ifade edilebilir. Oysa tıbbi görüntü anlama, doğal konuşma ezgisi, metindeki şablonlaşmış "yapay zeka kokusu"nun giderilmesi ve uzun erimli planlama gibi yetenekleri birkaç kurala ya da iş akışına sıkıştırmak çok güçtür. Bu tür yetenekler post-training yoluyla model parametrelerine yazılmak zorundadır.
@@ -268,8 +250,6 @@ Bir katman daha dışarı çıkıldığında optimizasyon nesnesi artık yalnız
 
 Aynı düşünce iş akışlarına ve tüm Harness'e genişletilebilir. AFlow, birden çok LLM çağrısından oluşan iş akışını bir kod grafiği olarak temsil eder ve yürütme geri bildirimiyle düğüm ve kontrol akışı birleşimlerini arar[^aflow-2025]; Meta-Harness ise Kodlama Agent'ına aday Harness'in kaynak kodunu, puanlarını ve trajectory'lerini okutarak bilginin nasıl saklandığını, getirildiğini ve sunulduğunu belirleyen kodu arar[^meta-harness-2026]. Bölüm 5, kodun Agent'ın sistem yapısını ifade ettiği genel dil olduğunu zaten göstermişti; buradaki yenilik şu: kod yalnızca bir kez üretilen bir çıktı değildir, değerlendirme geçmişiyle birlikte sürekli aramanın nesnesi de olabilir.
 
-Optimizasyon katmanı ne kadar yüksekse o kadar iyi değildir. Yerel bir kuralı aramak için birkaç sınır vakası yeter; oysa eksiksiz bir iş akışını ya da Harness'i aramak çok daha geniş bir aday uzayı, çok daha yüksek bir değerlendirme maliyeti ve çok daha zor bir nedensellik atfı demektir. Açık, yinelenen ve tek bir bileşene kadar götürülebilen bir arıza için önce denetlenebilir yerel bir yama uygulanmalıdır; ancak yerel değişiklikler bileşenler arası bir sorunu uzun süre çözemediğinde ya da mevcut yönetim yönteminin kendisi darboğaza dönüştüğünde iş akışı, Harness ve hatta optimize edici katmanına çıkmaya değer. Hangi katmana çıkılırsa çıkılsın, değerlendiriciler, yetki sınırları ve saklı testler değiştirilebilir alanın dışında kalmak zorundadır — arama uzayı ne kadar büyürse bu güven kökü o kadar önemli olur.
-
 > **Deney 9-6 ★★★: Bu Kitabı Hermes'e Verirsek Kendini Yükseltebilir mi?**
 >
 > **Amaç**: Bir Agent'ın dış bilgiyi kendi yeteneklerinde gerçek bir güncellemeye dönüştürüp dönüştüremediğini sınamak. Deney bir sorun ya da özellik listesi vermez; Hermes'e on bölüm ve kendi kaynak kodu verilir, ilkeleri anlaması, uygulamasını incelemesi ve değerli bir iyileştirmeyi kendisinin seçmesi beklenir.
@@ -288,33 +268,13 @@ Dört güncelleme biçimi ancak aynı otonom döngüye girdiğinde tek seferlik 
 
 Voyager[^voyager-2023] görece eksiksiz bir sürekli evrim döngüsü sergiliyor. Minecraft'ta mevcut yeteneklerine göre yeni bir hedef seçiyor, ortamdan gelen geri bildirimle programı yineliyor, doğrulamayı geçen kodu beceri kütüphanesine kaydediyor, sonra eski becerileri birleştirerek daha zor görevleri çözüyor. Otomatik müfredat, yürütülebilir beceriler ve ortam doğrulaması — bunların biri bile eksik olamaz: müfredat olmadan yalnızca beceri kütüphanesi varsa, Agent bir sonraki adımda ne öğreneceğini bilemez; ortam doğrulaması olmadan yalnızca kendi kendine reflection varsa, beceri kütüphanesi hata biriktirir; kalıcılık olmadan yalnızca keşif varsa, her görev yine sıfırdan başlar. Gerçek dünyadaki Agent'ların bilgisi, Prompt'u, araçları ve parametreleri daha karmaşık olsa da temel öğrenme süreci benzerdir.
 
-Daha somut olarak Voyager, birbirine geçen üç mekanizmadan oluşur. **Otomatik müfredat üreteci**, mevcut eşyalara, ortama ve kazanılmış becerilere bakarak zorluk düzeyi uygun bir sonraki hedefi önerir; böylece keşif rastgele bir dolanmaya dönüşmez. **Beceri kütüphanesi**, başarılı programları retrieval yapılabilir ve birleştirilebilir kod olarak saklar; örneğin ileri düzey bir toplama becerisi hareket ve üretim gibi temel becerileri çağırabilir. **Yinelemeli prompt mekanizması** ise ortam gözlemlerini, yürütme hatalarını ve öz doğrulama sonuçlarını bir sonraki kod üretimi turuna geri taşır; bu, görev gerçekten geçene kadar sürer. Makale, o dönemin baseline'larına kıyasla Voyager'ın 3,3 kat daha fazla benzersiz eşya edindiğini, 2,3 kat daha uzağa keşif yaptığını, kilit teknoloji ağacı kilometre taşlarını en fazla 15,3 kat daha hızlı açtığını ve beceri kütüphanesini yeni Minecraft dünyalarına aktarabildiğini bildiriyor; bu metrikler, dondurulmuş bir Agent'ın tek bir sınavdaki notunu değil, yeteneğin yaşantıyla birlikte büyüme eğrisini ölçüyor.
+Voyager üç kenetli mekanizmadan oluşur. **Otomatik müfredat üreticisi**, mevcut envanter, ortam ve becerilerden uygun zorlukta bir sonraki hedefi önererek keşfi rastgele gezinme olmaktan çıkarır. **Beceri kitaplığı**, başarılı programları geri çağrılabilir ve bileştirilebilir kod olarak saklar; gelişmiş toplama becerisi temel hareket ve üretim becerilerini çağırabilir. **Yinelemeli prompting mekanizması**, ortam gözlemlerini, yürütme hatalarını ve öz-doğrulama sonuçlarını görev gerçekten geçene dek sonraki kod üretim turuna taşır.
 
-### Sorunu Konumlandırmaktan Deneyimi Biriktirmeye
+**Keşif döngüsü: hipotez, deney, değerlendirme, geri bildirim.** Voyager gibi Agent öz-evrim sistemleri, yüzyıllarda olgunlaşan bilimsel yöntem olan bu döngüyü izler. Jeff Dean ve arkadaşlarının kısa süre önce kurduğu Discovery Loop; deney önerme, uygulama, değerlendirme, sonucu alma ve sonraki tura besleme sürecini otomatikleştirmeyi önerir[^ch1-discovery-loop]. Bu, Agent öz-evriminin bilime uygulanmasıdır. Kendi hikâyesini anlatıp kendine iyi not vermekten kaçınmak için bu bölümdeki öz-evrim bilimsel yönteme uymalıdır.
 
-Yüzeyde aynı görünen bir sorun farklı türde değişiklikler gerektirebilir. Müşteri hizmetleri Agent'ının olgu uydurma halüsinasyonu, bilgi tabanında olgunun eksik olmasından da kaynaklanabilir, Prompt'un alıntı istememesinden de. Agent görevi tamamlamadığı hâlde "tamamlandı" biçiminde asılsız bir söz veriyorsa, bu sorun hem talimatla düzeltilebilir hem de Harness'in yanıt ile araç durumu arasındaki tutarlılığı zorunlu olarak denetlemesiyle giderilebilir. Evrim modülü önce kök nedeni konumlandırmalı, sonra en küçük, en kolay doğrulanan ve en kolay geri alınan değişiklik nesnesini seçmelidir. Kanıtı yetersiz, seyrek görülen arızalar hemen öğrenmeyi tetiklememeli, örnek biriktirmeye devam edilmelidir.
+[^ch1-discovery-loop]: Discovery Loop, Jeff Dean, Sanjay Ghemawat, Quoc Le ve Oriol Vinyals tarafından 5 Ağustos 2026'da kamu yararına şirket olarak duyuruldu. Kamuya açık hedefi, tam deney döngülerini otomatikleştirmek ve eskiden seri yürüyen deneyleri büyük ölçekte paralelleştirmektir.
 
-Bu seçim, deneyim arttıkça da değişebilir. Yeni keşfedilen bir strateji önce retrieval için bir deneyim dokümanı olarak durur; birden çok vakada tekrar tekrar doğrulandıktan sonra bilgiye terfi ettirilebilir. Bilginin üç ifade biçimi vardır: doğal dille açıkça betimlenebilen kurallar Skill olarak biriktirilebilir; adımları kararlıysa ve doğal dil anlama yeteneği gerektirmiyorsa araç koduna derlenebilir; gerçekte geniş kapsamlı örtük bir karar yeteneğini yansıtıyorsa post-training'e girebilir.
-
-### Doğrulama, Yayım ve Geri Alma
-
-Bütün değişiklikler önce aday bir yetenek ya da aday bir Agent üretir; üretim sürümünün doğrudan üzerine yazmaz. Bilgi dokümanları için retrieval sonrasında yeni görevlerdeki başarımın artıp artmadığı doğrulanmalı; Prompt ve Skill için sınır vakaları ve eski görev regresyonu denetlenmeli; programlar sandbox'ta ve sıfırlanmış ortamlarda test edilmeli; parametre güncellemelerinde ise unutma, güvenlik ve dağılım dışı görevler kontrol edilmelidir. Doğrulama geçildikten sonra bile yeni sürüm kademeli yayımla gerçek trafikte gözlenmelidir; kilit metrikler kötüleştiğinde bilinen güvenli sürüme otomatik olarak geri dönülmelidir.
-
-**Doğrulanmış sürüm ve geri alma:**
-
-```python
-candidate = propose_minimal_update(evidence, current_version)
-
-if not verify(candidate, boundary_set): reject(candidate)
-elif not verify(candidate, retention_set): reject(candidate)
-elif not verify(candidate, safety_set): reject(candidate)
-else:
-    canary = deploy_to_small_traffic(candidate)
-    if canary.metrics_regress: rollback(current_version)
-    else: promote(candidate)
-```
-
-Doğrulama, sık sık birbirine karıştırılan iki yeteneği de ayırt etmelidir. **Harness güncelleme yeteneği** (harness-updating), trajectory'lerden değerli ve kalıcı değişiklikler üretebilmektir; **Harness'ten yararlanma yeteneği** (harness-benefit) ise görev Agent'ının sonraki çalışmalarda bu değişiklikleri bulup etkinleştirmesi ve doğru kullanmasıdır. Bir Skill kendi başına tümüyle doğru yazılmış olabilir, ama görece zayıf bir görev modeli onu uygun senaryoda yüklemiyorsa ya da yükledikten sonra uzun süre ona uyamıyorsa, bunların herhangi biri nihai sonucun "hiç evrim olmamış" gibi görünmesine yol açar. Dolayısıyla güncelleyicinin iyi mi kötü mü olduğu yalnızca uçtan uca puana bakılarak çıkarsanamaz. Lin ve arkadaşlarının model değiştirme deneyleri, bu iki yeteneğin temel model yeteneğiyle ilişkisinin aynı olmadığını gösteriyor[^harness-benefit-2026]; kesin güç ilişkisi hâlâ daha fazla görevde doğrulanmayı gerektiriyor, ama ikisini ayrı ayrı değerlendirmek genel olarak uygulanabilir bir yöntemdir.
+Sürekli Agent evriminde sık karıştırılan iki yetenek ayrılmalıdır. **Harness updating**, trajectory'lerden değerli kalıcı değişiklik üretir; **Harness benefit**, görev Agent'ının sonraki çalışmada bu değişikliği bulup etkinleştirme ve doğru kullanma yeteneğidir. Bir Skill kusursuz yazılmış olsa da zayıf model onu doğru durumda yüklemeyebilir veya uzun süre izleyemeyebilir; sonuç “evrim yok” gibi görünür. Bu yüzden end-to-end puan tek başına güncelleyiciyi teşhis edemez. Lin ve arkadaşlarının model değiştirme deneyleri iki yeteneğin temel model kabiliyetiyle farklı ilişkileri olduğunu gösterir[^harness-benefit-2026].
 
 Tablo 9-3 Sürekli Evrimin Katmanlı Değerlendirme Metrikleri
 
@@ -323,9 +283,7 @@ Tablo 9-3 Sürekli Evrimin Katmanlı Değerlendirme Metrikleri
 | Aday değişiklik etkinliği | Güncelleyici değerli bir değişiklik önerdi mi | Adayın bağımsız doğrulamadaki kabul oranı ve kazancı |
 | Artifact etkinleşme oranı | Görev Agent'ı yeni Skill'i, belleği veya aracı doğru senaryoda yükledi mi | Retrieval, yönlendirme ve tool calling trajectory'si |
 | Uyum başarı oranı | Etkinleştikten sonra yeni kurala veya sürece göre mi yürütüldü | Eylem dizisi ve süreç doğrulayıcıları |
-| Saklı görev kazancı | Bütün olarak, evrime katılmamış görevlerde iyileşme oldu mu | Held-out başarı oranı, kalite ve maliyet |
-
-Tanı sırasında aynı aday Harness sabit tutulup yalnızca görev modeli değiştirilebilir: güçlü model yararlanabiliyor ama zayıf model yeni artifact'ı hiç etkinleştirmiyorsa, darboğaz retrieval veya yönlendirmededir; ikisi de etkinleştiriyor ama yalnızca güçlü model doğru yürütüyorsa, darboğaz talimata uyma ya da uzun erimli planlamadadır; bütün modeller geriliyorsa, değişikliğin kendisinden şüphelenmek için daha çok neden vardır. Bunun tersi de yapılabilir: görev modeli sabit tutulup değişiklik öneren model değiştirilerek güncelleyicinin niteliği tek başına karşılaştırılabilir. Bu çift yönlü model değiştirme, yalnızca "evrim sonrası toplam puan"a bakmaktan çok daha kolay biçimde, yetenek bütçesinin nereye ayrılması gerektiğini gösterir.
+| Koruma kümesi kazanımı | Evrime katılmayan görevlerde sistem iyileşiyor ve genelliyor mu? | Koruma kümesi başarı oranı, kalite ve maliyeti |
 
 Değerlendirme, öğrenme bittikten sonra girilen bir sınav değil, kendi kendine evrim sürecinin vazgeçilmez bir parçasıdır. Uzun vadeli değerlendirme en az beş tür sonucu aynı anda gözlemelidir:
 
@@ -350,8 +308,6 @@ Bu tür görevler daha iyi makale yazan bir modele geçilerek kökünden çözü
 - **Arama çeşitliliğini koruyun**: Açık uçlu arama, yalnızca o an en yüksek puanı alan tek bir zinciri saklamamalıdır. Aday havuzunda ayrıca mekanizma farkına, kod özgünlüğüne veya hipotez türüne göre, geçici olarak düşük puanlı ama nitelikçe farklı birkaç dal tutulmalıdır; böylece bütün çözümlerin puan almayı kolaylaştıran aynı şablona yakınsaması önlenir.
 - **İnsanı daha üst katmanda devreye sokun**: İnsanın rolü, tehlikeli bir tool calling öncesinde "onayla"ya tıklamaktan ibaret olmamalı; problemi tanımlamayı, değerlendirme ölçütlerini incelemeyi, olağandışı sonuçları yorumlamayı ve ne zaman durulacağına karar vermeyi de kapsamalıdır. Geri bildirimin muğlak olduğu görevlerde bu üst düzey yargılar, yürütmeyi adım adım devralmaktan hem daha zor otomatikleştirilir hem de daha değerlidir.
 
-Aynı sınırlama sıradan yazılım mühendisliğinde de vardır: birim testlerinin tamamının geçmesi yalnızca şu anda gözlenebilen davranışın testleri karşıladığını kanıtlar, kod tabanının aylar sonra da kolay bakılabilir olacağını kanıtlamaz. Bu yüzden önceki kısım uzun vadeli mühendislik kalitesini bağımsız bir metrik olarak sıraladı; mevcut görevin başarı oranının bu gecikmeli dışsallıkları da kapsamasını beklemedi. Sürekli evrimin üst sınırı, nihayetinde sistemin gerçekten önemsediği hedefi değerlendirip değerlendiremediğine bağlıdır; yalnızca ölçmesi en kolay vekil metriğe değil.
-
 ### Sürekli Evrimin Güvenlik Sınırları
 
 Agent'ın kendi kendine evrilme yeteneği, tek bir hatayı uzun vadeli bir riske dönüştürebilir. Web sayfalarındaki, e-postalardaki ve araç çıktılarındaki **prompt injection deneyim olarak özetlenirse**, oturumlar boyunca tekrar tekrar etkili olabilir; otomatik aramayla bulunan kötü niyetli bir yazılım paketi araç olarak sarmalanırsa, etkisi tek bir sandbox çalışmasından bütün sonraki görevlere yayılır; kusurlu bir doğrulayıcı da ilerleme gibi görünen ama aslında gerileten aday sürümleri sürekli onaylayabilir. Bu nedenle Agent'ın kendi kendine evrim sistemi, "daha güçlü mü" sorusunu doğrulamanın yanı sıra "kim neyi değiştirebilir, dayanağı nereden geliyor" sorusunu da sınırlamak zorundadır.
@@ -373,17 +329,6 @@ Tipik bir uyku öğrenmesi döngüsü beş adımdan oluşur:
 3. **Toplama ve bütünleştirme**: Yakın zamanda değerlendirilmiş trajectory'lerde yeni sinyaller aramak, yinelenen içerikleri birleştirmek, çatışmaları ve uygulanabilirlik koşullarını işaretlemek, öncelikle yerel yamalar üretmek;
 4. **Doğrulama ve onay**: Adayları aktarım kümesi, saklı küme ve güvenlik kümesi üzerinde değerlendirmek; yüksek riskli yazma işlemlerini insan onayına bırakmak;
 5. **Budama ve indeksleme**: Retrieval indekslerini güncellemek; uzun süredir kullanılmayan veya yeni kanıtlarla çürütülen yetenekleri süresi dolmuş, arşivlenmiş ya da silinmiş olarak işaretlerken kaynağı ve geri alma sürümünü saklamak.
-
-**Boşta kalma sırasında birleştirme:**
-
-```python
-while sleep_gate_is_open():
-    batch = load_new_evaluated_trajectories()
-    proposals = consolidate(batch, current_capabilities)
-    for proposal in proposals:
-        validate_canary_and_promote_or_rollback(proposal)
-    prune_stale_entries_but_keep_provenance()
-```
 
 Kullanıcı belleği bunun en sezgisel örneğidir, ama eylem deneyiminden ayrılmalıdır. Claude Code'un otomatik belleği her proje için bir `MEMORY.md` indeksi ve konulara ayrılmış ayrıntı dosyaları tutar; oturum başlarken yalnızca indeksin sınırlı bir ön ekini yükler, geri kalan içeriği ihtiyaç oldukça okur; indeks üst sınıra yaklaştığında sistem Agent'tan ayrıntıları birleştirmesini ya da başka yere taşımasını ister. Bu, düz metin belleğin de kapasite kısıtına, katmanlı yüklemeye ve etkin düzenlemeye ihtiyaç duyduğunu gösteriyor; ne var ki kamuya açık mevcut mekanizma ağırlıklı olarak oturum içinde sürekli yazmaya dayanıyor ve sabit bir gece arka plan görevine basitçe eşitlenemez[^claude-code-memory].
 

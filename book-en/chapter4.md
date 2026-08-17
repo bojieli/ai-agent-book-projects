@@ -257,33 +257,6 @@ Table 4-2 Comparison of Proposer-Reviewer Mechanism and Sidecar Mechanism
 
 Another typical application of the Sidecar pattern is **constructing and enriching context**. While the main model is thinking, a Sidecar call can filter relevant user memories, summarize long tool outputs, or retrieve the user's latest information from a database. These results are ready when the main model needs them, with no perceptible added latency.
 
-**Tool safety gate:**
-
-```python
-proposal = model.tool_call()
-call = parse_and_validate_schema(proposal)
-
-if call is INVALID:
-    return structured_error("invalid arguments")
-
-if not permission_policy.allows(actor, call):
-    return structured_error("permission denied")
-
-risk = classify_risk(call.tool, call.args)
-if risk == HIGH:
-    review = independent_reviewer(
-        trusted_policy,
-        trusted_task_summary,
-        sanitize_and_tag_untrusted_fields(call)
-    )
-    if review != ALLOW:
-        return reject_or_escalate(review)
-
-result = sandbox.execute(call, scope = least_privilege_scope(call))
-checked = verify_result(call, result, observe_environment())
-return checked
-```
-
 **Automated Validation and Feedback Loop.**
 
 Another important design principle for execution tools is: **if the result of an operation can be verified, it should be verified automatically.** Taking code writing as an example: when an Agent calls `write_file` to create or modify a code file, the tool should not just write the content and return "success." Instead, it should immediately perform a syntax check after writing: call the appropriate linter (a static code analysis tool) based on the file type, parse its output into a structured list of errors, and return this as part of the tool's return value to the Agent.
@@ -402,20 +375,6 @@ The more common engineering equivalent keeps only a few basic tools (web search,
 ![Figure 4-2: Hierarchical Tool Matching (Two-Level Semantic Search: Server-Level → Tool-Level)](images/fig4-2.svg)
 
 **Hierarchical Matching and Fallback.** Efficient matching exploits the hierarchy already present in how tools are organized. In protocols like MCP, tools are grouped by **server** (like apps on a phone, each bundling a set of related functions), so matching can run in two layers: locate the relevant servers by capability description, then match specific tools within them. That shrinks the search space from "thousands of tools" to "dozens of servers × dozens of tools each," saving compute and cutting cross-domain semantic confusion. In engineering terms this rests on an embedding index built offline and updated incrementally. And when both layers' candidates score below threshold, the system should return an explicit "not found," prompting the Agent to rephrase and retry, to improvise with basic tools, or to create a new tool outright (the subject of Chapter 9).
-
-**Proactive tool discovery:**
-
-```python
-if capability_is_missing(task):
-    server = search_server_index(capability)
-    tool = search_tool_index(server, capability)
-
-    if tool == NOT_FOUND:
-        retry_with_rewritten_request_or_escalate()
-    else:
-        append_tool_schema_to_trajectory(tool)
-        continue
-```
 
 ![Figure 4-3: KV Cache Optimization for Dynamic Tool Loading](images/fig4-3.svg)
 

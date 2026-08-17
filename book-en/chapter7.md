@@ -150,16 +150,7 @@ An evaluation environment consists of five elements — the following sections w
 
 **Interaction Protocol**: Specifies the interaction mode and termination conditions.
 
-**Repeatable evaluation loop:**
-
-```python
-for task in dataset:
-    environment.reset(task.initial_state)
-    trajectory = agent.run(task.prompt, environment.tools)
-    outcome = environment.snapshot()
-    score = verifier(task, trajectory, outcome)
-    record(task, trajectory, outcome, score)
-```
+Together, these five elements form a repeatable evaluation loop.
 
 ![Figure 7-2: Tool-Calling and Human-Computer Interaction Evaluation Environments](images/fig7-2.svg)
 
@@ -381,17 +372,6 @@ rubric:
 ```
 
 **Good Rubric vs. Bad Rubric**: Each scoring level above specifies verifiable, concrete behavior ("Correctly answers Dr. Chen") rather than descriptions that cannot be judged objectively, like "demonstrates a deep understanding of memory." The veto item sets the bottom line: even if every other dimension scores full marks, a single instance of hallucination results in an automatic zero.
-
-**Deterministic veto before rubric judging:**
-
-```python
-deterministic = verify_state_policy_and_claims(trajectory, outcome)
-if deterministic.veto:
-    return FAIL(reason = deterministic.evidence)
-
-rubric_result = judge(answer, rubric, evidence)
-return aggregate_with_confidence(rubric_result)
-```
 
 ### Failure Attribution: Locate the First Error in a Trajectory
 

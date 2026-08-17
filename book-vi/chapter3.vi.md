@@ -40,23 +40,6 @@ Extracted memories:
 - User has travel plans to Tokyo (recent activity)
 ```
 
-**Vòng đời memory:**
-
-```python
-when answering(user_request):
-    recent_turns = conversation.tail()
-    relevant_memory = memory.search(user_request)
-    answer = LLM(recent_turns + relevant_memory)
-    return answer
-
-after conversation (background job):
-    candidates = extract_memory_candidates(conversation)
-    verified = verify_against_sources_and_policy(candidates, conversation)
-    memory.append_or_update(verified)
-```
-
-Hãy lưu ý một số đặc điểm chính của quá trình trích xuất này:
-
 **Tính chọn lọc**—Agent không ghi nhớ thông tin tạm thời như "tìm kiếm trả về 3 tùy chọn", mà chỉ giữ lại những sự kiện hữu ích về sau.
 
 **Tính trừu tượng**—"Tôi thích ngồi cạnh cửa sổ" được tinh lọc thành một sở thích chung, thay vì gắn với chuyến bay cụ thể này.
@@ -65,7 +48,7 @@ Hãy lưu ý một số đặc điểm chính của quá trình trích xuất n�
 
 ### Đánh giá khả năng ghi nhớ: khung ba cấp độ
 
-Trước khi bắt đầu thiết kế hệ thống bộ nhớ, trước tiên chúng ta phải trả lời câu hỏi: Loại hệ thống bộ nhớ nào được coi là "tốt"? Trước tiên hãy thiết lập các tiêu chuẩn đánh giá và sau đó có một thước đo thống nhất khi thảo luận về các phương án thiết kế khác nhau. Cộng đồng học thuật đã công bố một số điểm chuẩn công khai, trong đó **LoCoMo**(Bộ nhớ hội thoại Long-term, bộ nhớ đàm thoại dài hạn; Maharana và cộng sự, 2024, arXiv:2402.17753) là điểm chuẩn tiêu biểu: nó xây dựng các cuộc hội thoại nhiều vòng siêu dài với trung bình khoảng 300 vòng và tối đa 35 phiên. Khả năng ghi nhớ và hiểu biết của mô hình đối với các cuộc trò chuyện đường dài đã được kiểm tra thông qua ba nhiệm vụ: hỏi và trả lời (được chia thành các câu hỏi một bước, nhiều bước, lý luận tạm thời, phạm vi mở và các câu hỏi đối nghịch), tóm tắt sự kiện và tạo đối thoại đa phương thức.
+Trước khi bắt đầu thiết kế hệ thống bộ nhớ, trước tiên chúng ta phải trả lời câu hỏi: Loại hệ thống bộ nhớ nào được coi là "tốt"? Trước tiên hãy thiết lập các tiêu chuẩn đánh giá và sau đó có một thước đo thống nhất khi thảo luận về các phương án thiết kế khác nhau. Cộng đồng học thuật đã công bố một số điểm chuẩn công khai, trong đó **LoCoMo**(Bộ nhớ hội thoại Long-term, bộ nhớ đàm thoại dài hạn) là điểm chuẩn tiêu biểu: nó xây dựng các cuộc hội thoại nhiều vòng siêu dài với trung bình khoảng 300 vòng và tối đa 35 phiên. Khả năng ghi nhớ và hiểu biết của mô hình đối với các cuộc trò chuyện đường dài đã được kiểm tra thông qua ba nhiệm vụ: hỏi và trả lời (được chia thành các câu hỏi một bước, nhiều bước, lý luận tạm thời, phạm vi mở và các câu hỏi đối nghịch), tóm tắt sự kiện và tạo đối thoại đa phương thức.
 
 Dựa trên thực tiễn của các tiêu chuẩn bộ nhớ khác nhau như LoCoMo và các sản phẩm bộ nhớ thương mại, khả năng bộ nhớ của người dùng có thể được tóm tắt thành tám mục sau (đây là bản tóm tắt của tác giả, không phải phân loại ban đầu của một tiêu chuẩn nhất định):
 
@@ -90,7 +73,7 @@ Trên cơ sở đó, chúng tôi đã thiết kế khung đánh giá ba cấp đ
 >
 > Chúng tôi đã xây dựng bộ đánh giá theo khung ba cấp độ được mô tả ở trên: 20 trường hợp thử nghiệm cho mỗi cấp độ, mỗi trường hợp chứa một lượng lớn chi tiết thực tế. Các trường hợp sử dụng cấp độ đầu tiên thường bao gồm một phiên duy nhất; các trường hợp sử dụng cấp hai và cấp ba bao gồm nhiều phiên theo thời gian và đối tượng (mỗi trường hợp sử dụng có tổng cộng khoảng 50 vòng giao tiếp). Trong quá trình đánh giá, Agent đã thử nghiệm được yêu cầu tạo bộ nhớ dựa trên phiên đầu tiên, sau đó sửa đổi bộ nhớ dựa trên bộ nhớ và phiên tiếp theo (với tiền đề là chỉ có thể truy cập bộ nhớ và không thể xem lại đoạn hội thoại gốc của phiên trước đó) cho đến khi tất cả các phiên của trường hợp sử dụng này được xử lý. Sau khi bộ nhớ được tạo, Agent được yêu cầu trả lời câu hỏi mới của người dùng dựa trên bộ nhớ. Sau đó sử dụng phương thức LLM-as-a-judge (tức là dùng một LLM khác làm giám khảo để chấm điểm chất lượng câu trả lời) để so sánh câu trả lời với câu trả lời tham khảo để lấy điểm thưởng cho test case.
 >
-> Bộ đánh giá và tập lệnh đánh giá được bao gồm trong dự án `user-memory` trong kho hỗ trợ (dùng chung với thí nghiệm 3-2 ở phần sau), nơi người đọc có thể xem định nghĩa đầy đủ của từng lớp trường hợp thử nghiệm.
+> Bộ đánh giá và tập lệnh đánh giá được bao gồm trong dự án `user-memory` trong kho hỗ trợ, nơi người đọc có thể xem định nghĩa đầy đủ của từng lớp trường hợp thử nghiệm.
 
 ### Phân cấp bộ nhớ
 
@@ -141,21 +124,6 @@ Bốn định dạng đầu tiên, dù đơn giản hay phức tạp, về cơ b
 Nó chia quá trình cập nhật bộ nhớ thành hai giai đoạn [^uac]: **giai đoạn bộ nhớ**(sau mỗi phiên, LLM lần lượt trích xuất các sự kiện trong cuộc trò chuyện thành các chuỗi và thêm chúng vào nhật ký sự kiện chỉ thêm chứ không xóa) và **giai đoạn cấu trúc**(theo định kỳ, LLM sẽ tạo lại toàn bộ Python có kiểu từ nhật ký sự kiện hoàn chỉnh - sắp xếp các sự kiện thành dataclass, ngày tháng dùng `date()`, tập hợp dùng danh sách có kiểu, còn các mục linh tinh khó định kiểu thì đưa vào `notes: list[str]`). Đây là lần đầu tiên thiết kế cổ điển của "nhật ký ghi trước + điểm kiểm tra định kỳ" trong cơ sở dữ liệu được sử dụng trong bộ nhớ LLM: chỉ việc thêm nhật ký mới đảm bảo rằng không có dữ kiện nào bị mất và các điểm kiểm tra định kỳ sẽ nén nó thành một cấu trúc gọn gàng và có thể truy vấn được. (Quy trình tái thiết theo chu kỳ này có cùng nguyên tắc với "cơ chế tổ chức và nén bộ nhớ" ở phần sau của chương này, ngoại trừ việc sản phẩm là mã chứ không phải văn bản.)
 
 Dưới đây là một ví dụ đơn giản. Trong giai đoạn có cấu trúc, hộ chiếu và hành trình của người dùng được lưu trữ thành trạng thái có kiểu:
-
-**Log chỉ-ghi-thêm và checkpoint:**
-
-```python
-append_only_log += extract_facts(conversation)
-
-if checkpoint_due():
-    proposed_state = rebuild_typed_state(append_only_log)
-    if type_check(proposed_state) and source_review(proposed_state):
-        publish_checkpoint(proposed_state)
-    else:
-        keep_previous_checkpoint()
-```
-
-**Trạng thái người dùng có kiểu:**
 
 ```python
 state = {
@@ -269,15 +237,15 @@ Kiến trúc tham chiếu này cho thấy cách phân loại bộ nhớ của kh
 
 Khi sự tương tác tiếp tục, hệ thống bộ nhớ phải đối mặt với những thách thức kép về không gian lưu trữ và hiệu quả truy xuất. Việc lưu trữ tích lũy đơn giản sẽ dẫn đến bùng nổ bộ nhớ, điều này không chỉ tiêu tốn dung lượng lưu trữ mà còn làm giảm độ chính xác khi truy xuất.
 
-Trong thực tế, chiến lược nén bộ nhớ đa cấp có thể được sử dụng. Cấp độ đầu tiên được lọc theo điểm quan trọng. Một ý tưởng phổ biến để đánh giá tầm quan trọng của việc chấm điểm là kết hợp bốn yếu tố: tần suất truy cập (những ký ức được lấy lại thường xuyên là quan trọng hơn), sự suy giảm theo thời gian (những ký ức cũ có nhiều khả năng bị lãng quên hơn), cường độ cảm xúc (những ký ức có thẻ cảm xúc mạnh có nhiều khả năng được giữ lại hơn) và tính độc đáo của thông tin (thông tin lặp lại ít quan trọng hơn). Những bộ nhớ dưới ngưỡng được đánh dấu là có thể nén hoặc có thể xóa. Ví dụ: một bộ nhớ đã được truy cập 5 lần, được tạo cách đây 3 ngày, có thẻ tình cảm mạnh và không có bản ghi trùng lặp sẽ nhận được điểm quan trọng cao hơn; trong khi bộ nhớ chỉ được truy cập 1 lần, được tạo cách đây 90 ngày, không có thẻ tình cảm và bị trùng lặp nhiều với 3 bộ nhớ khác có thể nằm dưới ngưỡng nén.
+Trong thực tế, chiến lược nén bộ nhớ đa cấp có thể được sử dụng.
 
-Lớp thứ hai được thực hiện thông qua phân cụm. Những ký ức tương tự được nhóm lại và các bản tóm tắt đại diện được tạo cho mỗi nhóm (ví dụ: nhiều cuộc trò chuyện về thời tiết được nén thành “người dùng thường hỏi về thời tiết và đặc biệt quan tâm đến lượng mưa”). Bộ nhớ chi tiết ban đầu có thể được lưu trữ vào bộ lưu trữ thứ cấp.
+1. Cấp độ đầu tiên được lọc theo điểm quan trọng. Một ý tưởng phổ biến để đánh giá tầm quan trọng của việc chấm điểm là kết hợp bốn yếu tố: tần suất truy cập (những ký ức được lấy lại thường xuyên là quan trọng hơn), sự suy giảm theo thời gian (những ký ức cũ có nhiều khả năng bị lãng quên hơn), cường độ cảm xúc (những ký ức có thẻ cảm xúc mạnh có nhiều khả năng được giữ lại hơn) và tính độc đáo của thông tin (thông tin lặp lại ít quan trọng hơn). Những bộ nhớ dưới ngưỡng được đánh dấu là có thể nén hoặc có thể xóa. Ví dụ: một bộ nhớ đã được truy cập 5 lần, được tạo cách đây 3 ngày, có thẻ tình cảm mạnh và không có bản ghi trùng lặp sẽ nhận được điểm quan trọng cao hơn; trong khi bộ nhớ chỉ được truy cập 1 lần, được tạo cách đây 90 ngày, không có thẻ tình cảm và bị trùng lặp nhiều với 3 bộ nhớ khác có thể nằm dưới ngưỡng nén.
 
-Cấp độ thứ ba là trừu tượng hóa và khái quát hóa – trích xuất các quy tắc chung từ bộ nhớ tình huống cụ thể và chuyển chúng thành bộ nhớ ngữ nghĩa hoặc thủ tục. Ví dụ: từ nhiều cuộc trò chuyện mua sắm, họ biết rằng họ “thích các sản phẩm tiết kiệm chi phí và chú ý đến đánh giá của người dùng”.
+2. Lớp thứ hai được thực hiện thông qua phân cụm. Những ký ức tương tự được nhóm lại và các bản tóm tắt đại diện được tạo cho mỗi nhóm (ví dụ: nhiều cuộc trò chuyện về thời tiết được nén thành “người dùng thường hỏi về thời tiết và đặc biệt quan tâm đến lượng mưa”). Bộ nhớ chi tiết ban đầu có thể được lưu trữ vào bộ lưu trữ thứ cấp.
+
+3. Cấp độ thứ ba là trừu tượng hóa và khái quát hóa – trích xuất các quy tắc chung từ bộ nhớ tình huống cụ thể và chuyển chúng thành bộ nhớ ngữ nghĩa hoặc thủ tục. Ví dụ: từ nhiều cuộc trò chuyện mua sắm, họ biết rằng họ “thích các sản phẩm tiết kiệm chi phí và chú ý đến đánh giá của người dùng”.
 
 Phát hiện xung đột sử dụng phương pháp lập phiên bản - giữ lại các phiên bản lịch sử trong khi đánh dấu phiên bản mới nhất. Chỉ phiên bản mới nhất của một số thông tin (chẳng hạn như địa chỉ hiện tại của bạn) được giữ lại và lịch sử đầy đủ của thông tin khác (chẳng hạn như lịch sử việc làm của bạn) được giữ lại.
-
-Cuối cùng, cần vạch ra một ranh giới để tránh nhầm lẫn với các chương khác trong cuốn sách: Phần này thảo luận về thuật toán tổ chức của lớp lưu trữ bộ nhớ - những bộ nhớ nào cần được lọc, phân cụm và trừu tượng hóa thành dạng nào; việc nén ngữ cảnh trong Chương 2 giải quyết vấn đề về cửa sổ trong một phiên duy nhất và hai chức năng ở các cấp độ khác nhau; và cách các thuật toán tổ chức này được kích hoạt trong hệ thống sản xuất - cơ chế kích hoạt và triển khai kỹ thuật tích hợp bộ nhớ ngoại tuyến không đồng bộ, định kỳ - sẽ được mở rộng trong Chương 9.
 
 ### Bảo vệ quyền riêng tư: Giải mẫn cảm nhật ký
 
@@ -295,31 +263,9 @@ Trước đó chúng tôi tập trung vào việc biểu diễn và quản lý b
 
 Công nghệ cốt lõi để xây dựng cơ sở tri thức dùng chung là thế hệ tăng cường truy xuất (Retrieval-Augmented Generation, RAG). Ý tưởng cốt lõi là kết hợp khả năng tư duy và tạo ra của các mô hình ngôn ngữ quy mô lớn với bề rộng và tính kịp thời của cơ sở tri thức bên ngoài - dữ liệu huấn luyện của mô hình có ngày hết hạn, trong khi cơ sở tri thức có thể được cập nhật bất cứ lúc nào.
 
-Một hệ thống RAG điển hình bao gồm hai phần: bộ truy xuất chịu trách nhiệm tìm các đoạn có liên quan từ cơ sở kiến thức và bộ tạo (thường là LLM) lấy các đoạn này làm ngữ cảnh để tạo ra câu trả lời. Đầu tiên, chúng ta hãy trải nghiệm trực quan chế độ làm việc của RAG qua hai ví dụ, sau đó đi vào chi tiết kỹ thuật của bộ truy xuất.
+Một hệ thống RAG điển hình bao gồm hai phần: bộ truy xuất chịu trách nhiệm tìm các đoạn có liên quan từ cơ sở kiến thức và bộ tạo (thường là LLM) lấy các đoạn này làm ngữ cảnh để tạo ra câu trả lời.
 
-**Ví dụ 1: Cơ sở Kiến thức Wikipedia**. Người dùng hỏi "Vướng víu lượng tử là gì?" và dữ liệu huấn luyện cho mô hình cơ sở có thể không chứa những tiến bộ thử nghiệm mới nhất. Quá trình của RAG như sau:
-
-```python
-# 1. Câu hỏi của người dùng
-query = "Vướng víu lượng tử là gì? Những phát triển thử nghiệm mới nhất là gì?"
-
-# 2. Tìm kiếm: Tìm các đoạn phù hợp nhất từ kho kiến thức Wikipedia
-results = retriever.search(query, top_k=3)
-# results = [
-# "Vướng víu lượng tử là một hiện tượng cơ học lượng tử trong đó trạng thái lượng tử của hai hạt có liên quan với nhau...",
-# "Giải Nobel Vật lý năm 2022 được trao cho ba nhà khoa học đã chứng minh bằng thực nghiệm sự vướng víu lượng tử...",
-# "Thí nghiệm bất đẳng thức của Bell chứng minh tính phi địa phương của vướng víu lượng tử..."
-# ]
-
-# 3. Tạo: Sử dụng kết quả truy xuất làm ngữ cảnh và để LLM tạo câu trả lời
-answer = llm.generate(
-system="Trả lời câu hỏi của người dùng dựa trên các tài liệu tham khảo sau. Nếu không đủ thông tin, vui lòng cho biết rõ ràng.",
-context=results, # ← Các đoạn kiến thức được truy xuất sẽ được đưa vào ngữ cảnh
-    question=query
-)
-```
-
-**Ví dụ 2: Cơ sở tri thức doanh nghiệp**. Một người dùng hỏi "Tôi muốn hoàn lại tiền cho món hàng tôi đã mua, quy trình như thế nào?":
+Trước tiên, hãy cảm nhận trực quan cách RAG hoạt động qua một ví dụ về cơ sở tri thức doanh nghiệp: một người dùng hỏi "Tôi muốn hoàn lại tiền cho món hàng tôi đã mua, quy trình như thế nào?":
 
 ```python
 query = "Quy trình hoàn tiền"
@@ -589,7 +535,9 @@ Thiết kế cốt lõi là **L0/L1/L2 tải ngữ cảnh ba lớp theo yêu c�
 
 **Chọn Markdown thuần văn bản thay vì cơ sở dữ liệu chuyên dụng làm biểu diễn nền tảng cho tri thức** là một quyết định kỹ thuật tưởng như ngược đời nhưng được cân nhắc kỹ. Văn bản thuần túy cho phép người dùng trực tiếp đọc, chỉnh sửa và sửa tri thức của Agent; Git cung cấp kiểm soát phiên bản và khôi phục; quan trọng hơn, khi có khả năng `write_file`, Agent có thể tự ghi chép và tổ chức tri thức trên một nhánh làm việc, rồi đề xuất thay đổi để quy trình kiểm duyệt ở phần sau hợp nhất vào kho chính. Khi một phiên kết thúc, hệ thống có thể đề xuất ghi cập nhật sở thích người dùng vào `user/memories/` và ghi lại thao tác vào `agent/memories/`. Phần trước vẫn thuộc quản lý tri thức người dùng của chương này; phần sau chỉ trở thành kinh nghiệm học tập theo nghĩa của Chương 9 sau khi đã được đánh giá kết quả, khái quát qua nhiều trajectory và xác minh tiếp, chứ không phải biến tùy tiện một lần thao tác thành kinh nghiệm đáng tin cậy.
 
-Tuy nhiên, khi sử dụng văn bản thuần túy, tổ chức theo kiểu hệ thống tệp này, có một điều kiện tiên quyết dễ bị bỏ qua nhưng quyết định trực tiếp đến sự thành công hay thất bại của việc truy xuất: **Liên kết và chỉ mục phải được thiết lập giữa các tệp**. `.abstract`/`.overview` được giới thiệu trước đó giải quyết vấn đề trừu tượng hóa phân cấp theo chiều dọc, nhưng điểm nhấn ở đây là liên kết theo chiều ngang - nếu kiến thức chỉ được chia thành một loạt các tệp văn bản độc lập và đặt phẳng trong thư mục mà không có bất kỳ tham chiếu chéo nào với nhau, thì ngoài việc quét toàn văn bản hoặc truy xuất vectơ từng cái một, Agent hầu như không thể điều hướng giữa các mục liên quan; Càng có nhiều kiến thức thì việc tìm kiếm trong bộ sưu tập tài liệu nằm rải rác này càng khó khăn hơn. Cách tiếp cận đúng là tổ chức cơ sở kiến thức giống như Wikipedia: mỗi mục nhập trỏ đến nó bằng một liên kết khi đề cập đến các mục khác, được bổ sung bởi các trang mục nhập và trang chỉ mục, để Agent có thể đi theo các liên kết từ một khái niệm này đến các khái niệm liên quan - điều này tương đương với việc sử dụng các liên kết tệp nhẹ để hiện thực hóa một phần khả năng điều hướng của biểu đồ mối quan hệ thực thể của GraphRAG. Ngoài ra còn có một điểm khác biệt chính trong thực tế: **các mô hình khác nhau có mức độ sẵn sàng và khả năng tích cực thiết lập các liên kết như vậy khác nhau**. Khi viết kiến thức mới, một mô hình có khả năng mạnh sẽ tự động tham chiếu ngược lại các mục đã có và duy trì chỉ mục một cách thuận tiện; trong khi nhiều mô hình sẽ không chủ động thực hiện việc này và chỉ nối thêm các tệp một cách riêng biệt. Do đó, các yêu cầu phải được nêu rõ trong từ nhắc chịu trách nhiệm viết kiến thức - mỗi khi một mục mới được thêm vào, trước tiên nó phải được truy xuất và liên kết với các mục hiện có có liên quan và trang chỉ mục của thư mục chứa nó phải được cập nhật để tạo thành một mạng tham chiếu có thể truy cập hai chiều, thay vì cho phép kiến thức thoái hóa thành các hòn đảo bị ngắt kết nối.
+Tuy nhiên, khi sử dụng văn bản thuần túy, tổ chức theo kiểu hệ thống tệp này, có một điều kiện tiên quyết dễ bị bỏ qua nhưng quyết định trực tiếp đến sự thành công hay thất bại của việc truy xuất: **Liên kết và chỉ mục phải được thiết lập giữa các tệp**. `.abstract`/`.overview` được giới thiệu trước đó giải quyết vấn đề trừu tượng hóa phân cấp theo chiều dọc, nhưng điểm nhấn ở đây là liên kết theo chiều ngang - nếu kiến thức chỉ được chia thành một loạt các tệp văn bản độc lập và đặt phẳng trong thư mục mà không có bất kỳ tham chiếu chéo nào với nhau, thì ngoài việc quét toàn văn bản hoặc truy xuất vectơ từng cái một, Agent hầu như không thể điều hướng giữa các mục liên quan; Càng có nhiều kiến thức thì việc tìm kiếm trong bộ sưu tập tài liệu nằm rải rác này càng khó khăn hơn. Cách tiếp cận đúng là tổ chức cơ sở kiến thức giống như Wikipedia: mỗi mục nhập trỏ đến nó bằng một liên kết khi đề cập đến các mục khác, được bổ sung bởi các trang mục nhập và trang chỉ mục, để Agent có thể đi theo các liên kết từ một khái niệm này đến các khái niệm liên quan - điều này tương đương với việc sử dụng các liên kết tệp nhẹ để hiện thực hóa một phần khả năng điều hướng của biểu đồ mối quan hệ thực thể của GraphRAG.
+
+Ngoài ra còn có một điểm khác biệt chính trong thực tế: **các mô hình khác nhau có mức độ sẵn sàng và khả năng tích cực thiết lập các liên kết như vậy khác nhau**. Khi viết kiến thức mới, một mô hình có khả năng mạnh sẽ tự động tham chiếu ngược lại các mục đã có và duy trì chỉ mục một cách thuận tiện; trong khi nhiều mô hình sẽ không chủ động thực hiện việc này và chỉ nối thêm các tệp một cách riêng biệt. Do đó, các yêu cầu phải được nêu rõ trong từ nhắc chịu trách nhiệm viết kiến thức - mỗi khi một mục mới được thêm vào, trước tiên nó phải được truy xuất và liên kết với các mục hiện có có liên quan và trang chỉ mục của thư mục chứa nó phải được cập nhật để tạo thành một mạng tham chiếu có thể truy cập hai chiều, thay vì cho phép kiến thức thoái hóa thành các hòn đảo bị ngắt kết nối.
 
 ### Tri thức nên được cập nhật như thế nào
 
@@ -706,7 +654,7 @@ Ngay cả với khung RAG thông minh tiên tiến, các sai sót cơ bản tron
 >
 > Sự khác biệt được thể hiện ngay lập tức khi người dùng nhập một truy vấn yêu cầu ngữ cảnh cụ thể để trả lời, chẳng hạn như "Tăng trưởng doanh thu của ACME gần đây như thế nào?" **Không có ngữ cảnh** Trong cơ sở kiến thức, truy vấn có thể khớp với nhiều khối văn bản chứa từ khóa "tăng trưởng doanh thu" nhưng đến từ các công ty khác nhau, các năm khác nhau hoặc thậm chí chỉ là phân tích chung về ngành. Mối tương quan rất thấp và đầy tiếng ồn. **Ngữ cảnh** Trong cơ sở kiến thức, vì mỗi khối văn bản có một "thẻ nhận dạng" chính xác nên truy vấn có thể được chuyển hướng chính xác đến khối văn bản không chỉ chứa từ khóa mà còn có tiền tố theo ngữ cảnh phù hợp với mục đích truy vấn, chẳng hạn như "Công ty ACME", "Gần đây", v.v. Nhật ký thử nghiệm cho thấy rõ rằng kết quả truy xuất nhận biết ngữ cảnh đạt điểm cao hơn đáng kể so với kết quả không có ngữ cảnh và các khối văn bản trả về cũng chính xác hơn.
 >
-> Chi phí cải thiện hiệu suất là một lệnh gọi LLM bổ sung trong giai đoạn lập chỉ mục, nhưng thông qua prompt caching (cơ chế bộ nhớ đệm xuyên các yêu cầu được giới thiệu trong Chương 2, các lệnh gọi lặp lại tới cùng một tiền tố chỉ tốn khoảng 1/10), nó hoàn toàn có thể kiểm soát được (khoảng 1 USD trên một triệu token tài liệu). Theo dữ liệu nghiên cứu của Anthropic, công nghệ này kết hợp với BM25 có thể giảm 49% tỷ lệ truy xuất thất bại (tức là tỷ lệ trượt top-20 đã đề cập trong phần trước "Cách đo chất lượng truy xuất", 1 − recall@20) và kết hợp với trình sắp xếp lại, mức giảm có thể đạt tới 67%. Thử nghiệm này chứng minh rõ ràng rằng việc đầu tư vào giai đoạn tiền xử lý kiến thức thông minh hơn, nhận biết ngữ cảnh là một quyết định kỹ thuật mang lại nhiều lợi ích khi xây dựng hệ thống RAG cấp sản xuất, chất lượng cao.
+> Chi phí cải thiện hiệu suất là một lệnh gọi LLM bổ sung trong giai đoạn lập chỉ mục, nhưng thông qua prompt caching (cơ chế bộ nhớ đệm xuyên các yêu cầu được giới thiệu trong Chương 2, các lệnh gọi lặp lại tới cùng một tiền tố chỉ tốn khoảng 1/10), nó hoàn toàn có thể kiểm soát được (khoảng 1 USD trên một triệu token tài liệu). Theo dữ liệu nghiên cứu của Anthropic, công nghệ này kết hợp với BM25 có thể giảm 49% tỷ lệ truy xuất thất bại và kết hợp với trình sắp xếp lại, mức giảm có thể đạt tới 67%. Thử nghiệm này chứng minh rõ ràng rằng việc đầu tư vào giai đoạn tiền xử lý kiến thức thông minh hơn, nhận biết ngữ cảnh là một quyết định kỹ thuật mang lại nhiều lợi ích khi xây dựng hệ thống RAG cấp sản xuất, chất lượng cao.
 
 Việc xác minh trên là hiệu quả của việc truy xuất nhận biết ngữ cảnh trên cơ sở tri thức tài liệu. Áp dụng kỹ thuật tương tự ngược lại với các kịch bản bộ nhớ người dùng và bạn sẽ có được thử nghiệm tiếp theo.
 

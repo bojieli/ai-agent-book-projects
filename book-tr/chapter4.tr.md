@@ -259,33 +259,6 @@ Sidecar kalıbının bir başka tipik uygulaması **context zenginleştirmesidir
 
 Bir güvenlik Sidecar'ı ayrıca bir **ret circuit breaker'ına** ihtiyaç duyar: sınıflandırıcı işlem üstüne işlemi reddettiğinde, sistem sonsuza kadar yeniden denememeli—bu kaynakları israf eder ve kullanıcıyı bir döngüye hapsedebilir—bunun yerine kullanıcıdan elle karar vermesini istemeye geri dönmelidir. Bu, Bölüm 1'deki Harness "düzeltme" işlevinin tipik bir örneğidir.
 
-**Araç güvenlik kapısı:**
-
-```python
-proposal = model.tool_call()
-call = parse_and_validate_schema(proposal)
-
-if call is INVALID:
-    return structured_error("invalid arguments")
-
-if not permission_policy.allows(actor, call):
-    return structured_error("permission denied")
-
-risk = classify_risk(call.tool, call.args)
-if risk == HIGH:
-    review = independent_reviewer(
-        trusted_policy,
-        trusted_task_summary,
-        sanitize_and_tag_untrusted_fields(call)
-    )
-    if review != ALLOW:
-        return reject_or_escalate(review)
-
-result = sandbox.execute(call, scope = least_privilege_scope(call))
-checked = verify_result(call, result, observe_environment())
-return checked
-```
-
 **Otomatik Doğrulama ve Geri Bildirim Döngüsü.**
 
 Yürütme araçları için bir başka önemli tasarım ilkesi şudur: **bir işlemin sonucu doğrulanabiliyorsa, otomatik olarak doğrulanmalıdır.** Kod yazmayı örnek alırsak: bir Agent bir kod dosyası oluşturmak veya değiştirmek için `write_file`ı çağırdığında, araç yalnızca içeriği yazıp "başarılı" döndürmemelidir. Bunun yerine, yazdıktan hemen sonra bir sözdizimi kontrolü yapmalıdır: dosya türüne göre uygun linter'ı (statik kod analiz aracı) çağırmalı, çıktısını yapılandırılmış bir hata listesine ayrıştırmalı ve bunu aracın Agent'a dönüş değerinin bir parçası olarak döndürmelidir.
@@ -401,20 +374,6 @@ Geleneksel yaklaşım her aracın şemasını bir kerede system prompt'a enjekte
 ![Şekil 4-2: Hiyerarşik Araç Eşleştirme (İki Düzeyli Semantik Arama: Sunucu Düzeyi → Araç Düzeyi)](images/fig4-2.svg)
 
 **Hiyerarşik Eşleştirme ve Geri Dönüş.** Verimli eşleştirme, araçların organize edilme biçiminde zaten mevcut olan hiyerarşiden yararlanır. MCP gibi protokollerde, araçlar **sunucuya** göre gruplandırılır (bir telefondaki uygulamalar gibi, her biri ilgili işlevler kümesini paketler), bu yüzden eşleştirme iki katmanda çalışabilir: yetenek açıklamasına göre ilgili sunucuları bulun, ardından bunların içindeki belirli araçları eşleştirin. Bu, arama uzayını "binlerce araçtan" "düzinelerce sunucu × sunucu başına düzinelerce araca" küçültür, hesaplamadan tasarruf eder ve çapraz alan semantik karışıklığını azaltır. Mühendislik açısından bu, çevrimdışı inşa edilen ve artımlı olarak güncellenen bir embedding indeksine dayanır. Ve her iki katmanın adayları da eşiğin altında puan aldığında, sistem açık bir "bulunamadı" döndürmeli, Agent'ı yeniden ifade edip yeniden denemeye, temel araçlarla doğaçlama yapmaya veya doğrudan yeni bir araç yaratmaya (Bölüm 9'in konusu) yönlendirmelidir.
-
-**Proaktif araç keşfi:**
-
-```python
-if capability_is_missing(task):
-    server = search_server_index(capability)
-    tool = search_tool_index(server, capability)
-
-    if tool == NOT_FOUND:
-        retry_with_rewritten_request_or_escalate()
-    else:
-        append_tool_schema_to_trajectory(tool)
-        continue
-```
 
 ![Şekil 4-3: Dinamik Araç Yüklemesi için KV Cache Optimizasyonu](images/fig4-3.svg)
 

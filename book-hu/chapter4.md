@@ -250,35 +250,6 @@ Mind a Sidecar, mind a Javasló-Felülvizsgáló mechanizmus bevezet egy másodi
 
 A Sidecar minta másik tipikus alkalmazása a "kontextus gazdagítása": amíg a fő modell gondolkodik, egy sávon kívüli hívás párhuzamosan fut a felhasználói emlékek relevanciájának szűrésére, nagy eszközkimenetek összefoglalására, és engedélykövetelmények előzetes felmérésére – ezek az eredmények készen állnak, amikor a fő modellnek szüksége van rájuk, és a felhasználó nem érzékel további késleltetést.
 
-**Eszközbiztonsági ellenőrző kapu:**
-
-```python
-proposal = model.tool_call()
-call = parse_and_validate_schema(proposal)
-
-if call is INVALID:
-    return structured_error("invalid arguments")
-
-if not permission_policy.allows(actor, call):
-    return structured_error("permission denied")
-
-risk = classify_risk(call.tool, call.args)
-if risk == HIGH:
-    review = independent_reviewer(
-        trusted_policy,
-        trusted_task_summary,
-        sanitize_and_tag_untrusted_fields(call)
-    )
-    if review != ALLOW:
-        return reject_or_escalate(review)
-
-result = sandbox.execute(call, scope = least_privilege_scope(call))
-checked = verify_result(call, result, observe_environment())
-return checked
-```
-
-Itt a bemeneti elszigetelés a kulcsfontosságú határ: a Felülvizsgáló az eszköz nevét, a meglévő paramétereket és az engedély metaadatait látja, nem pedig a teljes nyomvonalat, amely prompt injection-t tartalmazhat; a továbbítandó szabad szöveget adatként kell megjelölni, nem pedig utasításként, és át kell esnie a hossz-, kódolási és tartalompolitikai ellenőrzéseken.
-
 Egy biztonsági Sidecar-nak szüksége van egy "elutasítási megszakítóra" is: amikor az osztályozó egymás után elutasítja a műveleteket, a rendszer nem próbálkozhat a végtelenségig – ez erőforrásokat pazarol, és a felhasználót egy hurokba zárhatja – hanem vissza kell esnie arra, hogy megkérje a felhasználót a kézi ítélethozatalra. Ez az 1. fejezet Harness "korrekció" funkciójának tipikus példája.
 
 **Automatizált Érvényesítés és Visszacsatolási Hurok.**
@@ -388,20 +359,6 @@ A hagyományos megközelítés minden eszköz sémáját egyszerre injektálja a
 ![4-2. ábra: Hierarchikus Eszköz Egyeztetés (Kétszintű Szemantikai Keresés: Szerver Szint → Eszköz Szint)](images/fig4-2.svg)
 
 **Hierarchikus Egyeztetés és Tartalék (Fallback).** A hatékony egyeztetés kihasználja az eszközök szervezésében már meglévő hierarchiát. Az olyan protokollokban, mint az MCP, az eszközök "szerverenként" vannak csoportosítva (mint az alkalmazások egy telefonon, mindegyik egy kapcsolódó funkciókészletet csomagolva), így az egyeztetés két rétegben futhat: a releváns szerverek megkeresése képességleírás alapján, majd a specifikus eszközök egyeztetése azokon belül. Ez a keresési teret "több ezer eszközről" "tucatnyi szerver × tucatnyi eszközre" szűkíti, számítási kapacitást megtakarítva és csökkentve a domének közötti szemantikai összetévesztést. Mérnöki szempontból ez egy offline felépített és inkrementálisan frissített beágyazási indexen (embedding index) alapul. És amikor mindkét réteg jelöltjei a küszöbérték alá esnek, a rendszernek egy explicit "nem található" eredményt kell visszaadnia, ami arra ösztönzi az Agentet, hogy fogalmazza újra és próbálkozzon újra, improvizáljon alap eszközökkel, vagy hozzon létre egy teljesen új eszközt (a 9. fejezet témája).
-
-**Proaktív eszközfelderítés:**
-
-```python
-if capability_is_missing(task):
-    server = search_server_index(capability)
-    tool = search_tool_index(server, capability)
-
-    if tool == NOT_FOUND:
-        retry_with_rewritten_request_or_escalate()
-    else:
-        append_tool_schema_to_trajectory(tool)
-        continue
-```
 
 ![4-3. ábra: KV Cache Optimalizálás a Dinamikus Eszközbetöltéshez](images/fig4-3.svg)
 

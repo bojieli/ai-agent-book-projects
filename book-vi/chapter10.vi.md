@@ -175,23 +175,6 @@ Hợp nhất bốn loại vùng vào cùng một cây thư mục là giá trị 
 
 Hệ thống tập tin giải quyết vấn đề **trao đổi sản phẩm** giữa Agent. Việc cộng tác còn cần một **mặt phẳng điều khiển**. Đây chính là chỗ dụng võ của các dòng vòng đời trong Bảng 10-2: bộ nguyên thủy công cụ mà Chương 4 đã đưa ra—tạo (`spawn_subagent`), gửi tin nhắn (`send_message_to_subagent`), hủy (`cancel_subagent`), khám phá (`list_agents`)—tương ứng với fork, tin nhắn, kill và ps của thế giới tiến trình. Phần này không lặp lại định nghĩa giao diện mà tập trung vào bốn khả năng mà cộng tác đa Agent phụ thuộc vào nhưng thường bị bỏ qua.
 
-**Envelope thông điệp và vòng đời worker:**
-
-```python
-envelope = {
-    id, trace_id, sender, recipient, type,
-    payload, created_at, deadline, schema_version
-}
-
-worker = spawn(task, budget, cancellation_token)
-publish(task_assigned(envelope, worker))
-while worker.is_running:
-    accept(status_update | artifact | needs_input)
-    if deadline_expired or cancellation_token.is_set:
-        request_graceful_stop(worker)
-await worker.ack_or_timeout()
-```
-
 **1. Truyền tin nhắn.** Hình thức đơn giản nhất là điểm-điểm: Agent A gọi trực tiếp `send_message_to_agent_b(content)`, phù hợp với các tình huống có cấu trúc liên kết cố định và một số lượng nhỏ Agent (chẳng hạn như điện thoại + máy tính kép Agent trong thử nghiệm của chương này). Khi số lượng Agent tăng lên và yêu cầu song song không đồng bộ, số lượng kết nối điểm-điểm tăng tỷ lệ thuận với số lượng Agent và cả người gửi và người nhận đều phải trực tuyến cùng một lúc; tại thời điểm này, **Bus thông báo** nên được sử dụng thay thế (xem "Biểu mẫu phối hợp song song" ở phần sau của chương này): Agent xuất bản thông báo lên bus và bus chuyển tiếp nó theo mối quan hệ đăng ký. Người gửi không cần biết người tiêu dùng. Dù là điểm-điểm hay qua xe buýt, tin nhắn thường phải mang một phong bì có cấu trúc: ID người gửi, đích (chỉ định Agent hoặc quảng bá), loại tin nhắn (chẳng hạn như `task_assigned`/`status_update`/`result`/`terminate`) và tải trọng JSON. Định dạng phong bì thống nhất đảm bảo người nhận định tuyến và phân tích cú pháp đáng tin cậy, đồng thời cho phép truy xuất nguồn gốc của các liên kết cộng tác - chìa khóa để gỡ lỗi các hệ thống đa Agent.
 
 **2. Truy vấn trạng thái.** Đây là mắt xích dễ bị đánh giá thấp nhất trong mặt phẳng điều khiển. Sau khi Agent chính phái Agent con đi, nếu không có cách nào biết được tiến độ của nó thì vừa không thể phán đoán có nên tiếp tục chờ hay không, vừa không thể can thiệp kịp thời khi nó bị nghẽn. Cách làm theo trực giác là bê nguyên RPC, định nghĩa một giao diện truy vấn `get_subagent_status(agent_id)`, trả về "đang chạy/đã hoàn thành/thất bại" cộng thêm một phần trăm tiến độ. Nhưng giao diện kiểu kéo này có công dụng thực tế nhỏ hơn nhiều so với kỳ vọng: Agent con vừa được tạo là lập tức bắt đầu thực thi, cho đến khi hoàn thành hoặc thất bại, chứ không luân chuyển giữa một chuỗi trạng thái xếp hàng như các tác vụ (job) của hệ thống xử lý theo lô truyền thống—cũng như trong lập trình Unix hiếm khi cần theo PID để bỏ phiếu (poll) trạng thái chạy của một tiến trình khác. Việc bỏ phiếu còn có cái lưỡng nan cố hữu: quá dày thì lãng phí token, quá thưa thì không kịp thời. Cách lấy trạng thái tự nhiên hơn là quay về hai mô thức giao tiếp lớn ở đầu chương.

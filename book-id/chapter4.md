@@ -252,33 +252,6 @@ Aplikasi khas lain dari pola Sidecar adalah **context enrichment** (pengayaan ko
 
 Sidecar keamanan juga memerlukan **rejection circuit breaker** (*circuit breaker* penolakan): ketika pengklasifikasi menolak operasi demi operasi, sistem tidak boleh mencoba lagi tanpa batas—hal itu membuang-buang sumber daya dan dapat menjebak pengguna dalam sebuah *loop* (perulangan)—tetapi kembali dengan meminta pengguna untuk menilai secara manual. Ini adalah contoh tipikal dari fungsi "koreksi" Harness dari Bab 1.
 
-**Gerbang keamanan tool:**
-
-```python
-proposal = model.tool_call()
-call = parse_and_validate_schema(proposal)
-
-if call is INVALID:
-    return structured_error("invalid arguments")
-
-if not permission_policy.allows(actor, call):
-    return structured_error("permission denied")
-
-risk = classify_risk(call.tool, call.args)
-if risk == HIGH:
-    review = independent_reviewer(
-        trusted_policy,
-        trusted_task_summary,
-        sanitize_and_tag_untrusted_fields(call)
-    )
-    if review != ALLOW:
-        return reject_or_escalate(review)
-
-result = sandbox.execute(call, scope = least_privilege_scope(call))
-checked = verify_result(call, result, observe_environment())
-return checked
-```
-
 **Validasi Otomatis dan Loop Umpan Balik.**
 
 Prinsip desain penting lainnya untuk *execution tool* (tool eksekusi) adalah: **jika hasil operasi dapat diverifikasi, operasi tersebut harus diverifikasi secara otomatis.** Mengambil penulisan kode sebagai contoh: ketika sebuah Agent memanggil `write_file` untuk membuat atau memodifikasi file kode, *tool* tidak seharusnya hanya menulis konten dan mengembalikan pesan "berhasil." Sebaliknya, ia harus segera melakukan pemeriksaan sintaksis setelah menulis: memanggil *linter* (sebuah alat analisis kode statis) yang sesuai berdasarkan jenis file, mengurai *output*-nya menjadi daftar kesalahan terstruktur, dan mengembalikannya sebagai bagian dari nilai pengembalian *tool* kepada Agent.
@@ -394,20 +367,6 @@ Pendekatan tradisional menyuntikkan setiap skema tool ke dalam System Prompt sek
 ![Gambar 4-2: Pencocokan Alat Hierarkis (Pencarian Semantik Dua Tingkat: Tingkat Server → Tingkat Alat)](images/fig4-2.svg)
 
 **Pencocokan Hierarkis dan Fallback.** Pencocokan yang efisien memanfaatkan hierarki yang sudah ada dalam cara tool diatur. Dalam protokol seperti MCP, tool dikelompokkan berdasarkan **server** (seperti aplikasi di ponsel, yang masing-masing membundel serangkaian fungsi terkait), sehingga pencocokan dapat berjalan dalam dua lapisan: menemukan server yang relevan berdasarkan deskripsi kemampuan, kemudian mencocokkan tool spesifik di dalamnya. Hal ini menyusutkan ruang pencarian dari "ribuan tool" menjadi "puluhan server × masing-masing puluhan tool," menghemat komputasi dan mengurangi kebingungan semantik lintas domain. Secara rekayasa, hal ini bergantung pada indeks *embedding* yang dibangun secara *offline* dan diperbarui secara inkremental. Dan ketika kandidat dari kedua lapisan mendapat skor di bawah ambang batas (*threshold*), sistem harus mengembalikan nilai eksplisit "tidak ditemukan," yang mendorong Agent untuk memparafrase dan mencoba lagi, berimprovisasi dengan tool dasar, atau membuat tool baru sama sekali (subjek dari Bab 9).
-
-**Penemuan tool proaktif:**
-
-```python
-if capability_is_missing(task):
-    server = search_server_index(capability)
-    tool = search_tool_index(server, capability)
-
-    if tool == NOT_FOUND:
-        retry_with_rewritten_request_or_escalate()
-    else:
-        append_tool_schema_to_trajectory(tool)
-        continue
-```
 
 ![Gambar 4-3: Optimasi KV Cache untuk Pemuatan Alat Dinamis](images/fig4-3.svg)
 

@@ -40,23 +40,6 @@ Extracted memories:
 - User has travel plans to Tokyo (recent activity)
 ```
 
-**Memory lifecycle:**
-
-```python
-when answering(user_request):
-    recent_turns = conversation.tail()
-    relevant_memory = memory.search(user_request)
-    answer = LLM(recent_turns + relevant_memory)
-    return answer
-
-after conversation (background job):
-    candidates = extract_memory_candidates(conversation)
-    verified = verify_against_sources_and_policy(candidates, conversation)
-    memory.append_or_update(verified)
-```
-
-Note several key characteristics of this extraction process:
-
 **Selectivity**—the Agent won't remember transient information like "the search returned 3 options," only facts useful for the future;
 
 **Abstraction**—"I prefer window seats" is refined into a general preference, not tied to this specific flight;
@@ -65,7 +48,7 @@ Note several key characteristics of this extraction process:
 
 ### Evaluating Memory Capabilities: A Three-Level Framework
 
-Before designing a memory system, first answer one question: what makes a memory system "good"? Setting the evaluation criteria up front gives us a common yardstick for every design discussed later. Several public benchmarks exist; a representative one is **LoCoMo** (Long-term Conversational Memory; Maharana et al., 2024, arXiv:2402.17753). It constructs ultra-long dialogues averaging about 300 turns across up to 35 sessions, and probes a model's memory and understanding of long-range conversation through three task families: question answering (subdivided into single-hop, multi-hop, temporal reasoning, open-domain, and adversarial questions), event summarization, and multimodal dialogue generation.
+Before designing a memory system, first answer one question: what makes a memory system "good"? Setting the evaluation criteria up front gives us a common yardstick for every design discussed later. Several public benchmarks exist; a representative one is **LoCoMo** (Long-term Conversational Memory). It constructs ultra-long dialogues averaging about 300 turns across up to 35 sessions, and probes a model's memory and understanding of long-range conversation through three task families: question answering (subdivided into single-hop, multi-hop, temporal reasoning, open-domain, and adversarial questions), event summarization, and multimodal dialogue generation.
 
 Drawing on LoCoMo and its peers, together with the practice of commercial memory products, user memory capabilities can be distilled into eight categories (the author's synthesis, not any single benchmark's original taxonomy):
 
@@ -90,7 +73,7 @@ Building on this, we designed a three-level evaluation framework more tailored t
 >
 > We built an evaluation set following the three-level framework above: 20 test cases per level, each containing a wealth of factual details. Level 1 cases typically consist of a single session; Level 2 and 3 cases consist of multiple sessions across different times and entities (approximately 50 total communication turns per case). During evaluation, the Agent under test is required to generate memories based on the first session, then modify memories based on subsequent sessions (with access only to the memory, not the original conversation history), until all sessions for that case are processed. After memory generation, the Agent is asked to answer a new user question based on the memory. An LLM-as-a-judge method (using another LLM as a judge to score answer quality) is then used to compare the answer against a reference answer, yielding a reward score for that test case.
 >
-> This evaluation set and evaluation script are included in the `user-memory` project of the companion repository (the same companion project used for Experiment 3-2 later in this chapter). Readers can view the complete definitions of test cases for each level there.
+> This evaluation set and evaluation script are included in the `user-memory` project of the companion repository. Readers can view the complete definitions of test cases for each level there.
 
 ### The Hierarchical Structure of Memory
 
@@ -141,21 +124,6 @@ The four formats discussed above, whether simple or complex, are fundamentally *
 It splits memory updates into two phases[^uac]: the **memory phase** (after each session, the LLM extracts facts from the conversation one by one as strings, appending them to an append-only fact log) and the **structuring phase** (periodically, the LLM regenerates the entire typed Python representation from the complete fact log—organizing facts into dataclasses, using `date()` for dates, typed lists for collections, and `notes: list[str]` for miscellaneous items that are hard to type). This is the classic "write-ahead log + periodic checkpoint" design from databases, applied to LLM memory for the first time: the append-only log ensures no facts are lost, and the periodic checkpoint compresses them into a clean, queryable structure. (This periodic reconstruction process is consistent with the "memory compression and organization mechanism" discussed later in this chapter, except the output is code rather than text.)
 
 Below is a simplified example. The structuring phase stores the user's passport and trips as typed state:
-
-**Append-only log and checkpoint:**
-
-```python
-append_only_log += extract_facts(conversation)
-
-if checkpoint_due():
-    proposed_state = rebuild_typed_state(append_only_log)
-    if type_check(proposed_state) and source_review(proposed_state):
-        publish_checkpoint(proposed_state)
-    else:
-        keep_previous_checkpoint()
-```
-
-**Typed user state:**
 
 ```python
 state = {
@@ -265,15 +233,15 @@ This reference architecture shows how cognitive science's memory classifications
 
 As interaction continues, a memory system faces the twin pressures of storage space and retrieval efficiency. Simply accumulating everything leads to unbounded memory growth—it consumes storage and drags down retrieval accuracy.
 
-In practice, a multi-tier compression strategy works well. The first tier filters memories by importance score. A common approach to importance scoring considers four factors: access frequency (frequently retrieved memories are more important), time decay (older memories are more likely to be forgotten), emotional intensity (memories with strong emotional markers are more likely to be retained), and information uniqueness (the importance of duplicate information decreases). Memories below a threshold are marked as compressible or deletable. For example, a memory accessed 5 times, created 3 days ago, with a strong emotional marker, and no duplicates would receive a high importance score. In contrast, a memory accessed only once, created 90 days ago, with no emotional marker, and three near-duplicates might fall below the compression threshold.
+In practice, a multi-tier compression strategy works well.
 
-The second tier performs clustering. Similar memories are grouped, and a representative summary is generated for each group (e.g., multiple weather-related conversations are compressed into "The user frequently asks about the weather, with particular concern about rain"). Original detailed memories can be archived to secondary storage.
+1. The first tier filters memories by importance score. A common approach to importance scoring considers four factors: access frequency (frequently retrieved memories are more important), time decay (older memories are more likely to be forgotten), emotional intensity (memories with strong emotional markers are more likely to be retained), and information uniqueness (the importance of duplicate information decreases). Memories below a threshold are marked as compressible or deletable. For example, a memory accessed 5 times, created 3 days ago, with a strong emotional marker, and no duplicates would receive a high importance score. In contrast, a memory accessed only once, created 90 days ago, with no emotional marker, and three near-duplicates might fall below the compression threshold.
 
-The third tier abstracts and generalizes—extracting general rules from specific episodic memories and converting them into semantic or procedural memory. For example, from multiple shopping conversations, the system might learn "Prefers cost-effective products and values user reviews."
+2. The second tier performs clustering. Similar memories are grouped, and a representative summary is generated for each group (e.g., multiple weather-related conversations are compressed into "The user frequently asks about the weather, with particular concern about rain"). Original detailed memories can be archived to secondary storage.
+
+3. The third tier abstracts and generalizes—extracting general rules from specific episodic memories and converting them into semantic or procedural memory. For example, from multiple shopping conversations, the system might learn "Prefers cost-effective products and values user reviews."
 
 Conflict detection uses a versioning approach—historical versions are retained while the latest version is marked. For certain information (e.g., current address), only the latest version is kept; for other information (e.g., work history), the complete history is retained.
-
-Finally, a boundary must be drawn to avoid confusion with other chapters. This section discusses organization algorithms at the memory **storage layer**—which memories to select, cluster, and abstract, and into what forms. Context compression in Chapter 2 addresses the window problem within a single session; the two mechanisms operate at different levels. This chapter is also responsible for knowledge storage, indexing, and retrieval. Chapter 9 generalizes the two-stage pattern of “append evidence online, consolidate it offline” to the evolution of Agent behavior, examining what operational evidence is sufficient to trigger persistent updates.
 
 ### Privacy Protection: Log Sanitization
 
@@ -291,31 +259,9 @@ So far we have focused on the **representation and management** of memory—what
 
 The core technology for building a shared knowledge base is Retrieval-Augmented Generation (RAG). The central idea is to combine the thinking and generation capabilities of large language models with the breadth and timeliness of an external knowledge base—the model's training data has a cutoff date, while the knowledge base can be updated at any time.
 
-A typical RAG system consists of two parts: a retriever, which finds relevant fragments from the knowledge base, and a generator (usually an LLM), which uses these fragments as context to generate an answer. Let's first get an intuitive feel for how RAG works through two examples, then delve into the technical details of the retriever.
+A typical RAG system consists of two parts: a retriever, which finds relevant fragments from the knowledge base, and a generator (usually an LLM), which uses these fragments as context to generate an answer.
 
-**Example 1: Wikipedia Knowledge Base.** A user asks, "What is quantum entanglement?" The base model's training data might not include the latest experimental results. The RAG process is as follows:
-
-```python
-# 1. User query
-query = "What is quantum entanglement? What are the latest experimental advances?"
-
-# 2. Retrieval: Find the most relevant fragments from the Wikipedia knowledge base
-results = retriever.search(query, top_k=3)
-# results = [
-# "Quantum entanglement is a quantum mechanical phenomenon where the quantum states of two particles are correlated...",
-# "The 2022 Nobel Prize in Physics was awarded to three scientists for experiments with quantum entanglement...",
-# "Bell's inequality experiments have demonstrated the non-locality of quantum entanglement..."
-# ]
-
-# 3. Generation: Use the retrieved results as context for the LLM to generate an answer
-answer = llm.generate(
-    system="Answer the user's question based on the following reference materials. If the materials are insufficient, state that clearly.",
-    context=results,   # ← Retrieved knowledge fragments injected into the context
-    question=query
-)
-```
-
-**Example 2: Company Knowledge Base.** A user asks, "I bought something and want a refund. What's the process?":
+Let's first get an intuitive feel for how RAG works through a company knowledge base example: a user asks, "I bought something and want a refund. What's the process?":
 
 ```python
 query = "Refund process"
@@ -575,7 +521,9 @@ The core design is **L0/L1/L2 three-layer context on-demand loading**. When a re
 
 **Choosing Markdown plain text over a specialized database as the underlying representation for knowledge** is a seemingly counterintuitive but carefully considered engineering decision. Plain text means users can directly read, edit, and correct the Agent's knowledge, while Git provides version control and rollback. More importantly, with the `write_file` capability, the Agent can record and organize knowledge on a working branch and merge it into the main library through the review workflow described below. At the end of a session, the system can propose writing user-preference updates to `user/memories/` and operational records to `agent/memories/`. The former remains part of the user-knowledge management discussed in this chapter. The latter becomes experience learning in the sense of Chapter 9 only after outcome evaluation, cross-trajectory generalization, and subsequent validation; an arbitrary single operation must not be treated directly as reliable experience.
 
-However, adopting this plain-text, filesystem-style organization has a prerequisite that is easily overlooked but directly determines retrieval success: **links and indexes must be established between files**. The `.abstract`/`.overview` files mentioned earlier address the vertical, hierarchical summarization. What is emphasized here is horizontal association—if knowledge is simply split into a pile of independent text files laid out flat in a directory without any cross-references between them, then, aside from scanning all files sequentially or using vector retrieval, the Agent has almost no way to navigate between related entries. The more knowledge there is, the harder this scattered pile of files becomes to retrieve. The right approach is to organize the knowledge base like Wikipedia: whenever an entry mentions another, it links to that entry, supplemented by entry pages and index pages, so the Agent can walk from one concept to its neighbors—lightweight file links providing some of the navigation power of GraphRAG's entity-relationship graph. There is also a key practical difference here: **models vary in how reliably they create and maintain such links**. Stronger models, when writing new knowledge, will spontaneously refer back to existing entries and maintain indexes. However, many models do not do this proactively, simply appending files in isolation. Therefore, the knowledge-writing prompt must explicitly require this—for each new entry added, the system must first retrieve and link to relevant existing entries, and update the index page of the directory it belongs to, forming a bidirectionally reachable reference network, rather than letting the knowledge become disconnected entries.
+However, adopting this plain-text, filesystem-style organization has a prerequisite that is easily overlooked but directly determines retrieval success: **links and indexes must be established between files**. The `.abstract`/`.overview` files mentioned earlier address the vertical, hierarchical summarization. What is emphasized here is horizontal association—if knowledge is simply split into a pile of independent text files laid out flat in a directory without any cross-references between them, then, aside from scanning all files sequentially or using vector retrieval, the Agent has almost no way to navigate between related entries. The more knowledge there is, the harder this scattered pile of files becomes to retrieve. The right approach is to organize the knowledge base like Wikipedia: whenever an entry mentions another, it links to that entry, supplemented by entry pages and index pages, so the Agent can walk from one concept to its neighbors—lightweight file links providing some of the navigation power of GraphRAG's entity-relationship graph.
+
+There is also a key practical difference here: **models vary in how reliably they create and maintain such links**. Stronger models, when writing new knowledge, will spontaneously refer back to existing entries and maintain indexes. However, many models do not do this proactively, simply appending files in isolation. Therefore, the knowledge-writing prompt must explicitly require this—for each new entry added, the system must first retrieve and link to relevant existing entries, and update the index page of the directory it belongs to, forming a bidirectionally reachable reference network, rather than letting the knowledge become disconnected entries.
 
 ### How Knowledge Should Be Updated
 
@@ -686,7 +634,7 @@ The elegance of the method is that it strengthens both retrieval modes at once. 
 >
 > When a user inputs a query requiring specific context, such as "What is ACME Corporation's recent revenue growth?", the difference is immediately apparent. In the **context-free** knowledge base, the query might match many text blocks containing the keywords "revenue growth" but from different companies, different years, or even general industry analysis, resulting in low relevance and high noise. In the **context-aware** knowledge base, because each text block has a precise "identity tag", retrieval is guided accurately toward text blocks that not only contain the keywords but also have a context prefix matching the query's intent ("ACME Corporation", "recent"). The experiment logs clearly show that context-aware retrieval results score significantly higher than context-free results, and the returned text blocks are much more precise.
 >
-> The cost of this performance improvement is the additional LLM calls during the indexing phase. However, this is fully controllable through prompt caching (the cross-request caching mechanism introduced in Chapter 2, where repeated calls for the same prompt prefix cost about 1/10 of the original), bringing the cost to approximately $1 per million document tokens. According to Anthropic research, combining this technique with BM25 can reduce the retrieval failure rate (i.e., the top-20 miss rate mentioned in "How to Measure Retrieval Quality", 1 − recall@20) by 49%, and by 67% when combined with a reranker. The experiment makes a strong case: when building production-grade RAG, investing in smarter, context-aware preprocessing of knowledge is an engineering decision with an outsized return.
+> The cost of this performance improvement is the additional LLM calls during the indexing phase. However, this is fully controllable through prompt caching (the cross-request caching mechanism introduced in Chapter 2, where repeated calls for the same prompt prefix cost about 1/10 of the original), bringing the cost to approximately $1 per million document tokens. According to Anthropic research, combining this technique with BM25 can reduce the retrieval failure rate by 49%, and by 67% when combined with a reranker. The experiment makes a strong case: when building production-grade RAG, investing in smarter, context-aware preprocessing of knowledge is an engineering decision with an outsized return.
 
 That validates Contextual Retrieval on document knowledge bases. Applying the same technique to the user memory scenario gives us the next experiment.
 

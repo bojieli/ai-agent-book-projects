@@ -879,26 +879,13 @@ Az Ügynöki Állapotsáv ezt a problémát úgy kezeli, hogy szándékosan a ku
 > A figyelem erősen koncentrálódik az állapotsáv információira. Az érvelési folyamat közvetlenül a már desztillált információkat használja, többé nem számol statisztikákat a nyers adatokból. Egy olyan kis modellnél, mint a Qwen3-0.6B, az A kontrollcsoport gyakran megsérti a korlátot és folytatja a hívást, míg a B kontrollcsoport következetesen betartja a korlátot.
 >
 
-A 2-8. kísérlet egy kis léptékű, kvalitatív bemutató, amely szemlélteti az alapötletet. A szerző és munkatársai egy erre készült benchmarkkal[^ch2-8] mérték fel, mennyire hasznos az „előre kiszámít, majd közvetlenül kiolvas” megközelítés, és hol vannak a határai (ennek egységes neve **kontextusdesztilláció, Context Distillation**; az ügynöki állapotsáv ennek hétköznapi formája). Következtetések:
-
-- Az **előre kiszámított állapotsáv** a **gyenge modellek pontosságát állítja helyre**. A leggyengébb modellek 40–54 százalékpontot javultak, egy helyi 2B modell pedig ezeken a feladatokon utolérte az állapotsáv nélküli élvonalbeli modellt.
-- **Az erős modellek eleve helyesen válaszolnak; náluk a nyereség a hatékonyság.** Ugyanaz az állapotsáv nagyjából egy nagyságrenddel csökkenti a kérésenkénti gondolkodást, késleltetést és költséget (a gondolkodási tokenek 80–90%-át vagy még többet megtakarítva).
-- A legfontosabb változás az, hogy állapotsáv nélkül a kérésenkénti gondolkodás a kontextus hosszával **folyamatosan nő**, állapotsávval viszont **lényegében állandó**. Bármilyen hosszú a kontextus, a modell csak „rápillant” arra a néhány állapotmezőre.
-
-
-Az „előre kiszámítás” azonban jól és rosszul is elvégezhető, a különbség pedig óriási. Három tanulság:
-
-**1. Az állapotsávot kóddal karbantartani, nem LLM-mel.** Természetesnek tűnhet megkérni egy másik LLM-et, hogy olvassa el a történetet és összegezze az állapotsávot, de a kísérlet azt találta, hogy ez rosszul teljesített. Egy 20 soros reguláris kifejezés függvény elérte a valóság szintű pontosságot, míg egy frontier modell, amely a teljes történetet egy batchben dolgozta fel, sok hibás bejegyzést produkált, és a downstream pontosságot a nincs-állapotsáv alapvonal alá csökkentette. Ha egy LLM-et kérünk meg egy hosszú történet egyetlen menetben történő összegzésére, az csak áthelyezi az eredeti kontextus-beolvasási problémát máshova. Életképes alternatíva, hogy "lehetőség szerint kódot használjunk"; ha LLM szükséges, akkor az **egyenként vonja ki az elemeket, majd a kód aggregálja őket**, ahelyett, hogy a teljes történetet egyetlen menetben összegezné.
-
-**2. Ne törölje az eredeti kontextust.** Az állapotsáv az eredeti kontextus **veszteséges leképezése**: csak azokat a dimenziókat számítja ki előre, amelyekre várhatóan rákérdeznek. Ha számlálási vagy állapotkövetési feladatokhoz elegendő, az eredeti rekordok törölhetők, és sok token takarítható meg; de ha egy kérdés az állapotsávban nem szereplő dimenzióra vonatkozik, a csak állapotsávra támaszkodó pontosság meredeken összeomlik.
-
-**3. Az állapotsáv pontosságát elsődleges production metrikaként kövesse.** A kísérlet szerint **a modell szinte feltétel nélkül megbízik az állapotsávban**: ha az „3 hívást” ír, a modell ellenőrzés és újraszámítás nélkül elfogadja. Ez teszi hatékonnyá, de emiatt egy hiba **változatlanul** átkerül a végső válaszba. Ezért a korábban említett **állapotsáv-mérgezés** kockázatát komolyan kell venni.
+A kísérletek azt mutatják[^ch2-8], hogy egy **előre kiszámított állapotsávval** a **kisebb nyílt modellek pontossága megközelítheti az élvonalbeli nagy modellekét**. Emellett **az állapotsáv jelentősen javíthatja a modell gondolkodási hatékonyságát**: az Ágens egy-egy iterációjának gondolkodási tokenjeit, késleltetését és költségét nagyjából egy nagyságrenddel csökkenti. Állapotsáv nélkül az egyes lekérdezések gondolkodási igénye a kontextus növekedésével **folyamatosan nő**; állapotsávval **közel állandóvá** válik.
 
 [^ch2-8]: Li, Bojie and Noah Shi. *Distill, Don't Retrieve: Inference-Time Context Distillation for LLM Agent Reasoning.* 2026. https://01.me/research/context-distillation
 
 ### Az Ügynöki Állapotsáv Összetétele
 
-A fenti elméleti alapokra építve az Ügynöki Állapotsáv a következő információtípusokat tartalmazza:
+Az Ügynöki Állapotsáv a következő információtípusokat tartalmazza:
 
 **Feladattervezés**: Amikor egy ügynök összetett, több lépésből álló feladatokat kezel, a trajektória nagyon hosszúvá válhat. Az ügynök hajlamos túlzottan az aktuális helyi részfeladatra összpontosítani, elfelejtve a felhasználó eredeti kérését, a kulcsfontosságú korlátokat és a későbbi munkát. Egy TODO lista elhelyezése, amely a feladatot világos lépésekre bontja, a trajektória végén folyamatosan emlékezteti a modellt az aktuális előrehaladására és a jövőbeli célokra, segítve a cselekvések összehangolását az átfogó tervvel.
 
@@ -974,6 +961,14 @@ Egy durva modell megbecsüli a megtérülési pontot. Legyen minden állapot $S$
 
 Az ügynöki állapotsávnak van egy gyakorlati előnye: minden metainformáció ember által olvasható formában jelenik meg a kontextusban, így a fejlesztő bármikor ellenőrizheti, milyen információt kapott az ügynök és milyen döntéseket hozott. Még fontosabb, hogy a megoldás nem avatkozik bele a modellbe: nincs szükség finomhangolásra, és közvetlenül használható bármely nyelvi modellel.
 
+Az állapotsáv karbantartásánál két dologra kell figyelni:
+
+1. **Az állapotsávot lehetőleg kód tartsa karban. Ha elkerülhetetlen az LLM használata, egyenként vonja ki az elemeket, majd kód összesítse őket; soha ne kérj tőle egyszeri kötegelt számlálást**. A kísérletek szerint **a modell szinte feltétel nélkül megbízik az állapotsávban**: ha az áll rajta, hogy „3 hívás történt”, újraszámolás nélkül elfogadja. Az LLM-ek eleve könnyen hibáznak számláláskor, ezért a korábban említett **állapotsáv-mérgezés** kockázatát is komolyan kell venni.
+
+2. **Ne töröld az eredeti kontextust**. Az állapotsáv az eredeti kontextus **veszteséges vetülete**: csak azokat a dimenziókat számítja ki előre, amelyekre kérdést vártál. Ha elegendő—mint számlálásnál és állapotkövetésnél—, a nyers napló törölhető, sok token megtakarításával. De ha akár egy kérdés is a sávon kívüli dimenzióra vonatkozik, a kizárólag állapotsávra támaszkodó rendszer pontossága összeomlik.
+
+Az Ügynöki Állapotsáv a **kontextustömörítés** (Context Compression) egyik technikája. A következő szakasz további kontextustömörítési módszereket mutat be.
+
 ## Kontextustömörítési Stratégiák
 
 Az előző szakaszok arról szóltak, mit vegyünk fel a kontextusba: a prompt tervezés meghatározza, mit írjunk, a Készségek meghatározzák, mit töltsünk be igény szerint, és az Ügynöki Állapotsáv meghatározza, milyen metainformációkat injektáljunk. Ahogy a többfordulós interakciók mélyülnek, a kontextus azonban folyamatosan bővül. Ez a szakasz az ellenkező problémára tér rá: "hogyan csökkentsük a kontextus tartalmát" – mikor kell tömöríteni, hogyan kell tömöríteni, és miért lehet hasznos a tömörítés már azelőtt, hogy a kontextusablak megtelne.
@@ -1039,14 +1034,14 @@ A kulcs a tömörítés "időzítésének és helyének" megértése. A tömör�
 >
 > **2. és 3. stratégia: Nem Feladattudatos Tömörítés** – Az Egyedi Összegzés minden keresési eredményhez egymástól függetlenül 2-3 bekezdéses összefoglalót generál, 10,9%-os tömörítési aránnyal (ebben a könyvben a tömörítési arány "tömörített térfogat / eredeti térfogat"; kisebb szám agresszívebb tömörítést jelent). Képes elvégezni a feladatot, de 12 iterációt és 276 608 tokent igényel. A fő probléma az információ töredezettsége – több oldal ismételten ugyanazt az eseményt írja le, pazaro Helyet. Az Összevont Összegzés az összes eredményt egyetlen átfogó összefoglalóba egyesíti, 4,3%-os tömörítési aránnyal, 10 iterációt és 93 449 tokent igényelve. Azonban ha a bemenet rendkívül hosszú, le kell vágni, potenciálisan elveszítve a végén lévő információkat. Mindkettő közös hibája a szemantikai megértés hiánya, ami lehetetlenné teszi az információk relevanciájának megkülönböztetését.
 >
-> **4. stratégia: Kontextustudatos Tömörítés** – A központi újítás a jelenlegi lekérdezési szándék és a felhalmozott információ beépítése a tömörítési döntési folyamatba. A tömörítési promptban a "Given the search query: {query}" és "Current context: {context}" megadásával a modellt célzott összefoglalók generálására irányítjuk. Az eredmény csak 7 iterációt és 40 157 tokent igényel, körülbelül 3,0%-os általános tömörítési aránnyal. Egy tömörítési esetben 147 877 karaktert 1 963 karakterre tömörítve (körülbelül 1,3%) továbbra is megőrizte a kulcsfontosságú információkat, mint az alapítók nevei és pozícióváltozások; a későbbi keresések intelligensen ki tudták vonni a kulcsfontosságú információkat, mint a pozícióváltozások és új cégek, kiszűrve az irreleváns történelmi hátteret és duplikált tartalmat. Ez a siker egy kulcsfontosságú felismerésen alapul: a többlépéses feladatokban a szükséges információsűrűség és típus a különböző szakaszokban változik – a korai szakaszokban széles körű információgyűjtésre van szükség, a középső szakaszokban pontos tényellenőrzésre, a későbbi szakaszokban átfogó információszintézisre. A kontextustudatos tömörítés maximalizálja az információértéket a tömörítés fókuszának dinamikus beállításával.
+> **4. stratégia: Kontextustudatos Tömörítés** – A központi újítás a jelenlegi lekérdezési szándék és a felhalmozott információ beépítése a tömörítési döntési folyamatba. A tömörítési promptban a "Given the search query: {query}" és "Current context: {context}" megadásával a modellt célzott összefoglalók generálására irányítjuk. Az eredmény csak 7 iterációt és 40 157 tokent igényel, körülbelül 3,0%-os általános tömörítési aránnyal. Egy esetben mintegy 150 ezer karaktert 2 ezerre tömörített úgy, hogy megőrizte a későbbi feladathoz szükséges kulcsinformációkat, például az alapítók neveit és a pozícióváltozásokat.
 >
-> **5. stratégia: Kontextustudatos Idézetekkel** – Hozzáadja az információ származását az intelligens tömörítéshez, minden tényhez forrás URL idézet jelölőt csatolva. A tokenhasználat 222 992-re nő, 4,1%-os tömörítési aránnyal, de az idézetek lehetővé teszik az ellenőrzést. Ez kombinálja a veszteséges szemantikai tömörítést a veszteségmentes indexeléssel: bár a tartalom tömörítve van, a megtartott forráslinkek lehetővé teszik a rendszer számára, hogy visszatérjen az eredeti anyaghoz.
+> **5. stratégia: Kontextustudatos Idézetekkel** – Hozzáadja az információ származását az intelligens tömörítéshez, minden tényhez forrás-URL jelölőt csatolva. A tartalom szemantikailag, veszteségesen tömörül, de a forráslinkek megtartása veszteségmentes indexet ad, amelyből elméletileg bármikor vissza lehet térni az eredeti információhoz.
 >
 > **6. stratégia: Adaptív Ablakozás** – Egy kulcsfontosságú felismerésen alapul: a feladat korai szakaszában a kontextushely bőséges, így nincs szükség a tömörítésre sietni. A tömörítési mechanizmus csak akkor aktiválódik, amikor megközelítjük a kapacitáskorlátot, ezáltal a lehető legnagyobb mértékben megőrizve az eredeti információ integritását. A konkrét implementáció három alapvető mechanizmust foglal magában:
 >
-> - **Küszöbérték Trigger**: Folyamatosan figyeli a kontextushasználatot. A tömörítés csak akkor aktiválódik, ha a prompt tokenek száma meghaladja az ablak 80%-át (102 400 token egy 128K ablak esetén).
-> - **Batch Tömörítés**: Aktiváláskor az összes megjelöletlen eszközeredményt egyszerre tömöríti. Például a negyedik iteráció körül, amikor a kontextus érzékeli, hogy meghaladja a 102 400 token küszöbértéket (a gyakorlatban körülbelül 135 600 token esetén aktiválódott), mind a 10 tömörítetlen eszközüzenet azonnal tömörítésre kerül.
+> - **Küszöbérték Trigger**: Folyamatosan figyeli a kontextushasználatot, és csak akkor aktiválja a tömörítést, ha a prompt tokenjeinek száma meghaladja az ablak 80%-át.
+> - **Batch Tömörítés**: Aktiváláskor egyszerre tömöríti az összes megjelöletlen eszközeredményt. Ha például a kontextus túllépi a 102 400 tokenes küszöböt, azonnal tömöríti mind a 10 még tömörítetlen eszközüzenetet
 > - **Duplikáció Megelőzése**: Hozzáad egy `[COMPRESSED]` jelölőt, hogy a tömörített tartalom soha ne kerüljön újra feldolgozásra.
 >
 > Bár a teljes tokenhasználat viszonylag magas (174 601), az első néhány iteráció megtartja a teljes eredeti információt, maximális rugalmasságot biztosítva a kezdeti széles körű információgyűjtéshez.
@@ -1077,13 +1072,7 @@ Már elemeztük a tömörítés két motivációját – a hossz szabályozása 
 
 Bár a tömörítés számítási többletköltséggel jár, mert minden tömörítés egy extra LLM hívást igényel, a befektetés megtérülése rendkívül magas lehet a megtakarított token költségekhez és a feladat sikerességének javulásához képest. A kísérletek azt mutatják, hogy a kontextustudatos tömörítés több mint 75%-kal csökkenti a tokenhasználatot.
 
-Amit a tömörítés a legkönnyebben elveszít, az nem maguk a részletek, hanem **a korai architekturális döntések, a korlátok mögötti érvelés és a sikertelen utak** – az LLM-ek általában előnyben részesítik az olyan információk törlését, amelyek úgy tűnik, újra megszerezhetők. Production-szintű ügynökrendszerekben ajánlott explicit módon meghatározni a megtartási prioritásokat a tömörítés során:
-
-1.  "Architekturális Döntések és Kulcsfontosságú Korlátok": Nem szabad összefoglalni.
-2.  **Módosított Fájlok Listája és Kulcsfontosságú Változtatási Rekordok**: Teljes egészében megőrizni.
-3.  "Ellenőrzési Státusz" (sikerült/megbukott): Meg kell tartani.
-4.  "Megoldatlan TODO-k és Visszaállítási Jegyzetek": Meg kell tartani.
-5.  "Eszközkimenet": Törölhető, csak a sikerült/megbukott következtetést megtartva.
+A tömörítés legkönnyebben a korai architekturális döntéseket, a korlátozások indokait és a sikertelen útvonalakat veszíti el. Ezért **az Ágensnek gyakran dokumentumokban kell mentenie az előrehaladást**, nem pedig szétszórnia minden információt a végrehajtási előzményekben. Ahogy a vállalat fontos információit is dokumentálni kell ahelyett, hogy csevegési naplókban maradnának, az Ágensnek is szokásává kell tennie a dokumentumok írását és frissítését. Ha a használt modellnek nincs ilyen szokása, prompttal és skillel kell emlékeztetni rá.
 
 ### Elszigetelés a Tömörítés Helyett: Részügynök Kontextus Elszigetelés
 

@@ -26,19 +26,6 @@ Sok más feladatnak nincs egyetlen helyes válasza. Az, hogy az ügyfélszolgál
 
 A 9-2. ábra egy háromrétegű ellenőrzési struktúrát mutat. Az alsó rétegbeli eredmény-ellenőrző a teszteredményeket, adatbázis-állapotokat és eszköz-visszatéréseket olvassa, hogy megválaszolja: „Ténylegesen elkészült a feladat?" A középső rétegbeli folyamat-ellenőrző az üzleti szabályokat, jogosultságokat és műveleti sorrendeket ellenőrzi a kérdésre: „Megengedett módon készült el?" A felső rétegbeli minőség-ellenőrző a rubrika szerint értékeli a nyelvet és a stratégiát a kérdésre: „Megfelelően lett kezelve?" Az alsó szintű mutatóknak erősebben kell támaszkodniuk a kódra és a környezeti alapismeretekre; csak a formalizálható szempontokat szabad nyelvi modellre bízni.
 
-**Háromrétegű trajektória-ellenőrzés:**
-
-```python
-outcome = verify_environment_state(trajectory)
-process = verify_actions_and_permissions(trajectory)
-quality = judge_with_rubric(trajectory, cite_evidence = true)
-
-if not outcome.pass or not process.pass:
-    reject_as_learning_example(outcome, process, quality)
-else:
-    emit_structured_diagnosis(outcome, process, quality)
-```
-
 ![9-2. ábra: Háromrétegű trajektória-ellenőrzés a környezeti eredményektől az LLM Rubrikáig](images/fig9-2.svg)
 
 Egy ügyfélszolgálati ágens esetében egy hasznos rubrikának legalább a 9-1. táblázatban felsorolt dimenziókat kell lefednie. Az első öt elsősorban az alapkövetelményeket kényszeríti ki, míg az utolsó kettő a szolgáltatás minőségét méri. Ez a bontás diagnosztikailag hasznosabb, mint annak megkérdezése, hogy a felhasználó elégedett volt-e: a felhasználó lehet elégedett, mert az ágens nem megfelelő visszatérítést adott ki, vagy elégedetlen egy megfelelőségi korlátozás miatt. Egyetlen elégedettségi pontszám nem képes megkülönböztetni a kettőt.
@@ -55,23 +42,11 @@ Egy ügyfélszolgálati ágens esetében egy hasznos rubrikának legalább a 9-1
 | Kifejezésminőség | Természetes és tömör a nyelv, ismétlés vagy sablonos megfogalmazás nélkül? | Teljes beszélgetés, nyelvi rubrika |
 | Megfelelő alternatívák | Ha az eredeti terv kivitelezhetetlen volt, talált az ágens megengedett alternatívát? | Felhasználói cél, irányelvek és későbbi műveletek |
 
-Az „ígéret–tett konzisztencia” különösen alkalmas ágens-forgatókönyvekhez. A hagyományos szövegkiértékelés csak a végső választ olvassa, és könnyen értékelheti a „Benyújtottam a visszatérítését" mondatot jó szolgáltatásként. A trajektória-kiértékelés ehelyett továbbmegy, és ellenőrzi, hogy a visszatérítési eszköz ténylegesen meghívásra került-e, a hívás sikeres volt-e, és a rendelés állapota megváltozott-e. A "„megfelelő alternatívák"" nem arra ösztönzi a modellt, hogy szabadon figyelmen kívül hagyja a szabályokat; megköveteli, hogy a modell megértse a felhasználó valódi célját, és ha a visszatérítés nem elérhető, olyan jogszerű opciókat vizsgáljon, mint az átütemezés, hosszabbítás vagy részleges kompenzáció.
-
-Az ellenőrzési eredményeket nem szabad skalárrá tömöríteni. A trajektória-kiértékelés inkább egy strukturált diagnózishoz áll közel: a feladat részben sikerült, a szabálymegfelelés rendben volt, de volt egy nem alátámasztott állítás, egy hamis ígéret, és a válasz háromszor ismételte meg az irányelv magyarázatát. A dimenzionális jelek megőrzik minden probléma természetét és a bizonyítékok helyét. Csak így tudják a downstream modulok meghatározni, hogy egy nem alátámasztott állítás hiányzó tudást, hiányzó idézési követelményeket vagy elégtelen modellképességet tükröz-e, és hogy egy hamis ígéret Prompt-felülvizsgálatot vagy az ígéretek és az eszközállapotok közötti konzisztencia-ellenőrzést igényel a Harness-ben.
-
-Az LLM-ellenőrzők kalibrálást is igényelnek. A termelési rendszerek általában egy kis, szakértők által annotált trajektóriakészletet tartanak fenn az ellenőrző konzisztenciájának ellenőrzésére minden dimenzióban; a magas kockázatú vagy alacsony megbízhatóságú eseteket egy második modellhez vagy emberi bírálóhoz irányítják; és a kalibrációs készletet újrafuttatják a modellverzió-váltások után. Az ellenőrzőnek kiértékeléseket és bizonyítékokat kell szolgáltatnia, míg egy független diagnosztikai és evolúciós modulnak kell eldöntenie, hogy az ágens melyik részét kell módosítani. Ez megakadályozza, hogy ugyanaz a modell bíróként működjön, miközben közvetlenül átírja a szabályokat.
-
 > **9-1. ★★ kísérlet: Trajektória-ellenőrző építése egy ügyfélszolgálati ágenshez**
 >
 > **Cél:** Egy ügyfélszolgálati trajektória átalakítása strukturált diagnózissá, amely támogatja a későbbi tanulást, és annak tesztelése, hogy a „bizonyítékokkal alátámasztott többdimenziós következtetések" jobban azonosítják-e a gyökérokokat, mint egyetlen összpontszám.
 >
-> **Adatok és eljárás:** Készítsünk szakértők által annotált trajektóriákat, amelyek négy kategóriát fednek le: normál visszatérítések, hamis ígéretek, adatvédelmi jogsértések és túlzott elutasítások. Az első réteg a végső rendelés állapotát és az eszköznaplókat olvassa, hogy meghatározza, történt-e tényleges visszatérítés vagy átütemezés. A második minden lépést ellenőriz az üzleti irányelvek alapján, beleértve a jogosultságokat, az előírt eljárásokat, az adatvédelmet, a tények alátámasztását és az ígéret–tett konzisztenciát. A harmadik a nyelvi minőséget és a megfelelő alternatívákat értékeli a 9-1. táblázat rubrikája szerint, és minden hibához megtartja a releváns fordulók bizonyítékait. Az alapértelmezett minőségi bíró determinisztikus szabályokat használ, de elérhető egy valódi LLM bíró is. A felső réteg modelljétől függetlenül az eredmény- és szabályrétegeket nem szabad nyelvi modellre bízni.
->
-> **Kontrollok és mérőszámok:** A kiindulási feltétel csak egy összpontszámot ad ki; a kísérleti feltétel `pass`, `fail` vagy `uncertain` értéket ad minden dimenzióhoz, bizonyítékkal és megbízhatósággal együtt. A kalibráció során mérjük a precizitást és a visszahívást a hibák detektálásában minden dimenzióban, és jelentsük a szakértői címkékkel való pontos egyezést. Ellenőrizzük azt is, hogy a hamis ígéretekhez tartozó hibák nem üres bizonyítékot tartalmaznak, nem pedig alátámasztatlan következtetéseket.
->
-> **Elfogadási kritériumok:** Az ellenőrzőnek megbízhatóan kell érzékelnie a kritikus jogsértéseket, a hamis ígéreteket és a túlzott elutasításokat. A magas összpontszám nem takarhat el adatvédelmi vagy irányelvhibát. Az alacsony megbízhatóságú és magas kockázatú eseteket egy második ellenőrzőhöz vagy emberi felülvizsgálathoz kell irányítani ahelyett, hogy automatikusan tanulási jelekké válnának.
->
-> A mellékelt implementáció a [`trajectory-verifier`](../chapter9/trajectory-verifier/) címen érhető el. Alapértelmezésben egy offline reprodukálható minőségi bírót használ; a `--judge llm` kapcsolóval futtatható a megvalósított valódi LLM-ellenőrző.
+> **A kísérlet leírása:** Hasonlítsd össze az „egyetlen összpontszámot” a „dimenziónkénti következtetés, bizonyíték és megbízhatóság” megoldással, és figyeld meg, melyik különíti el jobban a feladathibát, szabálysértést, hamis ígéretet és fogalmazási problémát. A folyamatos fejlődés nem támaszkodhat csupán sikerarányra vagy egyetlen pontszámra. Csak a hiba helyének, okának és bizonyítékának megőrzésével dönthető el később, hogy a tudást, Promptot, programot vagy modellparamétert kell-e frissíteni; az alacsony bizalmú esetek ne kerüljenek automatikusan a tanulóhalmazba.
 
 ## Az ágensek folyamatos evolúciójának négy módszere
 
@@ -89,19 +64,6 @@ A 9-2. táblázat tömör összehasonlítást nyújt. A négy módszer nem zárj
 | Prompt és Skill | Nyelvileg kifejezhető ítélkezési elvek és műveleti eljárások | Értelmezhető, szabályozható hatókör | Hajlamos a dagályra, konfliktusra vagy figyelmen kívül hagyásra |
 | Programok és Harness | Determinisztikus eljárások, eszközök és kemény kényszerek | Tesztelhető, stabil végrehajtás, alacsony költség | Magasabb fejlesztési és karbantartási költségek |
 | Modellparaméterek | Magas dimenziós érzékelés, generálási stílus és implicit stratégiák | Erős általánosítás, alacsony következtetési többletterhelés | Magas frissítési és regressziós költségek |
-
-**Tapasztalat–képesség útválasztás:**
-
-```python
-if experience.is_factual and experience.has_sources:
-    target = KNOWLEDGE
-elif experience.can_be_expressed_as_contextual_language_rule:
-    target = PROMPT_OR_SKILL
-elif experience.is_deterministic or experience.is_hard_safety_constraint:
-    target = PROGRAM_OR_HARNESS
-else:
-    target = MODEL_PARAMETERS
-```
 
 ### Tapasztalatok konszolidálása tudásba
 
@@ -248,6 +210,26 @@ A 9-8. kísérlet ugyanezt a protokollt a verifikációs rétegre alkalmazza. Cs
 >
 > A `failure_trajectories.json` három jelzést és kontrollpályákat ad. A valós `gpt-4o-mini` jelölt nem ment át a befejezetlen feladatok, normál műveletek és egyszer használatos tokenek ellenőrzésén, ezért a biztonsági kapu elutasította. A determinisztikus jelölt minden ellenőrzést teljesített és `release_to_canary` lett; rögzítjük a döntést és a stabil könyvtár hashét. Megvalósítás: [`harness-safety-gate`](../chapter9/harness-safety-gate/).
 
+#### Eset: DeepSeek Harness – önevolúció, ahol minden bővítmény
+
+Az 1. fejezet táblázata a DeepSeek Harness (`dsh`) rendszert „ügynök-önevolúciós keretrendszerként” sorolja be[^dsh-2026]. Alapját, a Cordis tanulmányt az a felismerés vezeti, hogy a hagyományos kompozíció **statikus**: a függvényhívás, import és öröklés fordításkor rögzül. A bővítményrendszereknek és önevolúciós Harnessnek **dinamikus kompozíció** kell, amely futás közben tölt be, távolít el és konfigurál át összetevőket[^cordis-2026]. Minden önmódosítás lényegében dinamikus kompozíció.
+
+A tanulmány két független dimenziót különít el. Az **időbeli kompozícióképesség** azt kérdezi, hogy egy összetevő eltávolításakor teljesen és biztonságosan visszavonható-e minden közös környezeti módosítása; ehhez követni kell minden erőforrást, eseményregisztrációt és állapotváltozást. A **térbeli kompozícióképesség** azt kérdezi, hogy az összetevők strukturáltan, ellenőrizhetően deklarálják, fedezik fel és oldják-e fel függőségeiket, és összehangolják-e életciklusukat változáskor. Az első: **mi változott**; a második: **mitől függ**.
+
+Az önevolúciós Harness a probléma legélesebb esete. A visszavonandó mellékhatások hosszú életűek és állapottartók, a függőségek futás közben jelennek meg, tűnnek el vagy váltanak azonosságot. Időbeli kompozícióképesség nélkül minden módosítás teljes újraindítást, állapotvesztést és feladatmegszakítást okoz. Térbeli nélkül minden modul rögtönözve figyeli a függőséget, és egy egyszerű kódcsere csendben törhet el fogyasztókat vagy ciklust hozhat létre.
+
+A Cordis két fordításidejű fogalmat emel futásidőre. Az effektusrendszerből **visszafordítható effektus** lesz: minden kontextusátalakításhoz explicit inverz tartozik, amelyet a futtatókörnyezet követ és eltávolításkor alkalmaz. A koeffektusrendszerből **reaktív koeffektus** lesz: az összetevő specifikációként deklarálja igényeit, a kontextusváltozás pedig aktiválja, inaktiválja vagy érintetlenül hagyja. A dinamikus kompozíciós kalkulus ezt összefonódó rendszerekre terjeszti ki—kompozícióképességnek tranzitívnak kell lennie.
+
+**Az önevolúció felső határát nem a modell kódírása, hanem a befogadó rendszer kompozícióképessége szabja meg.** Ezért bővítmény a `dsh` modelladaptere, eszközjegyzéke, munkamenetnaplója és még a fő ügynökciklusa is: **nincs csak ember által karbantartható kiváltságos mag**.
+
+A kompozícióképesség azt oldja meg, hogy biztonságosan telepíthető-e valami, nem azt, hogy telepíteni kell-e. A modell írta bővítmény csak folyamatmemóriában él, újraindításkor eltűnik, és **nem léptethető automatikusan hivatalos bővítménnyé**; a megőrzéshez a lassabb worktree + Pull Request út kell.
+
+Az evolúció költséges is. A futó bővítmény megváltoztatja a modell eszközeit és Prompt-részleteit; a kéréselőtag változásától a 2. fejezet KV Cache-e érvénytelen. Egy `dsh` bővítmény dokumentációjának ezért le kell írnia kontextus- és KV Cache-hatását.
+
+[^dsh-2026]: DeepSeek AI, *DeepSeek Harness: Everything is a Plugin*, 2026. https://github.com/deepseek-ai/deepseek-harness. A `docs/architecture.md` ismerteti a rétegeket és foltozást, a `docs/subsystems/extensions.md` és `packages/extensions/README.md` az önmódosító eszközök életciklusát, sandboxát és bizalmi deklarációit. A 2026 augusztusában kiadott projekt ekkor fejlesztői előzetes volt.
+
+[^cordis-2026]: Shi, Yifan, Wei Zhang, and Tianyi Cui. *A Programming Paradigm for Spatiotemporal Composability.* Preprint-tervezet, 2026. augusztus 13. https://github.com/cordiverse/paper
+
 ### Tapasztalatok kódolása paraméterekben
 
 A tudás, az utasítások és a programok mind egy előfeltevésen alapulnak: a célképesség viszonylag teljesen kifejezhető külső szimbólumokkal. Az olyan képességek azonban, mint az orvosi képalkotás megértése, a természetes beszéd prozódia, a formális „AI-érzés" eltávolítása a szövegből és a hosszú távú tervezés, nehezen sűríthetők néhány szabályba vagy munkafolyamatba. Ezeket a képességeket paraméterekbe kell írni utóképzéssel.
@@ -268,8 +250,6 @@ A következő szinten az optimalizálás célpontja már nem csupán az, hogy mi
 
 Ugyanez az ötlet kiterjed a munkafolyamatokra és a teljes Harness-re. Az AFlow a több LLM-hívásból álló munkafolyamatokat kódgráfokként reprezentálja, és a csomópontok és vezérlési folyam kombinációit keresi végrehajtási visszajelzés segítségével[^aflow-2025]. A Meta-Harness egy kódoló ágenssel vizsgáltatja a jelölt Harness forrást, pontszámokat és trajektóriákat, hogy megtalálja azt a kódot, amely meghatározza, hogy az információ hogyan tárolódik, kerül visszakeresésre és bemutatásra[^meta-harness-2026]. Az 5. fejezet a kódot az ágensrendszer szerkezetének általános nyelveként határozta meg. A kiegészítő pont itt az, hogy a kód a kiértékelési előzményeivel együtt maga is a folyamatos keresés tárgyává válhat, nem pedig egyszeri kimenet.
 
-A magasabb szintek nem automatikusan jobbak. Egy lokális szabály kereséséhez csak néhány határesetre lehet szükség, míg egy teljes munkafolyamat vagy Harness keresése sokkal nagyobb jelöltteret, magasabb kiértékelési költséget és nehezebb attribúciót jelent. Egy egyértelmű, ismétlődő, egy komponensre lokalizált hibának először egy auditálható lokális javítást kell kapnia. Csak amikor a lokális változtatások ismételten nem képesek kezelni egy komponenseken átívelő problémát, vagy amikor az aktuális kezelési módszer maga válik szűk keresztmetszetté, érdemes kifelé mozdulni a munkafolyamatra, a Harness-re vagy az optimalizálóra. Minden szinten az értékelőknek, a jogosultsági határoknak és a kihagyott teszteknek a szerkeszthető hatókörön kívül kell maradniuk – minél nagyobb a keresési tér, annál fontosabb ez a megbízható gyökér.
-
 > **9-6. ★★★ kísérlet: Mi történik, ha Hermes megkapja ezt a könyvet? Képes frissíteni önmagát?**
 >
 > **Cél:** Annak vizsgálata, hogy egy Agent képes-e külső tudást saját képességeinek valódi frissítésévé alakítani. A kísérlet nem ad meg hibát vagy funkciólistát: Hermes megkapja mind a tíz fejezetet és saját forrását, majd magának kell megértenie az elveket, átvizsgálnia a megvalósítást és kiválasztania egy érdemi javítást.
@@ -288,33 +268,13 @@ A négy frissítési módszer csak akkor válik folyamatos evolúcióvá, nem pe
 
 A Voyager[^voyager-2023] egy viszonylag teljes folyamatos evolúciós hurkot demonstrál. A Minecraftban az aktuális képességek alapján választ új célokat, iteratívan finomítja a programokat környezeti visszajelzéssel, a sikeresen érvényesített kódot egy skill-könyvtárban tárolja, majd a meglévő skill-eket kombinálja nehezebb feladatok megoldásához. Az automatikus tanterv, a végrehajtható skill-ek és a környezeti érvényesítés mind nélkülözhetetlen: skill-könyvtárral, de tanterv nélkül az ágens nem tudja, mit tanuljon következőnek; önreflexióval, de környezeti érvényesítés nélkül a skill-könyvtár hibákat halmoz fel; felfedezéssel, de perzisztencia nélkül minden feladatot előröl kell kezdeni. Bár a valós ágensek tudása, Promptjai, eszközei és paraméterei összetettebbek, az alapvető tanulási folyamat hasonló.
 
-Pontosabban, a Voyager három egymásba kapcsolódó mechanizmusból áll. Az "automatikus tanterv-generátor" az aktuális leltárból, környezetből és megszerzett skill-ekből javasol egy megfelelően kihívást jelentő következő célt, így a felfedezés nem válik véletlenszerű bolyongássá. A "skill-könyvtár" a sikeres programokat visszakereshető, összeállítható kódként tárolja; egy fejlett gyűjtögető skill például meghívhat alapvető mozgási és készítési skill-eket. Az "iteratív promptolási mechanizmus" a környezeti megfigyeléseket, végrehajtási hibákat és önellenőrzési eredményeket visszavezeti a kódgenerálás következő körébe, amíg a feladat ténylegesen át nem megy. A cikkben használt alapvonalakhoz képest a Voyager 3,3× több egyedi tárgyat szerzett, 2,3× messzebbre utazott, a kulcsfontosságú technológiai fa mérföldköveit akár 15,3× gyorsabban elérte, és átvitte a skill-könyvtárát új Minecraft világokba. Ezek a mérőszámok azt mérik, hogy a képesség hogyan növekszik a tapasztalattal, nem pedig azt, hogy egy befagyasztott ágens hogyan teljesít egyetlen vizsgán.
+A Voyager három egymásba kapaszkodó mechanizmusból áll. Az **automatikus tantervgenerátor** a készlet, környezet és meglévő készségek alapján megfelelő nehézségű következő célt javasol, elkerülve a céltalan bolyongást. A **készségkönyvtár** a sikeres programokat visszakereshető, kombinálható kódként tárolja; egy fejlett gyűjtési készség például mozgási és barkácsolási alapkészségeket hívhat. Az **iteratív promptmechanizmus** a környezeti megfigyelést, végrehajtási hibát és önellenőrzést visszavezeti a következő kódgenerálási körbe, amíg a feladat ténylegesen át nem megy.
 
-### A probléma diagnózisától a tapasztalat konszolidálásáig
+**Felfedezési ciklus: hipotézis, kísérlet, értékelés, visszacsatolás.** A Voyagerhez hasonló önevolúciós rendszerek ezt, az évszázadok alatt kiforrott tudományos módszert követik. A Jeff Dean és társai által nemrég alapított Discovery Loop a ciklus automatizálását javasolja: kísérletet ajánlani, megvalósítani, értékelni, majd az eredményt a következő körbe visszaadni[^ch1-discovery-loop]. Ez az ügynök-önevolúció tudományos alkalmazása. Az önigazoló történetek és önmagának adott jó értékelés elkerüléséhez a fejezet evolúciójának a tudományos módszert kell követnie.
 
-Ugyanaz a felszíni probléma különböző módosítási formákat igényelhet. Amikor egy ügyfélszolgálati ágens kitalált tényeket hallucinál, az ok lehet hiányzó információ a tudásbázisban, vagy a Prompt nem írja elő a hivatkozásokat. Amikor egy ágens hamisan ígéri, hogy „elkészült", mielőtt befejezné a feladatot, a probléma kijavítható utasításokkal, vagy azzal, hogy a Harness kikényszeríti a konzisztenciát a válasz és az eszköz állapota között. Az evolúciós modulnak először a gyökérokot kell azonosítania, majd kiválasztania a legkisebb módosítási célt, amelyet a legkönnyebb érvényesíteni és visszaállítani. A szórványos, elégtelen bizonyítékkal rendelkező hibák nem indíthatják el azonnal a tanulást; a rendszernek továbbra is gyűjtenie kell a példákat.
+[^ch1-discovery-loop]: A Discovery Loop alapítását Jeff Dean, Sanjay Ghemawat, Quoc Le és Oriol Vinyals jelentette be 2026. augusztus 5-én, közhasznú vállalatként. Nyilvános célja teljes kísérleti ciklusok automatizálása és a korábban soros kísérletek nagy léptékű párhuzamosítása.
 
-Ez a választás a tapasztalatok felhalmozódásával is változhat. Egy újonnan felfedezett stratégia kezdetben tapasztalati dokumentumként tárolható visszakeresésre; több eseten át tartó ismételt érvényesítés után tudássá léptethető elő. A tudás háromféleképpen fejezhető ki: a természetes nyelven egyértelműen leírható szabályok Skill-ekbe konszolidálhatók; a stabil eljárások, amelyek nem igényelnek természetes nyelvű megértést, eszközkódba fordíthatók; és a széles, implicit döntéshozatalt tükröző képességek utóképzésbe kerülhetnek.
-
-### Érvényesítés, kiadás és visszaállítás
-
-Minden módosításnak először egy jelölt képességet vagy jelölt ágenst kell eredményeznie, nem pedig közvetlenül felülírnia a termelési verziót. A tudásdokumentumokat tesztelni kell, hogy a visszakeresés javítja-e a teljesítményt új feladatokon; a Promptokat és Skill-eket ellenőrizni kell határesetekre és a korábbi feladatokon való regressziókra; a programokat sandbox-okban és visszaállított környezetekben kell tesztelni; a paraméterfrissítéseket pedig értékelni kell felejtésre, biztonságra és eloszláson kívüli teljesítményre. Még az érvényesítés után is fokozatosan kell kiadni az új verziót, és valós forgalom mellett figyelni; ha a kulcsfontosságú mutatók romlanak, a rendszernek automatikusan vissza kell állnia egy ismert biztonságos verzióra.
-
-**Ellenőrzött kiadás és visszagörgetés:**
-
-```python
-candidate = propose_minimal_update(evidence, current_version)
-
-if not verify(candidate, boundary_set): reject(candidate)
-elif not verify(candidate, retention_set): reject(candidate)
-elif not verify(candidate, safety_set): reject(candidate)
-else:
-    canary = deploy_to_small_traffic(candidate)
-    if canary.metrics_regress: rollback(current_version)
-    else: promote(candidate)
-```
-
-Az érvényesítésnek két gyakran összemosott képességet is szét kell választania. A "Harness frissítése" a trajektóriákból értékes, tartós változások előállításának képessége; a "Harness haszna" a feladat ágens azon képessége, hogy megtalálja, aktiválja és helyesen használja ezeket a változásokat később. Egy Skill önmagában helyes lehet, de egy gyengébb feladatmodell nem biztos, hogy betölti a megfelelő helyzetben, vagy nem követi egy hosszú trajektórián keresztül. Bármelyik kudarc miatt a végső pontszám úgy nézhet ki, mintha nem történt volna evolúció. A végpontok közötti teljesítmény önmagában ezért nem diagnosztizálja a frissítőt. A Lin és munkatársai által végzett modellcsere-kísérletek azt jelzik, hogy a két képesség eltérően viszonyul az alapmodell képességéhez[^harness-benefit-2026]. A pontos kapcsolat több feladaton történő érvényesítést igényel, de a kettő elkülönített értékelése széles körben hasznos.
+A folyamatos evolúcióban két gyakran összekevert képességet kell szétválasztani. A **Harness updating** értékes, tartós módosításokat készít a trajektóriákból; a **Harness benefit** azt jelenti, hogy a feladatügynök később megtalálja, aktiválja és helyesen használja ezeket. Egy Skill lehet hibátlan, de egy gyengébb modell nem tölti be megfelelő helyzetben vagy hosszú távon nem követi, így úgy tűnik, nem történt fejlődés. A végponttól végpontig pontszám tehát nem diagnosztizálja önmagában a frissítőt. Lin és társai modellcserés kísérletei szerint a két képesség másképp függ az alapmodelltől[^harness-benefit-2026].
 
 9-3. táblázat: A folyamatos evolúció rétegezett értékelési mérőszámai
 
@@ -323,9 +283,7 @@ Az érvényesítésnek két gyakran összemosott képességet is szét kell vál
 | Jelölt-változtatás érvényessége | Javasol-e a frissítő hasznos változtatásokat? | Elfogadási arány és nyereség független érvényesítésben |
 | Artefaktum aktiválási arány | Betölti-e a feladat ágens az új Skill-t, memóriát vagy eszközt a megfelelő helyzetben? | Visszakeresési, útválasztási és eszközhívási nyomok |
 | Sikeres követési arány | Aktiválás után követi-e az ágens az új szabályt vagy folyamatot? | Műveleti sorozatok és folyamat-ellenőrzők |
-| Kihagyott feladat nyereség | Javul-e a teljes rendszer olyan feladatokon, amelyeket nem használtak az evolúció során? | Kihagyott feladatok sikeressége, minősége és költsége |
-
-A diagnózishoz tartsuk fixen a jelölt Harness-t, és cseréljük csak a feladatmodellt. Ha egy erős modell profitál, míg egy gyenge modell soha nem aktiválja az új artefaktumot, a visszakeresés vagy az útválasztás a szűk keresztmetszet. Ha mindkettő aktiválja, de csak az erős modell hajtja végre helyesen, az utasításkövetés vagy a hosszú távú tervezés a szűk keresztmetszet. Ha minden modell romlik, maga a változtatás gyanúsabb. Ezzel szemben tartsuk fixen a feladatmodellt, és cseréljük a változtatásokat javasló modellt, hogy közvetlenül összehasonlítsuk a frissítők minőségét. Ez a kétirányú modellcsere hatékonyabban lokalizálja, hová kell a képességi költségvetést költeni, mint egyetlen evolúció utáni pontszám.
+| Megtartási halmaz nyeresége | Javul-e az evolúcióban nem szereplő feladatokon, és általánosít-e? | A megtartási halmaz sikeraránya, minősége és költsége |
 
 Az értékelés nem egy vizsga, amelyet a tanulás befejezése után végeznek el, hanem az önfejlődés nélkülözhetetlen része. A hosszú távú értékelésnek legalább ötféle kimenetet kell egyidejűleg figyelnie:
 
@@ -350,8 +308,6 @@ Ezek a feladatok a bizonyíték- és felügyeleti struktúra megváltoztatását
 - **Keresési diverzitás megőrzése:** A nyílt végű keresés ne csak az aktuálisan legmagasabb pontszámú láncot tartsa meg. A jelöltkészletben érdemes megőrizni néhány alacsonyabb pontszámú, de mechanizmusban, kód-újdonságban vagy hipotézistípusban jelentősen eltérő ágat is, hogy ne minden megoldás ugyanarra a könnyen pontozható sablonra konvergáljon.
 - **Emberi részvétel felfelé mozgatása:** Az emberi input nem korlátozódik a veszélyes eszközhívások jóváhagyására. Magában foglalja a problémák meghatározását, az értékelési kritériumok felülvizsgálatát, az anomáliák értelmezését és a leállítás eldöntését. Kétértelmű visszajelzés esetén ezek a magas szintű ítéletek nehezebben automatizálhatók – és értékesebbek –, mint az egyes végrehajtási lépések átvétele.
 
-Ugyanez a korlátozás jelenik meg a hétköznapi szoftverfejlesztésben is. Az összes egységteszt sikeres áthaladása csak azt bizonyítja, hogy az aktuálisan megfigyelhető viselkedés megfelel a teszteknek; nem bizonyítja, hogy a kódbázis hónapok múlva is karbantartható marad. Ezért kezeli az előző szakasz a hosszú távú mérnöki minőséget független mérőszámként, ahelyett, hogy elvárná, hogy a jelenlegi feladatsiker fedezze a késleltetett externáliákat. A folyamatos evolúció plafonját végső soron az határozza meg, hogy a rendszer képes-e értékelni azt, ami valóban fontos számára, nem csupán a legkönnyebben mérhető proxy-t.
-
 ### A folyamatos evolúció biztonsági korlátai
 
 Egy ágens önfejlődési képessége egyetlen hibát hosszú távú kockázattá változtathat. **Ha a weboldalakon, e-mailekben vagy eszközkimenetben található Prompt injekciókat tapasztalatként összegezzük**, azok munkameneteken át ismétlődően érvényesülhetnek. Ha egy automatizált kereséssel talált rosszindulatú csomagot eszközként csomagolunk, a hatása egyetlen sandbox futtatásról minden későbbi feladatra kiterjedhet. Egy hibás érvényesítő is tovább hagyhatja jóvá azokat a jelölteket, amelyek látszólag javulnak, de valójában romlanak. Egy ágens önfejlődési rendszerének ezért nemcsak azt kell kérdeznie, hogy egy jelölt erősebb-e, hanem azt is, hogy ki mit módosíthat, és milyen bizonyíték indokolja a változtatást.
@@ -373,17 +329,6 @@ Egy tipikus alvó tanulási ciklus öt lépésből áll:
 3. **Gyűjtés és konszolidáció:** Keressünk új jeleket a nemrég kiértékelt trajektóriákban, egyesítsük a duplikátumokat, jelöljük az ütközéseket és alkalmazási feltételeket, és részesítsük előnyben a lokális javításokat.
 4. **Érvényesítés és jóváhagyás:** Értékeljük a jelölteket átviteli, retenciós és biztonsági készleteken; a magas kockázatú írások várjanak emberi jóváhagyásra.
 5. **Ritkítás és indexelés:** Frissítsük a visszakeresési indexeket, és a hosszú ideje használaton kívüli vagy új bizonyítékok által megcáfolt képességeket jelöljük lejártnak, archiváltnak vagy töröltnek, miközben megőrizzük a származást és a visszaállítási verziókat.
-
-**Alvásidős konszolidáció:**
-
-```python
-while sleep_gate_is_open():
-    batch = load_new_evaluated_trajectories()
-    proposals = consolidate(batch, current_capabilities)
-    for proposal in proposals:
-        validate_canary_and_promote_or_rollback(proposal)
-    prune_stale_entries_but_keep_provenance()
-```
 
 A felhasználói memória a legkézenfekvőbb példa, de meg kell különböztetni a műveleti tapasztalattól. A Claude Code auto memory funkciója minden projekthez fenntart egy `MEMORY.md` indexet és témaspecifikus részletes fájlokat. A munkamenet indításakor csak az index egy korlátozott előtagját tölti be, és a többi tartalmat igény szerint olvassa; amikor az index megközelíti a korlátját, az ágens utasítást kap a részletek egyesítésére vagy máshová helyezésére. Ez megmutatja, hogy még az egyszerű szöveges memória is kapacitáskorlátokat, rétegzett betöltést és aktív szervezést igényel. A jelenleg dokumentált mechanizmus elsősorban a munkamenetek során ír memóriát, és nem szabad egyszerűen egy rögzített éjszakai háttérfeladattal azonosítani[^claude-code-memory].
 

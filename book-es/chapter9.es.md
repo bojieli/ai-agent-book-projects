@@ -26,19 +26,6 @@ Muchas tareas no tienen una única respuesta correcta. Determinar si un agente d
 
 La Figura 9-2 ilustra una estructura de verificación de tres capas. El verificador de resultados de la capa inferior lee los resultados de las pruebas, el estado de la base de datos y los retornos de las herramientas, respondiendo a la pregunta de "si el asunto realmente se completó"; el verificador de procesos de la capa intermedia comprueba las reglas de negocio, los permisos y las secuencias de acciones, respondiendo a "si se completó de la manera permitida"; el verificador de calidad de la capa superior evalúa el lenguaje y la estrategia según la Rubric, respondiendo a "si se completó de forma adecuada". Cuanto más abajo se encuentre el indicador, más debe depender del código y de la verdad de entorno, dejando al modelo de lenguaje únicamente la parte difícil de formalizar.
 
-**Verificación de trayectoria en tres capas:**
-
-```python
-outcome = verify_environment_state(trajectory)
-process = verify_actions_and_permissions(trajectory)
-quality = judge_with_rubric(trajectory, cite_evidence = true)
-
-if not outcome.pass or not process.pass:
-    reject_as_learning_example(outcome, process, quality)
-else:
-    emit_structured_diagnosis(outcome, process, quality)
-```
-
 ![Figura 9-2: Verificación de trayectoria de tres capas desde resultados ambientales hasta una Rúbrica de LLM](images/fig9-2.svg)
 
 Tomando como ejemplo un Agente de atención al cliente, una Rubric útil debe cubrir al menos las dimensiones mostradas en la Tabla 9-1. Las primeras cinco dimensiones restringen los límites fundamentales, mientras que las últimas dos miden la calidad del servicio. Esta división ofrece mayor valor diagnóstico que "saber si el usuario está satisfecho": un usuario puede estar satisfecho porque el Agente realizó un reembolso violando las normas, o insatisfecho debido a restricciones normativas; un indicador de satisfacción único no puede distinguir entre ambos escenarios.
@@ -55,23 +42,11 @@ Tabla 9-1 Dimensiones de evaluación de trayectoria para un Agente de atención 
 | Calidad de expresión | ¿Es natural y concisa, evitando repeticiones y plantillas? | Diálogo completo, Rubric de lenguaje |
 | Alternativas cumplidoras | Cuando el plan original no fue factible, ¿se halló una alternativa permitida? | Objetivo del usuario, políticas y acciones posteriores |
 
-Entre ellas, la "consistencia promesa-acción" es especialmente adecuada para escenarios de Agentes. La evaluación de texto tradicional solo lee la respuesta final, siendo propensa a considerar "ya he tramitado su reembolso" como un buen servicio; la evaluación de trayectoria, en cambio, verifica si realmente se invocó la herramienta de reembolso, si la llamada fue exitosa y si cambió el estado del pedido. De igual forma, las "alternativas cumplidoras" no incentivan al modelo a romper las reglas arbitrariamente, sino que le exigen comprender el objetivo real del usuario y, si el reembolso no es factible, examinar opciones legales como cambios de fecha, prórrogas o compensaciones parciales.
-
-Los resultados de la verificación no deben comprimirse en un escalar único. La evaluación de una trayectoria se asemeja más a un diagnóstico estructurado: la tarea fue parcialmente exitosa, el cumplimiento de reglas fue aprobado, pero se detectó una declaración sin evidencia, una falsa promesa y la respuesta explicó repetidamente la política tres veces. Las señales dimensionales preservan tanto la naturaleza del problema como la ubicación de la evidencia. Esto permite que los módulos posteriores determinen si la declaración sin evidencia se debió a falta de conocimiento, ausencia de requisitos de citación o capacidad insuficiente del modelo; o si una falsa promesa requiere modificar los prompt words o agregar una verificación de consistencia entre la respuesta y el estado de la herramienta en el Harness.
-
-El propio verificador LLM requiere calibración. Los sistemas de producción suelen preparar un pequeño conjunto de trayectorias anotadas por expertos para verificar la consistencia del verificador en cada dimensión; los casos de alto riesgo o baja confianza se derivan a un segundo modelo o a revisión humana; tras cambios de versión del modelo, se vuelve a ejecutar el conjunto de calibración. El verificador se encarga de proporcionar evaluaciones y evidencias, mientras que la decisión sobre qué parte del Agente modificar debe recaer en un módulo independiente de diagnóstico y evolución, evitando que el mismo modelo actúe como juez y reescriba directamente las reglas.
-
 > **Experimento 9-1 ★★: Construir un verificador de trayectorias para un Agente de atención al cliente**
 >
 > **Objetivo del experimento**: Convertir una trayectoria de ejecución de atención al cliente en un diagnóstico estructurado utilizable para el aprendizaje posterior, y verificar si "conclusiones multidimensionales más evidencia" permiten localizar la causa raíz mejor que una puntuación global única.
 >
-> **Datos y proceso**: El experimento prepara cuatro tipos de trayectorias etiquetadas por expertos: reembolso normal, falsa promesa, fuga de privacidad y rechazo excesivo. La primera capa lee el estado final del pedido y los registros de herramientas para determinar si el reembolso o cambio ocurrió realmente; la segunda capa coteja paso a paso las políticas del negocio, comprobando permisos, procesos necesarios, privacidad, base factual y consistencia promesa-acción; la tercera capa evalúa la calidad de expresión y las alternativas cumplidoras según la Rubric de la Tabla 9-1, reservando los turnos de evidencia para las conclusiones fallidas. El Judge de calidad predeterminado utiliza reglas deterministas, ofreciéndose además un LLM Judge real; independientemente del modelo usado en la capa superior, las capas de resultados y reglas no se dejan a la conjetura del modelo de lenguaje.
->
-> **Contraste e indicadores**: La línea base solo emite una puntuación global; el grupo experimental emite `pass`, `fail` o `uncertain` para cada dimensión, junto con la evidencia y la confianza. En la fase de calibración se calcula la precisión y cobertura de identificación de fallas por dimensión, reportando la tasa de coincidencia exacta con las etiquetas de los expertos; asimismo, se verifica que fallas como las falsas promesas entreguen evidencias no vacías y no solo una conclusión.
->
-> **Criterios de aceptación**: El verificador debe identificar de forma estable infracciones clave, falsas promesas y rechazos excesivos; una puntuación global alta no debe ocultar fallos en dimensiones de privacidad o reglas; los casos de baja confianza y alto riesgo deben pasar a un segundo verificador o a revisión humana, en lugar de convertirse automáticamente en señales de aprendizaje.
->
-> La implementación correspondiente se encuentra en [`trajectory-verifier`](../chapter9/trajectory-verifier/), utilizando por defecto un Judge de calidad reproducible sin conexión; con `--judge llm` se puede ejecutar el verificador LLM real implementado.
+> **Descripción del experimento:** Compare «una sola puntuación total» con «una conclusión, evidencia y confianza por dimensión», y observe cuál distingue mejor el fallo de tarea, la infracción de reglas, las promesas falsas y los problemas de expresión. La evolución continua no puede depender solo de la tasa de éxito o de una puntuación. Solo conservando qué falló, por qué y dónde está la evidencia podrán los módulos posteriores decidir si actualizar conocimiento, Prompt, programa o parámetros; los casos de baja confianza no deben entrar automáticamente en el conjunto de aprendizaje.
 
 ## Cuatro Métodos para la Evolución Continua del Agente
 
@@ -89,19 +64,6 @@ Tabla 9-2 Límites aplicables de los cuatro métodos de evolución continua
 | Prompt y Skill | Principios de juicio y normas operativas verbalizables | Interpretable, alcance de acción controlable | Propenso a sobrecarga, conflictos u omisiones |
 | Programa y Harness | Procesos deterministas, herramientas y restricciones fuertes | Evaluable, ejecución estable, bajo costo | Costo de desarrollo y mantenimiento relativamente alto |
 | Parámetros del modelo | Percepción de alta dimensión, estilo de generación y estrategias implícitas | Alta capacidad de generalización, bajo costo de inferencia | Alto costo de actualización y prueba de regresión |
-
-**Enrutamiento de experiencia a capacidad:**
-
-```python
-if experience.is_factual and experience.has_sources:
-    target = KNOWLEDGE
-elif experience.can_be_expressed_as_contextual_language_rule:
-    target = PROMPT_OR_SKILL
-elif experience.is_deterministic or experience.is_hard_safety_constraint:
-    target = PROGRAM_OR_HARNESS
-else:
-    target = MODEL_PARAMETERS
-```
 
 ### Consolidación de la Experiencia en Conocimiento
 
@@ -248,6 +210,26 @@ El experimento 9-8 aplica el mismo protocolo a la capa de verificación. Solo cu
 >
 > Se usan las tres señales y las trayectorias de control de `failure_trajectories.json`. El candidato real de `gpt-4o-mini` no superó la reproducción de tareas incompletas, operaciones normales y tokens de un solo uso, y fue rechazado por la puerta de seguridad. El candidato determinista superó todo y obtuvo `release_to_canary`; se registran las comprobaciones, la decisión y el hash del directorio estable. Implementación en [`harness-safety-gate`](../chapter9/harness-safety-gate/).
 
+#### Caso: autoevolución en DeepSeek Harness, donde todo es un plugin
+
+La tabla del capítulo 1 clasifica DeepSeek Harness (`dsh`) como «framework de autoevolución de Agentes»[^dsh-2026]. Su fundamento, el artículo Cordis, señala que la composición convencional es **estática**: llamadas a funciones, importaciones y herencia quedan fijadas al compilar. Los sistemas de plugins y Harness autoevolutivos exigen **composición dinámica**, con componentes que se cargan, descargan y reconfiguran durante la ejecución[^cordis-2026]. Cada automodificación del Agente es, en esencia, composición dinámica.
+
+El artículo divide la composición dinámica en dos dimensiones ortogonales. La **componibilidad temporal** pregunta si, al retirar un componente, pueden deshacerse completa y seguramente sus cambios en el entorno compartido; el runtime debe seguir cada recurso, registro de evento y cambio de estado. La **componibilidad espacial** pregunta si los componentes pueden declarar, descubrir y resolver dependencias de forma estructurada y verificable, coordinando sus ciclos de vida cuando cambian. La primera trata de **qué cambió**; la segunda, de **de qué depende**.
+
+Un Harness autoevolutivo agudiza el problema: los efectos que hay que revertir son duraderos y con estado, y las dependencias aparecen, desaparecen o cambian de identidad en ejecución. Sin componibilidad temporal, cada modificación obliga a reiniciar, pierde todo el estado del proceso e interrumpe tareas. Sin componibilidad espacial, cada módulo improvisa cómo detectar dependencias, y un simple reemplazo de código puede romper silenciosamente a sus consumidores o crear un ciclo.
+
+Cordis eleva al runtime dos conceptos propios del tiempo de compilación. Los sistemas de efectos pasan a ser **efectos reversibles**: toda transformación del contexto lleva una inversa explícita que el runtime sigue para restaurarlo al retirar el componente. Los sistemas de coefectos pasan a ser **coefectos reactivos**: el componente declara sus dependencias como especificación y cada cambio de contexto le indica si debe activarse, desactivarse o quedar igual. Un cálculo de composición dinámica amplía la propiedad de un componente a sistemas entrelazados: la componibilidad debe ser transitiva.
+
+**El límite de la autoevolución no depende de lo bien que el modelo escriba código, sino de lo componible que sea el sistema que lo alberga.** Por eso `dsh` convierte en plugins adaptadores, registros de herramientas, logs de sesión e incluso el bucle principal del Agente: **no existe un núcleo privilegiado mantenible solo por humanos**.
+
+La componibilidad resuelve si se puede instalar y retirar con seguridad, no si se debe instalar. Los plugins escritos por el modelo viven en memoria y desaparecen al reiniciar. **No pueden promocionarse automáticamente a plugins oficiales**; para persistir deben seguir la ruta más lenta de worktree y Pull Request descrita antes.
+
+La evolución también cuesta. Un plugin cambia las herramientas y fragmentos de Prompt visibles al modelo. Al cambiar el prefijo de la petición, el KV Cache del capítulo 2 queda invalidado desde ese punto. La documentación de un plugin `dsh` debe describir su impacto en contexto y KV Cache.
+
+[^dsh-2026]: DeepSeek AI, *DeepSeek Harness: Everything is a Plugin*, 2026. https://github.com/deepseek-ai/deepseek-harness. `docs/architecture.md` describe capas y parches; `docs/subsystems/extensions.md` y `packages/extensions/README.md`, ciclo de vida, sandbox y declaraciones de confianza de las herramientas de automodificación. Publicado en agosto de 2026, el proyecto estaba en vista previa para desarrolladores.
+
+[^cordis-2026]: Shi, Yifan, Wei Zhang, and Tianyi Cui. *A Programming Paradigm for Spatiotemporal Composability.* Borrador de prepublicación, 13 de agosto de 2026. https://github.com/cordiverse/paper
+
 ### Codificación de la Experiencia en Parámetros
 
 El conocimiento, las instrucciones y los programas se basan en una premisa: la capacidad objetivo se puede expresar de forma relativamente completa mediante símbolos externos. Sin embargo, capacidades como la comprensión de imágenes médicas, la prosodia natural de la voz, la eliminación del tono estandarizado de "sabor a IA" en textos y la planificación a largo plazo son difíciles de comprimir en unas pocas reglas o flujos de trabajo. Este tipo de capacidades se debe incorporar en los parámetros del modelo a través del post-entrenamiento.
@@ -268,8 +250,6 @@ Una capa más hacia afuera, el objeto de optimización deja de ser únicamente "
 
 La misma idea se puede extender a los flujos de trabajo y a todo el Harness. AFlow representa los flujos de trabajo compuestos por múltiples llamadas a LLM como grafos de código, buscando combinaciones de nodos y flujos de control mediante retroalimentación de ejecución[^aflow-2025]; mientras que Meta-Harness permite que un Coding Agent lea el código fuente, las puntuaciones y las trayectorias de Harness candidatos, buscando el código que decide cómo se almacena, recupera y presenta la información[^meta-harness-2026]. El Capítulo 5 explicó que el código es el lenguaje universal del Agente para expresar la estructura del sistema; la novedad aquí radica en que el código no es solo el producto de una generación puntual, sino que puede convertirse en un objeto de búsqueda continua junto con el historial de evaluación.
 
-Los niveles de optimización no son mejores cuanto más altos sean. Buscar una regla local solo requiere unos pocos casos límite, mientras que buscar un flujo de trabajo completo o un Harness enfrenta un espacio candidato más amplio, mayores costos de evaluación y dificultades de atribución más severas. Un fallo claro, recurrente y localizable en un solo componente debe abordarse prioritariamente mediante un parche local auditable; solo cuando las modificaciones locales no logren resolver problemas entre componentes a largo plazo, o cuando el método de gestión existente se convierta en un cuello de botella, valdrá la pena ascender a las capas de flujo de trabajo, Harness e incluso optimizador. Independientemente del nivel al que se ascienda, el evaluador, los límites de permisos y las pruebas de retención deben situarse fuera del alcance modificable: cuanto mayor sea el espacio de búsqueda, más relevante resulta esta raíz de confianza.
-
 > **Experimento 9-6 ★★★: Dale este libro a Hermes: ¿puede mejorarse a sí mismo?**
 >
 > **Objetivo**: Comprobar si un Agent puede convertir conocimiento externo en una actualización real de sus propias capacidades. El experimento no plantea un problema ni ofrece una lista de funciones: entrega a Hermes los diez capítulos y su código, y le pide entender los principios, revisar su implementación y elegir por sí mismo una mejora valiosa.
@@ -288,33 +268,13 @@ Los cuatro métodos de actualización se convierten en una evolución continua s
 
 Voyager[^voyager-2023] muestra un bucle de evolución continua relativamente completo. En Minecraft, selecciona nuevos objetivos basándose en sus capacidades actuales, itera programas mediante retroalimentación del entorno, guarda el código en la biblioteca de habilidades tras una verificación exitosa y luego combina habilidades antiguas para resolver tareas más difíciles. El currículo automático, las habilidades ejecutables y la verificación del entorno son indispensables: sin currículo, el Agente no sabe qué aprender a continuación; sin verificación del entorno, la biblioteca de habilidades acumularía errores; sin persistencia, cada tarea tendría que empezar desde cero. Aunque el conocimiento, los Prompts, las herramientas y los parámetros de los Agentes reales son más complejos, el proceso básico de aprendizaje es similar.
 
-En concreto, Voyager se compone de tres mecanismos interconectados. El **generador automático de currículo** propone el siguiente objetivo de dificultad adecuada según los objetos actuales, el entorno y las habilidades dominadas, evitando que la exploración sea un paseo aleatorio; la **biblioteca de habilidades** guarda los programas exitosos como código recuperable y combinable, permitiendo por ejemplo que una habilidad de recolección avanzada invoque habilidades básicas como movimiento y fabricación; el **mecanismo de prompting iterativo** lleva las observaciones del entorno, los errores de ejecución y los resultados de auto-verificación a la siguiente ronda de generación de código, hasta que la tarea se apruebe realmente. El artículo reporta que, en comparación con las líneas base de su momento, Voyager obtuvo 3.3 veces más objetos únicos, exploró 2.3 veces más distancia y desbloqueó hitos clave del árbol tecnológico hasta 15.3 veces más rápido, pudiendo además transferir su biblioteca de habilidades a nuevos mundos de Minecraft; estos indicadores miden la curva de crecimiento de capacidad con la experiencia, en lugar de la puntuación de un examen puntual con el Agente congelado.
+En concreto, Voyager consta de tres mecanismos entrelazados. El **generador automático de currículo** propone, a partir del inventario, el entorno y las habilidades actuales, un objetivo siguiente de dificultad adecuada para evitar la exploración aleatoria. La **biblioteca de habilidades** guarda programas exitosos como código recuperable y componible; una habilidad avanzada de recolección puede invocar movimiento y fabricación. El **mecanismo de prompting iterativo** devuelve observaciones, errores de ejecución y autoverificación a la siguiente generación de código hasta que la tarea supera la prueba.
 
-### De la Localización de Problemas a la Consolidación de la Experiencia
+**Bucle de descubrimiento: hipótesis, experimento, evaluación y realimentación.** Sistemas de autoevolución como Voyager siguen este bucle, que es el método científico refinado durante siglos. Discovery Loop, fundada recientemente por Jeff Dean y sus colegas, propone automatizarlo: proponer un experimento, implementarlo, evaluarlo, obtener el resultado y pasarlo a la siguiente ronda[^ch1-discovery-loop]. Es la autoevolución de Agentes aplicada a la ciencia. Para evitar relatos autoconsistentes y éxitos autoasignados, la evolución de este capítulo debe respetar el método científico.
 
-Un mismo problema superficial puede requerir diferentes formas de modificación. Las alucinaciones en las que un Agente de atención al cliente inventa hechos pueden deberse a falta de datos en la base de conocimientos o a que el Prompt no exigió citas; las falsas promesas de estar "completado" cuando la tarea no se ha finalizado pueden corregirse mediante instrucciones o comprobarse forzosamente en el Harness mediante verificaciones entre respuesta y estado de herramientas. El módulo de evolución debe localizar primero la causa raíz y luego elegir el objeto de modificación mínimo, más fácil de verificar y revertir. Las fallas ocasionales con evidencia insuficiente no deben activar el aprendizaje de inmediato, sino continuar acumulando muestras.
+[^ch1-discovery-loop]: Discovery Loop fue anunciada el 5 de agosto de 2026 por Jeff Dean, Sanjay Ghemawat, Quoc Le y Oriol Vinyals como sociedad de beneficio público. Su descripción pública propone automatizar bucles experimentales completos y paralelizar a gran escala experimentos antes secuenciales.
 
-Esta elección también puede cambiar con el aumento de la experiencia. Una estrategia recién descubierta sirve primero como documento de experiencia para recuperación; tras ser verificada repetidamente en múltiples casos, se puede promocionar a conocimiento. El conocimiento cuenta con tres formas de expresión: las reglas que se pueden describir claramente en lenguaje natural se consolidan como Skills; si los pasos son estables y no requieren capacidad de comprensión de lenguaje natural, se pueden compilar como código de herramienta; si en realidad reflejan amplias capacidades de toma de decisiones implícitas, pueden ingresar al post-entrenamiento.
-
-### Validación, Despliegue y Reversión
-
-Todas las modificaciones producen primero capacidades candidatas o Agentes candidatos, en lugar de sobrescribir directamente la versión de producción. Los documentos de conocimiento deben verificar si tras su recuperación mejoran el rendimiento en nuevas tareas, los Prompts y Skills deben comprobar casos límite y regresiones en tareas antiguas, los programas deben ejecutar pruebas en sandboxes y entornos restablecidos, y las actualizaciones de parámetros deben comprobar olvidos, seguridad y tareas fuera de distribución. Tras aprobar la validación, se debe utilizar un despliegue gradual (canary) para observar el tráfico real; si los indicadores clave se deterioran, se revierte automáticamente a la versión segura conocida.
-
-**Publicación validada y rollback:**
-
-```python
-candidate = propose_minimal_update(evidence, current_version)
-
-if not verify(candidate, boundary_set): reject(candidate)
-elif not verify(candidate, retention_set): reject(candidate)
-elif not verify(candidate, safety_set): reject(candidate)
-else:
-    canary = deploy_to_small_traffic(candidate)
-    if canary.metrics_regress: rollback(current_version)
-    else: promote(candidate)
-```
-
-La validación requiere además distinguir entre dos capacidades que suelen confundirse. La **capacidad de actualización del Harness** (harness-updating) consiste en generar modificaciones duraderas y valiosas a partir de trayectorias; la **capacidad de beneficio del Harness** (harness-benefit) es la capacidad del Agente de tareas para encontrar, activar y utilizar correctamente dichas modificaciones en ejecuciones posteriores. Una Skill en sí misma puede estar redactada de forma impecable, pero un modelo de tareas más débil podría no cargarla en el escenario adecuado, o ser incapaz de seguirla a largo plazo tras cargarla, haciendo en cualquiera de los casos que el resultado final parezca "sin evolución". Por lo tanto, no se debe utilizar únicamente la puntuación de extremo a extremo para deducir la calidad del actualizador. Los experimentos de reemplazo de modelos de Lin et al. demostraron que la relación entre estas dos capacidades y la capacidad del modelo base no es idéntica[^harness-benefit-2026]; la relación de fortaleza específica requiere mayor verificación en tareas, pero evaluar ambas de forma separada constituye un método de aplicación general.
+En la evolución continua deben separarse dos capacidades que suelen confundirse. **Harness updating** produce cambios persistentes valiosos a partir de trayectorias; **Harness benefit** es la capacidad del Agente de tarea para encontrar, activar y usar correctamente esos cambios después. Una Skill puede estar perfectamente escrita, pero un modelo débil puede no cargarla en el momento adecuado o no seguirla a largo plazo, haciendo parecer que nada evolucionó. Por tanto, la puntuación de extremo a extremo no diagnostica por sí sola al actualizador. Los intercambios de modelo de Lin et al. muestran que ambas capacidades se relacionan de forma distinta con el modelo base[^harness-benefit-2026].
 
 Tabla 9-3 Métricas de evaluación por capas para la evolución continua
 
@@ -323,9 +283,7 @@ Tabla 9-3 Métricas de evaluación por capas para la evolución continua
 | Validez de modificaciones candidatas | ¿El actualizador propuso modificaciones valiosas? | Tasa de aceptación y ganancia de los candidatos en validación independiente |
 | Tasa de activación de artefactos | ¿El Agente cargó la nueva Skill, memoria o herramienta en el escenario correcto? | Trayectorias de recuperación, enrutamiento y llamadas a herramientas |
 | Tasa de cumplimiento exitoso | ¿Tras la activación se ejecutó según la nueva regla o proceso? | Secuencia de acciones y verificador de procesos |
-| Ganancia en tareas retenidas | ¿Mejoró globalmente en tareas que no participaron en la evolución? | Tasa de éxito en held-out, calidad y costo |
-
-Durante el diagnóstico se puede fijar el mismo Harness candidato y reemplazar únicamente el modelo de tareas: si un modelo fuerte logra beneficiarse mientras que uno débil nunca activa los nuevos artefactos, el cuello de botella está en la recuperación o enrutamiento; si ambos pueden activarlos pero solo el modelo fuerte los ejecuta correctamente, el cuello de botella reside en el seguimiento de instrucciones o la planificación a largo plazo; si todos los modelos se degradan, se cuenta con mayores razones para dudar de la modificación en sí. Inversamente, también se puede fijar el modelo de tareas y cambiar el modelo encargado de proponer modificaciones, comparando individualmente la calidad del actualizador. Este reemplazo bidireccional de modelos permite ubicar el presupuesto de capacidad de forma más precisa que observar un simple "puntaje total tras la evolución".
+| Ganancia en el conjunto de retención | ¿Mejora el sistema en tareas no usadas en la evolución y generaliza? | Éxito, calidad y coste del conjunto de retención |
 
 La evaluación no es un examen tras finalizar el aprendizaje, sino una parte indispensable del proceso de auto-evolución. La evaluación a largo plazo observa al menos cinco tipos de resultados simultáneamente:
 
@@ -350,8 +308,6 @@ Este tipo de tareas no se puede resolver completamente cambiando a un modelo que
 - **Mantenimiento de la diversidad de búsqueda**: La búsqueda abierta no debe conservar únicamente la cadena con la puntuación más alta en el momento. El banco de candidatos debe conservar varias ramas temporalmente de baja puntuación pero no homogéneas según diferencias de mecanismo, novedad de código o tipo de hipótesis, evitando que todas las soluciones converjan en una misma plantilla fácil de puntuar.
 - **Intervención humana en niveles superiores**: El papel del ser humano no debe limitarse a hacer clic en "aprobar" antes de invocaciones de herramientas peligrosas, sino incluir la definición de problemas, la revisión de criterios de evaluación, la interpretación de resultados anómalos y la decisión de cuándo detenerse. En tareas con retroalimentación ambigua, estos juicios de alto nivel resultan más difíciles de automatizar y más valiosos que asumir la ejecución paso a paso.
 
-Las mismas limitaciones existen en la ingeniería de software ordinaria: que todas las pruebas unitarias pasen solo demuestra que el comportamiento observable actual satisface las pruebas, pero no garantiza que la base de código siga siendo fácil de mantener meses después. Por ello, la sección anterior incluyó la calidad de ingeniería a largo plazo como un indicador independiente, en lugar de esperar que la tasa de éxito de la tarea actual cubra fortuitamente estas externalidades diferidas. El límite superior de la evolución continua depende en última instancia de si el sistema puede evaluar los objetivos que realmente le importan, y no solo los indicadores sustitutos más fáciles de medir.
-
 ### Límites de Seguridad de la Evolución Continua
 
 La capacidad de auto-evolución del Agente tiene el potencial de convertir un error puntual en un riesgo a largo plazo. Si las **inyecciones de prompts en páginas web, correos u salidas de herramientas se resumen como experiencia**, podrían surtir efecto repetidamente a través de sesiones; si paquetes de software maliciosos buscados automáticamente se encapsulan como herramientas, su impacto se propagará desde una ejecución en sandbox a todas las tareas posteriores; mientras que un verificador defectuoso podría aprobar continuamente versiones candidatas que aparentan progreso pero presentan degradación real. Por ende, los sistemas de auto-evolución de Agentes deben limitar "quién puede modificar qué y de dónde provienen los criterios", además de verificar "si es más fuerte".
@@ -373,17 +329,6 @@ Un ciclo típico de aprendizaje durante el sueño consta de cinco pasos:
 3. **Recolección y consolidación**: Buscar nuevas señales en las trayectorias evaluadas recientemente, fusionar contenidos duplicados, marcar conflictos y condiciones de aplicación, priorizando la generación de parches locales;
 4. **Validación y aprobación**: Evaluar los candidatos en conjuntos de transferencia, retención y seguridad, registrando escrituras de alto riesgo a la espera de aprobación humana;
 5. **Poda e indexación**: Actualizar los índices de búsqueda, marcando capacidades no utilizadas durante mucho tiempo o refutadas por nueva evidencia como expiradas, archivadas o eliminadas, conservando simultáneamente fuentes y versiones de reversión.
-
-**Consolidación durante el tiempo de inactividad:**
-
-```python
-while sleep_gate_is_open():
-    batch = load_new_evaluated_trajectories()
-    proposals = consolidate(batch, current_capabilities)
-    for proposal in proposals:
-        validate_canary_and_promote_or_rollback(proposal)
-    prune_stale_entries_but_keep_provenance()
-```
 
 La memoria de usuario es el ejemplo más intuitivo, pero debe distinguirse de la experiencia de acción. La memoria automática de Claude Code mantiene un índice `MEMORY.md` y archivos detallados divididos por tema para cada proyecto; al iniciar la sesión solo se carga un prefijo acotado del índice, leyéndose el resto del contenido bajo demanda; cuando el índice se aproxima al límite superior, el sistema exige al Agente fusionar o retirar detalles. Esto demuestra que la memoria de texto plano también requiere restricciones de capacidad, carga por capas y sistematización activa, aunque los mecanismos públicos actuales escriben continuamente durante la sesión y no se pueden equiparar simplemente a una tarea fija de fondo nocturno[^claude-code-memory].
 

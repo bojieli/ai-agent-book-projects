@@ -1,61 +1,49 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 505" width="780" height="505" style="background:#ffffff">
-<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333" /></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999" /></marker><marker id="ah-sm" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto"><polygon points="0 0, 6 2, 0 4" fill="#999999" /></marker></defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 300" width="780" height="300" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333" /></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999" /></marker></defs>
 
-<rect x="30" y="55" width="350" height="230" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" />
-<text x="42" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold"><tspan x="42" dy="160.28">MGRD Chưng cất tư duy neo đậu</tspan><tspan x="42" dy="19.44">theo phương thức</tspan></text>
-<rect x="45" y="80" width="320" height="56" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2" />
-<text x="65" y="86.4" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">① Lấy mẫu và sàng lọc</text>
-<text x="65" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal"><tspan x="65" dy="97.2">Chuỗi tư duy lấy mẫu mô hình hiện</tspan><tspan x="65" dy="10.8">tại K</tspan></text>
-<text x="65" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal"><tspan x="65" dy="118.8">Chuỗi bộ lọc dựa trên đặc điểm âm</tspan><tspan x="65" dy="10.8">thanh</tspan></text>
-<line x1="205" y1="136" x2="205" y2="144" stroke="#999999" stroke-width="2" marker-end="url(#ah-sm)" />
-<rect x="45" y="144" width="320" height="56" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
-<text x="65" y="162" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">② Vương SFT</text>
-<text x="65" y="178" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Âm thanh CoT + Văn bản Suy nghĩ</text>
-<text x="65" y="192" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">tinh chỉnh khớp</text>
-<line x1="205" y1="200" x2="205" y2="208" stroke="#999999" stroke-width="2" marker-end="url(#ah-sm)" />
-<rect x="45" y="208" width="320" height="70" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
-<text x="65" y="219.33" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.7" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">③ Tối ưu hóa RLVR</text>
-<text x="65" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.96" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal"><tspan x="65" dy="231.56">Phần thưởng tổng hợp: Độ chính xác</tspan><tspan x="65" dy="11.84">0.8 + định dạng tư duy 0.2</tspan></text>
-<text x="65" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.96" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal"><tspan x="65" dy="255.24">Vòng lặp T → Chuyển cơ sở tư duy</tspan><tspan x="65" dy="11.84">sang phân tích âm thanh</tspan></text>
-<rect x="400" y="55" width="350" height="230" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" />
-<text x="412" y="170" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">MPS Mind-Paced Speaking</text>
-<rect x="415" y="82" width="155" height="70" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2" />
-<text x="492" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.81" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold"><tspan x="492" dy="95.01">Formulation</tspan><tspan x="492" dy="15.99">Brain</tspan></text>
-<text x="492" y="126" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.96" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Thế hệ liên tục</text>
-<text x="492" y="139.99" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.96" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">think segment</text>
-<rect x="580" y="82" width="155" height="70" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
-<text x="657" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14.81" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold"><tspan x="657" dy="95.01">Articulation</tspan><tspan x="657" dy="15.99">Brain</tspan></text>
-<text x="657" y="126" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.96" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Nhận think → Tạo</text>
-<text x="657" y="139.99" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.96" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">response segment</text>
-<line x1="570" y1="117" x2="578" y2="117" stroke="#999999" stroke-width="2" marker-end="url(#ah-sm)" />
-<rect x="415" y="165" width="155" height="40" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2" />
-<text x="492" y="174.2" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.58" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Think-First</text>
-<text x="492" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal"><tspan x="492" dy="185.31">Độ trễ ~80 tok |</tspan><tspan x="492" dy="10.8">93.9%</tspan></text>
-<rect x="580" y="165" width="155" height="40" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2" />
-<text x="657" y="174.2" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.58" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Speak-First</text>
-<text x="657" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal"><tspan x="657" dy="185.31">Độ trễ bằng không |</tspan><tspan x="657" dy="10.8">92.8%</tspan></text>
-<text x="575" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal"><tspan x="575" dy="162.44">Hai brain đều duy trì định dạng TBS tiêu</tspan><tspan x="575" dy="15.12">chuẩn → mạch lạc về mặt ngữ nghĩa</tspan></text>
-<rect x="30" y="300" width="720" height="80" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
-<text x="390" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold"><tspan x="390" dy="331.36">Kiến trúc mô hình: Bộ mã hóa âm thanh Qwen2 (25Hz, bị đóng băng) → bộ chuyển đổi</tspan><tspan x="390" dy="17.28">(↓12.5Hz) → Qwen2.5 32B</tspan></text>
-<rect x="55" y="335" width="205" height="35" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2" />
-<text x="157" y="346" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">bộ mã hóa âm thanh</text>
-<text x="157" y="360" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Tốc độ khung hình 25Hz</text>
-<line x1="262" y1="352" x2="277" y2="352" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)" />
-<rect x="275" y="335" width="205" height="35" rx="3" fill="#e8e8e8" stroke="#333333" stroke-width="2" />
-<text x="377" y="346" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">bộ chuyển đổi âm thanh</text>
-<text x="377" y="360" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Đầu ra 12.5Hz</text>
-<line x1="482" y1="352" x2="497" y2="352" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)" />
-<rect x="495" y="335" width="205" height="35" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
-<text x="597" y="346" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Bộ giải mã LLM</text>
-<text x="597" y="360" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Suy nghĩ + Trả lời</text>
-<rect x="30" y="395" width="720" height="125" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2" />
-<text x="390" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold"><tspan x="390" dy="431.58">Cái nhìn sâu sắc cốt lõi: Tư duy tác nhân văn bản → Tư duy neo theo</tspan><tspan x="390" dy="21.6">âm thanh</tspan></text>
-<rect x="45" y="433" width="330" height="40" rx="3" fill="#e8e8e8" stroke="#333333" stroke-width="2" />
-<text x="210" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal"><tspan x="210" dy="436.8">❌ Text Agent: "Lời bài hát ám chỉ nỗi</tspan><tspan x="210" dy="10.8">buồn"</tspan></text>
-<text x="210" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal"><tspan x="210" dy="458.4">Suy nghĩ dựa trên phiên âm → Chuỗi càng</tspan><tspan x="210" dy="10.8">dài thì hiệu suất càng kém</tspan></text>
-<rect x="400" y="433" width="340" height="40" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2" />
-<text x="570" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal"><tspan x="570" dy="436.8">✓ Neo âm thanh: "tiến triển nhỏ + giai</tspan><tspan x="570" dy="10.8">điệu giảm dần"</tspan></text>
-<text x="570" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal"><tspan x="570" dy="458.4">Chưng cất lặp MGRD → chuỗi suy nghĩ càng</tspan><tspan x="570" dy="10.8">dài thì càng chính xác</tspan></text>
-<text x="390" y="471.54" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Đào tạo: Mẫu khởi động nguội 5M + mẫu 5K RL | Lọc dữ liệu: pass@8 ∈ [3,6] (độ khó vừa phải)</text>
-<text x="390" y="486.66" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Spoken-MQA vượt qua Gemini 2.5 Pro (81.5%) | Đánh giá tổng thể 83.6%</text>
+
+
+<rect x="30" y="55" width="190" height="185" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
+<text x="125" y="121.58" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">① Chụp màn hình</text>
+
+<rect x="55" y="95" width="140" height="90" rx="4" fill="#ffffff" stroke="#999999" stroke-width="1.5" />
+<text x="125" y="115" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central">Màn hình máy tính</text>
+<rect x="72" y="128" width="106" height="14" rx="2" fill="#e8e8e8" stroke="none" />
+<rect x="72" y="146" width="80" height="14" rx="2" fill="#e8e8e8" stroke="none" />
+<rect x="72" y="164" width="50" height="12" rx="2" fill="#d0d0d0" stroke="none" />
+
+<text x="125" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#999999" text-anchor="middle" dominant-baseline="central"><tspan x="125" dy="137.78">Desktop / trình duyệt / ứng</tspan><tspan x="125" dy="12.96">dụng</tspan></text>
+<text x="125" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#999999" text-anchor="middle" dominant-baseline="central"><tspan x="125" dy="163.7">Chờ giao diện ổn định rồi</tspan><tspan x="125" dy="12.96">chụp</tspan></text>
+
+<line x1="220" y1="130" x2="283" y2="130" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
+<text x="252" y="118" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central">Ảnh chụp màn hình</text>
+
+<rect x="295" y="55" width="190" height="185" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2" />
+<text x="390" y="92.42" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">② Mô hình suy luận</text>
+
+<text x="390" y="109.16" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Đầu vào</text>
+<text x="390" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central"><tspan x="390" dy="123.2">Ảnh chụp + chỉ dẫn nhiệm</tspan><tspan x="390" dy="14.04">vụ</tspan></text>
+<line x1="310" y1="137" x2="470" y2="137" stroke="#999999" stroke-width="1" stroke-dasharray="4,3" />
+<text x="390" y="151.28" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Đầu ra</text>
+<text x="390" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central"><tspan x="390" dy="165.32">Suy nghĩ: “ô tìm kiếm ở</tspan><tspan x="390" dy="14.04">giữa màn hình”</tspan></text>
+<text x="390" y="192.86" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central">Action: click(512, 250)</text>
+<text x="390" y="205.82" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central">Action: type("weather")</text>
+
+<line x1="485" y1="130" x2="548" y2="130" stroke="#333333" stroke-width="2" marker-end="url(#ah)" />
+<text x="517" y="118" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central">Action</text>
+
+<rect x="560" y="55" width="190" height="185" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" />
+<text x="655" y="97.82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">③ Thực thi action</text>
+
+<text x="655" y="115.1" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Công cụ thực thi</text>
+<text x="655" y="129.68" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central">xdotool / Playwright</text>
+<line x1="575" y1="147" x2="735" y2="147" stroke="#999999" stroke-width="1" stroke-dasharray="4,3" />
+<text x="655" y="0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central"><tspan x="655" dy="143.72">Chuột: di chuyển, click,</tspan><tspan x="655" dy="14.04">kéo thả</tspan></text>
+<text x="655" y="171.8" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central">Bàn phím: nhập, phím tắt</text>
+<text x="655" y="185.84" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central">Cuộn: lên/xuống/trái/phải</text>
+<text x="655" y="199.88" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central">Chờ: giao diện phản hồi</text>
+
+<path d="M 655 240 L 655 280 L 125 280 L 125 248" stroke="#333333" stroke-width="2" fill="none" marker-end="url(#ah)" />
+<text x="390" y="298" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central">④ Trạng thái giao diện đổi → chờ ổn định → sang vòng chụp tiếp theo</text>
+<text x="390" y="325" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#999999" text-anchor="middle" dominant-baseline="central">Tình huống điển hình: điền form nhiều bước có thể cần 10–20 vòng lặp</text>
 </svg>

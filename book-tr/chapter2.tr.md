@@ -875,26 +875,13 @@ Agent Durum Çubuğu, attention tahsisini açıkça manipüle ederek bu sorunu e
 > Attention, durum çubuğu bilgisi üzerinde yoğun biçimde toplanır. Düşünme süreci, artık ham veriden istatistik çıkarmak yerine doğrudan zaten damıtılmış bilgiyi kullanır. Qwen3-0.6B gibi küçük bir model için, Kontrol Grubu A sıklıkla kısıtı ihlal edip aramaya devam ederken, Kontrol Grubu B kısıta istikrarlı biçimde uyar.
 >
 
-Deney 2-8, sezgi sağlayan küçük ölçekli nitel bir gösterimdir. “Önceden hesapla, doğrudan göz at” yaklaşımının ne kadar yararlı olduğunu ve sınırlarını ölçmek için yazar ve iş birlikçileri özel bir benchmark kullandı[^ch2-8] (bu yaklaşımın ortak adı **Context Distillation**'dır; Agent Durum Çubuğu onun en gündelik biçimidir). Sonuçlar:
-
-- Modele **önceden hesaplanmış bir durum çubuğu** verildiğinde, **zayıf modeller doğruluğu geri kazanır**. En zayıf modeller 40–54 yüzde puanı iyileşti; yerel bir 2B model bu görevlerde durum çubuğu olmayan öncü bir modele yetişti.
-- **Güçlü modeller zaten doğru yanıt verir; kazançları verimliliktir.** Aynı durum çubuğu sorgu başına düşünme miktarını, gecikmeyi ve maliyeti yaklaşık bir büyüklük mertebesi azaltır (düşünme token'larını %80–90 veya daha fazla düşürür).
-- En temel değişiklik şudur: durum çubuğu olmadan sorgu başına düşünme miktarı context uzadıkça **sürekli büyür**; durum çubuğuyla **neredeyse sabit** kalır. Context ne kadar uzarsa uzasın, model yalnızca birkaç durum alanına “göz atar”.
-
-
-Ancak önceden hesaplamayı doğru ve yanlış yapmak arasında büyük fark vardır. Üç ders:
-
-**1. Durum çubuğunu kodla koruyun, büyük bir modelle değil.** Doğal bir düşünce şudur: "O zaman geçmişi okuyup benim için durum çubuğunu özetlemesi için başka bir LLM kullanırım"—sonuç tam tersidir. Deneyde, 20 satırlık bir regex fonksiyonu "ground truth" düzeyinde doğruluk elde ederken, öncü bir modelin tüm geçmişi **toplu olarak okuyup** istatistikleri çıktı vermesi çoğu girdiyi yanlış aldı, alt akış doğruluğunu hiç durum çubuğu kullanmamaktan bile daha düşük düşürdü. Nedeni anlaşılması zor değil: bir LLM'den uzun bir geçmişi toplu olarak özetlemesini istemek, "tüm context'i tarama" orijinal sorununu başka bir yere taşımaktan başka bir şey değildir, hiçbir şeyi çözmez. Uygulanabilir bir alternatif: **mümkün olduğunda hesaplama için kod kullanın**; kesinlikle bir LLM kullanmanız gerekiyorsa, ona **öğeleri birer birer çıkarttırın, ardından kodla toplayın—asla bir kerede toplu özetlemesine izin vermeyin**.
-
-**2. Orijinal context'i silmeyin.** Durum çubuğu, orijinal context'in **kayıplı bir izdüşümüdür**; yalnızca sorulmasını beklediğiniz boyutları önceden hesaplar. Sayma ve durum takibi gibi görevlerde durum çubuğu yeterliyse orijinal kayıtları silip çok sayıda token tasarrufu yapabilirsiniz; ancak durum çubuğunun hesaplamadığı bir boyut sorulduğunda yalnızca durum çubuğunu tutmanın doğruluğu keskin biçimde çöker.
-
-**3. Durum çubuğu doğruluğunu birinci sınıf production metriği olarak izleyin.** Deney, **modelin durum çubuğuna neredeyse koşulsuz güvendiğini** gösterdi: “3 kez arandı” yazarsanız, kontrol etmeden veya yeniden hesaplamadan bunu üç olarak kabul eder. Bu, durum çubuğunu etkili kılar; ama içindeki bir hata da nihai yanıta **aynen** aktarılır. Bu nedenle daha önce değinilen **durum çubuğu zehirlenmesi** riski ciddiye alınmalıdır.
+Deneyler[^ch2-8], modele **önceden hesaplanmış bir durum çubuğu** vermenin **daha küçük açık modellerin doğruluğunu öncü büyük modellere yaklaştırabildiğini** gösteriyor. Ayrıca **durum çubuğu modelin düşünme verimliliğini büyük ölçüde artırabilir**; her Agent yinelemesinin düşünme token'larını, gecikmesini ve maliyetini yaklaşık bir büyüklük mertebesi azaltır. Durum çubuğu olmadan her sorgunun düşünme miktarı context uzadıkça **sürekli artar**; durum çubuğuyla **neredeyse sabit** hale gelir.
 
 [^ch2-8]: Li, Bojie and Noah Shi. *Distill, Don't Retrieve: Inference-Time Context Distillation for LLM Agent Reasoning.* 2026. https://01.me/research/context-distillation
 
 ### Agent Durum Çubuğunun Bileşimi
 
-Yukarıdaki teorik temele dayanarak, Agent Durum Çubuğu şu bilgi türlerini içerir:
+Agent Durum Çubuğu şu bilgi türlerini içerir:
 
 **Görev Planlaması**: Bir Agent karmaşık, çok adımlı görevleri ele alırken, trajectory çok uzayabilir. Agent, mevcut yerel alt göreve aşırı odaklanma, kullanıcının orijinal isteğini, temel kısıtları ve sonraki işi unutma eğilimindedir. Trajectory'nin sonuna yerleştirilen, görevi net adımlara bölen bir TODO listesi tanıtarak, modele mevcut ilerlemesi ve gelecekteki hedefleri sürekli hatırlatılır, eylemlerin genel planla uyumlu olması sağlanır.
 
@@ -970,6 +957,14 @@ Yaklaşık bir model başa baş noktasını gösterir. Her durumun $S$ token iç
 
 Agent durum çubuğu tekniğinin pratik bir avantajı vardır: tüm meta bilgiler Context içinde insanların okuyabileceği biçimde görünür; böylece geliştirici Agent'ın hangi bilgileri aldığını ve hangi kararları verdiğini istediği zaman denetleyebilir. Daha da önemlisi, modele müdahale etmez—fine-tuning gerektirmez ve herhangi bir dil modeliyle doğrudan kullanılabilir.
 
+Durum çubuğunu sürdürürken iki noktaya dikkat edilmelidir:
+
+1. **Durum çubuğunu mümkün olduğunca kodla sürdürün. LLM kullanmak kaçınılmazsa öğeleri tek tek çıkarıp kodla birleştirin; modele asla tek seferde toplu sayım yaptırmayın**. Deneyler, **modelin durum çubuğuna neredeyse koşulsuz güvendiğini** gösteriyor: “3 arama yapıldı” yazarsanız yeniden saymadan bunu üç kabul eder. LLM'ler zaten sayım hatalarına yatkındır; bu nedenle daha önce değinilen **durum çubuğu zehirleme** riski ciddiye alınmalıdır.
+
+2. **Orijinal context'i silmeyin**. Durum çubuğu, orijinal context'in **kayıplı bir izdüşümüdür**; yalnızca sorulmasını beklediğiniz boyutları önceden hesaplar. Sayım ve durum takibi gibi görevlerde çubuk yeterliyse ham kayıt silinerek çok sayıda token tasarruf edilebilir. Ancak tek bir soru bile hesaplanmamış bir boyuta düşerse yalnızca durum çubuğunun kaldığı sistemin doğruluğu çöker.
+
+Agent Durum Çubuğu, **context sıkıştırma** (Context Compression) tekniklerinden biridir. Sonraki bölüm diğer context sıkıştırma tekniklerini tanıtır.
+
 ## Context Sıkıştırma Stratejileri
 
 Önceki bölümler context'e ne konulacağını tartıştı—prompt engineering neyin yazılacağını, Skills neyin ihtiyaç halinde yükleneceğini ve Agent durum çubuğu hangi meta bilginin enjekte edileceğini belirler. Ancak çok turlu etkileşimler derinleştikçe, context sürekli genişleyecektir. Bu bölüm ters yönü tartışır: **context'ten içerik nasıl azaltılır**—ne zaman sıkıştırılacağı, nasıl sıkıştırılacağı ve context dolu olmasa bile sıkıştırmanın neden gerekli olduğu.
@@ -1035,14 +1030,14 @@ Kilit nokta, sıkıştırmanın **zamanlamasını ve konumunu** anlamaktır. Sı
 >
 > **Strateji 2 ve 3: Göreve Duyarsız Sıkıştırma** — Bireysel Özetleme, her arama sonucu için bağımsız olarak 2-3 paragraflık bir özet üretir, sıkıştırma oranı %10,9'dur (bu kitapta sıkıştırma oranı "sıkıştırılmış hacim / orijinal hacim" anlamına gelir; daha küçük bir sayı daha agresif sıkıştırma anlamına gelir). Görevi tamamlayabilir ama 12 yineleme ve 276.608 token gerektirir. Ana sorun bilgi parçalanmasıdır—birden fazla sayfa aynı olayı tekrar tekrar anlatır, context alanını israf eder. Birleşik Özetleme, tüm sonuçları tek bir kapsamlı özette birleştirir, sıkıştırma oranı %4,3'tür, 10 yineleme ve 93.449 token gerektirir. Ancak, girdi son derece uzun olduğunda kesilmelidir, bu da sonundaki bilgiyi kaybedebilir. İkisinin ortak kusuru semantik anlayış eksikliğidir, bu da bilginin ilgi düzeyini ayırt etmeyi imkânsız kılar.
 >
-> **Strateji 4: Bağlama Duyarlı Sıkıştırma** — Temel yenilik, mevcut sorgu niyetini ve birikmiş bilgiyi sıkıştırma karar sürecine dahil etmektir. Sıkıştırma prompt'unda "Arama sorgusu göz önüne alındığında: {query}" ve "Mevcut context: {context}" belirterek, model hedefe yönelik özetler üretmeye yönlendirilir. Sonuç yalnızca 7 yineleme ve 40.157 token gerektirir, genel sıkıştırma oranı yaklaşık %3,0'tür. Bir sıkıştırma örneğini ele alırsak, 147.877 karakteri 1.963 karaktere (yaklaşık %1,3) sıkıştırmak, kurucu adları ve pozisyon değişiklikleri gibi kilit bilgiyi hâlâ korudu; sonraki aramalar, ilgisiz tarihsel arka planı ve tekrarlanan içeriği filtreleyerek pozisyon değişiklikleri ve yeni şirketler gibi kilit bilgiyi akıllıca çıkarabildi. Bu başarı, temel bir içgörüye dayanır: çok adımlı görevlerde, gereken bilgi yoğunluğu ve türü farklı aşamalarda değişir—erken aşamalar geniş bilgi toplama gerektirir, orta aşamalar hassas gerçek doğrulaması gerektirir, sonraki aşamalar ise kapsamlı bilgi sentezi gerektirir. Bağlama duyarlı sıkıştırma, sıkıştırmanın odağını dinamik olarak ayarlayarak bilgi değerini maksimize eder.
+> **Strateji 4: Bağlama Duyarlı Sıkıştırma** — Temel yenilik, mevcut sorgu niyetini ve birikmiş bilgiyi sıkıştırma karar sürecine dahil etmektir. Sıkıştırma prompt'unda "Given the search query: {query}" ve "Current context: {context}" belirtilerek model hedefe yönelik özetler üretmeye yönlendirilir. Sonuç yalnızca 7 yineleme ve 40.157 token gerektirir; genel sıkıştırma oranı yaklaşık %3,0'tür. Bir örnekte yaklaşık 150 bin karakter 2 bine sıkıştırılırken kurucu adları ve pozisyon değişiklikleri gibi sonraki görevin ihtiyaç duyduğu kilit bilgiler korundu.
 >
-> **Strateji 5: Alıntılı Bağlama Duyarlı Sıkıştırma** — Akıllı sıkıştırmaya bilgi kaynağı ekler, her gerçek bir kaynak URL alıntı işaretiyle birlikte gelir. Token kullanımı 222.992'ye çıkar, sıkıştırma oranı %4,1'dir, ama bilgi doğrulaması için bir araç sağlar. Bu, kayıplı sıkıştırma ile kayıpsız indeksleme birleşimini başarır—içerik semantik olarak sıkıştırılır (kayıplı), ama kaynak bağlantılarını (kayıpsız indeks) koruyarak, teorik olarak her an orijinal bilgiye geri izlenebilir.
+> **Strateji 5: Alıntılı Bağlama Duyarlı Sıkıştırma** — Akıllı sıkıştırmaya bilgi kaynağı ekler ve her gerçeğe bir kaynak URL alıntı işareti iliştirir. İçerik semantik olarak kayıplı biçimde sıkıştırılır; ancak kaynak bağlantılarını korumak, teorik olarak her an orijinal bilgiye dönmeyi sağlayan kayıpsız bir indeks sunar.
 >
 > **Strateji 6: Uyarlanabilir Pencereleme** — Temel bir içgörüye dayanır: görevin erken aşamasında, context alanı bol olduğundan sıkıştırmaya acele etmeye gerek yoktur. Sıkıştırma mekanizması yalnızca kapasite sınırına yaklaşıldığında etkinleştirilir, böylece orijinal bilginin bütünlüğü mümkün olduğunca korunur. Belirli uygulama üç temel mekanizma içerir:
 >
-> - **Eşik Tetikleyici**: Context kullanımını sürekli izler. Sıkıştırma yalnızca prompt token sayısı pencerenin %80'ini aştığında etkinleştirilir (128K pencere için 102.400 token).
-> - **Toplu Sıkıştırma**: Tetiklendiğinde, işaretlenmemiş tüm araç sonuçlarını bir kerede sıkıştırır. Örneğin, 4. yinelemenin civarında, context'in 102.400 token eşiğini aştığı tespit edildiğinde (pratikte yaklaşık 135.600 token'da tetiklenir), sıkıştırılmamış 10 araç mesajının tümü hemen sıkıştırılır.
+> - **Eşik Tetikleyici**: Context kullanımını sürekli izler ve sıkıştırmayı yalnızca prompt token sayısı pencerenin %80'ini aştığında etkinleştirir.
+> - **Toplu Sıkıştırma**: Tetiklendiğinde, işaretlenmemiş tüm araç sonuçlarını bir kerede sıkıştırır. Örneğin context'in 102.400 token eşiğini aştığını algıladığında, sıkıştırılmamış 10 araç mesajının tümünü hemen sıkıştırır
 > - **Tekrar Önleme**: Sıkıştırılmış içeriğin asla yeniden işlenmemesini sağlamak için bir `[COMPRESSED]` işareti ekler.
 >
 > Toplam token kullanımı nispeten yüksek olsa da (174.601), ilk birkaç yineleme eksiksiz orijinal bilgiyi korur, geniş kapsamlı ilk bilgi toplama için maksimum esneklik sağlar.
@@ -1073,13 +1068,7 @@ Sıkıştırmanın iki motivasyonunu (uzunluğu kontrol etmek ve düşünme kali
 
 Sıkıştırma ek hesaplama yükü gerektirse de (her sıkıştırma ekstra bir LLM çağrısıdır), tasarruf edilen token maliyetlerine ve iyileşen görev başarı oranlarına kıyasla yatırım getirisi son derece yüksektir—deneyler, bağlama duyarlı sıkıştırmanın token kullanımını %75'in üzerinde azalttığını gösteriyor.
 
-Sıkıştırmanın en kolay kaybettiği şey ayrıntıların kendisi değil, **erken mimari kararlar, kısıtların ardındaki gerekçe ve başarısız yollardır**—LLM'ler tipik olarak yeniden elde edilebilir gibi görünen bilgiyi silmeyi önceliklendirir. Üretim düzeyindeki Agent sistemlerinde, sıkıştırma sırasında koruma önceliklerini açıkça tanımlamak önerilir:
-
-1.  **Mimari Kararlar ve Kilit Kısıtlar**: Özetlenmemelidir.
-2.  **Değiştirilen Dosyaların Listesi ve Kilit Değişiklik Kayıtları**: Tamamen korunmalıdır.
-3.  **Doğrulama Durumu** (geçti/kaldı): Korunmalıdır.
-4.  **Çözülmemiş TODO'lar ve Geri Alma Notları**: Korunmalıdır.
-5.  **Araç Çıktısı**: Silinebilir, yalnızca geçti/kaldı sonucu tutulur.
+Sıkıştırmada en kolay kaybolan şeyler erken mimari kararlar, kısıtların gerekçeleri ve başarısız yollardır. Bu yüzden **Agent ilerlemeyi sık sık belge halinde kaydetmeli**, tüm bilgiyi yürütme geçmişine dağınık biçimde bırakmamalıdır. Bir şirketin önemli bilgileri sohbet kayıtlarında tutulmak yerine belgelenmesi gerektiği gibi, Agent da belge yazma ve güncelleme alışkanlığı edinmelidir. Kullandığınız modelde bu alışkanlık yoksa prompt ve skill ile hatırlatın.
 
 ### Sıkıştırma Yerine İzolasyon: Alt Agent Context İzolasyonu
 

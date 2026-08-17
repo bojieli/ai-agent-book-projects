@@ -40,23 +40,6 @@ Kinyert emlékek:
 - A felhasználónak utazási tervei vannak Tokióba (közelmúltbeli tevékenység)
 ```
 
-**A memória életciklusa:**
-
-```python
-when answering(user_request):
-    recent_turns = conversation.tail()
-    relevant_memory = memory.search(user_request)
-    answer = LLM(recent_turns + relevant_memory)
-    return answer
-
-after conversation (background job):
-    candidates = extract_memory_candidates(conversation)
-    verified = verify_against_sources_and_policy(candidates, conversation)
-    memory.append_or_update(verified)
-```
-
-A kinyerési folyamatnak több kulcsjellemzője van.
-
 **Szelektivitás** – az Ágens nem jegyez meg átmeneti információkat, például hogy „a keresés 3 lehetőséget adott vissza”, csak a jövőben hasznos tényeket.
 
 **Absztrakció** – az „ablak melletti ülést szeretek” általános preferenciává válik, nem kötődik az adott járathoz.
@@ -65,7 +48,7 @@ A kinyerési folyamatnak több kulcsjellemzője van.
 
 ### A memóriaképességek értékelése: Háromszintű keretrendszer
 
-Mielőtt megterveznénk egy memóriarendszert, először egy kérdésre kell válaszolnunk: mitől "jó" egy memóriarendszer? Az értékelési szempontok előzetes meghatározása közös mércét ad minden később tárgyalt dizájnhoz. Számos nyilvános benchmark létezik; egy reprezentatív ezek közül a "LoCoMo" (Long-term Conversational Memory; Maharana et al., 2024, arXiv:2402.17753). Ultra-hosszú párbeszédeket épít, átlagosan körülbelül 300 fordulóval, maximum 35 szekcióban, és a modell memóriáját és a hosszú távú konverzáció megértését vizsgálja három feladattípuson keresztül: kérdésmegválaszolás (egy- és többugrásos, időbeli következtetést igénylő, nyílt végű és ellentmondásos kérdésekre bontva), eseményösszegzés, valamint multimodális párbeszédgenerálás.
+Mielőtt megterveznénk egy memóriarendszert, először egy kérdésre kell válaszolnunk: mitől "jó" egy memóriarendszer? Az értékelési szempontok előzetes meghatározása közös mércét ad minden később tárgyalt dizájnhoz. Számos nyilvános benchmark létezik; egy reprezentatív ezek közül a "LoCoMo" (Long-term Conversational Memory). Ultra-hosszú párbeszédeket épít, átlagosan körülbelül 300 fordulóval, maximum 35 szekcióban, és a modell memóriáját és a hosszú távú konverzáció megértését vizsgálja három feladattípuson keresztül: kérdésmegválaszolás (egy- és többugrásos, időbeli következtetést igénylő, nyílt végű és ellentmondásos kérdésekre bontva), eseményösszegzés, valamint multimodális párbeszédgenerálás.
 
 A LoCoMóra és társaira, valamint a kereskedelmi memóriatermékek gyakorlatára támaszkodva a felhasználói memória képességei nyolc kategóriába sűríthetők (a szerző szintézise, nem egyetlen benchmark eredeti taxonómiája):
 
@@ -90,7 +73,7 @@ Ezekre építve egy háromszintű, az Ágens-forgatókönyvekhez jobban illeszke
 >
 > Felépítettünk egy értékelési készletet a fenti háromszintű keretrendszer alapján: szintenként 20 teszteset, mindegyik rengeteg tényszerű részletet tartalmaz. Az 1. szintű esetek jellemzően egyetlen szekcióból állnak; a 2. és 3. szintű esetek több szekcióból állnak, különböző időpontokból és entitásokból (esetenként körülbelül 50 kommunikációs forduló). Az értékelés során a tesztelt Ágensnek az első szekció alapján kell emlékeket generálnia, majd a későbbi szekciók alapján módosítania azokat (csak a memóriához férve hozzá, nem az eredeti beszélgetési előzményekhez), amíg az adott eset összes szekcióját fel nem dolgozta. A memóriagenerálás után az Ágenst megkérjük, hogy válaszoljon egy új felhasználói kérdésre a memória alapján. Ezután egy LLM-mint-bíró módszert (egy másik LLM-et használva bíróként a válasz minőségének pontozására) alkalmazunk a válasz összehasonlítására egy referenciaválasszal, ami jutalom pontszámot ad az adott tesztesetre.
 >
-> Ez az értékelési készlet és az értékelő szkript megtalálható a kísérő adattár `user-memory` projektjében (ugyanaz a kísérő projekt, amelyet a 3-2. kísérlet is használ). Az olvasók ott megtekinthetik az egyes szintek teszteseteinek teljes definícióit.
+> Ez az értékelési készlet és az értékelő szkript megtalálható a kísérő adattár `user-memory` projektjében. Az olvasók ott megtekinthetik az egyes szintek teszteseteinek teljes definícióit.
 
 ### A memória hierarchikus szerkezete
 
@@ -141,21 +124,6 @@ A fent tárgyalt négy formátum, legyen bár egyszerű vagy összetett, alapvet
 A memória frissítését két fázisra bontja[^uac]: a "memória fázisra" (minden szekció után az LLM egyenként, sztringként kinyeri a tényeket a beszélgetésből, hozzáfűzve egy append-only tény naplóhoz) és a "strukturáló fázisra" (időszakosan az LLM újragenerálja a teljes tipizált Python reprezentációt a teljes tény naplóból – a tényeket dataclass-okba szervezve, `date()`-et használva a dátumokhoz, tipizált listákat a gyűjteményekhez, és `notes: list[str]`-et a nehezen tipizálható egyéb tételekhez). Ez az adatbázisok klasszikus "write-ahead log + időszakos checkpoint" tervezési mintája, először alkalmazva LLM memóriára: a függő napló biztosítja, hogy egyetlen tény se vesszen el, és az időszakos checkpoint tömöríti őket egy tiszta, lekérdezhető struktúrába. (Ez az időszakos újraépítési folyamat összhangban van a fejezet későbbi "memória tömörítési és szervezési mechanizmusával", azzal a különbséggel, hogy a kimenet kód, nem szöveg.)
 
 Az alábbiakban egy egyszerűsített példa látható. A strukturáló fázis a felhasználó útlevelét és utazásait tipizált állapotként tárolja:
-
-**Csak-hozzáfűző napló és ellenőrzőpont:**
-
-```python
-append_only_log += extract_facts(conversation)
-
-if checkpoint_due():
-    proposed_state = rebuild_typed_state(append_only_log)
-    if type_check(proposed_state) and source_review(proposed_state):
-        publish_checkpoint(proposed_state)
-    else:
-        keep_previous_checkpoint()
-```
-
-**Típusos felhasználói állapot:**
 
 ```python
 state = {
@@ -265,15 +233,15 @@ Ez a referencia architektúra megmutatja, hogy a kognitív tudomány memória-os
 
 Ahogy az interakció folytatódik, a memóriarendszer a tárolási hely és a visszakeresési hatékonyság kettős nyomásával szembesül. Egyszerűen mindent felhalmozni a memória korlátlan növekedéséhez vezet – fogyasztja a tárhelyet és rontja a visszakeresés pontosságát.
 
-A gyakorlatban egy többszintű tömörítési stratégia jól működik. Az első szint az emlékek fontossági pontszám szerinti szűrése. A fontossági pontozás egy általános megközelítése négy tényezőt vesz figyelembe: hozzáférési gyakoriság (a gyakran visszakeresett emlékek fontosabbak), időbeli csillapítás (a régebbi emlékek nagyobb valószínűséggel feledésbe merülnek), érzelmi intenzitás (az erős érzelmi jelzőkkel rendelkező emlékek nagyobb valószínűséggel maradnak meg), és információ-egyediség (a duplikált információk fontossága csökken). Az egy küszöb alatti emlékek tömöríthetőként vagy törölhetőként vannak megjelölve. Például egy 5-ször hozzáfér, 3 napja létrehozott, erős érzelmi jelzővel rendelkező, nem duplikált emlék magas fontossági pontszámot kapna. Ezzel szemben egy csak egyszer hozzáfér, 90 napja létrehozott, érzelmi jelző nélküli, három közeli duplikátummal rendelkező emlék a tömörítési küszöb alá eshet.
+A gyakorlatban egy többszintű tömörítési stratégia jól működik.
 
-A második szint klaszterezést végez. A hasonló emlékek csoportosításra kerülnek, és minden csoporthoz egy reprezentatív összefoglaló készül (pl. több időjárással kapcsolatos beszélgetés tömörítve: "A felhasználó gyakran kérdez az időjárásról, különösen aggódik az eső miatt"). Az eredeti részletes emlékek archiválhatók másodlagos tárolóba.
+1. Az első szint az emlékek fontossági pontszám szerinti szűrése. A fontossági pontozás egy általános megközelítése négy tényezőt vesz figyelembe: hozzáférési gyakoriság (a gyakran visszakeresett emlékek fontosabbak), időbeli csillapítás (a régebbi emlékek nagyobb valószínűséggel feledésbe merülnek), érzelmi intenzitás (az erős érzelmi jelzőkkel rendelkező emlékek nagyobb valószínűséggel maradnak meg), és információ-egyediség (a duplikált információk fontossága csökken). Az egy küszöb alatti emlékek tömöríthetőként vagy törölhetőként vannak megjelölve. Például egy 5-ször hozzáfér, 3 napja létrehozott, erős érzelmi jelzővel rendelkező, nem duplikált emlék magas fontossági pontszámot kapna. Ezzel szemben egy csak egyszer hozzáfér, 90 napja létrehozott, érzelmi jelző nélküli, három közeli duplikátummal rendelkező emlék a tömörítési küszöb alá eshet.
 
-A harmadik szint absztrahál és általánosít – általános szabályokat von ki konkrét epizodikus emlékekből, és átalakítja azokat szemantikus vagy procedurális memóriává. Például több vásárlási beszélgetésből a rendszer megtanulhatja: "A költséghatékony termékeket preferálja, és értékeli a felhasználói véleményeket."
+2. A második szint klaszterezést végez. A hasonló emlékek csoportosításra kerülnek, és minden csoporthoz egy reprezentatív összefoglaló készül (pl. több időjárással kapcsolatos beszélgetés tömörítve: "A felhasználó gyakran kérdez az időjárásról, különösen aggódik az eső miatt"). Az eredeti részletes emlékek archiválhatók másodlagos tárolóba.
+
+3. A harmadik szint absztrahál és általánosít – általános szabályokat von ki konkrét epizodikus emlékekből, és átalakítja azokat szemantikus vagy procedurális memóriává. Például több vásárlási beszélgetésből a rendszer megtanulhatja: "A költséghatékony termékeket preferálja, és értékeli a felhasználói véleményeket."
 
 A konfliktusészlelés verziókövető megközelítést használ – a történeti verziók megmaradnak, míg a legújabb verzió megjelölésre kerül. Bizonyos információk (pl. aktuális cím) esetében csak a legújabb verziót tartják meg; más információk (pl. munkatörténet) esetében a teljes előzményt megőrzik.
-
-Végül határt kell húzni a többi fejezettel való összetévesztés elkerülése érdekében. Ez a szakasz a memória "tárolási rétegében" lévő szervezési algoritmusokról beszél – mely emlékeket kell kiválasztani, klaszterezni és absztrahálni, és milyen formákba. A 2. fejezet kontextus-tömörítése az egyetlen szekción belüli ablakproblémával foglalkozik; a két mechanizmus különböző szinteken működik. Ez a fejezet felelős a tudás tárolásáért, indexeléséért és visszakereséséért is. A 9. fejezet általánosítja a "bizonyíték online hozzáfűzése, offline konszolidációja" kétszakaszos mintát az Ágens viselkedésének evolúciójára, megvizsgálva, hogy milyen operatív bizonyíték elegendő a perzisztens frissítések elindításához.
 
 ### Adatvédelem: Naplótisztítás
 
@@ -291,31 +259,9 @@ Eddig a memória "reprezentációjára és kezelésére" összpontosítottunk �
 
 A megosztott tudásbázis építésének központi technológiája a Retrieval-Augmented Generation (RAG). A központi gondolat az, hogy kombináljuk a nagy nyelvi modellek gondolkodási és generálási képességeit egy külső tudásbázis szélességével és időszerűségével – a modell betanítási adatainak van egy vágási dátuma, míg a tudásbázis bármikor frissíthető.
 
-Egy tipikus RAG rendszer két részből áll: egy visszakeresőből (retriever), amely megtalálja a releváns töredékeket a tudásbázisból, és egy generátorból (általában egy LLM), amely ezeket a töredékeket kontextusként használja a válasz generálásához. Először érezzük rá intuitívan, hogyan működik a RAG két példán keresztül, majd merüljünk el a visszakereső technikai részleteiben.
+Egy tipikus RAG rendszer két részből áll: egy visszakeresőből (retriever), amely megtalálja a releváns töredékeket a tudásbázisból, és egy generátorból (általában egy LLM), amely ezeket a töredékeket kontextusként használja a válasz generálásához.
 
-**1. példa: Wikipedia tudásbázis.** Egy felhasználó megkérdezi: "Mi az a kvantumösszefonódás?" Az alapszintű modell betanítási adatai esetleg nem tartalmazzák a legújabb kísérleti eredményeket. A RAG folyamat a következő:
-
-```python
-# 1. Felhasználói lekérdezés
-query = "Mi az a kvantumösszefonódás? Melyek a legújabb kísérleti eredmények?"
-
-# 2. Visszakeresés: A legrelevánsabb töredékek megtalálása a Wikipedia tudásbázisból
-results = retriever.search(query, top_k=3)
-# results = [
-# "A kvantumösszefonódás egy kvantummechanikai jelenség, ahol két részecske kvantumállapotai korrelálnak...",
-# "A 2022-es Nobel-díjat a fizikában három tudósnak ítélték oda a kvantumösszefonódással kapcsolatos kísérleteikért...",
-# "A Bell-egyenlőtlenség kísérletek kimutatták a kvantumösszefonódás nem-lokalitását..."
-# ]
-
-# 3. Generálás: A visszakeresési eredmények kontextusként való használata az LLM általi válaszhoz
-answer = llm.generate(
-    system="Válaszolj a felhasználó kérdésére az alábbi referencia anyagok alapján. Ha az anyagok nem elegendőek, jelezd azt.",
-    context=results,   # ← Visszakeresett tudástöredékek a kontextusba illesztve
-    question=query
-)
-```
-
-**2. példa: Vállalati tudásbázis.** Egy felhasználó megkérdezi: "Vettem valamit és vissza akarom küldeni. Mi a folyamat?":
+Először egy vállalati tudásbázis példáján érezzük rá, hogyan működik a RAG: egy felhasználó megkérdezi: "Vettem valamit és vissza akarom küldeni. Mi a folyamat?":
 
 ```python
 query = "Visszatérítési folyamat"
@@ -576,7 +522,9 @@ A központi kialakítás az "L0/L1/L2 háromrétegű kontextus igény szerinti b
 
 A **Markdown egyszerű szövegének választása egy speciális adatbázis helyett** a tudás mögöttes reprezentációjaként elsőre szokatlan, mégis átgondolt mérnöki döntés. A felhasználó közvetlenül olvashatja, szerkesztheti és javíthatja az Ágens tudását; a változtatások Gitben verziózhatók és visszaállíthatók; a `write_file` képességgel rendelkező Ágens pedig munkafiókon rögzítheti és szervezheti a tudást, majd a javasolt módosításokat a később bemutatott felülvizsgálati folyamaton át lehet beolvasztani a fő tudásbázisba. Egy munkamenet végén a rendszer javasolhatja felhasználói preferenciák frissítését a `user/memories/` könyvtárban, illetve műveleti rekordok írását az `agent/memories/` könyvtárba. Az előbbi e fejezet felhasználói tudáskezeléséhez tartozik; az utóbbi csak eredményértékelés, több trajektórián átívelő általánosítás és utólagos ellenőrzés után válik a 9. fejezet szerinti tapasztalati tanulássá, nem pedig egyetlen tetszőleges művelet automatikus megbízható tapasztalattá emelésével.
 
-Ennek az egyszerű szöveges, fájlrendszer-szerű szervezésnek az elfogadásának azonban van egy könnyen figyelmen kívül hagyható előfeltétele, amely közvetlenül meghatározza a visszakeresés sikerességét: **linkeket és indexeket kell létrehozni a fájlok között**. A korábban említett `.abstract`/`.overview` fájlok a vertikális, hierarchikus összefoglalást kezelik. Ami itt hangsúlyos, az a "horizontális asszociáció" – ha a tudást egyszerűen független szövegfájlok halmazára bontjuk, amelyek laposan helyezkednek el egy könyvtárban, anélkül hogy bármilyen keresztreferencia lenne közöttük, akkor – a fájlok szekvenciális beolvasását vagy vektoros visszakeresést leszámítva – az Ágensnek szinte semmilyen módja nincs a kapcsolódó bejegyzések közötti navigálásra. Minél több a tudás, annál nehezebben visszakereshető ez a szétszórt fájlhalom. A helyes megközelítés a tudásbázis szervezése a Wikihéhez hasonlóan: amikor egy bejegyzés említ egy másikat, linkeljen arra, kiegészítve bejegyzésoldalakkal és indexoldalakkal, így az Ágens egyik fogalomról a szomszédosra járhat – a könnyűsúlyú fájllinkek a GraphRAG entitás-reláció gráfjának navigációs erejének egy részét biztosítják. Van itt egy fontos gyakorlati különbség is: **a modellek eltérő megbízhatósággal hozzák létre és tartják karban az ilyen linkeket**. Az erősebb modellek, amikor új tudást írnak, spontán visszahivatkoznak a meglévő bejegyzésekre és karbantartják az indexeket. Sok modell azonban nem teszi ezt proaktívan, egyszerűen elszigetelten fűz hozzá fájlokat. Ezért a tudásíró promptnak explicit módon meg kell követelnie ezt – minden új bejegyzés hozzáadásakor a rendszernek először vissza kell keresnie és linkelnie kell a releváns meglévő bejegyzéseket, és frissítenie kell a könyvtár indexoldalát, amelyhez tartozik, egy kétirányban elérhető referenciális hálózatot képezve, ahelyett, hogy a tudás szétszakadt bejegyzésekké válna.
+Ennek az egyszerű szöveges, fájlrendszer-szerű szervezésnek az elfogadásának azonban van egy könnyen figyelmen kívül hagyható előfeltétele, amely közvetlenül meghatározza a visszakeresés sikerességét: **linkeket és indexeket kell létrehozni a fájlok között**. A korábban említett `.abstract`/`.overview` fájlok a vertikális, hierarchikus összefoglalást kezelik. Ami itt hangsúlyos, az a "horizontális asszociáció" – ha a tudást egyszerűen független szövegfájlok halmazára bontjuk, amelyek laposan helyezkednek el egy könyvtárban, anélkül hogy bármilyen keresztreferencia lenne közöttük, akkor – a fájlok szekvenciális beolvasását vagy vektoros visszakeresést leszámítva – az Ágensnek szinte semmilyen módja nincs a kapcsolódó bejegyzések közötti navigálásra. Minél több a tudás, annál nehezebben visszakereshető ez a szétszórt fájlhalom. A helyes megközelítés a tudásbázis szervezése a Wikihéhez hasonlóan: amikor egy bejegyzés említ egy másikat, linkeljen arra, kiegészítve bejegyzésoldalakkal és indexoldalakkal, így az Ágens egyik fogalomról a szomszédosra járhat – a könnyűsúlyú fájllinkek a GraphRAG entitás-reláció gráfjának navigációs erejének egy részét biztosítják.
+
+Van itt egy fontos gyakorlati különbség is: **a modellek eltérő megbízhatósággal hozzák létre és tartják karban az ilyen linkeket**. Az erősebb modellek, amikor új tudást írnak, spontán visszahivatkoznak a meglévő bejegyzésekre és karbantartják az indexeket. Sok modell azonban nem teszi ezt proaktívan, egyszerűen elszigetelten fűz hozzá fájlokat. Ezért a tudásíró promptnak explicit módon meg kell követelnie ezt – minden új bejegyzés hozzáadásakor a rendszernek először vissza kell keresnie és linkelnie kell a releváns meglévő bejegyzéseket, és frissítenie kell a könyvtár indexoldalát, amelyhez tartozik, egy kétirányban elérhető referenciális hálózatot képezve, ahelyett, hogy a tudás szétszakadt bejegyzésekké válna.
 
 ### Hogyan kell frissíteni a tudást
 
@@ -687,7 +635,7 @@ A módszer eleganciája, hogy egyszerre erősíti mindkét visszakeresési módo
 >
 > Amikor egy felhasználó olyan lekérdezést ad meg, amely specifikus kontextust igényel, mint például "Mi az ACME Corporation legutóbbi bevételnövekedése?", a különbség azonnal nyilvánvaló. A "kontextus nélküli" tudásbázisban a lekérdezés sok olyan szövegblokkot találhat, amelyek a "bevételnövekedés" kulcsszavakat tartalmazzák, de különböző cégektől, különböző évekből, vagy akár általános iparági elemzésekből, ami alacsony relevanciát és magas zajt eredményez. A "kontextus-tudatos" tudásbázisban, mivel minden szövegblokknak precíz "identitáscímkéje" van, a visszakeresés pontosan azokra a szövegblokkokra irányul, amelyek nemcsak a kulcsszavakat tartalmazzák, hanem kontextus előtagjuk is megegyezik a lekérdezés szándékával ("ACME Corporation", "közelmúlt"). A kísérleti naplók egyértelműen mutatják, hogy a kontextus-tudatos visszakeresés eredményei szignifikánsan magasabb pontszámot érnek el, mint a kontextus nélküliek, és a visszaadott szövegblokkok sokkal pontosabbak.
 >
-> Ennek a teljesítményjavulásnak az ára az indexelési fázis további LLM-hívásai. Ez azonban teljes mértékben kontrollálható prompt gyorsítótár segítségével (a 2. fejezetben bemutatott keresztkérés-gyorsítótárazási mechanizmus, ahol az azonos prompt előtag ismételt hívásai az eredeti költség körülbelül 1/10-ébe kerülnek), ami körülbelül 1 dollárra csökkenti a költséget millió dokumentum tokenenként. Az Anthropic kutatása szerint ezt a technikát BM25-tel kombinálva a visszakeresési hibaarány (azaz a "Hogyan mérjük a visszakeresés minőségét" részben említett top-20 kihagyási arány, 1 − recall@20) 49%-kal, újrarangsorolóval kombinálva pedig 67%-kal csökkenthető. A kísérlet meggyőzően alátámasztja: amikor éles szintű RAG-ot építünk, a tudás okosabb, kontextus-tudatos előfeldolgozásába való befektetés olyan mérnöki döntés, amely kiemelkedő megtérülést hoz.
+> Ennek a teljesítményjavulásnak az ára az indexelési fázis további LLM-hívásai. Ez azonban teljes mértékben kontrollálható prompt gyorsítótár segítségével (a 2. fejezetben bemutatott keresztkérés-gyorsítótárazási mechanizmus, ahol az azonos prompt előtag ismételt hívásai az eredeti költség körülbelül 1/10-ébe kerülnek), ami körülbelül 1 dollárra csökkenti a költséget millió dokumentum tokenenként. Az Anthropic kutatása szerint ezt a technikát BM25-tel kombinálva a visszakeresési hibaarány 49%-kal, újrarangsorolóval kombinálva pedig 67%-kal csökkenthető. A kísérlet meggyőzően alátámasztja: amikor éles szintű RAG-ot építünk, a tudás okosabb, kontextus-tudatos előfeldolgozásába való befektetés olyan mérnöki döntés, amely kiemelkedő megtérülést hoz.
 
 Ez igazolja a Kontextuális visszakeresést a dokumentumtudásbázisokon. Ugyanezt a technikát a felhasználói memória forgatókönyvre alkalmazva kapjuk a következő kísérletet.
 

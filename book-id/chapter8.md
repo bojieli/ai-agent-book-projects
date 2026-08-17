@@ -53,20 +53,6 @@ Ini adalah wawasan utama pertama yang harus dipahami dalam bab ini: **Secara mat
 
 Begitu Anda melihat hal ini, "SFT menghafal" menjadi hal yang wajar: tujuan optimasi SFT adalah untuk **memaksimalkan probabilitas setiap token dalam respons berlabel**—dalam bahasa sederhana, "hafalkan jawaban standar ini di luar kepala." Diberikan pertanyaan yang sama, model dilatih untuk mereproduksi demonstrasi sedekat mungkin. Untuk tugas-tugas dengan tujuan yang jelas dan format yang tetap, ini sangatlah efisien—beberapa ribu contoh sudah cukup—tetapi kapabilitasnya tetap dibatasi secara ketat oleh data demonstrasi: model tersebut tidak mempelajari situasi yang tidak ada dalam demonstrasi, dan ketika jawaban yang didemonstrasikan tidak lagi berlaku karena environment telah berubah, model masih akan mereproduksi jawaban tersebut.
 
-Kalau dipadatkan menjadi kerangka pelatihan paling ringkas, intinya bukan pada API kerangka kerja tertentu, melainkan pada batas ini: **token prompt tidak memberi supervisi, token jawaban memberi supervisi**.
-
-```python
-for sample in dataset:
-    prompt_tokens = tokenize(sample.prompt)
-    answer_tokens = tokenize(sample.answer)
-    tokens = prompt_tokens + answer_tokens
-    labels = [-100] * len(prompt_tokens) + answer_tokens
-    loss = causal_lm_loss(tokens, labels)
-    update_parameters(loss)
-```
-
-Angka `-100` di sini hanya menandai masker loss, bukan menghapus prompt dari masukan model. Model tetap harus membaca pertanyaannya agar dapat mempelajari protokol menjawab.
-
 Singkatnya, SFT menggunakan efisiensi sampel yang sangat tinggi untuk **menyandikan (encode) pemetaan dan protokol input-ke-output yang stabil dalam parameter model**. SFT menyandikan **pengetahuan protokol (protocol knowledge)**—bagaimana mengatakan atau melakukan sesuatu, termasuk format, gaya, dan proses—alih-alih **pengetahuan faktual (factual knowledge)** dalam jumlah besar—apa yang diketahui model. Pengetahuan faktual bergantung pada pre-training atau RAG (kita akan kembali ke perbedaan ini di akhir bab).
 
 > **Biaya Training: LoRA Parameter-Efficient Fine-Tuning.** Baik SFT maupun RL selanjutnya membutuhkan pembaruan parameter model, dan full-parameter fine-tuning memiliki kebutuhan VRAM yang tinggi (perlu menyimpan gradien dan state optimizer untuk miliaran parameter). **LoRA** (Low-Rank Adaptation) adalah metode penghematan biaya yang paling umum: alih-alih memodifikasi matriks bobot asli yang besar, ia melampirkan sebuah "tambalan" kecil (matriks rank rendah) untuk mempelajari tugas tersebut. Jumlah parameternya hanya 1%–5% dari aslinya, namun ia dapat mendekati performa full fine-tuning. Karena bobot aslinya dibekukan (frozen), LoRA juga menyebabkan lebih sedikit gangguan (perturbation) pada kapabilitas model dasar (base model) yang ada, mengurangi risiko catastrophic forgetting (lupa secara drastis). Beberapa aturan praktis (rules of thumb) yang telah divalidasi[^ch8-1]: Anda **harus** menerapkan LoRA ke semua matriks bobot utama (terutama layer MLP, yang memiliki jumlah parameter terbesar); menerapkannya hanya pada layer attention akan mengorbankan akurasi. **Learning rate yang optimal adalah sekitar 10 kali lipat dari full fine-tuning** (berlaku untuk SFT dan RL, sebuah aturan transfer yang sangat praktis). Gunakan rank menengah ke tinggi (64–256) untuk SFT; karena informasi per putaran kecil untuk RL, rank kecil (8–32) atau bahkan rank=1 sudah cukup. Selama deployment, sebuah inference server tunggal dapat memuat beberapa LoRA adapter secara bersamaan untuk layanan multi-tenant. Buku ini memperlakukan LoRA sebagai pilihan engineering default untuk semua metode post-training dan tidak akan menjelaskannya secara terpisah.
@@ -372,7 +358,7 @@ Dalam praktiknya, keputusan dapat dibuat dengan urutan sebagai berikut:
 
 Sebelum masuk ke eksperimen, mari kita bangun beberapa **intuisi minimal** tentang algoritma RL, yang cukup untuk mengikuti istilah-istilah yang muncul (rumus lengkap dan perbandingannya akan dibahas nanti di bagian "Comparison of Reinforcement Learning Algorithms" di bab ini). Pelatihan RL dalam bab ini sebagian besar bertumpu pada **policy gradient**: model menghasilkan beberapa respons untuk masalah yang sama, meningkatkan probabilitas untuk respons ber-*reward* tinggi dan menurunkan probabilitas untuk respons ber-*reward* rendah—bergerak lebih jauh ke arah yang memberikan *reward* dan lebih sedikit ke arah yang tidak memberikan *reward*. Untuk menjaga agar pembaruan besar tunggal tidak menggagalkan model, algoritma **PPO** arus utama memotong besaran pembaruan pada setiap langkah (ini adalah "PPO with value network" dari eksperimen-eksperimen selanjutnya; *value network* memperkirakan *baseline* untuk menghitung *advantage* yang lebih halus). Metode lainnya, **GRPO**, tidak melatih *value network*; melainkan ia membandingkan beberapa respons terhadap masalah yang sama satu sama lain untuk menilai kualitas relatif masing-masing. Intuisi tersebut adalah semua yang Anda butuhkan untuk dua eksperimen berikutnya.
 
-Mekanisme yang sama dapat dituliskan sebagai kerangka bergaya Python di bawah ini. Ia menghilangkan paralelisme pengambilan sampel, regularisasi KL, dan rincian optimizer, dan hanya menandai rantai sebab dari satu rollout sampai pembaruan parameter:
+Mekanisme yang sama dapat dituliskan sebagai pseudocode bergaya Python di bawah ini. Ia menghilangkan paralelisme pengambilan sampel, regularisasi KL, dan rincian optimizer, dan hanya menandai rantai sebab dari satu rollout sampai pembaruan parameter:
 
 ```python
 for prompt in batch:
@@ -522,18 +508,6 @@ Search-R1[^ch8-25] mewakili jalur augmentasi pencarian: model sendiri memutuskan
 
 Trajektori bertool punya satu detail implementasi yang penting: token yang dikembalikan environment bukan dihasilkan policy, jadi ketika menghitung gradien policy token umpan balik itu mesti dimasker, dan gradien hanya dialirkan lewat pikiran model sendiri serta argumen pemanggilan tool-nya. Kalau tidak, model justru dilatih memprediksi keluaran sandbox alih-alih belajar memakai tool.
 
-Batas ini dapat ditulis sebagai masker singkat pada tataran trajektori:
-
-```python
-for token in trajectory:
-    if token.source == ENVIRONMENT:
-        loss_mask[token] = 0
-    else:                                      # model thought / tool arguments
-        loss_mask[token] = 1
-```
-
-Ini bukan berarti umpan balik environment tidak penting: umpan balik itulah yang menghitung imbalan dan keunggulan, hanya saja ia tidak boleh diperlakukan sebagai barisan target yang harus direproduksi policy. Pesan tool harus mempertahankan penanda sumbernya dan tetap dapat dibedakan dari keluaran policy di dalam environment eksekusi.
-
 > **Eksperimen 8-14 ★★★: ReTool — penyelesaian soal matematika dengan interpreter kode**
 >
 > ![Gambar 8-17 Lingkar umpan balik ReTool: pikiran teks-kode berselang-seling dan eksekusi sandbox](images/fig8-17.svg)
@@ -626,7 +600,7 @@ On-Policy Distillation mula-mula membiarkan murid menghasilkan trajektori dengan
 
 Secara konkret, distribusi prediksi murid didekatkan ke distribusi guru, biasanya dengan meminimalkan **divergensi KL** di antara keduanya. Misalnya ketika murid menghasilkan "kueri API dulu, lalu urai nilai kembaliannya…", guru dapat memberikan distribusi pada posisi itu berupa 80% "kueri", 15% "panggil", dan 5% sisanya. Dibandingkan imbalan biner di ujung tugas, penyelarasan per token memberi sinyal pembelajaran yang jauh lebih rapat dan bervariansi lebih rendah; harganya adalah biaya inferensi guru, yang justru sangat sepadan ketika interaksi environment mahal.
 
-Alur kendalinya dapat dipadatkan begini: murid berjalan di jalannya sendiri, dan guru hanya memberi distribusi pada keadaan yang benar-benar dikunjungi murid, bukan memutar ulang sebuah jawaban off-policy untuk murid.
+Pseudocode dasar dari on-policy distillation adalah:
 
 ```python
 student_trajectory = rollout(student, task)
@@ -636,8 +610,6 @@ for state in student_trajectory:
     loss += KL(student_logits(state), teacher_logits)
 update_student(loss)
 ```
-
-Kerangka di sini hanya dipakai untuk membedakan keadaan on-policy dari supervisi per token.
 
 Pada tugas seperti matematika, jumlah langkah pelatihan untuk mencapai kinerja setara kira-kira **sepersepuluh** RL murni. Pada Agent multi-turn, ketika sinyal berhasil-gagal datang lebih lambat dan lebih jarang, distribusi per token dari guru dapat langsung membimbing keputusan-keputusan antara; syaratnya environment simulasi cukup realistis sehingga keadaan yang dijelajahi murid mendekati distribusi penggelaran, sebab kalau tidak, penilaian guru atas keadaan asing yang berbias pun tak dapat dipercaya.
 
@@ -649,7 +621,7 @@ Kekuatan On-Policy Distillation datang dari gurunya, dan karena itu ia memikul s
 
 Satu jalan keluar yang cerdik adalah **On-Policy Self-Distillation (OPSD, distilasi diri on-policy)**[^ch8-15]: **satu model yang sama memerankan guru dan murid sekaligus, tetapi melihat konteks yang berbeda.** Versi guru dapat melihat "informasi istimewa" — jawaban rujukan atau solusi benar yang sudah terverifikasi; versi murid hanya melihat soalnya, tetapi menyelaraskan diri ke distribusi per token versi guru pada trajektori yang ia sampel sendiri. Menjelaskan jalur yang baru saja ditempuh murid sambil memegang jawabannya biasanya lebih mudah daripada menjelajah sendiri, sehingga satu rollout tetap dapat menghasilkan supervisi rapat.
 
-OPSD dapat dibaca sebagai varian terbatas dari kerangka di atas:
+OPSD dapat dibaca sebagai varian terbatas dari pseudocode di atas:
 
 ```python
 student_trajectory = rollout(model, task_without_answer)

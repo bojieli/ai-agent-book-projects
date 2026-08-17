@@ -876,27 +876,13 @@ Thanh trạng thái Agent giải quyết vấn đề này bằng cách thao tác
 > Sự chú ý tập trung cao độ vào thông tin trên thanh trạng thái và quá trình suy nghĩ trực tiếp sử dụng thông tin đã được tinh chỉnh thay vì thống kê từ dữ liệu gốc. Đối với mô hình nhỏ như Qwen3-0.6B, nhóm điều khiển A thường vi phạm các ràng buộc và tiếp tục thực hiện cuộc gọi, trong khi nhóm điều khiển B có thể tuân thủ ổn định các ràng buộc.
 >
 
-Thí nghiệm 2-8 là một minh họa định tính quy mô nhỏ nhằm cung cấp trực giác. Để định lượng mức độ hữu ích và giới hạn của cách “tính sẵn rồi nhìn trực tiếp”, tác giả và các cộng sự dùng một benchmark chuyên biệt[^ch2-8] (cách này có tên chung là **Context Distillation**; thanh trạng thái Agent là dạng thường gặp nhất). Kết luận:
-
-- Khi có **thanh trạng thái được tính sẵn**, **mô hình yếu lấy lại độ chính xác**. Các mô hình yếu nhất tăng 40–54 điểm phần trăm, và một mô hình cục bộ 2B thậm chí ngang với mô hình tiên tiến không có thanh trạng thái trên loại tác vụ này.
-- **Mô hình mạnh vốn đã trả lời đúng; phần tiết kiệm là hiệu suất.** Cùng một thanh trạng thái làm giảm lượng suy luận, độ trễ và chi phí cho mỗi truy vấn khoảng một bậc độ lớn (cắt 80–90% hoặc hơn số token suy luận).
-- Thay đổi căn bản nhất là: không có thanh trạng thái, lượng suy luận cho mỗi truy vấn **tăng liên tục** khi context dài ra; có thanh trạng thái, lượng này **gần như không đổi**. Context dài đến đâu, mô hình cũng chỉ cần “liếc nhìn” vài ô trạng thái.
-
-Tuy nhiên, tính sẵn đúng và sai tạo ra khác biệt rất lớn. Ba bài học:
-
-**1. Duy trì thanh trạng thái bằng code, không phải bằng mô hình lớn.** Một ý tưởng tự nhiên là nhờ LLM khác đọc lịch sử và tóm tắt thanh trạng thái, nhưng kết quả lại ngược hẳn. Trong thí nghiệm, một hàm biểu thức chính quy 20 dòng đạt độ chính xác ở mức đáp án chuẩn; còn mô hình tiên tiến đọc **toàn bộ** lịch sử một lần để xuất số liệu lại sai ở phần lớn ô và kéo độ chính xác hạ nguồn xuống thấp hơn cả khi không dùng thanh trạng thái. Lý do rất rõ: bắt LLM thống kê hàng loạt lịch sử dài chỉ chuyển nguyên bài toán “quét toàn bộ context” sang chỗ khác. Cách khả thi là **tính bằng code bất cứ khi nào có thể**; nếu buộc phải dùng LLM, hãy **trích xuất từng mục rồi tổng hợp bằng code, tuyệt đối không thống kê hàng loạt trong một lần**.
-
-**2. Đừng xóa context gốc.** Thanh trạng thái là một **phép chiếu có mất mát** của context gốc: nó chỉ tính trước những chiều mà bạn dự đoán sẽ được hỏi. Nếu thanh trạng thái đủ cho các tác vụ như đếm và theo dõi trạng thái, bạn có thể xóa bản ghi gốc và chỉ giữ thanh trạng thái để tiết kiệm nhiều token; nhưng nếu câu hỏi rơi vào một chiều chưa được tính, độ chính xác khi chỉ giữ thanh trạng thái sẽ sụp giảm.
-
-**3. Hãy theo dõi độ chính xác của thanh trạng thái như một chỉ số production hàng đầu.** Thí nghiệm cho thấy **mô hình gần như tin thanh trạng thái vô điều kiện**: nếu bạn viết “đã gọi 3 lần”, nó sẽ coi là ba mà không kiểm tra hay tính lại. Đây là lý do thanh trạng thái hiệu quả, nhưng cũng có nghĩa lỗi trong đó sẽ đi **nguyên trạng** vào câu trả lời cuối. Vì vậy, nguy cơ **đầu độc thanh trạng thái** nêu trước đó cần được xem xét nghiêm túc.
+Thực nghiệm cho thấy[^ch2-8], việc cung cấp cho mô hình một **thanh trạng thái được tính sẵn** có thể giúp **độ chính xác của các mô hình mở nhỏ hơn tiến gần các mô hình lớn tiên tiến**. Ngoài ra, **thanh trạng thái có thể cải thiện đáng kể hiệu quả suy nghĩ của mô hình**, giảm khoảng một bậc độ lớn số token suy nghĩ, độ trễ và chi phí của mỗi vòng lặp Agent. Không có thanh trạng thái, lượng suy nghĩ cho mỗi truy vấn **liên tục tăng** khi ngữ cảnh dài ra; có thanh trạng thái, nó trở nên **gần như không đổi**.
 
 [^ch2-8]: Li, Bojie and Noah Shi. *Distill, Don't Retrieve: Inference-Time Context Distillation for LLM Agent Reasoning.* 2026. https://01.me/research/context-distillation
 
-Từ góc nhìn này, có thể thấy kỹ thuật Loop ở cuối tiến trình phát triển của Chương 1 (Chương 10 sẽ trình bày cùng hệ thống cộng tác đa Agent) thực chất là kỹ thuật hóa trục thứ ba—“tương tác”. Mỗi vòng lặp chỉ tạo ra tiến bộ thật khi bước xác minh ghi quan sát từ thế giới bên ngoài trở lại context, bổ sung thông tin mà mô hình không thể tự nghĩ ra; bỏ bước đó đi, vòng lặp chỉ sắp xếp lại thông tin cũ tại chỗ. Nhận định phổ biến trong ngành rằng “nút thắt của vòng lặp nằm ở bộ xác minh, không phải ở mô hình” cũng nói lên điều này: thước đo tiến bộ phải bám vào quan sát thực, nếu không vòng lặp sẽ âm thầm chạy rỗng.
-
 ### Thành phần của thanh trạng thái Agent
 
-Dựa trên nền tảng lý thuyết trên, thanh trạng thái Agent gồm các loại thông tin sau:
+Thanh trạng thái Agent gồm các loại thông tin sau:
 
 **Lập kế hoạch tác vụ**: Khi Agent xử lý một tác vụ phức tạp nhiều bước, trajectory sẽ rất dài. Agent dễ tập trung quá mức vào tác vụ con hiện tại mà quên yêu cầu ban đầu, ràng buộc cốt lõi và công việc tiếp theo. Danh sách TODO chia tác vụ thành các bước rõ ràng và được đặt ở cuối trajectory để liên tục nhắc mô hình về tiến độ hiện tại cùng mục tiêu phía trước, bảo đảm hành động vẫn bám sát kế hoạch tổng thể.
 
@@ -968,6 +954,14 @@ Một mô hình gần đúng cho biết điểm hòa vốn. Gọi $S$ là số t
 
 Kỹ thuật thanh trạng thái Agent có một ưu điểm thực tế: mọi siêu thông tin đều xuất hiện trong ngữ cảnh ở dạng con người có thể đọc được, vì vậy developer có thể kiểm tra bất cứ lúc nào Agent đã nhận thông tin gì và đưa ra quyết định nào. Quan trọng hơn, kỹ thuật này không can thiệp vào mô hình—không cần fine-tuning và có thể áp dụng trực tiếp cho bất kỳ mô hình ngôn ngữ nào.
 
+Việc duy trì thanh trạng thái cần lưu ý hai điểm:
+
+1. **Hãy duy trì thanh trạng thái bằng mã bất cứ khi nào có thể. Nếu buộc phải dùng LLM, hãy trích xuất từng mục rồi tổng hợp bằng mã; tuyệt đối không yêu cầu mô hình thống kê hàng loạt trong một lần**. Thực nghiệm cho thấy **mô hình gần như tin thanh trạng thái vô điều kiện**: ghi “đã gọi 3 cuộc”, mô hình sẽ coi đó là ba mà không tính lại. LLM vốn dễ sai khi đếm, nên rủi ro **đầu độc thanh trạng thái** đã nêu trước đó cũng cần được xem xét nghiêm túc.
+
+2. **Không xóa ngữ cảnh gốc**. Thanh trạng thái là một **phép chiếu có mất mát** của ngữ cảnh gốc: nó chỉ tính trước những chiều mà bạn dự đoán sẽ được hỏi. Nếu thanh trạng thái đã đủ—như với việc đếm và theo dõi trạng thái—bạn có thể xóa bản ghi thô để tiết kiệm nhiều token. Nhưng chỉ cần một câu hỏi rơi vào chiều chưa được tính, độ chính xác sẽ sụt mạnh nếu chỉ còn thanh trạng thái.
+
+Thanh trạng thái Agent là một kỹ thuật **nén ngữ cảnh** (Context Compression). Phần tiếp theo giới thiệu thêm các kỹ thuật nén ngữ cảnh.
+
 ## Policy nén ngữ cảnh
 
 Các phần trước đã thảo luận về cách đưa nội dung vào ngữ cảnh - dự án nhanh chóng quyết định nội dung cần viết, Kỹ năng quyết định nội dung cần tải theo yêu cầu và thanh trạng thái Agent quyết định thông tin meta nào sẽ được đưa vào. Nhưng khi nhiều vòng tương tác tiến triển, ngữ cảnh sẽ tiếp tục mở rộng. Phần này đi theo hướng ngược lại: cách giảm nội dung khỏi ngữ cảnh - khi nào cần nén, nén như thế nào và tại sao bạn nên nén ngay cả khi ngữ cảnh chưa đầy.
@@ -1033,14 +1027,14 @@ Trước khi thảo luận về chiến lược nén cụ thể, cần phải gi
 >
 > **Policy 2 và 3: Nén không nhận biết nhiệm vụ** - Các bản tóm tắt riêng lẻ tạo ra các tóm tắt phân đoạn 2-3 một cách độc lập cho mỗi kết quả tìm kiếm, với tỷ lệ nén 10,9% (tốc độ nén trong cuốn sách này đề cập đến "khối lượng nén/khối lượng văn bản gốc", giá trị càng nhỏ thì nén càng khó), có thể hoàn thành nhiệm vụ nhưng yêu cầu 12 lần lặp và 276.608 mã thông báo. Vấn đề chính là sự phân mảnh thông tin - nhiều trang mô tả lặp đi lặp lại cùng một sự kiện, lãng phí không gian theo ngữ cảnh. Bản tóm tắt kết hợp kết hợp tất cả các kết quả để tạo ra bản tóm tắt toàn diện với tỷ lệ nén 4,3%, 10 lần lặp và 93.449 mã thông báo. Tuy nhiên, khi đầu vào quá dài thì phải cắt bớt, thông tin ở cuối có thể bị mất. Những thiếu sót chung của cả hai là: thiếu hiểu biết về ngữ nghĩa và không có khả năng phân biệt mức độ liên quan của thông tin.
 >
-> **Policy 4: Nén theo ngữ cảnh** - Đổi mới cốt lõi nằm ở việc kết hợp mục đích truy vấn hiện tại và thông tin tích lũy vào quy trình ra quyết định nén. Hướng dẫn mô hình tạo các bản tóm tắt được nhắm mục tiêu bằng cách chỉ định "Cung cấp truy vấn tìm kiếm: {query}" và "Ngữ cảnh hiện tại: {context}" trong gợi ý nén. Kết quả chỉ yêu cầu 7 lần lặp, 40.157 mã thông báo và tỷ lệ nén tổng thể khoảng 3,0%. Lấy một trong các lần nén làm ví dụ, khi 147.877 ký tự được nén thành 1.963 ký tự (khoảng 1,3%), các thông tin quan trọng như tên người sáng lập và những thay đổi về chức vụ vẫn được giữ lại; các tìm kiếm tiếp theo có thể trích xuất thông minh thông tin quan trọng như thay đổi vị trí và công ty mới, đồng thời lọc ra ngữ cảnh lịch sử không liên quan và nội dung trùng lặp. Thành công này dựa trên hiểu biết sâu sắc: Trong một nhiệm vụ gồm nhiều bước, các giai đoạn khác nhau đòi hỏi mật độ và loại thông tin khác nhau - thu thập thông tin rộng rãi ở giai đoạn đầu, kiểm tra thực tế chính xác ở giai đoạn giữa và tích hợp thông tin toàn diện ở giai đoạn sau. Tính năng nén nhận biết ngữ cảnh sẽ tối đa hóa giá trị của thông tin bằng cách điều chỉnh linh hoạt trọng tâm nén.
+> **Policy 4: Nén theo ngữ cảnh** - Đổi mới cốt lõi nằm ở việc kết hợp mục đích truy vấn hiện tại và thông tin tích lũy vào quy trình quyết định nén. Việc chỉ định “Given the search query: {query}” và “Current context: {context}” trong prompt nén hướng dẫn mô hình tạo bản tóm tắt có mục tiêu. Kết quả chỉ cần 7 lần lặp, 40.157 token và tỷ lệ nén tổng thể khoảng 3,0%. Trong một lần nén, khoảng 150 nghìn ký tự được rút xuống còn 2 nghìn nhưng vẫn giữ thông tin quan trọng mà nhiệm vụ sau cần, như tên người sáng lập và thay đổi chức vụ.
 >
-> **Policy thứ năm: Nhận thức theo ngữ cảnh với tài liệu tham khảo** - Dựa trên khả năng nén thông minh, khả năng truy nguyên thông tin được thêm vào và mỗi dữ kiện đều được kèm theo dấu tham chiếu URL của nguồn. Số lượng Token tăng lên 222.992 và tỷ lệ nén là 4,1% nhưng nó cung cấp một cách để xác minh thông tin. Điều này đạt được sự kết hợp giữa nén có mất dữ liệu và lập chỉ mục không mất dữ liệu - nội dung được nén về mặt ngữ nghĩa (có mất dữ liệu), nhưng bằng cách giữ lại liên kết nguồn (lập chỉ mục không mất dữ liệu), về mặt lý thuyết, thông tin ban đầu có thể được truy ngược về thông tin gốc bất kỳ lúc nào.
+> **Policy thứ năm: Nhận thức theo ngữ cảnh với tài liệu tham khảo** - Bổ sung khả năng truy nguyên vào nén thông minh, trong đó mỗi dữ kiện đi kèm dấu tham chiếu URL nguồn. Nội dung được nén ngữ nghĩa có mất mát, nhưng việc giữ liên kết nguồn tạo ra chỉ mục không mất mát, về lý thuyết cho phép quay lại thông tin gốc bất cứ lúc nào.
 >
 > **Policy 6: Cửa sổ thích ứng** - Dựa trên thông tin chuyên sâu chính: Có đủ không gian ngữ cảnh khi bắt đầu tác vụ nên không cần phải vội vàng nén. Cơ chế nén chỉ được khởi động khi gần đạt đến giới hạn dung lượng, nhờ đó giữ được tính toàn vẹn của thông tin gốc ở mức tối đa. Việc triển khai cụ thể bao gồm ba cơ chế cốt lõi:
 >
-> - **Trình kích hoạt ngưỡng**: Liên tục theo dõi việc sử dụng ngữ cảnh và kích hoạt nén khi số lượng mã thông báo nhắc vượt quá 80% cửa sổ (cửa sổ 128K là 102.400 mã thông báo)
-> - **Nén hàng loạt**: Nén tất cả các kết quả dao chưa được đánh dấu cùng một lúc khi được kích hoạt. Ví dụ: sau khi phát hiện ngữ cảnh vượt quá ngưỡng 102.400 mã thông báo trong khoảng lần lặp thứ 4 (số đo thực tế được kích hoạt ở khoảng 135.600 mã thông báo), tất cả 10 thông báo công cụ chưa nén sẽ ngay lập tức được nén.
+> - **Trình kích hoạt ngưỡng**: Liên tục theo dõi việc sử dụng ngữ cảnh và chỉ kích hoạt nén khi số token của prompt vượt quá 80% cửa sổ
+> - **Nén hàng loạt**: Khi được kích hoạt, nén cùng lúc mọi kết quả công cụ chưa được đánh dấu. Ví dụ, sau khi phát hiện ngữ cảnh vượt ngưỡng 102.400 token, nó lập tức nén cả 10 thông báo công cụ chưa nén
 > - **Bảo vệ chống trùng lặp**: Thêm thẻ `[COMPRESSED]` để đảm bảo nội dung nén không bao giờ được xử lý hai lần
 >
 > Mặc dù tổng mức sử dụng Token lớn (174.601), một vài lần lặp lại đầu tiên vẫn duy trì thông tin gốc hoàn chỉnh, mang lại sự linh hoạt tối đa cho việc thu thập thông tin mở rộng ban đầu.
@@ -1071,13 +1065,7 @@ Trước đây chúng tôi đã phân tích hai động cơ nén (kiểm soát �
 
 Mặc dù quá trình nén yêu cầu chi phí tính toán bổ sung (mỗi lần nén là một lệnh gọi LLM bổ sung), so với chi phí mã thông báo đã lưu và tỷ lệ thành công của nhiệm vụ được cải thiện, lợi tức đầu tư là cực kỳ cao - các thử nghiệm cho thấy rằng nén nhận biết ngữ cảnh giúp giảm hơn 75% mức sử dụng mã thông báo.
 
-Thứ dễ bị mất nhất trong quá trình nén không phải là bản thân các chi tiết mà là **các quyết định kiến trúc ban đầu, lý do đằng sau các ràng buộc và đường dẫn đến thất bại** - LLM thường ưu tiên xóa thông tin có vẻ như có thể truy xuất được. Trong các hệ thống Agent cấp sản xuất, bạn nên xác định rõ ràng mức độ ưu tiên lưu giữ trong quá trình nén:
-
-1. **Quyết định về kiến trúc và các ràng buộc chính**: Không cho phép tóm tắt
-2. **Danh sách tệp đã sửa đổi và bản ghi thay đổi khóa**: Giữ nguyên
-3. **Trạng thái xác minh**(pass/fail): Phải được giữ lại
-4. **Các ghi chú TODO và rollback chưa được giải quyết**: phải được giữ lại
-5. **Đầu ra công cụ**: Có thể xóa, chỉ giữ lại pass/fail. Phần kết luận
+Những gì dễ mất nhất khi nén là các quyết định kiến trúc ban đầu, lý do đằng sau các ràng buộc và những hướng đi đã thất bại. Vì vậy, **Agent cần thường xuyên lưu tiến độ dưới dạng tài liệu**, thay vì rải rác mọi thông tin trong lịch sử thực thi. Cũng như thông tin quan trọng của công ty cần được ghi thành tài liệu chứ không nên nằm trong nhật ký trò chuyện, Agent cũng phải hình thành thói quen viết và cập nhật tài liệu. Nếu mô hình bạn dùng chưa có thói quen đó, hãy nhắc nó bằng prompt và skill.
 
 ### Cách ly khi nén: cách ly ngữ cảnh phụ Agent
 

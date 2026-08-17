@@ -175,23 +175,6 @@
 
 檔案系統解決 Agent 間**產物交換**的問題，協作還需一條**控制平面**。這正是表 10-2 中生命週期各行的用武之地：建立（`spawn_subagent`）、發訊息（`send_message_to_subagent`）、取消（`cancel_subagent`）、發現（`list_agents`）這組第四章給出的工具原語，對應程序世界的 fork、訊息、kill 和 ps。本節不重複介面定義，而聚焦多 Agent 協作依賴、卻常被忽略的四項能力。
 
-**訊息信封與 worker 生命週期:**
-
-```python
-envelope = {
-    id, trace_id, sender, recipient, type,
-    payload, created_at, deadline, schema_version
-}
-
-worker = spawn(task, budget, cancellation_token)
-publish(task_assigned(envelope, worker))
-while worker.is_running:
-    accept(status_update | artifact | needs_input)
-    if deadline_expired or cancellation_token.is_set:
-        request_graceful_stop(worker)
-await worker.ack_or_timeout()
-```
-
 **一、訊息傳遞。** 最簡形態為點對點：Agent A 直接呼叫 `send_message_to_agent_b(content)`，適用於拓撲固定、Agent 數量少的場景（如本章實驗 10-3 的電話 + 電腦雙 Agent）。當 Agent 數量增多且需非同步並行時，點對點連線數隨 Agent 數呈平方增長，且要求收發雙方同時線上；此時應改用**訊息匯流排**（詳見本章後文「並行協調形態」）：Agent 將訊息釋出至匯流排，由匯流排按訂閱關係轉寄，傳送方無需知曉消費者。無論點對點還是經匯流排，訊息通常應攜帶結構化的**信封**（envelope）：傳送者 ID、目標（指定 Agent 或廣播）、訊息型別（如 `task_assigned`/`status_update`/`result`/`terminate`）及 JSON 負載。統一的信封格式保證接收方可靠地路由與解析，並使協作鏈路可追溯——這很多 Agent 系統除錯的關鍵。
 
 **二、狀態查詢。** 這是控制平面中最易被低估的一環。主 Agent 派出子 Agent 後，若無從獲知其進展，則既無法判斷是否繼續等待，也無法在其阻塞時及時介入。直覺的做法是照搬 RPC，定義一個 `get_subagent_status(agent_id)` 查詢介面，返回「執行中/已完成/失敗」加一個進度百分比。但這種拉取式介面的實際用處遠小於預期：子 Agent 一經建立就立即開始執行，直到完成或失敗，並不像傳統批次處理系統的作業那樣在一串排隊狀態之間流轉——正如 Unix 程式設計中極少需要按 PID 去輪詢另一個程序的執行狀態。輪詢還有固有的兩難：過密浪費 token，過疏則不及時。狀態獲取更自然的做法，是回到本章開頭的兩大通訊正規化。

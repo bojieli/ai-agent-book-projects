@@ -38,11 +38,9 @@ Las cuatro secciones comparten un mismo conjunto de primitivas —**despertar, p
 
 **Hay una decisión deliberada en el orden de lectura: este capítulo dedica a la voz bastante más espacio que a los dos escenarios siguientes.** En la línea evolutiva de la interacción en tiempo real, la voz es la que ha llegado más lejos y la que mejor sirve de sistema de referencia: parte del problema «la tubería en serie tiene demasiada latencia», atraviesa el extremo a extremo, el dúplex completo y el pensar mientras se habla, y llega hasta un final relativamente asentado; el recorrido completo problema → solución → final ya está hecho. Por eso lo contamos a fondo, y Computer Use y robótica pueden leerse contra esa línea: hasta dónde ha llegado cada uno y dónde se ha atascado.
 
-Y que el capítulo abra con la **asincronía y la orientación a eventos** se debe a que es lo más cercano al lector: la modalidad sigue siendo texto puro y solo cambia el momento. Es el primer paso fuera del mundo por turnos de los cinco capítulos anteriores y el primer lugar donde la tesis del «supuesto de turno» toca tierra.
-
 ## Asincronía y orientación a eventos: cuando el mundo viene a buscarte
 
-Las tres categorías de herramientas del capítulo 4 —percepción, ejecución y colaboración— las invoca el propio Agente: es él quien decide cuándo mirar y cuándo actuar. Esta sección se desplaza al extremo más lento del eje temporal: ¿cómo gestiona un Agente tareas que duran horas o incluso días, y cómo responde a eventos externos que pueden llegar en cualquier momento? Eso exige una arquitectura asíncrona orientada a eventos; y las dos categorías restantes de las cinco del capítulo 1 —herramientas disparadas por eventos y de comunicación con el usuario— funcionan precisamente apoyadas en esa arquitectura, de modo que se tratan aquí también.
+El Agente invoca de forma activa las herramientas de percepción, ejecución y colaboración tratadas en el capítulo 4. ¿Cómo debe responder a eventos externos que pueden llegar en cualquier momento? Para ello necesita una arquitectura asíncrona orientada a eventos. Las dos clases de herramientas restantes del capítulo 1—las activadas por eventos y las de comunicación con el usuario—dependen de esta arquitectura, por lo que también se abordan aquí.
 
 ### Por qué se necesita la asincronía
 
@@ -176,23 +174,6 @@ Las reglas rígidas codificadas tienen sus limitaciones, ya que la semántica de
 
 A continuación, mediante un experimento de Agente de procesamiento de correo orientado a eventos, aterrizaremos las estrategias de procesamiento anteriores en una implementación ejecutable.
 
-**Enrutamiento del bucle de eventos:**
-
-```python
-while runtime.is_alive:
-    events = queue.take_batch()
-
-    if any(is_urgent(event) for event in events):
-        cancel_at_safe_point(current_work)
-    elif has_independent_fast_query(events):
-        start_parallel_session(events)
-    else:
-        append_to_trajectory(events)
-
-    decision = LLM(context + trajectory)
-    dispatch(decision)
-```
-
 > **Experimento 6-1 ★★★: Agente de Procesamiento de Correos Orientado a Eventos**
 >
 >
@@ -300,11 +281,9 @@ Los modelos VLA (Vision-Language-Action, visión-lenguaje-acción, véase el Cap
 
 Lograr este entrenamiento RL asíncrono requiere nueva infraestructura: simuladores de entornos asíncronos (que generen latencias en devoluciones de herramientas, interrupciones aleatorias de usuarios, etc.) y recompensas específicas para capacidades asíncronas (comprender correctamente trayectorias desordenadas, recuperar con éxito pensamientos interrumpidos, evitar alucinaciones y procesar eventos en lote de forma sintética).
 
-Sin embargo, el "pensamiento continuo" no tiene por qué esperar a la siguiente generación de modelos: utilizando una capa muy delgada de lógica de orquestación (unos doscientos líneas), se puede transformar un modelo de pensamiento de texto **existente** en un Agente de **pensamiento continuo (continuous-time)** al instante [^ch6-async-1], conectando precisamente las dos mitades anteriores de "compromiso de ingeniería" y "evolución del modelo". Su mecanismo es una versión mejorada de la Regla 4 previa: en lugar de **descartar** medio pensamiento al interrumpirse, es mejor construir toda la interacción como **un flujo de pensamiento ininterrumpido**, pudiendo cerrar por la fuerza en cualquier momento el bloque `<think>` que el modelo está escribiendo, insertar la nueva observación llegada (un retorno de herramienta, una interrupción del usuario, un nuevo fragmento reconocido) como un mensaje normal y permitir que el modelo continúe decodificando a continuación. Esto aprovecha un recurso habitualmente desperdiciado: el modelo puede generar cientos de tokens por segundo, mientras que una llamada a herramienta o una frase del usuario suelen tardar varios segundos; estas "esperas" son para el modelo **capacidad de cómputo ganada gratuitamente**, pudiendo aprovecharse para pensar por adelantado. De ello nacen dos comportamientos: **pensar mientras se espera** (sin esperar a que la herramienta vuelva o a que el usuario termine de hablar, pensando hacia adelante basándose en la información parcial existente e incluso activando por adelantado el siguiente paso de herramientas; esta tendencia de "pensamiento de anticipación" se ha replicado con cero disparos en múltiples familias de modelos, con datos específicos en el artículo de la nota al pie); y **pensar mientras se actúa** (continuar pensando mientras se emite la salida, siendo capaz de corregirse a mitad de la acción).
+El pensamiento continuo no tiene que esperar a la siguiente generación de modelos. Unas doscientas líneas de orquestación pueden convertir un modelo de razonamiento textual **existente** en un Agente **de tiempo continuo**, enlazando la solución de ingeniería anterior con la evolución del modelo. Es una ampliación de la regla 4: en vez de descartar un pensamiento parcial interrumpido, se construye la interacción como un flujo de pensamiento ininterrumpido. El runtime puede cerrar por la fuerza el bloque `<think>` actual, inyectar como mensaje ordinario una observación recién llegada—resultado de una herramienta, interrupción del usuario o actualización del reconocimiento—y continuar la decodificación.
 
-Sin embargo, la otra mitad más crítica de esta investigación versa sobre el **entrenamiento**, respondiendo precisamente a la demanda anterior de "esperar la evolución del modelo": disponer únicamente de la orquestación solo hace que el pensamiento continuo **sea posible**, pero para que sea realmente **útil** depende de cómo se entreguen las señales de entrenamiento. La investigación descubrió que si se entrena utilizando recompensas del tipo "LLM como juez", el modelo aprenderá a ocultar su pensamiento y usar el silencio para obtener buenas evaluaciones del juez, empeorando los indicadores objetivos; solo utilizando objetivos verificables que conserven la cobertura de información aportará el pensamiento continuo beneficios reales. En una frase: **la orquestación hace posible el comportamiento, y el entrenamiento hace que el comportamiento sea bueno**, lo que confirma el juicio de esta sección: las capacidades asíncronas deben consolidarse mediante el entrenamiento adecuado, en lugar de depender eternamente de parches de ingeniería de prompts.
-
-[^ch6-async-1]: Sobre el uso de unas doscientas líneas de orquestación para convertir modelos de pensamiento existentes en Agentes de pensamiento continuo, y la conclusión de que "las señales de entrenamiento determinan si el pensamiento continuo es útil", véase Li, Bojie and Noah Shi. *Never Stop Thinking: Continuous-Time Language Agents.* 2026 (por publicar).
+Aprovecha un recurso que suele desperdiciarse: el modelo puede generar cientos de tokens por segundo, mientras que una llamada a herramienta o una intervención del usuario puede tardar varios segundos. Ese tiempo de espera puede dedicarse a pensar. Así, el Agente puede **pensar mientras espera**—continuar a partir de información parcial e incluso iniciar antes la siguiente herramienta—y **pensar mientras actúa**—seguir razonando durante la salida y corregirse a mitad de una acción.
 
 > **Experimento 6-2 ★★★: Agente Asíncrono con Ejecución Paralela y Capacidad de Interrupción**
 >
@@ -321,6 +300,8 @@ Sin embargo, la otra mitad más crítica de esta investigación versa sobre el *
 > **3. Mecanismo de interrupción**: El "detente" del usuario finaliza inmediatamente el flujo de ejecución y cancela las herramientas asíncronas. **Escenario de verificación**: El Agente ejecuta una tarea larga, el usuario envía "cancelar", el Agente se detiene inmediatamente y la trayectoria registra el evento de interrupción y la operación de cancelación.
 >
 > **4. Cancelación de herramientas paralelas y consulta de estado**: Una vez completadas las herramientas asíncronas, se inyectan los resultados reales en la conversación mediante nuevos eventos, admitiendo la cancelación o consulta de avance mediante el ID de la tarea. **Escenario de verificación**: El usuario solicita "ayúdame a ejecutar estos tres scripts simultáneamente; cuando el primero termine, comprueba el avance de los restantes y, si alguno no supera el 50%, cancélalo". Tres scripts simulan procesos de análisis emitiendo avances continuamente mientras se ejecutan, a velocidades del 3%, 2% y 1% por segundo respectivamente. El Agente inicia simultáneamente los tres comandos de terminal asíncronos; cuando el script del 3% por segundo se completa en unos 33 segundos, el Agente consulta el estado de los otros dos terminales, descubriendo que uno se ha ejecutado hasta aproximadamente el 66% y el otro hasta el 33%, cancelando este último por no superar el 50%. Una vez completados ambos terminales, integra los resultados generando el informe completo.
+
+La ejecución asíncrona y orientada a eventos permite que el mundo despierte al Agente en cualquier momento, pero supone que el modelo puede terminar de pensar antes de responder. Las tres secciones siguientes cuestionan ese supuesto: cuando el entorno cambia tan rápido como genera el modelo o más, «pensar y después hablar» introduce una latencia inaceptable.
 
 ## Voz: la interfaz humano-máquina más natural
 
@@ -342,21 +323,7 @@ El hilo común es escapar de la suposición de que hay que hablar por turnos y d
 
 [^ch6-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/ . La clasificación procede del resumen de las tres generaciones de ChatGPT Voice; «end-to-end omnimodal (Omni)» corresponde a «turn-based voice models».
 
-**Cancelación en streaming:**
-
-```python
-while audio_is_arriving:
-    partial = asr.push(audio_chunk)
-    if endpoint_is_probable(partial):
-        candidate = llm.start(partial)
-        if later_audio_changes_meaning(partial):
-            cancel(candidate)                 # speculative cancellation
-        else:
-            tts.enqueue_stable_segments(candidate)
-
-on_final_transcript(text):
-    commit_or_restart(text)
-```
+Cuando un sistema en cascada pasa de la ejecución serial al streaming, lo más importante no es convertir cada función en `async`, sino permitir que **los resultados incrementales queden invalidados y se cancelen**.
 
 ### Paradigma 1 · Pipeline en cascada
 
@@ -379,11 +346,7 @@ En una respuesta breve, las esperas de VAD, ASR, LLM y TTS se acumulan en serie 
 
 > **Experimento 6-3 ★: Construir un Agente de voz tradicional**
 >
-> Conecta micrófono, Silero VAD, Whisper local, LLM en streaming y Fish S1 TTS por WebSocket. La evidencia real de un turno demuestra que la cadena funciona de extremo a extremo, pero no es un benchmark de concurrencia ni de carga de producción. Código y aceptación: [chapter6/live-audio](../chapter6/live-audio/).
-
-> **Proyecto adicional: un Agente de voz WebRTC que «llama al usuario»**
->
-> PSTN no es imprescindible. WebRTC en el navegador reproduce el ciclo de abrir una sesión, pedir datos faltantes, repetirlos para confirmar y guardar resultados estructurados. Para llamar a una organización externa se sustituye el mismo contrato por un proveedor PSTN/SIP conforme. El proyecto conserva los identificadores históricos exp9-2, pero ya no ocupa un número del manuscrito. Véanse [chapter6/phone-agent](../chapter6/phone-agent/) y sus evidencias.
+> Conecte mediante WebSocket el micrófono, Silero VAD, Whisper local, un LLM en streaming y Fish S1 TTS para establecer la línea base en cascada.
 
 #### De lo serial a la percepción en streaming
 
@@ -391,11 +354,13 @@ ASR puede emitir una transcripción provisional mientras se habla, el LLM puede 
 
 El frente VAD + ASR acumula latencia por esperar silencio, pierde dudas, emoción, apoyos y ambiente, y rompe el contexto de nombres o correos. Un modelo realmente streaming necesita codificador causal o por bloques y decodificación incremental; Whisper no es causal porque su codificador espera el segmento completo. Un modelo auditivo basado en LLM puede emitir texto y eventos semánticos, pero simular prefijos no garantiza el rendimiento de un modelo causal. Los marcadores speak_start/end, interrupt, emotion, laugh, sigh y noise conservan señales que no caben en texto.
 
+Si el único objetivo es decidir si el usuario ha terminado de hablar, el juicio de fin de turno puede integrarse directamente en el reconocedor streaming. Las etiquetas de entrenamiento solo deben usar información visible en el momento de la decisión; de lo contrario, la retrospectiva producirá un juicio imposible de reproducir en línea[^ch6-11]. Esta vía es más ligera que un LLM de audio completo.
+
 [^ch6-11]: Sobre incorporar el juicio de turno al reconocedor y el problema de etiquetas con información futura, véase Li, Bojie and Noah Shi. *The Trade-off Was in the Labels: Causal Supervision for Turn-Aware Streaming ASR.* 2026 (pendiente de publicación).
 
 > **Experimento 6-4 ★: Simular percepción de voz en streaming con Qwen2-Audio**
 >
-> Qwen2-Audio no es un modelo streaming: se usan prefijos de audio crecientes y se compara con 600 ms de VAD + Whisper. El canonical run pasó los controles, pero solo reprodujo 2/6 conductas; tardó 8,4–11,3 s, omitió silence en pause y confundió cough/laughter en noise. Es una prueba de mecanismos y fallos, no evidencia de percepción streaming de 100–200 ms. Registro: [chapter6/streaming-speech](../chapter6/streaming-speech/).
+> Qwen2-Audio no es un modelo de streaming. El experimento simula la percepción continua mediante prefijos de audio crecientes y la compara con VAD de 600 ms + Whisper.
 
 ### Paradigma 2 · Modelos omnimodales de extremo a extremo (Omni)
 
@@ -409,17 +374,7 @@ Las API de voz en tiempo real ocupan una posición intermedia: procesan audio de
 
 > **Experimento 6-5 ★★: Ejecutar MiniCPM-o 4.5 localmente, extremo a extremo frente a autocascada**
 >
-> Fija una revisión local, desactiva thinking mode y compara responder directamente al audio con transcribir primero y responder después. Mide la conservación de información acústica, no la capacidad posterior de «pensar mientras habla».
-> Tabla 6-1 Resultados locales de MiniCPM-o 4.5: extremo a extremo frente a autocascada (cuatro comprobaciones de mecanismo, no un benchmark)
->
->
-> | Tarea | Extremo a extremo | Autocascada | Observación |
-> | --- | ---: | ---: | --- |
-> | Aritmética semántica (2) | 1/2 | 2/2 | La autocascada corrigió un error de transcripción |
-> | Velocidad paralingüística (2) | 2/2 | 1/2 | El texto borró la diferencia rápido/lento |
-> | Total | 3/4 | 3/4 | Mismo total, fallos complementarios |
->
-> La muestra es pequeña; no establece qué ruta es generalmente más precisa o rápida. Evidencia completa: [chapter6/end-to-end-speech](../chapter6/end-to-end-speech/).
+> Ejecute MiniCPM-o 4.5 localmente con thinking mode desactivado y compare la respuesta directa desde el audio con una autocascada que primero transcribe y luego responde con el mismo modelo. Esto mide si se conserva la información sonora, **no** el «pensar mientras se habla» tratado más adelante.
 
 Step-Audio 2 procesa audio crudo y produce texto y voz; Step-Audio R1 incorpora el razonamiento en el modelo de audio.
 
@@ -428,8 +383,6 @@ Step-Audio 2 procesa audio crudo y produce texto y voz; Step-Audio R1 incorpora 
 Omni separa «habla el usuario» y «habla el modelo», pero la interpretación simultánea exige solapamiento. Un modelo de dúplex completo escucha y habla continuamente y decide seguir, pausar, interrumpir o llamar a una herramienta. Moshi de Kyutai fue un ejemplo temprano; Thinking Machines Lab llama a esta ruta Interaction Model[^ch6-14] y la integra en el modelo en lugar de montarla alrededor de VAD. GPT-Live la lleva a escala de producción y delega el trabajo complejo a un modelo de fondo mientras mantiene la conversación.
 
 [^ch6-14]: Thinking Machines Lab, “Interaction Models: A Scalable Approach to Human-AI Collaboration,” 2026-05. https://thinkingmachines.ai/blog/interaction-models/
-
-La trayectoria es: la cascada adivina turnos con umbrales de silencio, el streaming eleva el juicio al nivel semántico y el dúplex completo convierte el cambio de turno en una decisión continua.
 
 ### Tiempo cognitivo: interacción en tiempo real y pensamiento profundo
 
@@ -459,10 +412,7 @@ La tercera solución interioriza la capacidad de razonar dentro del propio model
 
 Idealmente, el modelo debería inferir la emoción del tono, el ritmo y la entonación, y no solo del texto transcrito. El llamado «pensamiento por delegación al texto» consiste en que el modelo sustituye el análisis de la melodía y de los rasgos acústicos por las palabras negativas de la letra. MGRD filtra las cadenas de razonamiento que citan realmente rasgos acústicos, entrena el modelo con esos datos y, mediante aprendizaje por refuerzo, impide que el modelo se salte el razonamiento y adivine la respuesta.
 
-MPS hace que el cerebro de concepción produzca fragmentos de pensamiento de forma continua, y el cerebro de expresión, al recibir cada fragmento, genera voz de inmediato combinándolo con lo ya respondido. Ambos funcionan en paralelo como una tubería, de modo que no hace falta esperar a que el razonamiento termine para que el usuario oiga la primera frase (Figura 6-11).
-
-
-![Figura 6-11: Arquitectura de doble cerebro MGRD y MPS de Step-Audio R1](images/fig6-11.svg)
+MPS hace que el cerebro de concepción produzca fragmentos de pensamiento de forma continua, y el cerebro de expresión, al recibir cada fragmento, genera voz de inmediato combinándolo con lo ya respondido. Ambos funcionan en paralelo como una tubería, de modo que no hace falta esperar a que el razonamiento termine para que el usuario oiga la primera frase.
 
 
 El modelo unificado es el que más estrechamente logra «pensar mientras habla», a costa de tener que reentrenar juntos el razonamiento y la expresión en tiempo real; la vía desacoplada facilita sustituir el cerebro de fondo, mientras que la vía unificada encaja mejor en escenarios especializados que buscan la máxima naturalidad. Son un compromiso, no un simple reemplazo mutuo.
@@ -488,31 +438,17 @@ Computer Use (también llamado Agente de automatización de GUI) permite a la IA
 3. La capa de ejecución ejecuta dicha acción en el entorno real (mover el ratón, hacer clic, ingresar texto, etc.).
 4. Espera la respuesta de la interfaz y vuelve a tomar una captura de pantalla, entrando en la siguiente ronda del bucle.
 
-**Bucle de seguridad de Computer Use:**
+Aquí conviene distinguir entre **comprender la interfaz** y **completar la tarea**. Lo primero se aproxima más a la comprensión multimodal y puede medirse con preguntas sobre una sola captura; lo segundo exige integrar la comprensión y la generación de acciones en un bucle cerrado que gestione la carga de páginas, los cambios de estado, los errores y las consecuencias irreversibles. La dificultad de Computer Use no consiste solo en responder bien sobre una captura, sino en volver a comprobar tras cada paso que la realidad aún coincide con el plan.
 
-```python
-observation = capture_screenshot_and_accessibility_tree()
-proposal = model.decide(task, observation)
-action = validate_schema_and_coordinates(proposal)
-
-if action.is_irreversible and not user_or_policy_approval(action):
-    stop("approval required")
-else:
-    execute_in_sandbox_or_scoped_session(action)
-    new_observation = capture_after_settle()
-    if not verify_goal_progress(new_observation, action):
-        rollback_if_possible_or_replan()
-```
-
-![Figura 6-12: Bucle Percibir-Pensar-Actuar de Agentes Computer Use](images/fig6-12.svg)
+![Figura 6-11: Bucle Percibir-Pensar-Actuar de Agentes Computer Use](images/fig6-11.svg)
 
 Existen tres dimensiones de diseño clave en este bucle: el **espacio de acciones** (qué operaciones puede ejecutar el Agente), el **grounding visual** (cómo encontrar el elemento objetivo en la captura de pantalla) y la **arquitectura del modelo** (cómo generar la acción correcta a partir de la captura de pantalla).
 
 ### Diseño del espacio de acciones
 
-Anthropic define tres categorías de herramientas que constituyen la capacidad de interacción completa (Figura 6-12):
+La implementación de referencia de Anthropic divide la capacidad de interacción completa en tres categorías de herramientas (Figura 6-12). Es un diseño claro del espacio de acciones, pero no un protocolo privado que deban seguir los proveedores de modelos: siempre que el Harness traduzca las mismas capturas, restricciones de acción y resultados de ejecución a mensajes y salidas estructuradas compatibles con el modelo objetivo, Claude, los modelos visuales de pesos abiertos y los endpoints autoalojados pueden impulsar el mismo bucle Percepción-Pensamiento-Acción.
 
-![Figura 6-13: Espacio de acciones de Computer Use](images/fig6-13.svg)
+![Figura 6-12: Espacio de acciones de Computer Use](images/fig6-12.svg)
 
 **Herramientas de operación de GUI** (`computer tool`): Las operaciones de ratón incluyen movimiento (`mouse_move`), clic con botón izquierdo/derecho/central, doble clic/triple clic, arrastre (`left_click_drag`), así como presionar/soltar con mayor precisión (`left_mouse_down/up`). El desplazamiento (`scroll`) admite cuatro direcciones y se puede combinar con teclas modificadoras. Las operaciones de teclado incluyen escritura carácter por carácter (`type`, simulando la escritura real con un intervalo de 12 ms entre caracteres), combinaciones de teclas (`key`, como Ctrl+C) y pulsación prolongada (`hold_key`). Acciones de percepción: captura de pantalla (`screenshot`), obtención de la posición del cursor (`cursor_position`) y espera (`wait`).
 
@@ -524,9 +460,7 @@ Anthropic define tres categorías de herramientas que constituyen la capacidad d
 >
 > La ruta A utiliza la demo de Anthropic Computer Use. Su contenedor empaqueta un entorno de escritorio Ubuntu completo, con navegador, terminal y otras herramientas habituales. El frontend recibe la tarea; el backend envía las instrucciones y capturas de pantalla a Claude y luego ejecuta las acciones de ratón, teclado, terminal o edición que devuelve el modelo. Esta ruta sirve para comprender el protocolo nativo de la herramienta `computer`; no exige que todos los lectores tengan acceso a la API de Anthropic.
 >
-> La ruta B utiliza el proyecto complementario del libro [`chapter6/computer-use-open-model`](../chapter6/computer-use-open-model/). Por defecto controla browser-use con el modelo de pesos abiertos Qwen3-VL 32B Instruct, ya sea mediante la API alojada de OpenRouter o apuntando `OPEN_MODEL_BASE_URL` a un vLLM/SGLang autoalojado u otro endpoint compatible. El endpoint debe aceptar capturas de pantalla y admitir JSON Schema nativo; si solo admite JSON ordinario, se puede activar explícitamente el modo de compatibilidad schema-in-prompt.
->
-> Ambas rutas emplean la misma tarea de solo lectura y el mismo contrato de aceptación: un máximo de 25 pasos, una sola acción por paso, y conservación de la identidad del modelo/endpoint, las respuestas originales del proveedor, las capturas de cada paso, la secuencia de acciones, la respuesta final y el motivo de detención. Los modelos distintos deben informarse como brazos experimentales separados: no se puede presentar el resultado de un modelo abierto como una reproducción de Claude ni considerar que «el contenedor arrancó correctamente» equivale a completar la tarea. El intervalo entre acciones y la calidad de la planificación son resultados medidos; no se presupone que sean de 2–5 segundos ni que superen necesariamente a otros modelos.
+> La ruta B utiliza el código de ejemplo de [`chapter6/computer-use-open-model`](../chapter6/computer-use-open-model/). De forma predeterminada controla browser-use con Qwen3-VL 32B Instruct de pesos abiertos, mediante la API alojada de OpenRouter o apuntando `OPEN_MODEL_BASE_URL` a vLLM/SGLang autoalojado u otro endpoint compatible.
 
 ### Grounding visual (Visual Grounding)
 
@@ -557,7 +491,7 @@ Elements:
 
 El modelo solo necesita emitir un número de ID, y el sistema ejecuta automáticamente el clic utilizando las coordenadas centrales de dicho elemento. Este tipo de solución no ahorra tokens (porque toda la información de anotación debe enviarse al modelo), pero la localización es precisa y estable, evitando además las omisiones y falsas detecciones que los modelos de segmentación podrían introducir.
 
-![Figura 6-14: Set-of-Mark vs indexación de elementos estructurados (implementación browser-use)](images/fig6-14.svg)
+![Figura 6-13: Set-of-Mark vs indexación de elementos estructurados (implementación browser-use)](images/fig6-13.svg)
 
 **Predicción directa de coordenadas.**
 
@@ -565,27 +499,23 @@ La tercera ruta no realiza ninguna anotación y permite que el modelo emita las 
 
 En la solución de predicción de coordenadas, la comprensión de las coordenadas por parte del modelo depende en gran medida de la resolución utilizada durante el entrenamiento (Figura 6-14). El entrenamiento de Claude utiliza XGA (1024x768), WXGA (1280x800) y FWXGA (1366x768); si la resolución de la captura de pantalla de entrada no coincide, las coordenadas predichas por el modelo se desviarán sistemáticamente, como si se midiera una distancia en un mapa pequeño y se aplicara directamente a un mapa grande. Por lo tanto, es necesario implementar un mecanismo de escalado bidireccional de coordenadas en la capa de herramientas, debiendo **seleccionar la resolución objetivo según la relación de aspecto de ancho y alto**, evitando que un estiramiento no proporcional deforme la imagen e introduzca desvíos en el juicio de coordenadas. Por ejemplo, si la resolución real de la pantalla es de 2560×1440 (16:9), se debe seleccionar entre las tres opciones admitidas por Claude aquella cuya relación de aspecto sea más cercana a 16:9: FWXGA (1366×768) es la más adecuada. Al tomar la captura de pantalla, la pantalla se escala proporcionalmente a 1366×768 para enviarla al modelo; tras emitir el modelo las coordenadas de clic (683, 384), se mapean de forma inversa a las coordenadas reales (683×2560/1366, 384×1440/768) ≈ (1280, 720). Por el contrario, si se fuerza el estiramiento de 16:9 a 1024×768 (4:3), la imagen se aplastará horizontalmente y las coordenadas predichas por el modelo sufrirán una desviación sistemática.
 
-![Figura 6-15: Coincidencia de resolución y escalado bidireccional de coordenadas](images/fig6-15.svg)
+![Figura 6-14: Coincidencia de resolución y escalado bidireccional de coordenadas](images/fig6-14.svg)
 
 La lógica de elección entre las tres rutas se puede resumir de la siguiente manera: **cuando la información estructurada esté disponible, se priorizará el uso del índice DOM/Accessibility Tree**, ya que la localización es la más precisa y estable; **cuando no esté disponible** (software de escritorio nativo como Photoshop, interfaces renderizadas en Canvas/WebGL, juegos), **se puede utilizar tanto la anotación visual (ruta SoM original) como la predicción de coordenadas**. La anotación visual convierte la localización en una pregunta de opción múltiple, siendo más amigable para modelos generales no entrenados específicamente; la predicción de coordenadas omite el paso de anotación y es más directa para modelos entrenados en localización de GUI. La precisión de ambas en elementos pequeños e interfaces densas aún presenta brechas.
 
 > **Experimento 6-8 ★: Uso de browser-use para implementar operaciones automatizadas en el navegador**
 >
-> Se combina Playwright, un framework de automatización de navegadores, con un modelo multimodal para implementar operaciones de navegador dirigidas mediante lenguaje natural. Se activa la visualización SoM y se guarda antes de cada decisión una captura con cuadros delimitadores anotados. La interfaz del modelo no se limita a OpenAI ni Anthropic: el libro ofrece una configuración de API para el modelo abierto Qwen3-VL y conserva un base URL genérico compatible con OpenAI para otros servicios alojados o para inferencia autoalojada.
+> Combine Playwright, un framework de automatización del navegador, con un modelo multimodal para realizar operaciones guiadas por lenguaje natural. Active la visualización SoM y guarde antes de cada decisión una captura con cuadros anotados.
 >
-> Tarea de prueba «Abrir Google y consultar el tiempo en San Francisco»: tras iniciar el sistema, una captura muestra la página de búsqueda de Google con los elementos interactivos numerados. El modelo selecciona el cuadro de búsqueda, escribe "San Francisco weather today", envía la búsqueda y extrae la temperatura y las condiciones de la página de resultados. Durante la aceptación se verifican de forma independiente la respuesta y la trayectoria, y se registran fielmente el número real de pasos y el tiempo transcurrido. «5 pasos y unos 20 segundos» solo puede ser una observación de una ejecución concreta, no un resultado fijo sin comprobante de ejecución.
->
-> La ejecución oficial preservada del modelo abierto utilizó `qwen/qwen3-vl-32b-instruct` en OpenRouter. Al encontrar un CAPTCHA en la búsqueda de Google en el paso 4, el modelo no afirmó haber terminado: cambió a weather.com y, en el paso 16, leyó en la página Today de San Francisco 64°F, Sunny, sensación térmica de 62°F, máxima de 74°F y mínima de 55°F. Las 16 respuestas de API informaron del modelo Qwen3-VL solicitado, y las 15 capturas válidas de los pasos junto con la trayectoria de acciones de solo lectura superaron una aceptación determinista independiente. Este resultado demuestra que la ruta de API del modelo abierto funciona; no significa que se haya reproducido el brazo que usa la herramienta `computer` nativa de Anthropic.
+> Tarea de prueba «Abrir Google y consultar el tiempo de San Francisco»: tras iniciar, la captura muestra Google con los elementos interactivos numerados. El modelo selecciona el buscador, escribe «San Francisco weather today», envía la búsqueda y extrae la temperatura y las condiciones de la página de resultados.
 
 ### Agentes de Computer Use capaces de ver animaciones y escuchar audio
 
-Hasta ahora, la percepción de Computer Use se ha basado en una suposición implícita: **la pantalla está estática** (tomar una captura, pensar un paso, hacer clic, y luego tomar la siguiente captura). Sin embargo, en la realidad las pantallas reproducen videos, muestran notificaciones fugaces y reproducen las voces de las personas en las reuniones. Un Agente que solo abre los ojos una vez cada 3-5 segundos y carece por completo de oídos es incapaz de ver o escuchar "lo que sucede entre dos fotogramas". Ver grabaciones de pantalla, seguir reuniones, escuchar avisos de voz o responder a cuadros de diálogo que parpadean rápidamente: toda esta categoría de operaciones cotidianas en computadoras es casi una zona prohibida para los Agentes de Computer Use de hoy en día.
+Hasta ahora, la percepción de Computer Use se ha basado en una suposición implícita: **la pantalla es estática**—capturar, razonar un paso, hacer clic y volver a capturar. Las pantallas reales reproducen vídeo, muestran notificaciones fugaces y emiten voces de reuniones. Un Agente que abre los ojos cada 3–5 segundos y carece de oídos no puede ver ni oír lo que ocurre entre dos fotogramas.
 
-Lo que realmente debe rediseñarse aquí no es la "interfaz de acción", sino la **"interfaz de observación"** [^ch6-9]. La idea central es desacoplar la **observación** (continua, adaptativa, multimodal) de la **acción** (discreta), convirtiéndola en una capa de middleware de percepción que se inserta entre el entorno y cualquier modelo de Computer Use existente sin necesidad de reentrenamiento (pudiendo denominarse Interfaz de Observación Agente-Computadora, AOI). Consta de tres componentes que "abren la compuerta según la demanda": en primer lugar, la **captura de fotogramas clave entre fotogramas** (utilizando primero una puerta de píxeles extremadamente económica para omitir imágenes casi sin cambios, y luego un modelo pequeño para juzgar si la imagen ha sufrido cambios significativos, tomando capturas solo ante cambios, con costo casi nulo en imágenes estáticas); en segundo lugar, la **transcripción de voz controlada por puerta de volumen** (llamando al reconocimiento de voz solo cuando hay sonido, permitiendo al Agente "desarrollar oídos" por primera vez); y en tercer lugar, lo más crítico, **narrar la imagen en texto persistente** (haciendo que el modelo describa los fotogramas capturados en una frase como "la notificación recién mostrada dice que la fecha de lanzamiento cambió al 28 de abril", y **aunque la imagen original se limpie posteriormente del contexto, esta frase de texto permanece en la memoria**, llevando la información dinámica hacia adelante en forma de texto).
+Lo que debe rediseñarse no es la interfaz de acción, sino la **interfaz de observación**[^ch6-9]. Una interfaz de observación Agente–ordenador (AOI) convierte la observación continua del entorno en eventos discretos que el modelo puede procesar. Sus técnicas clave son: **captura de fotogramas clave entre frames**, que omite pantallas casi idénticas y usa un modelo pequeño para conservar solo los cambios significativos; **transcripción de voz controlada por volumen**, que invoca el reconocimiento solo cuando hay sonido; y **descripción textual de los fotogramas**, para que persista en memoria cuando la imagen original salga del contexto y comprima el historial multimodal.
 
-Un hallazgo contraintuitivo es que lo que realmente funciona no es "qué fotogramas seleccionar", sino **"narrar los fotogramas como texto que se pueda conservar a largo plazo"**: el texto es precisamente la modalidad que mejor manejan los LLM Agent. En ocho modelos que van desde 7B hasta la escala de vanguardia, este middleware aportó una mejora de +17 a +48 puntos porcentuales sin necesidad de reentrenamiento alguno, siendo la brecha en las tareas de voz la más drástica: con esta capa de percepción añadida, el Agente pudo realizar tareas de voz que originalmente "escuchaba pero no podía ejecutar". Sin embargo, tampoco se trata de una configuración fija universal: en algunos modelos más recientes, añadir demasiados tokens de imagen desplaza al razonamiento y perjudica el rendimiento, por lo que estos componentes deben **seleccionarse modelo por modelo**, en lugar de activarlos todos de golpe. Esto sigue la misma lógica que la elección entre Set-of-Mark y predicción de coordenadas explicada anteriormente: no existe una bala de plata en las soluciones de percepción, y es necesario configurarlas según las características específicas del modelo.
-
-[^ch6-9]: Los detalles de los fotogramas clave controlados por puerta, la transcripción a pedido y la narración de fotogramas en texto persistente, así como la mecánica completa y las ablaciones por modelo, se encuentran en Li, Bojie y Noah Shi. *Agent-Computer Observation Interfaces Enable Dynamic Computer Use.* arXiv:2606.29472, 2026.
+[^ch6-9]: Véase Li, Bojie and Noah Shi. *Agent-Computer Observation Interfaces Enable Dynamic Computer Use.* arXiv:2606.29472, 2026.
 
 ### Modelos del mundo para Computer Use
 
@@ -708,21 +638,6 @@ RT-2 y OpenVLA trocean la acción continua en tokens discretos y los emiten uno 
 
 Un modelo grande suele poder inferir solo entre 1 y 10 veces por segundo, mientras que un controlador tradicional puede actualizarse de decenas a miles de veces por segundo. Una práctica habitual en ingeniería es el "troceado de acciones" (action chunking): el modelo genera de una vez un tramo corto de acciones futuras, el hilo de control ejecuta ese tramo a alta frecuencia y el modelo prepara entretanto el siguiente. Así se oculta parte de la espera de inferencia dentro del tiempo de ejecución de las acciones. El precio es que, cuanto más largo es el tramo, más suave resulta el movimiento pero menos escenas nuevas ve el modelo durante ese intervalo. Si el XLeRobot extiende el brazo para coger la taza y la taza se desplaza de un golpe a mitad de camino, puede seguir ejecutando acciones generadas a partir de una imagen antigua. El troceado de acciones es, por tanto, un compromiso entre suavidad y velocidad de reacción, no una aceleración gratuita.
 
-El troceado de acciones necesita normalmente un esqueleto de "predecir—ejecutar—interrumpir" en lugar de llevar el tramo hasta el final:
-
-```python
-chunk = vla(current_observation, skill)
-for action in chunk:
-    low_level.execute(action)
-    if safety_event() or observation_changed_significantly():
-        low_level.stop()
-        discard_remaining(chunk)
-        reobserve_and_replan()
-        break
-```
-
-Los tramos cortos reaccionan más rápido pero multiplican las llamadas al modelo; los largos son más suaves pero tienden a usar observaciones caducadas. El experimento 6-12 compara este tipo de compromiso en el simulador, y es el 9-9 el que toca la frontera de seguridad del hardware real.
-
 ### Los límites del VLA
 
 "Planificación a largo plazo + VLA" es un plan base practicable, pero deja algunos problemas que se pasan por alto con facilidad.
@@ -783,9 +698,7 @@ Que el experimento 6-12 sea estable en el simulador no significa que el XLeRobot
 
 ## Resumen del capítulo
 
-Lo que este capítulo ha retirado es la premisa que los cinco anteriores daban por supuesta: que el Agente y el mundo hablan por turnos.
-
-Leídas a lo largo de los ejes de **modalidad** y **momento**, las cuatro secciones son una misma tesis desplegada en cuatro escalas temporales. La **asincronía orientada a eventos** amplía la observación de «el Agente va a buscarla» a «el mundo la empuja», y la acción de «terminar dentro del turno» a «iniciar ahora y cerrar después con un evento»; la modalidad no cambia, solo el momento. La **voz** comprime la escala hasta los milisegundos, y la evolución por cascada, Omni extremo a extremo y dúplex completo es justamente el paso de «hablar por turnos» a escuchar y hablar de forma continua, con reparto entre la interacción en tiempo real en primer plano y el pensamiento profundo en segundo plano. **Computer Use** traslada el mismo bucle a la pantalla, donde el cuello de botella se ha ampliado de «¿puede completarse la tarea?» a la eficiencia operativa, la comprensión visual continua y la confirmación del estado tras cada acción. La **robótica** lo empuja al mundo físico, donde la acción por bloques negocia entre suavidad y velocidad de reacción, y donde si la tarea se completó ha de decidirlo, todavía, una nueva observación.
+Vistos sobre los ejes de **modalidad** y **momento de ejecución**, la **asincronía y la orientación a eventos** amplían la observación de «el Agente la obtiene» a «el mundo la envía», y la acción de «terminar dentro del turno» a «iniciar ahora y completar mediante eventos posteriores». La **voz** comprime la escala a milisegundos, avanza de los turnos a la escucha y el habla continuas y separa la interacción inmediata en primer plano del pensamiento profundo en segundo plano. **Computer Use** lleva el bucle a la pantalla, donde los cuellos de botella incluyen eficiencia, comprensión visual continua y confirmación de estado tras la acción. La **robótica** lo lleva al mundo físico: el troceado de acciones equilibra fluidez y respuesta, y la finalización aún debe juzgarse con una nueva observación.
 
 Las cuatro secciones comparten un mismo esqueleto de control:
 
@@ -798,9 +711,7 @@ percibir de forma continua
   → continuar, corregir, reintentar, detenerse o replanificar
 ```
 
-También comparten un mismo conjunto de primitivas: despertar, punto seguro, cancelación, desalojo y separación rápido/lento. «Comprobar la señal de cancelación en un punto seguro», en el bucle de eventos, y «al detectar una anomalía, descartar las acciones restantes y volver a observar», en la acción por bloques, son el mismo mecanismo implementado dos veces con cinco órdenes de magnitud de diferencia; el reparto entre un modelo rápido en primer plano y uno lento en segundo, y el «devolver primero un ID de tarea y dejar que un evento posterior la cierre» del Agente asíncrono, son igualmente dos escrituras de una sola cosa.
-
-Conviene señalar que la mayoría de estos mecanismos siguen siendo apaños de ingeniería. Los protocolos de marcador de posición, las marcas de evento en la barra de estado, la cancelación y reversión del pensamiento anticipado: todos ellos usan lógica de orquestación para compensar la experiencia asíncrona ausente en la distribución de entrenamiento del modelo. El avance del lado del modelo está absorbiendo parte de ello en los parámetros —los modelos interactivos incorporan la interrupción y la intervención dentro del modelo, y el pensamiento continuo permite «pensar mientras se escucha» sin esperar a la siguiente generación—, pero mientras el corpus de entrenamiento siga siendo mayoritariamente por turnos, esta capa de compensación no desaparecerá: solo se irá desplazando a la nueva frontera conforme avance la capacidad del modelo.
+También comparten las mismas primitivas—activación, puntos seguros, cancelación, expropiación y separación rápida/lenta.
 
 Este capítulo cierra la última pieza de la parte dedicada a «construir Agentes»: los espacios de observación y de acción ya se han desplegado en las tres direcciones —contenido, modalidad y momento—. Los tres capítulos siguientes giran hacia otra pregunta: cómo saber si todo esto se construyó bien y cómo lograr que siga mejorando.
 

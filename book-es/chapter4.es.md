@@ -254,33 +254,6 @@ Otra aplicación típica del patrón Sidecar es el **enriquecimiento de contexto
 
 Para el Sidecar de seguridad, se requiere además un **interruptor de rechazo (circuit breaker)**: cuando el clasificador rechaza operaciones de forma consecutiva múltiples veces, el sistema no debe reintentar indefinidamente (lo que desperdiciaría recursos y podría atrapar al usuario en un bucle infinito), sino degradarse solicitando el juicio manual del usuario. Este es precisamente un ejemplo típico de la función de "corrección" del Harness del Capítulo 1.
 
-**Puerta de seguridad de herramientas:**
-
-```python
-proposal = model.tool_call()
-call = parse_and_validate_schema(proposal)
-
-if call is INVALID:
-    return structured_error("invalid arguments")
-
-if not permission_policy.allows(actor, call):
-    return structured_error("permission denied")
-
-risk = classify_risk(call.tool, call.args)
-if risk == HIGH:
-    review = independent_reviewer(
-        trusted_policy,
-        trusted_task_summary,
-        sanitize_and_tag_untrusted_fields(call)
-    )
-    if review != ALLOW:
-        return reject_or_escalate(review)
-
-result = sandbox.execute(call, scope = least_privilege_scope(call))
-checked = verify_result(call, result, observe_environment())
-return checked
-```
-
 **Validación automática y bucle de retroalimentación.**
 
 Otro principio de diseño importante para las herramientas de ejecución es: **si el resultado de una operación se puede verificar, se debe verificar automáticamente**. Tomando como ejemplo la escritura de código, cuando el Agente invoca `write_file` para crear o modificar un archivo de código, la herramienta no debe limitarse a escribir el contenido y devolver "éxito", sino ejecutar inmediatamente una comprobación sintáctica tras la escritura: invocando el linter correspondiente según el tipo de archivo y analizando la salida en una lista estructurada de errores devuelta como parte de la respuesta de la herramienta al Agente.
@@ -396,20 +369,6 @@ La práctica tradicional consiste en inyectar los schemas de todas las herramien
 ![Figura 4-2 Coincidencia jerárquica de herramientas (búsqueda semántica en dos niveles: servidor -> herramienta)](images/fig4-2.svg)
 
 **Coincidencia jerárquica y degradación**. La clave para una coincidencia eficiente reside en que la propia organización de las herramientas posea una estructura jerárquica: en protocolos como MCP, las herramientas se agrupan por **servidores** (similar a las aplicaciones en un teléfono móvil, donde cada aplicación proporciona un conjunto de funciones relacionadas), permitiendo dividir la coincidencia en dos capas: primero localizar el servidor relevante según la descripción de capacidad, y luego coincidir la herramienta específica dentro del servidor, reduciendo el espacio de búsqueda de "miles de herramientas" a "docenas de servidores x docenas de herramientas por servidor", ahorrando cómputo y reduciendo la confusión semántica interdominio. En ingeniería esto depende de un índice de embeddings construido fuera de línea que admita actualizaciones incrementales; si la similitud de los candidatos en ambas capas es inferior al umbral, se debe devolver explícitamente "no encontrado", permitiendo que el Agente reescriba la petición, implemente manualmente mediante herramientas básicas o cree directamente una nueva herramienta (la creación de herramientas es el tema del Capítulo 9).
-
-**Descubrimiento proactivo de herramientas:**
-
-```python
-if capability_is_missing(task):
-    server = search_server_index(capability)
-    tool = search_tool_index(server, capability)
-
-    if tool == NOT_FOUND:
-        retry_with_rewritten_request_or_escalate()
-    else:
-        append_tool_schema_to_trajectory(tool)
-        continue
-```
 
 ![Figura 4-3 Optimización de Caché KV para la carga dinámica de herramientas](images/fig4-3.svg)
 

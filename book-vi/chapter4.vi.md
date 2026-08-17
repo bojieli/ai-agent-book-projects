@@ -259,33 +259,6 @@ Một ứng dụng điển hình khác của mẫu Sidecar là **làm giàu ng�
 
 Đối với Sidecar bảo mật, cũng cần trang bị **bộ ngắt mạch từ chối**: khi bộ phân loại từ chối các hoạt động nhiều lần liên tiếp, hệ thống không nên thử lại vô thời hạn (điều này sẽ lãng phí tài nguyên và cũng có thể đưa người dùng vào một vòng lặp vô hạn), mà sẽ chuyển sang yêu cầu người dùng đánh giá thủ công. Đây là một ví dụ điển hình về chức năng “sửa” của Harness ở Chương 1.
 
-**Cổng an toàn tool:**
-
-```python
-proposal = model.tool_call()
-call = parse_and_validate_schema(proposal)
-
-if call is INVALID:
-    return structured_error("invalid arguments")
-
-if not permission_policy.allows(actor, call):
-    return structured_error("permission denied")
-
-risk = classify_risk(call.tool, call.args)
-if risk == HIGH:
-    review = independent_reviewer(
-        trusted_policy,
-        trusted_task_summary,
-        sanitize_and_tag_untrusted_fields(call)
-    )
-    if review != ALLOW:
-        return reject_or_escalate(review)
-
-result = sandbox.execute(call, scope = least_privilege_scope(call))
-checked = verify_result(call, result, observe_environment())
-return checked
-```
-
 **Vòng khép kín xác minh và phản hồi tự động.**
 
 Một nguyên tắc thiết kế quan trọng khác đối với các công cụ thực thi là: **Nếu kết quả của thao tác có thể được xác minh thì chúng sẽ được xác minh tự động**. Lấy việc viết mã làm ví dụ, khi Agent gọi `write_file` để tạo hoặc sửa đổi tệp mã, công cụ không chỉ ghi nội dung rồi trả về "thành công" mà còn phải thực hiện kiểm tra cú pháp ngay sau khi viết: gọi linter tương ứng (công cụ kiểm tra tĩnh mã) theo loại tệp, phân tích đầu ra thành danh sách lỗi có cấu trúc và trả về Agent như một phần của giá trị trả về của công cụ.
@@ -401,20 +374,6 @@ Cách tiếp cận truyền thống là đưa lược đồ của tất cả cá
 ![Hình 4-2 So khớp công cụ phân cấp (cấp máy chủ → tìm kiếm ngữ nghĩa hai cấp cấp công cụ) ](images/fig4-2.svg)
 
 **Kết hợp và hạ cấp thứ bậc.** Chìa khóa để so khớp hiệu quả là bản thân tổ chức công cụ có cấu trúc phân cấp: trong các giao thức như MCP, các công cụ được nhóm theo **máy chủ**(tương tự như Ứng dụng trên điện thoại di động, mỗi Ứng dụng cung cấp một tập hợp các chức năng liên quan), do đó, việc so khớp có thể được chia thành hai lớp - trước tiên hãy xác định vị trí các máy chủ có liên quan theo mô tả khả năng và sau đó khớp các công cụ cụ thể trong máy chủ, giảm không gian tìm kiếm từ "hàng nghìn công cụ" xuống "hàng chục máy chủ × hàng chục công cụ trên mỗi máy chủ", điều này không làm giảm không gian tìm kiếm chỉ tiết kiệm sức mạnh tính toán mà còn giảm sự nhầm lẫn ngữ nghĩa giữa các miền. Về mặt kỹ thuật, điều này dựa vào một chỉ mục nhúng được xây dựng ngoại tuyến và hỗ trợ các bản cập nhật gia tăng; nếu độ giống nhau của các ứng viên ở cả hai cấp độ so khớp thấp hơn ngưỡng, "không tìm thấy" phải được trả về một cách rõ ràng, cho phép Agent viết lại các yêu cầu và thử lại, triển khai thủ công bằng các công cụ cơ bản hoặc đơn giản là tạo một công cụ mới (tạo công cụ là chủ đề của Chương 9).
-
-**Khám phá tool chủ động:**
-
-```python
-if capability_is_missing(task):
-    server = search_server_index(capability)
-    tool = search_tool_index(server, capability)
-
-    if tool == NOT_FOUND:
-        retry_with_rewritten_request_or_escalate()
-    else:
-        append_tool_schema_to_trajectory(tool)
-        continue
-```
 
 ![Hình 4-3 Tối ưu hóa KV Cache của việc tải động công cụ ](images/fig4-3.svg)
 

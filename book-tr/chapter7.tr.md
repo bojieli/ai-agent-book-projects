@@ -145,16 +145,7 @@ Bir değerlendirme ortamı beş öğeden oluşur — ilerideki alt bölümler bu
 
 **Yürütme protokolü (Interaction Protocol)** etkileşim biçimini ve sonlanma koşullarını belirler.
 
-**Tekrarlanabilir değerlendirme döngüsü:**
-
-```python
-for task in dataset:
-    environment.reset(task.initial_state)
-    trajectory = agent.run(task.prompt, environment.tools)
-    outcome = environment.snapshot()
-    score = verifier(task, trajectory, outcome)
-    record(task, trajectory, outcome, score)
-```
+Bu beş öğe birlikte tekrarlanabilir bir değerlendirme döngüsü oluşturur.
 
 ![Şekil 7-2: Araç Çağırma Tipi ve İnsan-Makine Etkileşimi Tipi Değerlendirme Ortamları](images/fig7-2.svg)
 
@@ -374,17 +365,6 @@ rubric:
 ```
 
 **İyi Rubric ile kötü Rubric**: yukarıdaki her puan basamağı, "belleğe dair derin bir kavrayış sergiliyor" gibi nesnel olarak yargılanamayacak betimlemeler yerine doğrulanabilir somut davranışlar ("Dr. Chen yanıtını doğru verir") tanımlıyor. Veto maddesi ise alt sınırı net çiziyor: diğer boyutların hepsi tam puan alsa bile, halüsinasyon görüldüğü anda sonuç doğrudan sıfırdır.
-
-**Rubric değerlendirmesi öncesi deterministik veto:**
-
-```python
-deterministic = verify_state_policy_and_claims(trajectory, outcome)
-if deterministic.veto:
-    return FAIL(reason = deterministic.evidence)
-
-rubric_result = judge(answer, rubric, evidence)
-return aggregate_with_confidence(rubric_result)
-```
 
 Rubric ile Agent'ın yanıtını birlikte hakem modele verin; model her boyutu puanlayıp gerekçesini yazsın. Onlarca vakanın sonuçlarını boyutlara göre topladığınızda ve düşük puanlı trajectory'leri yeniden oynattığınızda, genel bir “başarı düştü” bulgusu somut bir teşhise dönüşür: retrieval bir olguyu kaçırmış olabilir, model kişi ya da olayları yanlış ilişkilendirmiş olabilir veya dayanağı olmayan bir iddia eklemiş olabilir. İyi bir Rubric yalnızca sistemin kaç puan aldığını değil, bir sonraki incelemenin nereye yönelmesi gerektiğini de gösterir.
 
