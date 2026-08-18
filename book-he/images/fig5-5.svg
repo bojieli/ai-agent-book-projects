@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 520" width="880" height="520" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="20" y="60" width="350" height="280" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="195" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Proposer Agent</text>
+<text x="40" y="110" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Input: Paper/content</text>
+<rect x="30" y="125" width="330" height="24" rx="3" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="38" y="137" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">paper.pdf → Extract sections/arguments/figures</text>
+<text x="40" y="168" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Output: Slidev Markdown</text>
+<rect x="30" y="182" width="330" height="138" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="40" y="199.0" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">---</text>
+<text x="40" y="213.0" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">layout: two-cols</text>
+<text x="40" y="227.0" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">---</text>
+<text x="40" y="241.0" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central"># Transformer Architecture</text>
+<text x="40" y="255.0" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">::left::</text>
+<text x="40" y="269.0" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">- Self-attention mechanism</text>
+<text x="40" y="283.0" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">- Multi-head attention</text>
+<text x="40" y="297.0" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">::right::</text>
+<text x="40" y="311.0" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">&lt;img src=&quot;fig3.png&quot; /&gt;</text>
+<rect x="510" y="60" width="350" height="280" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="685" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Reviewer Agent</text>
+<text x="520" y="110" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Step 1: Render screenshot</text>
+<rect x="520" y="125" width="330" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="685" y="142" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">slidev export --per-slide</text>
+<text x="685" y="160" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">→ slide-01.png, slide-02.png ...</text>
+<text x="520" y="192" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Step 2: Vision LLM review</text>
+<rect x="520" y="208" width="330" height="108" rx="3" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="528" y="222" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">Review dimensions:</text>
+<text x="528" y="238" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">  ✓ Text overflow boundary</text>
+<text x="528" y="254" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">  ✓ Layout too crowded</text>
+<text x="528" y="270" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">  ✓ Image size appropriate</text>
+<text x="528" y="286" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">  ✗ Slide 3: Text overflows right column</text>
+<text x="528" y="302" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">  ✗ Slide 7: Content too dense</text>
+<line x1="370" y1="200" x2="508" y2="150" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="439.0" y="165.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle">Slidev code</text>
+<line x1="508" y1="300" x2="370" y2="260" stroke="#333333" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah)"/>
+<text x="439.0" y="270.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle">Modification suggestions</text>
+<rect x="395" y="220" width="100" height="24" rx="12" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="445.0" y="232.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">Iterate 2-3 rounds</text>
+<line x1="30" y1="365" x2="850" y2="365" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="440.0" y="388" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Why separate Proposer and Reviewer?</text>
+<rect x="30" y="405" width="270" height="130" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="165" y="425" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Single Agent Problem</text>
+<text x="165" y="450" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Tens of pages of rendered screenshots → context bloat</text>
+<text x="165" y="474" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Code + screenshot mix → attention dispersion</text>
+<rect x="320" y="405" width="270" height="130" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="455" y="425" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Advantages of Separation</text>
+<text x="455" y="450" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Reviewer independent context → only screenshots + code</text>
+<text x="455" y="474" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Proposer focuses on code → only receives modification suggestions</text>
+<rect x="610" y="405" width="270" height="130" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="745" y="425" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Actual Effect</text>
+<text x="745" y="450" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Significantly reduces context usage</text>
+<text x="745" y="474" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Fix accuracy improves significantly</text>
+</svg>

@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 490" width="780" height="490" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<rect x="30" y="65" width="300" height="200" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="180" y="87" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Proposer Agent</text>
+<text x="42" y="113" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Input: Extended paper abstract (2000 words)</text>
+<rect x="40" y="127" width="280" height="124" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="50" y="144.0" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">---</text>
+<text x="50" y="158.0" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">theme: academic</text>
+<text x="50" y="172.0" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">---</text>
+<text x="50" y="186.0" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central"># Transformer Attention Mechanism</text>
+<text x="50" y="200.0" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central"></text>
+<text x="50" y="214.0" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">## Core Idea</text>
+<text x="50" y="228.0" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">- Self-attention computes Q·K^T/√d</text>
+<text x="50" y="242.0" font-family="'Courier New', Courier, monospace" font-size="10.5" fill="#333333" text-anchor="start" dominant-baseline="central">- Multi-head attention parallel processing</text>
+<text x="180" y="255" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Understand content structure → decompose into slide pages</text>
+<rect x="450" y="65" width="300" height="200" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="600" y="87" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Reviewer Agent</text>
+<rect x="460" y="107" width="280" height="38" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="468" y="120" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">① Slidev rendering → PDF/PNG</text>
+<text x="468" y="135" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">② Vision LLM multi-dimensional evaluation</text>
+<rect x="460" y="151" width="280" height="85" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="468" y="165" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Structured feedback:</text>
+<text x="468" y="183" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">Page   Issue Type    Severity</text>
+<text x="468" y="198" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">P3    Content dense  High</text>
+<text x="468" y="213" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">P7    Font too small Medium</text>
+<text x="468" y="228" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">P11   Color mismatch Low</text>
+<text x="600" y="255" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Rendering + visual analysis → actionable improvement suggestions</text>
+<line x1="332" y1="135" x2="448" y2="135" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="390.0" y="123" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Slidev code</text>
+<line x1="448" y1="215" x2="332" y2="215" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="390.0" y="231" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Structured feedback</text>
+<rect x="30" y="290" width="720" height="110" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="390" y="308" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Iterative improvement process</text>
+<rect x="75" y="325" width="190" height="62" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="85" y="339" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Round 1</text>
+<text x="85" y="357" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">12-page draft</text>
+<text x="85" y="375" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">5 issues</text>
+<line x1="269" y1="356" x2="291" y2="356" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="295" y="325" width="190" height="62" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="305" y="339" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Round 2</text>
+<text x="305" y="357" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">14 pages (split dense pages)</text>
+<text x="305" y="375" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">2 issues</text>
+<line x1="489" y1="356" x2="511" y2="356" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<rect x="515" y="325" width="190" height="62" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="525" y="339" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Round 3</text>
+<text x="525" y="357" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">14 pages (font corrected)</text>
+<text x="525" y="375" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">0 issues ✓</text>
+<rect x="30" y="415" width="720" height="90" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="390" y="435" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Why not use a single agent?</text>
+<text x="60" y="460" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Single agent: rendering images ×N rounds → context explosion</text>
+<text x="60" y="478" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">(1080p screenshot = thousands of tokens × 14 pages × 5 rounds)</text>
+<text x="410" y="460" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Dual agent: Reviewer only sees current version</text>
+<text x="410" y="478" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Proposer only accumulates text feedback → clean context</text>
+</svg>

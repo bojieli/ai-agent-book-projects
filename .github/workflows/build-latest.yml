@@ -22,6 +22,7 @@ on:
       - 'book-ar/**'
       - 'book-tr/**'
       - 'book-hu/**'
+      - 'book-he/**'
       - 'build_epub.sh'
       - 'epub.css'
       - 'epub_external_links.lua'
@@ -50,6 +51,7 @@ on:
           - hu
           - ja
           - ar
+          - he
 
 permissions:
   contents: write
@@ -161,7 +163,7 @@ jobs:
         run: |
           set -u
           if [ "$GITHUB_REF" = "refs/heads/main" ] || [ "$EDITION" = "all" ]; then
-            main="book book-zhtw book-en book-es book-id book-ru book-vi book-ta book-ar book-tr book-ko book-hu"
+            main="book book-zhtw book-en book-es book-id book-ru book-vi book-ta book-ar book-tr book-ko book-hu book-he"
             optional="book-ja"
           else
             # workflow_dispatch on a feature branch is a focused edition
@@ -180,6 +182,7 @@ jobs:
               hu) main="book-hu" ;;
               ja) main="book-ja" ;;
               ar) main="book-ar" ;;
+              he) main="book-he" ;;
               *) echo "::error::Unsupported edition: $EDITION"; exit 2 ;;
             esac
             optional=""
