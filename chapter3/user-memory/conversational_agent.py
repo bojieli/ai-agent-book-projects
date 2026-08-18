@@ -261,7 +261,7 @@ You MUST analyze the context, user's questions and memories in detail, and provi
                 logger.info("Streaming response...")
                 
             for chunk in stream:
-                if chunk.choices[0].delta.content:
+                if chunk.choices and chunk.choices[0].delta.content:
                     delta = chunk.choices[0].delta.content
                     assistant_message += delta
                     # Always stream output to show real-time response
