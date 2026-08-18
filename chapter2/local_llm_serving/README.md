@@ -213,8 +213,9 @@ python server.py                            # vLLM (Linux/WSL2 + NVIDIA GPU)
 ollama serve && ollama pull qwen3:0.6b      # Ollama (Mac / no GPU)
 
 # 2. Run benchmark
+# If you use Ollama, add --backend ollama to every command below.
 python benchmark.py --scenario all --output results.json
-python benchmark.py --scenario kv-cache --backend ollama
+python benchmark.py --scenario kv-cache
 python benchmark.py --scenario batching --concurrency 1,2,4,8
 
 python benchmark.py --dry-run
@@ -517,8 +518,9 @@ python server.py                            # vLLM（Linux/WSL2 + NVIDIA GPU）
 ollama serve && ollama pull qwen3:0.6b      # Ollama（Mac / 无 GPU）
 
 # 2. 运行基准
+# 如果使用 Ollama 后端，请在以下每条命令中添加 --backend ollama参数
 python benchmark.py --scenario all --output results.json
-python benchmark.py --scenario kv-cache --backend ollama
+python benchmark.py --scenario kv-cache
 python benchmark.py --scenario batching --concurrency 1,2,4,8
 
 python benchmark.py --dry-run
