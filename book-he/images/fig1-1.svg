@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 450" width="900" height="450" role="img" aria-labelledby="title desc">
+  <title id="title">The Agent–Environment interaction loop</title>
+  <desc id="desc">The Agent contains a Model surrounded by a Harness. The Environment returns observations to the Agent, and the Agent sends actions to the Environment; the Harness mediates the interaction but is not the Environment.</desc>
+  <defs>
+    <marker id="arrow-dark" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <polygon points="0 0, 10 4, 0 8" fill="#333333"/>
+    </marker>
+    <style>
+      .sans { font-family: Arial, "Helvetica Neue", Helvetica, "PingFang SC", "Microsoft YaHei", sans-serif; }
+      .heading { fill: #303030; font-size: 20px; font-weight: 700; }
+      .subheading { fill: #333333; font-size: 17px; font-weight: 700; }
+      .body { fill: #333333; font-size: 15px; }
+      .note { fill: #666666; font-size: 13.5px; }
+      .box { stroke: #3f3f3f; stroke-width: 2; }
+      .flow { fill: none; stroke: #333333; stroke-width: 2.2; marker-end: url(#arrow-dark); }
+    </style>
+  </defs>
+
+  <rect width="900" height="500" fill="#ffffff"/>
+
+  <!-- Agent boundary -->
+  <rect class="box" x="28" y="42" width="432" height="382" rx="12" fill="#ffffff"/>
+  <text class="sans heading" x="50" y="72" dominant-baseline="middle">Agent</text>
+
+  <!-- Harness surrounds the model but remains inside the Agent boundary -->
+  <rect x="58" y="92" width="372" height="300" rx="10" fill="#f3f3f3" stroke="#666666" stroke-width="2" stroke-dasharray="8 4"/>
+  <text class="sans subheading" x="244" y="112" text-anchor="middle" dominant-baseline="middle">Harness (model runtime &amp; interaction layer)</text>
+
+  <rect class="box" x="145" y="130" width="250" height="58" rx="7" fill="#ffffff"/>
+  <text class="sans subheading" x="270" y="151" text-anchor="middle" dominant-baseline="middle">Context</text>
+  <text class="sans note" x="270" y="172" text-anchor="middle" dominant-baseline="middle">observations · history · memory · task state</text>
+
+  <line class="flow" x1="270" y1="190" x2="270" y2="207"/>
+
+  <rect class="box" x="145" y="210" width="250" height="78" rx="8" fill="#d5d5d5"/>
+  <text class="sans heading" x="270" y="236" text-anchor="middle" dominant-baseline="middle">Model</text>
+  <text class="sans body" x="270" y="263" text-anchor="middle" dominant-baseline="middle">understand · reason · choose next action</text>
+
+  <line class="flow" x1="270" y1="290" x2="270" y2="313"/>
+
+  <rect class="box" x="145" y="316" width="250" height="50" rx="7" fill="#ffffff"/>
+  <text class="sans subheading" x="270" y="341" text-anchor="middle" dominant-baseline="middle">Tools &amp; action interfaces</text>
+
+  <text class="sans note" x="244" y="382" text-anchor="middle" dominant-baseline="middle">loop · state management · permissions · verification · correction</text>
+
+  <!-- Environment boundary -->
+  <rect class="box" x="620" y="78" width="252" height="322" rx="12" fill="#eeeeee"/>
+  <text class="sans heading" x="746" y="111" text-anchor="middle" dominant-baseline="middle">Environment</text>
+  <text class="sans note" x="746" y="136" text-anchor="middle" dominant-baseline="middle">state &amp; transition rules</text>
+
+  <rect x="650" y="161" width="192" height="67" rx="7" fill="#ffffff" stroke="#777777" stroke-width="1.7"/>
+  <text class="sans subheading" x="746" y="184" text-anchor="middle" dominant-baseline="middle">Current state</text>
+  <text class="sans note" x="746" y="207" text-anchor="middle" dominant-baseline="middle">new state after action</text>
+
+  <line x1="650" y1="247" x2="842" y2="247" stroke="#b0b0b0"/>
+  <text class="sans body" x="670" y="274" dominant-baseline="middle">file system · database</text>
+  <text class="sans body" x="670" y="304" dominant-baseline="middle">web · APIs · applications</text>
+  <text class="sans body" x="670" y="334" dominant-baseline="middle">users · other Agents</text>
+  <text class="sans body" x="670" y="364" dominant-baseline="middle">simulated or physical world</text>
+
+  <!-- Classic Agent–Environment loop -->
+  <path class="flow" d="M 620 145 H 398"/>
+  <rect x="477" y="119" width="116" height="22" rx="4" fill="#ffffff"/>
+  <text class="sans body" x="535" y="131" text-anchor="middle" dominant-baseline="middle">observation</text>
+
+  <path class="flow" d="M 398 341 H 617"/>
+  <rect x="477" y="311" width="116" height="22" rx="4" fill="#ffffff"/>
+  <text class="sans body" x="535" y="323" text-anchor="middle" dominant-baseline="middle">action</text>
+
+</svg>

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 860 390" width="860" height="390" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="30" y="185" width="110" height="56" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="85.0" y="213.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">User</text>
+<rect x="250" y="95" width="168" height="56" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="334.0" y="114.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Dr. Zhang-A</text>
+<text x="334.0" y="135.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Department: Dentistry</text>
+<rect x="470" y="95" width="150" height="56" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="545.0" y="123.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Renai Stomatology Hospital</text>
+<rect x="680" y="95" width="150" height="56" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="755.0" y="114.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Address</text>
+<text x="755.0" y="135.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">XX Road, Xuhui District</text>
+<rect x="250" y="280" width="168" height="56" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="334.0" y="299.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Dr. Zhang-B</text>
+<text x="334.0" y="320.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Department: Cardiology</text>
+<rect x="470" y="280" width="180" height="56" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="560.0" y="299.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Huashan Hospital</text>
+<text x="560.0" y="320.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Cardiovascular Center</text>
+<line x1="140" y1="205" x2="250" y2="128" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="195.0" y="156.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle">My Dentist</text>
+<line x1="140" y1="222" x2="250" y2="300" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="195.0" y="251.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle">My Cardiologist</text>
+<line x1="418" y1="123" x2="470" y2="123" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="444.0" y="110.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle">Works at</text>
+<line x1="620" y1="123" x2="680" y2="123" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="650.0" y="110.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle">Address</text>
+<line x1="418" y1="308" x2="470" y2="308" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="444.0" y="295.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle">Works at</text>
+<text x="40" y="365" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">· Multi-hop reasoning: “Address of the hospital where my dentist works” follows</text>
+<text x="55" y="381" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">User → Dr. Zhang-A → Renai Stomatology Hospital → Address.</text>
+<text x="40" y="402" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">· Entity disambiguation: relation edges distinguish the two “Dr. Zhang” nodes.</text>
+<text x="55" y="418" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Each edge is a subject–relation–object triple.</text>
+</svg>

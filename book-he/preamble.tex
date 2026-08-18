@@ -1,0 +1,233 @@
+% ===== Hebrew edition preamble (RTL) =====
+% Engine: LuaLaTeX. RTL comes from babel's bidi=basic, which is the most
+% robust modern option (no separate `bidi` package, works inside tcolorbox,
+% tables and floats). The English edition's preamble.tex is XeLaTeX +
+% ElegantBook and is deliberately NOT reused: that class assumes LTR
+% throughout, and its cover/headers fight the bidi algorithm.
+
+% ── Page geometry (roughly matches the English edition's text block) ──
+\usepackage[a4paper, top=2.4cm, bottom=2.4cm, inner=2.6cm, outer=2.2cm]{geometry}
+
+% ── Languages: Hebrew is the main script, English rides along ────────
+% onchar=ids fonts makes every Latin run switch to the English font
+% automatically, so inline terms (LLM, Prompt, Harness…) keep a proper
+% Latin typeface without any markup in the Markdown.
+\usepackage[bidi=basic]{babel}
+\babelprovide[import, main]{hebrew}
+\babelprovide[import, onchar=ids fonts]{english}
+
+% Note: the Hebrew families are pinned to mode=node. Babel defaults them to
+% mode=harf, and luaotfload silently ignores fallback chains in HarfBuzz mode —
+% Latin letters inside Hebrew runs then vanish instead of falling back.
+% ── Fallback chains ──────────────────────────────────────────────────
+% No single font covers this book: Hebrew body text, Latin technical terms,
+% a few hundred arrows and math symbols, and Chinese examples retained from
+% the source chapters. luaotfload fallbacks resolve each character to the
+% first font in the chain that actually has the glyph, which is far more
+% robust than enumerating code points with \newunicodechar.
+\directlua{
+  luaotfload.add_fallback("hebrewchain", {
+    "TeX Gyre Pagella:mode=node;script=latn;",
+    "DejaVu Sans:mode=node;",
+    "Songti SC:mode=node;",
+  })
+  luaotfload.add_fallback("latinchain", {
+    "DavidCLM-Medium.otf:mode=node;",
+    "DejaVu Sans:mode=node;",
+    "Songti SC:mode=node;",
+  })
+  luaotfload.add_fallback("monochain", {
+    "DavidCLM-Medium.otf:mode=node;",
+    "DejaVu Sans:mode=node;",
+    "Songti SC:mode=node;",
+  })
+}
+
+% ── Fonts ────────────────────────────────────────────────────────────
+% Hebrew: David CLM / Nachlieli CLM from the Culmus project (TeX Live), not
+% the macOS Hebrew fonts. macOS ships them as .ttc collections, which force
+% HarfBuzz mode — and luaotfload ignores fallback chains under HarfBuzz, so
+% any character the Hebrew font lacks silently disappears. Culmus ships plain
+% .otf files, which work in node mode and therefore honour the fallbacks.
+% Latin: TeX Gyre Pagella (Palatino) — same face as the English edition.
+\babelfont{rm}[
+  RawFeature = {mode=node;fallback=hebrewchain},
+  Extension = .otf,
+  UprightFont = *-Medium,
+  BoldFont = *-Bold,
+  ItalicFont = *-MediumItalic,
+  BoldItalicFont = *-BoldItalic]{DavidCLM}
+\babelfont{sf}[
+  RawFeature = {mode=node;fallback=hebrewchain},
+  Extension = .otf,
+  UprightFont = *-Light,
+  BoldFont = *-Bold,
+  ItalicFont = *-LightOblique,
+  BoldItalicFont = *-BoldOblique]{NachlieliCLM}
+\babelfont[english]{rm}[
+  RawFeature = {fallback=latinchain},
+  Extension = .otf,
+  UprightFont = *-regular,
+  BoldFont = *-bold,
+  ItalicFont = *-italic,
+  BoldItalicFont = *-bolditalic]{texgyrepagella}
+\babelfont[english]{sf}[
+  RawFeature = {fallback=latinchain},
+  Extension = .otf,
+  UprightFont = *-regular,
+  BoldFont = *-bold,
+  ItalicFont = *-italic,
+  BoldItalicFont = *-bolditalic,
+  Scale = 0.9]{texgyreheros}
+% DejaVu Sans Mono from TeX Live rather than macOS Menlo: Menlo ships as a
+% .ttc collection, which luatex fails to subset ("no glyphs in the subset").
+% DejaVu also covers the box-drawing glyphs used in some code blocks.
+% Monospace is declared with \setmonofont, NOT \babelfont: \babelfont builds a
+% separate instance per language, and inline code inside Hebrew text loads the
+% Hebrew instance while onchar routes the Latin characters to the English one —
+% leaving an empty subset, which LuaTeX treats as a fatal error. Code is always
+% Latin, so one shared family is both correct and safe.
+% DejaVu (TeX Live) rather than macOS Menlo: Menlo is a .ttc collection that
+% luatex fails to subset, and DejaVu covers the box-drawing glyphs in code.
+\setmonofont[
+  RawFeature = {fallback=monochain},
+  Extension = .ttf,
+  UprightFont = *,
+  BoldFont = *-Bold,
+  ItalicFont = *-Oblique,
+  BoldItalicFont = *-BoldOblique,
+  Scale = 0.82]{DejaVuSansMono}
+
+% ── Font primer ──────────────────────────────────────────────────────
+% LuaTeX aborts with "there are no glyphs in the subset" if a declared font
+% variant is never actually typeset — and \babelfont declares a full rm/sf/tt
+% set for BOTH languages, several of which (bold/italic Hebrew monospace, for
+% instance) never occur in this book. Ship one glyph of every variant inside a
+% zero-size, white box so each subset is non-empty and the layout is untouched.
+% (Hebrew variants must be primed with a Hebrew letter: onchar=ids routes any
+% Latin character to the English fonts instead.)
+\newcommand{\fontprimer}{%
+  \sbox0{\color{white}\fontsize{1pt}{1pt}\selectfont
+    א\textbf{א}\textit{א}\textbf{\textit{א}}%
+    \textsf{א}\textsf{\textbf{א}}\textsf{\textit{א}}%
+    \texttt{a}\texttt{\textbf{a}}\texttt{\textit{a}}\texttt{\textbf{\textit{a}}}%
+    \foreignlanguage{english}{a\textbf{a}\textit{a}\textbf{\textit{a}}%
+      \textsf{a}\textsf{\textbf{a}}\textsf{\textit{a}}%
+      \texttt{a}\texttt{\textbf{a}}\texttt{\textit{a}}\texttt{\textbf{\textit{a}}}}}%
+  \hbox to 0pt{\raisebox{0pt}[0pt][0pt]{\usebox0}\hss}%
+}
+
+% ── Glyph coverage ───────────────────────────────────────────────────
+\usepackage{newunicodechar}
+% U+2011 non-breaking hyphen is used throughout the Hebrew text (compounds
+% and figure/table numbers) but is missing from most Hebrew fonts; render it
+% as an ordinary hyphen that simply does not break.
+\newunicodechar{‑}{\mbox{-}}
+\IfFontExistsTF{Arial Unicode MS}{\newfontfamily\fallbackfont{Arial Unicode MS}}%
+                                 {\newfontfamily\fallbackfont{DejaVu Sans}}
+\IfFontExistsTF{Heiti SC}{\newfontfamily\cjkfallback{Heiti SC}}%
+                         {\newfontfamily\cjkfallback{DejaVu Sans}}
+\newunicodechar{←}{{\fallbackfont\char"2190}}
+\newunicodechar{→}{{\fallbackfont\char"2192}}
+\newunicodechar{★}{{\cjkfallback ★}}
+% Han characters survive in a few translation examples (chapter 10).
+\newunicodechar{智}{{\cjkfallback 智}}
+\newunicodechar{能}{{\cjkfallback 能}}
+\newunicodechar{体}{{\cjkfallback 体}}
+\newunicodechar{代}{{\cjkfallback 代}}
+\newunicodechar{理}{{\cjkfallback 理}}
+
+% List bullets: \textbullet resolves to U+2022, which New Peninim MT lacks.
+% Take the bullet from the math font instead (always present) and tint it.
+\renewcommand{\labelitemi}{\textcolor{accent}{\ensuremath{\bullet}}}
+\renewcommand{\labelitemii}{\textcolor{accent}{\ensuremath{\circ}}}
+\renewcommand{\labelitemiii}{\textcolor{accent}{\ensuremath{-}}}
+
+% ── Theme colour (same navy as the English edition) ──────────────────
+\usepackage{xcolor}
+\definecolor{structurecolor}{RGB}{30,58,107}
+\colorlet{accent}{structurecolor}
+\colorlet{accentbg}{structurecolor!6}
+\colorlet{accentrule}{structurecolor!35}
+
+% ── Headings in the theme colour ─────────────────────────────────────
+\usepackage{titlesec}
+\titleformat{\chapter}[display]
+  {\normalfont\sffamily\bfseries\color{structurecolor}}
+  {\Large\chaptertitlename\ \thechapter}{14pt}{\Huge}
+\titleformat*{\section}{\Large\sffamily\bfseries\color{structurecolor}}
+\titleformat*{\subsection}{\large\sffamily\bfseries\color{structurecolor}}
+\titleformat*{\subsubsection}{\normalsize\sffamily\bfseries\color{structurecolor}}
+
+% ── Running footer with page number ──────────────────────────────────
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\color{structurecolor}\small\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\color{structurecolor}\small\thepage}%
+  \renewcommand{\headrulewidth}{0pt}}
+
+% ── Code blocks: wrap long lines, framed box (mirrors the English look) ──
+\usepackage{fvextra}
+\fvset{breaklines=true,breakanywhere=true,%
+  breaksymbolleft={\footnotesize\textcolor{accentrule}{$\hookrightarrow$}\,}}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\},breaklines,breakanywhere}
+
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+\newtcolorbox{codebox}{%
+  breakable, enhanced,
+  colback=black!3, colframe=accentrule,
+  boxrule=0.5pt, leftrule=2.5pt,
+  left=0.7em, right=0.6em, top=0.4em, bottom=0.4em,
+  arc=0.6mm, before skip=0.7em, after skip=0.7em}
+% Code is Latin and must stay left-to-right inside the RTL page; babel's
+% otherlanguage environment flips both the script and the paragraph direction.
+\renewenvironment{Shaded}%
+  {\begin{codebox}\begin{otherlanguage}{english}}%
+  {\end{otherlanguage}\end{codebox}}
+\renewenvironment{verbatim}%
+  {\VerbatimEnvironment\begin{codebox}\begin{otherlanguage}{english}\begin{Verbatim}}%
+  {\end{Verbatim}\end{otherlanguage}\end{codebox}}
+
+% ── Experiment & question callouts (used by experiment_box.lua) ────
+\newtcolorbox{experimentbox}{
+  breakable, enhanced,
+  colback=accentbg, colframe=accent,
+  boxrule=0.6pt, left=0.8em, right=0.8em, top=0.6em, bottom=0.6em,
+  arc=1mm, before skip=0.9em, after skip=0.9em}
+
+\newtcolorbox{questionbox}{
+  breakable, enhanced,
+  colback=accentbg, colframe=accent,
+  boxrule=0.8pt, left=0.9em, right=0.9em, top=0.9em, bottom=0.7em,
+  arc=1.2mm, before skip=0.9em, after skip=0.9em}
+
+% ── Blockquotes (experiment boxes in the Markdown) get a navy side bar ──
+\renewenvironment{quote}{%
+  \begin{tcolorbox}[
+    blanker, breakable,
+    borderline east={2.5pt}{0pt}{accent},
+    colback=accent!4,
+    left=0.6em, right=1em, top=0.5em, bottom=0.5em,
+    before skip=0.6em, after skip=0.6em]%
+}{%
+  \end{tcolorbox}%
+}
+
+% ── Figures: force [H] so they stay inside their callout boxes ────────
+\usepackage{float}
+\let\origfigure\figure
+\let\origendfigure\endfigure
+\renewenvironment{figure}[1][htbp]{\origfigure[H]}{\origendfigure}
+\setkeys{Gin}{width=\linewidth,height=0.38\textheight,keepaspectratio}
+
+% ── Captions: the figure number is part of the caption text ──────────
+\usepackage{caption}
+% singlelinecheck=false: the check measures the caption in an \hbox, which
+% overflows under the bidi algorithm ("Dimension too large") for RTL captions.
+\captionsetup{font={normalsize,sf,bf}, labelformat=empty, skip=4pt,
+              justification=centering, singlelinecheck=false}
+
+\setlength{\parindent}{1.5em}
