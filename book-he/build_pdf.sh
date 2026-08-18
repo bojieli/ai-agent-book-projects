@@ -6,8 +6,8 @@
 # that mixes Hebrew body text with Latin terms, code and URLs.
 #
 # Requirements: pandoc, lualatex + the packages listed in preamble.tex,
-#               rsvg-convert (librsvg) for the SVG figures,
-#               macOS Hebrew fonts (New Peninim MT, Arial Hebrew).
+#               rsvg-convert (librsvg) for the SVG figures, and the Culmus
+#               fonts shipped with TeX Live (David CLM / Nachlieli CLM).
 # Usage: cd book-he && bash build_pdf.sh
 #
 # Figures live in book-he/images/. They are currently the English figure set:

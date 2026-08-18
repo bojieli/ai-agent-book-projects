@@ -48,13 +48,22 @@ html[xml\:lang="ko"] body {
                sans-serif;
 }
 
-/* ── Arabic / RTL edition ──────────────────────────────────────────────── */
+/* ── RTL editions ─────────────────────────────────────────────────────── */
 
-html[dir="rtl"] body,
+html[dir="rtl"] body {
+  text-align: right;
+}
+
 html[lang="ar"] body,
 html[xml\:lang="ar"] body {
   text-align: right;
   font-family: "Noto Naskh Arabic", Amiri, "Noto Sans Arabic",
+               system-ui, sans-serif;
+}
+
+html[lang="he"] body,
+html[xml\:lang="he"] body {
+  font-family: "Noto Sans Hebrew", "Arial Hebrew", "David Libre",
                system-ui, sans-serif;
 }
 
