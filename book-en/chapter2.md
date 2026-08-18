@@ -974,7 +974,7 @@ The previous sections discussed what to include in context: prompt engineering d
 
 ### Why Compression Is Needed: Not Just a Length Issue
 
-Context compression has two distinct motivations. Understanding both is crucial for designing an effective compression strategy.
+Context compression has three distinct motivations. Understanding all three is crucial for designing an effective compression strategy.
 
 **First, addressing length and cost constraints.** This is the most intuitive reason: the context window is limited (e.g., 128K tokens), tool call results routinely run to tens of thousands of characters, and a few rounds of interaction can fill the window and cut the task short. More tokens also mean higher API costs and sharply higher inference latency.
 
@@ -983,6 +983,10 @@ Context compression has two distinct motivations. Understanding both is crucial 
 Consider a concrete example: during a complex task, an Agent accumulates information on a topic through 10 web searches. These search results are scattered in their raw form throughout the context—the results from round 2 are near the beginning, and the results from round 9 are near the end. When the Agent must make a final decision from all this information, it has to retrieve relevant fragments scattered across tens of thousands of tokens. Its attention becomes diffuse, and it can easily miss key information.
 
 After the 10th search, however, a single LLM call could produce a structured summary of the accumulated information: "Currently known: A is..., B is..., information on C is still missing." The model can then use this refined knowledge representation in subsequent reasoning, without re-extracting it from the raw data.
+
+**Third, mitigating the model's context anxiety**[^ch2-7]. When a model believes its context window is about to run out, it may start wrapping up before the task is complete. Compressing the context well before the window is close to full may improve the quality of the model's decisions.
+
+[^ch2-7]: Prithvi Rajasekaran, [“Harness design for long-running application development”](https://www.anthropic.com/engineering/harness-design-long-running-apps), Anthropic Engineering, 2026.
 
 ### The Internal Mechanism of In-Context Learning: Retrieval, Not Reasoning
 
@@ -1060,7 +1064,7 @@ The experiment above demonstrates the performance differences among compression 
 
 ### Design Principles for Compression Strategies
 
-We have already analyzed the two motivations for compression—controlling length and improving reasoning quality—and the internal mechanism by which “in-context learning is essentially retrieval.” On that basis, we can distill four principles to guide the design of specific compression strategies. The compression discussed here serves the current task; when trajectories from multiple tasks must be consolidated offline into persistent experience, the problem becomes one of continuous evolution, as discussed in Chapter 9.
+We have already analyzed the three motivations for compression—controlling length, improving reasoning quality, and mitigating context anxiety—and the internal mechanism by which “in-context learning is essentially retrieval.” On that basis, we can distill four principles to guide the design of specific compression strategies. The compression discussed here serves the current task; when trajectories from multiple tasks must be consolidated offline into persistent experience, the problem becomes one of continuous evolution, as discussed in Chapter 9.
 
 - **Non-Uniform Distribution of Information Value**: Key decision points, such as personnel lists, have greater value than supporting evidence, such as news details; supporting evidence, in turn, has greater value than redundant noise, such as navigation bars and footer ads.
 - **Semantic Integrity**: "Sutskever left OpenAI in May 2024" cannot be compressed to "Sutskever left"—the time and company name are critical, non-negotiable information.

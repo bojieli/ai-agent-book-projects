@@ -975,7 +975,7 @@ Bagian-bagian sebelumnya membahas apa yang perlu disertakan dalam context: promp
 
 ### Mengapa Kompresi Diperlukan: Bukan Semata Isu Kepanjangan
 
-Kompresi context dipicu oleh dua motivasi tersendiri. Mengerti keduanya sangatlah krusial untuk merancang strategi kompresi yang efektif.
+Kompresi context dipicu oleh tiga motivasi tersendiri. Memahami ketiganya sangatlah krusial untuk merancang strategi kompresi yang efektif.
 
 **Pertama, mengatasi batas panjang dan biaya.** Context window memiliki kapasitas terbatas (misalnya, 128K token), sedangkan hasil pemanggilan tool sering mencapai puluhan ribu karakter. Beberapa putaran interaksi saja dapat memenuhi jendela tersebut dan menghentikan tugas sebelum selesai. Semakin banyak token juga berarti biaya API yang lebih tinggi dan latensi inferensi yang meningkat tajam.
 
@@ -984,6 +984,10 @@ Kompresi context dipicu oleh dua motivasi tersendiri. Mengerti keduanya sangatla
 Pertimbangkan contoh konkret: saat mengerjakan tugas kompleks, sebuah Agent mengumpulkan informasi tentang suatu topik melalui sepuluh pencarian web. Hasil pencarian mentah tersebut tersebar di seluruh context—hasil putaran kedua berada dekat bagian awal, sedangkan hasil putaran kesembilan berada dekat bagian akhir. Ketika Agent harus mengambil keputusan akhir berdasarkan seluruh informasi itu, ia perlu menemukan kembali potongan-potongan relevan yang tersebar di antara puluhan ribu token. Perhatiannya menjadi terpencar dan informasi penting mudah terlewat.
 
 Namun, setelah pencarian kesepuluh, satu panggilan LLM dapat menghasilkan ringkasan terstruktur dari informasi yang terkumpul: "Yang diketahui saat ini: A adalah..., B adalah..., sedangkan informasi tentang C masih belum tersedia." Model kemudian dapat menggunakan representasi pengetahuan yang telah dirapikan ini dalam penalaran berikutnya tanpa harus mengekstraknya kembali dari data mentah.
+
+**Ketiga, meredakan kecemasan context (Context Anxiety) pada model**[^ch2-7]. Ketika model menganggap context window akan segera habis, model dapat mulai menuntaskan pekerjaan sebelum tugas selesai. Melakukan kompresi context jauh sebelum jendela mendekati batasnya dapat meningkatkan kualitas keputusan model.
+
+[^ch2-7]: Prithvi Rajasekaran, [“Harness design for long-running application development”](https://www.anthropic.com/engineering/harness-design-long-running-apps), Anthropic Engineering, 2026.
 
 
 ### Mekanisme Internal In-Context Learning: Retrieval, Bukan Penalaran
@@ -1060,7 +1064,7 @@ Eksperimen di atas menunjukkan perbedaan kinerja antarstrategi kompresi. Dalam p
 
 ### Prinsip Desain untuk Strategi Kompresi
 
-Kita telah membahas alasan kompresi—membatasi panjang dan meningkatkan penalaran—serta sifat dasar in-context learning sebagai "pencarian (retrieval)". Kita dapat menyimpulkan empat prinsip desain kompresi. Kompresi melayani tugas saat ini; jika riwayat dari berbagai tugas digabungkan secara offline, ini disebut evolusi berkelanjutan (Bab 9).
+Kita telah membahas tiga alasan kompresi—membatasi panjang, meningkatkan penalaran, dan meredakan kecemasan context—serta sifat dasar in-context learning sebagai "pencarian (retrieval)". Kita dapat menyimpulkan empat prinsip desain kompresi. Kompresi melayani tugas saat ini; jika riwayat dari berbagai tugas digabungkan secara offline, ini disebut evolusi berkelanjutan (Bab 9).
 
 - **Distribusi Nilai Informasi Tidak Seragam**: Titik keputusan kunci seperti daftar personil lebih penting daripada detail berita. Detail berita lebih penting daripada noise seperti bar navigasi.
 - **Integritas Semantik**: "Sutskever meninggalkan OpenAI pada Mei 2024" tak boleh disingkat jadi "Sutskever pergi". Waktu dan nama adalah hal mutlak.

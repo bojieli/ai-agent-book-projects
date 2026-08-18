@@ -975,7 +975,7 @@ Az előző szakaszok arról szóltak, mit vegyünk fel a kontextusba: a prompt t
 
 ### Miért Van Szükség Tömörítésre: Nem Csak Hosszkérdés
 
-A kontextustömörítésnek két különálló motivációja van. Mindkettő megértése kulcsfontosságú a hatékony tömörítési stratégia kialakításához.
+A kontextustömörítésnek három különálló motivációja van. Mindhárom megértése kulcsfontosságú a hatékony tömörítési stratégia kialakításához.
 
 **Először is, a hossz- és költségkorlátok kezelése.** Ez a legintuitívabb ok: a kontextusablak korlátozott (pl. 128K token), az eszközhívási eredmények rutinszerűen több tízezer karaktert tesznek ki, és néhány kör interakció megtöltheti az ablakot, megszakítva a feladatot. A több token magasabb API költségeket és drámaian magasabb következtetési késleltetést is jelent.
 
@@ -984,6 +984,10 @@ A kontextustömörítésnek két különálló motivációja van. Mindkettő meg
 Vegyünk egy konkrét példát: egy összetett feladat során egy ügynök 10 webes keresésen keresztül gyűjt információt egy témáról. Ezek a keresési eredmények nyers formájukban szétszórva vannak a kontextusban – a 2. kör eredményei az elején, a 9. kör eredményei a végén vannak. Amikor az ügynöknek mindebből az információból kell végső döntést hoznia, több tízezer token között kell megtalálnia a releváns töredékeket. A figyelme szétszóródik, és könnyen figyelmen kívül hagyhat kulcsfontosságú információkat.
 
 A 10. keresés után azonban egyetlen LLM hívással strukturált összefoglaló készíthető a felhalmozott információkból: "Jelenleg ismert: A..., B..., a C-ről szóló információ még hiányzik." A modell ezt a finomított tudásreprezentációt használhatja a későbbi érvelésben, anélkül, hogy újra kivonná a nyers adatokból.
+
+**Harmadszor, a modell kontextusszorongásának (Context Anxiety) enyhítése**[^ch2-7]. Amikor a modell úgy véli, hogy a kontextusablak hamarosan kimerül, a feladat befejezése előtt elkezdheti lezárni a munkát. Ha a kontextust jóval az ablak kimerülése előtt tömörítjük, javulhat a modell döntéseinek minősége.
+
+[^ch2-7]: Prithvi Rajasekaran, [“Harness design for long-running application development”](https://www.anthropic.com/engineering/harness-design-long-running-apps), Anthropic Engineering, 2026.
 
 
 ### A Kontextuson Belüli Tanulás Belső Mechanizmusa: Visszakeresés, Nem Érvelés
@@ -1063,7 +1067,7 @@ A fenti kísérlet bemutatja a tömörítési stratégiák közötti teljesítm�
 
 ### Tömörítési Stratégiák Tervezési Elvei
 
-Már elemeztük a tömörítés két motivációját – a hossz szabályozása és az érvelés minőségének javítása – valamint azt a belső mechanizmust, hogy "a kontextuson belüli tanulás lényegében visszakeresés." Ennek alapján négy elvet desztillálhatunk, amelyek irányítják a konkrét tömörítési stratégiák tervezését. Az itt tárgyalt tömörítés a jelenlegi feladatot szolgálja; amikor több feladatból származó trajektóriákat kell offline konszolidálni tartós tapasztalattá, a probléma folyamatos evolúcióvá válik, amelyet a 9. fejezet tárgyal.
+Már elemeztük a tömörítés három motivációját – a hossz szabályozását, az érvelés minőségének javítását és a kontextusszorongás enyhítését – valamint azt a belső mechanizmust, hogy "a kontextuson belüli tanulás lényegében visszakeresés." Ennek alapján négy elvet desztillálhatunk, amelyek irányítják a konkrét tömörítési stratégiák tervezését. Az itt tárgyalt tömörítés a jelenlegi feladatot szolgálja; amikor több feladatból származó trajektóriákat kell offline konszolidálni tartós tapasztalattá, a probléma folyamatos evolúcióvá válik, amelyet a 9. fejezet tárgyal.
 
 - **Az Információérték Nem Egyenletes Eloszlása**: A kulcsfontosságú döntési pontok, mint a személyi listák, nagyobb értékkel bírnak, mint a támogató bizonyítékok, mint a hírrészletek; a támogató bizonyítékok nagyobb értékkel bírnak, mint a redundáns zaj, mint a navigációs sávok és lábléc hirdetések.
 - **Szemantikai Integritás**: "Sutskever elhagyta az OpenAI-t 2024 májusában" nem tömöríthető "Sutskever elhagyta" formára – az idő és a cég neve kritikus, nem alku tárgyát képező információ.
