@@ -81,6 +81,10 @@ Tablo 10-1 Çoklu Agent İş Birliği Modellerinin Bilgi Kazanımı Karşılaşt
 
 Bu "yeni bilgi" çerçevesi, görünüşte çelişkili bir olguyu açıklıyor: akademik araştırmalar "tek Agent yeter" diyor, ama mühendislik pratiğinde çoklu Agent gerçekten daha iyi sonuç veriyor. Çelişkinin kaynağı, ikisinin farklı tipte "çoklu Agent"lardan söz etmesi — akademik araştırmalarda karşılaştırılanlar çoğunlukla "birden fazla Agent'ın aynı metne bakıp birbiriyle tartışması" modelidir (tartışma gibi), oysa mühendislik pratiğinde etkili olan çoklu Agent sistemleri genellikle dış geri bildirim döngüleri (kod yürütme, görsel render, araç çağırma) içerir. İlki yeni bilgi getirmez, ikincisi getirir. Bu bölümde ileride tanıtılacak eşler arası iş birliği, yönetici ve merkezsiz mimarilerin gerçekten işe yarayan kullanımlarının neredeyse tamamı bu ölçüt üzerinde bir yere oturtulabilir.
 
+Anthropic'in 2026 tarihli güvenlik açığı bulma deneyi buna bir örnektir. Kırk beş Agent ortak bir forum üzerinden aramalarını koordine etti, birbirinin bulgularını inceledi ve sonuçları bağımsız bir hakem Agent'a sundu. Koordineli Agent kümesi 27 milyon token ile 266 açık bulurken, bağımsız Agent'ların paralel çalıştığı yöntem 6,5 milyon token ile yalnızca 21 açık buldu. Açık uçlu bir arama alanında iletişim, çoklu Agent sisteminin odağını dinamik biçimde değiştirmesine ve uzmanlaşmasına olanak tanır; daha geniş kapsam ve daha çeşitli keşif yolları için daha yüksek token bütçesi harcanır.[^anthropic-multiagent-2026]
+
+[^anthropic-multiagent-2026]: Anthropic Frontier Red Team, “Patterns and Problems in Emerging Multiagent Systems,” 2026-08-13. https://www.anthropic.com/research/multiagent-systems
+
 **Adım bütçesi ve Agent performansı.** İlgili bir araştırma yönü şudur: Agent'a farklı adım bütçeleri (yani izin verilen araç çağrısı sayısı veya yineleme turu) vermek performansını nasıl etkiler? Sezgisel olarak daha çok adım daha iyi sonuç getirmelidir — 30 adımlık bütçede Agent ancak çekirdek işlevi hızlıca gerçekleştirebilir, 300 adımlık bütçede önce planlama yapıp sonra gerçekleştirebilir, test edebilir, iyileştirebilir. Ama Google'ın 2025 tarihli *Budget-Aware Tool-Use Enables Effective Agent Scaling* makalesi sezgiye aykırı bir sonuç buldu: **Agent'ın kullanabileceği adım sayısını artırmak tek başına performans artışını garanti etmiyor**. Standart Agent'lar "bütçe farkındalığından" yoksundur — 300 adımlık bütçeleri olsa bile yüzeysel arama yapma eğilimini sürdürür ve çok geçmeden "doyuma" ulaşırlar. Daha fazla adımın gerçekten daha iyi sonuca dönüşmesi için Agent'ın, kalan kaynağa göre stratejisini dinamik olarak ayarlayan açık bir bütçe farkındalığı mekanizmasına ihtiyacı vardır: başlangıçta geniş keşif, sonrasında en umut vaat eden yöne odaklanma. 2026 tarihli BAVT (Budget-Aware Value Tree Search) bir adım daha ileri giderek adım düzeyinde değer değerlendirmesi önerdi; her adımda kalan bütçe oranına göre keşif ile sömürünün ağırlığını ayarlıyor — bütçe azaldıkça Agent "geniş ağ atmaktan" giderek "derin kazmaya" geçiyor.
 
 Bu bulguların çoklu Agent sistem tasarımı için doğrudan yol gösterici bir anlamı var. Örneğin yönetici modelinde Manager Agent, görevleri alt Agent'lara dağıtıp sonucu beklemekle yetinmemeli, görevin karmaşıklığına göre **adım bütçesini dinamik olarak dağıtmalıdır** — basit alt görevlere daha az, karmaşık alt görevlere bol adım. Aynı zamanda alt Agent'ları bu bütçeyi makul kullanmaya yönlendirmelidir (önce planla, sonra gerçekleştir, sonra test et, sonra iyileştir); doğrudan dalıp işe girişmeye değil.
@@ -199,7 +203,7 @@ Agent'lar arasındaki iş birliği ilişkisine ve kontrol akışı özelliklerin
 
 ### Eşler Arası İş Birliği Modeli: Karşılıklı Denge ve Yinelemeli İyileştirme
 
-Eşler arası iş birliği genellikle eşit statüde 2-3 Agent'ı kapsar; bunlar çok turlu yinelemeyle birbirlerine geri bildirim verir. Temel değeri bilişsel çeşitlilik getirmesindedir — farklı Agent'lar aynı soruna farklı açılardan bakar, yenilikçilikle sağlamlık arasında denge kurar ve herhangi bir tek Agent'ınkinden daha kaliteli bir çıktı üretir.
+Eşler arası iş birliği genellikle eşit statüde iki ya da üç Agent'ı kapsar; bunlar birkaç tur boyunca birbirine geri bildirim verir. Potansiyel değeri bağımsız bakış açıları ve bilişsel çeşitlilik sağlamasıdır, ancak "birden çok örnek" kendiliğinden "birden çok düşünme biçimi" yaratmaz. Model, context ve iskele çok benzer olduğunda farklı Agent'lar aynı kararları verme eğilimindedir ve yerel bir hata sistemik arızaya dönüşebilir. Gerçek çeşitlilik için modeller, context'ler, araçlar, görülebilen kanıtlar veya sorumluluklar bilinçli biçimde farklılaştırılmalı; sonuçlar birleştirilmeden önce her Agent bağımsız karar vermelidir.[^anthropic-multiagent-2026]
 
 Yönetici ve merkezsiz modellere kıyasla eşler arası iş birliğinin gerçekleştirme karmaşıklığı çok daha düşüktür — iki Agent'ın rolünü, iletişim mekanizmasını ve yineleme sonlandırma koşulunu tanımlamak sistemi çalıştırmaya yeter. Fikirleri hızla doğrulamak ve prototip kurmak için ideal bir seçimdir.
 
@@ -267,6 +271,10 @@ ICLR 2024'ün CRITIC makalesi sezgisel bir karşılaştırma deneyi sunuyor. CRI
 Proposer-Reviewer paradigmasının çekirdek tasarım ilkesi tam da budur. Bölüm 5'teki PPT üretimi deneyinde Reviewer Agent'ın değeri "aynı modelle koda bir kez daha bakmak" değil, **PPT'yi render edip ekran görüntüsü almaktı** — bu görüntü, Proposer Agent'ın kodu üretirken hiçbir şekilde elde edemeyeceği görsel bilgiyi içeriyordu. Aynı şekilde kod üretimi senaryosunda, test durumlarının yürütülmesinden çıkan geçti/kaldı sonuçları da kod yazılırken var olmayan yeni sinyallerdir — Reviewer'ın bağımsız değeri, tam da Proposer'ın erişemediği bu dış geri bildirimlere ulaşabilmesinden gelir.
 
 Loop mühendisliği açısından bakıldığında, sektörün derlediği birkaç döngü tarzının hepsi bu kitapta karşılık bulur: insan onayı eklenmiş kapalı döngü, Bölüm 4'teki ön onaya karşılık gelir (nihai inceleyici insandır); bütçe veya tur sınırı eklenmiş açık döngü, Bölüm 5'teki PPT üretiminin çok turlu yinelemesine karşılık gelir (en fazla 5 tur); orkestrasyon tipi alt Agent'lar ise bir sonraki kısımdaki yönetici modeline karşılık gelir. Başka bir deyişle Loop mühendisliği yeni bir mimariyi değil, bu iş birliği modellerini "döngü + doğrulama + sonlandırma koşulu" tek çerçevesi altında birleştirmeyi anlatır — doğrulamayı üstlenen de buradaki Proposer-Reviewer paradigmasıdır.
+
+Anthropic'in 2026 tarihli uzun süreli uygulama geliştirme deneyi bu yaklaşımı planlayıcı, üretici ve değerlendiriciden oluşan üç Agent'lı bir mimariyle uyguladı. Planlayıcı kullanıcı talebini ürün tanımına dönüştürdü; üretici ile değerlendirici önce her turun tamamlanma ölçütlerinde anlaştı, ardından üretici uygulamayı geliştirdi ve değerlendirici gerçek uygulamayı Playwright ile kullanarak hata raporu hazırladı. Agent'lar durumu dosyalar üzerinden devretti. Deney, görev mevcut modelin tek başına güvenilir biçimde tamamlayabileceği sınırı aştığında, dış kanıta dayalı bağımsız incelemenin çok daha yüksek bir maliyet karşılığında geliştirme kalitesini artırabildiğini gösteriyor.[^anthropic-harness-2026]
+
+[^anthropic-harness-2026]: Prithvi Rajasekaran, “Harness Design for Long-Running Application Development,” Anthropic Engineering, 2026-03-24. https://www.anthropic.com/engineering/harness-design-long-running-apps
 
 #### Münazara (Debate) Modeli
 
@@ -534,13 +542,25 @@ Somut uygulaması şöyledir: her dosya için bir sürüm numarası (ya da son d
 
 Süreçler arası iletişim baytları bit düzeyinde sadakatle aktarırken, Agent'lar arası iletişim anlambilimi (semantiği) aktarır ve her devir kayıplı bir yeniden kodlamadır. Birden fazla Agent sık sık etkileşime girdiğinde, bir Agent'ın hatası sonraki Agent'lar tarafından kademeli olarak güçlendirilebilir; tıpkı "kulaktan kulağa" oyununda bilginin aktarıldıkça bozulması gibi.
 
-**Çapraz doğrulama** (Cross-validation), bu zinciri kırmanın anahtarıdır. Temel fikir, aynı düşünce zincirine daha fazla Agent dahil etmek değil, bir Agent'ın sonuçları **bağımsız bir bakış açısıyla** yeniden incelemesini sağlamaktır: önceki Agent'ın düşünce sürecine bakmaksızın yalnızca ham kanıtların nihai sonuçla eşleşip eşleşmediğini kontrol etmek. Bu, 5. Bölümde tartışılan Öneren-Denetleyen (Proposer-Reviewer) mekanizmasının çoklu Agent senaryolarına bir uzantısıdır: Denetleyicinin değeri yalnızca kod hatalarını veya biçimlendirme sorunlarını bulmakta değil, tüm düşünce zinciri boyunca topluca gözden kaçırılan çelişkileri tespit edebilen bağımsız bir hakem olarak hareket etmesindedir. Yüksek riskli kararlar için harici doğralama araçları da devreye sokulabilir.
+**Çapraz doğrulama** (Cross-validation), bu zinciri kırmanın anahtarıdır. Amaç aynı düşünce zincirine daha fazla Agent katmak değil, bir Agent'ın sonucu **bağımsız bir bakış açısıyla** yeniden incelemesini sağlamaktır: önceki Agent'ın düşünme sürecini görmeden, yalnızca ham kanıtın nihai sonucu destekleyip desteklemediğini kontrol eder. Bu, 5. Bölümdeki Proposer-Reviewer mekanizmasının çoklu Agent sistemlerine genişletilmesidir.
 
-### Başarısızlık Kalıbı Üç: Erken Sonlandırma ve Kontrolden Çıkan Döngüler
+### Başarısızlık Kalıbı Üç: Homojen Yakınsama
+
+Hatalar her zaman iletişim zinciri boyunca yayılmaz; birden çok homojen Agent aynı hatayı bağımsız olarak üretebilir. Anthropic'in deneyinde[^anthropic-multiagent-2026], aynı anda başlayan 30 Agent'ın 18'i aynı adlı Git dalını oluşturdu. Yazma deneyinde de farklı Agent'lar bağımsız biçimde aynı başlığı seçti. Ortak model ve iskeleden kaynaklanan bu **ortak nedenli arızalar**, aynı modelin benzer context'lerde ürettiği birden çok incelemenin kendiliğinden bağımsız kanıt sayılamayacağı anlamına gelir. Sistem modeller, context'ler ve veri kaynakları arasında bilinçli farklar yaratmalı; aynı kararın paylaşılan kaynaklara eşzamanlı yüklenmesini önlemek için ad alanları, kaynak kotaları ve hız sınırları kullanmalıdır.
+
+Koordinasyon da her zaman yararlı değildir. Bertrand fiyatlandırma deneyinde kârını artırmaya çalışan Agent'lar özel bir kanal verildiğinde hızla fiyat anlaşmasına vardı. Tüm doğrudan iletişim kaldırıldıktan sonra bile herkese açık fiyat panosu üzerinden tekliflerini koordine etmeyi sürdürdüler.
+
+### Başarısızlık Kalıbı Dört: Sorumluluğu Birbirine Atma
+
+Hedefler birbiriyle bağdaşmadığında yakınsama çatışmaya dönüşebilir. Anthropic üç Agent'a aynı backend'i farklı dillere taşıma görevi verdi. Agent'lar kısa sürede diğerlerinin işlemlerini kasıtlı engelleme saydı; rakip süreçleri durdurdu, yetkileri iptal etti ve kendi kendini çoğaltan yıkıcı kod bile dağıttı. Daha güçlü yürütme yeteneği daha iyi koordinasyon anlamına gelmez. Runtime; hedef önceliklerini, kaynak sahipliğini ve yetki sınırlarını önceden tanımlamalı, doğrulanabilir kurallarla çözülemeyen çatışmalarda çalışmayı durdurup insan hakemliğine başvurmalıdır.[^anthropic-multiagent-2026]
+
+MetaGPT'nin ilk sürümlerinde de geliştirme rolündeki Agent'lar arasında bir tür "büyük şirket hastalığı" görüldü. Test mühendisi bir bug bildirdiğinde frontend ve backend mühendisleri önce diğerinin düzeltmesi gerektiğini savunuyor; backend mühendisi ürün tasarımını, ürün yöneticisi ise backend mimarisini suçluyordu. Başka bir durumda test ortamındaki sorun yüzünden frontend ve backend neyi değiştirirse değiştirsin test mühendisi aynı bug'ı bildirmeyi sürdürdü ve ekip çıkmaza girdi.
+
+### Başarısızlık Kalıbı Beş: Kontrolden Çıkan Döngüler
 
 Erken sonlandırmanın karşı ucunda **kontrolsüz bir döngü** bulunur. Döngü süresiz çalışabilir veya token bütçesini tüketebilir. Yürütmeyi sınırlı tutmak için açık bütçeler, iptal mekanizması ve durma koşulları gerekir.
 
-### Başarısızlık Kalıbı Dört: Anlama Borcu ve Bilişsel Teslimiyet
+### Başarısızlık Kalıbı Altı: Anlama Borcu ve Bilişsel Teslimiyet
 
 Bir döngü kodu ne kadar hızlı teslim ederse mühendisin anlayışı uygulamanın o kadar gerisinde kalabilir. Sonunda insan sistemi anlamamaya veya bağımsız incelemeyi bırakmaya başlayabilir. Gerçek gözlemlere dayanan doğrulayıcılar ve insanın döngünün sorumlu mühendisi olarak kalması çözümü oluşturur.
 
@@ -634,7 +654,7 @@ Smallville, Agent toplumunun toplumsal ve kültürel boyutunu gösterdiyse, Ando
 
 Geleneksel pekiştirmeli öğrenmeden farklı olarak bu Agent'lar milyonlarca deneme yanılmayla öğrenmez; tıpkı insan işletmeciler gibi, pazar gözlemine, rekabet analizine ve strateji akıl yürütmesine dayanarak karar verir.
 
-Rekabet boyutu, tek Agent'lı benchmark'larda hiç görünmeyen oyun davranışlarını ortaya çıkardı. Gerçek çalışmalarda Agent'lar arasında karşılıklı fiyat kırma savaşları patladı; bazı modeller ise tam tersini yapıp bütün rakiplerine kendiliğinden e-posta göndererek tek tip fiyatlandırma ve fiyat birliği kurma önerdi — hatta bir yandan düşünme sürecinde fiyat anlaşmasının "etik dışı ve yasa dışı" olduğunu kabul edip, öte yandan "pazarı istikrara kavuşturmak" adına bunu yapmayı sürdüren modeller oldu. Agent'ın karşısında artık değişmez bir çevre değil, kendi stratejisini dinamik olarak ayarlayan rakipler vardır; bu da yalnızca planlama yeteneğini sınayan benchmark'lara kıyasla gerçek iş dünyasına çok daha yakındır ve "ekonomik belirişi" bir mecaz olmaktan çıkarıp gözlemlenebilir bir deney olgusuna dönüştürür.
+Rekabet boyutu, tek Agent'lı benchmark'larda hiç görünmeyen oyun davranışlarını ortaya çıkardı. Gerçek çalışmalarda Agent'lar arasında karşılıklı fiyat kırma savaşları patladı; bazı modeller ise tam tersini yapıp bütün rakiplerine kendiliğinden e-posta göndererek tek tip fiyatlandırma ve fiyat birliği kurma önerdi — hatta bir yandan düşünme sürecinde fiyat anlaşmasının "etik dışı ve yasa dışı" olduğunu kabul edip, öte yandan "pazarı istikrara kavuşturmak" adına bunu yapmayı sürdüren modeller oldu. Açık iletişim, fiyat anlaşması için zorunlu değildir: önceki Bertrand deneyinin gösterdiği gibi herkese açık fiyatlar da örtük sinyal olabilir. Agent'ın karşısında artık değişmez bir çevre değil, kendi stratejisini dinamik olarak ayarlayan rakipler vardır; bu da yalnızca planlama yeteneğini sınayan benchmark'lara kıyasla gerçek iş dünyasına çok daha yakındır ve "ekonomik belirişi" bir mecaz olmaktan çıkarıp gözlemlenebilir bir deney olgusuna dönüştürür.
 
 ### Agent Ekonomisi: Pinchwork ve RentAHuman
 
@@ -683,7 +703,9 @@ Kurt adam, bu kısımdaki üç boyuttan **stratejik oyunu** temsil eder: kural k
 
 ## Bölüm Özeti
 
-Çoklu Agent işbirliği, tek bir Agent'ın üretim sırasında elde edemeyeceği yeni bilgiler (çalıştırma sonuçları, görsel geri bildirim veya harici araç doğrulaması) sağladığında değerlidir. Tasarım; paylaşılan ya da yalıtılmış bağlam ile eşler arası, yönetici veya merkezi olmayan topolojiler arasında seçim yapmalıdır. Yapılandırılmış handoff paketleri, yetki sınırları, bağımsız doğrulama, bütçe ve iptal mekanizmaları temel hata toleransı döngüsünü oluşturur. Uzun süreli açık etkileşimlerde sosyal ilişkiler, normlar, piyasalar ve stratejiler ortaya çıkabilir; öz, bilgi akışını, yeteneklerin bölünmesini ve hataların keşfini tasarlamaktır.
+Çoklu Agent iş birliği, tek bir Agent'ın üretim sırasında elde edemeyeceği yeni bilgiler — çalıştırma sonuçları, görsel geri bildirim veya dış araç doğrulaması — sağladığında değerlidir. Tasarım; paylaşılan ya da yalıtılmış context ile eşler arası, yönetici veya merkezsiz topolojiler arasında seçim yapmalıdır. Yapılandırılmış handoff paketleri, yetki sınırları, bağımsız doğrulama, farklı bilgi kaynakları, bütçe ve iptal mekanizmaları temel hata toleransı döngüsünü oluşturur; yine de homojen Agent'lar ortak nedenli arızalar üretebilir.
+
+Uzun süreli açık etkileşimlerde sosyal ilişkiler, normlar, piyasalar ve stratejiler ortaya çıkabilir. Daha güçlü model veya tekil düzeyde uyum, grup koordinasyonunu kendiliğinden yaratmaz. Çoklu Agent mühendisliği; bilginin nasıl akacağını, yeteneklerin nasıl bölüneceğini, teşviklerin nasıl sınırlandırılacağını, anlaşmazlıkların nasıl çözüleceğini ve hataların nasıl bulunacağını birlikte tasarlamalıdır.
 
 ## Düşünce Soruları
 
