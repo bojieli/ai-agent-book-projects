@@ -23,9 +23,7 @@ Các chương trước mở rộng **nội dung** của hai không gian này, c�
 
 Mệnh đề cốt lõi của chương này có thể nén thành một câu: **lượt phiên là giả định do huấn luyện để lại, không phải tính chất của môi trường.**
 
-Ngữ liệu huấn luyện của mô hình gần như toàn bộ đều theo lượt — sau câu hỏi là câu trả lời, sau lệnh gọi công cụ là kết quả công cụ, một bên nói xong bên kia mới mở lời. Vì thế chính sách mà mô hình học được mặc định rằng thế giới sẽ chờ nó. Nhưng môi trường thực thì không chờ: thư đến trong lúc nó đang nghĩ, người dùng chen ngang khi nó nói dở câu, trang web đã đổi khác giữa hai lần chụp màn hình, chiếc cốc bị đụng đổ trên đường tay máy vươn tới. **Bốn mục của chương này chính là quá trình giả định ấy được nới lỏng lần lượt trên bốn thang thời gian khác nhau.**
-
-Trước hết hãy xem vị trí của chúng:
+Ngữ liệu huấn luyện của một mô hình gần như hoàn toàn theo lượt — một câu hỏi rồi đến một câu trả lời, một lệnh gọi công cụ rồi đến một kết quả công cụ, một người nói xong rồi người kia mới bắt đầu. Vì thế, chính sách mà mô hình học được mặc định rằng thế giới sẽ chờ nó. Môi trường thực tế thì không chờ mô hình phản ứng: thư đến trong lúc nó đang suy nghĩ, người dùng ngắt lời giữa chừng, trang đã đổi giữa hai ảnh chụp màn hình, và cái cốc bị làm đổ trong lúc cánh tay đang với tới nó.
 
 | Thang | Bối cảnh | Thay đổi ở phía quan sát | Thay đổi ở phía hành động |
 |---|---|---|---|
@@ -357,9 +355,7 @@ Streaming thông thường cũng không bỏ được thời gian chờ im lặn
 
 Ngoài token văn bản, luồng có thể phát \`speak_start/end\`, \`interrupt\` (ranh giới lời nói và ý định ngắt), \`emotion\` (cảm xúc và do dự), \`laugh\`, \`sigh\`, \`noise\` (âm thanh cận ngôn ngữ và môi trường). Nhờ vậy Agent không phải nén mọi sự kiện âm thanh thành văn bản thường.
 
-Nếu mục tiêu chỉ là xác định người dùng đã nói xong hay chưa, quyết định kết thúc lượt có thể được tích hợp trực tiếp vào bộ nhận dạng streaming. Nhãn huấn luyện chỉ được dùng thông tin nhìn thấy tại thời điểm ra quyết định; nếu không, thông tin nhìn lại sẽ tạo ra phán đoán không thể tái hiện trực tuyến[^ch6-11]. Cách này nhẹ hơn một LLM âm thanh hoàn chỉnh.
-
-[^ch6-11]: Về việc đưa phán đoán lượt vào bộ nhận dạng và vấn đề nhãn sử dụng thông tin tương lai, xem Bojie Li và Noah Shi, *The Trade-off Was in the Labels: Causal Supervision for Turn-Aware Streaming ASR*, 2026 (sắp xuất bản).
+Nếu mục tiêu chỉ là xác định người dùng đã nói xong hay chưa, quyết định kết thúc lượt có thể được tích hợp trực tiếp vào bộ nhận dạng streaming. Nhãn huấn luyện chỉ được dùng thông tin nhìn thấy tại thời điểm ra quyết định; nếu không, thông tin nhìn lại sẽ tạo ra phán đoán không thể tái hiện trực tuyến. Cách này nhẹ hơn một LLM âm thanh hoàn chỉnh.
 
 > **Thử nghiệm 6-4 ★: Mô phỏng nhận biết giọng nói streaming bằng Qwen2-Audio**
 >
@@ -367,11 +363,9 @@ Nếu mục tiêu chỉ là xác định người dùng đã nói xong hay chưa
 
 ### Mô hình 2 · Mô hình omnimodal end-to-end (Omni)
 
-Ngay cả khi có nhận biết streaming, cascade vẫn đưa nghe, suy nghĩ và nói qua các giao diện rời rạc; cảm xúc, ngữ điệu và âm thanh môi trường có thể mất khi âm thanh biến thành văn bản. Omni dùng một mô hình để nghe, sinh câu trả lời và nói, giữ được tín hiệu phi văn bản nhưng tốn hơn khi huấn luyện, gỡ lỗi và thay thành phần (Hình 6-9). Self-cascade có thể sửa lỗi nhận biết khi văn bản đủ cho nhiệm vụ; nếu câu trả lời phụ thuộc tốc độ nói, cảm xúc hoặc môi trường, nút thắt văn bản làm mất bằng chứng không thể đảo ngược[^ch6-13].
+Ngay cả khi có nhận biết streaming, cascade vẫn đưa nghe, suy nghĩ và nói qua các giao diện rời rạc; cảm xúc, ngữ điệu và âm thanh môi trường có thể mất khi âm thanh biến thành văn bản. Omni dùng một mô hình để nghe, sinh câu trả lời và nói, giữ được tín hiệu phi văn bản nhưng tốn hơn khi huấn luyện, gỡ lỗi và thay thành phần (Hình 6-9). Self-cascade có thể sửa lỗi nhận biết khi văn bản đủ cho nhiệm vụ; nếu câu trả lời phụ thuộc tốc độ nói, cảm xúc hoặc môi trường, nút thắt văn bản làm mất bằng chứng không thể đảo ngược.
 
 Omni vẫn giả định chia lượt và thường dùng VAD hoặc endpointing ngữ nghĩa. Một khoảng dừng trong chuỗi số có thể bị coi là kết thúc; nhận biết streaming cải thiện phán đoán nhưng không xóa lượt.
-
-[^ch6-13]: Đo lường đầy đủ thời điểm lợi thế độ chính xác giữa cascade và end-to-end đảo chiều, xem Li, Bojie và Noah Shi, *The Cascade Gap: When and Why Self-Cascades Help Multimodal Agents*, 2026 (sắp xuất bản).
 
 ![Hình 6-9: So sánh mô hình giọng nói omnimodal end-to-end](images/fig6-9.svg)
 
@@ -424,11 +418,15 @@ Mô hình hợp nhất hiện thực hoá "vừa nghĩ vừa nói" chặt chẽ 
 
 ### Tổng hợp giọng nói giống con người hơn
 
-TTS truyền thống quá trơn tru và ít ngắt nghỉ sẽ để lộ bản chất máy móc. LLM chính có thể phát thêm các marker điều khiển như \`THINKING\`, \`EMO:happy\`, \`SPEED:0.8x\`; TTS ánh xạ chúng thành khoảng dừng, ngữ điệu, tốc độ, tiếng cười và tiếng thở dài. Có thể huấn luyện TTS hiểu marker hoặc dùng voice cloning với nhiều đoạn tham chiếu.
+TTS truyền thống có thể để lộ bản chất máy móc của nó vì quá mượt và ngắt nghỉ quá ít. Những khoảng dừng, từ đệm và sự lặp lại thỉnh thoảng báo hiệu sự do dự và suy nghĩ trong lời nói của con người.
 
-> **Thử nghiệm 6-6 ★★: TTS điều khiển bằng token với Fish Audio**
+LLM chính có thể phát ra các ký hiệu điều khiển ngoài văn bản, chẳng hạn như **THINKING**, **EMO:happy** và **SPEED:0.8x**; TTS ánh xạ chúng thành khoảng dừng, ngữ điệu, tốc độ nói, tiếng cười, tiếng thở dài và các âm thanh phi ngôn ngữ khác. Việc triển khai có thể là một TTS được huấn luyện để hiểu các ký hiệu điều khiển, hoặc sao chép giọng nói với các đoạn tham chiếu cho những cảm xúc và phong cách khác nhau.
+
+> **Thí nghiệm 6-6 ★★: TTS điều khiển bằng token với Fish Audio**
 >
-> Dùng Fish Audio S1 để xây dựng thư viện giọng nhiều tham chiếu và so sánh ba cấu hình: không marker, một đoạn tham chiếu và nhiều đoạn tham chiếu. Lớp thực thi chọn cảm xúc, tốc độ và phong cách khớp marker. Cấu hình nhiều tham chiếu đạt điểm cao nhất trong ba vòng nghe mù cân bằng (độ giống nhân viên dịch vụ khách hàng thật 4,67/5), nhưng thứ tự dự kiến không lặp lại đầy đủ vì nhánh không marker vượt nhánh một tham chiếu. Kết quả gợi ý kiểm soát biểu cảm có ích, song nghiên cứu nghe nhỏ không kết luận chất lượng giọng nói nói chung. Thư viện 24 tham chiếu, media A/B/C và hồ sơ nghiệm thu ở [chapter6/controllable-tts](../chapter6/controllable-tts/).
+> Dùng Fish Audio S1 để xây dựng một thư viện giọng nói nhiều tham chiếu và so sánh ba cấu hình: không có ký hiệu điều khiển, một đoạn tham chiếu, và nhiều đoạn tham chiếu. Lớp thực thi chọn cảm xúc, tốc độ nói và phong cách phù hợp từ các ký hiệu.
+
+
 ## Computer Use: GUI Tự động hóa Agent
 
 Khi đọc điều này, bạn có thể nhận thấy rằng chương này dành nhiều không gian cho giọng nói hơn đáng kể so với hai cảnh cuối - điều này là có chủ ý. Trên tiến trình phát triển của đa phương thức thời gian thực, giọng nói là thứ hoàn thiện nhất và đáng được sử dụng làm hệ thống tham chiếu nhất: bắt đầu từ vấn đề "độ trễ đường ống nối tiếp quá cao", thông qua một loạt các giải pháp như end-to-end, full-duplex, suy nghĩ và nói chuyện, v.v., cho đến phần cuối tương đối hình thành ngày nay, toàn bộ quá trình của vấn đề → giải pháp → kết thúc đã được hoàn thành. Vì vậy, hãy giải thích nó kỹ lưỡng. Hai cảnh tiếp theo của Computer Use và robot có thể được xem trong ngữ cảnh giọng nói - chúng đã đạt đến giai đoạn nào của đường tiến hóa này và chúng đang bị mắc kẹt ở đâu.
@@ -463,11 +461,11 @@ Bản triển khai tham chiếu của Anthropic chia khả năng tương tác ho
 
 **Công cụ chỉnh sửa tệp**(str_replace_editor): Chỉnh sửa an toàn đạt được thông qua khớp chuỗi. Nó hỗ trợ các hoạt động xem, tạo, thay thế, chèn và hoàn tác. Nó chính xác hơn việc ghi đè trực tiếp toàn bộ tập tin và ít có khả năng vô tình làm thay đổi nội dung khác.
 
-> **Thử nghiệm 6-7 ★: Chạy Computer Use (lộ trình tham chiếu Anthropic hoặc lộ trình mô hình mở)**
+> **Thí nghiệm 6-7 ★: Chạy Computer Use (đường dẫn tham chiếu Anthropic hoặc đường dẫn mô hình mở)**
 >
-> Lộ trình A sử dụng Anthropic Computer Use Demo. Container đóng gói một môi trường desktop Ubuntu hoàn chỉnh, gồm trình duyệt, terminal và các công cụ thông dụng khác. Frontend nhận tác vụ; backend gửi hướng dẫn và ảnh chụp màn hình đến Claude, rồi thực thi các thao tác chuột, bàn phím, terminal hoặc chỉnh sửa do mô hình trả về. Lộ trình này dùng để tìm hiểu giao thức công cụ `computer` nguyên bản; không yêu cầu mọi độc giả đều phải có quyền truy cập Anthropic API.
+> Đường dẫn A dùng Anthropic Computer Use Demo. Container của nó đóng gói một môi trường desktop Ubuntu hoàn chỉnh, bao gồm trình duyệt, terminal và các công cụ phổ biến khác. Frontend nhận một tác vụ, còn backend gửi hướng dẫn và ảnh chụp màn hình đến Claude, rồi thực thi các hành động chuột, bàn phím, terminal hoặc chỉnh sửa do mô hình trả về.
 >
-> Lộ trình B dùng mã ví dụ tại [`chapter6/computer-use-open-model`](../chapter6/computer-use-open-model/). Mặc định, nó điều khiển browser-use bằng Qwen3-VL 32B Instruct trọng số mở qua API được OpenRouter lưu trữ, hoặc trỏ `OPEN_MODEL_BASE_URL` tới vLLM/SGLang tự lưu trữ hay endpoint tương thích khác.
+> Đường dẫn B dùng mã ví dụ trong [`chapter6/computer-use-open-model`](../chapter6/computer-use-open-model/). Theo mặc định, nó điều khiển browser-use bằng mô hình Qwen3-VL 32B Instruct trọng số mở thông qua API OpenRouter được lưu trữ, hoặc thông qua vLLM/SGLang tự lưu trữ và các hệ thống tương tự.
 
 ### Định vị trực quan (Nối đất)
 

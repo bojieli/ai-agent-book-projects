@@ -23,9 +23,7 @@ Los capítulos anteriores ampliaron el **contenido** de esos dos espacios; este 
 
 La tesis central del capítulo cabe en una frase: **el turno es un supuesto que deja el entrenamiento, no una propiedad del entorno.**
 
-El corpus de entrenamiento de un modelo es casi por completo por turnos: a la pregunta le sigue la respuesta, a la llamada de herramienta le sigue su resultado, uno termina de hablar antes de que el otro empiece. Por eso la política que aprende el modelo da por hecho que el mundo lo esperará. El entorno real no espera: llega un correo mientras piensa, el usuario interrumpe a mitad de frase, la página ya cambió entre dos capturas, la taza se vuelca mientras el brazo se acerca. **Las cuatro secciones de este capítulo son ese supuesto relajándose, una escala temporal a la vez.**
-
-Veamos primero dónde se sitúan:
+El corpus de entrenamiento de un modelo es casi por completo basado en turnos: una pregunta seguida de una respuesta, una llamada a una herramienta seguida de su resultado, una persona termina antes de que la otra empiece. Por eso la política que aprende el modelo da por hecho que el mundo lo esperará. El entorno real no espera a que el modelo reaccione: llega correo mientras está pensando, el usuario interrumpe a mitad de frase, la página ya ha cambiado entre dos capturas, y la taza se vuelca mientras el brazo va a alcanzarla.
 
 | Escala | Escenario | Cambio del lado de la observación | Cambio del lado de la acción |
 |---|---|---|---|
@@ -354,9 +352,7 @@ ASR puede emitir una transcripción provisional mientras se habla, el LLM puede 
 
 El frente VAD + ASR acumula latencia por esperar silencio, pierde dudas, emoción, apoyos y ambiente, y rompe el contexto de nombres o correos. Un modelo realmente streaming necesita codificador causal o por bloques y decodificación incremental; Whisper no es causal porque su codificador espera el segmento completo. Un modelo auditivo basado en LLM puede emitir texto y eventos semánticos, pero simular prefijos no garantiza el rendimiento de un modelo causal. Los marcadores speak_start/end, interrupt, emotion, laugh, sigh y noise conservan señales que no caben en texto.
 
-Si el único objetivo es decidir si el usuario ha terminado de hablar, el juicio de fin de turno puede integrarse directamente en el reconocedor streaming. Las etiquetas de entrenamiento solo deben usar información visible en el momento de la decisión; de lo contrario, la retrospectiva producirá un juicio imposible de reproducir en línea[^ch6-11]. Esta vía es más ligera que un LLM de audio completo.
-
-[^ch6-11]: Sobre incorporar el juicio de turno al reconocedor y el problema de etiquetas con información futura, véase Li, Bojie and Noah Shi. *The Trade-off Was in the Labels: Causal Supervision for Turn-Aware Streaming ASR.* 2026 (pendiente de publicación).
+Si el único objetivo es decidir si el usuario ha terminado de hablar, el juicio de fin de turno puede integrarse directamente en el reconocedor streaming. Las etiquetas de entrenamiento solo deben usar información visible en el momento de la decisión; de lo contrario, la retrospectiva producirá un juicio imposible de reproducir en línea. Esta vía es más ligera que un LLM de audio completo.
 
 > **Experimento 6-4 ★: Simular percepción de voz en streaming con Qwen2-Audio**
 >
@@ -364,9 +360,7 @@ Si el único objetivo es decidir si el usuario ha terminado de hablar, el juicio
 
 ### Paradigma 2 · Modelos omnimodales de extremo a extremo (Omni)
 
-La cascada pierde emoción, entonación y sonido ambiente en la interfaz textual. Omni escucha, genera y habla con un único modelo, pero cuesta más entrenarlo, depurarlo y sustituir componentes. Su ventaja principal es la latencia y la información no textual, no una precisión necesariamente mayor. La autocascada puede corregir un error de percepción cuando el texto basta; si la respuesta depende de velocidad, emoción o ambiente, el cuello de botella textual destruye la evidencia[^ch6-13]. Omni todavía supone turnos y puede confundir una pausa en una secuencia de números con el final.
-
-[^ch6-13]: Medición completa de cuándo se invierte la ventaja de precisión entre cascada y extremo a extremo: Li, Bojie and Noah Shi. *The Cascade Gap: When and Why Self-Cascades Help Multimodal Agents.* 2026 (pendiente de publicación).
+La cascada pierde emoción, entonación y sonido ambiente en la interfaz textual. Omni escucha, genera y habla con un único modelo, pero cuesta más entrenarlo, depurarlo y sustituir componentes. Su ventaja principal es la latencia y la información no textual, no una precisión necesariamente mayor. La autocascada puede corregir un error de percepción cuando el texto basta; si la respuesta depende de velocidad, emoción o ambiente, el cuello de botella textual destruye la evidencia. Omni todavía supone turnos y puede confundir una pausa en una secuencia de números con el final.
 
 ![Figura 6-9: Comparación de modelos de voz omnimodales](images/fig6-9.svg)
 
@@ -419,11 +413,14 @@ El modelo unificado es el que más estrechamente logra «pensar mientras habla»
 
 ### Síntesis de voz más humana
 
-Un TTS demasiado fluido y sin pausas delata que es una máquina. El LLM puede emitir THINKING, EMO:happy y SPEED:0.8x junto con el texto, y TTS puede convertirlos en pausas, prosodia, velocidad, risas y suspiros. En Fish Audio S1, la configuración con varias referencias obtuvo la mejor puntuación en tres escuchas ciegas equilibradas (4,67/5 en parecido a un agente humano), pero el grupo sin marcadores superó al de referencia única y no se reprodujo todo el orden previsto.
+Un TTS tradicional puede delatar su identidad de máquina por ser demasiado fluido y hacer pocas pausas. Las pausas, las muletillas y la repetición ocasional señalan incertidumbre y pensamiento en el habla humana.
+
+El LLM principal puede emitir marcadores de control además del texto, como **THINKING**, **EMO:happy** y **SPEED:0.8x**; TTS los mapea a pausas, prosodia, velocidad de habla, risas, suspiros y otros elementos sonoros no verbales. La implementación puede ser un TTS entrenado para entender marcadores de control, o clonación de voz con clips de referencia para distintas emociones y estilos.
 
 > **Experimento 6-6 ★★: TTS controlado por tokens con Fish Audio**
 >
-> Compara biblioteca sin marcadores, una referencia y varias referencias; la capa de ejecución selecciona emoción, velocidad y estilo. La biblioteca de 24 referencias, los medios A/B/C y la aceptación están en [chapter6/controllable-tts](../chapter6/controllable-tts/).
+> Usa Fish Audio S1 para construir una biblioteca de voces con múltiples referencias y compara tres configuraciones: sin marcadores de control, un clip de referencia y múltiples clips de referencia. La capa de ejecución selecciona emoción, velocidad de habla y estilo coincidiendo con los marcadores.
+
 
 ## Computer Use: Agentes de automatización de GUI
 
@@ -458,9 +455,9 @@ La implementación de referencia de Anthropic divide la capacidad de interacció
 
 > **Experimento 6-7 ★: Ejecutar Computer Use (ruta de referencia de Anthropic o ruta de modelo abierto)**
 >
-> La ruta A utiliza la demo de Anthropic Computer Use. Su contenedor empaqueta un entorno de escritorio Ubuntu completo, con navegador, terminal y otras herramientas habituales. El frontend recibe la tarea; el backend envía las instrucciones y capturas de pantalla a Claude y luego ejecuta las acciones de ratón, teclado, terminal o edición que devuelve el modelo. Esta ruta sirve para comprender el protocolo nativo de la herramienta `computer`; no exige que todos los lectores tengan acceso a la API de Anthropic.
+> La ruta A usa la demo de Anthropic Computer Use. Su contenedor empaqueta un entorno de escritorio Ubuntu completo, que incluye navegador, terminal y otras herramientas comunes. El frontend recibe una tarea, mientras que el backend envía las instrucciones y capturas de pantalla a Claude y luego ejecuta las acciones de ratón, teclado, terminal o edición devueltas por el modelo.
 >
-> La ruta B utiliza el código de ejemplo de [`chapter6/computer-use-open-model`](../chapter6/computer-use-open-model/). De forma predeterminada controla browser-use con Qwen3-VL 32B Instruct de pesos abiertos, mediante la API alojada de OpenRouter o apuntando `OPEN_MODEL_BASE_URL` a vLLM/SGLang autoalojado u otro endpoint compatible.
+> La ruta B usa el código de ejemplo de [`chapter6/computer-use-open-model`](../chapter6/computer-use-open-model/). Por defecto, controla browser-use con el modelo abierto Qwen3-VL 32B Instruct mediante la API alojada de OpenRouter, o mediante vLLM/SGLang autohospedados y sistemas similares.
 
 ### Grounding visual (Visual Grounding)
 
