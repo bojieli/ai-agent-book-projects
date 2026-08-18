@@ -60,9 +60,9 @@ pandoc "${CHAPTERS[@]}" \
     --number-sections \
     -V documentclass=book \
     -V classoption=oneside \
-    -V author="בוג'י לי" \
+    -V author="בוג'י לי; תרגום לעברית: Itzik Woda" \
     --metadata title-meta="AI Agents in Depth (Hebrew edition)" \
-    --metadata author-meta="Bojie Li" \
+    --metadata author-meta="Bojie Li; Hebrew translation: Itzik Woda" \
     -H preamble.tex \
     --include-before-body=cover.tex \
     --highlight-style=kate \

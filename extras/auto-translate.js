@@ -1,6 +1,6 @@
 // Tier 3: machine translation for languages the book is not translated into.
 //
-// The site ships 13 reviewed editions as static pages (tier 1/2). This adds an
+// The site ships 14 reviewed editions as static pages (tier 1/2). This adds an
 // opt-in fallback for everything else: the reader picks a language from the
 // "机器翻译" group in the language menu and translate.js
 // (https://github.com/xnx3/translate, MIT) rewrites the page's text nodes in

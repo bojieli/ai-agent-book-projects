@@ -11,6 +11,8 @@ on:
   pull_request:
     paths:
       - "README.md"
+      - "README.he.md"
+      - "index*.md"
       - "docs/**"
       - "chapter*/README*.md"
       - "book*/**"
@@ -25,6 +27,8 @@ on:
     branches: [main]
     paths:
       - "README.md"
+      - "README.he.md"
+      - "index*.md"
       - "docs/**"
       - "chapter*/README*.md"
       - "book*/**"

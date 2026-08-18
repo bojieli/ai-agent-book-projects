@@ -27,6 +27,7 @@ LANGUAGES = {
     "en": {"label": "English", "prefix": "book-en/", "readmeSuffix": "en"},
     "ta": {"label": "தமிழ்", "prefix": "book-ta/", "readmeSuffix": "ta"},
     "ko": {"label": "한국어", "prefix": "book-ko/", "readmeSuffix": "ko"},
+    "he": {"label": "עברית", "prefix": "book-he/", "suffix": ".he"},
 }
 
 CONFIG = {"extra": {"languages": LANGUAGES}}
@@ -46,6 +47,8 @@ CONFIG = {"extra": {"languages": LANGUAGES}}
         ("chapter3/README.ta/", "book-ta"),
         # Translated homepages carry their locale in the slug.
         ("index.ko/", "book-ko"),
+        ("book-he/chapter1.he/", "book-he"),
+        ("index.he/", "book-he"),
         # Language-agnostic pages stay shared.
         ("chapter6/agent-loop/", hook.SHARED),
         ("chapter1/README/", hook.SHARED),
@@ -86,6 +89,8 @@ def test_on_post_build_splits_by_edition(tmp_path):
             "chapter1/README.en/",
             "book-ta/chapter1/",
             "index.ko/",
+            "book-he/chapter1.he/",
+            "index.he/",
         ],
     )
 
@@ -103,6 +108,9 @@ def test_on_post_build_splits_by_edition(tmp_path):
     )
     assert locations("search_index.book-ta.json") == sorted(shared + ["book-ta/chapter1/"])
     assert locations("search_index.book-ko.json") == sorted(shared + ["index.ko/"])
+    assert locations("search_index.book-he.json") == sorted(
+        shared + ["book-he/chapter1.he/", "index.he/"]
+    )
     # The canonical filename keeps serving the default edition, so a client
     # that never runs the router still gets a working index.
     assert locations("search_index.json") == sorted(shared + ["book/chapter1/"])
