@@ -2,9 +2,9 @@
 """Split Material's monolithic search index into one file per book edition.
 
 MkDocs' search plugin emits a single ``search/search_index.json`` covering
-every page in the build. This site ships all 13 book editions plus the ~94
+every page in the build. This site ships all 14 book editions plus the ~94
 companion-experiment pages from one build, so that file had grown to ~55 MB:
-every reader who opens search downloads the full prose of 12 editions they
+every reader who opens search downloads the full prose of 13 editions they
 cannot read.
 
 This hook rewrites the search plugin's output into:

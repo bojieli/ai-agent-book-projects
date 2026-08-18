@@ -541,7 +541,10 @@
           var label = document.createElement("span");
           label.className = "lang-menu__label";
           label.setAttribute("lang", optionLocale(code));
-          label.setAttribute("dir", code === "ar" ? "rtl" : "auto");
+          label.setAttribute(
+            "dir",
+            i18n.languages[code].direction === "rtl" ? "rtl" : "auto"
+          );
           label.textContent = cfg[code].label;
 
           option.appendChild(check);
@@ -556,7 +559,10 @@
       if (labelNode) {
         labelNode.textContent = currentLabel;
         labelNode.setAttribute("lang", optionLocale(activeLang));
-        labelNode.setAttribute("dir", activeLang === "ar" ? "rtl" : "auto");
+        labelNode.setAttribute(
+          "dir",
+          i18n.languages[activeLang].direction === "rtl" ? "rtl" : "auto"
+        );
       }
       trigger.setAttribute(
         "aria-label",

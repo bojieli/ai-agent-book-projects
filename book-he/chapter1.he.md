@@ -194,7 +194,7 @@ repeat:
 ```text
 trajectory = [
   {role: "user", content: "Based on the company's quarterly revenue: Q1 2.5M USD, Q2 2.1M EUR, Q3 1.8M GBP, Q4 380M JPY, calculate the company's total annual revenue and average quarterly revenue"},
-  
+
   # First iteration - LLM receives the above trajectory and generates a response
   {role: "assistant",
    reasoning: "Need to convert all currencies to USD...",
@@ -204,12 +204,12 @@ trajectory = [
      {name: "convert_currency", args: {amount: 1800000, from: "GBP", to: "USD"}},
      {name: "convert_currency", args: {amount: 380000000, from: "JPY", to: "USD"}}
    ]},
-  
+
   # Agent framework executes tools, adds results to trajectory
   {role: "tool", content: "EUR->USD: 2282608.7"},
   {role: "tool", content: "GBP->USD: 2278481.01"},
   {role: "tool", content: "JPY->USD: 2541806.02"},
-  
+
   # Second iteration - LLM receives the complete trajectory, including tool results
   {role: "assistant",
    reasoning: "Conversion results obtained, now need to aggregate and calculate...",
@@ -217,9 +217,9 @@ trajectory = [
    tool_calls: [
      {name: "code_interpreter", args: {code: "total = 2500000 + 2282608.7 + ..."}}
    ]},
-  
+
   {role: "tool", content: "Total: $9,602,895.73, Average: $2,400,723.93..."},
-  
+
   # Third iteration - LLM receives the complete trajectory and generates the final answer
   {role: "assistant",
    reasoning: "All calculations complete, summarizing results...",

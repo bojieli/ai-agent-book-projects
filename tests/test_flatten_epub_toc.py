@@ -1,9 +1,10 @@
 import sys
 from pathlib import Path
+from xml.etree import ElementTree as ET
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from flatten_epub_toc import flatten_nav, flatten_ncx
+from flatten_epub_toc import flatten_nav, flatten_ncx, set_xhtml_direction
 
 
 def test_flatten_nav_after_flatten_ncx_preserves_default_xhtml_namespace():
@@ -114,3 +115,27 @@ def test_flatten_nav_inserted_top_level_nav_items_order_and_attributes():
     assert ch1_pos != -1
     assert title_pos < contents_pos < ch1_pos
     assert 'class="chapter-group"' in result[ch1_pos - 100 : ch1_pos + 100]
+
+
+def test_rtl_helpers_use_requested_language_and_keep_code_ltr():
+    nav_xml = """<?xml version="1.0" encoding="utf-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+<body><nav epub:type="toc"><ol><li><a href="ch1.xhtml">פרק 1</a></li></ol></nav></body>
+</html>"""
+    content_xml = """<?xml version="1.0" encoding="utf-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml"><body><p>עברית</p><code>print('hello')</code></body></html>"""
+
+    nav = flatten_nav(
+        nav_xml, "עמוד השער", "תוכן העניינים", rtl=True, language="he"
+    )
+    nav_root = ET.fromstring(nav)
+    assert nav_root.get("dir") == "rtl"
+    assert nav_root.get("{http://www.w3.org/XML/1998/namespace}lang") == "he"
+
+    content = set_xhtml_direction(content_xml, language="he")
+    content_root = ET.fromstring(content)
+    assert content_root.get("dir") == "rtl"
+    assert content_root.get("lang") == "he"
+    assert content_root.get("{http://www.w3.org/XML/1998/namespace}lang") == "he"
+    code = content_root.find(".//{http://www.w3.org/1999/xhtml}code")
+    assert code.get("dir") == "ltr"

@@ -267,6 +267,7 @@ jobs:
           cp book-tr/AI-Agents-in-Depth-Bojie-Li-v2.0-tr.pdf      "$out/AI-Agents-in-Depth-tr.pdf"
           cp book-ko/AI-Agents-in-Depth-v2.0-ko.pdf                "$out/AI-Agents-in-Depth-ko.pdf"
           cp book-hu/AI-Agents-in-Depth-v2.0-hu.pdf                "$out/AI-Agents-in-Depth-hu.pdf"
+          cp book-he/AI-Agents-in-Depth-v2.0-he.pdf                "$out/AI-Agents-in-Depth-he.pdf"
           cp "book/深入理解-AI-Agent-李博杰-v2.0.epub"             "$out/AI-Agents-in-Depth-zh-CN.epub"
           cp "book-zhtw/深入理解-AI-Agent-李博杰-v2.0-zhtw.epub"   "$out/AI-Agents-in-Depth-zh-TW.epub"
           cp book-en/AI-Agents-in-Depth-Bojie-Li-v2.0.epub       "$out/AI-Agents-in-Depth-en.epub"
@@ -278,6 +279,7 @@ jobs:
           cp book-tr/AI-Agents-in-Depth-Bojie-Li-v2.0-tr.epub    "$out/AI-Agents-in-Depth-tr.epub"
           cp book-ko/AI-Agents-in-Depth-v2.0-ko.epub               "$out/AI-Agents-in-Depth-ko.epub"
           cp book-hu/AI-Agents-in-Depth-v2.0-hu.epub               "$out/AI-Agents-in-Depth-hu.epub"
+          cp book-he/AI-Agents-in-Depth-v2.0-he.epub               "$out/AI-Agents-in-Depth-he.epub"
           # WIP: ja artifacts and the Arabic EPUB are copied only if their
           # non-fatal builds produced them.
           cp book-ja/AI-Agents-in-Depth-Bojie-Li-v2.0-ja.pdf     "$out/AI-Agents-in-Depth-ja.pdf"  || echo "ja PDF not built yet (WIP) — skipping"

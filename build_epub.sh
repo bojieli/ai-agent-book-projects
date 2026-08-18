@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Build EPUB 3 editions from the Markdown sources.
-# Usage: ./build_epub.sh [all|zh-CN|zh-TW|en|es|id|ru|ta|vi|tr|ko|hu|ja|ar]
+# Usage: ./build_epub.sh [all|zh-CN|zh-TW|en|es|id|ru|ta|vi|tr|ko|hu|ja|ar|he]
 # Note: `all` does NOT include ja or ar while their PDF pipelines are being
 # validated. Build them explicitly with `./build_epub.sh ja|ar`.
 
@@ -17,9 +17,9 @@ for command in pandoc pdftoppm python3; do
 done
 
 case "$SELECTION" in
-    all|zh-CN|zh-TW|en|es|id|ru|ta|vi|tr|ko|hu|ja|ar) ;;
+    all|zh-CN|zh-TW|en|es|id|ru|ta|vi|tr|ko|hu|ja|ar|he) ;;
     *)
-        echo "Usage: $0 [all|zh-CN|zh-TW|en|es|id|ru|ta|vi|tr|ko|hu|ja|ar]" >&2
+        echo "Usage: $0 [all|zh-CN|zh-TW|en|es|id|ru|ta|vi|tr|ko|hu|ja|ar|he]" >&2
         exit 2
         ;;
 esac
@@ -163,11 +163,21 @@ build_edition() {
             toc_label="المحتويات"
             chapters=(introduction.ar.md chapter{1..10}.ar.md afterword.ar.md)
             ;;
+        he)
+            directory="book-he"
+            title="סוכני AI לעומק: עקרונות עיצוב ופרקטיקה הנדסית"
+            author="בוג'י לי; תרגום לעברית: Itzik Woda"
+            pdf="AI-Agents-in-Depth-v2.0-he.pdf"
+            output="AI-Agents-in-Depth-v2.0-he.epub"
+            title_label="עמוד השער"
+            toc_label="תוכן העניינים"
+            chapters=(introduction.he.md chapter{1..10}.he.md afterword.he.md)
+            ;;
     esac
 
     local edition_dir="$ROOT/$directory"
     direction="ltr"
-    if [ "$language" = "ar" ]; then
+    if [ "$language" = "ar" ] || [ "$language" = "he" ]; then
         direction="rtl"
     fi
     local chapter
@@ -206,9 +216,9 @@ build_edition() {
             --metadata identifier="https://github.com/bojieli/ai-agent-book#$language"
     )
 
-    if [ "$language" = "ar" ]; then
+    if [ "$language" = "ar" ] || [ "$language" = "he" ]; then
         python3 "$ROOT/flatten_epub_toc.py" \
-            "$edition_dir/$output" "$title_label" "$toc_label" rtl
+            "$edition_dir/$output" "$title_label" "$toc_label" rtl "$language"
     else
         python3 "$ROOT/flatten_epub_toc.py" \
             "$edition_dir/$output" "$title_label" "$toc_label"
@@ -222,7 +232,7 @@ build_edition() {
 }
 
 if [ "$SELECTION" = "all" ]; then
-    for language in zh-CN zh-TW en es id ru ta vi tr ko hu; do
+    for language in zh-CN zh-TW en es id ru ta vi tr ko hu he; do
         build_edition "$language"
     done
 else

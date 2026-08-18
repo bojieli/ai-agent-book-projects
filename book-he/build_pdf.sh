@@ -6,8 +6,8 @@
 # that mixes Hebrew body text with Latin terms, code and URLs.
 #
 # Requirements: pandoc, lualatex + the packages listed in preamble.tex,
-#               rsvg-convert (librsvg) for the SVG figures,
-#               macOS Hebrew fonts (New Peninim MT, Arial Hebrew).
+#               rsvg-convert (librsvg) for the SVG figures, and the Culmus
+#               fonts shipped with TeX Live (David CLM / Nachlieli CLM).
 # Usage: cd book-he && bash build_pdf.sh
 #
 # Figures live in book-he/images/. They are currently the English figure set:
@@ -60,9 +60,9 @@ pandoc "${CHAPTERS[@]}" \
     --number-sections \
     -V documentclass=book \
     -V classoption=oneside \
-    -V author="בוג'י לי" \
+    -V author="בוג'י לי; תרגום לעברית: Itzik Woda" \
     --metadata title-meta="AI Agents in Depth (Hebrew edition)" \
-    --metadata author-meta="Bojie Li" \
+    --metadata author-meta="Bojie Li; Hebrew translation: Itzik Woda" \
     -H preamble.tex \
     --include-before-body=cover.tex \
     --highlight-style=kate \
