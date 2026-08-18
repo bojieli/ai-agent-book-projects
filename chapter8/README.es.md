@@ -1,6 +1,6 @@
 # Capítulo 8 · Posentrenamiento de Modelos
 
-> Tres etapas (Pre-entrenamiento/SFT/RL): cuándo elegir SFT vs. RL, internalización de llamadas a herramientas, eficiencia de muestra
+> Cuatro partes—pre-entrenamiento, Mid-training, SFT y RL: currículo y datos de contexto largo, protocolos con SFT, entornos y recompensas de RL, y eficiencia de muestra de una a varias rondas.
 
 ← [Volver al README principal](../docs/es/README.md) · 📖 [Leer texto del capítulo](../book-es/chapter8.es.md)
 

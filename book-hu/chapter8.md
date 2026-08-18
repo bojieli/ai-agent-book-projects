@@ -4,7 +4,7 @@ A könyv alapképlete: Ágens = LLM + Kontextus + Eszközök. Ez a fejezet magá
 
 Ez a fejezet nem feltételez semmilyen előzetes ismeretet a megerősítéses tanulásról vagy modelltréningről. Nem várjuk el, hogy ismerd a gradienseket vagy a policy-optimalizálást. Ehelyett abból a kérdésből indulunk ki, hogy hogyan tanul egy modell egyáltalán, világossá téve, hogy az egyes lépések mire valók, hogyan működnek, és milyen problémát oldanak meg. A fejezet végére képesnek kell lenned megválaszolni a következő kérdéseket: Hány szakaszból áll egy modell képességeinek kialakítása? Mit csinál az egyes szakaszok? Miért kell ebben a sorrendben történniük? És hova érdemes koncentrálnod a saját projektjeidben?
 
-**Először is állítsuk fel a legfontosabb térképet: egy modern modell képességei három szakaszban formálódnak.** Ez a három szakasz egymásba kapcsolódik és nélkülözhetetlen:
+**A legfontosabb térkép négy részből áll: pre-tréning, Mid-training, SFT és RL.** A Mid-training az általános alap és a viselkedési illesztés között szakterületi tudást és alapképességeket épít; a következő szakaszok mind a négy részt tárgyalják.
 
 1.  "Pre-tréning": Hatalmas mennyiségű internetes szövegen történő tréning a "következő token előrejelzésére". Ez a lépés megtanítja a modellnek a nyelv szabályait, a világról való ismereteket és az alapvető érvelést. Olyan, mint egy ember, aki elolvasta a könyvtár összes könyvét – tudós, de még nem jó a kérdések megválaszolásában. Ez a legdrágább lépés (gyakran több tízmillió dollár) és minden képesség alapja.
 2.  "Supervised Fine-Tuning (SFT)": A modell tréningje címkézett bemenet-kimenet párokon, hasonlóan ahhoz, ahogy egy tanár standard válaszokat ad a diáknak, hogy utánozza azokat. Több ezertől több tízezer kérdés–standard-válasz demonstráció megtanítja a modellnek, hogy milyen formátumban, stílusban és folyamattal válaszoljon. Ez a lépés a tudós modellt olyan asszisztenssé alakítja, amely érti az utasításokat és jól strukturált kimeneteket produkál. Olcsó, gyors és stabil, és jelenleg szinte minden telepített modell átesik ezen a lépésen.
@@ -22,15 +22,16 @@ Egy intuitív hasonlat: A pre-tréning "tízezer könyv elolvasása" (ismeretek 
 > *   "Ágensalkalmazás-fejlesztők" (akik nem tréningeznek modelleket): Kezdd az "Pre-tréning, SFT, RL: Háromszakaszos panoráma" bevezetővel a globális megértéshez. Utána átugorhatod a következő két `[Ajánlott olvasmány]` részt (klasszikus RL és pre-tréning háttér), és folytathatod az SFT szakasztól. Koncentrálj az "SFT és RL lényegi különbsége" döntési keretrendszerére és az "mikor válassz SFT-t vs. RL-t" kérdésre, valamint arra az ítéletre, hogy "az adat és a környezet fontosabb, mint az algoritmusok" – ezek a felismerések befolyásolják a tervezési döntéseidet a Harness mérnöki munkában (mikor oldjunk meg promptokkal, mikor éri meg a finomhangolás).
 > *   "Modelltréning-mérnökök": Olvasd elejétől a végéig. A két `[Ajánlott olvasmány]` szakasz teljes hátteret ad a megerősítéses tanuláshoz és a pre-tréninghez. A későbbi kísérletek reprodukálható tréning sémákat biztosítanak.
 
-## Pre-tréning, SFT, RL: Háromszakaszos panoráma
+## A pre-tréningtől az RL-ig: négyszakaszos panoráma
 
-A bevezető megadta a három szakasz térképét; ez a szakasz az egyes szakaszok mechanikáján megy végig. A három szakasz az "adataikban", "optimalizációs céljaikban" és "költségeikben" különbözik. A hasonlóságok és különbségek megértése a kulcsa az egész fejezetnek. A 8-1. táblázat áttekintést ad; a részletek a táblázat után következnek.
+A bevezető megadta a négy rész térképét; ez a szakasz az **adat**, **optimalizációs cél** és **költség** különbségeit mutatja be. A 8-1. táblázat áttekintést ad, majd jönnek a részletek.
 
-8-1. táblázat A modellképességek kialakításának három szakasza
+8-1. táblázat A modellképesség-fejlesztés négy része
 
 | Szakasz | Felhasznált adat | Optimalizációs cél | Amit tanul | Tipikus költség |
 |-------------|---------------------|--------------------|---------------------|-------------------|
 | "Pre-tréning" | Hatalmas mennyiségű nyers internetszöveg | A következő token előrejelzése | Nyelvi szabályok, világismeret, alapvető érvelés | Nagyon magas (milliók-tízmilliók USD) |
+| "Mid-training" | Célnyelvi, szakterületi és képességkorpusz, valamint megőrző adatok | A következő token előrejelzésének folytatása (loss rendszerint minden tokenen) | Tudás-, nyelvi és alapképesség-hiányok pótlása | Közepes–magas; a tokenszámtól és a tanított paraméterektől függ |
 | "SFT" | Több ezertől több tízezer "bemenet-kimenet" demonstrációs pár | A következő token előrejelzése (veszteség csak a válaszon számolva) | Utasításkövetés, kimeneti formátum, stílus, folyamat protokoll | Alacsony (órák-napok) |
 | "RL" | Feladat + Jutalomfüggvény (nincs standard válasz) | Várható jutalom maximalizálása | Átvihető döntéshozatali stratégia, újonnan felfedezett megoldások | Magas (gyakran tízszer-százszorosa az SFT-ének) |
 
@@ -43,6 +44,10 @@ Mutasd meg a modellnek egy szöveg első részét, és találja ki a következő
 Van egy fontos pont, amit érdemes megjegyezni, ami végigvonul az SFT-n és az RL-en is: **A modell kimenete lényegében egy valószínűségi eloszlás.** Az előző szöveg alapján a modell minden lehetséges tokenjéhez rendel egy valószínűséget a szókészletében. A "tréning" lényege "ennek a valószínűségi eloszlásnak a beállítása" – a kívánt tokenek valószínűségének növelése és a nem kívántaké csökkentése. A három szakasz között csak abban van különbség, hogy "mi a kívánt" és "milyen jel definiálja a 'kívánt'-at".
 
 A pre-tréning után a modell tudós, de nem felhasználóbarát: ha felteszel neki egy kérdést, lehet, hogy további kérdéseket generál a válasz helyett – mert az internetes szövegben egy kérdést gyakran egy másik kérdés követ. Még nem tanulta meg azt a protokollt, hogy "ha kérdeznek, válaszolni kell".
+
+### A Mid-training lényege: továbbtanulás a céleloszláson
+
+Az általános pre-tréning nem fedhet le minden nyelvet, szakterületet és képességet. Ha a modell alig olvassa a célnyelvet, nem ismeri a belső protokollt, vagy még nincs megfelelő reprezentációja hosszú kontextushoz és kódhoz, már késő csak a válaszformátumot vagy a siker/kudarc jutalmát tanítani. A Mid-training megtartja a következő-token célt, a célterületre szűkíti az adateloszlást, és általános adatot kever be a felejtés ellen. Azt kérdezi, megvan-e a feladathoz szükséges tudás és alapképesség, nem azt, hogyan nézzen ki a válasz vagy melyik stratégia kapja a legtöbb jutalmat.
 
 ### Az SFT lényege: "Következő token előrejelzése" más adatokkal
 
@@ -57,9 +62,11 @@ Röviden: Az SFT rendkívül magas mintahatékonysággal **egy stabil bemenet-ki
 
 > **Tréningköltség: LoRA paraméterhatékony finomhangolás.** Mind az SFT, mind a későbbi RL megköveteli a modell paramétereinek frissítését, és a teljes paraméteres finomhangolás nagy VRAM-igényekkel jár (tárolni kell a gradienseket és optimalizátor állapotokat több milliárd paraméterhez). A "LoRA" (Low-Rank Adaptation) a leggyakoribb költségcsökkentő módszer: ahelyett, hogy a nagy eredeti súlymátrixokat módosítaná, egy kis "javítást" (alacsony rangú mátrixot) csatol a feladat megtanulásához. A paraméterszám csak 1–5%-a az eredetiének, mégis megközelítheti a teljes finomhangolás teljesítményét. Mivel az eredeti súlyok fagyasztva vannak, a LoRA kevésbé zavarja az alapmodell meglévő képességeit, csökkentve a katasztrofális felejtés kockázatát. Néhány bevált szabály[^ch8-1]: "Muszáj" a LoRA-t az összes fő súlymátrixra alkalmazni (különösen az MLP rétegekre, amelyek a legtöbb paraméterrel rendelkeznek); ha csak a figyelmi rétegekre alkalmazzuk, az pontosságot veszít. **Az optimális tanulási ráta körülbelül 10-szerese a teljes finomhangolásénak** (igaz mind az SFT-re, mind az RL-re, egy nagyon praktikus átviteli szabály). Az SFT-hez használj közepes-magas rangot (64–256); mivel az RL-ben körönként kevés az információ, kis rang (8–32) vagy akár rang=1 is elegendő. Telepítéskor egyetlen következtető szerver több LoRA adaptert is betölthet egyszerre több-bérlős kiszolgáláshoz. Ez a könyv a LoRA-t tekinti az alapértelmezett mérnöki választásnak minden poszt-tréning módszerhez, és nem tárgyalja külön.
 
-### Miért kell az SFT-nek az RL előtt jönnie, és nem fordítva
+### Mikor kell az alapot megerősíteni az SFT/RL előtt
 
-A három szakasz sorrendje nem önkényes. A pre-tréning első vitathatatlan – nyelvi és ismereti alap nélkül semmi más nem lehetséges. Amit meg kell magyarázni: **Miért kell az SFT-nek az RL előtt jönnie?**
+Az RL a modell **saját maga által generált** válaszait értékeli, ezért a kimenetnek ellenőrizhetőnek kell lennie, és az aktuális stratégiának időnként értékes viselkedést kell találnia. Instabil formátumnál SFT-vel tesszük értelmezhetővé a JSON-t vagy tool callt. Ha viszont ésszerű hőmérsékleten és mintaszámnál a `pass@k` is közel nulla, a megoldás az alapmodell effektív támogatásán kívül van. A teljesen sikertelen rolloutok alig jelzik, melyik tudás vagy érvelési lépés hiányzik; a GRPO csoporton belüli advantage-e is eltűnik. Előbb Mid-traininggel adjunk tudást és atomi képességet, vagy bemutatóval/desztillációval vigyük a járható utat a támogatásba, és csak azután használjunk RL-t.
+
+Ezután értelmes a kérdés: **milyen feltételek mellett jöjjön az SFT az RL előtt?**
 
 A válasz abban rejlik, hogy az RL hogyan működik. Az RL nem nézi a standard válaszokat; hagyja, hogy a modell "generálja" a saját válaszait, majd jutalmakat vagy büntetéseket ad a válasz minősége alapján. De a minőség megítéléséhez először képesnek kell lenned "értelmezni" a modell kimenetét: ha a feladat egy JSON objektum vagy egy eszközhívás kiadását igényli, és a modell egy rosszul formázott szövegkáoszt produkál, a jutalomfüggvény nem tud számolni (még azt sem tudja eldönteni, hogy "siker vagy kudarc"), és az RL nem tud tanulni.
 
@@ -249,6 +256,49 @@ A három pre-tréning kísérlet együtt egy szabályszerűséget tár fel: korl
 
 A pre-tréningből származó alapképességekkel a következő lépés az, hogy poszt-tréninggel az általános modellt használható ágenssé alakítsuk. A poszt-tréning első szakasza a felügyelt finomhangolás (SFT).
 
+## Mid-training: tudás és alapképességek pótlása
+
+A fejezetben a **Mid-training** egy kész alapmodellből induló, a céleloszláson végzett további nyelvimodell-tréning. Rendszerint ugyanazt a next-token célt használja, és dokumentum, kód vagy levezetés minden tokenén loss-t számol. A DAPT/TAPT kutatás szerint a szakterületi vagy feladathoz kötődő címkézetlen korpuszon végzett második pre-tréning javíthatja a downstream teljesítményt[^ch8-30].
+
+Ez pótolja a nyelv, terminológia, belső dokumentum vagy codebase **tudáshiányát**, valamint a hosszú kontextus, kód, matematika és multimodális reprezentáció **alapképesség-hiányát**, amikor sok mintából sem születik jó megoldás. Az SFT kevés tényt megjegyezhet, de néhány QA-pár kevés hozzáférési útvonalat erősít; nagy, összefüggő tudásra nem alkalmas. Stabil sorrend: Mid-training tudás/képesség → kis SFT protokoll → RL, ha a siker már nem nulla[^ch8-31].
+
+### Adatkeverék és hosszúkontextus-tanterv
+
+Az $i$ hosszúsági szakasz keveréke:
+
+$$
+D_i=\alpha_iD_{\text{long}}+\beta_iD_{\text{atomic}}+\gamma_iD_{\text{agent}}+\delta_iD_{\text{replay}},
+\qquad \alpha_i+\beta_i+\gamma_i+\delta_i=1.
+$$
+
+Az arányokat **tokenek**, ne dokumentumok alapján számoljuk. $D_{\text{long}}$ könyv, hosszú dokumentum és kódrepo; $D_{\text{atomic}}$ visszakeresés, többlépéses érvelés, utasításkövetés, aggregáció és statisztika; $D_{\text{agent}}$ tervezés, eszközválasztás/-hívás, hosszú állapotkövetés és hibajavítás. $D_{\text{replay}}$ megőrzi az általános/rövid adatokat és a már ismert rövid feladatokat a jelenlegi hosszra „felemelve”, változó bizonyítékhellyel és zavaró elemekkel. Szükséges a deduplikáció, minőségszűrés és eval-szennyezés ellenőrzése.
+
+A Mid-trainingnek a névleges ablakot **effektív célhosszra** kell bővítenie, közben hosszú érvelést, tervezést és eszközhasználatot tanítva. A `max_position_embeddings` 32K-ról 128K-ra emelése csak a bemenet elfogadását bizonyítja. Használjunk például 8K → 16K → 32K → 64K → 128K tantervet a modellhez, célhoz és költséghez igazítva[^ch8-36]. Bővítés előtt a jelenlegi hosszon legyen kész a NIAH, visszakeresés, multi-hop, aggregáció/statisztika, alaptervezés és eszközválasztás.
+
+Ha $M(\theta,c,L)$ a $\theta$ modell $c$ képességének pontja $L$ hosszon, három kapu használható:
+
+$$
+\begin{aligned}
+M(\theta_i,c,L_i)&\geq\tau_{c,i},\\
+M(\theta_i,c,L_i)&\geq M(\theta_i,c,L_{i-1})-\epsilon_{\text{len}},\\
+M(\theta_i,c,L_{i-1})&\geq M(\theta_{i-1},c,L_{i-1})-\epsilon_{\text{retain}}.
+\end{aligned}
+$$
+
+Ezek rendre a jelenlegi hossz teljesítését, a képesség megőrzését hosszabbításkor és a régi képesség megőrzését az új szakaszban kérik. A másodikhoz azonos nehézségű, csak hosszában emelt feladat kell; az $\epsilon$ értékeit ismételt mérés konfidenciaintervallumából válasszuk. Ha egy képesség elbukik, növeljük az atomi, jelenlegi hosszú vagy replay adatot, ne csak a névleges ablakot.
+
+| Képesség | Benchmark | Fő diagnózis |
+| --- | --- | --- |
+| Pozíció, visszakeresés, követés, aggregáció | NIAH, RULER | Needle-hely/-szám, multi-hop, aggregáció és hossz szerinti romlás; a NIAH csak smoke test |
+| Valós hosszú dokumentum | LongBench, LongBench v2 | Egy-/többdokumentumos QA, hosszú párbeszéd, in-context learning, strukturált adat kategória és hossz szerint |
+| Hosszú kód | LongBench v2 repository feladatok, LongCodeU | Kódegységek, fájlok közötti kapcsolat, repo-szintű megértés |
+| Tervezés és eszközök | PlanningArena és korábbi tool benchmarkok | Felbontás, választás, memória, argumentum, állapot |
+| End-to-end Agent | SWE-bench Verified, $\tau^2$-bench, Terminal-Bench | Tervezés, eszköz, helyreállítás és befejezés valós hosszú trajektórián |
+
+A RULER a NIAH-t multi-needle, multi-hop és aggregáció felé bővíti[^ch8-37]; a LongBench v2 valós dokumentumot, párbeszédet, repót és strukturált adatot fed le[^ch8-38]; a LongCodeU és PlanningArena hosszú kódot, illetve tervezést/eszközhasználatot diagnosztizál[^ch8-39][^ch8-40]. A hivatalos teszt csak értékelésre való; tanítsunk hasonló, de nem átfedő példán, és jelentsünk hossz, képesség és hibatípus szerint. Egyetlen NIAH vagy leaderboard nem bizonyít hosszúkontextus-érvelést.
+
+A frissítendő, idézendő, hozzáférés-szabályozott vagy törlendő tények maradjanak RAG-ban. Nagy teljes-paraméteres Mid-training előtt kis kísérletben validáljuk a keveréket.
+
 ## SFT (Supervised Fine-Tuning)
 
 ![8-10. ábra: A felügyelt finomhangolás (SFT) folyamata](images/fig8-10.svg)
@@ -322,7 +372,9 @@ A 7. fejezet bad case-ei is átalakíthatók itt tréningadattá. Vegyük a Codi
 
 Az ebben a fejezetben újként szereplő két Bad Case kísérlet két különböző felügyeleti célt mutat be. A kínai kunkori idézőjeles eset előbb hatókörérzékeny dokumentációs Skill-lé desztillálja a visszajelzést, és csak azután végez SFT-t strukturált szintetikus adaton; a speciális karakterláncos eset az `old_string` eltéréseit bájtpontos másolási feladattá alakítja, és a tokenszintű hűséget tréningezi. Mindkettő a 7. fejezet hibaattribúciós, valamint tréning/értékelés elkülönítési protokollját használja, de nem osztoznak közös összpontszámon: az első azt méri, hogy „amit változtatni kell, azt változtasd, amit megőrizni, azt hagyd”, a második azt, hogy „szó szerint másolj”.
 
-## Mikor válassz SFT-t és mikor RL-t?
+## Mikor válassz Mid-traininget, SFT-t vagy RL-t?
+
+Először azt diagnosztizáljuk, hogy az **alap, a protokoll vagy a stratégia** hiányzik. A közel nulla `pass@k` tudás-/képességhibákkal Mid-traininget; az alkalmi siker instabil formátummal/schema-val SFT-t jelez. Az RL csak akkor hatékony, ha a rollout pontozható, néha sikeres, a jutalom hű a célhoz, és a csoporton belül eltér. Held-out adaton mérjük a `pass@1`, `pass@k`, részleges előrehaladás, parse arány és hibaattribúció értékeit. Ne futtassunk PPO/GRPO-t közvetlenül teljesen sikertelen rolloutokon.
 
 A „Pre-tréning, SFT, RL: Háromszakaszos panoráma” szakasz tisztázta az SFT és az RL "lényegi különbségét". Ez a szakasz egy gyakorlatiasabb kérdésre ad választ: "Egy adott feladatra melyiket használd?" Az alábbi döntési keretrendszer néhány következtetését a későbbi RL kísérletek (7-10., 8-11. kísérlet) tovább erősítik. Az olvasók először kialakíthatnak egy előzetes ítéletet, majd az RL szakasz elolvasása után visszatérhetnek ellenőrzésre.
 
@@ -431,6 +483,23 @@ Készítsünk durva időbecslést. Egy összetett ágens rolloutja több tucat k
 A PPO és a GRPO is ezt a zárt hurkot követi, a különbség főként abban van, **mihez viszonyítanak**. A GRPO közvetlenül ugyanazon feladat több rolloutját hasonlítja össze, és nincs szüksége külön értékmodellre. A PPO egy értékmodellt tréningez, amely a trajektória minden lépésénél megbecsüli, hogy „általában milyen jól szokott sikerülni”, majd eldönti, hogy az aktuális cselekvés felülmúlja-e ezt a várakozást; ezért jobban illik a finomszemcsés hitelkiosztást igénylő hosszú trajektóriákhoz. Mindkettő korlátozza egyetlen frissítés nagyságát, hogy egy kis mintaköteg ne változtassa meg hirtelen túlságosan a modellt. A DPO más: közvetlenül előre begyűjtött „jobb válasz — rosszabb válasz” preferenciapárokból tanul, és nem generáltatja online az aktuális politikával ezt a rolloutcsoportot.
 
 Ennek a fejezetnek az eseteiben az AdaptThink saját megszorított célfüggvényt használ; a GeneralPoints és a V-IRL értékmodelles PPO-t; a SimpleVLA-RL és az RLVP GRPO-t; a ReTool PPO-t. Az algoritmus dönti el, hogyan hasonlítjuk össze a trajektóriákat és hogyan frissítjük a paramétereket; a jutalom dönti el, mi számít sikernek; a környezet és az adat pedig azt, hogy a modell milyen problémákkal találkozhat egyáltalán.
+
+### Miért előnyös általában az On-Policy az LLM RL-ben
+
+Az **online** csak azt jelenti, hogy tréning közben folyamatosan készül adat; az **on-policy** azt, hogy a rolloutot készítő $\mu$ viselkedési stratégia azonos vagy közel van az aktuális $\pi_\theta$ stratégiához. A pár checkpointtal lemaradó aszinkron worker online adata is off-policy. Más stratégiából származó adathoz importance ratio kell:
+
+$$
+\rho_t=\frac{\pi_\theta(a_t\mid s_t)}{\mu(a_t\mid s_t)}
+=\exp\!\left(\log\pi_\theta(a_t\mid s_t)-\log\mu(a_t\mid s_t)\right).
+$$
+
+Friss on-policy rolloutnál frissítés előtt $\rho_t=1$, így a jelenlegi modell által valóban látogatott állapotokon tanulunk, és elkerüljük az eloszláseltérés nagy varianciájú korrekcióját. Az off-policy újrahasznosítja az adatot és növeli a throughputot, de hosszú autoregresszív sorban a kis tokenarány-eltérés felhalmozódik. A PPO clipping korlátozza a kiugró frissítést, de nem állítja vissza az elveszett lefedést. Az on-policy tehát nem mindig jobb; a jelenlegi LLM policy gradientben többnyire kisebb eloszlási torzítást és stabilabb optimalizálást jelent[^ch8-32].
+
+#### A numerikus eltérés szétrombolhatja a névleges On-Policy-t
+
+A vLLM/SGLang sampler és FSDP/Megatron trainer azonos súlynál is eltérő log probabilityt adhat a pontosság, reduction-sorrend, tensor parallel, batch size, KV cache és fused kernel miatt. Már frissítés előtt $\rho_t\ne1$: a névleges on-policy numerikusan off-policy lesz, és kis tokeneltérés is összeomlást okozhat[^ch8-33]. A lánc: log-probability hiba → exponenciált arány → hosszú prefixen felhalmozódás → clipping/advantage változás → gradiens és effective sample size változás. 4000 token azonos irányú $10^{-3}$ hibája $e^4\approx54.6$ lehet; a batchváltás a batch invariance-ot is törheti[^ch8-34].
+
+Frissítés előtt hasonlítsuk össze a sampler/trainer token log probabilityit; figyeljük $\rho_t$ átlagát, kvantiliseit, maximumát, az approximate KL-t és clipping fractiont. Szinkronizáljuk a LoRA-t, tokenizert, chat template-et, revisiont és pozícióbeállítást; mentsük a generáláskori behavior log probabilityt. Ha a numerikus út nem egyezik, kezeljük nyíltan off-policyként, korrigáljunk, és korlátozzuk a stalenesst és a batchenkénti frissítést.
 
 ## RL-környezetek: az értékeléstől a szimulációig
 
@@ -582,7 +651,15 @@ Az RL alacsony mintahatékonysága a nagy varianciából és az on-policy adat n
 
 ### On-Policy Distillation: hogyan adjon egyetlen rollout sűrű felügyeletet
 
-Az On-Policy Distillationt a Thinking Machines Lab fogalmazta meg módszeresen és tette ismertté 2025-ben[^ch8-10]. Egyszerre próbálja orvosolni az SFT és az RL gyengéjét: az SFT felügyelete sűrű, de a tanító vagy az ember által bejárt **off-policy utakról** származik; amikor a diák saját hibát vét, és olyan állapotba kerül, amelyet a tréningadat nem fed le, nem tudja, hogyan álljon helyre. Az RL a diákkal generáltatja a saját **on-policy útjait**, de egy trajektóriának rendszerint csak egyetlen végső jutalma van, így a tanulási jel ritka és nagy varianciájú.
+Az On-Policy Distillationt a Thinking Machines Lab rendszerezte 2025-ben[^ch8-10]. A „policy” itt azt jelenti, **ki generálja az állapotprefixet, amelyen a diák tanul**, nem azt, ki adja a felügyeletet.
+
+| Módszer | Ki mintázza a trajektóriát/állapotot | Fő felügyelet |
+| --- | --- | --- |
+| SFT/off-policy desztilláció | Ember vagy tanító | Sűrű tokenfelügyelet címkézett válaszból |
+| On-policy RL | Aktuális diák | Többnyire ritka eredmény-/folyamatjutalom |
+| On-Policy Distillation | Aktuális diák | A tanító sűrű tokeneloszlása a diák prefixén |
+
+Az SFT sűrű, de a tanító állapotaira torzít; az RL illeszkedik a diák állapotaihoz, de sokszor csak végső sikert/kudarcot ad. Az On-Policy Distillation egyesíti őket: **a diák választja meg a meglátogatott állapotot, a tanító ott adja a teljes next-token eloszlást**. Ha a diák értelmes állapotba sem jut, előbb Mid-training vagy off-policy bemutató kell. A numerikus egyezés kötelező: ha a rollout $\mu$-ból jön, de a trainer más $\pi_\theta$-t számol, az állapot PPO ratio nélkül is off-policy. Frissítés előtt teszteljük a sampler/trainer log-probability egyezését.
 
 Az On-Policy Distillation először a diákkal generáltat trajektóriákat a saját politikája szerint, majd egy erősebb tanítóval adatja meg a következő token valószínűségi eloszlását **minden olyan állapotban, amelyet a diák ténylegesen bejárt**. Így egy $T$ hosszúságú rollout már nem egyetlen 0/1 jelet ad, hanem nagyjából $T$ csoportnyi tokenszintű felügyeletet; a tanító inferenciája számítást fogyaszt, nem további környezeti interakciót. Ez egyszerre kerüli el az SFT eloszlásbeli eltérését, és csökkenti jelentősen az RL varianciáját és próbálkozásszámát: egyetlen drága mintavételezés már megtanítja, „mit kellene ebben a lépésben másképp csinálni”, ahelyett hogy meg kellene várni a feladat végét, és onnan visszafelé következtetni.
 
@@ -629,7 +706,7 @@ Az RLVR-hez képest az OPSD nem követeli meg, hogy a jutalom automatikusan elle
 
 Ez a szakasz visszatér ahhoz a kérdéshez, amelyet a 7. fejezet nyitva hagyott: hogyan válik az éles bad case-ekből épített értékelő adathalmaz valóban a poszt-tréning bemenetévé. A 7. fejezet vége az értékelőkörnyezetet és az ellenőrzőket a poszt-tréning alapköveihez hasonlította. A hibaattribúciós feljegyzések, a végponttól végpontig tartó regressziós feladatok, a trajektória-előtag regressziós feladatok és a rubrikás pontozás mind más-más tréningfelhasználásnak felelnek meg:
 
-8-4. táblázat A 7. fejezet értékelő adathalmazainak megfeleltetése a 8. fejezet tréningfelhasználásainak
+8-5. táblázat A 7. fejezet értékelő adathalmazainak megfeleltetése a 8. fejezet tréningfelhasználásainak
 
 | A 7. fejezet értékelő adata | A 8. fejezet tréningfelhasználása |
 | --- | --- |
@@ -690,6 +767,8 @@ Ha a fájl beolvasása vagy az eszköz visszatérése már megváltoztatta a bá
 
 ## A poszt-tréning gyakorlati tanulságai
 
+Három további veszélyt külön is figyeljünk: **a névleges ablak nem feltétlenül effektív**, **közel nulla `pass@k` mellett ne indítsunk RL-t**, és **a sampler/trainer numerikus eltérését ne tekintsük ártalmatlan zajnak**. Az elsőhöz képesség × hossz kapuk és replay, a másodikhoz Mid-training/SFT támogatás, a harmadikhoz frissítés előtti log-probability-, KL- és clipping-monitorozás kell.
+
 Ez a fejezet hosszú utat járt be a pre-tréning „jósold meg a következő szót” feladatától: az SFT hatékonyan tanulja meg a formátumot és a protokollt, az eredményközpontú RL pedig e fejezet kontrollált kísérleteiben javította az eloszláson kívüli általánosítást; a többmenetes feladatok behozzák a hitelkiosztás problémáját; a jutalomtervezés az eredményjutalomtól az „eredményt jutalmazó, folyamatot korlátozó” útjelzésekig bővül; az eszközhasználat pedig kombinatorikus robbanást hoz. Egyetlen fonál fut végig mindezen: az, hogy a modell mit tanul meg, attól függ, mit tanított neki a tréningjel; annak minőségét pedig elsősorban az adat és a környezet dönti el, nem az algoritmus.
 
 Az alábbi **gyakori csapdák** figyelmet érdemelnek; felismerésük gyakran több erőforrás-pazarlástól ment meg, mint a technikai részletek elsajátítása:
@@ -710,6 +789,8 @@ Alapelv: **mielőtt nagy léptékű erőforrást fektetnél be, kis léptékű k
 A robusztus rendszerek jellemzően kombinálják ezeket: RAG-gal kezelik a tényeket és bizonyítékokat, ICL-lel gyorsan kipróbálják a nyelvvel leírható stratégiákat, programmal rögzítik a determinisztikus folyamatokat és a kemény megszorításokat, poszt-tréninggel pedig azokat a képességeket írják a paraméterekbe, amelyeket nehéz nyelvvel kifejezni, és széles általánosítást igényelnek. A poszt-tréning modelldesztillációt is lehetővé tesz: egy nagy képességű modell tudásának átvitelét egy olcsóbb, kisebb modellbe.
 
 ## Fejezet összefoglaló
+
+A Mid-training, SFT és RL rendre az **alapot, protokollt és stratégiát** kezeli. A Mid-training hosszúsági tantervvel és replay-keverékkel épít effektív kontextust; az SFT stabilizálja a formát; az RL csak pontozható, jutalomváltozatosságot mutató trajektóriákon hatékony. Nulla `pass@k` esetén előbb képességet kell hozzáadni, nem többet próbálkozni.
 
 Az SFT és az RL nem annyira versenytársak, mint inkább gyakran sorban egymásra épülő módszerek. Olyan beállításokban, ahol a strukturált kimenet instabil, előbb az SFT stabilizálhatja a formátumot, hogy az RL jutalomjele megbízhatóan kiszámítható legyen, majd az RL felfedezhet stratégiákat és javíthatja az eloszláson kívüli teljesítményt. Az „SFT memorizál, RL általánosít” e fejezet kontrollált kísérleteiben megfigyelt hajlamot foglalja össze, nem pedig olyan törvényt, amely az adattól, a modelltől, a jutalomtól és a környezettől függetlenül érvényes.
 
@@ -747,6 +828,17 @@ Ez a fejezet arra a kérdésre válaszolt, hogyan valósítható meg az ágens f
 [^ch8-27]: Yu, Qiying et al., “DAPO: An Open-Source LLM Reinforcement Learning System at Scale”, 2025. arXiv:2503.14476. https://arxiv.org/abs/2503.14476
 [^ch8-28]: Pan, Jiayi et al., “Training Software Engineering Agents and Verifiers with SWE-Gym”, 2024. arXiv:2412.21139; Barres, Victor et al., “$\tau^2$-Bench: Evaluating Conversational Agents in a Dual-Control Environment”, 2025. arXiv:2506.07982; Rawles, Christopher et al., “AndroidWorld: A Dynamic Benchmarking Environment for Autonomous Agents”, 2024. arXiv:2405.14573.
 [^ch8-29]: storm, "Long-horizon agent self-checking and early stopping: the reward-seeking phenomenon and its mitigations", Qingke Community, 6 August 2026. https://qingkeai.online/archives/Reward-Seeking
+[^ch8-30]: Gururangan, Suchin et al., “Don't Stop Pretraining”, ACL, 2020. https://aclanthology.org/2020.acl-main.740/
+[^ch8-31]: Jiang, Zhengbao et al., “Instruction-tuned Language Models are Better Knowledge Learners”, ACL, 2024. https://aclanthology.org/2024.acl-long.296/
+[^ch8-32]: Zheng, Chujie et al., “Stabilizing Reinforcement Learning with LLMs”, 2025. https://arxiv.org/abs/2512.01374
+[^ch8-33]: Zhong, Tianle et al., “Diagnosing Training Inference Mismatch in LLM Reinforcement Learning”, 2026. https://arxiv.org/abs/2605.14220
+[^ch8-34]: He, Horace and Thinking Machines Lab, “Defeating Nondeterminism in LLM Inference”, 2025. https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/
+[^ch8-35]: Gao, Tianyu et al., “How to Train Long-Context Language Models (Effectively)”, ACL, 2025. https://aclanthology.org/2025.acl-long.366/
+[^ch8-36]: Xiong, Wenhan et al., “Effective Long-Context Scaling of Foundation Models”, NAACL, 2024. https://aclanthology.org/2024.naacl-long.260/
+[^ch8-37]: Hsieh, Cheng-Ping et al., “RULER”, COLM, 2024. https://arxiv.org/abs/2404.06654
+[^ch8-38]: Bai, Yushi et al., “LongBench” and “LongBench v2”, ACL, 2024/2025. https://aclanthology.org/2025.acl-long.183/
+[^ch8-39]: Li, Jia et al., “Benchmarking Long-Context Language Models on Long Code Understanding”, ACL, 2025. https://aclanthology.org/2025.acl-long.1324/
+[^ch8-40]: Zheng, Zihan et al., “PlanningArena”, ACL, 2025. https://aclanthology.org/2025.acl-long.1499/
 
 ## Gondolatkérdések
 
@@ -760,6 +852,6 @@ Ez a fejezet arra a kérdésre válaszolt, hogyan valósítható meg az ágens f
 8. ★★★ Az On-Policy Distillation egy erősebb tanító modellre támaszkodik a tanuló felügyeletéhez. Az OpenAI Weak-to-Strong Generalization kutatása azonban egy ellentmondásos megállapítást hozott: egy gyenge modell felügyelete néha felszabadíthat olyan képességeket, amelyek latensek, de inaktívak egy erősebb modellben. Ha ezt alkalmaznánk az Ágens tréningre, lehetővé tehetné-e ez a fordított desztillációt, ahol "egy kis modell tanít egy nagy modellt"?
 9. ★★ A Folyamat Jutalommodell (PRM) minden érvelési lépést értékel, míg az Eredmény Jutalommodell (ORM) csak a végeredményt veszi figyelembe. Melyik érdemel több jutalmat: "egy helyes folyamat, ami rossz eredményhez vezet", vagy "egy rossz folyamat, ami véletlenül helyes eredményt produkál"? Hogyan egyensúlyoznád a kettőt többlépéses Ágens eszközhívási forgatókönyvekben?
 10. ★★★ Az ebben a fejezetben tárgyalt értékelési adathalmazok, mint a SWE-Bench Verified, τ²-bench és AndroidWorld, használhatók mind értékelésre, mind poszt-tréningre. De ha egyszer egy értékelési készletet tréningre használunk, többé nem független. Megsérti-e ez az alapvető elvet, hogy a tréning és a teszt készleteknek elkülönítve kell maradniuk? A τ²-bench dinamikus paramétergenerálása és az AndroidWorld paraméterezett sablonjai bizonyos mértékig enyhítik a problémát, de a sablonstruktúrájuk rögzített marad. Hogyan lehet az értékelési adatok tréning értékét teljes mértékben kihasználni az értékelési függetlenség megőrzése mellett?
-11. ★★★ Ez a fejezet egy "előbb a forma, aztán a szellem" tréning paradigmát javasol: állítsd le az SFT-t, amint "a formátum stabil és az alapképességek jelen vannak", majd válts RL-re. A gyakorlatban hogyan lehet meghatározni, hogy az SFT mikor "elég", és mikor kell váltani?
+11. ★★★ Ha az alapmodell `pass@1` értéke nagyon alacsony a célfeladaton, hogyan egyesítenéd a `pass@k`, parse-siker, részleges előrehaladás és hibaattribúció jeleit a Mid-training, SFT vagy közvetlen RL kiválasztásához? Milyen feltételeket kell teljesíteni váltás előtt?
 12. ★★★ A ReTool tréning dinamikája (lásd 8-14. kísérlet) megmutatja, hogy néhány rendkívül hosszú válasz jelentősen meghosszabbíthatja a teljes tréning ciklust – a legtöbb rollout egy kötegben már generálva van, de a rendszernek várnia kell a leghosszabb válaszok befejezésére, ami alacsony GPU kihasználtságot hagy a klaszterben. Hogyan javítható az erőforrás kihasználtság a tréning klaszterekben ilyen hosszú farok válaszfeltételek mellett?
 13. ★★★ Amikor egy Ágenst LLM-szimulált környezetekkel szemben tréningezünk – mint egy szimulált keresőmotor vagy szimulált felhasználók –, az Ágens kiaknázásának célpontja átvált "a valós környezet szabályairól" "a szimulátor torzításaira és hiányosságaira". Milyen konkrét jutalomhackelési viselkedések merülhetnek fel az ilyen típusú tréningben, és hogyan kellene megelőzni őket?

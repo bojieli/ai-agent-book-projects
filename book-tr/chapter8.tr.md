@@ -4,7 +4,7 @@ Bu kitabın temel formülü Agent = LLM + Context + Tools'tur. Bu bölüm, LLM d
 
 Bu bölüm, pekiştirmeli öğrenme ya da model eğitimi konusunda hiçbir arka planı olmayan okurlar için yazıldı. Gradyanları veya policy optimizasyonunu bildiğinizi varsaymıyoruz; bunun yerine "bir model nasıl eğitilir" sorusunun kendisinden başlayıp her adımın amacını, çalışma ilkesini ve çözdüğü problemi açık açık anlatıyoruz. Bu bölümü bitirdiğinizde şunlara yanıt verebilmelisiniz: Bir modelin yeteneği kaç adımda dövülür, her adım ne yapar, neden bu sıraya uyulması zorunludur ve kendi projenizde hangi adıma emek harcamalısınız?
 
-**Önce en önemli haritayı kuralım: modern bir modelin yeteneği üç aşamada dövülür.** Bu üç aşama birbirine kenetlidir, hiçbiri eksik olamaz:
+**En önemli harita dört parçadan oluşur: pre-training, Mid-training, SFT ve RL.** Mid-training genel temel ile davranış hizalama arasında alan bilgisi ve temel yetenek kurar; sonraki kesimler dört parçayı da ele alır.
 
 1. **Pre-training (ön eğitim)**: Devasa miktarda internet metni üzerinde "bir sonraki token'ı tahmin etme" eğitimi. Bu adım modele dil kurallarını, dünya bilgisini ve temel akıl yürütmeyi öğretir; kütüphanedeki bütün kitapları okumuş bir insan gibi — çok bilgili, ama henüz soruları düzgün yanıtlayamıyor. En pahalı adım budur (rahatlıkla on milyonlarca dolar) ve yeteneğin temelini atar.
 2. **SFT (Supervised Fine-Tuning, denetimli ince ayar — yani modeli etiketlenmiş "girdi—çıktı" çiftleriyle eğitmek; öğretmenin standart cevabı verip öğrencinin ona bakarak öğrenmesi gibi)**: Birkaç binden birkaç on bine kadar "soru—standart yanıt" gösterim verisiyle modele "hangi formatta, hangi üslupta, hangi akışla yanıt vereceğini" öğretir. Bu adım, çok bilgili modeli talimatları anlayan ve düzenli çıktı veren bir asistana dönüştürür. Ucuz, hızlı ve kararlıdır; bugün konuşlandırılan neredeyse bütün modellerin geçtiği bir adımdır.
@@ -22,15 +22,16 @@ Sezgisel bir benzetme: pre-training "on bin kitap okumaktır" (bilgi biriktirme)
 > - **Agent uygulama geliştiricileri** (modeli kendisi eğitmek zorunda olmayanlar): Önce açılıştaki "Pre-training, SFT, RL: üç aşamalı panorama" kesimini okuyup genel resmi kurun; ardından hemen arkasından gelen iki `[isteğe bağlı okuma]` kesimini (klasik RL ve pre-training arka planı) atlayıp SFT kesiminden devam edebilirsiniz. "SFT ile RL arasındaki temel fark" ve "Ne zaman SFT, ne zaman RL seçilmeli" karar çerçevelerine, bir de "veri ve ortam algoritmadan daha önemlidir" yargısına odaklanın — bu kavrayışlar Harness engineering'deki tasarım kararlarınızı etkileyecek (ne zaman prompt ile çözülür, ne zaman ince ayar yapmaya değer).
 > - **Model eğitimi mühendisleri**: Baştan sona sırayla okuyun; iki `[isteğe bağlı okuma]` kesimi pekiştirmeli öğrenme ve pre-training için eksiksiz arka plan sunuyor, sonraki deneyler ise yeniden üretilebilir eğitim reçeteleri veriyor.
 
-## Pre-training, SFT, RL: Üç Aşamalı Panorama
+## Pre-training'den RL'e: Dört Aşamalı Panorama
 
-Giriş, üç aşamanın haritasını verdi; bu kesim her adımın mekanizmasını enine boyuna anlatıyor. Üç aşamanın kullandığı **veri**, **optimizasyon hedefi** ve **maliyet** birbirinden farklıdır; benzerliklerini ve farklarını anlamak bütün bölümü kavramanın anahtarıdır. Önce Tablo 8-1 genel bir görünüm veriyor, ardından maddeler tek tek açılıyor.
+Giriş dört parçanın haritasını verdi; bu kesim her parçanın **veri**, **optimizasyon hedefi** ve **maliyet** farkını anlatıyor. Tablo 8-1 önce genel görünümü veriyor, ardından ayrıntılar geliyor.
 
-Tablo 8-1 Model Yeteneğinin Dövüldüğü Üç Aşama
+Tablo 8-1 Model Yeteneği Geliştirmenin Dört Parçası
 
 | Aşama | Hangi veri kullanılır | Optimizasyon hedefi | Ne öğrenilir | Tipik maliyet |
 |------|---------------------|-----------------------|------------------------|---------------------|
 | **Pre-training** | Devasa miktarda ham internet metni | Bir sonraki token'ı tahmin etmek | Dil kuralları, dünya bilgisi, temel akıl yürütme | Aşırı yüksek (milyonlarca–on milyonlarca dolar) |
+| **Mid-training** | Hedef dil/alan/yetenek külliyatı ve koruma verisi | Sonraki token tahminini sürdürmek (genellikle tüm token'larda loss) | Alan bilgisi, dil ve temel yetenek boşluklarını kapatmak | Orta-yüksek; token miktarına ve eğitilen parametrelere bağlı |
 | **SFT** | Birkaç bin–birkaç on bin "girdi—çıktı" gösterim çifti | Bir sonraki token'ı tahmin etmek (loss yalnızca yanıt üzerinde hesaplanır) | Talimat takibi, çıktı formatı, üslup, akış protokolü | Düşük (birkaç saat–birkaç gün) |
 | **RL** | Görev + ödül fonksiyonu (standart cevap yok) | Beklenen ödülü maksimize etmek | Aktarılabilir karar stratejisi, keşfedilerek bulunan yeni çözümler | Yüksek (çoğu zaman SFT'nin onlarca–yüzlerce katı) |
 
@@ -43,6 +44,10 @@ Modele bir metnin ilk yarısını gösterirsiniz, o da bir sonraki token'ın ne 
 Aklınızda tutmanız gereken kilit bir nokta var; SFT ve RL boyunca da peşinizi bırakmayacak: **modelin çıktısı özünde bir olasılık dağılımıdır**. Önceki metin verildiğinde model, sözlüğündeki her olası token'a bir olasılık atar. "Eğitim" dediğimiz şey nihayetinde **bu olasılık dağılımını ayarlamaktan** ibarettir — istediğimiz token'ların olasılığını yükseltmek, istemediklerimizinkini düşürmek. Üç aşamanın farkı yalnızca "neyin istendiğinde" ve "istenenin hangi sinyalle tanımlandığındadır".
 
 Pre-training'den sonra model çok bilgilidir ama kullanışlı değildir: ona bir soru sorarsınız, yanıt vermek yerine yeni sorular yazmayı sürdürebilir — çünkü internet metinlerinde bir sorunun ardından çoğu zaman başka bir soru gelir. "Soru sorulduğunda yanıt verilir" protokolünü henüz öğrenmemiştir.
+
+### Mid-training'in Özü: Hedef Dağılımda Öğrenmeye Devam Etmek
+
+Genel pre-training her dili, alanı ve yeteneği yeterince kapsayamaz. Model hedef dili neredeyse okuyamıyor, kurum içi protokolleri bilmiyor veya uzun bağlam ve kod için gerekli temsilleri kurmamışsa yalnızca yanıt biçimini öğretmek ya da başarı/başarısızlık ödülü vermek çok geçtir. Mid-training sonraki-token hedefini korur, veriyi hedef alana yoğunlaştırır ve unutmayı denetlemek için genel koruma verisi karıştırır. Sorduğu soru “görev için gereken bilgi ve temel yetenek var mı?”dır; “yanıt nasıl görünmeli?” ya da “hangi politika en yüksek ödülü alır?” değil.
 
 ### SFT'nin Özü: Verisi Değiştirilmiş "Bir Sonraki Token'ı Tahmin Etme"
 
@@ -57,9 +62,11 @@ SFT'nin özü tek cümlede: **son derece yüksek bir örneklem verimliliğiyle, 
 
 > **Eğitim maliyeti: LoRA ile parametre-verimli ince ayar**. Yukarıdaki SFT de sonraki RL de model parametrelerini güncellemeyi gerektirir, oysa tam parametreli ince ayarın VRAM ihtiyacı çok yüksektir (milyarlarca parametrenin hepsi için gradyan ve optimizer durumu saklanmalıdır). **LoRA** (Low-Rank Adaptation, düşük ranklı uyarlama) en yaygın tasarruf yöntemidir: orijinal büyük ağırlık matrislerine dokunmaz, yalnızca yanlarına görevi öğrenecek küçücük bir "yama" (düşük ranklı matris) asar; parametre sayısı orijinalin yalnızca %1–5'i kadardır ama tam parametreli ince ayara yakın bir sonuç verir. Orijinal ağırlıklar dondurulduğu için LoRA'nın temel modelin mevcut yeteneklerinde yarattığı sarsıntı da daha küçüktür, catastrophic forgetting riski daha düşüktür. Doğrulanmış birkaç pratik ders[^ch8-1]: LoRA'yı bütün ana ağırlık matrislerine (özellikle parametrenin en büyük payını tutan MLP katmanlarına) uygulamak **zorunludur**, yalnızca attention katmanlarına eklerseniz puan kaybedersiniz; **en iyi öğrenme oranı, tam parametreli ince ayarınkinin yaklaşık 10 katıdır** (hem SFT hem RL için geçerli, son derece kullanışlı bir aktarım kuralı); SFT'de orta-yüksek rank (64–256) kullanılır, RL'de ise her turun taşıdığı bilgi çok az olduğu için küçük rank (8–32), hatta rank=1 bile yeter. Konuşlandırmada tek bir çıkarım sunucusu aynı anda birden fazla LoRA adapter yükleyip çok kiracılı hizmet verebilir. Bu kitap LoRA'yı bütün post-training yöntemlerini kesen bir mühendislik varsayılanı olarak alıyor ve ayrıca açmıyor.
 
-### Neden Önce SFT Sonra RL, Tersi Değil
+### SFT/RL'den Önce Temel Ne Zaman Onarılmalı
 
-Üç aşamanın sırası keyfi değildir. Pre-training'in en başta gelmesi tartışmasızdır — dil ve bilgi temeli olmadan sonrasının lafı bile edilemez. Asıl açıklanması gereken şudur: **SFT neden RL'den önce gelmek zorunda?**
+RL, modelin **kendi ürettiği** yanıtları ödülle değerlendirir; dolayısıyla çıktı doğrulanabilir olmalı ve mevcut politika ara sıra değerli bir davranış keşfedebilmelidir. Biçim kararsızsa JSON veya tool call'u ayrıştırılabilir kılmak için SFT kullanılır. Fakat makul sıcaklık ve örnek sayısında `pass@k` hâlâ sıfıra yakınsa doğru çözüm modelin etkili desteğinin dışındadır. Tamamı başarısız rollout'lar eksik bilgi veya akıl yürütme adımını neredeyse hiç söylemez; GRPO'da grup içi advantage da kaybolur. Önce Mid-training ile bilgi ve atomik yetenek ekleyin ya da gösterim/damıtmayla uygulanabilir yolları desteğe sokun, sonra RL yapın.
+
+Ancak bundan sonra şu soru anlamlıdır: **SFT hangi koşullarda RL'den önce gelmeli?**
 
 Yanıt, RL'in çalışma biçiminde saklıdır. RL standart cevaba bakmaz; yanıtı modelin **kendisinin üretmesini** ister, sonra yanıtın iyi ya da kötü olmasına göre ödül veya ceza verir. Ama iyi mi kötü mü olduğuna karar verebilmek için önce modelin çıktısını **ayrıştırabilmek** gerekir: görev bir JSON parçası ya da bir tool call üretmeyi gerektiriyorsa ve modelin kustuğu şey formatı darmadağın bir metin yığınıysa, ödül fonksiyonunun hesaplayacak hiçbir şeyi kalmaz ("başarılı mı, başarısız mı" bile ayırt edilemez), dolayısıyla RL'in de öğreneceği bir şey olmaz.
 
@@ -261,6 +268,49 @@ Dil modeli eğitimi "tokenization — pre-training — post-training" biçiminde
 
 Pre-training'in temel yetenekleri elde edildikten sonraki adım, post-training yoluyla genel amaçlı modeli kullanışlı bir Agent'a dönüştürmektir. Post-training'in ilk aşaması denetimli ince ayardır (SFT).
 
+## Mid-training: Bilgi ve Temel Yetenekleri Tamamlama
+
+Bu bölümde **Mid-training**, var olan bir temel modelden başlayıp hedef veri dağılımında ek bir dil modeli eğitimi yapmaktır. Genellikle pre-training ile aynı next-token hedefini kullanır ve belge, kod veya türetimin tüm token'larında loss hesaplar. DAPT/TAPT çalışmaları, alan ya da görevle ilgili etiketsiz külliyatta ikinci pre-training aşamasının aşağı akış başarımını artırabildiğini gösterir[^ch8-30].
+
+Bu aşama dil, terim, iç belge veya codebase eksiklerinden doğan **bilgi boşluklarını** ve uzun bağlam, kod, matematik ya da çok kipli temsil gibi çok örneklemede bile çözüme ulaşmayan **temel yetenek boşluklarını** kapatır. SFT az sayıda olguyu ezberletebilir; fakat birkaç QA çifti yalnızca sınırlı erişim yollarını güçlendirir ve büyük, ilişkili bilgi kütlesi için uygun değildir. Sağlam sıra: Mid-training ile bilgi/yetenek → küçük SFT ile çıktı protokolü → başarı oranı sıfırdan büyük olduğunda RL[^ch8-31].
+
+### Veri Karışımı ve Uzun Bağlam Müfredatı
+
+Uzunluk aşaması $i$ için karışım:
+
+$$
+D_i=\alpha_iD_{\text{long}}+\beta_iD_{\text{atomic}}+\gamma_iD_{\text{agent}}+\delta_iD_{\text{replay}},
+\qquad \alpha_i+\beta_i+\gamma_i+\delta_i=1.
+$$
+
+Oranları belge sayısıyla değil **token** sayısıyla hesaplayın. $D_{\text{long}}$ kitap, uzun belge ve kod depolarıdır; $D_{\text{atomic}}$ erişim, çok adımlı akıl yürütme, talimat takibi, toplama ve istatistiği; $D_{\text{agent}}$ planlama, araç seçimi/çağrısı, uzun durum takibi ve hata toparlamayı kapsar. $D_{\text{replay}}$ hem genel/kısa veriyi hem de bilinen kısa görevlerin kanıt konumu ve çeldiricileri değiştirilerek mevcut uzunluğa “yükseltilmiş” sürümlerini tutar. Tekilleştirme, kalite süzme ve değerlendirme sızıntısı denetimi gerekir.
+
+Mid-training ayrıca nominal pencereyi **etkili hedef uzunluğa** güvenle taşırken uzun metin akıl yürütmesi, planlama ve araç kullanımı kazandırmalıdır. `max_position_embeddings` değerini 32K'dan 128K'ya çıkarmak yalnızca girdinin kabul edildiğini kanıtlar. Başlangıç modeli, hedef ve bütçeye göre 8K → 16K → 32K → 64K → 128K gibi bir müfredat kullanın[^ch8-36]. Her genişletmeden önce mevcut uzunlukta NIAH, erişim, çok adımlı akıl yürütme, toplama/istatistik, temel planlama ve araç seçimini tamamlayın.
+
+$M(\theta,c,L)$, $\theta$ modelinin $c$ yeteneğinde $L$ uzunluğundaki puanıysa üç kapı kullanılır:
+
+$$
+\begin{aligned}
+M(\theta_i,c,L_i)&\geq\tau_{c,i},\\
+M(\theta_i,c,L_i)&\geq M(\theta_i,c,L_{i-1})-\epsilon_{\text{len}},\\
+M(\theta_i,c,L_{i-1})&\geq M(\theta_{i-1},c,L_{i-1})-\epsilon_{\text{retain}}.
+\end{aligned}
+$$
+
+Bunlar sırasıyla mevcut uzunlukta yeterlilik, uzatınca aynı yeteneğin anlamlı biçimde düşmemesi ve yeni aşamanın eski yeteneği unutmamasıdır. İkinci karşılaştırmada zorluğu eşlenmiş, yalnızca uzunluğu yükseltilmiş görevler kullanın; $\epsilon$ değerlerini yinelenen değerlendirmenin güven aralıklarından belirleyin. Bir yetenek geçemezse nominal pencereyi artırmak yerine ilgili atomik, mevcut-uzunluk veya replay verisini artırıp yeniden eğitin.
+
+| Yetenek | Benchmark | Ana tanı |
+| --- | --- | --- |
+| Konum, erişim, izleme, toplama | NIAH, RULER | Needle konumu/sayısı, çok adım, toplama ve uzunluğa göre bozulma; NIAH yalnızca smoke test |
+| Gerçekçi uzun belge akıl yürütmesi | LongBench, LongBench v2 | Tek/çok belgeli QA, uzun diyalog, bağlam içi öğrenme, yapılandırılmış veri; kategori ve uzunluk dilimleri |
+| Uzun kod anlama | LongBench v2 repository görevleri, LongCodeU | Kod birimleri, dosyalar arası ilişkiler, depo bütünü |
+| Planlama ve araç öğrenimi | PlanningArena ve önceki araç benchmark'ları | Ayrıştırma, seçim, bellek, argüman, durum doğruluğu |
+| Uçtan uca Agent | SWE-bench Verified, $\tau^2$-bench, Terminal-Bench | Gerçek uzun yörüngede plan, araç, toparlanma, tamamlama |
+
+RULER, NIAH'ı çoklu needle, çok adımlı izleme ve toplamaya genişletir[^ch8-37]; LongBench v2 gerçekçi belge, diyalog, repository ve yapılandırılmış veriyi kapsar[^ch8-38]; LongCodeU ve PlanningArena uzun kod ilişkileri ile planlama/araç öğrenimini tanılar[^ch8-39][^ch8-40]. Resmî test kümelerini yalnızca değerlendirmede kullanın; benzer yapılı ama çakışmayan örneklerle eğitin ve uzunluk, yetenek, hata türü bazında raporlayın. Tek NIAH veya leaderboard başarısı uzun bağlam muhakemesini kanıtlamaz.
+
+Güncellenmesi, kaynak gösterilmesi, erişimi denetlenmesi veya silinmesi gereken olgular RAG'da kalmalıdır. Büyük tam-parametre Mid-training'den önce karışımı küçük deneyle doğrulayın.
+
 ## SFT (Denetimli İnce Ayar)
 
 ![Şekil 8-10: Denetimli ince ayar (SFT) boru hattı](images/fig8-10.svg)
@@ -334,7 +384,9 @@ Veri sentezinde belirleyici olan miktar değil, kapsam, çeşitlilik ve doğrulu
 
 Bu bölüme eklenen iki Bad Case deneyi iki farklı denetim hedefini gösteriyor. Çince kıvrık tırnak örneği önce geri bildirimi kapsama duyarlı bir belge Skill'ine damıtır, sonra yapılandırılmış sentetik veriyle SFT yapar; özel karakter dizisi örneği ise `old_string` uyuşmazlığını bayt bayt birebir kopyalama görevine çevirip token düzeyinde sadakati eğitir. İkisi de 7. bölümün başarısızlık atfetme ve eğitim/değerlendirme yalıtımı protokollerini paylaşır, ama toplam puanı paylaşmaz: ilki "değişmesi gerekeni değiştir, kalması gerekeni bırak"ı, ikincisi "birebir kopyala"yı ölçer.
 
-## Ne Zaman SFT, Ne Zaman RL Seçilmeli
+## Mid-training, SFT ve RL Ne Zaman Seçilmeli
+
+Önce eksikliğin **temel, protokol ya da politika** olduğunu tanılayın. Bilgi/yetenek hatalarıyla birlikte sıfıra yakın `pass@k` Mid-training'e; ara sıra doğru ama kararsız biçim/schema SFT'ye işaret eder. RL ancak rollout puanlanabiliyor, bazen başarılı oluyor, ödül gerçek hedefe sadık kalıyor ve grup içinde ödül farkı varsa verimlidir. Tutma kümesinde `pass@1`, `pass@k`, kısmi ilerleme, parse oranı ve hata atfını ölçün; tamamı başarısız rollout'a doğrudan PPO/GRPO uygulamayın.
 
 "Pre-training, SFT, RL: Üç Aşamalı Panorama" kesimi SFT ile RL arasındaki **temel farkı** netleştirdi; bu kesim ise daha uygulamalı bir soruyu yanıtlıyor: **somut bir görev karşısında hangisi kullanılmalı?** Aşağıdaki karar çerçevesinin bazı sonuçları ilerideki RL deneylerinde (Deney 8-10 ve Deney 8-11) ayrıca doğrulanacak; okur önce bir ön yargıya varabilir, RL kısmını bitirdikten sonra buraya dönüp karşılaştırabilir.
 
@@ -445,6 +497,23 @@ Kabaca bir süre kestirimi yapalım. Karmaşık bir Agent rollout'u onlarca tur 
 PPO ile GRPO'nun ikisi de bu kapalı döngüyü izler; fark esas olarak **neyle karşılaştırdıklarındadır**. GRPO aynı problemin birden çok rollout'unu doğrudan karşılaştırır ve ayrı bir değer modeline gerek duymaz. PPO ise bir değer modeli eğitip yörüngenin her adımında "genelde ne kadar iyi yapılabildiğini" kestirir, sonra mevcut eylemin bu beklentiyi aşıp aşmadığını yargılar; bu yüzden ince taneli kredi atfı gerektiren uzun yörüngelere daha uygundur. İkisi de tek bir güncellemenin genliğini sınırlar ki küçük bir örnek yığını modeli birdenbire fazla değiştirmesin. DPO farklıdır: önceden toplanmış "daha iyi yanıt — daha kötü yanıt" tercih çiftlerinden doğrudan öğrenir ve mevcut politikaya bu rollout grubunu çevrimiçi ürettirmez.
 
 Bu bölümdeki örneklerde AdaptThink kendi kısıtlı amaç fonksiyonunu, GeneralPoints ve V-IRL değer modelli PPO'yu, SimpleVLA-RL ve RLVP GRPO'yu, ReTool ise PPO'yu kullanıyor. Algoritma yörüngelerin nasıl karşılaştırılacağını ve parametrelerin nasıl güncelleneceğini belirler; ödül neyin başarı sayılacağını belirler; ortam ve veri ise modelin hangi problemleri yaşayabileceğini belirler.
+
+### LLM RL Neden Genellikle On-Policy'yi Tercih Eder
+
+**Online**, verinin eğitim sırasında üretilmeye devam etmesidir; **on-policy**, rollout davranış politikası $\mu$ ile optimize edilen güncel $\pi_\theta$ politikasının aynı veya yeterince yakın olmasıdır. Birkaç checkpoint geride kalan asenkron worker, online veriyi bile off-policy yapar. Başka politikadan gelen veri importance ratio ile düzeltilir:
+
+$$
+\rho_t=\frac{\pi_\theta(a_t\mid s_t)}{\mu(a_t\mid s_t)}
+=\exp\!\left(\log\pi_\theta(a_t\mid s_t)-\log\mu(a_t\mid s_t)\right).
+$$
+
+Güncel on-policy rollout'ta güncelleme öncesi $\rho_t=1$ olur; böylece güncel modelin gerçekten ziyaret ettiği durumlarda öğrenilir ve dağılım kaymasının yüksek varyanslı düzeltmesi önlenir. Off-policy eski veriyi yeniden kullanıp throughput'u artırır, fakat uzun otoregresif dizide küçük token oranı sapmaları birikir. PPO clipping aykırı güncellemeyi sınırlar, kaybolan dağılım kapsamını geri getirmez. Dolayısıyla on-policy her zaman üstün değildir; güncel LLM politika gradyanında genellikle daha az dağılım yanlılığı ve daha kararlı optimizasyon demektir[^ch8-32].
+
+#### Sayısal Uyuşmazlık Görünürdeki On-Policy'yi Bozar
+
+vLLM/SGLang sampler ile FSDP/Megatron trainer aynı ağırlıklarda bile hassasiyet, reduction sırası, tensor parallel, batch size, KV cache ve fused kernel nedeniyle farklı log probability hesaplayabilir. Güncellemeden önce $\rho_t\ne1$ olur ve nominal on-policy sayısal olarak off-policy'ye dönüşür; küçük token farkları bile eğitimi çökertebilir[^ch8-33]. Büyütme zinciri: log-probability hatası → üstel oran → uzun prefix'te birikim → clipping/advantage değişimi → gradyan ve etkili örnek sayısının değişimi. 4.000 token'da aynı yönlü $10^{-3}$ sapma $e^4\approx54.6$ oranına ulaşabilir; batch değişimi batch invariance'ı da bozabilir[^ch8-34].
+
+Her güncellemeden önce sampler/trainer token log probability'lerini karşılaştırın; $\rho_t$ ortalama, quantile ve maksimumunu, yaklaşık KL'yi, clipping oranını izleyin. LoRA, tokenizer, chat template, revision ve konum ayarlarını da eşitleyin; üretim anındaki behavior log probability'yi saklayın. Sayısal yollar eşleşemiyorsa açıkça off-policy kabul edip önem düzeltmesi yapın, staleness ve batch başına güncelleme sayısını sınırlayın.
 
 ## RL Ortamları: Değerlendirmeden Simülasyona
 
@@ -596,7 +665,15 @@ RL'in örneklem verimliliğinin düşüklüğü yüksek varyanstan ve on-policy 
 
 ### On-Policy Distillation: bir rollout'tan yoğun denetim çıkarmak
 
-On-Policy Distillation, 2025'te Thinking Machines Lab tarafından dizgeli biçimde ortaya konup yaygınlaştırıldı[^ch8-10]. Hem SFT'nin hem RL'in eksiğini birlikte gidermeyi hedefler: SFT'nin denetimi yoğundur, ama öğretmenin ya da insanın yürüdüğü **off-policy yollardan** gelir; öğrenci kendi hatasını yapıp eğitim verisinin kapsamadığı durumlara girdiğinde nasıl toparlanacağını bilemez. RL öğrenciye kendi **on-policy yollarını** ürettirir, ama bir yörüngenin genellikle tek bir nihai ödülü olur; sinyal seyrek ve varyansı yüksektir.
+On-Policy Distillation, 2025'te Thinking Machines Lab tarafından sistemleştirildi[^ch8-10]. Buradaki “policy”, denetimi kimin verdiğini değil, **öğrencinin öğrendiği durum prefix'lerini kimin ürettiğini** anlatır.
+
+| Yöntem | Yörünge/durumu kim örnekler | Ana denetim |
+| --- | --- | --- |
+| SFT/off-policy damıtma | İnsan veya öğretmen | Etiketli yanıttan yoğun token denetimi |
+| On-policy RL | Güncel öğrenci | Genellikle seyrek sonuç/süreç ödülü |
+| On-Policy Distillation | Güncel öğrenci | Öğrenci prefix'inde öğretmenin yoğun token dağılımı |
+
+SFT yoğun ama öğretmen durumlarına eğilimlidir; RL öğrenci durumlarıyla eşleşir ama çoğu zaman yalnızca sonda başarı/başarısızlık verir. On-Policy Distillation ikisini birleştirir: **hangi duruma gidileceğini öğrenci belirler, öğretmen orada tüm next-token dağılımını verir**. Öğrenci anlamlı bir duruma bile giremiyorsa önce Mid-training veya off-policy gösterim gerekir. Sayısal tutarlılık yine şarttır: rollout $\mu$'dan gelirken trainer başka $\pi_\theta$ hesaplıyorsa PPO ratio olmasa da durumlar off-policy'dir. Güncelleme öncesi sampler/trainer log-probability uyumunu sınayın.
 
 On-Policy Distillation önce öğrenciye kendi politikasıyla yörüngeler ürettirir, sonra daha güçlü bir öğretmenin **öğrencinin fiilen uğradığı her durumda** bir sonraki token'ın olasılık dağılımını vermesini sağlar. Böylece $T$ uzunluğundaki bir rollout artık tek bir 0/1 sinyali değil, yaklaşık $T$ takım token düzeyinde denetim üretir; öğretmenin çıkarımının tükettiği şey hesaptır, fazladan ortam etkileşimi değil. Bu hem SFT'nin dağılım uyumsuzluğunu önler hem RL'in varyansını ve deneme sayısını belirgin biçimde düşürür: pahalı bir örnekleme daha o anda "bu adımda neyin değişmesi gerektiğini" öğretir; görevin bitmesini bekleyip başarıdan geriye doğru akıl yürütmek gerekmez.
 
@@ -643,7 +720,7 @@ RLVR'ye kıyasla OPSD, ödülün mutlaka otomatik doğrulanabilir olmasını ger
 
 Bu kesim 7. bölümün açık bıraktığı soruya dönüyor: üretimdeki bad case'lerden kurulan değerlendirme veri kümesi gerçekten nasıl post-training'in girdisine dönüşür? 7. bölümün sonunda değerlendirme ortamı ile doğrulayıcılar post-training'in temel taşlarına benzetilmişti. Başarısızlık atfetme kayıtları, uçtan uca gerileme görevleri, yörünge ön eki gerileme görevleri ve rubrik puanlaması ayrı ayrı farklı eğitim kullanımlarına karşılık gelir:
 
-Tablo 8-4. 7. bölümün değerlendirme veri kümelerinin 8. bölümdeki eğitim kullanımına eşlenmesi
+Tablo 8-5. 7. bölümün değerlendirme veri kümelerinin 8. bölümdeki eğitim kullanımına eşlenmesi
 
 | 7. bölümün değerlendirme verisi | 8. bölümdeki eğitim kullanımı |
 | --- | --- |
@@ -704,6 +781,8 @@ Dosya okuması ya da aracın dönüşü baytları zaten değiştirdiyse suç ara
 
 ## Post-training'de pratik esaslar
 
+Üç ek tuzağa özellikle dikkat edin: **nominal pencereyi etkili pencere sanmak**, **`pass@k` sıfıra yakınken RL başlatmak** ve **sampler/trainer sayısal farkını zararsız gürültü saymak**. Bunlar için sırasıyla yetenek × uzunluk kapıları ve replay, Mid-training/SFT ile support genişletme, güncelleme öncesi log-probability/KL/clipping izlemesi gerekir.
+
 Bu bölüm, pre-training'in "bir sonraki kelimeyi tahmin et"inden yola çıkıp uzun bir yol aldı: SFT biçimi ve protokolü verimli biçimde öğreniyor, sonuç odaklı RL ise bu bölümün kontrollü deneylerinde dağılım dışı genelleşmeyi iyileştirdi; çok turlu görevler kredi atfı sorununu getiriyor; ödül tasarımı sonuç ödülünden "sonucu ödüllendir, süreci kısıtla" diyen yol sinyallerine genişliyor; araç kullanımı ise bileşimsel patlama getiriyor. Hepsinin içinden geçen tek bir iplik var: modelin ne öğreneceği, eğitim sinyalinin ona ne öğrettiğine bağlıdır; o sinyalin niteliğini ise esas olarak veri ve ortam belirler, algoritma değil.
 
 Aşağıdaki **sık düşülen tuzaklar** dikkate değer; bunları tanımak çoğu zaman teknik ayrıntılara hâkim olmaktan daha çok kaynak israfını önler:
@@ -724,6 +803,8 @@ Temel ilke: **büyük ölçekli kaynak ayırmadan önce kilit varsayımları kü
 Sağlam sistemler bu yöntemleri genellikle birlikte kullanır: olguları ve kanıtları RAG ile yönetin, dille anlatılabilen stratejileri ICL ile hızlıca deneyin, belirlenimci süreçleri ve katı kısıtları programla sabitleyin, dille ifadesi zor ve geniş genelleşme isteyen yetenekleri ise post-training ile parametrelere yazın. Post-training ayrıca model damıtmayı da mümkün kılar: yüksek yetenekli büyük bir modelin yeteneğini daha ucuz küçük bir modele taşımak.
 
 ## Bölüm Özeti
+
+Mid-training, SFT ve RL sırasıyla **temel, protokol ve politika** sorunlarını çözer. Mid-training uzunluk müfredatı ve replay ile etkili bağlam kurar; SFT biçimi kararlı kılar; RL ancak puanlanabilir ve ödül farkı olan yörüngelerde verimlidir. `pass@k` sıfırsa denemeyi değil, önce yeteneği artırın.
 
 SFT ile RL rakip olmaktan çok, sık sık sırayla birleştirilen yöntemlerdir. Yapılandırılmış çıktının kararsız olduğu kurgularda önce SFT ile biçim kararlı kılınabilir, böylece RL'in ödül sinyali güvenilir biçimde hesaplanabilir; sonra RL ile strateji keşfedilip dağılım dışı başarım iyileştirilebilir. "SFT ezberler, RL genelleştirir", bu bölümün kontrollü deneylerinde gözlenen bir eğilimi özetler; veriden, modelden, ödülden ve ortamdan bağımsız evrensel bir yasa değildir.
 
@@ -761,6 +842,17 @@ Bu bölüm, model parametrelerini güncelleyerek Agent'ın sürekli evrimini nas
 [^ch8-27]: Yu, Qiying et al., “DAPO: An Open-Source LLM Reinforcement Learning System at Scale”, 2025. arXiv:2503.14476. https://arxiv.org/abs/2503.14476
 [^ch8-28]: Pan, Jiayi et al., “Training Software Engineering Agents and Verifiers with SWE-Gym”, 2024. arXiv:2412.21139; Barres, Victor et al., “$\tau^2$-Bench: Evaluating Conversational Agents in a Dual-Control Environment”, 2025. arXiv:2506.07982; Rawles, Christopher et al., “AndroidWorld: A Dynamic Benchmarking Environment for Autonomous Agents”, 2024. arXiv:2405.14573.
 [^ch8-29]: storm, "Long-horizon agent self-checking and early stopping: the reward-seeking phenomenon and its mitigations", Qingke Community, 6 August 2026. https://qingkeai.online/archives/Reward-Seeking
+[^ch8-30]: Gururangan, Suchin et al., “Don't Stop Pretraining”, ACL, 2020. https://aclanthology.org/2020.acl-main.740/
+[^ch8-31]: Jiang, Zhengbao et al., “Instruction-tuned Language Models are Better Knowledge Learners”, ACL, 2024. https://aclanthology.org/2024.acl-long.296/
+[^ch8-32]: Zheng, Chujie et al., “Stabilizing Reinforcement Learning with LLMs”, 2025. https://arxiv.org/abs/2512.01374
+[^ch8-33]: Zhong, Tianle et al., “Diagnosing Training Inference Mismatch in LLM Reinforcement Learning”, 2026. https://arxiv.org/abs/2605.14220
+[^ch8-34]: He, Horace and Thinking Machines Lab, “Defeating Nondeterminism in LLM Inference”, 2025. https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/
+[^ch8-35]: Gao, Tianyu et al., “How to Train Long-Context Language Models (Effectively)”, ACL, 2025. https://aclanthology.org/2025.acl-long.366/
+[^ch8-36]: Xiong, Wenhan et al., “Effective Long-Context Scaling of Foundation Models”, NAACL, 2024. https://aclanthology.org/2024.naacl-long.260/
+[^ch8-37]: Hsieh, Cheng-Ping et al., “RULER”, COLM, 2024. https://arxiv.org/abs/2404.06654
+[^ch8-38]: Bai, Yushi et al., “LongBench” and “LongBench v2”, ACL, 2024/2025. https://aclanthology.org/2025.acl-long.183/
+[^ch8-39]: Li, Jia et al., “Benchmarking Long-Context Language Models on Long Code Understanding”, ACL, 2025. https://aclanthology.org/2025.acl-long.1324/
+[^ch8-40]: Zheng, Zihan et al., “PlanningArena”, ACL, 2025. https://aclanthology.org/2025.acl-long.1499/
 
 ## Düşünce Soruları
 
@@ -774,6 +866,6 @@ Bu bölüm, model parametrelerini güncelleyerek Agent'ın sürekli evrimini nas
 8. ★★★ On-Policy Distillation, öğrenciyi denetlemek için daha güçlü bir öğretmen modele dayanır. Ama OpenAI'nin Weak-to-Strong Generalization araştırması sezgiye aykırı bir bulgu ortaya koydu: zayıf modelin denetim sinyali bazen güçlü modelin kendisinde var olan ama henüz etkinleşmemiş yetenekleri harekete geçirebiliyor. Bu fikir Agent eğitimine uygulanırsa, "küçük modelin büyük modele öğretmesi" biçiminde ters yönlü bir damıtma mümkün olur mu?
 9. ★★ Süreç ödül modeli (PRM) her düşünme adımını değerlendirir, sonuç ödül modeli (ORM) ise yalnızca nihai sonuca bakar. Peki "doğru sürecin yanlış sonuca yol açması" ile "yanlış sürecin şans eseri doğru sonuca ulaşması" durumlarından hangisi ödüllendirilmeyi daha çok hak eder? Agent'ın çok adımlı tool calling senaryosunda dengeyi nasıl kurarsınız?
 10. ★★★ Bu bölümde ele alınan değerlendirme veri kümeleri (SWE-Bench Verified, τ²-bench, AndroidWorld gibi) hem değerlendirme hem de post-training için kullanılabilir. Ama değerlendirme kümesini eğitimde kullanırsanız, artık bağımsız bir değerlendirme kümesi olmaktan çıkar — bu, eğitim kümesiyle test kümesinin ayrı olması gerektiği temel ilkesini ihlal etmez mi? τ²-bench'in dinamik parametre üretimi ve AndroidWorld'ün parametrik şablonları bu sorunu bir ölçüde hafifletiyor, ama şablon yapısının kendisi yine de sabit. Değerlendirme verisinin eğitim değerinden tam olarak yararlanmakla değerlendirmenin bağımsızlığını korumak arasındaki dengeyi nasıl bulursunuz?
-11. ★★★ Bu bölüm "önce biçim, sonra ruh" biçiminde bir eğitim paradigması ortaya koyuyor: SFT "biçim kararlı, yetenek başlangıç düzeyinde" noktasında durur, sonra RL'e geçilir. Peki pratikte SFT'nin çoktan "yeterli" olduğuna ve artık geçiş yapılması gerektiğine nasıl karar verilir?
+11. ★★★ Hedef görevde temel modelin `pass@1` değeri çok düşükse `pass@k`, parse başarısı, kısmi ilerleme ve hata atfını birleştirerek Mid-training, SFT veya doğrudan RL arasında nasıl seçim yaparsınız? Aşamayı değiştirmeden önce bu ölçütler hangi koşulları sağlamalıdır?
 12. ★★★ ReTool'un eğitim dinamiği (bkz. Deney 8-14), az sayıdaki aşırı uzun yanıtın tüm eğitim döngüsünü belirgin biçimde geciktirdiğini gösteriyor — bir rollout partisindeki yanıtların büyük çoğunluğu çoktan üretilmiş olsa da en uzun birkaç yanıtın bitmesi beklenir ve bu süre boyunca cluster'ın GPU kullanımı çok düşüktür. Bu uzun kuyruklu yanıt senaryosunda eğitim cluster'ının kaynak kullanımı nasıl artırılabilir?
 13. ★★★ Agent'ı LLM ile simüle edilmiş bir ortamda (simüle arama motoru, simüle kullanıcı gibi) eğitirken, Agent'ın açık aradığı hedef "gerçek ortamın kurallarından" "simülatörün kendi önyargıları ve açıklarına" kayar. Bu tür eğitimlerde hangi somut reward hacking davranışları ortaya çıkabilir? Bunlara karşı nasıl önlem alınabilir?

@@ -1,6 +1,6 @@
 # Chapter 8 · Model Post-Training
 
-> A comprehensive view of the three stages: pre-training, SFT, and RL. When to choose SFT vs. RL, RLHF, algorithm comparison, data and environments, and cutting-edge exploration into teaching models tool calling and improving sample efficiency.
+> Four parts—pre-training, Mid-training, SFT, and RL: long-context curricula and data construction, SFT protocol shaping, RL environments and rewards, and sample efficiency from single-turn to multi-turn Agents.
 
 ← [Back to main README](../docs/en/README.md) · 📖 [Read chapter text](../book-en/chapter8.md)
 
