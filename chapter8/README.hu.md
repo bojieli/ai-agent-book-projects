@@ -1,6 +1,6 @@
 # 8. fejezet · Modell-utóképzés
 
-> Az előképzést, SFT-t és RL-t tárgyalja: mikor melyiket érdemes választani, hogyan internalizálhatók az eszközhívások, és hogyan javítható a mintahatékonyság.
+> Négy rész—pre-tréning, Mid-training, SFT és RL: hosszúkontextus-tanterv és adatépítés, SFT-protokoll, RL-környezet és jutalom, mintahatékonyság egy- és többmenetes ágenseknél.
 
 ← [Vissza a magyar főoldalhoz](../docs/hu/README.md) · 📖 [A fejezet olvasása](../book-hu/chapter8.md)
 

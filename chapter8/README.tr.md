@@ -1,6 +1,6 @@
 # Bölüm 8 · Model Eğitim Sonrası
 
-> Pre-training, SFT ve RL üç aşamasının kapsamlı bir görünümü. SFT mi RL mi ne zaman seçilir, RLHF, algoritma karşılaştırması, veri ve ortamlar; modellere araç çağırma öğretme ve örnek verimliliğini artırma konusundaki sınır keşifleri.
+> Dört bölüm—pre-training, Mid-training, SFT ve RL: uzun bağlam müfredatı ve veri yapımı, SFT ile protokol, RL ortamı ve ödülü, tek turdan çok tura örneklem verimliliği.
 
 ← [Ana README'ye dön](../README.tr.md) · 📖 [Bölüm metnini oku](../book-tr/chapter8.tr.md)
 

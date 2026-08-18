@@ -1,6 +1,6 @@
 # Bab 8 · Pasca-Pelatihan Model
 
-> Membahas pre-training, SFT, dan RL: kapan menggunakan masing-masing, cara menginternalisasi tool calling, serta cara meningkatkan efisiensi sampel.
+> Empat bagian—pre-training, Mid-training, SFT, dan RL: kurikulum serta data konteks panjang, pembentukan protokol SFT, environment dan reward RL, serta efisiensi sampel dari single-turn hingga multi-turn.
 
 ← [Kembali ke README utama](../docs/id/README.md) · 📖 [Baca bab](../book-id/chapter8.md)
 

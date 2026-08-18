@@ -1,36 +1,38 @@
 # Post-entrenamiento de Modelos
 
-La fórmula central de este libro es Agente = LLM + Contexto + Herramientas. Este capítulo se centra en optimizar el LLM, el "cerebro" del sistema: a través del post-entrenamiento, el modelo aprende a aprovechar el contexto y las herramientas de manera más efectiva, elevando así la capacidad de todo el sistema de Agentes. Al final del Capítulo 7 se señaló que el sistema de evaluación y el entorno de simulación son las dos piedras angulares del post-entrenamiento: el entorno de evaluación proporciona el campo de práctica y las métricas de evaluación definen el objetivo. Este capítulo se construye sobre esas dos piedras angulares y analiza cómo modificar realmente los pesos del modelo para consolidar las capacidades directamente en los parámetros.
+La fórmula central de este libro es Agente = LLM + Contexto + Herramientas. Este capítulo se centra en optimizar el LLM, el «cerebro» del sistema: primero usamos Mid-training para cubrir carencias de conocimiento y capacidades básicas del dominio objetivo, y después SFT y RL para moldear cómo el modelo utiliza el contexto y las herramientas. Al final del Capítulo 7 se señaló que el sistema de evaluación y el entorno de simulación son las dos piedras angulares del post-entrenamiento: el entorno aporta el campo de práctica y las métricas definen el objetivo. Este capítulo parte de ambas para explicar cómo modificar los pesos y consolidar capacidades en los parámetros.
 
 Este capítulo está dirigido a lectores sin experiencia previa en aprendizaje por refuerzo o entrenamiento de modelos. No asumimos que entiendas de gradientes o de optimización de políticas; en cambio, explicamos desde cero cómo se entrena un modelo, aclarando el propósito, el principio y el problema que resuelve cada paso. Al terminar de leer este capítulo, deberías poder responder a las siguientes preguntas: en cuántas etapas se forjan las capacidades de un modelo, qué se hace en cada etapa, por qué deben seguir este orden estricto y en qué etapa debes enfocar tus esfuerzos según las necesidades de tu propio proyecto.
 
-**Establezcamos primero el mapa más importante: las capacidades de un modelo moderno se forjan en tres etapas.** Estas tres etapas están íntimamente conectadas y son totalmente indispensables:
+**Establezcamos primero el mapa más importante: el desarrollo de capacidades de un modelo moderno suele dividirse en cuatro partes.** El pre-entrenamiento crea la base general, Mid-training cubre conocimiento y capacidades en la distribución objetivo, y SFT y RL moldean después la conducta según el formato y la tarea.
 
 1. **Pre-entrenamiento (Pre-training)**: Se realiza en textos masivos de internet bajo la tarea de "predecir el siguiente token". Esta etapa enseña al modelo las reglas del lenguaje, el conocimiento del mundo y el razonamiento básico, de forma análoga a una persona que ha leído todos los libros de una biblioteca: es sumamente erudito, pero aún no sabe responder adecuadamente a las preguntas. Es la etapa más costosa (frecuentemente decenas de millones de dólares) y constituye el cimiento de todas sus capacidades.
-2. **Ajuste Fino Supervisado (SFT, Supervised Fine-Tuning, es decir, entrenar el modelo con pares etiquetados de "entrada-salida", similar a un profesor que da respuestas estándar para que el estudiante las imite)**: Utiliza de miles a decenas de miles de datos de demostración del tipo "pregunta-respuesta estándar" para enseñar al modelo qué formato, estilo y flujo debe utilizar al responder. Esta etapa transforma un modelo erudito en un asistente capaz de entender instrucciones y estructurar sus respuestas. Es un proceso económico, rápido y estable, por el que pasan casi todos los modelos desplegados en la actualidad.
-3. **Aprendizaje por Refuerzo (RL, Reinforcement Learning, es decir, permitir que el modelo intente repetidamente y ajuste su comportamiento según recompensas y penalizaciones por el resultado, similar al adiestramiento de un perro: dar un premio cuando lo hace bien y denegarlo cuando lo hace mal)**: En lugar de darle respuestas estándar, se deja que el modelo intente por sí mismo, aumentando la probabilidad de los comportamientos acertados y reduciendo la de los erróneos. Esta etapa enseña al modelo a tomar decisiones razonables en **situaciones no vistas previamente**, siendo la sección más extensa de este capítulo y la que exige mayor competencia de ingeniería.
+2. **Mid-training (entrenamiento intermedio o pre-entrenamiento continuado)**: Parte de un modelo base existente y continúa el modelado del lenguaje con datos del idioma objetivo, documentos de dominio, código, contextos largos o datos de capacidades diseñados. No reconstruye los cimientos: completa los «capítulos del manual» que el pre-entrenamiento general cubrió mal. Requiere menos datos y cómputo que entrenar desde cero y resulta más apropiado que SFT para absorber mucho conocimiento y formar representaciones básicas. También se denomina Continued Pre-training (CPT), Domain-Adaptive Pre-training (DAPT) o Task-Adaptive Pre-training (TAPT).
+3. **Ajuste Fino Supervisado (SFT)**: Con miles o decenas de miles de demostraciones «entrada-salida», enseña formato, estilo y procedimiento. Convierte un modelo con conocimiento y capacidad en un asistente que sigue instrucciones y produce salidas estructuradas.
+4. **Aprendizaje por Refuerzo (RL)**: El modelo prueba por sí mismo y eleva la probabilidad de las conductas recompensadas. Cuando el modelo base ya acierta ocasionalmente y la recompensa, los datos y el entorno son adecuados, RL puede mejorar las decisiones en **situaciones no vistas previamente**.
 
-Una analogía intuitiva: El pre-entrenamiento es "leer diez mil libros" (acumular conocimiento), el SFT es "el profesor enseñando paso a paso la solución estándar" (imitar demostraciones) y el RL es "resolver ejercicios por uno mismo y perfeccionarse mediante aciertos y errores" (mejora por ensayo y error). La relación entre los tres no es una elección exclusiva, sino una línea de ensamblaje: primero se lee, luego se observa la demostración y finalmente se pasa a la práctica real.
+Una analogía intuitiva: el pre-entrenamiento es una educación general; Mid-training, un estudio intensivo de manuales especializados; SFT, la demostración del profesor sobre cómo resolver y comunicar; y RL, resolver ejercicios y corregirse según el resultado.
 
 **Este capítulo tiene dos hilos conductores a lo largo de toda la exposición. Por favor, tenlos en mente, ya que todo el contenido posterior trabaja a su servicio:**
 
-- **Hilo uno: SFT memoriza, RL generaliza.** Para una misma tarea y bajo el mismo presupuesto, el SFT tiende a **memorizar** las respuestas presentes en los datos de entrenamiento, por lo que suele fallar cuando el entorno de despliegue difiere del de entrenamiento. Por el contrario, el RL tiende a **aprender** una estrategia transferible que se mantiene firme ante situaciones no vistas. Esto no es un simple eslogan, sino un fenómeno medible que verificaremos mediante experimentos comparativos. La sección "Panorama de las Tres Etapas: Pre-entrenamiento, SFT y RL" explicará en detalle las **razones profundas** de esta diferencia.
-- **Hilo dos: Los datos y el entorno importan más que los algoritmos.** Esta es una de las experiencias más contraintuitivas y valiosas en la industria. Basta con saber cómo utilizar los algoritmos de RL existentes (PPO, GRPO, entre otros); lo que realmente determina el éxito o el fracaso son dos factores: el **entorno de simulación** (si el campo de práctica del modelo es lo suficientemente realista) y los **datos de entrenamiento** (si la calidad de las demostraciones y de las señales de recompensa es lo bastante alta). En muchos escenarios, si la calidad de los datos de SFT es adecuada, es posible que ni siquiera necesites aplicar RL. Este capítulo redirigirá constantemente tu atención desde la selección de algoritmos hacia la calidad de los datos y del entorno.
+- **Hilo uno: en los experimentos controlados de este capítulo, SFT tiende a memorizar demostraciones y RL generaliza mejor.** Es una tendencia medida bajo esas condiciones, no una propiedad universal. La sección «Del pre-entrenamiento a RL: panorama en cuatro partes» explica por qué pueden aparecer esas diferencias.
+- **Hilo dos: los datos y el entorno importan más que los algoritmos.** Lo decisivo es si el **corpus de Mid-training** repara la base, si las **demostraciones** fijan el protocolo y si el **entorno y la recompensa** ofrecen retroalimentación fiable. Cuando los dos primeros están bien, a menudo no hace falta RL.
 
 > **Guía de lectura**: El contenido de este capítulo se divide en dos rutas según el perfil del lector:
 >
-> - **Desarrolladores de aplicaciones de Agentes** (que no necesitan entrenar modelos por sí mismos): Lee primero el apartado "Panorama de las Tres Etapas: Pre-entrenamiento, SFT y RL" para construir una visión global. Luego puedes omitir las dos secciones indicadas como `[Lectura Opcional]` (RL clásico y fundamentos de pre-entrenamiento) y continuar directamente en SFT. Presta especial atención al marco de decisión "Diferencia esencial entre SFT y RL", a "Cuándo elegir SFT y cuándo elegir RL", y al criterio de que "Los datos y el entorno importan más que los algoritmos", ya que estas nociones influirán directamente en tus decisiones de diseño dentro de la ingeniería de Harness (cuándo resolver un problema mediante prompts y cuándo vale la pena realizar un ajuste fino).
+> - **Desarrolladores de aplicaciones de Agentes**: Lee primero «Del pre-entrenamiento a RL: panorama en cuatro partes», omite si quieres las dos secciones `[Lectura Opcional]` y continúa en la sección independiente de Mid-training. Concéntrate en cuándo elegir Mid-training, SFT o RL y en cuándo un prompt basta frente a cuándo merece la pena entrenar.
 > - **Ingenieros de entrenamiento de modelos**: Lee secuencialmente desde el principio. Las dos secciones de `[Lectura Opcional]` proporcionan el contexto completo sobre aprendizaje por refuerzo y pre-entrenamiento, mientras que los experimentos posteriores ofrecen esquemas de entrenamiento totalmente reproducibles.
 
-## Panorama de las Tres Etapas: Pre-entrenamiento, SFT y RL
+## Del pre-entrenamiento a RL: panorama en cuatro partes
 
-La introducción ofreció el mapa de las tres etapas; esta sección examina a fondo los mecanismos de cada una. Los **datos**, los **objetivos de optimización** y los **costos** difieren entre las tres etapas. Comprender sus semejanzas y diferencias es la clave para asimilar todo el capítulo. La Tabla 8-1 presenta una vista general inicial, que posteriormente se detallará punto por punto.
+La introducción ofreció el mapa de cuatro partes; esta sección examina sus mecanismos. Sus **datos**, **objetivos de optimización** y **costos** son distintos. La Tabla 8-1 resume el panorama.
 
-Tabla 8-1 Las tres etapas de la formación de capacidades del modelo
+Tabla 8-1 Las cuatro partes del desarrollo de capacidades
 
 | Etapa | Datos utilizados | Objetivo de optimización | Lo que se aprende | Costo típico |
 |------|---------------------|-----------------------|------------------------|---------------------|
 | **Pre-entrenamiento** | Texto masivo de internet | Predecir el siguiente token | Reglas del lenguaje, conocimiento del mundo, razonamiento básico | Extremadamente alto (millones a decenas de millones de USD) |
+| **Mid-training** | Corpus del idioma/dominio/capacidad objetivo y datos de retención | Continuar prediciendo el siguiente token, normalmente con pérdida en todos | Conocimiento de dominio, idioma y capacidades básicas | Medio a alto, según tokens y entrenamiento completo o parcial |
 | **SFT** | Miles a decenas de miles de pares de demostración "entrada-salida" | Predecir el siguiente token (cálculo de pérdida solo en la respuesta) | Seguimiento de instrucciones, formato de salida, estilo, protocolos de proceso | Bajo (unas pocas horas a días) |
 | **RL** | Tarea + Función de recompensa (sin respuesta estándar) | Maximizar la recompensa esperada | Estrategia de decisión transferible, nuevas soluciones exploradas | Alto (frecuentemente decenas a cientos de veces el costo de SFT) |
 
@@ -40,9 +42,15 @@ Toda la "inteligencia" de los grandes modelos modernos se erige sobre una tarea 
 
 Se le muestra al modelo la primera parte de un texto y se le pide que adivine cuál es el siguiente token. Por ejemplo, ante la entrada "La capital de España es", el modelo debería asignar una probabilidad muy alta a "Madrid". Cada vez que el modelo hace una predicción, se compara su resultado con el token real siguiente; cuanto mayor sea la diferencia (llamada pérdida o Loss), más intensamente se ajustan los parámetros para que la próxima vez adivine con mayor precisión en contextos similares. Al repetir este proceso sobre billones de tokens de texto de internet, el modelo se ve obligado a aprender gramática, hechos, lógica e incluso razonamiento básico, ya que para acertar continuamente el siguiente token en una variedad masiva de contextos no hay atajos: debe "digerir" verdaderamente las reglas subyacentes del texto.
 
-Hay un punto clave que se debe recordar, el cual acompañará toda la explicación hasta el SFT y el RL: **la salida del modelo es, en esencia, una distribución de probabilidad**. Dado el texto previo, el modelo asigna una probabilidad a cada token posible en el vocabulario. Lo que llamamos "entrenamiento" consiste fundamentalmente en **ajustar esta distribución de probabilidad**, aumentando la probabilidad de los tokens deseados y reduciendo la de los no deseados. La única diferencia entre las tres etapas radica en "qué es lo que se desea" y "qué señal se utiliza para definir lo deseado".
+Hay un punto clave que acompañará toda la explicación hasta Mid-training, SFT y RL: **la salida del modelo es una distribución de probabilidad**. Entrenar consiste en ajustarla. Las cuatro partes difieren en qué se desea y qué señal lo define.
 
 Tras el pre-entrenamiento, el modelo es erudito pero poco práctico: si le formulas una pregunta, es posible que continúe escribiendo más preguntas en lugar de responder, debido a que en el texto de internet a menudo a una pregunta le sigue otra. Todavía no ha aprendido el protocolo de "responder cuando se le pregunta".
+
+### La esencia de Mid-training: seguir aprendiendo en la distribución objetivo
+
+El pre-entrenamiento general no cubre todos los idiomas, dominios y capacidades. Si el modelo apenas entiende documentos coreanos, protocolos internos o las representaciones de código y contexto largo que exige la tarea, enseñar solo «cómo responder» o premiar éxito y fracaso llega demasiado tarde. Mid-training conserva el objetivo de siguiente token, concentra los datos en el dominio objetivo y mezcla datos generales de retención. Responde a si el modelo posee el conocimiento y las capacidades básicas, no a cómo debe verse la respuesta ni qué política recibe más recompensa.
+
+Mid-training suele aprender de documentos, código o derivaciones completos y calcula pérdida sobre muchos tokens; SFT organiza demostraciones entrada-salida y normalmente calcula pérdida solo en la respuesta. Un pequeño SFT puede memorizar hechos, pero refuerza pocas rutas de acceso. Para conocimiento de dominio grande e interconectado, conviene Mid-training; para conocimiento actualizable y trazable, RAG.
 
 ### La esencia del SFT: "predecir el siguiente token" con datos cambiados
 
@@ -57,15 +65,19 @@ En resumen, la esencia del SFT es: **utilizar una eficiencia de muestra extremad
 
 > **Costo de entrenamiento: ajuste fino eficiente en parámetros con LoRA**. Tanto el SFT como el RL posterior requieren actualizar los parámetros del modelo, mientras que el ajuste fino de parámetros completos impone exigencias de memoria VRAM muy altas (debido a la necesidad de almacenar gradientes y estados del optimizador para miles de millones de parámetros). **LoRA** (Low-Rank Adaptation, Adaptación de Bajo Rango) es el método más común para ahorrar recursos: en lugar de modificar las grandes matrices de pesos originales, se añade a un lado un "parche" muy pequeño (matrices de bajo rango) para aprender la tarea. El volumen de parámetros representa solo entre el 1% y el 5% del original, logrando un rendimiento cercano al ajuste completo. Dado que los pesos originales permanecen congelados, LoRA altera en menor medida las capacidades previas de la base, reduciendo el riesgo de olvido catastrófico. Algunas experiencias prácticas comprobadas [^ch8-1]: **debes** aplicar LoRA a todas las matrices de pesos principales (especialmente a las capas MLP, que concentran la mayor proporción de parámetros); aplicarlo únicamente a las capas de atención degrada el rendimiento; **la tasa de aprendizaje óptima es aproximadamente 10 veces mayor que la del ajuste completo** (regla empírica muy práctica que aplica tanto a SFT como a RL); SFT suele emplear rangos medios a altos (64 a 256), mientras que RL, al recibir una menor cantidad de información por iteración, funciona bien con rangos pequeños (8 a 32) o incluso rank=1. Durante el despliegue, un único servidor de inferencia puede cargar simultáneamente múltiples adaptadores LoRA para ofrecer servicios multitenant. Este libro trata a LoRA como la opción por defecto de ingeniería en todos los métodos de post-entrenamiento, por lo que no se detallará por separado.
 
-### Por qué el SFT debe ir antes del RL y no al revés ("Forma primero, espíritu después")
+### Cuándo reparar la base antes de aplicar SFT o RL
 
-El orden de las tres etapas no es arbitrario. Que el pre-entrenamiento vaya en primer lugar no admite debate: sin los cimientos de lenguaje y conocimiento, no se puede construir nada posterior. Lo que realmente requiere explicación es: **¿por qué el SFT debe preceder al RL?**
+RL evalúa con una recompensa respuestas que el modelo **genera por sí mismo**. Para aprender, la salida debe poder verificarse y la política actual debe explorar ocasionalmente una conducta valiosa.
 
-La respuesta reside en la forma en que opera el RL. El RL no examina respuestas estándar, sino que permite que el modelo **genere por sí mismo** las respuestas para luego evaluarlas con premios o penalizaciones. Sin embargo, para juzgar si una respuesta es buena o mala, primero es necesario **parsear o extraer** la salida del modelo: si la tarea requiere generar una estructura JSON o una llamada a una herramienta y el modelo produce un texto desorganizado, la función de recompensa no puede calcularse (incapaz de determinar si fue un éxito o un fracaso), lo que impide que el RL pueda aprender.
+La primera condición es el **soporte de formato**: si un JSON o una llamada a herramienta no puede analizarse, la recompensa tampoco puede calcularse. SFT estabiliza formato y procedimiento con pocas demostraciones antes de que RL optimice la política.
 
-Por lo tanto, el SFT desempeña el rol de **"aprender a estructurar la salida primero"**: con una pequeña cantidad de demostraciones, estabiliza el formato de salida para que pueda ser parseado de forma confiable, proporcionando al RL un punto de partida evaluable. Este es el paradigma de dos etapas más sólido de la industria: **"primero SFT, luego RL"**. El orden inverso no funciona: sin una salida estable, la señal de recompensa se convierte en puro ruido. Utilizando una metáfora de la pintura tradicional: el SFT establece primero la **"forma"** (formato, estructura) y el RL busca posteriormente el **"espíritu"** (estrategia, generalización); es decir, **primero la forma, luego el espíritu**.
+La segunda es el **soporte de capacidad**. En tareas reservadas, mide `pass@1` y `pass@k`. Si la probabilidad de éxito por muestra es $p$, la probabilidad de al menos un éxito en $k$ muestras aproximadamente independientes es
 
-Un límite importante: la afirmación de que "el SFT debe ir primero" se sostiene bajo la configuración de **"modelos base pequeños + salidas strictly estructuradas"** (como se comprobará en el Experimento 8-11, donde un modelo como Llama-3.2-Vision-11B sin SFT previo falla completamente al aplicar RL directo). Sin embargo, si el modelo base es lo suficientemente fuerte, puede producir salidas válidas desde el principio y omitir el SFT: DeepSeek-R1-Zero demostró que un modelo base potente puede lograr el éxito mediante RL directo, haciendo emerger capacidades de autorreflexión y razonamiento en cadena larga. La desventaja fue una legibilidad deficiente y una mezcla de idiomas, motivo por el cual DeepSeek volvió a incorporar un "SFT de arranque en frío" en R1 para estabilizar de nuevo la forma. El recorrido de R1 desde Zero hasta el arranque en frío es el mejor testimonio del principio "primero la forma, luego el espíritu".
+$$
+\operatorname{pass@}k = 1-(1-p)^k.
+$$
+
+Si `pass@1` es bajo pero `pass@k` crece con $k$, la estrategia correcta ya está en la distribución y RL, muestreo por rechazo o destilación pueden amplificarla. Si `pass@k` sigue cerca de cero, los grupos GRPO serán todo ceros y PPO tampoco verá una dirección positiva; esperar un acierto fortuito cuesta aproximadamente $1/p$ muestras. Si faltan idioma, hechos, patrones de código o capacidad de contexto largo, usa Mid-training; si la capacidad existe pero no se expresa según la interfaz, usa SFT; si hay progreso parcial, diseña recompensas parciales verificables o un currículo. RL eleva conductas exitosas **existentes pero improbables**; no crea conocimiento nuevo a partir de recompensas siempre nulas. Un modelo fuerte con éxito no nulo puede omitir SFT; el SFT de arranque en frío de DeepSeek-R1 mejoró sobre todo legibilidad y coherencia lingüística.
 
 ### Diferencia esencial entre SFT y RL (la tabla más importante del capítulo)
 
@@ -249,19 +261,86 @@ El entrenamiento de modelos de lenguaje sigue un flujo de tres etapas: "tokeniza
 >
 > Este experimento revela el paradigma básico de entrenamiento de modelos multimodales: reutilizar los logros del pre-entrenamiento unimodal y lograr la alineación multimodal entrenando una capa de proyección ligera, un enfoque eficiente y escalable, aunque la capacidad expresiva limitada de la capa de proyección puede convertirse en un cuello de botella para la comprensión profunda. Extendiendo este mismo esquema de "codificador visual + capa de proyección + LLM" un paso más allá para permitir que el modelo genere acciones, se llega al modelo VLA (Visión-Lenguaje-Acción) que se aborda en el Capítulo 6.
 
+Los dos experimentos de pre-entrenamiento revelan una regla: con presupuesto limitado, mejorar algoritmos y arquitectura suele rendir más que aumentar escala. Sin embargo, si el pre-entrenamiento general no cubre el idioma o dominio objetivo, SFT y RL no pueden saltarse esa carencia. Esa es la función de Mid-training.
+
+## Mid-training: completar conocimiento y capacidades básicas
+
+En este capítulo, **Mid-training** significa continuar el modelado del lenguaje de un modelo base sobre la distribución objetivo, con el mismo objetivo de siguiente token y, normalmente, pérdida sobre todos los tokens de documentos, código o derivaciones. DAPT y TAPT muestran que una segunda fase sobre corpus no etiquetados del dominio o la tarea puede mejorar el rendimiento posterior[^ch8-30]. «Mid» describe su lugar en el flujo, no una función de pérdida distinta.
+
+Resuelve dos carencias:
+
+- **Conocimiento**: idioma, finanzas, medicina, derecho, documentos internos o repositorios apenas cubiertos por el pre-entrenamiento general.
+- **Capacidad básica**: representaciones de contexto largo, código, matemáticas o multimodalidad que el modelo base aún no posee y que no aparecen ni tras muchas muestras.
+
+SFT puede memorizar algunos hechos y enseñar a formular respuestas de dominio, pero unos pocos pares QA cubren pocas rutas de acceso y no son un buen contenedor para conocimiento grande e interconectado. Mid-training tampoco garantiza por sí solo que el conocimiento pueda recuperarse mediante preguntas: el orden y la organización del pre-entrenamiento continuado y el ajuste de instrucciones importan[^ch8-31]. Una receta robusta es **Mid-training para conocimiento/capacidad → SFT pequeño para acceso y protocolo → RL opcional cuando ya existe éxito no nulo**.
+
+### Cómo construir los datos de Mid-training
+
+La **distribución objetivo, la distribución de retención y la evaluación** deben cerrar el ciclo:
+
+1. **Derivar los datos de la distribución de fallos.** Segmenta por tema, idioma, tipo de documento, patrón de código y longitud; distingue una carencia de base de un simple error de formato.
+2. **Crear corpus objetivo densos.** Documentos para términos y hechos, repositorios para estructura y dependencias, y derivaciones, explicaciones sintéticas y relaciones entre documentos para hacer explícitas las conexiones. Deduplica, filtra calidad y evita contaminación del conjunto de evaluación.
+3. **Mezclar por capacidad.** En la etapa $i$:
+
+   $$
+   \mathcal{D}_i=\alpha_i\mathcal{D}_{\text{long}}+\beta_i\mathcal{D}_{\text{atomic}}+\gamma_i\mathcal{D}_{\text{agent}}+\delta_i\mathcal{D}_{\text{replay}},\qquad
+   \alpha_i+\beta_i+\gamma_i+\delta_i=1
+   $$
+
+   $\mathcal{D}_{\text{long}}$ contiene libros, documentos largos y repositorios cercanos a la longitud actual; $\mathcal{D}_{\text{atomic}}$, recuperación, razonamiento multi-salto, agregación y estadística; $\mathcal{D}_{\text{agent}}$, planificación, elección y llamada de herramientas, seguimiento de estado y recuperación; $\mathcal{D}_{\text{replay}}$, datos generales y de etapas anteriores. Documentación, código, planes, cambios de estado y trayectorias pueden entrenarse como secuencias completas; el schema exacto de diálogo y herramientas queda para SFT. No existe una proporción universal: ajústala según curvas de aprendizaje y olvido y mídela **por tokens**, no por número de ejemplos.
+4. **Aplicar doble replay.** Conserva texto corto y datos generales, y además eleva tareas antiguas a la longitud actual con evidencia y distractores en distintas posiciones. Usa si es posible el corpus original del modelo; de lo contrario, corpus abiertos como FineWeb-2. Los datos cortos de alta calidad siguen siendo importantes junto al texto largo natural[^ch8-35].
+5. **Detenerse con puertas multidimensionales.** Sigue pérdida, tareas de dominio reservadas, capacidad general, instrucciones previas y `pass@1`/`pass@k`. Si mejora el dominio pero cae la retención, cambia mezcla o tasa de aprendizaje; si baja la pérdida pero no sube `pass@k`, revisa cobertura y la necesidad de SFT para acceder al conocimiento.
+
+### Ampliar la ventana de contexto mediante aprendizaje curricular
+
+Mid-training debe convertir la longitud nominal en una **ventana efectiva** e incorporar razonamiento largo, planificación y herramientas mientras se amplía. Cambiar `max_position_embeddings` de 32K a 128K solo permite la entrada; no demuestra que el modelo recupere, agregue y actúe. Usa un currículo, por ejemplo 8K → 16K → 32K → 64K → 128K, adaptado al modelo y al presupuesto. La mezcla de datos y el currículo de longitudes son variables clave en el pre-entrenamiento continuado de contexto largo[^ch8-36].
+
+Antes de ampliar, resuelve en la longitud actual:
+
+- **Posición y recuperación**: una o varias agujas, distintas posiciones y distractores;
+- **Relaciones y razonamiento**: seguimiento entre párrafos/documentos, multi-salto, contradicciones y evidencia;
+- **Agregación y estadística**: conteo, agrupación, orden, comparación y resumen de tablas o logs largos;
+- **Primitivas de Agente**: descomposición, plan, herramienta, argumentos, memoria de estado y recuperación de fallos.
+
+Para checkpoint $\theta_i$, ventana $L_i$ y capacidad $c$, exige antes de pasar a $L_{i+1}$:
+
+$$
+\begin{aligned}
+M(\theta_i,c,L_i) &\geq \tau_c &&\text{(umbral en la longitud actual)},\\
+M(\theta_i,c,L_i) &\geq M(\theta_i,c,L_{i-1})-\epsilon_{\text{len}} &&\text{(sin degradación significativa por longitud)},\\
+M(\theta_i,c,L_{i-1}) &\geq M(\theta_{i-1},c,L_{i-1})-\epsilon_{\text{retain}} &&\text{(sin olvidar la capacidad anterior)}.
+\end{aligned}
+$$
+
+La segunda condición requiere tareas elevadas de dificultad equivalente. Determina $\epsilon$ mediante intervalos de confianza de evaluaciones repetidas. Si falla una capacidad crítica, aumenta sus datos atómicos, los datos de longitud actual o replay antes de seguir ampliando.
+
+Los benchmark existentes permiten construir una matriz **capacidad × longitud**:
+
+| Capa de aceptación | Benchmark disponibles | Qué observar |
+| --- | --- | --- |
+| Posición, recuperación, seguimiento y agregación | NIAH, RULER | Degradación por posición, número de agujas, multi-salto, agregación y longitud; NIAH es solo una prueba de humo |
+| Razonamiento sobre documentos reales | LongBench, LongBench v2 | QA mono/multidocumento, diálogo largo, aprendizaje en contexto y datos estructurados, por categoría y longitud |
+| Comprensión de código largo | Tareas de repositorio de LongBench v2, LongCodeU | Unidades de código, relaciones entre archivos y comprensión del repositorio |
+| Planificación y herramientas | PlanningArena y benchmark de herramientas anteriores | Descomposición, selección, memoria, argumentos y estado |
+| Agente extremo a extremo | SWE-bench Verified, $\tau^2$-bench, Terminal-Bench, etc. | Éxito final, trayectorias válidas y `pass@k` |
+
+RULER amplía NIAH con recuperación de varias agujas, seguimiento multi-salto y agregación[^ch8-37]; LongBench v2 cubre tareas reales de documentos, diálogo, repositorios y datos estructurados[^ch8-38]; LongCodeU y PlanningArena diagnostican código largo y planificación/herramientas[^ch8-39][^ch8-40]. Reserva los test oficiales para evaluar y entrena solo con ejemplos homólogos pero no solapados. Informa por longitud, capacidad y tipo de fallo: una puntuación global puede ocultar regresiones y superar NIAH no demuestra razonamiento largo.
+
+Para hechos cambiantes o que exigen cita, sigue siendo mejor RAG. Mid-training encaja con conocimiento estable y capacidades que necesitan representación interna; valida primero la mezcla a pequeña escala.
+
 > **Experimento 8-5 ★★: Continuar el pre-entrenamiento para aprender un nuevo idioma**
 >
-> Tomando como base Mistral 7B v0.3 (pre-entrenado principalmente en inglés, con casi nula comprensión del coreano), se inyecta la capacidad del idioma coreano continuando el pre-entrenamiento con la Wikipedia en coreano: realizar un entrenamiento no supervisado sobre un modelo pre-entrenado utilizando datos en el nuevo idioma. El modelo ya posee capacidad de modelado del lenguaje general y solo necesita adaptarse a la nueva distribución de datos, con un costo muy inferior al de entrenar desde cero. El punto clave de ingeniería es utilizar datos mixtos (aproximadamente 80% coreano + 20% inglés) para mitigar el olvido catastrófico: una proporción excesiva del idioma objetivo provoca la degradación del idioma original, mientras que una proporción demasiado baja genera una eficiencia de aprendizaje insuficiente. Finalmente, se aplica SFT con datos de instrucciones en coreano para obtener una capacidad de diálogo práctica en dicho idioma. La conclusión de este experimento se reutilizará al final del capítulo: para que un modelo memorice una gran cantidad de nuevos conocimientos de dominio, se debe recurrir a continuar el pre-entrenamiento y no al SFT.
+> Partiendo de Mistral 7B v0.3, pre-entrenado sobre todo en inglés y con casi nula comprensión del coreano, se continúa el modelado del lenguaje con Wikipedia coreana. El modelo ya posee representaciones generales y solo se adapta a una nueva distribución, mucho más barato que entrenar desde cero. El experimento usa aproximadamente 80 % coreano y 20 % inglés para reducir el olvido; es una elección experimental, no una regla universal. Después, SFT con instrucciones coreanas enseña a recibir instrucciones y organizar respuestas. Mid-training aporta primero conocimiento y capacidad lingüística; SFT fija el protocolo.
+>
+> El experimento también muestra olvido catastrófico: mejoró la evaluación ciega en coreano y cayó la capacidad en inglés. Por eso siguen siendo necesarios conjuntos de retención, evaluación factual y auditoría de datos.
 
-Los tres experimentos de pre-entrenamiento revelan una regla común: bajo restricciones presupuestarias, la mejora algorítmica y la innovación arquitectónica ofrecen una mejor relación costo-beneficio que el simple aumento de escala. Lo que es más importante, el pre-entrenamiento otorga al modelo conocimientos descriptivos y capacidad de modelado del lenguaje, pero carece de un seguimiento de instrucciones estructurado y de un comportamiento orientado a tareas, que es precisamente el vacío que el SFT debe llenar.
-
-Con las capacidades básicas del pre-entrenamiento listas, el siguiente paso es transformar el modelo general en un Agente práctico a través del post-entrenamiento. La primera etapa del post-entrenamiento es el Ajuste Fino Supervisado (SFT).
+Con suficiente conocimiento y capacidad básica, el siguiente paso es convertir el modelo en un Agente práctico que respete protocolos.
 
 ## SFT (Ajuste Fino Supervisado)
 
 ![Figura 8-10 Flujo de trabajo de Ajuste Fino Supervisado (SFT)](images/fig8-10.svg)
 
-La sección "Panorama de las Tres Etapas: Pre-entrenamiento, SFT y RL" explicó la esencia del SFT ("predecir el siguiente token" con datos modificados y cálculo de pérdida enfocado en la respuesta). Esta sección utiliza cuatro experimentos para examinar qué consolida concretamente en diversas tareas este mecanismo de "escribir mapeos y protocolos estables en los parámetros". El valor central del SFT no reside en inyectar nuevos conocimientos, sino en **consolidar protocolos**: escribir en los parámetros las relaciones de mapeo, los formatos de interacción y las normas de estilo, de modo que durante la inferencia se generen salidas conforme a lo esperado sin requerir prompts extensos. Por lo general, bastan de unos pocos miles a decenas de miles de ejemplos de alta calidad para establecer la capacidad básica de diálogo y el seguimiento de instrucciones.
+La sección «Del pre-entrenamiento a RL: panorama en cuatro partes» explicó la esencia del SFT. Su valor central no es inyectar conocimiento nuevo, sino **consolidar protocolos**: mapeos, formatos de interacción y normas de estilo.
 
 Esta alta eficiencia puede tener como contrapartida la dependencia de la distribución de entrenamiento: en tareas que exigen explorar varias estrategias correctas, o cuando la distribución de despliegue se aleja de los datos de demostración, el SFT tiende a reproducir los patrones demostrados y su rendimiento cae en escenarios nuevos. Los cuatro experimentos siguientes muestran desde distintos ángulos este proceso de "consolidar protocolos".
 
@@ -330,23 +409,29 @@ Los bad cases del capítulo 7 también pueden convertirse aquí en datos de entr
 
 Los dos experimentos de Bad Case que añade este capítulo muestran dos objetivos de supervisión distintos. El caso de las comillas curvas en chino destila primero la retroalimentación en una Skill documental sensible al ámbito y después hace SFT con datos sintéticos estructurados; el caso de las cadenas especiales convierte los desajustes de `old_string` en una tarea de copia byte a byte y entrena la fidelidad token a token. Ambos comparten los protocolos de atribución de fallos y de aislamiento entrenamiento/evaluación del capítulo 7, pero no comparten una puntuación total: el primero mide "cambiar lo que hay que cambiar y dejar lo que hay que dejar", el segundo mide "copiar literalmente".
 
-## Cuándo Elegir SFT y Cuándo Elegir RL
+## Cuándo elegir Mid-training, SFT y RL
 
-La sección "Panorama de las Tres Etapas: Pre-entrenamiento, SFT y RL" aclaró la **diferencia esencial** entre SFT y RL; esta sección responde a una pregunta operativa más concreta: **ante una tarea específica, ¿cuál de los dos se debe utilizar?** Algunas conclusiones del marco de decisión posterior se verificarán en los experimentos de RL (Experimento 8-10 y 7-11), por lo que el lector puede construir un juicio preliminar y volver a contrastarlo tras leer la sección de RL.
+Primero diagnostica si falta **base, protocolo o política**; no conviertas «el modelo falla» en «necesita RL».
 
-![Figura 8-11 Pipeline de entrenamiento en dos etapas SFT→RL](images/fig8-11.svg)
+![Figura 8-11 Pipeline SFT→RL; Mid-training precede a estas dos fases de alineación conductual](images/fig8-11.svg)
 
-El **SFT es adecuado para** escenarios con formatos consolidados (salidas JSON, estilo de diálogo), demostraciones de expertos de alta calidad y una alta concordancia entre el entorno de entrenamiento y el de despliegue. Los **escenarios donde el RL debe intervenir** son distintos: cuando existen diferencias sistemáticas entre el entorno de despliegue y el de entrenamiento (por ejemplo, si durante el entrenamiento las cartas J/Q/K valen 10 y en el despliegue pasan a valer 11/12/13, cambiando la regla; o si en el entrenamiento se usan palos negros y en el despliegue aparecen palos rojos, cambiando la apariencia), cuando se requiere explorar estrategias óptimas (donde las demostraciones de expertos no son necesariamente las mejores) o cuando los costos de anotación son demasiado elevados para ofrecer demostraciones de cada ruta.
+Tabla 8-4 Criterios de elección
 
-En cuanto a cuándo deben encadenarse ambos, el criterio de "primero la forma, después el espíritu" de la sección "Panorama de las Tres Etapas: Pre-entrenamiento, SFT y RL" ya da la prueba: cuando la salida estructurada es inestable, se usa primero el SFT para que la "forma" se sostenga, de modo que la recompensa del RL pueda calcularse siquiera; cuando el modelo base es lo bastante fuerte para producir salidas aceptables desde el principio, se puede aplicar RL directamente.
+| Observación | Carencia | Método prioritario | Puerta de salida |
+| --- | --- | --- | --- |
+| No conoce conceptos, idioma u operaciones; `pass@k`≈0 | Conocimiento/capacidad fuera del soporte efectivo | **Mid-training**; RAG para hechos dinámicos | Mejora en dominio, retención aceptable y primeras trayectorias verificables |
+| A veces acierta, pero formato, schema, tono o flujo son inestables | Protocolo | **SFT** o decodificación restringida | Análisis estable y verificador fiable |
+| Hay éxito y recompensa fiables, pero la política buena es improbable o falla en OOD | Distribución de probabilidad y política | **RL** | Variación de recompensa y mejora en test independiente |
+| Hay pocas demostraciones y no hay entorno interactivo | Datos imitables, sin feedback online | **SFT/RFT/preferencias offline** | Crear primero línea base y evaluación |
 
-Ambos enfoques tienen sus costos: el SFT posee alta eficiencia de muestra y rápida convergencia, pero generalización limitada; el RL aprende estrategias transferibles, pero tiene baja eficiencia de muestra y entrenamiento inestable. Un criterio práctico de decisión es: cuando "por más que se incrementen las demostraciones, el rendimiento en nuevos escenarios no aumenta", se ha alcanzado el punto de inflexión para migrar a RL, indicando que la raíz del problema no es la cantidad de demostraciones, sino el objetivo de optimización del SFT.
+Orden práctico:
 
-En las decisiones prácticas, se puede seguir este orden de evaluación:
+1. **Descarta cambios de pesos innecesarios.** Usa prompt, herramientas, restricciones de código o gestión de contexto; usa RAG para hechos actualizables, citables o eliminables.
+2. **Mide soporte.** Evalúa `pass@1`, `pass@k`, progreso parcial, tasa de análisis y causas de fallo. Si `pass@k`≈0 por conocimiento/capacidad, aplica Mid-training y vuelve a medir.
+3. **Usa SFT para protocolos, no para embutir una base de conocimiento.** Fija JSON, herramientas, terminología, proceso y estilo.
+4. **Usa RL solo cuando haya exploración posible.** La política debe producir trayectorias puntuables y algún éxito; con rollouts todo cero, PPO/GRPO solo gastan presupuesto.
 
-1. **Preguntar primero: ¿se requiere post-entrenamiento?** Si el problema se resuelve mediante ingeniería de Harness (optimización de prompts, diseño de herramientas, gestión de contexto), no hace falta entrenar el modelo. La mayoría de las aplicaciones de Agentes se sitúan aquí.
-2. **Si se requiere entrenamiento: probar SFT primero.** Adecuado para consolidar formatos de salida (schema JSON, formato de llamadas API), consolidar conocimiento protocolar (uso de términos, formato de salidas, hábitos de flujo, es decir, "cómo hablar y cómo actuar") y unificar el estilo (tono, longitud). Nótese que el SFT no es adecuado para inyectar grandes volúmenes de conocimiento fáctico ("qué se sabe"), lo cual requiere continuar el pre-entrenamiento o recurrir a RAG (ver "Panorama completo" al final de este capítulo). El SFT es económico y de rápido impacto.
-3. **Cuando el SFT no sea suficiente: añadir RL.** Adecuado cuando se necesita generalizar a nuevos escenarios, explorar estrategias óptimas o cuando el costo de anotación es excesivamente alto. Asegúrate de estabilizar primero el formato de salida con SFT antes de aplicar RL sobre esa base.
+No todos los proyectos recorren las tres fases. Un modelo fuerte puede ir directo a RL; una tarea de formato, solo a SFT; conocimiento estable, solo a Mid-training y la alineación ya existente. Lo importante son puertas medibles, no un ritual fijo.
 
 ## RL de Un Solo Turno: Memoria vs Generalización
 
@@ -439,6 +524,29 @@ Vale la pena hacer una estimación aproximada de tiempo. El rollout de un Agente
 PPO y GRPO siguen ambos este bucle; se diferencian sobre todo en **con qué comparan**. GRPO compara directamente varios rollouts del mismo problema y no necesita un modelo de valor aparte. PPO entrena un modelo de valor que estima "cuán bien se suele llegar a hacer" en cada paso de la trayectoria y después juzga si la acción actual supera esa expectativa, lo que encaja mejor con trayectorias largas que requieren una asignación de crédito de grano fino. Ambos limitan el tamaño de cada actualización para que un lote pequeño de muestras no cambie el modelo demasiado de golpe. DPO es distinto: aprende directamente de pares de preferencia "mejor respuesta—peor respuesta" recogidos de antemano y nunca hace que la política actual genere ese grupo de rollouts en línea.
 
 Entre los casos de este capítulo, AdaptThink usa un objetivo restringido propio; GeneralPoints y V-IRL usan PPO con modelo de valor; SimpleVLA-RL y RLVP usan GRPO; ReTool usa PPO. El algoritmo decide cómo se comparan las trayectorias y cómo se actualizan los parámetros; la recompensa decide qué cuenta como éxito; el entorno y los datos deciden qué problemas llega a experimentar el modelo.
+
+### Por qué RL con LLM suele preferir on-policy
+
+**Online** solo significa que se generan datos durante el entrenamiento; **on-policy** exige que la política de comportamiento $\mu$ que produce los rollouts sea igual o muy cercana a la política actual $\pi_\theta$. Workers atrasados, replay antiguo o trayectorias de un profesor introducen off-policy. Incluso las últimas épocas de minibatch de PPO se alejan del `old_policy`, motivo de la razón de probabilidad y el clipping.
+
+Si los datos proceden de $\mu$, la corrección es
+
+$$
+\rho_t=\frac{\pi_\theta(a_t\mid s_t)}{\mu(a_t\mid s_t)}
+=\exp\left(\log\pi_\theta(a_t\mid s_t)-\log\mu(a_t\mid s_t)\right).
+$$
+
+On-policy suele ser mejor porque reduce varianza y razones extremas, cubre los estados y errores reales del estudiante y mantiene comparables los grupos de GRPO. Off-policy sigue siendo útil para entornos caros, replay y éxitos raros, pero requiere ponderación, límites de staleness u objetivos offline. La regla práctica es usar rollouts frescos por defecto y reutilizar solo cuando el ahorro supera el sesgo y la varianza[^ch8-32].
+
+#### Sensibilidad al desajuste numérico entre sampler y trainer
+
+Aunque carguen el mismo checkpoint, precisión, cuantización, kernels de atención, paralelismo, forma del batch u orden de reducción pueden producir probabilidades distintas. Antes de actualizar, debería cumplirse $\rho_t=1$; con
+
+$$
+\delta_t=\log\pi_\theta(a_t\mid s_t)-\log\mu(a_t\mid s_t),\qquad \rho_t=\exp(\delta_t),
+$$
+
+un pequeño error logarítmico se convierte exponencialmente en error multiplicativo y se acumula en respuestas largas. Aparecen clipping falso, KL y ponderación de ventajas incorrectos y un desplazamiento off-policy oculto. El desajuste entrenamiento-inferencia se ha identificado como causa independiente de inestabilidad[^ch8-33], y la inferencia también puede ser no determinista por el orden de reducción dependiente del batch[^ch8-34]. Antes de cualquier actualización, compara log probabilities sobre los mismos tokens, máscaras, temperatura y versión. Monitoriza diferencias, razón previa, KL aproximado, fracción recortada y staleness; si el error ya es grande en el paso cero, cambiar learning rate o clipping no corrige la causa.
 
 ## Entornos de RL: De la Evaluación a la Simulación
 
@@ -592,9 +700,19 @@ La baja eficiencia de muestra del RL viene de la alta varianza y de lo difícil 
 
 ### On-Policy Distillation: hacer que un rollout produzca supervisión densa
 
-On-Policy Distillation fue formulada de forma sistemática y difundida por Thinking Machines Lab en 2025[^ch8-10]. Se propone corregir a la vez las debilidades del SFT y del RL: la supervisión del SFT es densa, pero procede de los **caminos off-policy** que recorrió un profesor o una persona; cuando el estudiante comete sus propios errores y entra en estados que los datos de entrenamiento nunca cubrieron, no sabe cómo recuperarse. El RL deja que el estudiante genere sus propios **caminos on-policy**, pero una trayectoria suele llevar una única recompensa final, así que la señal de aprendizaje es dispersa y de alta varianza.
+On-Policy Distillation fue sistematizada y difundida por Thinking Machines Lab en 2025[^ch8-10]. Aquí «policy» indica **quién genera los prefijos de estado que aprenderá el estudiante**, no quién aporta la supervisión:
 
-On-Policy Distillation hace que el estudiante genere primero trayectorias con su propia política y después que un profesor más fuerte dé la distribución de probabilidad del siguiente token en **cada estado que el estudiante visitó realmente**. Así, un rollout de longitud $T$ deja de producir una sola señal 0/1 y produce en torno a $T$ conjuntos de supervisión token a token; lo que consume la inferencia del profesor es cómputo, no interacción adicional con el entorno. Esto evita el desajuste de distribución del SFT y a la vez reduce mucho la varianza y el número de intentos del RL: una única muestra cara ya enseña "qué habría que hacer distinto en este paso", en lugar de esperar a que termine la tarea para razonar hacia atrás desde el éxito o el fracaso.
+| Método | Quién muestrea trayectoria/estado | Supervisión principal |
+| --- | --- | --- |
+| SFT / destilación off-policy | Persona o profesor | Respuesta etiquetada token a token, densa |
+| RL on-policy | Estudiante actual | Recompensa de resultado o proceso, normalmente dispersa |
+| On-Policy Distillation | Estudiante actual | Distribución token a token del profesor sobre prefijos del estudiante, densa |
+
+SFT cubre sobre todo estados que visitaría el profesor; un error temprano del estudiante lo lleva a prefijos desconocidos y el error se acumula. RL on-policy usa la distribución real del estudiante, pero suele recibir solo éxito o fracaso al final. La destilación combina ambos: **el estudiante decide adónde llega y el profesor le da allí la distribución completa del siguiente token**.
+
+Un rollout de longitud $T$ produce cerca de $T$ supervisiones. Es más relevante que SFT off-policy y más densa y de menor varianza que RL puro. Pero tampoco crea capacidad desde cero: el estudiante debe alcanzar estados corregibles y el profesor no puede estar demasiado lejos de su soporte. Si faltan idioma, conceptos o acciones básicas, usa antes Mid-training o demostraciones off-policy.
+
+La coherencia numérica también importa: si el motor muestrea de $\mu$ y el trainer calcula otro $\pi_\theta$, los estados ya son off-policy aunque no se use la razón de PPO. Comprueba las log probabilities sampler/trainer antes de actualizar.
 
 En concreto, la distribución predicha por el estudiante se acerca a la del profesor, normalmente minimizando la **divergencia KL** entre ambas. Por ejemplo, cuando el estudiante genera "primero consulto la API, después analizo el valor devuelto…", el profesor puede dar en esa posición una distribución de 80 % "consultar", 15 % "llamar" y 5 % para todo lo demás. Frente a una recompensa binaria al final de la tarea, el alineamiento token a token aporta una señal de aprendizaje mucho más densa y de menor varianza; el costo es la inferencia del profesor, que compensa especialmente cuando la interacción con el entorno es cara.
 
@@ -639,7 +757,7 @@ Frente a RLVR, OPSD no exige que la recompensa sea verificable automáticamente:
 
 Esta sección retoma la pregunta que dejó abierta el capítulo 7: cómo un conjunto de datos de evaluación construido a partir de bad cases de producción se convierte realmente en entrada del post-entrenamiento. El final del capítulo 7 comparaba el entorno de evaluación y sus verificadores con los cimientos del post-entrenamiento. Los registros de atribución de fallos, las tareas de regresión de extremo a extremo, las tareas de regresión sobre prefijos de trayectoria y las puntuaciones por rúbrica corresponden cada uno a un uso distinto en entrenamiento:
 
-Tabla 8-4. Correspondencia entre los datos de evaluación del capítulo 7 y su uso en entrenamiento en el capítulo 8
+Tabla 8-5. Correspondencia entre los datos de evaluación del capítulo 7 y su uso en entrenamiento en el capítulo 8
 
 | Datos de evaluación del capítulo 7 | Uso en entrenamiento del capítulo 8 |
 |---|---|
@@ -700,32 +818,35 @@ Si la lectura del archivo o la respuesta de la herramienta ya alteraron los byte
 
 ## Puntos prácticos del post-entrenamiento
 
-Este capítulo ha recorrido un largo camino desde el "predecir el siguiente token" del pre-entrenamiento: el SFT aprende formatos y protocolos con eficiencia, y el RL orientado a resultados mejoró la generalización fuera de distribución en los experimentos controlados de este capítulo; las tareas multiturno introducen el problema de la asignación de crédito; el diseño de recompensas se extiende de las recompensas de resultado a señales de camino que "premian el resultado y restringen el proceso"; y el uso de herramientas trae explosión combinatoria. Un solo hilo lo atraviesa todo: lo que el modelo aprende depende de lo que le enseñó la señal de entrenamiento, y la calidad de esa señal la determinan principalmente los datos y el entorno, no el algoritmo.
+Este capítulo ha recorrido un largo camino desde «predecir el siguiente token»: Mid-training completa conocimiento y capacidades básicas en la distribución objetivo, SFT aprende formatos y protocolos, y RL orientado a resultados mejoró la generalización OOD en los experimentos controlados. El hilo común es que el modelo aprende lo que enseña la señal, cuya calidad depende principalmente de datos y entorno.
 
 Merece la pena vigilar los siguientes **errores habituales**; reconocerlos suele ahorrar más recursos que dominar los detalles técnicos:
 
-1.  **Depender en exceso del post-entrenamiento para memorizar hechos**: el conocimiento factual debe gestionarse con RAG (actualizable dinámicamente, con origen rastreable y sin olvidarse por el entrenamiento), mientras que el post-entrenamiento se centra en "cómo usar el conocimiento".
+1.  **Embutir una base de conocimiento en SFT o confiar todo a los parámetros**: usa Mid-training para conocimiento estable y capacidades, SFT para acceso y expresión, y RAG para actualización, cita, permisos o borrado.
 2.  **Introducir RL antes de que el formato sea estable**: si el modelo no produce de forma fiable el JSON que necesita el cálculo de la recompensa, la señal de entrenamiento se vuelve dispersa o distorsionada. La tasa de fallo de análisis aceptable depende de la tarea y del diseño de la recompensa, y ningún umbral fijo debe tomarse como universal; fija primero un listón de estabilidad de formato con una evaluación a pequeña escala y, si hace falta, estabiliza la salida con SFT o decodificación restringida antes de aplicar RL.
-3.  **Funciones de recompensa mal diseñadas** que llevan a reward hacking: el modelo aprende a explotar los huecos de la recompensa para sacar buena nota en vez de completar realmente la tarea (por ejemplo, generar texto largo y sin sentido cuando solo se mide la longitud de la respuesta). Evalúa el objetivo final, no un indicador intermedio.
-4.  **Ignorar la fidelidad de la simulación**: si la simulación es demasiado simple (un guion de atención al cliente que responde siempre igual) o las respuestas del entorno no son realistas (mensajes de error que no coinciden con producción), la política resultante falla por completo en escenarios reales. Construir un entorno de simulación de alta fidelidad puede costar más que el propio entrenamiento.
-5.  **Sobreentrenar y degradar la generalización**: cuando la pérdida de entrenamiento sigue bajando mientras el rendimiento en validación empeora, el modelo está memorizando detalles del entrenamiento. El SFT es especialmente propenso a esto y la parada temprana sigue siendo esencial; un RL sobreoptimizado también sobreajusta la política a la distribución de tareas actual.
-6.  **Colapso de la función de valor y exploración insuficiente**: estimaciones de valor inexactas en PPO sesgan el cálculo de la ventaja y se manifiestan como curvas de entrenamiento que oscilan violentamente. Una temperatura demasiado baja o poca aleatoriedad atrapan al Agente en un óptimo local.
-7.  **Subestimar el costo de cómputo del RL**: una tarea que funciona bien con SFT puede necesitar entre 10 y 100 veces más tiempo de entrenamiento con RL. Si la distribución de prueba se parece mucho a la de entrenamiento, puede que el SFT ya baste.
-8.  **Datos de entrenamiento de baja calidad**: el SFT aprende directamente el ruido y el sesgo de los datos y los congela en los parámetros; el RL puede encontrar mejores estrategias explorando, pero si el modelo de recompensa tiene un sesgo sistemático optimizará en la dirección equivocada.
+3.  **Confundir ventana nominal con efectiva**: aceptar 128K no demuestra recuperar, razonar y planificar en 128K. Usa puertas por longitud, datos cortos y replay.
+4.  **Aplicar RL con `pass@k`≈0**: rollouts sin éxito no aportan trayectoria positiva y GRPO pierde ventaja interna. Añade capacidad, soporte o un currículo alcanzable.
+5.  **Funciones de recompensa mal diseñadas** que llevan a reward hacking: evalúa el objetivo final, no un proxy.
+6.  **Ignorar la fidelidad de simulación**: un entorno irreal produce una política irreal.
+7.  **Sobreentrenar**: Mid-training olvida capacidad general, SFT sobreajusta demostraciones y RL sobreajusta recompensa; todos necesitan retención independiente y parada temprana.
+8.  **Colapso de valor y exploración insuficiente**: estimaciones PPO erróneas o temperatura baja desestabilizan o atrapan la política.
+9.  **Tratar el desajuste numérico entrenamiento-inferencia como ruido menor**: si antes de actualizar la razón sampler/trainer no es 1, el on-policy ya se volvió off-policy. Monitoriza log probability, KL, clipping y staleness.
+10. **Subestimar el cómputo de RL**: puede costar 10–100 veces SFT.
+11. **Datos de baja calidad**: Mid-training absorbe asociaciones falsas, SFT ruido y RL amplifica recompensas sesgadas.
 
-Principio central: **valida las hipótesis clave con experimentos a pequeña escala antes de comprometer recursos a gran escala**: comprueba con pocos datos si el SFT estabiliza el formato, usa un entorno simplificado para ver si el RL converge y usa una muestra pequeña para comprobar si la función de recompensa refleja el objetivo real. Fallar rápido es más aceptable que fallar a lo grande.
+Principio central: **valida a pequeña escala**: corpus Mid-training para curvas de capacidad/olvido, pocos datos SFT para formato y pocos rollouts para `pass@k`, variación de recompensa y coherencia sampler/trainer.
 
 **Sinergia con RAG e ICL (aprendizaje en contexto)**: los tres no son alternativas excluyentes, sino que actúan en lugares distintos. ICL usa ejemplos, reglas y el estado actual para una adaptación inmediata sin tocar parámetros, aunque la latencia y el costo suben a medida que crece el contexto; RAG coloca hechos y evidencias en un conocimiento externo actualizable dinámicamente y rastreable; el post-entrenamiento escribe en los parámetros la percepción de alta dimensión, el estilo de generación y las políticas de decisión implícitas. La elección no depende solo de si la tarea es estable a largo plazo, sino sobre todo de si la capacidad puede expresarse suficientemente con símbolos externos. Capacidades como el reconocimiento de imágenes médicas o un tono de voz natural suelen seguir requiriendo actualización de parámetros incluso en un dominio en cambio continuo; a la inversa, una regla de aprobación de transferencias estable a largo plazo debería garantizarse de forma determinista con código, y no dejarse a la memoria del modelo.
 
-Los sistemas robustos suelen combinar estos métodos: gestionar hechos y evidencias con RAG, experimentar rápido con ICL las estrategias que pueden describirse en lenguaje, fijar en código los procesos deterministas y las restricciones duras, y escribir en los parámetros mediante post-entrenamiento aquellas capacidades difíciles de expresar en lenguaje y que necesitan generalizar ampliamente. El post-entrenamiento permite además la destilación de modelos: transferir la capacidad de un modelo grande a uno pequeño y más barato.
+Los sistemas robustos combinan RAG para hechos dinámicos, ICL para estrategias editables, código para restricciones deterministas, Mid-training para conocimiento estable y capacidades básicas, y SFT/RL para conductas difíciles de expresar con reglas externas. La destilación transfiere conductas a modelos más baratos.
 
 ## Resumen del Capítulo
 
-SFT y RL no son tanto alternativas en competencia como métodos que a menudo se combinan en secuencia. Cuando la salida estructurada es inestable, el SFT puede estabilizar primero el formato para que la señal de recompensa del RL pueda calcularse de forma fiable; después el RL puede explorar estrategias y mejorar el rendimiento fuera de distribución. "SFT memoriza, RL generaliza" resume una tendencia observada en los experimentos controlados de este capítulo, no una ley que se cumpla al margen de los datos, el modelo, la recompensa y el entorno.
+Mid-training, SFT y RL no son intensidades intercambiables de ajuste: tratan **base, protocolo y política**. Mid-training convierte mediante currículo, mezcla y puertas una ventana nominal en contexto efectivo sin olvidar capacidades cortas. Con `pass@k`≈0, completa primero conocimiento/capacidad; si a veces acierta pero la salida no puede analizarse, estabiliza con SFT; solo con trayectorias puntuables y variación de recompensa RL puede redistribuir probabilidad con eficiencia.
 
-Hay además dos juicios que atraviesan todo el capítulo y que merece más la pena recordar que cualquier algoritmo. El primero, **los datos y el entorno importan más que los algoritmos**: basta con saber usar los algoritmos de RL disponibles; lo que de verdad marca la diferencia es la fidelidad del entorno de simulación y la calidad de los datos de entrenamiento. Cuando no se puede construir un entorno real, usar un modelo para simularlo (sintetizar valores de retorno de herramientas, simular la dinámica del entorno) también es una vía viable, pero recuerda que el sesgo del simulador es el techo del entrenamiento. No solo se pueden filtrar las respuestas: la propia distribución de tareas de los datos de entrenamiento puede convertirse en objeto de optimización. En muchos escenarios, si la calidad de los datos de SFT es suficiente, puede que ni siquiera haga falta RL.
+Primero, **datos y entorno importan más que algoritmos**: el corpus Mid-training define qué se repara, las demostraciones SFT el protocolo y entorno/recompensa lo que RL explora. Muchas veces una buena base y demostraciones eliminan la necesidad de RL.
 
-El segundo, **el principal cuello de botella del RL hoy es la eficiencia de muestra**: On-Policy Distillation expande el escalar terminal de un rollout en supervisión token a token, y RLVP convierte en señal aprendible la retroalimentación del entorno que se desperdiciaba; son las dos direcciones que hoy parecen más prometedoras. Lo que comparten es tomar información que ya existe en el entorno y en los datos, pero que las recompensas puramente de resultado derrochan, y devolverla a una forma que el modelo pueda aprender.
+Segundo, **los cuellos de botella de RL son eficiencia de muestra y coherencia de distribución**. On-Policy Distillation densifica la supervisión en estados del estudiante y RLVP recupera feedback desperdiciado; rollouts realmente on-policy reducen sesgo y varianza. El desajuste numérico rompe esa premisa, por lo que la coherencia sampler/trainer importa tanto como la curva de recompensa.
 
 Este capítulo ha respondido a cómo la actualización de parámetros permite la evolución continua de un Agente. En el próximo veremos que los parámetros son solo uno de los cuatro soportes de la auto-evolución de un Agente: conocimiento, instrucciones, programas y parámetros.
 
@@ -757,6 +878,17 @@ Este capítulo ha respondido a cómo la actualización de parámetros permite la
 [^ch8-27]: Yu, Qiying et al., “DAPO: An Open-Source LLM Reinforcement Learning System at Scale”, 2025. arXiv:2503.14476. https://arxiv.org/abs/2503.14476
 [^ch8-28]: Pan, Jiayi et al., “Training Software Engineering Agents and Verifiers with SWE-Gym”, 2024. arXiv:2412.21139; Barres, Victor et al., “$\tau^2$-Bench: Evaluating Conversational Agents in a Dual-Control Environment”, 2025. arXiv:2506.07982; Rawles, Christopher et al., “AndroidWorld: A Dynamic Benchmarking Environment for Autonomous Agents”, 2024. arXiv:2405.14573.
 [^ch8-29]: storm, "Long-horizon agent self-checking and early stopping: the reward-seeking phenomenon and its mitigations", Qingke Community, 6 August 2026. https://qingkeai.online/archives/Reward-Seeking
+[^ch8-30]: Gururangan, Suchin et al., “Don't Stop Pretraining: Adapt Language Models to Domains and Tasks”, ACL, 2020. https://aclanthology.org/2020.acl-main.740/
+[^ch8-31]: Jiang, Zhengbao et al., “Instruction-tuned Language Models are Better Knowledge Learners”, ACL, 2024. https://aclanthology.org/2024.acl-long.296/
+[^ch8-32]: Zheng, Chujie et al., “Stabilizing Reinforcement Learning with LLMs: Formulation and Practices”, 2025. arXiv:2512.01374. https://arxiv.org/abs/2512.01374
+[^ch8-33]: Zhong, Tianle et al., “Diagnosing Training Inference Mismatch in LLM Reinforcement Learning”, 2026. arXiv:2605.14220. https://arxiv.org/abs/2605.14220
+[^ch8-34]: He, Horace and Thinking Machines Lab, “Defeating Nondeterminism in LLM Inference”, 2025. https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/
+[^ch8-35]: Gao, Tianyu et al., “How to Train Long-Context Language Models (Effectively)”, ACL, 2025. https://aclanthology.org/2025.acl-long.366/
+[^ch8-36]: Xiong, Wenhan et al., “Effective Long-Context Scaling of Foundation Models”, NAACL, 2024. https://aclanthology.org/2024.naacl-long.260/
+[^ch8-37]: Hsieh, Cheng-Ping et al., “RULER: What’s the Real Context Size of Your Long-Context Language Models?”, COLM, 2024. https://arxiv.org/abs/2404.06654
+[^ch8-38]: Bai, Yushi et al., “LongBench: A Bilingual, Multitask Benchmark for Long Context Understanding”, ACL, 2024. https://aclanthology.org/2024.acl-long.172/; Bai, Yushi et al., “LongBench v2: Towards Deeper Understanding and Reasoning on Realistic Long-context Multitasks”, ACL, 2025. https://aclanthology.org/2025.acl-long.183/
+[^ch8-39]: Li, Jia et al., “Benchmarking Long-Context Language Models on Long Code Understanding”, ACL, 2025. https://aclanthology.org/2025.acl-long.1324/
+[^ch8-40]: Zheng, Zihan et al., “PlanningArena: A Modular Benchmark for Multidimensional Evaluation of Planning and Tool Learning”, ACL, 2025. https://aclanthology.org/2025.acl-long.1499/
 
 ## Preguntas de Reflexión
 
@@ -770,6 +902,6 @@ Este capítulo ha respondido a cómo la actualización de parámetros permite la
 8. ★★★ La Destilación en la Política depende de un profesor más fuerte para supervisar al estudiante. Sin embargo, la investigación de Generalización Weak-to-Strong de OpenAI reveló un hallazgo contraintuitivo: la señal de supervisión de un modelo débil puede activar capacidades latentes no expresadas en un modelo fuerte. Si se aplica esta idea al entrenamiento de Agentes, ¿sería factible lograr una destilación inversa donde "un modelo pequeño enseñe a uno grande"?
 9. ★★ El Modelo de Recompensa de Proceso (PRM) evalúa cada paso del pensamiento, y el Modelo de Recompensa de Resultado (ORM) evalúa solo el resultado final. Entre "un proceso correcto que conduce a un resultado erróneo" y "un proceso erróneo que llega por azar a un resultado correcto", ¿cuál merece mayor recompensa? En escenarios de llamadas a herramientas de múltiples pasos en Agentes, ¿cómo equilibrarías ambos aspectos?
 10. ★★★ Los conjuntos de datos de evaluación abordados en este capítulo (SWE-Bench Verified, $\tau²$-bench, AndroidWorld) pueden emplearse tanto para evaluar como para realizar post-entrenamiento. Sin embargo, al usar un conjunto de evaluación para entrenar, este deja de ser independiente, violando el principio de separación entre datos de entrenamiento y prueba. La generación dinámica de parámetros en $\tau²$-bench y las plantillas parametrizadas de AndroidWorld mitigan parcialmente este problema, aunque la estructura de la plantilla permanece fija. ¿Cómo equilibrar el aprovechamiento del valor de entrenamiento de los datos de evaluación con la preservación de la independencia en la evaluación?
-11. ★★★ Este capítulo propone el paradigma de entrenamiento "primero la forma, luego el espíritu": aplicar SFT hasta lograr "estabilidad de formato y capacidad inicial" para luego migrar a RL. En la práctica, ¿cómo determinar que el SFT ha sido "suficiente" para realizar dicha transición?
+11. ★★★ Ante una tarea objetivo con `pass@1` muy bajo, ¿cómo combinarías `pass@k`, tasa de análisis, progreso parcial y atribución de fallos para decidir entre Mid-training, SFT o RL directo? ¿Qué condiciones justificarían cambiar de fase?
 12. ★★★ La dinámica de entrenamiento de ReTool (Experimento 8-14) muestra que unas pocas respuestas extremadamente largas prolongan sustancialmente el ciclo global de entrenamiento: la gran mayoría de las rollouts finalizan pero deben esperar a las más largas, reduciendo la utilización de GPU en el clúster. ¿Cómo mejorar la utilización de recursos en clústeres de entrenamiento ante este escenario de respuestas con cola larga?
 13. ★★★ Al entrenar Agentes con LLM que simulan el entorno (como motores de búsqueda o usuarios simulados), el objeto de reward hacking del Agente pasa de ser "las reglas del entorno real" a ser "los sesgos y vulnerabilidades del propio simulador". ¿Qué comportamientos concretos de reward hacking pueden emerger en este tipo de entrenamiento y cómo prevenirlos?

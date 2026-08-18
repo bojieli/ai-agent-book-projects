@@ -1,6 +1,6 @@
 # 第 8 章 · 模型後訓練
 
-> 預訓練/SFT/RL 三階段：何時選 SFT、何時選 RL，工具呼叫內化、樣本效率
+> 預訓練／Mid-training／SFT／RL 四階段：長上下文課程與資料構造、SFT 協定固化、RL 環境與獎勵，以及從單輪到多輪的樣本效率。
 
 ← [返回主目錄](../docs/zh-TW/README.md) · 📖 [讀本章正文](../book/chapter8.md)
 

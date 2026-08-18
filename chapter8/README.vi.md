@@ -1,6 +1,6 @@
 # Chương 8 · Hậu huấn luyện mô hình
 
-> toàn cảnh ba giai đoạn tiền huấn luyện, SFT và RL. Khi nào chọn SFT, khi nào chọn RL, RLHF, so sánh thuật toán, dữ liệu và môi trường, cũng như các hướng tiên phong giúp mô hình học cách gọi công cụ và nâng cao hiệu quả mẫu.
+> Bốn phần—tiền huấn luyện, Mid-training, SFT và RL: curriculum và dữ liệu ngữ cảnh dài, định hình giao thức bằng SFT, môi trường và phần thưởng RL, cùng hiệu quả mẫu từ một vòng đến nhiều vòng.
 
 ← [Về README chính](../docs/vi/README.md) · 📖 [Đọc nội dung chương](../book-vi/chapter8.vi.md)
 

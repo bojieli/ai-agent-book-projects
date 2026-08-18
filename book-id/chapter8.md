@@ -4,7 +4,7 @@ Formula inti dari buku ini adalah Agent = LLM + Context + Tools. Bab ini beralih
 
 Bab ini mengasumsikan tidak adanya latar belakang tentang reinforcement learning atau model training. Kami tidak mengharapkan Anda mengetahui gradien atau policy optimization. Alih-alih, kami memulai dari pertanyaan tentang bagaimana sebuah model dilatih pada awalnya, memperjelas apa tujuan setiap langkah, bagaimana cara kerjanya, dan masalah apa yang dipecahkannya. Pada akhir bab ini, Anda seharusnya dapat menjawab pertanyaan-pertanyaan berikut: Berapa banyak tahapan yang terlibat dalam membentuk kapabilitas model? Apa yang dilakukan pada setiap tahap? Mengapa mereka harus terjadi dalam urutan ini? Dan di mana Anda harus memfokuskan upaya dalam proyek Anda sendiri?
 
-**Pertama, mari kita tetapkan peta yang paling penting: kapabilitas model modern dibentuk dalam tiga tahap.** Ketiga tahap ini saling terkait dan sangat diperlukan:
+**Peta terpenting memiliki empat bagian: pre-training, Mid-training, SFT, dan RL.** Mid-training berada di antara fondasi umum dan penyelarasan perilaku untuk menyerap pengetahuan domain serta membangun kapabilitas dasar; bagian berikut membahas keempatnya.
 
 1.  **Pre-training**: Training pada teks internet yang masif untuk "memprediksi token berikutnya". Langkah ini mengajarkan model aturan bahasa, pengetahuan dunia, dan penalaran dasar. Ini seperti seseorang yang telah membaca semua buku di perpustakaan—terpelajar, tetapi belum pandai menjawab pertanyaan. Ini adalah langkah yang paling mahal (seringkali puluhan juta dolar) dan merupakan fondasi dari semua kapabilitas.
 2.  **Supervised Fine-Tuning (SFT)**: Training model pada pasangan input-output berlabel, seperti seorang guru yang memberikan jawaban standar kepada siswa untuk ditiru. Ribuan hingga puluhan ribu demonstrasi pertanyaan-dan-jawaban standar mengajarkan model tentang format, gaya, dan proses apa yang harus digunakan saat merespons. Langkah ini mengubah model yang terpelajar menjadi asisten yang memahami instruksi dan menghasilkan output yang terstruktur dengan baik. Proses ini murah, cepat, dan stabil, serta saat ini merupakan langkah yang dialami oleh hampir semua model yang di-deploy.
@@ -22,15 +22,16 @@ Sebuah analogi intuitif: Pre-training adalah "membaca sepuluh ribu buku" (mengum
 > *   **Agent Application Developers** (tidak perlu melatih model sendiri): Mulailah dengan membaca pembuka "Pre-training, SFT, RL: A Three-Stage Panorama" untuk membangun pemahaman global. Kemudian Anda bisa melewati dua bagian `[Optional Reading]` berikut (classic RL dan latar belakang pre-training) dan melanjutkan dari bagian SFT. Fokuslah pada kerangka keputusan untuk "perbedaan esensial antara SFT dan RL" dan "kapan harus memilih SFT vs RL", serta penilaian bahwa "data dan environment lebih penting daripada algoritma"—wawasan ini akan memengaruhi keputusan desain Anda dalam Harness engineering (kapan harus menyelesaikannya dengan prompt, kapan fine-tuning sepadan untuk dilakukan).
 > *   **Model Training Engineers**: Bacalah secara berurutan dari awal. Dua bagian `[Optional Reading]` memberikan latar belakang lengkap tentang reinforcement learning dan pre-training. Eksperimen-eksperimen selanjutnya memberikan skema training yang dapat direproduksi.
 
-## Prapelatihan, SFT, dan RL: Panorama Tiga Tahap
+## Dari Prapelatihan hingga RL: Panorama Empat Tahap
 
-Bagian pengantar telah memberi Anda peta dari tiga tahap tersebut; bagian ini membahas mekanisme masing-masing tahap. Ketiga tahap ini berbeda dalam hal **data**, **tujuan optimasi (optimization objectives)**, dan **biaya (costs)**. Memahami persamaan dan perbedaannya adalah kunci untuk keseluruhan bab ini. Tabel 8-1 memberikan gambarannya; detailnya menyusul.
+Pengantar telah memberi peta empat bagian. Bagian ini membandingkan **data**, **tujuan optimasi**, dan **biaya** masing-masing. Tabel 8-1 memberi gambaran sebelum detailnya dibahas.
 
-Tabel 8-1 Tiga Tahapan Pembentukan Kapabilitas Model
+Tabel 8-1 Empat Bagian Pengembangan Kapabilitas Model
 
 | Tahap | Data yang Digunakan | Tujuan Optimasi | Apa yang Dipelajari | Biaya Tipikal |
 |-------------|---------------------|--------------------|---------------------|-------------------|
 | **Pre-training** | Teks internet mentah yang masif | Memprediksi token berikutnya | Aturan bahasa, pengetahuan dunia, penalaran dasar | Sangat Tinggi (jutaan hingga puluhan juta USD) |
+| **Mid-training** | Korpus bahasa/domain/kapabilitas target serta data retensi | Melanjutkan prediksi token berikutnya (biasanya loss pada semua token) | Menutup celah pengetahuan domain, bahasa, dan kapabilitas dasar | Sedang hingga tinggi, bergantung jumlah token dan parameter yang dilatih |
 | **SFT** | Ribuan hingga puluhan ribu pasangan demonstrasi "input-output" | Memprediksi token berikutnya (loss dihitung hanya pada respons) | Mengikuti instruksi (instruction following), format output, gaya, protokol proses | Rendah (hitungan jam hingga hari) |
 | **RL** | Tugas + Fungsi reward (tanpa jawaban standar) | Memaksimalkan expected reward | Strategi pengambilan keputusan yang dapat ditransfer, solusi yang baru ditemukan | Tinggi (seringkali puluhan hingga ratusan kali lipat dari SFT) |
 
@@ -43,6 +44,10 @@ Tunjukkan pada model bagian pertama dari sebuah teks dan biarkan model menebak t
 Ada satu poin kunci yang harus diingat yang akan terbawa hingga ke SFT dan RL: **Output model pada dasarnya adalah sebuah distribusi probabilitas (probability distribution).** Diberikan teks sebelumnya, model menetapkan probabilitas pada setiap kemungkinan token yang ada di dalam kosakatanya. "Training," pada intinya, adalah **menyesuaikan distribusi probabilitas ini**—membuat probabilitas dari token yang diinginkan menjadi lebih tinggi dan yang tidak diinginkan menjadi lebih rendah. Perbedaan antara ketiga tahapan tersebut hanya terletak pada "apa yang diinginkan" dan "sinyal apa yang mendefinisikan 'diinginkan' tersebut".
 
 Setelah pre-training, model menjadi sangat berpengetahuan tetapi tidak user-friendly: jika Anda mengajukan pertanyaan, model mungkin akan terus menghasilkan lebih banyak pertanyaan alih-alih menjawabnya—karena dalam teks internet, sebuah pertanyaan sering kali diikuti oleh pertanyaan lain. Model belum mempelajari protokol "ketika ditanya sebuah pertanyaan, Anda harus menjawab."
+
+### Esensi Mid-training: Melanjutkan Belajar pada Distribusi Target
+
+Pre-training umum tidak mungkin mencakup setiap bahasa, domain, dan kapabilitas. Bila model hampir tidak dapat membaca bahasa target, tidak memahami protokol internal, atau belum membentuk representasi kode dan konteks panjang yang dibutuhkan tugas, mengajarkan format jawaban atau memberi reward sukses/gagal saja sudah terlambat. Mid-training mempertahankan tujuan next-token tetapi memusatkan distribusi data pada domain target dan mencampur data umum untuk mengendalikan lupa. Ia menjawab apakah model memiliki pengetahuan dan kapabilitas dasar untuk mengerjakan tugas, bukan bagaimana respons harus terlihat atau policy mana yang mendapat reward tertinggi.
 
 ### Esensi dari SFT: "Predict the Next Token" dengan Data Berbeda
 
@@ -57,9 +62,11 @@ Singkatnya, SFT menggunakan efisiensi sampel yang sangat tinggi untuk **menyandi
 
 > **Biaya Training: LoRA Parameter-Efficient Fine-Tuning.** Baik SFT maupun RL selanjutnya membutuhkan pembaruan parameter model, dan full-parameter fine-tuning memiliki kebutuhan VRAM yang tinggi (perlu menyimpan gradien dan state optimizer untuk miliaran parameter). **LoRA** (Low-Rank Adaptation) adalah metode penghematan biaya yang paling umum: alih-alih memodifikasi matriks bobot asli yang besar, ia melampirkan sebuah "tambalan" kecil (matriks rank rendah) untuk mempelajari tugas tersebut. Jumlah parameternya hanya 1%–5% dari aslinya, namun ia dapat mendekati performa full fine-tuning. Karena bobot aslinya dibekukan (frozen), LoRA juga menyebabkan lebih sedikit gangguan (perturbation) pada kapabilitas model dasar (base model) yang ada, mengurangi risiko catastrophic forgetting (lupa secara drastis). Beberapa aturan praktis (rules of thumb) yang telah divalidasi[^ch8-1]: Anda **harus** menerapkan LoRA ke semua matriks bobot utama (terutama layer MLP, yang memiliki jumlah parameter terbesar); menerapkannya hanya pada layer attention akan mengorbankan akurasi. **Learning rate yang optimal adalah sekitar 10 kali lipat dari full fine-tuning** (berlaku untuk SFT dan RL, sebuah aturan transfer yang sangat praktis). Gunakan rank menengah ke tinggi (64–256) untuk SFT; karena informasi per putaran kecil untuk RL, rank kecil (8–32) atau bahkan rank=1 sudah cukup. Selama deployment, sebuah inference server tunggal dapat memuat beberapa LoRA adapter secara bersamaan untuk layanan multi-tenant. Buku ini memperlakukan LoRA sebagai pilihan engineering default untuk semua metode post-training dan tidak akan menjelaskannya secara terpisah.
 
-### Mengapa SFT Harus Ada Sebelum RL, dan Bukan Sebaliknya
+### Kapan Fondasi Perlu Diperbaiki sebelum SFT/RL
 
-Urutan ketiga tahapan ini tidaklah sembarangan. Pre-training pertama tidak menjadi kontroversi—tanpa dasar bahasa dan pengetahuan, tidak ada hal lain yang memungkinkan. Yang perlu dijelaskan adalah: **Mengapa SFT harus ada sebelum RL?**
+RL menilai respons yang **dihasilkan sendiri** oleh model. Karena itu output harus dapat diverifikasi dan policy saat ini sesekali harus menemukan perilaku bernilai. Jika format tidak stabil, gunakan SFT agar JSON atau tool call dapat di-parse. Namun bila dengan temperatur dan jumlah sampel yang wajar `pass@k` tetap mendekati nol, solusi berada di luar effective support model. Rollout yang semuanya gagal hampir tidak menjelaskan pengetahuan atau langkah penalaran yang hilang; GRPO juga kehilangan advantage dalam grup. Tambahkan pengetahuan dan kapabilitas atomik lewat Mid-training, atau masukkan jalur yang layak ke dalam support lewat demonstrasi/distilasi, baru gunakan RL.
+
+Setelah itu barulah perlu dijelaskan: **dalam kondisi apa SFT harus mendahului RL?**
 
 Jawabannya terletak pada bagaimana RL bekerja. RL tidak melihat jawaban standar; ia membiarkan model **menghasilkan (generate)** responsnya sendiri dan kemudian memberikan reward atau penalti berdasarkan kualitas respons tersebut. Tetapi untuk menilai kualitas, pertama-tama Anda harus dapat **mem-parse** output dari model: jika tugas tersebut membutuhkan output berupa objek JSON atau sebuah Tool Call, dan model tersebut menghasilkan teks acak-acakan yang formatnya buruk, maka fungsi reward tidak memiliki dasar perhitungan (bahkan tidak dapat membedakan "keberhasilan dan kegagalan"), dan RL tidak dapat belajar.
 
@@ -261,6 +268,49 @@ Ketiga eksperimen pre-training tersebut secara kolektif mengungkap sebuah pola: 
 
 Dengan kemampuan dasar dari pre-training, langkah selanjutnya adalah mengubah model tujuan umum menjadi sebuah Agent praktis melalui post-training. Tahap pertama dari post-training adalah Supervised Fine-Tuning (SFT).
 
+## Mid-training: Menambah Pengetahuan dan Kapabilitas Dasar
+
+**Mid-training** di bab ini berarti satu tahap language-model training tambahan pada distribusi target, dimulai dari base model yang sudah ada. Tujuannya biasanya tetap next-token prediction dengan loss pada seluruh token dokumen, kode, atau derivasi. Riset DAPT/TAPT menunjukkan bahwa tahap kedua pada korpus domain atau tugas yang tidak berlabel dapat memperbaiki kinerja hilir[^ch8-30].
+
+Ia memperbaiki **celah pengetahuan**—bahasa, istilah, dokumen perusahaan, atau codebase yang kurang tercakup—dan **celah kapabilitas dasar**—konteks panjang, kode, matematika, atau representasi multimodal yang tetap gagal meski disampel berkali-kali. SFT dapat menghafal sedikit fakta, tetapi pasangan QA yang sedikit hanya menguatkan beberapa jalur akses; ia bukan wadah yang baik untuk pengetahuan besar dan saling terkait. Resep yang stabil adalah Mid-training menyerap pengetahuan/kapabilitas → SFT kecil menetapkan protokol → RL sesudah tingkat sukses tidak nol[^ch8-31].
+
+### Campuran Data dan Kurikulum Konteks Panjang
+
+Campuran pada tahap panjang $i$ dapat ditulis:
+
+$$
+D_i=\alpha_iD_{\text{long}}+\beta_iD_{\text{atomic}}+\gamma_iD_{\text{agent}}+\delta_iD_{\text{replay}},
+\qquad \alpha_i+\beta_i+\gamma_i+\delta_i=1.
+$$
+
+Hitung rasio berdasarkan **token**, bukan jumlah dokumen. $D_{\text{long}}$ berisi buku, dokumen panjang, dan repository kode; $D_{\text{atomic}}$ melatih retrieval, penalaran multi-hop, instruction following, agregasi, dan statistik; $D_{\text{agent}}$ memuat planning, pemilihan/pemanggilan tool, pelacakan state jangka panjang, dan pemulihan error. $D_{\text{replay}}$ harus menyimpan data umum/pendek serta tugas lama yang sudah dikuasai tetapi “diangkat” ke panjang saat ini dengan posisi bukti dan distraktor yang bervariasi. Lakukan deduplikasi, filter mutu, dan pemeriksaan kontaminasi evaluasi.
+
+Mid-training juga harus mengubah context window nominal menjadi **window efektif** sambil memasukkan penalaran panjang, planning, dan tool use. Mengubah `max_position_embeddings` dari 32K ke 128K hanya membuktikan input diterima. Gunakan kurikulum seperti 8K → 16K → 32K → 64K → 128K, disesuaikan dengan model, target, dan anggaran[^ch8-36]. Sebelum memperpanjang, selesaikan retrieval, NIAH, multi-hop, agregasi/statistik, planning dasar, dan pemilihan tool pada panjang saat ini.
+
+Jika $M(\theta,c,L)$ adalah skor model $\theta$ untuk kapabilitas $c$ pada panjang $L$, gunakan tiga gerbang:
+
+$$
+\begin{aligned}
+M(\theta_i,c,L_i)&\geq\tau_{c,i},\\
+M(\theta_i,c,L_i)&\geq M(\theta_i,c,L_{i-1})-\epsilon_{\text{len}},\\
+M(\theta_i,c,L_{i-1})&\geq M(\theta_{i-1},c,L_{i-1})-\epsilon_{\text{retain}}.
+\end{aligned}
+$$
+
+Artinya: lolos pada panjang sekarang, kapabilitas yang sama tidak turun secara material ketika konteks memanjang, dan tahap baru tidak melupakan kapabilitas lama. Bandingkan tugas yang tingkat kesulitannya sama dan hanya dinaikkan panjangnya; tentukan $\epsilon$ dari confidence interval evaluasi berulang. Bila satu bucket gagal, tambah data atomik, data panjang saat ini, atau replay sebelum memperpanjang window nominal.
+
+| Kapabilitas | Benchmark | Diagnosis utama |
+| --- | --- | --- |
+| Posisi, retrieval, tracking, agregasi | NIAH, RULER | Degradasi menurut posisi/jumlah needle, multi-hop, agregasi, dan panjang; NIAH hanya smoke test |
+| Penalaran dokumen realistis | LongBench, LongBench v2 | QA satu/banyak dokumen, dialog panjang, in-context learning, data terstruktur per kategori dan panjang |
+| Pemahaman kode panjang | Tugas repository LongBench v2, LongCodeU | Unit kode, relasi antar-file, pemahaman repository |
+| Planning dan tool learning | PlanningArena dan benchmark tool sebelumnya | Dekomposisi, pilihan, memori, argumen, dan state |
+| Agent end-to-end | SWE-bench Verified, $\tau^2$-bench, Terminal-Bench | Planning, tool, recovery, dan penyelesaian pada trajektori nyata |
+
+RULER memperluas NIAH ke multi-needle, multi-hop, dan agregasi[^ch8-37]; LongBench v2 mencakup dokumen, dialog, repository, dan data terstruktur realistis[^ch8-38]; LongCodeU dan PlanningArena mendiagnosis kode panjang serta planning/tool learning[^ch8-39][^ch8-40]. Simpan test set resmi hanya untuk evaluasi, latih dengan contoh serupa tetapi tidak bertumpang tindih, dan laporkan per panjang, kapabilitas, dan jenis kegagalan. Lulus NIAH atau satu leaderboard tidak membuktikan penalaran konteks panjang.
+
+Fakta yang perlu diperbarui, dikutip, dikontrol aksesnya, atau dihapus tetap lebih tepat di RAG. Validasi campuran lewat eksperimen kecil sebelum full-parameter Mid-training berskala besar.
+
 ## SFT (Supervised Fine-Tuning)
 
 ![Gambar 8-10: Pipeline Supervised Fine-Tuning (SFT)](images/fig8-10.svg)
@@ -334,7 +384,9 @@ Bad case dari Bab 7 juga dapat diubah menjadi data pelatihan di sini. Ambil "pen
 
 Dua eksperimen Bad Case yang ditambahkan pada bab ini memperlihatkan dua sasaran supervisi yang berbeda. Kasus tanda kutip lengkung bahasa Tionghoa mula-mula menyuling umpan balik menjadi Skill dokumentasi yang peka terhadap cakupan, baru kemudian menjalankan SFT pada data sintetis terstruktur; kasus string khusus mengubah ketidakcocokan `old_string` menjadi tugas penyalinan yang persis per byte dan melatih kesetiaan per token. Keduanya berbagi protokol atribusi kegagalan dan isolasi latih/evaluasi dari Bab 7, tetapi tidak berbagi skor total: yang pertama mengukur "ubah yang perlu diubah, biarkan yang perlu dibiarkan", yang kedua mengukur "salin persis kata demi kata".
 
-## Kapan Memilih SFT dan Kapan Memilih RL
+## Kapan Memilih Mid-training, SFT, dan RL
+
+Diagnosis pertama adalah apakah yang hilang berupa **fondasi, protokol, atau policy**. `pass@k` yang hampir nol dan kegagalan pengetahuan/kapabilitas mengarah ke Mid-training; model yang sesekali benar tetapi format/schema-nya tidak stabil mengarah ke SFT; RL baru efisien ketika rollout dapat dinilai, sesekali berhasil, reward setia pada tujuan, dan terdapat variasi reward dalam grup. Ukur `pass@1`, `pass@k`, kemajuan parsial, parse rate, serta atribusi kegagalan pada held-out set. Jangan langsung memakai PPO/GRPO pada seluruh rollout yang gagal.
 
 bagian "Prapelatihan, SFT, dan RL: Panorama Tiga Tahap" menjelaskan **perbedaan mendasar** antara SFT dan RL. Bagian ini menjawab pertanyaan yang lebih praktis: **Untuk tugas tertentu, mana yang sebaiknya digunakan?** Beberapa kesimpulan dari kerangka keputusan berikut akan diuji lebih lanjut dalam Eksperimen 8-10 dan 7-11. Pembaca dapat membentuk penilaian awal, lalu kembali membandingkannya setelah membaca bagian RL.
 
@@ -443,6 +495,23 @@ Mari buat perkiraan waktu kasar. Rollout Agent yang rumit menghasilkan puluhan p
 PPO dan GRPO sama-sama mengikuti lingkar tertutup ini, dan perbedaannya terutama pada **dibandingkan dengan apa**. GRPO langsung membandingkan beberapa rollout dari soal yang sama sehingga tidak memerlukan value model terpisah. PPO melatih sebuah value model yang menaksir "biasanya sebaik apa" pada tiap langkah trajektori, lalu menilai apakah aksi saat ini melampaui ekspektasi itu; karena itu ia lebih cocok untuk trajektori panjang yang memerlukan credit assignment yang halus. Keduanya membatasi besar satu pembaruan agar sekumpulan kecil sampel tidak mengubah model terlalu drastis. DPO berbeda: ia belajar langsung dari pasangan preferensi "jawaban lebih baik — jawaban lebih buruk" yang dikumpulkan lebih dulu, dan tidak pernah menyuruh policy saat ini menghasilkan kumpulan rollout itu secara daring.
 
 Pada kasus-kasus di bab ini, AdaptThink memakai fungsi tujuan berkendala buatan sendiri; GeneralPoints dan V-IRL memakai PPO dengan value model; SimpleVLA-RL dan RLVP memakai GRPO; ReTool memakai PPO. Algoritma menentukan bagaimana trajektori dibandingkan dan parameter diperbarui; imbalan menentukan apa yang dihitung sebagai keberhasilan; environment dan data menentukan masalah apa saja yang dapat dialami model.
+
+### Mengapa LLM RL Biasanya Mengutamakan On-Policy
+
+**Online** hanya berarti data terus dibuat selama training; **on-policy** berarti behavior policy $\mu$ yang membuat rollout sama atau cukup dekat dengan policy terkini $\pi_\theta$. Worker asinkron yang tertinggal beberapa checkpoint sudah membuat data online menjadi off-policy. Koreksinya memakai importance ratio:
+
+$$
+\rho_t=\frac{\pi_\theta(a_t\mid s_t)}{\mu(a_t\mid s_t)}
+=\exp\!\left(\log\pi_\theta(a_t\mid s_t)-\log\mu(a_t\mid s_t)\right).
+$$
+
+Sebelum update, rollout on-policy yang segar memiliki $\rho_t=1$: training berfokus pada state yang benar-benar dikunjungi model kini dan menghindari koreksi ber-variance tinggi. Off-policy dapat memakai ulang data dan menaikkan throughput, tetapi rasio token yang sedikit menyimpang dapat terakumulasi pada urutan panjang. PPO clipping membatasi outlier, bukan memulihkan coverage distribusi. Jadi on-policy bukan selalu unggul; dalam policy gradient LLM ia biasanya berarti bias distribusi lebih kecil dan optimasi lebih stabil[^ch8-32].
+
+#### Ketidakcocokan Numerik Dapat Merusak On-Policy
+
+Sampler vLLM/SGLang dan trainer FSDP/Megatron dapat memberi log probability berbeda meski bobot sama, akibat presisi, urutan reduksi, tensor parallelism, batch size, KV cache, atau fused kernel. Maka sebelum update pun $\rho_t\ne1$ dan training nominal on-policy menjadi off-policy secara numerik; perbedaan token kecil saja dapat meruntuhkan training[^ch8-33]. Rantai penguatnya adalah: galat log-probability → rasio yang dieksponensialkan → akumulasi pada prefix panjang → perubahan clipping/advantage → perubahan gradien dan effective sample size. Pada 4.000 token, bias searah $10^{-3}$ dapat menjadi $e^4\approx54.6$; perubahan batch juga dapat merusak batch invariance[^ch8-34].
+
+Sebelum update, bandingkan token log probability sampler/trainer dan pantau mean, quantile, maksimum $\rho_t$, approximate KL, dan clipping fraction. Sinkronkan juga LoRA, tokenizer, chat template, revision, dan konfigurasi posisi; simpan behavior log probability saat generasi. Jika jalur numeriknya tak dapat disamakan, perlakukan sebagai off-policy, gunakan koreksi eksplisit, dan batasi staleness serta jumlah update per batch.
 
 ## Environment RL: Dari Evaluasi ke Simulasi
 
@@ -594,7 +663,15 @@ Rendahnya efisiensi sampel RL berasal dari variansi yang besar dan sulitnya mema
 
 ### On-Policy Distillation: membuat satu rollout menghasilkan supervisi rapat
 
-On-Policy Distillation dirumuskan secara sistematis dan dipopulerkan oleh Thinking Machines Lab pada 2025[^ch8-10]. Ia hendak memperbaiki kelemahan SFT dan RL sekaligus: supervisi SFT rapat, tetapi berasal dari **jalur off-policy** yang ditempuh guru atau manusia; ketika murid membuat kesalahannya sendiri dan masuk ke keadaan yang tak tercakup data pelatihan, ia tak tahu cara memulihkan diri. RL membiarkan murid menghasilkan **jalur on-policy**-nya sendiri, tetapi satu trajektori biasanya hanya punya satu imbalan akhir sehingga sinyalnya jarang dan bervariansi tinggi.
+On-Policy Distillation dirumuskan oleh Thinking Machines Lab pada 2025[^ch8-10]. “Policy” di sini berarti **siapa yang menghasilkan prefix state tempat murid belajar**, bukan siapa yang memberi supervisi.
+
+| Metode | Pembuat trajektori/state | Supervisi utama |
+| --- | --- | --- |
+| SFT/distilasi off-policy | Manusia atau guru | Supervisi token rapat dari jawaban berlabel |
+| RL on-policy | Murid saat ini | Reward hasil/proses yang biasanya jarang |
+| On-Policy Distillation | Murid saat ini | Distribusi token guru pada prefix murid |
+
+SFT rapat tetapi terutama mencakup state guru, sedangkan RL relevan pada state murid namun sering hanya menerima sukses/gagal di akhir. On-Policy Distillation menggabungkannya: **murid menentukan state yang dikunjungi, guru memberi seluruh distribusi next-token di sana**. Jika murid bahkan tidak dapat mencapai state yang bermakna, lakukan Mid-training atau demonstrasi off-policy lebih dahulu. Konsistensi numerik tetap wajib: bila rollout berasal dari $\mu$ tetapi trainer menghitung $\pi_\theta$ lain, state training sudah off-policy meski tanpa PPO ratio. Uji kesepakatan log-probability sampler/trainer sebelum update.
 
 On-Policy Distillation mula-mula membiarkan murid menghasilkan trajektori dengan policy-nya sendiri, lalu meminta guru yang lebih kuat memberikan distribusi peluang token berikutnya **pada setiap keadaan yang benar-benar dilewati murid**. Dengan begitu rollout sepanjang $T$ tak lagi hanya menghasilkan satu sinyal 0/1, melainkan sekitar $T$ himpunan supervisi per token; yang dikonsumsi inferensi guru adalah komputasi, bukan interaksi environment tambahan. Ini menghindari ketidakcocokan distribusi pada SFT sekaligus menurunkan variansi dan jumlah percobaan RL secara mencolok: satu kali pengambilan sampel yang mahal sudah mengajarkan "apa yang harus diubah pada langkah ini", tanpa perlu menunggu tugas selesai lalu menalar mundur dari berhasil-gagalnya.
 
@@ -641,7 +718,7 @@ Dibandingkan RLVR, OPSD tidak menuntut imbalannya dapat diverifikasi otomatis: i
 
 Bagian ini kembali ke pertanyaan yang ditinggalkan Bab 7: bagaimana himpunan data evaluasi yang dibangun dari bad case produksi benar-benar menjadi masukan bagi post-training. Akhir Bab 7 mengumpamakan environment evaluasi dan verifier sebagai batu fondasi post-training. Catatan atribusi kegagalan, tugas regresi end-to-end, tugas regresi awalan trajektori, dan penilaian rubrik masing-masing bersesuaian dengan kegunaan pelatihan yang berbeda:
 
-Tabel 8-4. Pemetaan himpunan data evaluasi Bab 7 ke kegunaan pelatihan pada Bab 8
+Tabel 8-5. Pemetaan himpunan data evaluasi Bab 7 ke kegunaan pelatihan pada Bab 8
 
 | Data evaluasi Bab 7 | Kegunaan pelatihan pada Bab 8 |
 | --- | --- |
@@ -702,6 +779,8 @@ Jika pembacaan berkas atau kembalian tool sudah mengubah byte-nya, atribusikan k
 
 ## Kiat praktis post-training
 
+Tambahkan tiga risiko utama: **window nominal belum tentu efektif**, **jangan memulai RL ketika `pass@k` masih hampir nol**, dan **jangan menganggap perbedaan numerik sampler/trainer sebagai noise biasa**. Gunakan gerbang kapabilitas × panjang dan replay untuk yang pertama, perbaiki support lewat Mid-training/SFT untuk yang kedua, dan monitor log-probability, KL, serta clipping sebelum update untuk yang ketiga.
+
 Bab ini telah menempuh jalan panjang dari "memprediksi token berikutnya" pada prapelatihan: SFT mempelajari format dan protokol secara efisien, dan RL yang berorientasi hasil memperbaiki generalisasi di luar distribusi pada eksperimen terkendali bab ini; tugas multi-turn memasukkan persoalan credit assignment; desain imbalan meluas dari imbalan hasil ke sinyal jalur yang "mengganjar hasil dan membatasi proses"; dan pemakaian tool membawa ledakan kombinatorial. Benang merah yang menembus semuanya hanya satu: apa yang dipelajari model bergantung pada apa yang diajarkan sinyal pelatihan, dan mutu sinyal itu terutama ditentukan oleh data dan environment, bukan oleh algoritma.
 
 **Jebakan yang lazim** berikut patut diwaspadai; mengenalinya kerap lebih menghemat sumber daya daripada menguasai rincian teknis:
@@ -722,6 +801,8 @@ Prinsip intinya: **sebelum menanamkan sumber daya berskala besar, verifikasi dul
 Sistem yang tangguh biasanya memadukan metode-metode ini: kelola fakta dan bukti dengan RAG, ujicobakan dengan cepat lewat ICL strategi yang dapat diuraikan dengan bahasa, pakukan prosedur deterministik dan kendala keras dengan program, lalu tuliskan lewat post-training ke dalam parameter kemampuan yang sulit diungkapkan dengan bahasa dan menuntut generalisasi luas. Post-training juga memungkinkan distilasi model — memindahkan kemampuan model besar berkemampuan tinggi ke model kecil yang lebih murah.
 
 ## Ringkasan Bab
+
+Mid-training, SFT, dan RL masing-masing menangani **fondasi, protokol, dan policy**. Mid-training membangun konteks efektif dengan kurikulum panjang dan replay; SFT menstabilkan format; RL baru efisien pada trajektori yang dapat dinilai dan memiliki variasi reward. Bila `pass@k` nol, tambahkan kapabilitas lebih dahulu, bukan sekadar lebih banyak percobaan.
 
 SFT dan RL bukanlah sekadar pilihan yang saling bersaing, melainkan metode yang kerap dirangkai secara berurutan. Pada tatanan ketika keluaran terstrukturnya tidak stabil, SFT dapat lebih dulu menstabilkan format sehingga sinyal imbalan RL dapat dihitung dengan andal; sesudah itu RL dapat menjelajahi strategi dan memperbaiki kinerja di luar distribusi. "SFT menghafal, RL menggeneralisasi" merangkum kecenderungan yang teramati pada eksperimen terkendali bab ini, bukan hukum yang berlaku terlepas dari data, model, imbalan, dan environment.
 
@@ -759,6 +840,17 @@ Bab ini menjawab pertanyaan bagaimana mewujudkan evolusi berkelanjutan Agent lew
 [^ch8-27]: Yu, Qiying et al., “DAPO: An Open-Source LLM Reinforcement Learning System at Scale”, 2025. arXiv:2503.14476. https://arxiv.org/abs/2503.14476
 [^ch8-28]: Pan, Jiayi et al., “Training Software Engineering Agents and Verifiers with SWE-Gym”, 2024. arXiv:2412.21139; Barres, Victor et al., “$\tau^2$-Bench: Evaluating Conversational Agents in a Dual-Control Environment”, 2025. arXiv:2506.07982; Rawles, Christopher et al., “AndroidWorld: A Dynamic Benchmarking Environment for Autonomous Agents”, 2024. arXiv:2405.14573.
 [^ch8-29]: storm, "Long-horizon agent self-checking and early stopping: the reward-seeking phenomenon and its mitigations", Qingke Community, 6 August 2026. https://qingkeai.online/archives/Reward-Seeking
+[^ch8-30]: Gururangan, Suchin et al., “Don't Stop Pretraining”, ACL, 2020. https://aclanthology.org/2020.acl-main.740/
+[^ch8-31]: Jiang, Zhengbao et al., “Instruction-tuned Language Models are Better Knowledge Learners”, ACL, 2024. https://aclanthology.org/2024.acl-long.296/
+[^ch8-32]: Zheng, Chujie et al., “Stabilizing Reinforcement Learning with LLMs”, 2025. https://arxiv.org/abs/2512.01374
+[^ch8-33]: Zhong, Tianle et al., “Diagnosing Training Inference Mismatch in LLM Reinforcement Learning”, 2026. https://arxiv.org/abs/2605.14220
+[^ch8-34]: He, Horace and Thinking Machines Lab, “Defeating Nondeterminism in LLM Inference”, 2025. https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/
+[^ch8-35]: Gao, Tianyu et al., “How to Train Long-Context Language Models (Effectively)”, ACL, 2025. https://aclanthology.org/2025.acl-long.366/
+[^ch8-36]: Xiong, Wenhan et al., “Effective Long-Context Scaling of Foundation Models”, NAACL, 2024. https://aclanthology.org/2024.naacl-long.260/
+[^ch8-37]: Hsieh, Cheng-Ping et al., “RULER”, COLM, 2024. https://arxiv.org/abs/2404.06654
+[^ch8-38]: Bai, Yushi et al., “LongBench” and “LongBench v2”, ACL, 2024/2025. https://aclanthology.org/2025.acl-long.183/
+[^ch8-39]: Li, Jia et al., “Benchmarking Long-Context Language Models on Long Code Understanding”, ACL, 2025. https://aclanthology.org/2025.acl-long.1324/
+[^ch8-40]: Zheng, Zihan et al., “PlanningArena”, ACL, 2025. https://aclanthology.org/2025.acl-long.1499/
 
 ## Pertanyaan Pemikiran
 
@@ -772,6 +864,6 @@ Bab ini menjawab pertanyaan bagaimana mewujudkan evolusi berkelanjutan Agent lew
 8. ★★★ On-Policy Distillation bergantung pada model guru yang lebih kuat untuk mengawasi siswa. Akan tetapi, riset Weak-to-Strong Generalization dari OpenAI menawarkan temuan yang kontra-intuitif (counterintuitive): pengawasan dari model yang lemah terkadang dapat membuka kemampuan yang tersembunyi (latent) tetapi tidak aktif di dalam model yang lebih kuat. Jika diterapkan pada pelatihan Agent, bisakah ini memungkinkan reverse distillation (penyulingan terbalik) di mana “sebuah model kecil mengajar model besar”?
 9. ★★ Sebuah Process Reward Model (PRM) mengevaluasi setiap langkah penalaran, sedangkan Outcome Reward Model (ORM) hanya mempertimbangkan hasil akhir. Mana yang pantas mendapatkan lebih banyak reward: “proses benar yang mengarah ke hasil yang salah,” atau “proses salah yang kebetulan menghasilkan hasil yang benar”? Bagaimana Anda akan menyeimbangkan keduanya dalam skenario Tool Call Agent multi-langkah?
 10. ★★★ Dataset evaluasi yang dibahas dalam bab ini, seperti SWE-Bench Verified, τ²-bench, dan AndroidWorld, dapat digunakan baik untuk evaluasi maupun post-training. Tetapi begitu sebuah set evaluasi digunakan untuk pelatihan, ia tidak lagi independen. Apakah ini melanggar prinsip dasar bahwa set pelatihan (training set) dan pengujian (test set) harus tetap terpisah? Pembangkitan parameter dinamis (dynamic parameter generation) dalam τ²-bench dan parameterized templates (template terparameter) dalam AndroidWorld dapat sedikit memitigasi masalah ini, tetapi struktur template-nya tetap statis. Bagaimana nilai pelatihan dari data evaluasi dapat dieksploitasi sepenuhnya sambil mempertahankan independensi evaluasi?
-11. ★★★ Bab ini mengusulkan paradigma pelatihan “bentuk diutamakan, jiwa di nomor dua” (form first, spirit second): hentikan SFT setelah “format stabil dan kemampuan dasar hadir,” lalu beralih ke RL. Dalam praktiknya, bagaimana seseorang dapat menentukan kapan SFT “sudah cukup” dan ini saatnya untuk beralih?
+11. ★★★ Jika `pass@1` base model sangat rendah pada tugas target, bagaimana Anda menggabungkan `pass@k`, keberhasilan parsing, kemajuan parsial, dan atribusi kegagalan untuk memilih Mid-training, SFT, atau langsung RL? Kondisi apa yang harus dipenuhi sebelum berpindah tahap?
 12. ★★★ Dinamika pelatihan ReTool menunjukkan (lihat Eksperimen 8-14) bahwa beberapa respons yang sangat panjang dapat secara signifikan memperpanjang seluruh siklus pelatihan—sebagian besar Rollout dalam sebuah batch telah dihasilkan, tetapi sistem harus menunggu hingga respons terpanjang selesai, menjadikan pemanfaatan cluster GPU rendah. Bagaimana pemanfaatan sumber daya dapat ditingkatkan dalam cluster pelatihan di bawah kondisi respons long-tail seperti itu?
 13. ★★★ Saat melatih Agent melawan environment simulasi-LLM—seperti mesin pencari yang disimulasikan atau pengguna yang disimulasikan—target eksploitasi Agent bergeser dari “aturan dari environment riil” menuju “bias dan celah dari simulator itu sendiri.” Perilaku reward hacking konkret apa yang dapat muncul dalam jenis pelatihan ini, dan bagaimana hal tersebut harus dicegah?
