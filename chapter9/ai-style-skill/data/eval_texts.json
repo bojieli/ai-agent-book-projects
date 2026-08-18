@@ -3,50 +3,68 @@
     {
       "id": "b1",
       "scene": "产品发布稿",
-      "expected_rules": ["rule-dash-density"],
+      "expected_sources": ["fp-001", "fp-008"],
       "text": "全新降噪耳机——沉浸式体验——一触即达的智能降噪——40 小时超长续航——让音乐回归纯粹——即刻预约——享首发礼遇！"
     },
     {
       "id": "b2",
       "scene": "公众号文章",
-      "expected_rules": ["rule-not-but"],
+      "expected_sources": ["fp-002", "fp-009", "fp-015"],
       "text": "坚持不是咬牙硬撑，而是找到自己的节奏；努力不是做给别人看，而是对得起自己的选择。"
     },
     {
       "id": "b3",
       "scene": "公众号文章",
-      "expected_rules": ["rule-parallelism"],
+      "expected_sources": ["fp-007", "fp-014"],
       "text": "我们优化了搜索，我们重构了推荐，我们升级了播放，我们改进了评论。"
     },
     {
       "id": "b4",
       "scene": "邮件",
-      "expected_rules": ["rule-lets-start"],
+      "expected_sources": ["fp-003", "fp-018"],
       "text": "让我们携手开启新财年的征程。让我们以饱满的热情迎接每一个挑战。"
     },
     {
       "id": "b5",
       "scene": "README 段落",
-      "expected_rules": ["rule-template-sequence"],
+      "expected_sources": ["fp-004", "fp-012", "fp-019"],
       "text": "首先安装依赖，其次配置密钥，再次运行迁移脚本，最后启动服务。"
     },
     {
       "id": "b6",
       "scene": "产品发布稿",
-      "expected_rules": ["rule-emoji-density", "rule-parallelism"],
+      "expected_sources": ["fp-006", "fp-011", "fp-007", "fp-014"],
       "text": "新品上市 🎉🎉！超美配色 🌈，超强性能 🚀，超值价格 💰，快来抢购吧 🛒✨！"
     },
     {
       "id": "b7",
       "scene": "公众号文章",
-      "expected_rules": ["rule-era-opening"],
+      "expected_sources": ["fp-005", "fp-016"],
       "text": "在自媒体蓬勃发展的今天，内容创作者站在了流量风口。在这个注意力稀缺的时代，好内容愈发珍贵。"
     },
     {
       "id": "b8",
       "scene": "邮件",
-      "expected_rules": ["rule-dash-density", "rule-not-but"],
+      "expected_sources": ["fp-001", "fp-008", "fp-002", "fp-009", "fp-015"],
       "text": "这次改版——不是小修小补——而是全面升级——不是功能的叠加——而是体验的飞跃。"
+    },
+    {
+      "id": "b9",
+      "scene": "README 段落",
+      "expected_sources": ["fp-021", "fp-024"],
+      "text": "为了确保首次部署时各项依赖能够按照正确顺序完成安装并让初始化脚本拿到全部必要参数同时避免网络波动导致中途失败建议在运行命令前逐项检查配置文件和代理设置然后再启动自动安装流程。"
+    },
+    {
+      "id": "b10",
+      "scene": "产品发布稿",
+      "expected_sources": ["fp-022", "fp-025"],
+      "text": "值得注意的是，新版本支持离线模式。更值得注意的是，缓存空间可以自行设置。还值得注意的是，旧数据不会被删除。"
+    },
+    {
+      "id": "b11",
+      "scene": "邮件",
+      "expected_sources": ["fp-023", "fp-026"],
+      "text": "需求已被产品组确认，接口将被后端团队调整，测试用例会被质量组补齐，上线时间则会被项目经理重新安排。"
     }
   ],
   "retention": [
@@ -97,6 +115,24 @@
       "scene": "邮件",
       "note": "单次对比加单处破折号补充原因",
       "text": "他不是不想来，而是台风把航班全取消了——人在机场等了六个小时。"
+    },
+    {
+      "id": "r9",
+      "scene": "技术文档",
+      "note": "句子较长，但条件、动作和结果关系清楚，没有堆叠互不相干的信息",
+      "text": "当客户端连续三次请求失败时，SDK 会进入退避状态，并在下一次重试前等待最多三十秒。"
+    },
+    {
+      "id": "r10",
+      "scene": "安全公告",
+      "note": "只用一次强调语提示真正重要的兼容性风险",
+      "text": "值得注意的是，本次升级会改变令牌格式，依赖旧格式的客户端必须同步更新。"
+    },
+    {
+      "id": "r11",
+      "scene": "事故报告",
+      "note": "被动语态用于未知执行者的单一客观事实，没有连续堆砌",
+      "text": "凌晨两点，主数据库被意外重启，具体操作来源仍在调查。"
     }
   ]
 }

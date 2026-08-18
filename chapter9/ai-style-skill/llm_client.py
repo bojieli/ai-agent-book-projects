@@ -1,4 +1,4 @@
-"""OpenAI 兼容 Chat Completions 客户端：统一证据回执。
+"""OpenAI Responses / 兼容 Chat Completions 客户端：统一证据回执。
 
 约定与 chapter8/self-modifying-agent/llm_generator.py 一致：每次真实调用返回
 (content, receipt)，receipt 含原始请求、原始响应、Token 用量、延迟与
@@ -20,9 +20,9 @@ _PROVIDERS = {
 }
 
 _DEFAULT_MODELS = {
-    "openrouter": "openai/gpt-4o-mini",
+    "openrouter": "openai/gpt-5.6-sol",
     "ark": "doubao-seed-1-6-250615",
-    "openai": "gpt-4o-mini",
+    "openai": "gpt-5.6-sol",
 }
 
 
@@ -37,9 +37,10 @@ def make_client(provider: str) -> Tuple[Any, Dict[str, Any]]:
     if not key:
         raise RuntimeError(f"真实 LLM 路径需要设置环境变量 {env_name}")
     client = OpenAI(api_key=key, base_url=base_url) if base_url else OpenAI(api_key=key)
+    api = "responses" if provider in {"openai", "openrouter"} else "chat/completions"
     backend = {
         "provider": provider,
-        "endpoint": (base_url or "https://api.openai.com/v1") + "/chat/completions",
+        "endpoint": (base_url or "https://api.openai.com/v1") + f"/{api}",
         "credential_env": env_name,
     }
     return client, backend
@@ -59,23 +60,38 @@ def chat(
     seed: int = 8901,
     max_tokens: int = 5000,
 ) -> Tuple[str, Dict[str, Any]]:
-    """发起一次真实调用，返回 (文本内容, 证据回执)。"""
+    """发起一次结构化 JSON 调用，返回 ``(文本内容, 证据回执)``。"""
     client, backend = make_client(provider)
     selected = model or default_model(provider)
-    request = {
-        "model": selected,
-        "messages": messages,
-        "temperature": 0,
-        "seed": seed,
-        "max_tokens": max_tokens,
-        "response_format": {"type": "json_object"},
-    }
     started = time.perf_counter()
-    response = client.chat.completions.create(**request)
+    if provider in {"openai", "openrouter"}:
+        request = {
+            "model": selected,
+            "input": messages,
+            "reasoning": {"effort": "medium"},
+            "max_output_tokens": max_tokens,
+            "text": {"format": {"type": "json_object"}},
+            "store": False,
+        }
+        response = client.responses.create(**request)
+        content = response.output_text
+    else:
+        request = {
+            "model": selected,
+            "messages": messages,
+            "temperature": 0,
+            "seed": seed,
+            "max_tokens": max_tokens,
+            "response_format": {"type": "json_object"},
+        }
+        response = client.chat.completions.create(**request)
+        content = response.choices[0].message.content or ""
     elapsed = time.perf_counter() - started
     raw = response.model_dump(mode="json", exclude_none=True)
     usage = raw.get("usage") or {}
     cost = usage.get("cost")
+    prompt_tokens = usage.get("input_tokens", usage.get("prompt_tokens", 0))
+    completion_tokens = usage.get("output_tokens", usage.get("completion_tokens", 0))
     receipt = {
         "backend": {**backend, "model": selected, "credential_value_recorded": False},
         "request": request,
@@ -88,8 +104,8 @@ def chat(
         ).hexdigest(),
         "elapsed_seconds": round(elapsed, 6),
         "usage": {
-            "prompt_tokens": int(usage.get("prompt_tokens") or 0),
-            "completion_tokens": int(usage.get("completion_tokens") or 0),
+            "prompt_tokens": int(prompt_tokens or 0),
+            "completion_tokens": int(completion_tokens or 0),
             "total_tokens": int(usage.get("total_tokens") or 0),
             "provider_reported_cost_usd": float(cost) if cost is not None else None,
             "cost_qualification": (
@@ -99,4 +115,4 @@ def chat(
             ),
         },
     }
-    return response.choices[0].message.content or "", receipt
+    return content, receipt

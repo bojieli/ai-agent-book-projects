@@ -1,12 +1,4 @@
-"""改写演示：一段 AI 味文本按 Skill 规则改写的 before/after。
-
-确定性路径（离线）：用 rules_engine 定位命中，给出每条规则的预置换写建议，
-并展示人工参考改写——不假装自动改写。
-LLM 路径（真实）：把 active 规则连同原文交给模型改写，返回 before/after
-与证据回执。
-
-    python rewrite_demo.py                # 离线路径
-"""
+"""把 active 规则连同原文交给 LLM 改写，返回 before/after 与证据回执。"""
 
 from __future__ import annotations
 
@@ -15,7 +7,6 @@ import re
 from typing import Any, Dict, List, Tuple
 
 from llm_client import chat
-from rules_engine import run_detector
 
 # 演示用原文：刻意集齐八类 AI 味。
 SAMPLE_TEXT = (
@@ -24,37 +15,6 @@ SAMPLE_TEXT = (
     "最后，它让分享毫无门槛——仿佛一位永不疲倦的管家。总而言之，让我们从现在开始，"
     "把每一条灵感都安顿好 🚀✨💡。"
 )
-
-# 人工参考改写：离线对照用，展示「按规则改完应该长什么样」。
-REFERENCE_REWRITE = (
-    "这款笔记工具值得再介绍一次。它会自动整理你随手记下的灵感，检索和分享也都很快，"
-    "基本不用操心整理。想找一款省心笔记工具的话，现在就可以试试。"
-)
-
-
-def rewrite_deterministic(text: str, rules: List[Dict[str, Any]]) -> Dict[str, Any]:
-    """确定性路径：定位命中 + 预置换写建议 + 人工参考改写。"""
-    suggestions = []
-    for rule in rules:
-        detector = rule.get("detector", {})
-        if detector.get("type") == "llm":
-            continue  # llm 类规则离线不做定位，由真实 judge 路径处理
-        hits = run_detector(text, detector)
-        if hits:
-            suggestions.append({
-                "rule_id": rule["id"],
-                "rule_name": rule["name"],
-                "hits": [{"evidence": h["evidence"], "detail": h["detail"]} for h in hits],
-                "suggestion": rule.get("rewrite_hint", "按规则定义改写。"),
-            })
-    return {
-        "mode": "deterministic",
-        "original": text,
-        "suggestions": suggestions,
-        "reference_rewrite": REFERENCE_REWRITE,
-        "note": "确定性路径只做定位与预置建议，自动改写属于真实 LLM 路径。",
-    }
-
 
 _REWRITE_PROMPT = """你是中文文案改写助手。请按下面的写作规则改写给出的文案，消除所有违规之处，
 保持原意，不要增加新事实。只返回 JSON：{{"rewritten": "改写后的全文",
@@ -107,14 +67,17 @@ def _load_active_rules() -> List[Dict[str, Any]]:
 
 
 def main() -> int:
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--provider", choices=("ark", "openrouter", "openai"), default="openai")
+    parser.add_argument("--model", default=None)
+    args = parser.parse_args()
     rules = _load_active_rules()
-    result = rewrite_deterministic(SAMPLE_TEXT, rules)
-    print("原文：", result["original"])
-    print("\n命中与改写建议：")
-    for s in result["suggestions"]:
-        print(f"- [{s['rule_name']}] {len(s['hits'])} 处命中：{s['suggestion']}")
-    print("\n人工参考改写：", result["reference_rewrite"])
-    print("\n" + result["note"])
+    result, _ = rewrite_with_llm(
+        SAMPLE_TEXT, rules, provider=args.provider, model=args.model
+    )
+    print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 
 

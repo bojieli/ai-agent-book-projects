@@ -1,52 +1,222 @@
 [
   {
-    "id": "g1",
-    "labels": {"rule-hollow-metaphor": true},
+    "id": "g-dash-1",
+    "labels": [{"source_ids": ["fp-001", "fp-008"], "expected": true}],
+    "text": "年度新品——更轻——更快——更智能——现在预约——立即享受专属优惠。"
+  },
+  {
+    "id": "g-dash-2",
+    "labels": [{"source_ids": ["fp-001", "fp-008"], "expected": true}],
+    "text": "会议改到周四——还是下午三点——地点不变——材料提前发——请大家准时参加。"
+  },
+  {
+    "id": "g-dash-3",
+    "labels": [{"source_ids": ["fp-001", "fp-008"], "expected": false}],
+    "text": "这项机制——也就是写时复制——只在数据真正变化时创建副本。"
+  },
+  {
+    "id": "g-dash-4",
+    "labels": [{"source_ids": ["fp-001", "fp-008"], "expected": false}],
+    "text": "她只补充了一点——预算必须在月底前确认。"
+  },
+  {
+    "id": "g-not-but-1",
+    "labels": [{"source_ids": ["fp-002", "fp-009", "fp-015"], "expected": true}],
+    "text": "写作不是表达，而是连接；阅读不是消费，而是成长；分享不是炫耀，而是传递。"
+  },
+  {
+    "id": "g-not-but-2",
+    "labels": [{"source_ids": ["fp-002", "fp-009", "fp-015"], "expected": true}],
+    "text": "这不是修补，而是重塑。不是妥协，而是选择。不是终点，而是起点。"
+  },
+  {
+    "id": "g-not-but-3",
+    "labels": [{"source_ids": ["fp-002", "fp-009", "fp-015"], "expected": false}],
+    "text": "问题不是磁盘空间不足，而是日志轮转没有启动。"
+  },
+  {
+    "id": "g-not-but-4",
+    "labels": [{"source_ids": ["fp-002", "fp-009", "fp-015"], "expected": false}],
+    "text": "我们比较了两个方案，最终选择延迟更低的那个。"
+  },
+  {
+    "id": "g-lets-1",
+    "labels": [{"source_ids": ["fp-003", "fp-018"], "expected": true}],
+    "text": "让我们勇敢出发！让我们携手向前！让我们共同书写新的篇章！"
+  },
+  {
+    "id": "g-lets-2",
+    "labels": [{"source_ids": ["fp-003", "fp-018"], "expected": true}],
+    "text": "让我们见证改变，让我们拥抱未来，让我们一起创造无限可能。"
+  },
+  {
+    "id": "g-lets-3",
+    "labels": [{"source_ids": ["fp-003", "fp-018"], "expected": false}],
+    "text": "如果你复现了这个问题，让我们在 issue 里核对一下环境信息。"
+  },
+  {
+    "id": "g-lets-4",
+    "labels": [{"source_ids": ["fp-003", "fp-018"], "expected": false}],
+    "text": "欢迎提交问题和补丁，维护者通常会在两个工作日内回复。"
+  },
+  {
+    "id": "g-sequence-1",
+    "labels": [{"source_ids": ["fp-004", "fp-012", "fp-019"], "expected": true}],
+    "text": "首先分析需求，其次制定方案，再次协调资源，最后推动落地，总而言之我们会全力以赴。"
+  },
+  {
+    "id": "g-sequence-2",
+    "labels": [{"source_ids": ["fp-004", "fp-012", "fp-019"], "expected": true}],
+    "text": "首先，外观焕然一新。其次，性能全面升级。再次，体验大幅优化。总而言之，这是一款划时代产品。"
+  },
+  {
+    "id": "g-sequence-3",
+    "labels": [{"source_ids": ["fp-004", "fp-012", "fp-019"], "expected": false}],
+    "text": "安装分两步：首先下载压缩包，其次执行安装命令。"
+  },
+  {
+    "id": "g-sequence-4",
+    "labels": [{"source_ids": ["fp-004", "fp-012", "fp-019"], "expected": false}],
+    "text": "先备份数据库，再执行迁移；确认结果后启动新版本。"
+  },
+  {
+    "id": "g-era-1",
+    "labels": [{"source_ids": ["fp-005", "fp-016"], "expected": true}],
+    "text": "在这个信息爆炸的时代，专注力显得尤为珍贵。"
+  },
+  {
+    "id": "g-era-2",
+    "labels": [{"source_ids": ["fp-005", "fp-016"], "expected": true}],
+    "text": "在科技飞速发展的今天，创新已经成为企业前进的不竭动力。"
+  },
+  {
+    "id": "g-era-3",
+    "labels": [{"source_ids": ["fp-005", "fp-016"], "expected": false}],
+    "text": "人工智能工具越来越多，这份调查比较了其中五款的实际响应时间。"
+  },
+  {
+    "id": "g-era-4",
+    "labels": [{"source_ids": ["fp-005", "fp-016"], "expected": false}],
+    "text": "在上世纪九十年代的上海，寻呼机曾是常见的通信工具。"
+  },
+  {
+    "id": "g-emoji-1",
+    "labels": [{"source_ids": ["fp-006", "fp-011"], "expected": true}],
+    "text": "新品来了 🎉🎉，颜值爆表 ✨，性能起飞 🚀，价格惊喜 💰，快来抢购 🛒！"
+  },
+  {
+    "id": "g-emoji-2",
+    "labels": [{"source_ids": ["fp-006", "fp-011"], "expected": false}],
+    "text": "早起打卡 ☀️，早餐打卡 🥐，运动打卡 🏃，阅读打卡 📚，今天也要加油 💪！"
+  },
+  {
+    "id": "g-emoji-3",
+    "labels": [{"source_ids": ["fp-006", "fp-011"], "expected": false}],
+    "text": "这家小店的面很好吃 😋，下次还想带朋友来。"
+  },
+  {
+    "id": "g-emoji-4",
+    "labels": [{"source_ids": ["fp-006", "fp-011"], "expected": false}],
+    "text": "构建已经通过 ✅，可以合并了。"
+  },
+  {
+    "id": "g-parallel-1",
+    "labels": [{"source_ids": ["fp-007", "fp-014"], "expected": true}],
+    "text": "它让工作更轻松，它让协作更顺畅，它让决策更高效，它让未来更清晰。"
+  },
+  {
+    "id": "g-parallel-2",
+    "labels": [{"source_ids": ["fp-007", "fp-014"], "expected": true}],
+    "text": "每一次尝试都是成长，每一次失败都是积累，每一次坚持都是突破。"
+  },
+  {
+    "id": "g-parallel-3",
+    "labels": [{"source_ids": ["fp-007", "fp-014"], "expected": false}],
+    "text": "我喜欢清晨的安静，也喜欢傍晚的热闹。"
+  },
+  {
+    "id": "g-parallel-4",
+    "labels": [{"source_ids": ["fp-007", "fp-014"], "expected": false}],
+    "text": "搜索速度提升了，索引占用则略有增加，两项变化都在预期范围内。"
+  },
+  {
+    "id": "g-metaphor-1",
+    "labels": [{"source_ids": ["fp-013", "fp-020"], "expected": true}],
     "text": "这款音箱仿佛一位懂你的智者，总能在恰当的时刻送上恰当的音乐。"
   },
   {
-    "id": "g2",
-    "labels": {"rule-hollow-metaphor": true},
-    "text": "时间宛如一位公正的导师，教会我们珍惜每一个当下。"
+    "id": "g-metaphor-2",
+    "labels": [{"source_ids": ["fp-013", "fp-020"], "expected": true}],
+    "text": "她的建议宛如一座灯塔，照亮了团队前行的道路。"
   },
   {
-    "id": "g3",
-    "labels": {"rule-hollow-metaphor": true},
-    "text": "这款产品宛如一座灯塔，为迷茫的航行者指引方向。"
+    "id": "g-metaphor-3",
+    "labels": [{"source_ids": ["fp-013", "fp-020"], "expected": false}],
+    "text": "这座灯塔建于 1903 年，至今仍为进港船只导航。"
   },
   {
-    "id": "g4",
-    "labels": {"rule-hollow-metaphor": true},
-    "text": "数据仿佛一位沉默的守护者，默默记录着每一次选择。"
+    "id": "g-metaphor-4",
+    "labels": [{"source_ids": ["fp-013", "fp-020"], "expected": false}],
+    "text": "新算法把平均搜索时间从 800 毫秒降到了 120 毫秒。"
   },
   {
-    "id": "g5",
-    "labels": {"rule-hollow-metaphor": true},
-    "text": "她的文字犹如一盏明灯，照亮了无数读者前行的道路。"
+    "id": "g-long-sentence-1",
+    "labels": [{"source_ids": ["fp-021", "fp-024"], "expected": true}],
+    "text": "由于需求在评审后又发生变化并且接口文档直到昨晚才最终确认导致前端无法按原计划完成联调所以本周的提测时间需要顺延到下周二请相关同事同步调整后续安排。"
   },
   {
-    "id": "g6",
-    "labels": {"rule-hollow-metaphor": false},
-    "text": "这款音箱能根据时间段自动切换歌单，早上放轻音乐，晚上放白噪音。"
+    "id": "g-long-sentence-2",
+    "labels": [{"source_ids": ["fp-021", "fp-024"], "expected": true}],
+    "text": "新版本通过整合搜索推荐收藏和历史记录入口并重新设计信息层级以及优化缓存更新逻辑让用户能够在更少操作里找到需要的内容同时降低首次打开页面时的等待时间。"
   },
   {
-    "id": "g7",
-    "labels": {"rule-hollow-metaphor": false},
-    "text": "他讲话很快，但逻辑清楚，三分钟就把方案说透了。"
+    "id": "g-long-sentence-3",
+    "labels": [{"source_ids": ["fp-021", "fp-024"], "expected": false}],
+    "text": "当请求连续失败三次时，客户端会暂停重试，并在等待三十秒后重新建立连接。"
   },
   {
-    "id": "g8",
-    "labels": {"rule-hollow-metaphor": false},
-    "text": "这座灯塔建于 1903 年，至今仍是港口的主要导航设施。"
+    "id": "g-long-sentence-4",
+    "labels": [{"source_ids": ["fp-021", "fp-024"], "expected": false}],
+    "text": "测试环境正在升级。联调改到明天下午，地址不变。"
   },
   {
-    "id": "g9",
-    "labels": {"rule-hollow-metaphor": false},
-    "text": "新的客服系统上线后，平均响应时间从 4 小时降到 20 分钟。"
+    "id": "g-worth-noting-1",
+    "labels": [{"source_ids": ["fp-022", "fp-025"], "expected": true}],
+    "text": "值得注意的是，价格已经调整。还值得注意的是，套餐内容也有变化。尤其值得注意的是，优惠只到月底。"
   },
   {
-    "id": "g10",
-    "labels": {"rule-hollow-metaphor": false},
-    "text": "导师改完稿子只留了一句话：删掉所有不传递信息的句子。"
+    "id": "g-worth-noting-2",
+    "labels": [{"source_ids": ["fp-022", "fp-025"], "expected": true}],
+    "text": "需要强调的是，数据不会迁移。需要特别强调的是，旧账号无法登录。再次强调，用户必须重新注册。"
+  },
+  {
+    "id": "g-worth-noting-3",
+    "labels": [{"source_ids": ["fp-022", "fp-025"], "expected": false}],
+    "text": "值得注意的是，这个安全补丁会使旧版客户端无法连接，升级前必须通知所有用户。"
+  },
+  {
+    "id": "g-worth-noting-4",
+    "labels": [{"source_ids": ["fp-022", "fp-025"], "expected": false}],
+    "text": "价格已经调整，套餐内容不变，优惠持续到月底。"
+  },
+  {
+    "id": "g-passive-1",
+    "labels": [{"source_ids": ["fp-023", "fp-026"], "expected": true}],
+    "text": "方案被委员会审议，预算被财务部门核定，合同被法务团队复核，最终日期被项目组确认。"
+  },
+  {
+    "id": "g-passive-2",
+    "labels": [{"source_ids": ["fp-023", "fp-026"], "expected": true}],
+    "text": "文件会被程序读取，字段会被转换器处理，结果会被缓存模块保存，通知会被任务系统发送。"
+  },
+  {
+    "id": "g-passive-3",
+    "labels": [{"source_ids": ["fp-023", "fp-026"], "expected": false}],
+    "text": "凌晨两点，备用节点被意外重启，操作来源仍在调查。"
+  },
+  {
+    "id": "g-passive-4",
+    "labels": [{"source_ids": ["fp-023", "fp-026"], "expected": false}],
+    "text": "调度器读取任务列表，工作进程执行任务，监控服务记录结果。"
   }
 ]

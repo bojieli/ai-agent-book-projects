@@ -1,308 +1,172 @@
 [
   {
-    "id": "rule-dash-density",
-    "name": "破折号使用过多",
-    "definition": "频繁用破折号（——）串联句子、代替正常的停顿和连接，一段里出现三处以上，是典型的 AI 腔。",
+    "id": "rule-excessive-em-dash-separators",
+    "name": "避免用连续破折号代替常规断句",
+    "definition": "当一句或一段中连续使用多个破折号来串联普通并列信息、步骤或分句，导致层次不清、阅读节奏拖长时命中。应改用句号、逗号、冒号或分句。若破折号只偶尔用于插入说明、语意转折或强调，且前后关系明确，则不命中。",
     "detector": {
-      "type": "density",
-      "pattern": "——",
-      "min_occurrences": 3,
-      "threshold": 6
+      "type": "llm"
     },
-    "bad_example": "我们隆重推出全新智能笔记应用——一款真正懂你的效率神器——它不仅能记录灵感——还能自动整理、智能归类、跨端同步——让你的每一条想法都不再流失——现在下载，即刻开启高效人生——限时免费，错过再等一年！",
-    "good_example": "新版智能笔记应用上线了。它能记录灵感，自动整理和归类，支持多设备同步。现在下载可以免费试用一个月。",
-    "rewrite_hint": "把多数破折号改成逗号或句号，或直接拆成两句；一处必要的补充说明可以保留。",
+    "bad_example": "关于季度复盘会议——时间定于本周五下午三点——地点在三号会议室——请提前准备数据报表——如有冲突请及时告知——谢谢配合。",
+    "good_example": "季度复盘定在这周五下午三点，三号会议室。请提前准备好数据报表，时间冲突的话提前跟我说。",
+    "rewrite_hint": "先判断各部分是并列信息还是独立句意；并列项用逗号，完整意思用句号，只在确有插入或强调作用时保留破折号。",
     "scope": [
-      "产品发布稿"
+      "产品发布稿",
+      "公众号文章",
+      "邮件"
     ],
     "source_ids": [
-      "fp-001"
+      "fp-001",
+      "fp-008",
+      "fp-017"
     ],
     "status": "candidate",
-    "last_confirmed_batch": 1
+    "last_confirmed_batch": 3
   },
   {
-    "id": "rule-not-but",
-    "name": "「不是……而是……」句式滥用",
-    "definition": "同一篇里连用两处以上「不是 X，而是 Y」的对仗句式。单独一次真实对比不算违规。",
+    "id": "rule-avoid-repeated-not-but-contrast",
+    "name": "避免反复使用“不是……而是……”对仗",
+    "definition": "当“不是……而是……”被连续用于定义产品、解释概念或制造升华，尤其连续出现两次以上并形成整齐对仗时命中。这类写法常以否定铺垫代替直接说明。若上下文确实需要纠正一种明确误解，并且只使用一次来表达真实对立，则不命中。",
     "detector": {
-      "type": "regex",
-      "pattern": "不是[^。！？；：\\n]{0,30}?而是",
-      "min_occurrences": 2
+      "type": "llm"
     },
-    "bad_example": "真正的成长，不是年龄的增加，而是认知的升级；不是知识的堆砌，而是思维的重构；不是经验的重复，而是边界的突破。",
-    "good_example": "真正的成长，往往体现在认知的变化上：看问题的角度变了，做事的方法跟着变，最后连自己能做什么的边界都被重新画了一遍。",
-    "rewrite_hint": "保留真正有对比意义的一处，其余改成直接陈述「它是什么」。",
+    "bad_example": "这不是一次简单的版本更新，而是一次体验的全面革新；不是功能的堆砌，而是对用户需求的深度回应。",
+    "good_example": "这次版本更新改动很大：界面重做，核心流程缩短了两步，都来自上一版用户反馈里最高频的问题。",
+    "rewrite_hint": "删去否定式铺垫，直接说明对象是什么、具体改了什么，并用事实或例子支撑判断。",
     "scope": [
+      "README 段落",
+      "产品发布稿",
       "公众号文章"
     ],
     "source_ids": [
-      "fp-002"
+      "fp-002",
+      "fp-009",
+      "fp-015"
     ],
     "status": "candidate",
-    "last_confirmed_batch": 1
+    "last_confirmed_batch": 3
   },
   {
-    "id": "rule-parallelism",
-    "name": "排比堆砌",
-    "definition": "连续三个以上结构高度相似的分句（同开头或同结尾），读起来像口号。",
+    "id": "rule-avoid-repeated-let-us-slogans",
+    "name": "避免连用“让我们”式号召口号",
+    "definition": "当邮件、README 或产品稿连续以“让我们”开头，使用“共同见证”“携手并进”等口号来代替具体通知、邀请或行动说明时命中。若只出现一次，且确实是在自然地发出明确、可执行的共同邀请，则不命中。",
     "detector": {
-      "type": "structure",
-      "kind": "parallelism",
-      "min_run": 3
+      "type": "llm"
     },
     "bad_example": "让我们共同见证这个激动人心的时刻！让我们一起开启数字化转型的全新篇章。让我们携手并进，共创辉煌明天。",
     "good_example": "新版本今天上线了，期待大家试用之后多提意见。",
-    "rewrite_hint": "把排比拆开，用长短不一的句子各说一件事；保留最多两句对仗。",
+    "rewrite_hint": "直接交代发生了什么，以及希望读者采取什么具体行动，如试用、反馈、提 issue 或提交 PR。",
     "scope": [
+      "README 段落",
+      "产品发布稿",
       "邮件"
     ],
     "source_ids": [
-      "fp-003"
+      "fp-003",
+      "fp-010",
+      "fp-018"
     ],
     "status": "candidate",
-    "last_confirmed_batch": 1
+    "last_confirmed_batch": 3
   },
   {
-    "id": "rule-lets-start",
-    "name": "「让我们」口号式开头",
-    "definition": "连续用「让我们」领起句子，像动员演讲而不是在写文案。",
+    "id": "rule-avoid-mechanical-sequence-markers",
+    "name": "避免机械堆叠顺序连接词",
+    "definition": "当短段落逐句套用“首先、其次、再次、然后、最后、总而言之”等连接词，实际内容本可自然串联，因而呈现模板化或公文腔时命中。若步骤顺序严格、跳步会造成错误，或连接词确实用于澄清复杂层级，则不命中。",
     "detector": {
-      "type": "regex",
-      "pattern": "让我们",
-      "min_occurrences": 2
-    },
-    "bad_example": "让我们共同见证这个激动人心的时刻！让我们一起开启数字化转型的全新篇章。让我们携手并进，共创辉煌明天。",
-    "good_example": "新版本今天上线了，期待大家试用之后多提意见。",
-    "rewrite_hint": "删掉口号句，直接陈述事实或发出一次具体邀请。",
-    "scope": [
-      "邮件"
-    ],
-    "source_ids": [
-      "fp-003"
-    ],
-    "status": "candidate",
-    "last_confirmed_batch": 1
-  },
-  {
-    "id": "rule-template-sequence",
-    "name": "「首先/其次/最后」模板序列",
-    "definition": "堆叠「首先、其次、再次、然后、最后、总而言之」等连接词，把文案写成公文提纲。",
-    "detector": {
-      "type": "regex",
-      "pattern": "首先|其次|再次|然后|接下来|最后|总而言之|综上所述|总的来说",
-      "min_occurrences": 3
+      "type": "llm"
     },
     "bad_example": "首先，克隆本仓库到本地。其次，安装所需依赖。再次，配置环境变量。然后，运行初始化脚本。最后，启动开发服务器即可。",
     "good_example": "克隆仓库后安装依赖，把 .env.example 复制为 .env 并填好密钥，再运行 init.sh 初始化，最后 make dev 启动服务。",
-    "rewrite_hint": "去掉连接词标签，让句子按自然顺序衔接；两处的「首先/其次」可以接受。",
+    "rewrite_hint": "删除不提供额外信息的序号套话，改用动作之间的真实关系连接；必要时只保留少量“再”“最后”，或改成清晰的步骤列表。",
     "scope": [
-      "README 段落"
+      "README 段落",
+      "产品发布稿",
+      "邮件"
     ],
     "source_ids": [
-      "fp-004"
+      "fp-004",
+      "fp-012",
+      "fp-019"
     ],
     "status": "candidate",
-    "last_confirmed_batch": 1
+    "last_confirmed_batch": 3
   },
   {
-    "id": "rule-era-opening",
-    "name": "「在……的今天/时代」开头",
-    "definition": "用「在……的今天」「在这个……的时代」「在……的当下」这类空泛宏大开头的套话。",
+    "id": "rule-remove-generic-era-openings",
+    "name": "删除空泛的“在……时代”开场",
+    "definition": "当文章以“在……的今天”“在这个……的时代”等宏大背景开头，但该背景没有提供具体时间、事件或因果信息，只用于烘托气氛时命中。若时代或日期本身是论证所需的关键背景，并有具体事实支撑，则不命中。",
     "detector": {
-      "type": "regex",
-      "pattern": "在[^，。！？；\\n]{2,24}?(?:的今天|的时代|的当下|的时代背景下)",
-      "min_occurrences": 1
+      "type": "llm"
     },
-    "bad_example": "在人工智能飞速发展的今天，每个人都面临前所未有的机遇与挑战。在这个信息爆炸的时代，如何保持独立思考显得尤为重要。",
-    "good_example": "这两年 AI 工具更新得飞快，很多人一边兴奋一边焦虑。信息越多，越需要自己能做判断。",
-    "rewrite_hint": "删掉宏大开头，第一句直接说具体的事。",
+    "bad_example": "在这个快节奏的时代，高效的沟通显得尤为珍贵。在这个充满变化的时代，稳定的协作关系更值得珍惜。",
+    "good_example": "最近项目节奏快，咱们沟通尽量简短高效；也希望协作关系保持稳定，有问题随时同步。",
+    "rewrite_hint": "直接写当前发生的具体变化、影响和要求，用“最近”“这两年”等可核实时间范围替代泛化时代判断。",
     "scope": [
-      "公众号文章"
+      "产品发布稿",
+      "公众号文章",
+      "邮件"
     ],
     "source_ids": [
-      "fp-005"
+      "fp-005",
+      "fp-010",
+      "fp-016"
     ],
     "status": "candidate",
-    "last_confirmed_batch": 1
+    "last_confirmed_batch": 3
   },
   {
-    "id": "rule-emoji-density",
-    "name": "emoji 泛滥",
-    "definition": "一段文案里 emoji 出现三次以上，或密度超过每千字 5 个；正式稿件应基本不用。",
+    "id": "rule-control-emoji-density",
+    "name": "控制 emoji 的使用密度与场合",
+    "definition": "当正式产品稿中使用 emoji，或公众号段落中几乎每个信息点都附带表情，造成视觉干扰、削弱专业感时命中。正式稿件应去除 emoji；轻松社交场景中少量、与语义直接相关且不妨碍阅读的 emoji 不应一概判定为问题。",
     "detector": {
-      "type": "density",
-      "pattern": "[☀-➿⬀-⯿⌀-⏿\\U0001F000-\\U0001FAFF]",
-      "min_occurrences": 3,
-      "threshold": 5
+      "type": "llm"
     },
     "bad_example": "🎉 重磅来袭！🔥 全新智能手表正式发布！⌚ 超长续航 14 天 🔋，心率血氧全天候监测 ❤️，50 米防水 🏊，现在下单立减 200 元 💰，错过再等一年 ⏰！",
     "good_example": "新款智能手表发布：续航 14 天，支持心率血氧监测和 50 米防水，首发价立减 200 元。",
-    "rewrite_hint": "正式稿件全部删掉；生活化随笔最多保留一两个。",
-    "scope": [
-      "产品发布稿"
-    ],
-    "source_ids": [
-      "fp-006"
-    ],
-    "status": "candidate",
-    "last_confirmed_batch": 1
-  },
-  {
-    "id": "rule-parallelism",
-    "name": "排比堆砌",
-    "definition": "连续三个以上结构高度相似的分句（同开头或同结尾），读起来像口号。",
-    "detector": {
-      "type": "structure",
-      "kind": "parallelism",
-      "min_run": 3
-    },
-    "bad_example": "读书可以拓宽视野，读书可以沉淀心灵，读书可以启迪智慧，读书可以点亮人生。",
-    "good_example": "读书的好处很多：视野会变宽，心能静下来，看问题也会多几个角度。",
-    "rewrite_hint": "把排比拆开，用长短不一的句子各说一件事；保留最多两句对仗。",
+    "rewrite_hint": "正式文本删除全部 emoji；其他场景先去掉装饰性表情，只在确有语气或分类作用时保留极少量。",
     "scope": [
       "产品发布稿",
       "公众号文章"
     ],
     "source_ids": [
-      "fp-007",
-      "fp-010"
+      "fp-006",
+      "fp-011"
     ],
-    "status": "candidate"
+    "status": "candidate",
+    "last_confirmed_batch": 2
   },
   {
-    "id": "rule-dash-density",
-    "name": "破折号使用过多",
-    "definition": "频繁用破折号（——）串联句子、代替正常的停顿和连接，一段里出现三处以上，是典型的 AI 腔。",
+    "id": "rule-avoid-forced-parallelism",
+    "name": "避免刻意堆叠同构排比",
+    "definition": "当三句或更多分句反复使用完全相同的开头和句法框架，如“读书可以……”“它让……”“每一次……都是……”，且内容多为抽象赞美、缺少信息增量时命中。若排比用于必要的结构对照、篇幅适度且每项都有实质信息，则不命中。",
     "detector": {
-      "type": "density",
-      "pattern": "——",
-      "min_occurrences": 3,
-      "threshold": 6
+      "type": "llm"
     },
-    "bad_example": "关于季度复盘会议——时间定于本周五下午三点——地点在三号会议室——请提前准备数据报表——如有冲突请及时告知——谢谢配合。",
-    "good_example": "季度复盘定在这周五下午三点，三号会议室。请提前准备好数据报表，时间冲突的话提前跟我说。",
-    "rewrite_hint": "把多数破折号改成逗号或句号，或直接拆成两句；一处必要的补充说明可以保留。",
+    "bad_example": "读书可以拓宽视野，读书可以沉淀心灵，读书可以启迪智慧，读书可以点亮人生。",
+    "good_example": "读书的好处很多：视野会变宽，心能静下来，看问题也会多几个角度。",
+    "rewrite_hint": "保留一个总述，将各项改成不同句式或合并为并列成分；删去重复、空泛或意义相近的项。",
     "scope": [
-      "邮件"
-    ],
-    "source_ids": [
-      "fp-008"
-    ],
-    "status": "candidate"
-  },
-  {
-    "id": "rule-not-but",
-    "name": "「不是……而是……」句式滥用",
-    "definition": "同一篇里连用两处以上「不是 X，而是 Y」的对仗句式。单独一次真实对比不算违规。",
-    "detector": {
-      "type": "regex",
-      "pattern": "不是[^。！？；：\\n]{0,30}?而是",
-      "min_occurrences": 2
-    },
-    "bad_example": "本项目不是简单的爬虫框架，而是一套完整的数据采集解决方案；不是一次性的脚本集合，而是可长期维护的工程化平台。",
-    "good_example": "本项目提供一套可扩展的数据采集方案，支持插件化开发，适合作为长期维护的工程使用。",
-    "rewrite_hint": "保留真正有对比意义的一处，其余改成直接陈述「它是什么」。",
-    "scope": [
-      "README 段落"
-    ],
-    "source_ids": [
-      "fp-009"
-    ],
-    "status": "candidate"
-  },
-  {
-    "id": "rule-lets-start",
-    "name": "「让我们」口号式开头",
-    "definition": "连续用「让我们」领起句子，像动员演讲而不是在写文案。",
-    "detector": {
-      "type": "regex",
-      "pattern": "让我们",
-      "min_occurrences": 2
-    },
-    "bad_example": "在这个万物互联的时代，让我们共同拥抱智能家居的美好未来！让我们一起，让科技温暖每一个家庭。",
-    "good_example": "智能家居新品系列今天发布，覆盖灯光、安防和环境控制，希望能让家更省心。",
-    "rewrite_hint": "删掉口号句，直接陈述事实或发出一次具体邀请。",
-    "scope": [
-      "产品发布稿"
-    ],
-    "source_ids": [
-      "fp-010"
-    ],
-    "status": "candidate"
-  },
-  {
-    "id": "rule-era-opening",
-    "name": "「在……的今天/时代」开头",
-    "definition": "用「在……的今天」「在这个……的时代」「在……的当下」这类空泛宏大开头的套话。",
-    "detector": {
-      "type": "regex",
-      "pattern": "在[^，。！？；\\n]{2,24}?(?:的今天|的时代|的当下|的时代背景下)",
-      "min_occurrences": 1
-    },
-    "bad_example": "在这个万物互联的时代，让我们共同拥抱智能家居的美好未来！让我们一起，让科技温暖每一个家庭。",
-    "good_example": "智能家居新品系列今天发布，覆盖灯光、安防和环境控制，希望能让家更省心。",
-    "rewrite_hint": "删掉宏大开头，第一句直接说具体的事。",
-    "scope": [
-      "产品发布稿"
-    ],
-    "source_ids": [
-      "fp-010"
-    ],
-    "status": "candidate"
-  },
-  {
-    "id": "rule-emoji-density",
-    "name": "emoji 泛滥",
-    "definition": "一段文案里 emoji 出现三次以上，或密度超过每千字 5 个；正式稿件应基本不用。",
-    "detector": {
-      "type": "density",
-      "pattern": "[☀-➿⬀-⯿⌀-⏿\\U0001F000-\\U0001FAFF]",
-      "min_occurrences": 3,
-      "threshold": 5
-    },
-    "bad_example": "早餐这样吃才健康 🍞🥛！营养师推荐的三餐搭配来了 🍚🥗，坚持一个月，气色肉眼可见变好 ✨✨，姐妹们快收藏 💖！",
-    "good_example": "早餐怎么吃更健康？整理了一份营养师的三餐搭配建议，坚持一段时间会有改善，需要的可以收藏。",
-    "rewrite_hint": "正式稿件全部删掉；生活化随笔最多保留一两个。",
-    "scope": [
+      "README 段落",
       "公众号文章"
     ],
     "source_ids": [
-      "fp-011"
+      "fp-007",
+      "fp-014",
+      "fp-017"
     ],
-    "status": "candidate"
+    "status": "candidate",
+    "last_confirmed_batch": 3
   },
   {
-    "id": "rule-template-sequence",
-    "name": "「首先/其次/最后」模板序列",
-    "definition": "堆叠「首先、其次、再次、然后、最后、总而言之」等连接词，把文案写成公文提纲。",
+    "id": "rule-replace-empty-metaphors-with-facts",
+    "name": "用具体事实替代空洞抒情比喻",
+    "definition": "当“智者、屏障、明灯、灯塔”等比喻只负责抬高语气，却没有说明产品效果、处理进度或实际价值，甚至替代了读者需要的关键信息时命中。若比喻准确、简洁，并能帮助理解陌生概念或符合文学性场景，则不命中。",
     "detector": {
-      "type": "regex",
-      "pattern": "首先|其次|再次|然后|接下来|最后|总而言之|综上所述|总的来说",
-      "min_occurrences": 3
+      "type": "llm"
     },
-    "bad_example": "首先感谢各位本季度的付出。其次，需要指出交付节奏仍有优化空间。再次，请各组提交改进方案。最后，期待下季度再创佳绩。",
-    "good_example": "感谢大家这个季度的付出。交付节奏上还有改进空间，请各组本周内提交改进方案，我们下个季度接着努力。",
-    "rewrite_hint": "去掉连接词标签，让句子按自然顺序衔接；两处的「首先/其次」可以接受。",
-    "scope": [
-      "邮件"
-    ],
-    "source_ids": [
-      "fp-012"
-    ],
-    "status": "candidate"
-  },
-  {
-    "id": "rule-hollow-metaphor",
-    "name": "空洞比喻与假拟人",
-    "definition": "用「仿佛一位智者」「宛如一盏明灯」这类不传递任何具体信息的比喻和拟人抒情。",
-    "detector": {
-      "type": "llm",
-      "judge_prompt": "判断下面这段文字是否包含空洞比喻或假拟人：即用「仿佛/宛如/犹如/如同 + 智者/明灯/灯塔/导师/守护者/屏障」等意象抒情，但不传递具体事实。只回答 JSON：{\"hit\": true/false, \"evidence\": \"命中的片段或空字符串\"}。"
-    },
-    "bad_example": "这款耳机仿佛一位贴心的智者，在你喧嚣的世界里低语；它的降噪功能宛如一道温柔的屏障，将浮躁隔绝在外。",
-    "good_example": "这款耳机的降噪效果确实好，地铁里戴上能安静不少，报站的人声也能压得住。",
-    "rewrite_hint": "删掉比喻，改写为可验证的具体事实、数据或体验描述。",
+    "bad_example": "您的建议宛如一盏明灯，照亮了我们产品改进的前路；您的信任仿佛一座灯塔，指引着我们不断前行。",
+    "good_example": "您提的建议很具体，我们已经记进需求池，下个版本会先改其中两条。谢谢您的信任。",
+    "rewrite_hint": "删除装饰性喻体，补上可验证的信息，如实际体验、使用场景、已采取的动作和后续安排。",
     "scope": [
       "公众号文章",
       "邮件"
@@ -315,126 +179,66 @@
     "last_confirmed_batch": 3
   },
   {
-    "id": "rule-parallelism",
-    "name": "排比堆砌",
-    "definition": "连续三个以上结构高度相似的分句（同开头或同结尾），读起来像口号。",
+    "id": "rule-split-overloaded-sentences",
+    "name": "拆分承载过多层次的长句",
+    "definition": "当一句话同时塞入背景、原因、条件、多个动作、结果和要求，主要依靠“且、并、同时、为了、让”等连续连接，读者难以一次识别主干时命中。句子较长但主干清楚、修饰关系单一且不存在理解负担时不命中。",
     "detector": {
-      "type": "structure",
-      "kind": "parallelism",
-      "min_run": 3
+      "type": "llm"
     },
-    "bad_example": "它让配置更简单，它让部署更快速，它让监控更全面，它让运维更安心。",
-    "good_example": "配置、部署、监控和告警都内置了默认方案，运维成本明显更低。",
-    "rewrite_hint": "把排比拆开，用长短不一的句子各说一件事；保留最多两句对仗。",
+    "bad_example": "这次更新在保留原有工作台布局的基础上通过重新组织导航层级并合并重复入口同时优化首次加载和列表刷新策略让用户从打开应用到完成一次记录的整个过程都比以前更连贯也更省时间。",
+    "good_example": "这次更新保留了原有工作台布局，同时重新组织导航层级、合并重复入口。首次加载和列表刷新也做了优化，从打开应用到完成记录会更连贯。",
+    "rewrite_hint": "先提取背景、改动、要求和结果，再按层次拆成两到三句；每句只保留一个主要动作或判断。",
     "scope": [
-      "README 段落",
-      "公众号文章"
-    ],
-    "source_ids": [
-      "fp-014",
-      "fp-017"
-    ],
-    "status": "candidate"
-  },
-  {
-    "id": "rule-not-but",
-    "name": "「不是……而是……」句式滥用",
-    "definition": "同一篇里连用两处以上「不是 X，而是 Y」的对仗句式。单独一次真实对比不算违规。",
-    "detector": {
-      "type": "regex",
-      "pattern": "不是[^。！？；：\\n]{0,30}?而是",
-      "min_occurrences": 2
-    },
-    "bad_example": "这不是一次简单的版本更新，而是一次体验的全面革新；不是功能的堆砌，而是对用户需求的深度回应。",
-    "good_example": "这次版本更新改动很大：界面重做，核心流程缩短了两步，都来自上一版用户反馈里最高频的问题。",
-    "rewrite_hint": "保留真正有对比意义的一处，其余改成直接陈述「它是什么」。",
-    "scope": [
-      "产品发布稿"
-    ],
-    "source_ids": [
-      "fp-015"
-    ],
-    "status": "candidate"
-  },
-  {
-    "id": "rule-era-opening",
-    "name": "「在……的今天/时代」开头",
-    "definition": "用「在……的今天」「在这个……的时代」「在……的当下」这类空泛宏大开头的套话。",
-    "detector": {
-      "type": "regex",
-      "pattern": "在[^，。！？；\\n]{2,24}?(?:的今天|的时代|的当下|的时代背景下)",
-      "min_occurrences": 1
-    },
-    "bad_example": "在这个快节奏的时代，高效的沟通显得尤为珍贵。在这个充满变化的时代，稳定的协作关系更值得珍惜。",
-    "good_example": "最近项目节奏快，咱们沟通尽量简短高效；也希望协作关系保持稳定，有问题随时同步。",
-    "rewrite_hint": "删掉宏大开头，第一句直接说具体的事。",
-    "scope": [
+      "产品发布稿",
       "邮件"
     ],
     "source_ids": [
-      "fp-016"
+      "fp-021",
+      "fp-024"
     ],
-    "status": "candidate"
+    "status": "candidate",
+    "last_confirmed_batch": 2
   },
   {
-    "id": "rule-dash-density",
-    "name": "破折号使用过多",
-    "definition": "频繁用破折号（——）串联句子、代替正常的停顿和连接，一段里出现三处以上，是典型的 AI 腔。",
+    "id": "rule-remove-repeated-attention-prefaces",
+    "name": "删除反复出现的提醒性套话",
+    "definition": "当连续句子都用“值得注意的是”“需要特别注意的是”“更值得注意的是”等元话语开头，只是重复强调而没有建立新的信息层级时命中。若只在关键风险首次出现时使用一次，且确实需要提示读者改变注意焦点，则不命中。",
     "detector": {
-      "type": "density",
-      "pattern": "——",
-      "min_occurrences": 3,
-      "threshold": 6
+      "type": "llm"
     },
-    "bad_example": "成长是一场修行——它教会我们坚持——教会我们取舍——教会我们感恩。每一次跌倒都是财富，每一次爬起都是勋章，每一次坚持都是胜利。",
-    "good_example": "成长是场慢功夫。能坚持下来的人，多半都慢慢学会了取舍，也开始记得感谢路上帮过自己的人。摔过跤的地方，印象总是最深。",
-    "rewrite_hint": "把多数破折号改成逗号或句号，或直接拆成两句；一处必要的补充说明可以保留。",
+    "bad_example": "值得注意的是，本周五是最终截止时间。需要特别注意的是，逾期提交将影响下游联调。还值得注意的是，附件命名必须统一。",
+    "good_example": "最终截止时间是本周五，逾期会影响下游联调。附件请按统一格式命名。",
+    "rewrite_hint": "删掉“值得注意的是”等前缀，直接写结论、截止时间、后果或操作要求；需要突出时依靠信息顺序而非重复提醒。",
     "scope": [
-      "公众号文章"
+      "公众号文章",
+      "邮件"
     ],
     "source_ids": [
-      "fp-017"
+      "fp-022",
+      "fp-025"
     ],
-    "status": "candidate"
+    "status": "candidate",
+    "last_confirmed_batch": 3
   },
   {
-    "id": "rule-lets-start",
-    "name": "「让我们」口号式开头",
-    "definition": "连续用「让我们」领起句子，像动员演讲而不是在写文案。",
+    "id": "rule-avoid-passive-voice-chains",
+    "name": "避免连续使用“被”字被动句",
+    "definition": "当多个相邻分句都采用“对象被执行者处理”的结构，且执行者明确、适合直接充当主语时命中。若执行者未知、不重要，或文本确实需要突出受影响对象，则单个被动句不命中。",
     "detector": {
-      "type": "regex",
-      "pattern": "让我们",
-      "min_occurrences": 2
+      "type": "llm"
     },
-    "bad_example": "让我们一起构建更好的开源生态！让我们从 star 本项目开始，共同参与这场技术盛宴。",
-    "good_example": "如果这个项目对你有帮助，欢迎 star；也欢迎提 issue 和 PR。",
-    "rewrite_hint": "删掉口号句，直接陈述事实或发出一次具体邀请。",
+    "bad_example": "配置文件会被启动器读取，依赖会被安装脚本自动下载，数据库会被迁移工具初始化，服务会被进程管理器拉起。",
+    "good_example": "启动器读取配置文件，安装脚本自动下载依赖，迁移工具初始化数据库，进程管理器随后拉起服务。",
+    "rewrite_hint": "把工具、模块或责任方移到主语位置，改写为“谁做什么”；只有确需突出承受结果的对象时才保留被动表达。",
     "scope": [
-      "README 段落"
-    ],
-    "source_ids": [
-      "fp-018"
-    ],
-    "status": "candidate"
-  },
-  {
-    "id": "rule-template-sequence",
-    "name": "「首先/其次/最后」模板序列",
-    "definition": "堆叠「首先、其次、再次、然后、最后、总而言之」等连接词，把文案写成公文提纲。",
-    "detector": {
-      "type": "regex",
-      "pattern": "首先|其次|再次|然后|接下来|最后|总而言之|综上所述|总的来说",
-      "min_occurrences": 3
-    },
-    "bad_example": "首先，全新设计语言带来视觉革新。其次，性能提升高达 40%。再次，续航焦虑彻底解决。总而言之，这是迄今为止最值得升级的一代。",
-    "good_example": "这一代换了全新的外观设计，性能比上代提升 40%，电池也够用一整天了。如果是老用户，这次值得升级。",
-    "rewrite_hint": "去掉连接词标签，让句子按自然顺序衔接；两处的「首先/其次」可以接受。",
-    "scope": [
+      "README 段落",
       "产品发布稿"
     ],
     "source_ids": [
-      "fp-019"
+      "fp-023",
+      "fp-026"
     ],
-    "status": "candidate"
+    "status": "candidate",
+    "last_confirmed_batch": 3
   }
 ]

@@ -1,61 +1,55 @@
-# AI 写作风格 Skill 附加项目：把「AI 味」反馈内化为写作 Skill
+# AI 写作风格 Skill：开放式提炼 + LLM-as-a-judge
 
-本项目演示持续进化中最难的一类问题：用户说「这段文字 AI 味太重」，这是一条模糊的主观反馈，Agent 没法直接执行。本实验把它走完整个循环——收集用户纠正的 before/after 对，把「AI 味」提炼成可检查的具体规则（破折号密度、「不是……而是……」句式、排比堆砌、「让我们」开头、「首先/其次/最后」模板、emoji 密度、「在……的今天」开头、空洞比喻），沉淀为写作 Skill，并用评估集防止规则膨胀与误伤。
+本项目把用户对「AI 味」的 before/after 纠正持续提炼为写作规则。提炼代码不再包含
+`PATTERN_LIBRARY` 或 detector 白名单：模型可以从反馈中发现词表之外的语义、句法、
+语气和篇章问题。所有候选规则统一交给 LLM judge，并且只有通过独立人工金标校准后
+才能进入最终 Skill。
 
-机制单元测试与真实验收是两条不同路径：
-
-```bash
-python -m pytest -q test_pipeline.py
-python demo.py                      # 离线教学演示全流程
-python run_ai_style_skill.py        # 离线验收入口
-python run_ai_style_skill.py \
-  --provider ark --model doubao-seed-1-6-250615   # 真实 LLM 路径
-```
-
-离线路径不需要 API key：规则提炼走确定性模式库匹配（before 命中、after 消除的模式聚合成规则草案），空洞比喻这条 llm 类规则用确定性代理 judge 演示校准机制。真实 LLM 路径把规则提炼、judge 校准和改写都交给 OpenAI 兼容 API：
+默认模型是 OpenAI `gpt-5.6-sol`，OpenAI 直连使用 Responses API 的 JSON 输出。
 
 ```bash
-# 从仓库根目录开始：使用共享的第 8 章环境
+# 从仓库根目录开始
 uv sync --locked --python 3.12 --extra ch8
 source .venv/bin/activate
+source ~/.zshrc                  # 载入本机 OPENAI_API_KEY
 
-cd chapter8/ai-style-skill
-
-# 未安装 uv 时可用 pip 兜底：
-# python -m pip install -r requirements.txt
-
-export ARK_API_KEY=your_api_key_here
-python run_ai_style_skill.py --provider ark --model doubao-seed-1-6-250615
-
-# 也可改用 OpenAI 直连或 OpenRouter：
-# python run_ai_style_skill.py --provider openai --model gpt-4o-mini
+cd chapter9/ai-style-skill
+python -m pytest -q test_pipeline.py
+python run_ai_style_skill.py     # 默认 --provider openai --model gpt-5.6-sol
 ```
 
-真实模式的原始请求、原始响应、Token 用量、延迟、请求/响应哈希保存在 `validation/<run>/evidence.json`，`validation/latest.json` 指向最近一次完整证据。**当前仓库尚未包含真实 LLM 运行**——上面的真实路径需要在有凭据的机器上执行，离线路径的所有数字都是真实跑出来的。
+单元测试用假的批量 judge，因而无需 API key；完整验收必须调用真实模型。原始请求、响应、
+Token 用量、延迟和哈希写入 `validation/<run>/evidence.json`，凭据值不会落盘。
 
 ## 完整循环
 
-1. **收集**（`data/feedback_pairs.json`）：20 条用户纠正的 before/after 对，覆盖产品发布稿、公众号文章、邮件、README 段落，每条附用户原话（「破折号太多了」「不要不是而是的句式」）。
-2. **提炼**（`extract_rules.py`）：双路径。确定性路径用预置模式库检测 before 命中、after 消除的模式；LLM 路径让模型对比归纳规则并要求原文证据。规则草案带完整 schema（定义、检测器、坏例、好例、作用域、来源），写入 `data/candidate_rules.json`。
-3. **合并**（`skill_manager.py`）：相同检测模式的规则草案合并来源而不是追加——这是防膨胀的关键。阈值矛盾时报冲突并保留现有值；长期未触发或被证据推翻的规则归档到 `skill/archive/`。合并、激活、归档全部由模型外部代码决定，LLM 只能提出规则草案（可信根隔离）。
-4. **校准**（`judge.py`）：空洞比喻这类微妙模式没有确定性检测器，走 LLM judge；judge 上线前必须用 `data/golden_set.json`（10 条人工标注）校准，一致率低于 0.8 拒绝激活该规则——呼应第六章「评判者本身也要被评判」。
-5. **评估**（`evaluate.py`、`data/eval_texts.json`）：未完成任务集（8 条明显带有模板化表达的文本，应检出）与正常文本保留集（8 条合法使用这些模式的好文本，不应误伤——技术文档里一处必要的破折号、真正构成对比的单次「不是……而是……」、人类作者的克制两句对仗）。
-6. **改写**（`rewrite_demo.py`）：确定性路径定位命中并给出预置换写建议；LLM 路径真实改写。
+1. **收集**（`data/feedback_pairs.json`）：26 条用户纠正，除了原有案例，还加入长句信息堆叠、重复「值得注意的是」和连续被动语态等库外问题。
+2. **开放式提炼**（`extract_rules.py`）：模型一次比较完整反馈语料，在同一次语义判断中归并重复现象、分开不同问题。这样不会因批次顺序把一个概念拆成多个 id，或把两个相似表面形式误并。代码验证 source id 和正反例确实来自输入，并把 detector 固定为 `{"type": "llm"}`。
+3. **合并**（`skill_manager.py`）：模型输出必须使用唯一规则 id；管理器只做机械的 id 去重与来源合并，不再按预置 detector 指纹过滤。模型仍只能提出候选，不能自行激活规则。
+4. **校准**（`judge.py`、`data/golden_set.json`）：每条规则用与其反馈来源关联的独立人工正反例校准；一致率低于 0.8 或没有金标覆盖时拒绝上线。
+5. **评估**（`evaluate.py`、`data/eval_texts.json`）：人工标注使用反馈来源而不是写死模型生成的规则 id。这样规则名称可动态变化，同时库外保留样本仍能揭示漏检。
+6. **改写**（`rewrite_demo.py`）：只把通过校准的 active 规则交给模型改写，不再提供预置换写模式。
 
-## 离线路径的真实运行结果
+judge 会在一次请求里评判一段文本与全部 active 规则，避免为每条规则分别调用 API；
+校准时也会批量评判一条规则的全部金标样本。解析失败或缺失 verdict 一律按校准不一致处理。
 
-以下是本仓库离线确定性路径实际跑出的数字（`python run_ai_style_skill.py` 与 `python evaluate.py`）：
+## 防止新的自洽闭环
 
-- 规则增长曲线（3 批反馈顺序进入）：批次 1 提炼 7 条规则草案 → 7 条规则；批次 2 提炼 7 条规则草案 → 全部合并进已有规则，仍 7 条；批次 3 提炼 7 条规则草案 → 新增 1 条（空洞比喻），共 8 条。**21 条原始规则草案合并为 8 条规则**，规则数不随反馈条数线性膨胀。
-- 未完成任务集检出率 8/8，正常文本保留集误伤率 0/8，八条规则在评估集上的精确率与召回率均为 1.0。
-- 空洞比喻规则的 judge 校准：离线代理 judge 与金标集一致率 10/10 = 1.00，允许上线。注意这是确定性代理的演示数字；真实 LLM judge 的一致率要在有凭据的机器上重跑，不达标会拒绝上线。
+- 提炼输入只有用户纠正和当前已提炼规则，没有八类模式清单。
+- 候选不会因为无法映射到已有 detector 而回退或丢弃。
+- 金标集和 boundary/retention 集是独立人工文本，不复用提炼用的 before/after。
+- 评估集明确保留三类原模式库之外的问题，并为相似但合理的写法提供 retention 反例。
+- 激活、阈值门槛、证据校验和 API 回执仍由模型外部代码控制。
 
-真实 OpenRouter `gpt-4o-mini` 路径也已在本地完成（2026-08-07）。模型原始提炼结果包含重复且过于宽泛的规则，模型外部代码没有直接采纳，而是按内置检测器指纹筛选；三批反馈均回退到可检查的确定性规则。最终仍为 21 条规则草案合并成 8 条规则，未完成任务集检出 8/8，正常文本保留集误伤 0/8，空洞比喻规则在 10 条金标文本上通过校准（10/10）。整体验收通过，原始请求、响应、用量和回退批次见 `validation/real_20260807T160547Z/evidence.json`。
+第三方 OpenAI 兼容端点仍可通过 `--provider ark` 或 `--provider openrouter` 使用；本项目的
+OpenAI 默认路径和验收基线使用 `gpt-5.6-sol`。
 
-## 防误伤的设计细节
+## 真实验收结果（2026-08-18）
 
-「可检查」不等于「一刀切」。每条规则都区分滥用与合法使用：单次「不是……而是……」不触发（两处以上才算滥用），一处破折号补充说明不触发（三处以上且密度超标才算），两处「首先/其次」不触发（三处以上才算模板腔），两个 emoji 不触发，两句对仗不触发（连续三个结构相似分句才算排比）。正常文本保留集就是用来守住这条线的——新增或修改规则后必须重跑评估，误伤率升高就该删掉或收紧规则。
+使用 `--provider openrouter --model openai/gpt-5.6-sol` 完成真实运行，证据见
+`validation/real_20260818T130450Z/evidence.json`，`validation/latest.json` 为同一份结果：
 
-## 什么时候该升级为参数级训练
-
-规则路线有天花板：规则条数持续增长、彼此冲突变多、judge 校准频繁不达标，或者 Agent 对规则的遵循率开始下降时，说明「AI 味」这类风格知识更适合沉淀进模型参数而不是外挂清单——把 feedback_pairs 的 before/after 对整理成偏好数据，走第七章的蒸馏/微调路线。规则集此时仍有价值：它是训练数据的来源，也是训练后行为的回归测试集。
+- 完整语料开放式提炼出 11 条唯一规则，11 条全部通过独立金标校准，一致率均为 1.0。
+- boundary 检出 10/11，超过 0.85 门槛；retention 误伤 0/11。
+- 长句信息堆叠、重复强调套话和连续被动语态三类库外保留样本全部命中对应新规则。
+- 35 次真实 API 调用均保留回执，共使用 86,002 tokens；证据文件不记录凭据值。
