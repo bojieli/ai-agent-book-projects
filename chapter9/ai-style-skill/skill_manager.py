@@ -1,7 +1,7 @@
-"""Skill 的增量维护：合并、去重、冲突检测、prune 与 SKILL.md 生成。
+"""Skill 的增量维护：按开放式规则 id 合并、prune 与 SKILL.md 生成。
 
-防膨胀原则：新候选与现有规则 detector 签名相同（同类型同模式）时合并来源，
-而不是无限追加；阈值等参数不一致时报冲突并由模型外部代码决定保留哪一边。
+防膨胀原则：提炼模型看到当前规则，语义相同时复用稳定 id；本模块按 id 合并来源，
+而不是再用预置 detector 指纹把新发现筛掉。
 长期未被新证据确认、或被评估证据推翻的规则归档到 skill/archive/，不再进入
 SKILL.md。所有合并/激活/归档决定都发生在这里，不交给生成候选的模型。
 """
@@ -15,18 +15,9 @@ from typing import Any, Dict, List, Set, Tuple
 ROOT = Path(__file__).resolve().parent
 SKILL_DIR = ROOT / "skill"
 
-# detector 参数中参与冲突检测的字段。
-_TUNABLE_KEYS = ("threshold", "min_occurrences", "min_run")
-
-
-def detector_signature(detector: Dict[str, Any]) -> Tuple:
-    """规则的「指纹」：同指纹的规则视为同一条，合并而非追加。"""
-    dtype = detector.get("type")
-    if dtype == "structure":
-        return (dtype, detector.get("kind"))
-    if dtype == "llm":
-        return (dtype,)
-    return (dtype, detector.get("pattern"))
+def rule_signature(rule: Dict[str, Any]) -> str:
+    """模型在已有规则语义相同时复用 id；该稳定 id 就是合并键。"""
+    return str(rule.get("id", "")).strip().lower()
 
 
 def merge_rules(
@@ -36,30 +27,18 @@ def merge_rules(
     rules = [dict(rule) for rule in existing]
     report: Dict[str, Any] = {"added": [], "merged": [], "conflicts": []}
     for cand in candidates:
-        sig = detector_signature(cand.get("detector", {}))
+        sig = rule_signature(cand)
         match = next(
-            (r for r in rules if detector_signature(r.get("detector", {})) == sig), None
+            (rule for rule in rules if rule_signature(rule) == sig), None
         )
         if match is None:
             rules.append(cand)
             report["added"].append(cand["id"])
             continue
-        # 去重合并：并集来源与作用域，保留已有范例。
+        # 去重合并：并集来源与作用域，保留首次通过 schema 检查的定义与范例。
         match["source_ids"] = sorted(set(match.get("source_ids", [])) | set(cand.get("source_ids", [])))
         match["scope"] = sorted(set(match.get("scope", [])) | set(cand.get("scope", [])))
         report["merged"].append(cand["id"])
-        # 冲突检测：同指纹但可调参数矛盾（如两条破折号规则阈值不同）。
-        for key in _TUNABLE_KEYS:
-            old = match["detector"].get(key)
-            new = cand["detector"].get(key)
-            if old is not None and new is not None and old != new:
-                report["conflicts"].append({
-                    "rule_id": match["id"],
-                    "parameter": key,
-                    "existing_value": old,
-                    "candidate_value": new,
-                    "resolution": "保留现有值，冲突记录在案，需人工或更多证据裁决",
-                })
     return rules, report
 
 
@@ -88,20 +67,9 @@ def prune_rules(
 
 
 def _describe_detector(detector: Dict[str, Any]) -> str:
-    dtype = detector.get("type")
-    if dtype == "regex":
-        return f"正则 `{detector['pattern']}`，全篇命中达到 {detector.get('min_occurrences', 1)} 处触发"
-    if dtype == "density":
-        return (
-            f"统计 `{detector['pattern']}` 出现次数，全篇达到 "
-            f"{detector.get('min_occurrences', 1)} 次且密度超过 "
-            f"{detector.get('threshold')} 次/千字时触发"
-        )
-    if dtype == "structure":
-        return f"检测连续 ≥{detector.get('min_run', 3)} 个结构相似分句（同开头或同结尾）"
-    if dtype == "llm":
-        return "LLM judge 判定（上线前须通过金标集校准）：" + detector.get("judge_prompt", "")
-    return "未知检测器"
+    if detector.get("type") != "llm":
+        return "无效检测器（规则不会激活）"
+    return "LLM judge 语义判定（上线前须通过独立人工金标集校准）"
 
 
 def render_skill_md(rules: List[Dict[str, Any]]) -> str:
