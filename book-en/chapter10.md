@@ -79,6 +79,10 @@ The 2025 RLEF paper (Reinforcement Learning from Execution Feedback)[^rlef-2025]
 
 This framework helps resolve an apparent contradiction: some academic studies find that a single Agent is sufficient, while multi-agent systems often perform better in engineering practice. The studies often test multiple Agents that inspect and discuss the same text, as in debate, whereas effective engineering systems commonly add external feedback from code execution, visual rendering, or tools. Only the latter introduces new information. Nearly all effective uses of the three architectures discussed later—peer collaboration, orchestration, and decentralization—can be understood through this criterion.
 
+Anthropic's 2026 vulnerability-discovery experiment provides one example. Forty-five Agents coordinated their searches through a shared forum, reviewed one another's findings, and submitted results to a separate arbiter Agent. The coordinated swarm found 266 vulnerabilities using 27 million tokens, while independently parallel Agents found only 21 using 6.5 million tokens. In an open search space, communication lets a multi-agent system shift its attention dynamically and develop specializations, trading a larger token budget for broader coverage and more varied discovery paths.[^anthropic-multiagent-2026]
+
+[^anthropic-multiagent-2026]: Anthropic Frontier Red Team, “Patterns and Problems in Emerging Multiagent Systems,” 2026-08-13. https://www.anthropic.com/research/multiagent-systems
+
 **Step Budget and Agent Performance.** A related question is how an Agent's step budget—the number of tool calls or iteration rounds it may use—affects performance. More steps might seem certain to help: with 30 steps, an Agent may have time only to implement core functionality, whereas 300 steps allow it to plan, implement, test, and refine. However, the 2025 Google paper *Budget-Aware Tool-Use Enables Effective Agent Scaling* reached a counterintuitive conclusion: **simply giving an Agent more steps does not guarantee better performance.** Standard Agents lack "budget awareness"; even with 300 steps, they tend to conduct shallow searches and quickly reach a plateau. To use additional steps effectively, Agents need a mechanism that adapts their strategy to the remaining resources, exploring broadly at first and narrowing their focus later. The 2026 BAVT (Budget-Aware Value Tree Search) approach further introduced step-level value evaluation, adjusting the balance between exploration and exploitation according to the proportion of the budget remaining. As the budget decreases, the Agent shifts from broad exploration to deeper investigation.
 
 These findings have direct implications for multi-agent system design. For example, in the orchestration pattern, the Manager Agent should not simply distribute tasks to sub-agents and wait for results. Instead, it should **dynamically allocate step budgets** based on task complexity—simple subtasks get fewer steps; complex subtasks get ample steps. It should also guide sub-agents to use these budgets wisely (plan first, then implement, then test, then improve), rather than diving straight in.
@@ -203,7 +207,7 @@ Based on the collaborative relationships and control flow characteristics betwee
 
 ### Peer Collaboration Pattern: Mutual Checks and Iterative Improvement
 
-Peer collaboration typically involves 2-3 Agents of equal standing giving each other feedback across multiple rounds of iteration. Its core value is cognitive diversity: different Agents examine the same problem from different angles, balancing innovation against robustness to produce a result better than any single Agent could.
+Peer collaboration typically involves two or three Agents of equal standing giving one another feedback over multiple rounds. Its potential value lies in independent perspectives and cognitive diversity, but “multiple instances” do not necessarily produce “multiple ways of thinking.” When the model, context, and scaffolding are highly similar, different Agents often make the same choices, turning local errors into systemic failures. Genuine diversity must be designed by varying models, contexts, tools, visible evidence, or responsibilities, and by having Agents judge independently before their results are aggregated.[^anthropic-multiagent-2026]
 
 Compared to the manager and decentralized patterns, peer collaboration is far simpler to implement—define the two Agents' roles, the communication mechanism, and the iteration termination condition, and you have a running system. It is an ideal choice for quickly validating ideas and building prototypes.
 
@@ -270,6 +274,10 @@ The CRITIC paper at ICLR 2024 provides an intuitive comparative experiment. CRIT
 This is the core design principle of the Proposer-Reviewer paradigm. In the PPT generation experiment of Chapter 5, the value of the Reviewer Agent was not "using the same model to look at the code again," but **rendering the PPT and taking a screenshot**—a screenshot containing visual information that the Proposer Agent could not obtain when generating the code. Similarly, in code generation scenarios, the pass/fail results from executing test cases are new signals that did not exist when the code was written—the independent value of the Reviewer stems precisely from its access to this external feedback unavailable to the Proposer.
 
 Viewed through the lens of Loop Engineering, the loop patterns catalogued by the industry map onto patterns in this book. A closed loop with human approval corresponds to Chapter 4's pre-approval, in which the human is the final reviewer. An open loop with a budget or round cap corresponds to Chapter 5's multi-round PPT iteration, which allows at most five rounds. Orchestrated sub-agents correspond to the manager pattern in the next section. Loop Engineering therefore describes not a new architecture but a common framework—loop + verification + stop conditions—that unifies these collaboration patterns. The Proposer-Reviewer paradigm fills the verification role within that framework.
+
+Anthropic's 2026 experiment on long-running application development implemented this idea as a three-Agent planner–generator–evaluator architecture. The planner expanded a user's request into a product specification. The generator and evaluator first agreed on the completion criteria for each round; the generator then implemented the work, and the evaluator exercised the real application with Playwright and filed a defect report. Agents handed state off through files. The experiment suggests that when a task lies beyond what the current model can reliably complete alone, independent review grounded in external evidence can trade substantially higher cost for better development quality.[^anthropic-harness-2026]
+
+[^anthropic-harness-2026]: Prithvi Rajasekaran, “Harness Design for Long-Running Application Development,” Anthropic Engineering, 2026-03-24. https://www.anthropic.com/engineering/harness-design-long-running-apps
 
 #### Debate Pattern
 
@@ -525,13 +533,25 @@ When multiple Coding Agents modify the same codebase concurrently, the standard 
 
 Inter-process communication transfers raw bytes with bit-level fidelity, but inter-Agent communication transfers semantics—and every handoff is a lossy re-encoding. When multiple Agents interact frequently, an error by one Agent can be progressively amplified by downstream Agents, much like how information deteriorates in a game of "telephone."
 
-**Cross-validation** is the key to breaking this chain. The core idea is not to involve more Agents in the same chain of thought, but to have an Agent re-examine conclusions from an **independent perspective**: ignoring the previous Agent's reasoning process and assessing only whether the raw evidence aligns with the final conclusion. This is an extension of the Proposer-Reviewer mechanism discussed in Chapter 5 to multi-Agent scenarios: the value of the Reviewer lies not only in finding code errors or formatting issues, but in acting as an independent judge capable of identifying contradictions collectively overlooked across the entire thought chain. For high-risk decisions, external verification mechanisms can also be introduced.
+**Cross-validation** is the key to breaking this chain. The point is not to involve more Agents in the same chain of thought, but to have one Agent reassess the conclusion from an **independent perspective**: ignore the preceding Agent's reasoning and check only whether the raw evidence supports the final conclusion. This extends Chapter 5's Proposer-Reviewer mechanism to multi-agent systems.
 
-### Failure Mode Three: Premature Termination and Runaway Loops
+### Failure Mode Three: Homogeneous Convergence
+
+Errors need not propagate through a communication chain; homogeneous Agents may produce them independently. In Anthropic's experiment,[^anthropic-multiagent-2026] 18 of 30 Agents that came online at the same time created Git branches with the same name. In a writing experiment, separate Agents independently chose the same title. Such **common-cause failures**, produced by a shared model and scaffolding, mean that reviews generated by the same model in similar contexts cannot automatically be treated as independent evidence. A system should deliberately vary models, contexts, and data sources, while using namespaces, resource quotas, and rate limits to keep identical decisions from hitting shared resources at once.
+
+Coordination is not necessarily beneficial either. In a Bertrand pricing experiment, profit-seeking Agents quickly colluded when given a private channel. After all direct communication was removed, they still coordinated their bids through a public listings board.
+
+### Failure Mode Four: Passing the Buck
+
+When objectives conflict, convergence can give way to confrontation. Anthropic instructed three Agents to migrate the same backend to different languages. They soon interpreted one another's actions as deliberate obstruction, killed competing processes, revoked permissions, and even deployed self-replicating destructive code. Stronger execution ability does not imply better coordination. The runtime must define objective priorities, resource ownership, and permission boundaries in advance, and pause for human arbitration when a conflict cannot be resolved by verifiable rules.[^anthropic-multiagent-2026]
+
+Early versions of MetaGPT displayed a similar kind of corporate dysfunction among its development roles. A tester would report a bug, only for the frontend and backend engineers to insist that the other should fix it first; the backend engineer would blame product design, while the product manager would blame the backend architecture. In another case, a test-environment problem caused the tester to report the same bug regardless of how the frontend and backend engineers changed the code, leaving the team deadlocked.
+
+### Failure Mode Five: Runaway Loops
 
 The opposite of premature termination is **an uncontrolled loop**. A loop can run indefinitely or exhaust its token budget. Explicit budgets, cancellation and stop conditions are required to keep it bounded.
 
-### Failure Mode Four: Comprehension Debt and Cognitive Surrender
+### Failure Mode Six: Comprehension Debt and Cognitive Surrender
 
 The faster a loop ships code, the further the engineer's understanding can fall behind. Eventually the human may no longer understand the system or may stop reviewing independently. Verifiers grounded in real observations and a person who remains the engineer of the loop are the remedy.
 
@@ -627,7 +647,7 @@ Building on the same environment, **Vending-Bench Arena** places multiple Agents
 
 Unlike traditional reinforcement learning, these Agents do not learn through millions of trial-and-error iterations. Instead, like human business operators, they make decisions based on market observation, competitive analysis, and strategic reasoning.
 
-The competitive dimension introduces game-theoretic behaviors that single-agent benchmarks never surface. In actual runs, Agents have fought price wars, while others proposed uniform pricing and formed price-fixing alliances—even when they recognized that collusion was unethical and illegal. Agents face opponents who continually adjust their strategies rather than a static environment, turning economic emergence into an observable phenomenon.
+The competitive dimension introduces game-theoretic behaviors that single-agent benchmarks never surface. In actual runs, Agents have fought price wars, while others proposed uniform pricing and formed price-fixing alliances—even when they recognized that collusion was unethical and illegal. Explicit communication is not required for collusion: as the earlier Bertrand experiment showed, public prices can serve as implicit signals. Agents face opponents who continually adjust their strategies rather than a static environment, turning economic emergence into an observable phenomenon.
 
 ### Agent Economy: Pinchwork and RentAHuman
 
@@ -678,9 +698,9 @@ The value of multi-agent collaboration lies in introducing information unavailab
 
 The central design choices are shared or isolated context, and peer, manager or decentralized topology. Shared context preserves details but can cause context growth and role inertia. Isolated contexts improve concurrency, modularity and permission control, but require structured handoff packages delivered through tool parameters, shared files or a message bus. Virtual file systems, Agent lifecycles, message protocols and A2A provide the data plane, control plane and cross-organization interoperability. Good collaboration exposes interfaces, boundaries, permissions and acceptance criteria—not private chains of thought.
 
-Multi-agent systems can also amplify errors: shared resources create concurrency and semantic conflicts, errors cascade through communication, and loops may terminate too early or expand without bound. Optimistic locking and working-copy isolation, independent cross-validation, and explicit budgets and cancellation form a basic fault-tolerance loop. People must not outsource understanding and responsibility together with execution; comprehension debt and cognitive surrender remain real risks.
+Multi-agent systems can also amplify errors: shared resources create concurrency and semantic conflicts, errors cascade through communication, homogeneous Agents produce common-cause failures, and loops may terminate too early or expand without bound. Optimistic locking and working-copy isolation, independent cross-validation, diverse information sources, explicit budgets, and cancellation form a basic fault-tolerance loop. People must not outsource understanding and responsibility together with execution; comprehension debt and cognitive surrender remain real risks.
 
-When short-lived task collaboration grows into long-running, open-ended interaction, social relationships, cultural norms, market competition and strategic behavior under asymmetric information may emerge. The essence of multi-agent engineering is to design how information flows, how capabilities are divided, and how errors are discovered. Only when these mechanisms are robust can collective intelligence exceed that of an individual.
+When short-lived task collaboration grows into long-running, open-ended interaction, social relationships, cultural norms, market competition and strategic behavior under asymmetric information may emerge. Stronger models or alignment at the individual level do not automatically produce group coordination. Multi-agent engineering must design how information flows, how capabilities are divided, how incentives are constrained, how disputes are resolved, and how errors are discovered. Only when these mechanisms are robust can collective intelligence exceed that of an individual.
 
 ## Thought Questions
 
