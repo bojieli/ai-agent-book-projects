@@ -28,7 +28,7 @@
 
 回头看那些 harness 里层层叠叠的兜底逻辑——多级上下文压缩、失败数千次才熔断的重试、悲观地默认“不安全”的权限判断——每一段看似丑陋的“屎山”，记录的都是模型此刻还做不稳的地方。当下一代模型把这些约束内化，对应的代码就可以删掉；而模型之所以能内化，又正是因为 Agent 早已在真实业务里替它把这些坑趟了一遍，沉淀成了下一轮训练的信号。用户提出真实的难题，应用层用 harness 把模型暂时做不好的事补上，这些补救再反过来变成模型下一次迭代的训练信号。这是一个自我强化的飞轮。
 
-这个飞轮，也回答了第一章悬下的那个问题：**模型会不会最终吃掉 Harness？** 本书的观点是：**会，但不是一次性吃掉，是一层一层地吃，并且没有吃完的那一天。** 模型每稳定内化一种能力，对应的 Harness 层就可以删掉——第六章的交互模型就是这样一个样本：打断、插话这些曾经要靠外挂 harness 才能拼出的行为，如今被直接做进了模型内部。但这个“吃”永远不会完结。一是训练以月计，模型等得起，业务等不起；二是模型无法内化真实业务中所有的约束与偏好，总有一层最新的边界需要外部逻辑兜底；三是每一代模型都会打开新的能力前沿，而前沿处恰恰是模型最做不稳的地方。所以 Harness 不会消失，它只是随着模型，不断向新的前沿迁移。这也正是《苦涩的教训》在 Agent 时代的读法：通用方法终将胜出，但“终将”二字里的每一段路，都是 Harness 铺出来的。
+这个飞轮，也回答了第一章悬下的那个问题：**模型会不会最终吃掉 Harness？** 本书的观点是：**会，但不是一次性吃掉，而是一层一层地吃，并且没有吃完的那一天。** 模型每稳定内化一种能力，对应的 Harness 层就可以删掉——第六章的交互模型就是这样一个例子：打断、插话这些曾经要靠外挂 harness 才能拼出的行为，如今被直接做进了模型内部。但这个“吃”永远不会完结。一是训练以月计，模型等得起，业务等不起；二是模型无法内化真实业务中所有的约束与偏好，总有一层最新的边界需要外部逻辑兜底；三是每一代模型都会打开新的能力前沿，而前沿处恰恰是模型最做不稳的地方。所以 Harness 不会消失，它只是随着模型，不断向新的前沿迁移。这也正是《苦涩的教训》在 Agent 时代的读法：通用方法终将胜出，但“终将”二字里的每一段路，都是 Harness 铺出来的。
 
 而飞轮转得最快的地方，是同时握住两端的人。Anthropic 用 Claude Code 做的，正是让自家模型和自家 harness 互相喂养、共同进化：模型知道 harness 会怎样调用它，harness 也清楚模型的边界在哪，两端的每一次改动都能立刻反馈给对方。曾有人做过一个实验，不换模型、只改 harness，任务准确率就从 52.8% 跳到 66.5%。这既说明 harness 今天的杠杆有多大，也提醒你：它之所以有这么大杠杆，恰恰是因为模型还没走到那一步。也正因如此，这条飞轮本身，就是这个时代最深的一条护城河：真实业务、反馈数据与模型迭代咬合得越紧，别人越难从外部追上。
 
@@ -40,4 +40,4 @@ Agent 技术仍在飞速演进，一本书追不上所有变化。但如果这�
 
 [^mimo]: 小米 MiMo-V2.5-Pro-UltraSpeed 通过 FP4 量化、DFlash 并行推测解码与 TileRT 推理系统的模型—系统协同设计，在单个通用 8-GPU 节点上首次把 1T 参数模型的生成速度推过 1000 token/s。见小米 MiMo 官方技术博客 “Pushing 1T-Parameter Model Generation Speed to 1000 TPS”, 2026. https://mimo.xiaomi.com/blog/mimo-tilert-1000tps
 
-[^taalas]: Taalas HC1 将 Llama 3.1 8B 整个模型固化进 6nm 芯片，实现约 17000 token/s、响应低于 100 毫秒；代价是芯片只能运行被固化的那个模型，模型更新需重新流片。见 Karl Freund, “Taalas Launches Hardcore Chip With ‘Insane’ AI Inference Performance,” Forbes, 2026. https://www.forbes.com/sites/karlfreund/2026/02/19/taalas-launches-hardcore-chip-with-insane-ai-inference-performance/ 。
+[^taalas]: Taalas HC1 将 Llama 3.1 8B 整个模型固化进 6nm 芯片，实现约 17000 token/s、响应低于 100 毫秒；代价是芯片只能运行被固化的那个模型，模型更新需重新流片。见 Karl Freund, “Taalas Launches Hardcore Chip With ‘Insane’ AI Inference Performance,” Forbes, 2026. https://www.forbes.com/sites/karlfreund/2026/02/19/taalas-launches-hardcore-chip-with-insane-ai-inference-performance/。
