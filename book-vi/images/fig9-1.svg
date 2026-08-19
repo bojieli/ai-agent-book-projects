@@ -21,11 +21,11 @@
 
   <rect x="205" y="72" width="150" height="90" rx="8" class="box"/>
   <text x="280" y="105" text-anchor="middle" class="t h" style="font-size:18.5px">Ghi lại quỹ đạo</text>
-  <text x="280" y="134" text-anchor="middle" class="t s" style="font-size:9px">Hành động, kết quả và phản hồi</text>
+  <text x="280" y="134" text-anchor="middle" class="t s" style="font-size:10px">Hành động, kết quả và phản hồi</text>
 
   <rect x="385" y="72" width="150" height="90" rx="8" class="accent"/>
   <text x="460" y="105" text-anchor="middle" class="t h" style="font-size:14px">Hình thành tín hiệu</text>
-  <text x="460" y="134" text-anchor="middle" class="t s" style="font-size:9px">Kết quả · Quá trình · Chất lượng</text>
+  <text x="460" y="134" text-anchor="middle" class="t s" style="font-size:10px">Kết quả · Quá trình · Chất lượng</text>
 
   <rect x="565" y="55" width="230" height="124" rx="8" class="accent"/>
   <text x="680" y="84" text-anchor="middle" class="t h" style="font-size:14.5px">Sinh các bản cập nhật ứng viên</text>

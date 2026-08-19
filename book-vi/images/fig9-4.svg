@@ -36,7 +36,7 @@
 
   <rect x="826" y="78" width="152" height="96" rx="8" class="box"/>
   <text x="902" y="111" text-anchor="middle" class="t h" style="font-size:14.5px">Truy hồi và áp dụng</text>
-  <text x="902" y="139" text-anchor="middle" class="t s" style="font-size:9px">Nạp theo nhu cầu cho tác vụ mới</text>
+  <text x="902" y="139" text-anchor="middle" class="t s" style="font-size:10px">Nạp theo nhu cầu cho tác vụ mới</text>
   <text x="902" y="160" text-anchor="middle" class="t s" style="font-size:13.5px">Tiếp tục sinh phản hồi</text>
 
   <path d="M190 126 H213" class="line"/>
