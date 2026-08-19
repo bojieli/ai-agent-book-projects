@@ -9,6 +9,10 @@
 
 **Agent = LLM + Bağlam + Araçlar** — Bu kitap, bu temel formül etrafında 10 bölümde AI Agent'ları ilkelerden mühendislik pratiğine taşıyor. Tüm metin, görseller ve **93 eşlik eden deney** açık kaynak; deneyleri bizzat çalıştırmanız için sizi bekliyor.
 
+> 📢 **1.4'e kıyasla 2.0 sürümündeki değişiklikler:** 2.0 sürümü, eski 4. bölümdeki “eşzamansız etkileşim” kısmını eski 9. bölümdeki “çok modlu Agent” içeriğiyle birleştirerek yeni 6. bölüm “Etkileşim: Gözlem ve Eylem Uzaylarının Genişletilmesi” olarak yeniden düzenler. Eski 6. (“Agent'ın Değerlendirmesi”), 7. (“Model Post-Training”) ve 8. (“Agent'ın Sürekli Evrimi”) bölümler birer bölüm geriye kaydırılmış ve sırasıyla 7., 8. ve 9. bölümler olmuştur.
+>
+> Eski bir PDF okuyorsanız [en son PDF'yi indirmenizi](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-tr.pdf) öneririz. Yeni sürüm ayrıca çok sayıda içerik düzeltmesi ve düzenlemesi içerir; lütfen en güncel sürümü kullanın.
+
 | 📚 **10 bölüm** metin, temelden üretime | 📂 **93** eşlik eden proje (70+ bağımsız çalıştırılabilir) | 🌐 **14 dil**: CN / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO / HU / HE |
 | :---: | :---: | :---: |
 
@@ -57,10 +61,10 @@ Kitap, **Agent = LLM + Bağlam + Araçlar** temel formülü etrafında şekillen
 | 3 | 📚 **Kullanıcı Belleği ve Bilgi Tabanları** | Oturumlar arası kullanıcı belleği + harici bilgi: kullanıcı belleği, RAG, yapılandırılmış indeksler, bilgi grafikleri | [Oku](../../book-tr/chapter3.tr.md) | [12](../../chapter3/README.tr.md) |
 | 4 | 🛠️ **Araçlar** | Araçlar Agent'ın elleridir: MCP protokolü, algı/yürütme/işbirliği araçları, olay güdümlü asenkron Agent'lar, proaktif araç keşfi | [Oku](../../book-tr/chapter4.tr.md) | [8](../../chapter4/README.tr.md) |
 | 5 | 💻 **Coding Agent ve Kod Üretimi** | Kod, "yeni araçlar yaratabilen bir araçtır"; üretim seviyesinde Coding Agent'ın tam görünümü | [Oku](../../book-tr/chapter5.tr.md) | [13](../../chapter5/README.tr.md) |
-| 6 | 🎯 **Agent Değerlendirmesi** | Performansı karşılaştırılabilir sinyale dönüştürmek: ortamlar, metrikler, istatistiksel anlamlılık, değerlendirme odaklı seçim | [Oku](../../book-tr/chapter6.tr.md) | [12](../../chapter6/README.tr.md) |
-| 7 | 🧠 **Model Eğitim Sonrası** | Pre-training/SFT/RL üç aşama: SFT mi RL mi ne zaman seçilir, araç çağrılarının içselleştirilmesi, örnek verimliliği | [Oku](../../book-tr/chapter7.tr.md) | [16](../../chapter7/README.tr.md) |
-| 8 | 🔄 **Agent'ın Kendi Kendine Evrimi** | Ağırlıkları değiştirmeden büyüme: deneyimden öğrenme, araç kullanıcısından araç yaratıcısına | [Oku](../../book-tr/chapter8.tr.md) | [9](../../chapter8/README.tr.md) |
-| 9 | 🎙️ **Çok Modluluk ve Gerçek Zamanlı Etkileşim** | Metinden sese, GUI'ye, fiziksel dünyaya genişleme: üç ses paradigması, Computer Use, robotik | [Oku](../../book-tr/chapter9.tr.md) | [12](../../chapter9/README.tr.md) |
+| 6 | 🎙️ **Etkileşim: Gözlem ve Eylem Uzaylarının Genişletilmesi** | Agent'ın gözlem ve eylem uzaylarını kiplik ve zaman boyunca genişletmek: eşzamansız ve olay odaklı sistemler, ses, Computer Use ve robotik | [Oku](../../book-tr/chapter6.tr.md) | [13](../../chapter6/README.tr.md) |
+| 7 | 🎯 **Agent'ın Değerlendirmesi** | Performansı karşılaştırılabilir sinyallere dönüştürmek: ortamlar, metrikler, istatistiksel anlamlılık ve değerlendirme odaklı seçim | [Oku](../../book-tr/chapter7.tr.md) | [13](../../chapter7/README.tr.md) |
+| 8 | 🧠 **Model Post-Training** | Üç aşama—ön eğitim, SFT ve RL: ne zaman SFT veya RL seçileceği, araç çağrılarının içselleştirilmesi ve örnek verimliliği | [Oku](../../book-tr/chapter8.tr.md) | [19](../../chapter8/README.tr.md) |
+| 9 | 🔄 **Agent'ın Sürekli Evrimi** | Yürütme izlerinden öğrenme sinyalleri elde etmek ve bilgiyi, talimatları, programları ve parametreleri güncellemek | [Oku](../../book-tr/chapter9.tr.md) | [9](../../chapter9/README.tr.md) |
 | 10 | 🤝 **Çoklu Ajan İşbirliği** | Kolektif zeka bireyden üstündür: işbirliği çerçeveleri, bağlam paylaşımı/izolasyonu, ortaya çıkan "Agent Toplumu" | [Oku](../../book-tr/chapter10.tr.md) | [7](../../chapter10/README.tr.md) |
 
 > 💡 **Oku** = bölüm metnini GitHub üzerinde doğrudan oku (markdown); **N** = eşlik eden proje sayısı, koda bakmak için tıklayın. Proje türleri (✅ Bağımsız / 📖 Yeniden üretim / 🚧 Tasarım) her bölümün README'sinde açıklanır.

@@ -9,6 +9,10 @@
 
 **Agent = LLM + 上下文 + 工具**——本書圍繞這個核心公式，用 10 章把 AI Agent 從原理講到工程實戰。全書正文、配圖、**93 個配套實驗**全部開源，歡迎親手把實驗跑一遍。
 
+> 📢 **2.0 版變更（相較 1.4 版）**：2.0 版將原第四章中的「非同步互動」部分與原第九章中有關「多模態 Agent」的內容合併，重組為新的第六章「互動：觀察與動作空間的擴展」。原第六章「Agent 的評估」、第七章「模型後訓練」和第八章「Agent 的持續進化」依次後移一章，現分別為第七、八、九章。
+>
+> 如果你看到的是舊版 PDF，建議[下載最新版 PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-zh-TW.pdf)。新版還包含許多內容修正與調整，請以最新版為準。
+
 | 📚 **10 章** 正文，從基礎到生產 | 📂 **93 個** 配套專案（70+ 可獨立執行） | 🌐 **14 種** 語言：中 / 英 / 西 / 印尼 / 阿拉伯 / 繁體中文（台灣） / 俄 / 泰米爾 / 越 / 日 / 土耳其 / 韓 / 匈牙利 / 希伯來 |
 | :---: | :---: | :---: |
 
@@ -57,10 +61,10 @@
 | 3 | 📚 **使用者記憶和知識庫** | 跨會話記住使用者、接入外部知識：使用者記憶、RAG、結構化索引、知識圖譜 | [讀](../../book-zhtw/chapter3.zhtw.md) | [12](../../chapter3/README.zh-TW.md) |
 | 4 | 🛠️ **工具** | 工具是 Agent 的雙手：MCP 協議、感知/執行/協作三類工具、事件驅動非同步 Agent、主動工具發現 | [讀](../../book-zhtw/chapter4.zhtw.md) | [8](../../chapter4/README.zh-TW.md) |
 | 5 | 💻 **Coding Agent 與程式碼生成** | 程式碼是「能創造新工具的工具」，生產級 Coding Agent 全景 | [讀](../../book-zhtw/chapter5.zhtw.md) | [13](../../chapter5/README.zh-TW.md) |
-| 6 | 🎯 **Agent 的評估** | 把表現變成可比較訊號：評估環境、指標、統計顯著性、評估驅動選型 | [讀](../../book-zhtw/chapter6.zhtw.md) | [12](../../chapter6/README.zh-TW.md) |
-| 7 | 🧠 **模型後訓練** | 預訓練/SFT/RL 三階段：何時選 SFT、何時選 RL，工具呼叫內化、樣本效率 | [讀](../../book-zhtw/chapter7.zhtw.md) | [16](../../chapter7/README.zh-TW.md) |
-| 8 | 🔄 **Agent 的自我進化** | 不改權重也能成長：經驗學習、從工具使用者到創造者 | [讀](../../book-zhtw/chapter8.zhtw.md) | [9](../../chapter8/README.zh-TW.md) |
-| 9 | 🎙️ **多模態與即時互動** | 從文字擴充套件到語音、GUI、物理世界：語音三典範、Computer Use、機器人 | [讀](../../book-zhtw/chapter9.zhtw.md) | [12](../../chapter9/README.zh-TW.md) |
+| 6 | 🎙️ **互動：觀察與動作空間的擴展** | 從模態與時序兩個維度擴展 Agent 的觀察與動作空間：非同步與事件驅動、語音互動、Computer Use 和機器人操作 | [讀](../../book-zhtw/chapter6.zhtw.md) | [13](../../chapter6/README.zh-TW.md) |
+| 7 | 🎯 **Agent 的評估** | 把表現變成可比較訊號：評估環境、指標、統計顯著性、評估驅動選型 | [讀](../../book-zhtw/chapter7.zhtw.md) | [13](../../chapter7/README.zh-TW.md) |
+| 8 | 🧠 **模型後訓練** | 預訓練/SFT/RL 三階段：何時選 SFT、何時選 RL，工具呼叫內化、樣本效率 | [讀](../../book-zhtw/chapter8.zhtw.md) | [19](../../chapter8/README.zh-TW.md) |
+| 9 | 🔄 **Agent 的持續進化** | 從執行軌跡獲得學習訊號，更新知識、指令、程式與參數 | [讀](../../book-zhtw/chapter9.zhtw.md) | [9](../../chapter9/README.zh-TW.md) |
 | 10 | 🤝 **多 Agent 協作** | 群體智慧高於個體：協作框架、上下文共享/隔離、湧現的「Agent 社會」 | [讀](../../book-zhtw/chapter10.zhtw.md) | [7](../../chapter10/README.zh-TW.md) |
 
 > 💡 **讀** = 在 GitHub 網頁直接讀章節正文（markdown）；**N** = 該章配套專案數，點選檢視程式碼。專案型別說明（✅ 可執行 / 📖 復現 / 🚧 設計）見各章 README。

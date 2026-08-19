@@ -9,6 +9,10 @@
 
 **Ágens = NYM + Kontextus + Eszközök** — a könyv erre az alapképletre építve, tíz fejezeten keresztül vezet el az AI-ügynökök alapelveitől a mérnöki gyakorlatig. A teljes szöveg, az ábrák és a **104 kapcsolódó projekt** nyílt forráskódú.
 
+> 📢 **A 2.0-s verzió változásai az 1.4-eshez képest:** A 2.0-s verzió a korábbi 4. fejezet „aszinkron interakció” részét és a korábbi 9. fejezet „multimodális ágensekről” szóló anyagát egyesíti, majd új 6. fejezetként, „Interakció: a megfigyelési és a cselekvési tér kiterjesztése” címmel rendezi át. A korábbi 6. („Ügynökök kiértékelése”), 7. („Modell poszt-tréning”) és 8. („Az ágensek folyamatos evolúciója”) fejezet egy-egy hellyel hátrébb került, így most rendre a 7., 8. és 9. fejezet.
+>
+> Ha egy régebbi PDF-et olvas, javasoljuk, hogy [töltse le a legújabb PDF-et](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-hu.pdf). Az új kiadás számos javítást és tartalmi módosítást is tartalmaz; kérjük, mindig a legfrissebb verziót használja.
+
 | 📚 **10 fejezet** az alapoktól az éles rendszerekig | 📂 **104 kapcsolódó projekt**, helyi projektekkel és külső reprodukciós útvonalakkal | 🌐 **14 nyelv**: ZH / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO / HU / HE |
 | :---: | :---: | :---: |
 
@@ -57,10 +61,10 @@ A magyar kézirat forrása a [`book-hu/`](../../book-hu/) könyvtárban találha
 | 3 | 📚 **Felhasználói memória és tudásbázis** | Munkameneteken átívelő memória, RAG, strukturált indexek és tudásgráfok | [Olvasás](../../book-hu/chapter3.md) | [12](../../chapter3/README.hu.md) |
 | 4 | 🛠️ **Eszközök** | MCP, érzékelési, végrehajtási és együttműködési eszközök, eseményvezérelt aszinkron ágensek | [Olvasás](../../book-hu/chapter4.md) | [8](../../chapter4/README.hu.md) |
 | 5 | 💻 **Kódoló ágens és kódgenerálás** | A kód mint új eszközöket létrehozó eszköz; éles környezetre kész kódoló ágensek | [Olvasás](../../book-hu/chapter5.md) | [13](../../chapter5/README.hu.md) |
-| 6 | 🎯 **Ügynökök kiértékelése** | Értékelési környezetek, mérőszámok, statisztikai szignifikancia és értékelésvezérelt kiválasztás | [Olvasás](../../book-hu/chapter6.md) | [17](../../chapter6/README.hu.md) |
-| 7 | 🧠 **Modell-utóképzés** | Előképzés, SFT és RL; eszközhívások internalizálása és mintahatékonyság | [Olvasás](../../book-hu/chapter7.md) | [18](../../chapter7/README.hu.md) |
-| 8 | 🔄 **Az ágensek folyamatos evolúciója** | Tanulás a végrehajtási nyomvonalakból; tudás, utasítások, programok és paraméterek frissítése | [Olvasás](../../book-hu/chapter8.md) | [9](../../chapter8/README.hu.md) |
-| 9 | 🎙️ **Multimodalitás és valós idejű interakció** | Beszéd, grafikus felületek, Computer Use és robotika | [Olvasás](../../book-hu/chapter9.md) | [12](../../chapter9/README.hu.md) |
+| 6 | 🎙️ **Interakció: a megfigyelési és a cselekvési tér kiterjesztése** | Az ágens megfigyelési és cselekvési terének kiterjesztése modalitásban és időben: aszinkron és eseményvezérelt rendszerek, beszéd, Computer Use és robotika | [Olvasás](../../book-hu/chapter6.md) | [13](../../chapter6/README.hu.md) |
+| 7 | 🎯 **Ügynökök kiértékelése** | A teljesítmény összehasonlítható jelekké alakítása: környezetek, mérőszámok, statisztikai szignifikancia és értékelésvezérelt kiválasztás | [Olvasás](../../book-hu/chapter7.md) | [13](../../chapter7/README.hu.md) |
+| 8 | 🧠 **Modell poszt-tréning** | Három szakasz—előképzés, SFT és RL: mikor válasszunk SFT-t vagy RL-t, az eszközhívások internalizálása és a mintahatékonyság | [Olvasás](../../book-hu/chapter8.md) | [19](../../chapter8/README.hu.md) |
+| 9 | 🔄 **Az ágensek folyamatos evolúciója** | Tanulási jelek kinyerése a végrehajtási nyomvonalakból, majd a tudás, utasítások, programok és paraméterek frissítése | [Olvasás](../../book-hu/chapter9.md) | [9](../../chapter9/README.hu.md) |
 | 10 | 🤝 **Többügynökös együttműködés** | Együttműködési struktúrák, kontextusmegosztás és -elszigetelés, ágenstársadalmak | [Olvasás](../../book-hu/chapter10.md) | [8](../../chapter10/README.hu.md) |
 
 > 💡 Az **Olvasás** hivatkozások megnyitják a fejezet magyar szövegét a GitHubon; a **Kód** oszlop számai a kapcsolódó projektek magyar jegyzékére mutatnak.
