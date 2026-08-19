@@ -315,14 +315,12 @@ OpenAI'nin GPT-Live tanıtımı üç ses etkileşimi paradigması tanımlar: kas
 | Paradigma | Temel yapı | Ana avantaj | Ana sınırlama |
 | --- | --- | --- | --- |
 | Kaskad | VAD → ASR → LLM → TTS | Modüller açık; değiştirmek ve hata ayıklamak kolay | Gecikme birikir, paralinguistik bilgi arayüzlerde kaybolur |
-| Uçtan uca Omni | Tek model dinler, düşünür ve konuşur | Daha düşük gecikme; ton, duygu ve ortam sesi daha iyi korunur | Hâlâ sıra tabanlı; eğitim ve hata ayıklama daha pahalı |
-| Full-duplex | Sürekli dinler, konuşur ve karar verir | Üst üste konuşma, doğal kesme ve kesintisiz akış | Eğitim, kontrol ve değerlendirme daha karmaşıktır |
+| Uçtan uca Omni | Doğal ses girişi ve çıkışıyla sıra tabanlı etkileşim | Daha düşük gecikme; ton, duygu ve ortam sesi daha iyi korunur | Hâlâ sıra tabanlı; eğitim ve hata ayıklama daha pahalı |
+| Full-duplex | Doğal ses girişi ve çıkışıyla sürekli dinleme, konuşma ve karar verme | Üst üste konuşma, doğal kesme ve kesintisiz akış | Eğitim, kontrol ve değerlendirme daha karmaşıktır |
 
 Ortak hedef, insanların mutlaka sırayla konuşması ve VAD'nin kimin söz hakkına sahip olduğunu tahmin etmesi varsayımlarından kurtulmaktır. Kaskad ve Omni hâlâ etkileşimi turlara böler; full-duplex ise söz hakkını modelin sürekli verdiği bir karara dönüştürür.
 
 [^ch6-12]: OpenAI, *Introducing GPT-Live*, 2026-07-08. https://openai.com/index/introducing-gpt-live/ Kaskad / sıra tabanlı / full-duplex sınıflandırması, yazının ChatGPT Voice'un üç kuşağına dair özetinden gelir; “uçtan uca omnimodal (Omni)” terimi “turn-based voice models” kategorisine karşılık gelir.
-
-Kaskad sistem seri yürütmeden akışa geçerken en önemli değişiklik her işlevi `async` yapmak değil, **artımlı sonuçların geçersizleşip iptal edilebilmesine izin vermektir**.
 
 ### Paradigma 1 · Kaskad boru hattı
 
@@ -385,13 +383,7 @@ Omni “kullanıcı konuşur” ve “model konuşur” ayrımını korur, ancak
 
 ### Bilişsel zaman: gerçek zamanlı etkileşim ve derin düşünme
 
-Ön plan modeli kullanıcı hâlâ hatta iken yanıt vermeli, arka plan modeli ise daha uzun düşünebilmelidir. Bunlar doğrusal bir ilerleme değil, üç tasarım ödünleşimidir:
-
-| Tasarım | Ön plan | Arka plan | Ana risk |
-| --- | --- | --- | --- |
-| Hızlı dolgu, yavaş düzeltme | Anında yanıt | Yeniden düşünme ve tamamlama | Çelişki |
-| Hızlı etkileşim, yavaş tavsiye | Sohbeti ve ifadeyi sürdürme | Tavsiye veya araç sonucu | Kısıtlı arayüz |
-| Düşünme ve ifadenin birleşmesi | Konuşurken düşünme | Model durumunu paylaşma | Yüksek eğitim/değiştirme maliyeti |
+Etkileşim kalitesi ile zekâ tavanı farklı boyutlardır. Ön plan modeli kullanıcı hâlâ hatta iken yanıt vermeli, arka plan modeli ise daha uzun düşünebilmelidir. Aşağıdaki üç tasarım doğrusal bir ilerleme değil, ödünleşimlerdir. İlk ikisi kaskad ya da Omni üzerine uygulanabilir; üçüncüsü ise derin düşünme ile gerçek zamanlı ifadeyi aynı modelin içinde birleştirir.
 
 #### Çözüm 1: dolgu için hızlı düşünme, yanıt için yavaş düşünme
 
@@ -405,16 +397,23 @@ Hızlı düşünme birkaç yüz milisaniye içinde bir dolgu yanıtı verebilirk
 
 İkinci çözümde arka plan modeli, durum çubuğu ya da özel bir arayüz üzerinden ön plan modeline öneri verir; ön plan sohbeti sürdürmeye ve nasıl ifade edeceğine karar vermeye devam eder. Bu, birinci çözümden daha kararlıdır ama iletişim yine dolaylıdır: ön plan öneriyi yanlış anlayabilir ve arka planın ara muhakemesini göremez; arka plan bitirmeden kullanıcı yeniden sorduğunda ön plan yalnızca kendi yeteneklerine dayanabilir. Doğal biçimde "sonucu bekleyebilir" ama gerçekten konuşurken düşünemez.
 
-#### Çözüm 3: düşünme ile ifadenin uçtan uca birleştirilmesi (Step-Audio R1 örneği)
+#### Çözüm 3: düşünme ile ifadenin uçtan uca birleştirilmesi
 
 Üçüncü çözüm, düşünme yeteneğini doğrudan uçtan uca ses modelinin içine yerleştirir. Step-Audio R1 iki tamamlayıcı mekanizmayla iki sorunu çözer: **kipe demirlenmiş düşünme damıtması (MGRD)** modeli akustik özniteliklere dayanarak düşündürür, **MPS çift beyin mimarisi** ise tasarlama ile ifadeyi paralel yürütür. İlki "doğru düşünmeyi" güvence altına alır, ikincisi "zamanında konuşmayı" çözer.
 
-İdealde model duyguyu perde, ritim ve tonlamadan çıkarmalı, yalnızca deşifre metnine bakmamalıdır. "Metin vekilli düşünme" denen şey, modelin ezgi ve akustik öznitelik analizinin yerine şarkı sözlerindeki olumsuz kelimeleri koymasıdır. MGRD gerçekten akustik özniteliklere atıf yapan düşünme süreçlerini süzer, bu veriyle modeli eğitir ve pekiştirmeli öğrenmeyle modelin düşünmeyi atlayıp doğrudan yanıtı tahmin etmesini engeller.
+İdealde model duyguyu perde, ritim ve tonlamadan çıkarmalı, yalnızca deşifre metnine bakmamalıdır. MGRD gerçekten akustik özniteliklere atıf yapan düşünme süreçlerini süzer, bu veriyle modeli eğitir ve pekiştirmeli öğrenmeyle modelin düşünmeyi atlayıp doğrudan yanıtı tahmin etmesini engeller. MPS'de tasarlayan beyin sürekli düşünce parçaları üretir; ifade eden beyin bir parçayı alır almaz, verdiği yanıtla birleştirerek hemen konuşma üretir. İkisi bir boru hattı gibi paralel çalıştığı için, kullanıcının ilk cümleyi duyması adına düşünmenin tümüyle bitmesini beklemek gerekmez.
 
-MPS'de tasarlayan beyin sürekli düşünce parçaları üretir; ifade eden beyin bir parçayı alır almaz, verdiği yanıtla birleştirerek hemen konuşma üretir. İkisi bir boru hattı gibi paralel çalıştığı için, kullanıcının ilk cümleyi duyması adına düşünmenin tümüyle bitmesini beklemek gerekmez.
+#### Hızlı/yavaş düşünme ayrımı ile uçtan uca düşünme arasındaki ödünleşim
 
+Birleşik model "konuşurken düşünmeyi" en doğrudan biçimde gerçekleştirir; bedeli, düşünme ile gerçek zamanlı ifadenin birlikte yeniden eğitilmesi gerekmesidir. Ayrıştırılmış yolda arka plan beynini değiştirmek daha kolaydır. İkisi bir ödünleşimdir, birbirinin basit ikamesi değildir.
 
-Birleşik model "konuşurken düşünmeyi" en sıkı biçimde gerçekleştirir; bedeli, düşünme ile gerçek zamanlı ifadenin birlikte yeniden eğitilmesi gerekmesidir. Ayrıştırılmış yolda arka plan beynini değiştirmek daha kolaydır; birleşik yol ise azami doğallık peşindeki özel senaryolara daha uygundur. İkisi bir ödünleşimdir, birbirinin basit ikamesi değil.
+Öncü reasoning modellerinin hızla ilerlediği günümüzde hızlı ve yavaş düşünmeyi ayırmanın önemli bir mühendislik avantajı vardır: yavaş modelin her yeni kuşağındaki ilerlemeyi doğrudan kullanabilir. Ön plandaki hızlı model yalnızca düşük gecikmeyle dinlemekten, yanıt vermekten ve sohbeti sürdürmekten sorumludur; arka plandaki yavaş model reasoning, planlama ve araç çağrılarını üstlenir. Daha güçlü bir reasoning modeli çıktığında bütün gerçek zamanlı ses sistemini yeniden eğitmek yerine yalnızca arka plan modeli değiştirilir. Birleşik yaklaşım reasoning ile etkileşimi aynı eğitim döngüsüne bağlar; bu yüzden her yükseltmede zekâ düzeyi, yanıt gecikmesi ve ifadenin doğallığı yeniden dengelenmelidir. Dolayısıyla hızlı/yavaş ayrımı yalnızca gecikmeye verilmiş bir taviz değil, etkileşim yeteneği ile zekâ tavanının ayrı ayrı gelişmesini sağlayan modüler bir tercihtir.
+
+Bu ayrım görev başarımından mutlaka ödün verileceği anlamına da gelmez. Ağustos 2026 itibarıyla hızlı/yavaş düşünmeyi ayıran Pine AI sesli Agent'ı, τ³-Voice Leaderboard'da Grok Voice ve GPT-Realtime-2 gibi sistemleri geçerek birinci oldu. Bu sonuç en azından, derin reasoning ile gerçek zamanlı konuşmayı birlikte sınayan görevlerde ayrıştırılmış mimarinin uçtan uca modellerden doğası gereği geri olmadığını gösterir.[^ch6-17]
+
+[^ch6-17]: Pine AI. “The Most Natural Human-Computer Interface Is Your Voice.” 2026-06-23 (2026-08-06 tarihinde güncellendi). https://www.19pine.ai/blog/pine-ai-the-most-natural-human-computer-interface-is-your-voice
+
+“Uçtan uca model” teriminin yaygın olarak iki anlamda kullanıldığını açıklığa kavuşturmak gerekir. İlki, önceki bölümde ele alınan **uçtan uca ses yoludur**: model sesi doğrudan alır ve ses üretir; birden çok modeli ayrık metin üzerinden birbirine bağlamaz. Omni ile Interaction Model bu anlamda uçtan ucadır, ancak Omni genellikle hâlâ sıra tabanlı ilerlerken Interaction Model dinlerken konuşabilir; mimarileri belirgin biçimde farklıdır. İkincisi, bu bölümde ele alınan **uçtan uca bilişsel mimaridir**: gerçek zamanlı etkileşim ile derin düşünme tek model içinde durum paylaşarak birlikte mi eğitilir, yoksa ön plandaki hızlı model ile arka plandaki yavaş model arasında mı bölünür? Bu iki eksen birbirinden bağımsızdır. Bir sistemin ses yolu uçtan uca iken bilişsel mimarisinde hızlı/yavaş ayrımını koruması mümkündür; Thinking Machines Lab'in karmaşık görevleri arka plan reasoning modeline devretmesi bu birleşimin bir örneğidir.
 
 ### Daha insana benzeyen konuşma sentezi
 

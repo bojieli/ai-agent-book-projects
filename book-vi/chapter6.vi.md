@@ -315,14 +315,12 @@ Bài giới thiệu GPT-Live của OpenAI nêu ba mô hình tương tác bằng 
 | Mô hình | Cấu trúc cốt lõi | Ưu điểm chính | Hạn chế chính |
 | --- | --- | --- | --- |
 | Cascade | VAD → ASR → LLM → TTS | Mô-đun rõ ràng, dễ thay thế và gỡ lỗi | Độ trễ cộng dồn, thông tin cận ngôn ngữ mất ở các giao diện |
-| Omni end-to-end | Một mô hình nghe, suy nghĩ và nói | Độ trễ thấp hơn, giữ tốt giọng điệu, cảm xúc và âm thanh môi trường | Vẫn theo lượt; huấn luyện và gỡ lỗi tốn kém hơn |
-| Full-duplex | Liên tục nghe, nói và quyết định | Nói chồng, ngắt lời tự nhiên và luồng liên tục | Huấn luyện, điều khiển và đánh giá phức tạp hơn |
+| Omni end-to-end | Đầu vào và đầu ra âm thanh native, tương tác theo lượt | Độ trễ thấp hơn, giữ tốt giọng điệu, cảm xúc và âm thanh môi trường | Vẫn theo lượt; huấn luyện và gỡ lỗi tốn kém hơn |
+| Full-duplex | Đầu vào và đầu ra âm thanh native; liên tục nghe, nói và quyết định | Nói chồng, ngắt lời tự nhiên và luồng liên tục | Huấn luyện, điều khiển và đánh giá phức tạp hơn |
 
 Điểm chung là thoát khỏi giả định mọi người phải nói lần lượt và khỏi phỏng đoán của VAD về người đang giữ lượt. Cascade và Omni vẫn chia tương tác thành các lượt; full-duplex biến quyền giữ lượt thành quyết định liên tục của mô hình.
 
 [^ch6-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/ Phân loại cascade / turn-based / full-duplex xuất phát từ phần tóm tắt ba thế hệ ChatGPT Voice; thuật ngữ “end-to-end omnimodal (Omni)” tương ứng với nhóm “turn-based voice models”.
-
-Khi hệ thống cascade chuyển từ thực thi tuần tự sang streaming, điều quan trọng nhất không phải là biến mọi hàm thành `async`, mà là cho phép **kết quả gia tăng trở nên mất hiệu lực và bị hủy**.
 
 ### Mô hình 1 · Pipeline cascade
 
@@ -385,13 +383,7 @@ Omni vẫn tách “người dùng nói” và “mô hình nói”, nhưng phi�
 
 ### Thời gian nhận thức: tương tác thời gian thực và suy nghĩ sâu
 
-Mô hình tiền cảnh phải trả lời khi người dùng còn chờ; mô hình nền có thể suy nghĩ lâu hơn. Đây là ba đánh đổi, không phải các bậc tiến hóa tuyến tính:
-
-| Thiết kế | Tiền cảnh | Nền | Rủi ro chính |
-| --- | --- | --- | --- |
-| Lấp chỗ nhanh, sửa chậm | Trả lời ngay | Nghĩ lại và bổ sung | Mâu thuẫn |
-| Tương tác nhanh, lời khuyên chậm | Giữ mạch hội thoại và chọn cách nói | Lời khuyên hoặc kết quả công cụ | Giao diện hạn chế |
-| Hợp nhất suy nghĩ và biểu đạt | Vừa suy nghĩ vừa nói | Chia sẻ trạng thái mô hình | Chi phí huấn luyện và thay thế cao |
+Chất lượng tương tác và trần trí tuệ là hai chiều khác nhau. Mô hình tiền cảnh phải trả lời khi người dùng còn chờ; mô hình nền có thể suy nghĩ lâu hơn. Ba thiết kế sau là những đánh đổi, không phải các bậc tiến hóa tuyến tính. Hai thiết kế đầu có thể áp dụng cho cascade hoặc Omni; thiết kế thứ ba hợp nhất suy luận sâu và biểu đạt thời gian thực trong cùng một mô hình.
 
 #### Giải pháp 1: nghĩ nhanh để lấp chỗ, nghĩ chậm để trả lời
 
@@ -405,16 +397,23 @@ Nghĩ nhanh có thể đưa ra một câu đáp lấp chỗ trong vài trăm mil
 
 Giải pháp hai để mô hình nền đưa gợi ý cho mô hình tiền cảnh qua thanh trạng thái hoặc một giao diện chuyên dụng, còn tiền cảnh tiếp tục giữ mạch hội thoại và quyết định cách diễn đạt. Nó ổn định hơn giải pháp một, nhưng giao tiếp vẫn gián tiếp: tiền cảnh có thể hiểu sai gợi ý và không thấy được suy luận trung gian của nền; trước khi nền hoàn tất, nếu người dùng hỏi thêm thì tiền cảnh chỉ có thể dựa vào năng lực của chính nó. Nó có thể "chờ kết quả" một cách tự nhiên, nhưng không thực sự vừa nghĩ vừa nói được.
 
-#### Giải pháp 3: hợp nhất suy nghĩ và biểu đạt end-to-end (lấy Step-Audio R1 làm ví dụ)
+#### Giải pháp 3: hợp nhất suy nghĩ và biểu đạt end-to-end
 
 Giải pháp ba đưa năng lực suy nghĩ vào thẳng bên trong mô hình âm thanh end-to-end. Step-Audio R1 dùng hai cơ chế bổ trợ để giải hai bài toán: **chưng cất suy nghĩ neo theo phương thức (MGRD)** khiến mô hình suy nghĩ dựa trên đặc trưng âm học, còn **kiến trúc song não MPS** cho phép hình thành ý và biểu đạt chạy song song. Cái trước bảo đảm "nghĩ đúng", cái sau giải quyết "nói kịp lúc".
 
-Lý tưởng nhất, mô hình nên đánh giá cảm xúc từ cao độ, nhịp điệu và ngữ điệu, chứ không chỉ nhìn văn bản đã chuyển tự. Cái gọi là "suy nghĩ thay thế bằng văn bản" là khi mô hình dùng những từ tiêu cực trong lời bài hát để thay cho việc phân tích giai điệu và đặc trưng âm học. MGRD lọc ra những chuỗi suy nghĩ thật sự viện dẫn đặc trưng âm học, rồi dùng dữ liệu đó huấn luyện mô hình, đồng thời dùng học tăng cường để ngăn mô hình bỏ qua suy nghĩ mà đoán thẳng đáp án.
+Lý tưởng nhất, mô hình nên đánh giá cảm xúc từ cao độ, nhịp điệu và ngữ điệu, chứ không chỉ nhìn văn bản đã chuyển tự. MGRD lọc ra những chuỗi suy nghĩ thật sự viện dẫn đặc trưng âm học, rồi dùng dữ liệu đó huấn luyện mô hình, đồng thời dùng học tăng cường để ngăn mô hình bỏ qua suy nghĩ mà đoán thẳng đáp án. MPS khiến não hình thành ý liên tục sinh ra các mảnh suy nghĩ; não biểu đạt nhận được mảnh nào thì kết hợp ngay với phần đã trả lời để sinh tiếng nói. Hai bên chạy song song theo kiểu đường ống, nên không cần chờ toàn bộ suy nghĩ kết thúc mới cho người dùng nghe câu đầu tiên.
 
-MPS khiến não hình thành ý liên tục sinh ra các mảnh suy nghĩ; não biểu đạt nhận được mảnh nào thì kết hợp ngay với phần đã trả lời để sinh tiếng nói. Hai bên chạy song song theo kiểu đường ống, nên không cần chờ toàn bộ suy nghĩ kết thúc mới cho người dùng nghe câu đầu tiên.
+#### Đánh đổi giữa tách rời suy nghĩ nhanh/chậm và suy luận end-to-end
 
+Mô hình hợp nhất hiện thực hóa "vừa nghĩ vừa nói" trực tiếp nhất, cái giá là suy nghĩ và biểu đạt thời gian thực phải được huấn luyện lại cùng nhau; hướng tách rời dễ thay não nền hơn. Hai bên là một đánh đổi, không đơn giản thay thế lẫn nhau.
 
-Mô hình hợp nhất hiện thực hoá "vừa nghĩ vừa nói" chặt chẽ nhất, cái giá là suy nghĩ và biểu đạt thời gian thực phải huấn luyện lại cùng nhau; hướng tách rời dễ thay não nền hơn, còn hướng hợp nhất phù hợp hơn với những kịch bản chuyên biệt theo đuổi độ tự nhiên tối đa. Hai bên là một đánh đổi, không đơn giản thay thế lẫn nhau.
+Trong bối cảnh các mô hình suy luận tiên tiến phát triển nhanh chóng, tách suy nghĩ nhanh khỏi suy nghĩ chậm đem lại một lợi thế kỹ thuật quan trọng: hệ thống có thể trực tiếp hưởng lợi từ mỗi thế hệ mô hình chậm mới. Mô hình nhanh ở tiền cảnh chỉ phụ trách lắng nghe, phản hồi và duy trì hội thoại với độ trễ thấp; mô hình chậm ở nền đảm nhiệm suy luận, lập kế hoạch và gọi công cụ. Khi có mô hình suy luận mạnh hơn, chỉ cần thay mô hình nền mà không phải huấn luyện lại toàn bộ hệ thống thoại thời gian thực. Hướng hợp nhất gắn suy luận và tương tác vào cùng một chu kỳ huấn luyện, vì vậy mỗi lần nâng cấp đều phải cân bằng lại trí tuệ, độ trễ phản hồi và tính tự nhiên của biểu đạt. Do đó, tách nhanh/chậm không chỉ là nhượng bộ về độ trễ, mà còn là lựa chọn mô-đun cho phép năng lực tương tác và trần trí tuệ tiến hóa độc lập.
+
+Sự tách rời này cũng không nhất thiết làm giảm hiệu quả nhiệm vụ. Tính đến tháng 8 năm 2026, Agent thoại Pine AI dùng kiến trúc suy nghĩ nhanh/chậm tách rời đứng đầu τ³-Voice Leaderboard, vượt các hệ thống thoại thời gian thực như Grok Voice và GPT-Realtime-2. Kết quả này ít nhất cho thấy kiến trúc tách rời không mặc nhiên kém hơn mô hình end-to-end trong những nhiệm vụ đồng thời đánh giá suy luận sâu và hội thoại thời gian thực.[^ch6-17]
+
+[^ch6-17]: Pine AI. “The Most Natural Human-Computer Interface Is Your Voice.” 2026-06-23 (cập nhật 2026-08-06). https://www.19pine.ai/blog/pine-ai-the-most-natural-human-computer-interface-is-your-voice
+
+Cần làm rõ rằng cụm từ "mô hình end-to-end" thường được dùng theo hai nghĩa. Nghĩa thứ nhất là **đường âm thanh end-to-end** đã nói ở phần trước: mô hình nhận âm thanh và trực tiếp tạo âm thanh, thay vì nối nhiều mô hình qua văn bản rời rạc. Omni và Interaction Model đều là end-to-end theo nghĩa này, nhưng Omni thường vẫn vận hành theo lượt, còn Interaction Model có thể vừa nghe vừa nói; kiến trúc của chúng rất khác nhau. Nghĩa thứ hai là **kiến trúc nhận thức end-to-end** được nói ở phần này: tương tác thời gian thực và suy luận sâu cùng chia sẻ trạng thái và được huấn luyện chung trong một mô hình, hoặc được tách giữa mô hình nhanh ở tiền cảnh và mô hình chậm ở nền. Hai trục này độc lập. Một hệ thống có thể có đường âm thanh end-to-end trong khi vẫn tách nhanh/chậm ở kiến trúc nhận thức; việc Thinking Machines Lab giao nhiệm vụ phức tạp cho mô hình suy luận nền là một ví dụ của tổ hợp này.
 
 ### Tổng hợp giọng nói giống con người hơn
 
