@@ -312,14 +312,12 @@ Az OpenAI GPT-Live bemutatója három paradigmát különböztet meg: kaszkád, 
 | Paradigma | Szerkezet | Előny | Korlát |
 | --- | --- | --- | --- |
 | Kaszkád | VAD → ASR → LLM → TTS | Átlátható, cserélhető, hibakereshető modulok | Késleltetés halmozódik, a paralingvisztikai jel elveszik |
-| Végponttól végpontig Omni | Egy modell hallgat, gondolkodik és beszél | Kisebb késleltetés, jobb hangszín- és környezethang-megőrzés | Továbbra is köralapú, drága a tanítás és a hibakeresés |
-| Teljes duplex | Folyamatosan hallgat, beszél és dönt | Átfedő beszéd és természetes megszakítás | Bonyolultabb tanítás, vezérlés és értékelés |
+| Végponttól végpontig Omni | Natív hangbemenet és -kimenet, köralapú interakció | Kisebb késleltetés, jobb hangszín- és környezethang-megőrzés | Továbbra is köralapú, drága a tanítás és a hibakeresés |
+| Teljes duplex | Natív hangbemenet és -kimenet, folyamatos hallgatás, beszéd és döntés | Átfedő beszéd és természetes megszakítás | Bonyolultabb tanítás, vezérlés és értékelés |
 
 A közös cél az „egymás után beszélünk” feltételezés és a VAD szólójoggal kapcsolatos találgatásának meghaladása. A kaszkád és az Omni még körökre bont; a teljes duplexben a modell folyamatosan dönti el, ki beszél.
 
 [^ch6-12]: OpenAI. *Introducing GPT-Live.* 2026-07-08. https://openai.com/index/introducing-gpt-live/. A háromosztatú besorolás a ChatGPT Voice három generációjának összefoglalásából származik; az Omni a „turn-based voice models” kategóriának felel meg.
-
-Amikor egy kaszkádrendszer soros végrehajtásról streamingre vált, nem az a legfontosabb, hogy minden függvény `async` legyen, hanem hogy **az inkrementális eredmények érvénytelenné válhassanak és megszakíthatók legyenek**.
 
 ### Paradigma 1 · Kaszkádolt csővezeték
 
@@ -378,13 +376,7 @@ Az Omni a „felhasználó beszél” és a „modell beszél” időszakára os
 
 ### Kognitív időzítés: valós idejű interakció és mély gondolkodás
 
-Az előtérmodell addig válaszol, amíg a felhasználó jelen van; a háttérmodell tovább gondolkodhat. A három terv kompromisszum:
-
-| Terv | Előtér | Háttér | Kockázat |
-| --- | --- | --- | --- |
-| Gyors válasz, lassú javítás | Azonnali válasz | Újragondolás és kiegészítés | Ellentmondás |
-| Gyors interakció, lassú tanács | Beszélgetés és megfogalmazás | Tanács vagy eszközeredmény | Korlátozott interfész |
-| Egyesített gondolkodás és kifejezés | Gondolkodás közben beszél | Közös állapot | Magas újratanítási költség |
+Az interakció minősége és az intelligencia felső határa külön dimenzió. Az előtérmodell addig válaszol, amíg a felhasználó jelen van; a háttérmodell tovább gondolkodhat. A következő három terv kompromisszum, nem lineáris fejlődés. Az első kettő kaszkádra vagy Omni modellre is ráépíthető; a harmadik a mély gondolkodást és a valós idejű kifejezést ugyanazon modellen belül egyesíti.
 
 #### 1. terv: gyors gondolkodás a kitöltéshez, lassú gondolkodás a válaszhoz
 
@@ -398,16 +390,23 @@ A gyors gondolkodás néhány száz ezredmásodperc alatt képes kitöltő vála
 
 A második tervben a háttérmodell állapotsávon vagy dedikált interfészen keresztül ad javaslatokat az előtérmodellnek, az előtér pedig továbbra is tartja a szót, és eldönti, hogyan fogalmaz. Ez stabilabb az elsőnél, de a kommunikáció továbbra is közvetett: az előtér félreértheti a javaslatot, és nem látja a háttér köztes gondolkodását; amíg a háttér nem végez, a felhasználó rákérdezésére az előtér csak a saját képességeire támaszkodhat. Természetesen tud „eredményre várni", de valódi gondolkodás beszéd közben nem valósul meg.
 
-#### 3. terv: a gondolkodás és a kifejezés végponttól végpontig tartó egyesítése (a Step-Audio R1 példáján)
+#### 3. terv: a gondolkodás és a kifejezés végponttól végpontig tartó egyesítése
 
 A harmadik terv a gondolkodási képességet közvetlenül a végponttól végpontig tartó hangmodellbe építi be. A Step-Audio R1 két egymást kiegészítő mechanizmussal két problémát old meg: a **modalitáshoz horgonyzott gondolkodásdesztilláció (MGRD)** akusztikai jellemzők alapján gondolkodtatja a modellt, az **MPS kétagyú architektúra** pedig párhuzamosítja a fogalmazást és a kifejezést. Az előbbi a „helyes gondolkodást" biztosítja, az utóbbi az „időben történő megszólalást" oldja meg.
 
-Ideális esetben a modellnek a hangmagasságból, a ritmusból és a hanglejtésből kellene megítélnie az érzelmet, nem pusztán az átiratból. Az úgynevezett „szöveggel helyettesített gondolkodás" azt jelenti, hogy a modell a dallam és az akusztikai jellemzők elemzése helyett a dalszöveg negatív szavaira támaszkodik. Az MGRD kiszűri azokat a gondolatmeneteket, amelyek valóban akusztikai jellemzőkre hivatkoznak, ezekkel az adatokkal tanítja a modellt, és megerősítéses tanulással akadályozza meg, hogy a modell átugorja a gondolkodást és egyből tippeljen.
+Ideális esetben a modellnek a hangmagasságból, a ritmusból és a hanglejtésből kellene megítélnie az érzelmet, nem pusztán az átiratból. Az MGRD kiszűri azokat a gondolatmeneteket, amelyek valóban akusztikai jellemzőkre hivatkoznak, ezekkel az adatokkal tanítja a modellt, és megerősítéses tanulással akadályozza meg, hogy a modell átugorja a gondolkodást és egyből tippeljen. Az MPS-ben a fogalmazó agy folyamatosan gondolatfoszlányokat termel, a kifejező agy pedig, amint megkap egy foszlányt, a már elhangzott válasszal együtt azonnal beszédet generál. A kettő futószalagszerűen párhuzamosan működik, így nem kell megvárni a teljes gondolatmenet végét ahhoz, hogy a felhasználó meghallja az első mondatot.
 
-Az MPS-ben a fogalmazó agy folyamatosan gondolatfoszlányokat termel, a kifejező agy pedig, amint megkap egy foszlányt, a már elhangzott válasszal együtt azonnal beszédet generál. A kettő futószalagszerűen párhuzamosan működik, így nem kell megvárni a teljes gondolatmenet végét ahhoz, hogy a felhasználó meghallja az első mondatot.
+#### A gyors/lassú gondolkodás szétválasztása és a végponttól végpontig tartó gondolkodás közötti kompromisszum
 
+Az egyesített modell valósítja meg a legközvetlenebbül a „gondolkodás beszéd közben" elvét, ára viszont az, hogy a gondolkodást és a valós idejű kifejezést együtt kell újratanítani; a szétcsatolt megoldásban könnyebb kicserélni a háttéragyat. A kettő kompromisszum, nem egyszerű helyettesítője egymásnak.
 
-Az egyesített modell valósítja meg a legszorosabban a „gondolkodás beszéd közben" elvét, ára viszont az, hogy a gondolkodást és a valós idejű kifejezést együtt kell újratanítani; a szétcsatolt út esetén könnyebb kicserélni a háttéragyat, az egyesített út pedig inkább a végletekig természetes hatásra törekvő, célzott forgatókönyvekhez való. A kettő kompromisszum, nem pedig egyszerű helyettesítője egymásnak.
+A legfejlettebb következtető modellek gyors fejlődése közepette a gyors és lassú gondolkodás szétválasztása fontos mérnöki előnyt kínál: közvetlenül kihasználhatja a lassú modellek minden új generációjának javulását. A gyors előtérmodellnek csak alacsony késleltetéssel kell hallgatnia, válaszolnia és fenntartania a beszélgetést; a lassú háttérmodell végzi a következtetést, a tervezést és az eszközhívásokat. Amikor megjelenik egy erősebb következtető modell, elég a háttérmodellt cserélni, nem kell az egész valós idejű hangrendszert újratanítani. Az egyesített megoldás ugyanahhoz a tanítási ciklushoz köti a következtetést és az interakciót, ezért minden frissítésnél újra egyensúlyba kell hozni az intelligenciát, a válaszkésleltetést és a kifejezés természetességét. A gyors/lassú szétválasztás tehát nem pusztán a késleltetés miatti kompromisszum, hanem moduláris döntés, amelyben az interakciós képesség és az intelligencia felső határa külön fejlődhet.
+
+Ez a szétválasztás nem feltétlenül rontja a feladatteljesítményt sem. 2026 augusztusában a gyors/lassú architektúrát használó Pine AI hangügynöke az első helyen állt a τ³-Voice Leaderboardon, megelőzve többek között a Grok Voice és a GPT-Realtime-2 rendszereket. Ez az eredmény legalább azt mutatja, hogy a mély következtetést és a valós idejű beszélgetést egyszerre mérő feladatokban a szétcsatolt architektúra nem eleve gyengébb a végponttól végpontig tartó modelleknél.[^ch6-17]
+
+[^ch6-17]: Pine AI. “The Most Natural Human-Computer Interface Is Your Voice.” 2026-06-23 (frissítve: 2026-08-06). https://www.19pine.ai/blog/pine-ai-the-most-natural-human-computer-interface-is-your-voice
+
+Pontosítani kell, hogy a „végponttól végpontig tartó modell" kifejezést gyakran két értelemben használják. Az első az előző szakaszban tárgyalt **végponttól végpontig tartó hangút**: a modell közvetlenül hangot fogad és hangot állít elő, nem pedig diszkrét szövegen keresztül kapcsol össze több modellt. Az Omni és az Interaction Model ebben az értelemben egyaránt végponttól végpontig tartó, de az Omni rendszerint köralapú marad, míg az Interaction Model egyszerre tud hallgatni és beszélni; architektúrájuk jelentősen eltér. A második az ebben a szakaszban tárgyalt **végponttól végpontig tartó kognitív architektúra**: a valós idejű interakció és a mély gondolkodás egyetlen modellen belül közös állapotot használva együtt tanul-e, vagy egy gyors előtérmodell és egy lassú háttérmodell között oszlik meg. A két tengely független. Egy rendszer hangútja lehet végponttól végpontig tartó úgy, hogy kognitív architektúrája megtartja a gyors/lassú szétválasztást; ilyen kombináció, amikor a Thinking Machines Lab a bonyolult feladatokat háttérben futó következtető modellre bízza.
 
 ### Emberibb beszédszintézis
 
