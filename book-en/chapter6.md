@@ -23,9 +23,7 @@ The previous chapters expanded the **content** of these two spaces; this chapter
 
 The core proposition of this chapter compresses into one sentence: **turn-taking is an assumption left behind by training, not a property of the environment.**
 
-A model's training corpus is almost entirely turn-based—a question followed by an answer, a tool call followed by a tool result, one speaker finishing before the other begins. So the policy a model learns assumes the world will wait for it. The real environment does not: mail arrives while it is thinking, the user cuts in mid-sentence, the page has already changed between two screenshots, the cup is knocked over while the arm is reaching for it. **The four sections of this chapter are that assumption being relaxed, one time scale at a time.**
-
-Here is where they sit:
+A model's training corpus is almost entirely turn-based—a question followed by an answer, a tool call followed by a tool result, one speaker finishing before the other begins. So the policy a model learns assumes the world will wait for it. The real environment does not wait for the model to react: mail arrives while it is thinking, the user cuts in mid-sentence, the page has already changed between two screenshots, and the cup is knocked over while the arm is reaching for it.
 
 | Scale | Scenario | Change on the observation side | Change on the action side |
 |---|---|---|---|
@@ -367,7 +365,7 @@ A truly streaming model needs a causal or chunked encoder with incremental decod
 
 An LLM-based streaming-audio model can emit text and semantic events from continuous audio, placing recognition and part of understanding in one model. It keeps the conversation context from the beginning and can use world knowledge for brands, names, and proper nouns. Simulated chunking is still not a performance promise for a causal model.
 
-If the only goal is deciding whether the user has finished, endpointing can be built into the streaming recognizer. The model combines semantics and silence to judge whether an utterance is complete. Training labels must contain only information visible at decision time, or hindsight will produce a judgment that cannot be reproduced online[^ch6-11]. This is lighter than a complete audio-capable LLM.
+If the only goal is deciding whether the user has finished, endpointing can be built into the streaming recognizer. The model combines semantics and silence to judge whether an utterance is complete. Training labels must contain only information visible at decision time, or hindsight will produce a judgment that cannot be reproduced online. This is lighter than a complete audio-capable LLM.
 
 The model can emit acoustic-event markers as well as words:
 
@@ -377,8 +375,6 @@ The model can emit acoustic-event markers as well as words:
 
 Together with text tokens, these markers form one event stream. The Agent can detect hesitation, interruption, and environmental changes without compressing every sound into plain text.
 
-[^ch6-11]: For the diagnosis of embedding turn judgment in the recognizer and the problem of hindsight-based labels, see Bojie Li and Noah Shi. *The Trade-off Was in the Labels: Causal Supervision for Turn-Aware Streaming ASR.* 2026 (forthcoming).
-
 > **Experiment 6-4 ★: Simulate streaming voice perception with Qwen2-Audio**
 >
 > Qwen2-Audio is not itself a streaming model. This experiment simulates continuous perception with increasing audio prefixes and compares it with 600 ms VAD + Whisper.
@@ -387,11 +383,9 @@ Together with text tokens, these markers form one event stream. The Agent can de
 
 Even with streaming perception, a cascade passes listening, thinking, and speaking through discrete interfaces; emotion, intonation, and ambient sound may be lost when audio becomes plain text. Omni uses one model to listen to audio, generate a reply, and speak it, which can preserve those signals at the cost of higher training, debugging, and component-replacement costs (Figure 6-9).
 
-The end-to-end advantage is mainly latency and non-text information, not necessarily accuracy. A self-cascade first transcribes with the same model and then answers from the transcript: when text carries the task information, it may correct a perception error; when the answer depends on speech rate, emotion, or ambient sound, the text bottleneck irreversibly loses evidence. The key question is not whether there is an intermediate representation, but what information it carries[^ch6-13].
+The end-to-end advantage is mainly latency and non-text information, not necessarily accuracy. A self-cascade first transcribes with the same model and then answers from the transcript: when text carries the task information, it may correct a perception error; when the answer depends on speech rate, emotion, or ambient sound, the text bottleneck irreversibly loses evidence. The key question is not whether there is an intermediate representation, but what information it carries.
 
 Omni still assumes turn-taking and generally uses VAD or semantic endpointing to assign the floor. A pause in a spoken sequence of numbers can still be mistaken for the end; streaming perception improves the judgment but does not remove turns.
-
-[^ch6-13]: For a complete cross-modal measurement of when cascade and end-to-end accuracy advantages reverse, and how task nature predicts the direction, see Li, Bojie and Noah Shi. *The Cascade Gap: When and Why Self-Cascades Help Multimodal Agents.* 2026 (forthcoming).
 
 ![Figure 6-9: End-to-end omnimodal speech-model comparison](images/fig6-9.svg)
 
@@ -454,8 +448,6 @@ The main LLM can emit control markers in addition to text, such as **THINKING**,
 > **Experiment 6-6 ★★: Control token-driven TTS with Fish Audio**
 >
 > Use Fish Audio S1 to build a multi-reference voice library and compare three configurations: no control markers, one reference clip, and multiple reference clips. The execution layer selects matching emotion, speaking rate, and style from the markers.
->
-> The multi-reference configuration scored highest in three position-balanced blind listening passes (human-customer-service likeness 4.67/5), but the complete planned ordering was not reproduced because the no-marker arm outscored the single-reference arm. This result suggests that expressive control helps, but a small listening study is not a general speech-quality conclusion. The complete 24-reference library, A/B/C media, and acceptance record are in [chapter6/controllable-tts](../chapter6/controllable-tts/).
 
 ## Computer Use: GUI Automation Agents
 
@@ -490,9 +482,9 @@ Anthropic's reference implementation divides a complete interaction capability i
 
 > **Experiment 6-7 ★: Running Computer Use (Anthropic Reference Path or Open-Model Path)**
 >
-> Path A uses the Anthropic Computer Use Demo. Its container packages a complete Ubuntu desktop environment, including a browser, terminal, and other common tools. The frontend receives a task, while the backend sends the instructions and screenshots to Claude and then executes the mouse, keyboard, terminal, or editing actions returned by the model. This path is intended for understanding the native `computer` tool protocol; it does not require every reader to have access to the Anthropic API.
+> Path A uses the Anthropic Computer Use Demo. Its container packages a complete Ubuntu desktop environment, including a browser, terminal, and other common tools. The frontend receives a task, while the backend sends the instructions and screenshots to Claude and then executes the mouse, keyboard, terminal, or editing actions returned by the model.
 >
-> Path B uses the example code in [`chapter6/computer-use-open-model`](../chapter6/computer-use-open-model/). By default, it drives browser-use with the open-weight Qwen3-VL 32B Instruct model through the hosted OpenRouter API, or by pointing `OPEN_MODEL_BASE_URL` to self-hosted vLLM/SGLang or another compatible endpoint.
+> Path B uses the example code in [`chapter6/computer-use-open-model`](../chapter6/computer-use-open-model/). By default, it drives browser-use with the open-weight Qwen3-VL 32B Instruct model through the hosted OpenRouter API, or through self-hosted vLLM/SGLang and similar systems.
 
 ### Visual Grounding
 

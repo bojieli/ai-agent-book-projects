@@ -23,9 +23,7 @@
 
 இந்த அத்தியாயத்தின் மைய முன்மொழிவை ஒரே வாக்கியமாகச் சுருக்கலாம்: **சுற்று முறை என்பது பயிற்சி விட்டுச்சென்ற அனுமானம், சூழலின் இயல்பு அல்ல.**
 
-மாதிரியின் பயிற்சித் தரவு கிட்டத்தட்ட முழுவதுமே சுற்று முறையிலானது — கேள்விக்குப் பின் பதில், கருவி அழைப்புக்குப் பின் கருவி முடிவு, ஒருவர் பேசி முடித்த பின்னரே மற்றவர் வாய் திறப்பது. எனவே மாதிரி கற்ற கொள்கை, உலகம் தனக்காகக் காத்திருக்கும் என்று முன்வைக்கிறது. ஆனால் நிஜச் சூழல் காத்திருப்பதில்லை: அது யோசிக்கும்போது மின்னஞ்சல் வருகிறது, அது பாதி சொல்லும்போது பயனர் இடைமறிக்கிறார், இரு திரைப்பிடிப்புகளுக்கு இடையில் பக்கம் மாறிவிடுகிறது, இயந்திரக் கை நீளும் வழியில் கோப்பை கவிழ்கிறது. **இந்த அத்தியாயத்தின் நான்கு பகுதிகளும், அந்த அனுமானம் நான்கு வெவ்வேறு கால அளவுகளில் ஒவ்வொன்றாகத் தளர்த்தப்படும் செயல்முறையே.**
-
-முதலில் அவற்றின் இடத்தைப் பார்ப்போம்:
+ஒரு மாதிரியின் பயிற்சிக் களஞ்சியம் கிட்டத்தட்ட முழுவதும் சுற்று-முறையிலானது — ஒரு கேள்விக்குப் பின் ஒரு பதில், ஒரு tool call-க்குப் பின் ஒரு tool result, ஒருவர் தொடங்குவதற்கு முன் மற்றவர் முடிப்பது. ஆகவே, மாதிரி கற்றுக்கொள்ளும் கொள்கை, உலகம் அதற்காகக் காத்திருக்கும் என்று கருதுகிறது. நிஜச் சூழல் மாதிரி எதிர்வினை தருவதற்காகக் காத்திருக்காது: அது யோசித்துக்கொண்டிருக்கும்போது அஞ்சல் வந்து சேர்கிறது, பயனர் நடுவாக்கியிலேயே குறுக்கிடுகிறார், இரண்டு screenshots-களுக்கு இடையில் பக்கம் ஏற்கெனவே மாறிவிட்டது, கை அதைப் பிடிக்க நீளும் வேளையில் கோப்பை கவிழ்ந்துவிடுகிறது.
 
 | அளவு | சூழல் | அவதானிப்புப் பக்க மாற்றம் | செயல் பக்க மாற்றம் |
 |---|---|---|---|
@@ -353,9 +351,7 @@ Streaming ASR பயனர் பேசும்போதே provisional transcr
 
 Text tokens உடன் \`speak_start/end\`, \`interrupt\` (speech boundary மற்றும் interruption), \`emotion\` (உணர்ச்சி, தயக்கம்), \`laugh\`, \`sigh\`, \`noise\` (paralinguistic மற்றும் சூழல் ஒலி) போன்ற markers-ஐ வெளியிடலாம். இவ்வாறு ஒவ்வொரு ஒலியையும் plain text-ஆகச் சுருக்க வேண்டியதில்லை.
 
-பயனர் பேசி முடித்தாரா என்பதை மட்டும் தீர்மானிக்க வேண்டுமானால், turn-end தீர்ப்பை streaming recognizer-இலேயே உட்பொதிக்கலாம். பயிற்சி label-கள் முடிவு எடுக்கப்படும் தருணத்தில் தெரியும் தகவலை மட்டுமே பயன்படுத்த வேண்டும்; இல்லையெனில் hindsight, online-இல் மீண்டும் உருவாக்க முடியாத தீர்ப்பை உருவாக்கும்[^ch6-11]. இது முழுமையான audio LLM-ஐ விட இலகுவான வழி.
-
-[^ch6-11]: Turn judgment-ஐ recognizer-ல் உட்பொதிப்பது மற்றும் hindsight labels பற்றிய சிக்கலுக்கான பகுப்பாய்வுக்கு Bojie Li மற்றும் Noah Shi, *The Trade-off Was in the Labels: Causal Supervision for Turn-Aware Streaming ASR*, 2026 (வெளியீடு நிலுவையில்) பார்க்கவும்.
+பயனர் பேசி முடித்தாரா என்பதை மட்டும் தீர்மானிக்க வேண்டுமானால், turn-end தீர்ப்பை streaming recognizer-இலேயே உட்பொதிக்கலாம். பயிற்சி label-கள் முடிவு எடுக்கப்படும் தருணத்தில் தெரியும் தகவலை மட்டுமே பயன்படுத்த வேண்டும்; இல்லையெனில் hindsight, online-இல் மீண்டும் உருவாக்க முடியாத தீர்ப்பை உருவாக்கும். இது முழுமையான audio LLM-ஐ விட இலகுவான வழி.
 
 > **சோதனை 6-4 ★: Qwen2-Audio உடன் streaming குரல் உணர்வை உருவகப்படுத்துதல்**
 >
@@ -363,11 +359,9 @@ Text tokens உடன் \`speak_start/end\`, \`interrupt\` (speech boundary ம
 
 ### வடிவம் 2 · End-to-end omnimodal models (Omni)
 
-Streaming perception இருந்தாலும் cascade listening, thinking, speaking ஆகியவற்றை discrete interfaces வழியாக அனுப்புகிறது; audio plain text ஆகும் போது emotion, intonation, ambient sound இழக்கப்படலாம். Omni ஒரே மாதிரியில் audio-வை கேட்டு, பதிலை உருவாக்கி, பேசுகிறது; பயிற்சி, debugging, component replacement செலவு அதிகரித்தாலும் latency மற்றும் non-text signal-களைப் பாதுகாக்கிறது (படம் 6-9). Text போதுமான பணிகளில் self-cascade transcription பிழையைச் சரிசெய்யலாம்; பதில் speaking rate, emotion அல்லது ambient sound-ஐச் சார்ந்தால் text bottleneck சான்றை நிரந்தரமாக இழக்கிறது[^ch6-13].
+Streaming perception இருந்தாலும் cascade listening, thinking, speaking ஆகியவற்றை discrete interfaces வழியாக அனுப்புகிறது; audio plain text ஆகும் போது emotion, intonation, ambient sound இழக்கப்படலாம். Omni ஒரே மாதிரியில் audio-வை கேட்டு, பதிலை உருவாக்கி, பேசுகிறது; பயிற்சி, debugging, component replacement செலவு அதிகரித்தாலும் latency மற்றும் non-text signal-களைப் பாதுகாக்கிறது (படம் 6-9). Text போதுமான பணிகளில் self-cascade transcription பிழையைச் சரிசெய்யலாம்; பதில் speaking rate, emotion அல்லது ambient sound-ஐச் சார்ந்தால் text bottleneck சான்றை நிரந்தரமாக இழக்கிறது.
 
 Omni இன்னும் turn-taking-ஐ எதிர்பார்க்கிறது; VAD அல்லது semantic endpointing மூலம் floor-ஐத் தீர்மானிக்கிறது. எண்களின் தொடரில் வரும் pause முடிவாகப் புரிந்துகொள்ளப்படலாம்; streaming perception தீர்ப்பை மேம்படுத்தும், turns-ஐ நீக்காது.
-
-[^ch6-13]: Cascade மற்றும் end-to-end accuracy advantage எப்போது மாறுகிறது என்பதற்கான முழு அளவீட்டுக்கு Li, Bojie மற்றும் Noah Shi, *The Cascade Gap: When and Why Self-Cascades Help Multimodal Agents*, 2026 (வெளியீடு நிலுவையில்) பார்க்கவும்.
 
 ![படம் 6-9: end-to-end omnimodal speech-model ஒப்பீடு](images/fig6-9.svg)
 
@@ -420,11 +414,15 @@ MPS-இல் கருத்துருவாக்க மூளை தொட�
 
 ### மேலும் மனிதனைப் போன்ற பேச்சுத் தொகுப்பு
 
-இடைவெளி இல்லாத அளவுக்கு smooth-ஆக இருக்கும் பாரம்பரிய TTS தன் இயந்திர அடையாளத்தை வெளிப்படுத்தும். முதன்மை LLM text உடன் \`THINKING\`, \`EMO:happy\`, \`SPEED:0.8x\` போன்ற control markers-ஐ வெளியிடலாம்; TTS அவற்றை pause, prosody, speaking rate, laughter, sigh ஆகிய ஒலிகளாக மாற்றும். Markers-ஐப் புரியும் TTS-ஐப் பயிற்றுவிக்கலாம் அல்லது பல reference clips மூலம் voice cloning செய்யலாம்.
+பாரம்பரிய TTS மிகையளவு சீராகவும் மிகக் குறைவாக இடைநிறுத்தியும் இருப்பதன் மூலம் அதன் இயந்திர அடையாளத்தை வெளிப்படுத்தலாம். இடைவெளிகள், filler words, மற்றும் அவ்வப்போது நிகழும் மறுபடியும் கூறுதல் மனித பேச்சில் உறுதிப்படாத தன்மையையும் சிந்தனையையும் சுட்டுகின்றன.
+
+முதன்மை LLM உரையுடன் கூடுதலாக **THINKING**, **EMO:happy**, **SPEED:0.8x** போன்ற control markers-ஐ வெளியிடலாம்; TTS அவற்றை pauses, prosody, பேசும் வேகம், சிரிப்பு, மூச்சுவிடுதல், மற்றும் பிற nonverbal audio-ஆக மாற்றும். செயலாக்கம் control markers-ஐப் புரிந்துகொள்ளப் பயிற்றுவிக்கப்பட்ட TTS ஆக இருக்கலாம், அல்லது வேறு உணர்ச்சிகள் மற்றும் பாணிகளுக்கான reference clip-களைப் பயன்படுத்தி voice cloning ஆக இருக்கலாம்.
 
 > **சோதனை 6-6 ★★: Fish Audio மூலம் control-token இயக்கும் TTS**
 >
-> Fish Audio S1-ஐப் பயன்படுத்தி பல-reference voice library உருவாக்கி மூன்று அமைப்புகளை ஒப்பிடுக: control markers இல்லாமல், ஒரு reference clip உடன், பல reference clips உடன். Execution layer markers-க்கு ஏற்ற emotion, speaking rate, style-ஐத் தேர்ந்தெடுக்கும். சமநிலை செய்யப்பட்ட blind listening மூன்று சுற்றுகளில் பல-reference அமைப்பு உயர்ந்த மதிப்பெண் பெற்றது (மனித customer-service likeness 4.67/5), ஆனால் எதிர்பார்த்த முழு வரிசை மீளவில்லை: marker இல்லாத arm single-reference arm-ஐ விட உயர்ந்தது. சிறிய listening study என்பதால் expressive control உதவுகிறது எனச் சுட்டுகிறது; பொதுவான speech-quality முடிவு அல்ல. 24-reference library, A/B/C media மற்றும் acceptance record: [chapter6/controllable-tts](../chapter6/controllable-tts/).
+> Fish Audio S1-ஐப் பயன்படுத்தி multi-reference voice library ஒன்றை உருவாக்கி, மூன்று configurations-ஐ ஒப்பிடுக: control markers இல்லாமல், ஒரு reference clip, மற்றும் பல reference clips. execution layer marker-களுடன் பொருந்தும் emotion, speaking rate, மற்றும் style-ஐத் தேர்ந்தெடுக்கிறது.
+
+
 ## கணினி பயன்பாடு: GUI ஆட்டோமேஷன் ஏஜெண்ட்
 
 இந்த அத்தியாயம், அடுத்தடுத்த இரண்டு காட்சிகளை விட, குரலுக்கு கணிசமாக அதிக இடத்தை ஒதுக்குகிறது என்பதை நீங்கள் இப்போது கவனித்திருக்கலாம்—இது வேண்டுமென்றே செய்யப்பட்டது. நிகழ்நேர மல்டிமோடாலிட்டியின் பரிணாமப் பாதையில், குரல் மிக நீண்ட தூரம் பயணித்துள்ளது, சிறந்த குறிப்புச் சட்டகமாகவும் அமைகிறது: "தொடர் பைப்லைன் தாமதம் மிக அதிகம்" என்ற பிரச்சனையில் இருந்து தொடங்கி, எண்ட்-டு-எண்ட், ஃபுல்-டூப்ளக்ஸ், பேசும்போதே சிந்தித்தல் போன்ற தொடர்ச்சியான தீர்வுகள் வழியாக, இன்றைய ஒப்பீட்டளவில் முதிர்ந்த இறுதி நிலை வரை, பிரச்சனை → தீர்வு → இறுதி நிலை என்ற முழு பயணமும் கடக்கப்பட்டுள்ளது. எனவே, அதை நாம் முழுமையாக விளக்குகிறோம். அடுத்தடுத்த கணினி பயன்பாடு மற்றும் ரோபாட்டிக்ஸ் காட்சிகளை இந்த குரல் பாதையின் அடிப்படையில் பார்க்கலாம்—ஒவ்வொன்றும் இந்த பரிணாம வரிசையில் எங்கு நிற்கிறது, எங்கு சிக்கிக் கொண்டுள்ளது என்பதைப் பார்க்கலாம்.
@@ -458,9 +456,9 @@ Anthropic-ன் reference implementation முழுமையான தொட�
 
 > **சோதனை 6-7 ★: Computer Use-ஐ இயக்குதல் (Anthropic reference path அல்லது open-model path)**
 >
-> Path A, Anthropic Computer Use Demo-வைப் பயன்படுத்துகிறது. அதன் container, browser, terminal மற்றும் பிற பொதுவான கருவிகளுடன் முழுமையான Ubuntu desktop சூழலை வழங்குகிறது. Frontend பணியைப் பெறுகிறது; backend வழிமுறைகளையும் screenshots-ஐயும் Claude-க்கு அனுப்பி, மாதிரி திருப்பும் mouse, keyboard, terminal அல்லது editing செயல்களை இயக்குகிறது. இந்தப் பாதை native `computer` tool protocol-ஐப் புரிந்துகொள்வதற்கானது; ஒவ்வொரு வாசகருக்கும் Anthropic API அணுகல் இருக்க வேண்டும் என்பதில்லை.
+> Path A Anthropic Computer Use Demo-வைப் பயன்படுத்துகிறது. அதன் container முழுமையான Ubuntu desktop சூழலை, browser, terminal, மற்றும் பிற பொதுவான கருவிகளுடன் தொகுத்துக் கொண்டுள்ளது. frontend ஒரு பணியைப் பெறுகிறது; backend வழிமுறைகளையும் screenshots-களையும் Claude-க்கு அனுப்பி, பின்னர் மாதிரி திருப்பும் mouse, keyboard, terminal, அல்லது editing செயல்களை இயக்குகிறது.
 >
-> பாதை B [`chapter6/computer-use-open-model`](../chapter6/computer-use-open-model/) எடுத்துக்காட்டுக் குறியீட்டைப் பயன்படுத்துகிறது. இயல்பாக open-weight Qwen3-VL 32B Instruct மூலம் browser-use-ஐ இயக்குகிறது; OpenRouter hosted API-ஐப் பயன்படுத்தலாம் அல்லது `OPEN_MODEL_BASE_URL`-ஐ self-hosted vLLM/SGLang அல்லது வேறு இணக்கமான endpoint-க்கு அமைக்கலாம்.
+> Path B [`chapter6/computer-use-open-model`](../chapter6/computer-use-open-model/) இல் உள்ள எடுத்துக்காட்டுக் குறியீட்டை பயன்படுத்துகிறது. இயல்பாக, இது hosted OpenRouter API மூலம், அல்லது self-hosted vLLM/SGLang மற்றும் இதற்குச் சமமான அமைப்புகள் மூலம், open-weight Qwen3-VL 32B Instruct model-ஐக் கொண்டு browser-use-ஐ இயக்குகிறது.
 
 ### காட்சி அடிப்படை
 

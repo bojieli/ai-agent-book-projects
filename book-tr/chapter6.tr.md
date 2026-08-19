@@ -23,9 +23,7 @@ Gözlem uzayı ile eylem uzayını açtığımızda, her birinin genişletilebil
 
 Bu bölümün çekirdek savı tek cümleye sığdırılabilir: **sıralı tur, eğitimin geride bıraktığı bir varsayımdır; ortamın bir özelliği değil.**
 
-Bir modelin eğitim külliyatı neredeyse tümüyle sıralı turludur: soruyu yanıt izler, araç çağrısını araç sonucu izler, biri sözünü bitirmeden diğeri ağzını açmaz. Bu yüzden modelin öğrendiği politika, dünyanın onu bekleyeceğini varsayar. Gerçek ortam ise beklemez: o düşünürken e-posta gelir, cümlesinin ortasında kullanıcı araya girer, iki ekran görüntüsü arasında sayfa çoktan değişmiştir, robot kolu uzanırken bardak devrilir. **Bu bölümün dört kısmı, o varsayımın dört farklı zaman ölçeğinde tek tek gevşetilmesidir.**
-
-Önce konumlarına bakalım:
+Bir modelin eğitim külliyatı neredeyse bütünüyle tur temellidir—bir soru ardından bir yanıt, bir araç çağrısı ardından bir araç sonucu, biri başlamadan diğeri bitmiş olur. Dolayısıyla modelin öğrendiği politika, dünyanın onu bekleyeceğini varsayar. Gerçek ortam ise modelin tepki vermesini beklemez: o düşünürken posta gelir, kullanıcı cümlesinin ortasında araya girer, sayfa iki ekran görüntüsü arasında çoktan değişmiştir ve kol ona uzanırken bardak devrilir.
 
 | Ölçek | Senaryo | Gözlem tarafındaki değişim | Eylem tarafındaki değişim |
 |---|---|---|---|
@@ -357,9 +355,7 @@ Sıradan streaming, VAD'nin sessizlik beklemesini de ortadan kaldırmaz. VAD + A
 
 Metin belirteçlerine ek olarak \`speak_start/end\`, \`interrupt\`, \`emotion\`, \`laugh\`, \`sigh\` ve \`noise\` işaretleri konuşma sınırlarını, kesme niyetini, duyguyu, tereddüdü ve çevresel sesi taşıyabilir. Böylece her akustik olay düz metne sıkıştırılmaz.
 
-Amaç yalnızca kullanıcının konuşmayı bitirip bitirmediğine karar vermekse, sıra sonu kararı doğrudan akışlı tanıyıcıya yerleştirilebilir. Eğitim etiketleri yalnızca karar anında görülebilen bilgileri kullanmalıdır; aksi hâlde sonradan edinilen bilgi, çevrimiçi ortamda yeniden üretilemeyecek bir karar doğurur[^ch6-11]. Bu yol, eksiksiz bir ses LLM'sinden daha hafiftir.
-
-[^ch6-11]: Tur kararını tanıyıcıya gömme ve geleceğe bakan etiketler sorununa ilişkin teşhis için bkz. Bojie Li ve Noah Shi, *The Trade-off Was in the Labels: Causal Supervision for Turn-Aware Streaming ASR*, 2026 (yayına hazırlanıyor).
+Amaç yalnızca kullanıcının konuşmayı bitirip bitirmediğine karar vermekse, sıra sonu kararı doğrudan akışlı tanıyıcıya yerleştirilebilir. Eğitim etiketleri yalnızca karar anında görülebilen bilgileri kullanmalıdır; aksi hâlde sonradan edinilen bilgi, çevrimiçi ortamda yeniden üretilemeyecek bir karar doğurur. Bu yol, eksiksiz bir ses LLM'sinden daha hafiftir.
 
 > **Deney 6-4 ★: Qwen2-Audio ile akışlı konuşma algısını simüle etmek**
 >
@@ -367,11 +363,9 @@ Amaç yalnızca kullanıcının konuşmayı bitirip bitirmediğine karar vermeks
 
 ### Paradigma 2 · Uçtan uca omnimodal modeller (Omni)
 
-Streaming algı olsa bile kaskad dinleme, düşünme ve konuşmayı ayrık arayüzlerden geçirir; ses düz metne dönüştüğünde duygu, tonlama ve ortam sesi kaybolabilir. Omni bunları tek modelde yapar; eğitim, hata ayıklama ve bileşen değiştirme maliyeti daha yüksek olsa da gecikmeyi azaltır ve metin dışı sinyalleri korur (Şekil 6-9). Metnin görevi taşıdığı durumlarda öz-kaskad bir algılama hatasını düzeltebilir; yanıt konuşma hızına, duyguya veya ortama bağlıysa metin darboğazı kanıtı geri döndürülemez biçimde siler[^ch6-13].
+Streaming algı olsa bile kaskad dinleme, düşünme ve konuşmayı ayrık arayüzlerden geçirir; ses düz metne dönüştüğünde duygu, tonlama ve ortam sesi kaybolabilir. Omni bunları tek modelde yapar; eğitim, hata ayıklama ve bileşen değiştirme maliyeti daha yüksek olsa da gecikmeyi azaltır ve metin dışı sinyalleri korur (Şekil 6-9). Metnin görevi taşıdığı durumlarda öz-kaskad bir algılama hatasını düzeltebilir; yanıt konuşma hızına, duyguya veya ortama bağlıysa metin darboğazı kanıtı geri döndürülemez biçimde siler.
 
 Omni hâlâ sıra almayı varsayar ve genellikle VAD ya da anlamsal endpointing kullanır. Sayı dizisindeki kısa bir duraklama konuşmanın sonu sanılabilir; akışlı algı kararı iyileştirir ama turları kaldırmaz.
-
-[^ch6-13]: Kaskad ile uçtan uca doğruluk avantajının ne zaman tersine döndüğünü ölçen çalışma için bkz. Li, Bojie ve Noah Shi, *The Cascade Gap: When and Why Self-Cascades Help Multimodal Agents*, 2026 (yayına hazırlanıyor).
 
 ![Şekil 6-9: Uçtan uca omnimodal konuşma modeli karşılaştırması](images/fig6-9.svg)
 
@@ -424,11 +418,15 @@ Birleşik model "konuşurken düşünmeyi" en sıkı biçimde gerçekleştirir; 
 
 ### Daha insana benzeyen konuşma sentezi
 
-Geleneksel TTS'nin aşırı pürüzsüz olması ve az duraklaması makine kimliğini ele verir. Ana LLM metne \`THINKING\`, \`EMO:happy\` ve \`SPEED:0.8x\` gibi kontrol etiketleri ekleyebilir; TTS bunları duraklama, prozodi, hız, kahkaha ve iç çekmeye dönüştürür. Etiketleri anlayan bir TTS eğitilebilir veya farklı referans klipleriyle ses klonlama kullanılabilir.
+Geleneksel TTS, fazla pürüzsüz davranıp çok az duraklayarak makine kimliğini açığa vurabilir. Duraklamalar, dolgu sözcükleri ve ara sıra yinelenme, insan konuşmasında tereddüt ve düşünceyi işaret eder.
 
-> **Deney 6-6 ★★: Fish Audio ile kontrol belirteçli TTS**
+Ana LLM, metne ek olarak **THINKING**, **EMO:happy** ve **SPEED:0.8x** gibi kontrol belirteçleri üretebilir; TTS bunları duraklamalara, prozodiye, konuşma hızına, kahkahaya, iç çekişe ve diğer sözsüz seslere eşler. Uygulama, kontrol belirteçlerini anlayacak şekilde eğitilmiş bir TTS ya da farklı duygular ve stiller için referans kliplerle ses klonlama olabilir.
+
+> **Deney 6-6 ★★: Fish Audio ile kontrol belirteç güdümlü TTS**
 >
-> Fish Audio S1 kullanarak çok referanslı bir ses kütüphanesi oluşturun ve üç ayarı karşılaştırın: belirteçsiz, tek referanslı ve çok referanslı. Yürütme katmanı etiketlerden uygun duygu, konuşma hızı ve stili seçer. Dengeli üç kör dinlemede çok referanslı ayar en yüksek puanı aldı (insan müşteri hizmetleri benzerliği 4,67/5); ancak belirteçsiz kol tek referanslı kolu geçtiği için planlanan sıralama bütünüyle tekrarlanmadı. Küçük dinleme çalışması ifade kontrolünün yararlı olabileceğini gösterir, genel konuşma kalitesi sonucu değildir. 24 referanslı kütüphane, A/B/C medyası ve kabul kaydı: [chapter6/controllable-tts](../chapter6/controllable-tts/).
+> Fish Audio S1 kullanarak çok referanslı bir ses kütüphanesi oluşturun ve üç yapılandırmayı karşılaştırın: kontrol belirteci yok, tek referans klip ve birden çok referans klip. Yürütme katmanı, belirteçlerden eşleşen duyguyu, konuşma hızını ve stili seçer.
+
+
 ## Computer Use: GUI Otomasyonu Agent'ları
 
 Buraya kadar okuyunca, bu bölümün sese ayırdığı yerin sonraki iki senaryodan belirgin biçimde fazla olduğu fark edilebilir — bu bilinçli bir tercihtir. Gerçek zamanlı çok modluluk çizgisinde ses, en uzun yolu almış ve referans çerçevesi olarak alınmaya en değer alandır: "seri boru hattının gecikmesi çok yüksek" sorunundan yola çıkıp uçtan uca modeller, full-duplex etkileşim ve düşünürken konuşma gibi bir dizi çözümden geçerek bugünkü görece olgunlaşmış noktaya ulaşmıştır; sorun → çözüm → son durum güzergâhının tamamı katedilmiştir. Bu yüzden onu enine boyuna anlattık. Sıradaki Computer Use ve robotik senaryolarını okurken bu güzergâhla karşılaştırın: her biri bu evrim çizgisinin neresine gelmiştir ve nerede takılı kalmıştır?
@@ -463,11 +461,11 @@ Anthropic'in referans uygulaması eksiksiz etkileşim yeteneğini üç araç tü
 
 **Dosya düzenleme aracı** (str_replace_editor): Dizi eşleştirmesi yoluyla güvenli düzenleme sağlar; görüntüleme, oluşturma, değiştirme, ekleme ve geri alma işlemlerini destekler. Dosyanın tamamının üzerine yazmaktan daha kesindir ve alakasız içeriği yanlışlıkla değiştirme olasılığı daha düşüktür.
 
-> **Deney 6-7 ★: Computer Use'ı Çalıştırmak (Anthropic Referans Yolu veya Açık Model Yolu)**
+> **Deney 6-7 ★: Computer Use'ı Çalıştırma (Anthropic Referans Yolu veya Açık Model Yolu)**
 >
-> A yolu Anthropic Computer Use Demo'yu kullanır. Konteyner, tarayıcı, terminal ve diğer yaygın araçları içeren eksiksiz bir Ubuntu masaüstü ortamı sunar. Ön uç görevi alır; arka uç talimatları ve ekran görüntülerini Claude'a gönderir, ardından modelin döndürdüğü fare, klavye, terminal veya düzenleme eylemlerini yürütür. Bu yol, yerleşik `computer` aracı protokolünü anlamaya yöneliktir; her okuyucunun Anthropic API erişimine sahip olmasını gerektirmez.
+> A Yolu Anthropic Computer Use Demo'yu kullanır. Konteyneri, tarayıcı, terminal ve diğer yaygın araçları içeren eksiksiz bir Ubuntu masaüstü ortamını paketler. Ön uç bir görev alırken, arka uç talimatları ve ekran görüntülerini Claude'a gönderir ve ardından modelin döndürdüğü fare, klavye, terminal veya düzenleme eylemlerini yürütür.
 >
-> B Yolu, [`chapter6/computer-use-open-model`](../chapter6/computer-use-open-model/) örnek kodunu kullanır. Varsayılan olarak browser-use'u açık ağırlıklı Qwen3-VL 32B Instruct ile, OpenRouter'ın barındırılan API'si üzerinden ya da `OPEN_MODEL_BASE_URL` self-hosted vLLM/SGLang veya başka bir uyumlu uç noktaya yönlendirilerek çalıştırır.
+> B Yolu, [`chapter6/computer-use-open-model`](../chapter6/computer-use-open-model/) içindeki örnek kodu kullanır. Varsayılan olarak, barındırılan OpenRouter API'si üzerinden ya da kendi barındırdığınız vLLM/SGLang ve benzeri sistemler aracılığıyla açık ağırlıklı Qwen3-VL 32B Instruct modeliyle browser-use'u çalıştırır.
 
 ### Görsel Konumlandırma (Grounding)
 

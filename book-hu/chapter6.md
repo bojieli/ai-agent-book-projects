@@ -23,9 +23,7 @@ A korábbi fejezetek e két tér **tartalmát** terjesztették ki; ez a fejezet 
 
 A fejezet magállítása egyetlen mondatba sűríthető: **a körökre osztottság a tréning által hagyott feltevés, nem a környezet tulajdonsága.**
 
-A modell tréningkorpusza szinte teljes egészében körökre osztott: a kérdést válasz követi, az eszközhívást eszközeredmény, és csak akkor szólal meg a másik, ha az egyik befejezte. Ezért a modell által megtanult politika alapból azt feltételezi, hogy a világ megvárja. A valós környezet viszont nem vár: gondolkodás közben megérkezik egy levél, a felhasználó a mondat közepén közbevág, az oldal két képernyőkép között már megváltozott, a poharat feldöntik, miközben a robotkar érte nyúl. **A fejezet négy szakasza éppen ennek a feltevésnek a fokozatos feloldása négy különböző időskálán.**
-
-Nézzük először, hol helyezkednek el:
+A modell betanítási korpusza szinte teljes egészében körökre osztott: egy kérdést válasz követ, egy eszközhívást eszközeredmény, az egyik beszélő befejezi, mielőtt a másik elkezdené. Ezért a modell által tanult policy eleve azt feltételezi, hogy a világ megvárja. A valós környezet viszont nem vár arra, hogy a modell reagáljon: a levél közben érkezik meg, a felhasználó a mondat közepén közbevág, a két képernyőkép között az oldal már megváltozott, és a csészét feldöntik, miközben a kar éppen felé nyúl.
 
 | Skála | Forgatókönyv | Változás a megfigyelés oldalán | Változás a cselekvés oldalán |
 |---|---|---|---|
@@ -352,9 +350,7 @@ Az ASR beszéd közben ideiglenes átiratot adhat, az LLM az első felolvasható
 
 A VAD + ASR front-end három gondja a csend miatti **késleltetés**, a hezitálás, érzelem és környezeti hang elvesztése, valamint az e-mail-címek és tulajdonnevek **kontextustörése**. A valódi streaminghez kauzális vagy darabolt kódoló és inkrementális dekódolás kell; a Whisper teljes hangszegmenst vár. Az LLM-alapú hallási modell szöveget és szemantikai eseményeket adhat ki.
 
-A végpont eldöntése beépíthető a streaming felismerőbe, de a címkék csak a döntéskor látható információt használhatják[^ch6-11]. A speak_start/end, interrupt, emotion, laugh, sigh és noise jelölők megőrzik a nem szöveges jeleket.
-
-[^ch6-11]: A végpontítélet felismerőbe építéséről és az utólagos címkékről lásd Li, Bojie és Noah Shi. *The Trade-off Was in the Labels: Causal Supervision for Turn-Aware Streaming ASR.* 2026 (megjelenés alatt).
+A végpont eldöntése beépíthető a streaming felismerőbe, de a címkék csak a döntéskor látható információt használhatják. A speak_start/end, interrupt, emotion, laugh, sigh és noise jelölők megőrzik a nem szöveges jeleket.
 
 > **6-4. kísérlet ★: Streaming hangészlelés szimulációja Qwen2-Audio-val**
 >
@@ -362,9 +358,7 @@ A végpont eldöntése beépíthető a streaming felismerőbe, de a címkék csa
 
 ### Paradigma 2 · Végponttól végpontig tartó omnimodális modellek (Omni)
 
-A kaszkád szöveges határa elveszítheti az érzelmet, intonációt és környezeti hangot. Az Omni egy modellben hallgat, válaszol és beszél, de drágább tanítani, hibakeresni és cserélni. Előnye főként a késleltetés és a nem szöveges információ, nem szükségszerűen a pontosság. Az önkaszkád akkor javíthat felismerési hibát, ha a szöveg elég; beszédsebesség vagy érzelem esetén a szöveges szűk keresztmetszet bizonyítékot veszít[^ch6-13].
-
-[^ch6-13]: A kaszkád és a végponttól végpontig tartó út pontossági előnyeinek mérését lásd Li, Bojie és Noah Shi. *The Cascade Gap: When and Why Self-Cascades Help Multimodal Agents.* 2026 (megjelenés alatt).
+A kaszkád szöveges határa elveszítheti az érzelmet, intonációt és környezeti hangot. Az Omni egy modellben hallgat, válaszol és beszél, de drágább tanítani, hibakeresni és cserélni. Előnye főként a késleltetés és a nem szöveges információ, nem szükségszerűen a pontosság. Az önkaszkád akkor javíthat felismerési hibát, ha a szöveg elég; beszédsebesség vagy érzelem esetén a szöveges szűk keresztmetszet bizonyítékot veszít.
 
 ![6-9. ábra: End-to-end omnimodális hangmodellek](images/fig6-9.svg)
 
@@ -417,11 +411,14 @@ Az egyesített modell valósítja meg a legszorosabban a „gondolkodás beszéd
 
 ### Emberibb beszédszintézis
 
-A túl sima, szünet nélküli TTS gépiesnek hat. Az LLM THINKING, EMO:happy és SPEED:0.8x vezérlőjeleket adhat, a TTS pedig szünetté, prozódiává, tempóvá, nevetéssé vagy sóhajjá alakíthatja. Fish Audio S1 alatt a több referenciás beállítás kapta a legjobb pontszámot három kiegyensúlyozott vakhallgatásban (4,67/5), de a jelölés nélküli csoport megelőzte az egyreferenciásat, ezért a teljes tervezett sorrend nem ismétlődött meg.
+A hagyományos TTS túl sima hangzásával és túl kevés szünetével árulhatja el gépi mivoltát. A szünetek, töltelékszavak és az alkalmi ismétlések az emberi beszédben a bizonytalanságot és a gondolkodást jelzik.
 
-> **6-6. kísérlet ★★: Vezérlőtokenes TTS Fish Audióval**
+A fő LLM a szöveg mellett vezérlőjelölőket is kibocsáthat, például **THINKING**, **EMO:happy** és **SPEED:0.8x**; a TTS ezeket szünetekké, prozódiává, beszédtempóvá, nevetéssé, sóhajjá és más nem verbális hangokká alakítja. A megvalósítás lehet olyan TTS, amelyet vezérlőjelölők megértésére tanítottak, vagy hangklónozás különböző érzelmekhez és stílusokhoz tartozó referenciafelvételekkel.
+
+> **6-6. kísérlet ★★: Vezérlőtoken-vezérelt TTS Fish Audióval**
 >
-> Hasonlítsuk össze a jelölés nélküli, az egyreferenciás és a több referenciás hangkönyvtárat. A 24 referencia, az A/B/C média és az elfogadási rekord itt található: [chapter6/controllable-tts](../chapter6/controllable-tts/).
+> Használjuk a Fish Audio S1-et többreferenciás hangkönyvtár felépítésére, és hasonlítsunk össze három konfigurációt: vezérlőjelölők nélkül, egy referenciafelvétellel és több referenciafelvétellel. A végrehajtási réteg a jelölők alapján választja ki a megfelelő érzelmet, beszédtempót és stílust.
+
 
 ## Computer Use: Grafikus Felület Automatizálási Ügynökök
 
@@ -454,11 +451,11 @@ Az Anthropic referencia-megvalósítása három eszköztípusra bontja a teljes 
 
 **Fájlszerkesztő Eszköz** (`str_replace_editor`): Biztonságos szerkesztést tesz lehetővé karakterlánc-illesztésen keresztül, támogatva a megtekintést, létrehozást, cserét, beszúrást és visszavonást. Pontosabb, mint a teljes fájl felülírása, és kisebb a valószínűsége, hogy véletlenül más tartalmat módosít.
 
-> **6-7. kísérlet ★: Computer Use futtatása (Anthropic referenciaútvonal vagy nyílt modell útvonala)**
+> **6-7. kísérlet ★: Computer Use futtatása (Anthropic referenciaútvonal vagy nyílt modell útvonal)**
 >
-> Az A útvonal az Anthropic Computer Use Demót használja. A konténere teljes Ubuntu asztali környezetet csomagol böngészővel, terminállal és más gyakori eszközökkel. A front-end fogadja a feladatot, a back-end elküldi az utasításokat és a képernyőképeket a Claude-nak, majd végrehajtja a modell által visszaadott egér-, billentyűzet-, terminál- vagy szerkesztési műveleteket. Ez az útvonal a natív `computer` eszközprotokoll megértésére szolgál; nem követeli meg, hogy minden olvasó hozzáférjen az Anthropic API-jához.
+> Az A útvonal az Anthropic Computer Use Demót használja. A konténer egy teljes Ubuntu asztali környezetet csomagol, beleértve a böngészőt, a terminált és más gyakori eszközöket. A front-end fogadja a feladatot, míg a back-end az utasításokat és a képernyőképeket elküldi Claude-nak, majd végrehajtja a modell által visszaadott egér-, billentyűzet-, terminál- vagy szerkesztési műveleteket.
 >
-> A B útvonal a [`chapter6/computer-use-open-model`](../chapter6/computer-use-open-model/) példakódját használja. Alapértelmezésben a nyílt súlyú Qwen3-VL 32B Instruct modellel hajtja a browser-use-t az OpenRouter hosztolt API-ján keresztül, vagy az `OPEN_MODEL_BASE_URL` önálló vLLM/SGLang, illetve más kompatibilis végpontra irányításával.
+> A B útvonal a [`chapter6/computer-use-open-model`](../chapter6/computer-use-open-model/) példakódját használja. Alapértelmezésben a browser-use-t a nyílt súlyú Qwen3-VL 32B Instruct modellel hajtja meg a hosztolt OpenRouter API-n keresztül, vagy saját hosztolású vLLM/SGLang és hasonló rendszereken át.
 
 ### Vizuális Helymeghatározás
 

@@ -245,8 +245,6 @@ Pratikte, çok katmanlı bir sıkıştırma stratejisi iyi çalışır.
 
 3. Üçüncü katman soyutlar ve genelleştirir—belirli episodic bellekten genel kurallar çıkarır ve bunları semantic veya procedural belleğe dönüştürür. Örneğin, birden fazla alışveriş konuşmasından, sistem "Uygun maliyetli ürünleri tercih ediyor ve kullanıcı yorumlarına değer veriyor" öğrenebilir.
 
-Çelişki tespiti bir sürümleme yaklaşımı kullanır—geçmiş sürümler tutulurken en son sürüm işaretlenir. Belirli bilgiler için (örn. mevcut adres), yalnızca en son sürüm tutulur; diğer bilgiler için (örn. iş geçmişi), eksiksiz geçmiş korunur.
-
 ### Gizlilik Koruması: Günlük Temizleme (Log Sanitization)
 
 Bir kullanıcı belleği sistemi inşa ederken, temel zorluk, Agent'ın kişiselleştirilmiş hizmet için kişisel bilgiyi kullanmasına izin verirken LLM context'inde veya sistem günlüklerinde hassas veriyi açığa çıkarmamaktır.
@@ -261,7 +259,7 @@ Bir kullanıcı belleği sistemi inşa ederken, temel zorluk, Agent'ın kişisel
 
 ## RAG Temelleri: Bir Agent'ın Bilgi Edinme Boru Hattını İnşa Etmek
 
-Paylaşılan bir bilgi tabanı inşa etmenin temel teknolojisi Retrieval-Augmented Generation'dır (RAG). Merkezi fikir, büyük dil modellerinin düşünme ve üretme yeteneklerini bir dış bilgi tabanının genişliği ve güncelliğiyle birleştirmektir—modelin eğitim verisinin bir kesim tarihi vardır, bilgi tabanı ise her an güncellenebilir.
+Paylaşılan bir bilgi tabanı inşa etmenin temel teknolojisi Retrieval-Augmented Generation'dır (RAG). Merkezi fikir, büyük dil modellerinin düşünme ve üretme yeteneklerini bir dış bilgi tabanının genişliği ve güncelliğiyle birleştirmektir. Modelin eğitim verisinin bir kesim tarihi vardır, bilgi tabanı ise her an güncellenebilir.
 
 Tipik bir RAG sistemi iki parçadan oluşur: bilgi tabanından ilgili parçaları bulan bir retriever (getirici) ve bu parçaları context olarak kullanarak bir yanıt üreten bir generator (üretici, genellikle bir LLM).
 
@@ -278,25 +276,9 @@ answer = llm.generate(system="Sen bir müşteri hizmetleri asistanısın.", cont
 # → "Teslim alındıktan sonra 7 gün içinde tam iade talep edebilirsiniz. Adımlar: 'Siparişlerim'e git → Siparişi seç → 'İade Talep Et'e tıkla..."
 ```
 
-Kalıp her iki örnekte de aynıdır: **İlgili parçaları getir → Context'e enjekte et → LLM context'e dayanarak yanıt üretir**. RAG'ın temel değeri, modeli yeniden eğitmeye gerek kalmadan LLM'in eğitim sırasında görmediği bilgiyi (en güncel Wikipedia içeriği, bir şirketin iç dokümanları) kullanabilmesini sağlamaktır.
+RAG'ın temel akışı şudur: **İlgili parçaları getir → Bağlama enjekte et → LLM bağlama dayanarak yanıt üretir**.
 
-Retriever'ın kalitesi RAG'ın etkinliğini doğrudan belirler—ilgili parçaları getiremezse, en güçlü LLM bile üzerinde çalışacak bir şeye sahip olmaz. Bu bölüm, dokümanları bilgi tabanına sokmanın ilk adımıyla—chunking (parçalama)—başlar, ardından retriever'ın iki ana teknik yoluna, dense embedding'lere (semantik anlama) ve sparse embedding'lere (anahtar kelime eşleştirme) ve bunların nasıl birleştirileceğine döner.
-
-**Hibrit RAG hattı:**
-
-```python
-offline:
-    chunks = split_documents(documents)
-    dense_index = build_dense_index(chunks)
-    sparse_index = build_sparse_index(chunks)
-
-online(query):
-    dense_hits = dense_search(dense_index, query)
-    sparse_hits = sparse_search(sparse_index, query)
-    candidates = fuse_and_deduplicate(dense_hits, sparse_hits)
-    evidence = rerank(query, candidates)
-    return LLM(query + evidence)
-```
+Bilgi tabanına dokümanları almanın ilk adımıyla—doküman chunking’i—başlıyor, ardından retrieval’ın iki ana yaklaşımı olan dense embedding'ler ve sparse embedding'ler ile bunların nasıl birleştirileceğine geçiyoruz.
 
 ![Şekil 3-5: RAG Sorgu Akışı: Retrieval, Augmentation ve Generation](images/fig3-5.svg)
 
@@ -376,7 +358,7 @@ $$\text{TF-IDF}(t, d) = \text{TF}(t, d) \times \text{IDF}(t), \qquad \text{IDF}(
 
 Burada `TF(t,d)`, $t$ teriminin $d$ belgesinde kaç kez geçtiğini; `DF(t)`, bu terimi içeren belge sayısını; $N$ ise toplam belge sayısını gösterir. Yukarıdaki en basit uygulamada ham terim frekansı doğrusal büyür ve belge uzunluğu normalize edilmez: 10 kez geçen bir terim, 5 kez geçene göre iki kat TF alır; uzun belgeler de yalnızca daha fazla sözcük içerdikleri için daha yüksek puan alabilir.
 
-BM25 (Okapi BM25), bu iki sınırlamaya yönelik klasik bir düzeltme olarak görülebilir. Nadir terimler için IDF ağırlığını korurken terim frekansı doygunluğu ve belge uzunluğu normalizasyonu ekler:
+BM25, bu iki sınırlamaya yönelik klasik bir düzeltme olarak görülebilir. Nadir terimler için IDF ağırlığını korurken terim-frekansı doygunluğu ve doküman uzunluğu normalizasyonu ekler:
 
 $$\text{Score}(Q, D) = \sum_{i} \text{IDF}_{\text{BM25}}(q_i) \cdot \frac{\text{TF}(q_i, D)\,(k_1+1)}{\text{TF}(q_i, D) + k_1\left(1 - b + b \cdot \frac{|D|}{\text{avgdl}}\right)}$$
 
@@ -384,7 +366,7 @@ Burada $q_i$ sorgudaki bir terim, $|D|$ belge uzunluğu ve $\text{avgdl}$ külli
 
 $$\text{IDF}_{\text{BM25}}(t) = \ln\frac{N - \text{DF}(t) + 0.5}{\text{DF}(t) + 0.5}$$
 
-Sezgi değişmez —terim ne kadar nadirse ağırlığı o kadar büyüktür—, değişen yalnızca ölçme biçimidir. Payda toplam belge sayısı $N$ yerine terimi *içermeyen* belge sayısı $N - \text{DF}(t)$ yer alır; böylece oran, terimi içermeyen belgelerin içerenlerden kaç kat fazla olduğunu doğrudan ifade eder. Pay ve paydaya 0,5 eklenmesi sonucu yumuşatır ve formül $\text{DF}(t) = 0$ ile $\text{DF}(t) = N$ uç durumlarında da tanımlı kalır. Bedeli ise, belgelerin yarısından fazlasında geçen bir terimin ($\text{DF}(t) > N/2$) negatif ağırlık almasıdır; bu yüzden uygulamalar genellikle bir alt sınır koyar. Bu varyant olasılıksal erişim modelinden gelir ve literatürde Robertson–Spärck Jones ağırlığı olarak bilinir.
+Sezgi aynıdır—terim ne kadar nadirse ağırlığı o kadar yüksektir—yalnızca ölçülme biçimi değişmiştir. Pay, korpustaki belge sayısı $N$ yerine terimi *içermeyen* belge sayısı $N - \text{DF}(t)$ olur; böylece oran, terimi içermeyen belgelerin içerenlerden kaç kat fazla olduğunu ifade eder. Pay ve paydaya 0,5 eklemek sonucu yumuşatır; böylece formül, iki uç durumda $\text{DF}(t) = 0$ ve $\text{DF}(t) = N$ için de tanımlı kalır. Bedeli, belgelerin yarısından fazlasında geçen bir terimin ($\text{DF}(t) > N/2$) negatif ağırlık almasıdır; bu yüzden uygulamalar genellikle bunu bir alt sınıra kırpar.
 
 Şekil 3-8'de gösterildiği gibi, $k_1$ terim frekansının ne kadar hızlı doygunluğa ulaştığını kontrol eder; böylece her ek tekrarın marjinal katkısı azalır. $b$ ise uzunluk normalizasyonunun gücünü belirleyerek farklı uzunluktaki belgelerin daha adil karşılaştırılmasını sağlar. Bu nedenle 10 tekrar genellikle 5 tekrarın tam iki katından az katkı verir ve aynı TF daha uzun bir belgede daha düşük ağırlık alır. Belirli parametreler ve hesaplama Deney 3-5'te ele alınır.
 
@@ -396,7 +378,7 @@ Sezgi değişmez —terim ne kadar nadirse ağırlığı o kadar büyüktür—,
 >
 > Sparse retrieval'ın iç işleyişini açığa çıkarmak için, `sparse-embedding` projesi öğretici bir araç olarak sıfırdan BM25 tabanlı bir sparse vektör arama motoru uygular. Değeri performans sıkmakta değil, tam şeffaflıktadır. Zengin loglama ve görselleştirme arayüzleri aracılığıyla, tüm doküman indeksleme sürecini net biçimde gözlemleyebiliriz: metin ön işleme (tokenizasyon ve neredeyse hiç retrieval değeri taşımayan Çince durak kelimelerinin—"的" ve "了" gibi, İngilizce'deki "the" veya "of" kadar yaygın işlev kelimeleri—kaldırılması), bir ters indeks (inverted index) inşa etme ve TF ile IDF değerlerini hesaplama. Bir ters indeks, kelimelerden dokümanlara ters bir eşleme tablosudur—normal bir indeks "bir doküman verildiğinde, içerdiği kelimeleri listele" iken, bir ters indeks tam tersini yapar: "bir kelime verildiğinde, onu içeren tüm dokümanları hemen bul." Bu, bir kitabın arkasındaki terim indeksine benzer: "TCP"yi ararsınız, size 45, 112 ve 203. sayfalarda bahsedildiğini söyler.
 >
-> Bir sorgu sırasında, log BM25 hesaplamasının her adımını ayrıntılı biçimde gösterir. Yine "model damıtma" sorgusunu örnek alırsak—aşağıdaki, projeyle birlikte gelen küçük bir örnek külliyattan (N=10 doküman) bir logdur, bu yüzden isabet sayısı daha önce bahsedilen 100 makale senaryosundan çok daha küçüktür. Elle yeniden hesaplamayı kolaylaştırmak için, örnek BM25 parametrelerini k1=1,5, b=0,75 ve ortalama doküman uzunluğunu avgdl=250 kelime olarak sabitler; IDF yukarıdaki BM25 formunu kullanır: IDF=ln((N−df+0,5)/(df+0,5)), burada df kelimeyi içeren doküman sayısıdır:
+> Sorgu sırasında, log BM25 hesaplamasının her adımını ayrıntılı biçimde gösterir. Yine "model distillation" sorgusunu örnek alırsak, aşağıdaki log projeyle birlikte gelen küçük bir örnek korpustan (N=10 doküman) alınmıştır. Elle yeniden hesaplamayı kolaylaştırmak için örnek, BM25 parametrelerini k1=1.5, b=0.75 ve ortalama doküman uzunluğunu avgdl=250 kelime olarak sabitler; IDF yukarıda verilen BM25 formunu kullanır: IDF=ln((N−df+0.5)/(df+0.5)), burada df kelimeyi içeren doküman sayısıdır:
 >
 > ```
 > Sorgu token'ları: ["model", "damıtma"]
@@ -417,8 +399,6 @@ Sezgi değişmez —terim ne kadar nadirse ağırlığı o kadar büyüktür—,
 >
 > Bu deney, sparse retrieval'ın güçlü ve zayıf yönlerini açığa çıkarır: tam anahtar kelime eşleştirmesi sayesinde teknik kod veya adlar gibi sorgularda mükemmel performans gösterir, ama eş anlamlı ifadeleri anlayamaz (bir sorgu terimi yalnızca o tam kelimeyi içeren dokümanlarla eşleşir). Bu tek-güç-tek-zayıflık karşıtlığı, bir sonraki bölümdeki hibrit retrieval'ı kurar—somut karşılaştırmalar orada bekliyor.
 
-**Öğrenilmiş Sparse Retrieval.** Bu bölüm, eğitim gerektirmediği, şeffaf ve yeniden üretilebilir olduğu ve sparse retrieval ilkelerini açıklamak için en uygun olduğu için klasik BM25'i sparse retrieval'ın temsilcisi olarak kullanır. Bununla birlikte, sparse retrieval'ın kendisi "öğrenilmiş" bir aşamaya girmiştir: SPLADE'in temsil ettiği modeller ve BGE-M3'ün sparse çıktı dalı, her terime ağırlık atamak için sinir ağları kullanır—artık BM25 gibi yalnızca terim sıklığı ve doküman sıklığına dayalı puanlama yapmaz, modelin "bu kelimenin bu metinde ne kadar önemli olduğuna" karar vermesine izin verir, hatta semantik olarak ilgili ama orijinal metinde görünmeyen terimlere sıfırdan farklı ağırlıklar atar (terim genişletme). Sonuç yine de çoğu boyutu sıfır olan sparse bir vektördür, sözcüksel yorumlanabilirliği ve tam eşleşmeyi korurken sinir ağından bir miktar semantik genelleme kazanır. Bunu sparse ve dense yollar arasında bir buluşma noktası olarak düşünün.
-
 ### Hibrit Retrieval: İki Dünyanın En İyisine Sahip Olma Sanatı
 
 Her iki yöntemin de kör noktaları vardır: dense retrieval semantiği anlar ama anahtar kelimeleri kaçırabilir (“HTTP-403” aramak “sunucu hatası” hakkında genel tartışmalar döndürebilir), sparse retrieval ise tam eşleşir ama eş anlamlıları anlayamaz (“kedicik” aramak yalnızca “kedi”den bahseden dokümanları bulamaz). Hibrit retrieval'ın ardındaki fikir basittir—her iki motoru da çalıştırıp sonuçları birleştirmek—ama zorluk, büyük ölçüde farklı dağılımlara sahip iki puan kümesini anlamlı bir sıralamaya nasıl entegre edeceğinizdir.
@@ -431,15 +411,11 @@ Tipik bir hibrit retrieval boru hattının, her biri ayrı bir iş yapan üç a�
 
 Birincisi **paralel retrieval**'dır: sistem sorguyu dense ve sparse motorlara eş zamanlı gönderir; her biri bir aday doküman kümesi getirir.
 
-İkincisi **sonuç füzyonudur (result fusion)** ve iki sonuç kümesini birleşik bir aday havuzunda toplar. İki yoldan gelen puanlar doğrudan karşılaştırılamaz: dense retrieval'ın benzerlik puanları (örn. teorik olarak −1 ile 1 arasında değişen, normalleştirilmiş metin embedding'lerinde pratikte çoğunlukla 0 ile 1 arasında kalan kosinüs benzerliği) ile sparse retrieval'ın BM25 puanları (0'dan onlarca değere kadar herhangi bir değer alabilir) tamamen farklı ölçek ve dağılımlara sahiptir. İki yaygın yöntem vardır: her yolun puanlarını ayrı ayrı normalleştirip ağırlıklı toplamak veya Reciprocal Rank Fusion (RRF) kullanmak. RRF özgün puanları bırakıp yalnızca sıralamaya bakar; birleşik puan, her sonuç kümesindeki yumuşatılmış sıra terslerinin toplamıdır: puan = Σ 1/(k + sıra). Burada k, üst sıralar arasındaki farkı azaltan, genellikle 60 seçilen bir yumuşatma sabitidir. RRF basit ve sağlamdır, ancak yalnızca sıralama bilgisini kullanıp özgün puanlardaki zengin ilgi sinyalini kaybeder.
+İkincisi **sonuç füzyonudur**, iki sonuç kümesini birleşik bir aday havuzunda toplar. Zorluk şudur: iki yoldan gelen puanlar doğrudan karşılaştırılamaz; dense retrieval'ın kosinüs benzerliği puanları (genellikle 0 ile 1 arasında) ile sparse retrieval'ın BM25 puanları (0'dan onlarcaya kadar değişebilir) tamamen farklı ölçek ve dağılımlara sahiptir. Yaygın bir füzyon yöntemi **Reciprocal Rank Fusion (RRF)**'dir; bu yöntem özgün puanları tamamen bırakır ve yalnızca sıralamalara bakar. Her doküman için birleşik puan, her sonuç kümesindeki sıralamasının yumuşatılmış terslerinin toplamıdır; yani, puan = Σ 1/(k + sıra), burada k, üst sıralardaki puan farkını azaltmak için kullanılan bir yumuşatma sabitidir (çoğu zaman 60). RRF basit ve sağlamdır, ancak yalnızca sıra bilgisini kullanır; özgün puanlardaki zengin ilgili olma sinyalini atar.
 
 Üçüncü aşama **Neural Reranking**'dir. Önceki füzyon yöntemi ne olursa olsun, daha güçlü bir eşleştirme paradigması kullandığı için reranking eklemeye değer. Bir cross-encoder, sorgu ile doküman arasında derin etkileşimli eşleştirme yapar; bu, ikisini ayrı ayrı kodlayıp vektör işlemleriyle karşılaştıran retrieval aşamasındaki bi-encoder'dan çok daha isabetlidir. Birleşik havuzdaki ilk N adayı (örneğin 50) tek tek puanlayarak nihai sıralamayı üretir. Reranking füzyonun **yerini almaz**: füzyon birleşik aday havuzunu üretir, reranking bu havuzu hassas biçimde sıralar.
 
-Bir benzetme: özgeçmişleri hızlıca gözden geçiren bir işe alım uzmanı bi-encoder'dır; her adayla derin bir sohbet yapan bir mülakatçı ise cross-encoder'dır. Birincisi, önceden çıkarılmış özellikler üzerinde büyük ölçekte eler; ikincisi, sorgu ile her aday dokümanın "yüz yüze" buluşmasına ve kelime kelime tartılmasına izin verir. Reranker, retrieval aşamasında kullanılan "Bi-Encoder"ın tam tersine, "Cross-Encoder" mimarisini kullanır. Bir **Bi-Encoder**, sorgu ve doküman için bağımsız vektörler üretir ve benzerliği vektör işlemleriyle hesaplar—çok hızlıdır, ama derin eşleştirme ilişkilerini yakalayamaz, devasa veriden ilk elemede uygundur. Bir **Cross-Encoder**, **sorguyu ve aday dokümanı tek bir metin parçasında birleştirir** ve modele verir, modelin kelime kelime karşılaştırma yapıp kapsamlı bir ilgi puanı çıktı vermesine izin verir[^ch3-cross-encoder]—çok daha yavaştır, ama yargıda daha isabetlidir. [BAAI/bge-reranker-v2-m3](https://huggingface.co/BAAI/bge-reranker-v2-m3) gibi yaygın kullanılan reranking modelleri bu mimariyi benimser.
-
-Bu "ortak attention" mekanizması, cross-encoder'ın bi-encoder'ın algılayamadığı ince semantik ilişkileri yakalamasına izin verir, bu da tek başına herhangi bir retrieval yönteminden çok daha isabetli bir nihai sıralama sağlar.
-
-[^ch3-cross-encoder]: BERT benzeri modellerin uygulamalarında, birleştirilmiş girdi özel token'larla ayrılır (örn. `[CLS] sorgu metni [SEP] doküman metni [SEP]`, burada `[CLS]` dizinin başlangıcını, `[SEP]` ise sınırı işaretler). Bu, temel bir uygulama ayrıntısıdır ve retrieval sürecini anlamak için gerekli değildir.
+Bir benzetme: özgeçmişleri ilk eleme için gözden geçiren bir işe alım uzmanı bi-encoder'dır; her adayla derin bir sohbet yapan bir mülakatçı ise cross-encoder'dır. Birincisi, önceden çıkarılmış özellikler üzerinde büyük ölçekte eleme yapar; ikincisi, sorgu ile her aday dokümanın "yüz yüze" buluşmasına ve kelime kelime değerlendirilmesine izin verir. Reranker, retrieval aşamasında kullanılan "Bi-Encoder"a keskin biçimde karşıt olarak "Cross-Encoder" mimarisini kullanır. Bir **Bi-Encoder**, sorgu ve doküman için bağımsız vektörler üretir ve benzerliği vektör işlemleriyle hesaplar; çok hızlıdır, ancak derin eşleşme ilişkilerini yakalayamaz, bu da onu devasa veriden ilk eleme için uygun kılar. Bir **Cross-Encoder**, **sorguyu ve aday dokümanı tek bir metin parçasında birleştirir** ve modele verir; böylece modelin kelime kelime karşılaştırma yapmasına ve kapsamlı bir ilgili olma puanı üretmesine izin verir. Çok daha yavaştır, ancak ilgili olma yargılarında daha doğrudur. [BAAI/bge-reranker-v2-m3](https://huggingface.co/BAAI/bge-reranker-v2-m3) gibi yaygın reranking modelleri bu mimariyi benimser.
 
 **Retrieval Kalitesi Nasıl Ölçülür?** Bu tür çok aşamalı bir boru hattını ayarlamak nesnel metrikler gerektirir. En önemli üçü (hepsi işaretlenmiş yanıtlara sahip bir test sorgu kümesinde hesaplanır):
 
@@ -453,7 +429,7 @@ Tablo 3-3 Retrieval Kalitesi için Üç Temel Metrik
 
 [^ch3-recall]: Kesin olarak söylemek gerekirse, bu kitapta tanımlanan "recall@k" aslında **isabet oranıdır** (hit rate, success@k olarak da adlandırılır)—ilk k sonuçta en az bir ilgili doküman göründüğü sürece bir isabet olarak sayar. Standart akademik recall@k, **getirilen ilgili dokümanların oranını** ifade eder (ilk k sonuçtaki ilgili doküman sayısı ÷ o sorgu için toplam ilgili doküman sayısı); bir sorgunun birden fazla ilgili dokümanı olduğunda, ikisi eşit değildir. Bu kitap, daha sonra alıntılanan Anthropic'in "Contextual Retrieval" raporunun raporlama kurallarıyla uyum sağlamak için bu basitleştirilmiş tanımı benimser. Okuyucular kaynaklar arasında karşılaştırma yaparken kesin tanımlara dikkat etmelidir.
 
-Sektör raporları ayrıca yaygın olarak "retrieval başarısızlık oranından" bahseder. Örneğin, bu bölümde daha sonra alıntılanan Anthropic verilerinde, retrieval başarısızlık oranı, doğru bilginin ilk 20 retrieval sonucunda görünmediği sorguların oranını ifade eder—özünde 1 − recall@20. Bu tür sayılarla karşılaştığınızda, kaynaklar arasında karşılaştırma yapmadan önce hangi metriğe karşılık geldiklerini ve k'nin ne olduğunu netleştirin.
+Sektör raporları ayrıca yaygın olarak "retrieval başarısızlık oranından" bahseder. Örneğin, **retrieval başarısızlık oranı**, doğru bilginin ilk 20 retrieval sonucunda görünmediği sorguların oranıdır.
 
 > **Deney 3-6 ★★: Hibrit Retrieval Boru Hattı: Sparse, Dense ve Reranking'i Birleştirmek**
 >
@@ -473,9 +449,16 @@ Geleneksel RAG güçlüdür, ama temel yöntemi—"Doküman Parçalama" bölüm�
 
 Daha derin bir sorun şudur: bir RAG sistemi inşa etsek bile, büyük miktarda ham durumu düz biçimde bilgi tabanına yerleştirmek, retrieval mekanizmasının tüm ilgili bilgiyi getirebileceğini garanti etmez, bu da modelin eksik context'e dayanarak yanlış yargılarda bulunmasına yol açar.
 
-**Durum 1: Siyah Kedi ve Beyaz Kedi Sayma Problemi.** Bölüm 2'de, "attention'ın yumuşak bir retrieval mekanizması olduğunu ve istatistiksel bilginin önceden çıkarılması gerektiğini" göstermek için siyah kedi ve beyaz kedi sayma örneğini kullandık—100 durumun tümü context penceresine yüklense bile, model doğru sayma yapmakta zorlanır. Aynı sorun, bilgi tabanı ölçeğinde, birkaç yeni engelle birleşerek yeniden ortaya çıkar. Bilgi tabanının 100 bağımsız durum dokümanı içerdiğini (90 siyah kedi, 10 beyaz kedi, her biri bağımsız bir metin parçası) ve kullanıcının "Oran nedir?" diye sorduğunu varsayalım: Birincisi, **top-k kesme**—top-k ile sınırlı (örn. 20), çoğu durum hiç getirilmeyecektir. İkincisi, **eşit olmayan retrieval puanları**—daha büyük bir k ile bile, tek tek durumlar farklı biçimde tanımlanır, puanları dağılır ve bazıları hâlâ kaçırılır. En temel olarak, **dokümanlar arası toplama uyumsuzluğu** vardır—istatistiksel sorular "tüm dokümanlar genelinde sayma" gerektirirken, retrieval'ın doğası "en ilgili birkaçını bulmaktır", bu da doğasında olan bir çelişki yaratır. Model yalnızca eksik bir örneğe (örn. yalnızca 15 siyah kedi ve 3 beyaz kedi görerek) dayanarak yanlış sonuçlar çıkarabilir. "Toplam 100 kedi: 90 siyah kedi (%90) ve 10 beyaz kedi (%10)" gibi önceden üretilmiş bir özet indekslenirse, tek bir retrieval doğru bilgiyi verir.
+**Durum 1: Siyah Kedi ve Beyaz Kedi Sayma Problemi.** Bölüm 2'de, "attention yumuşak bir retrieval'dır"ı göstermek için siyah kedi ve beyaz kedi sayma örneğini kullandık; 100 vakayı da context penceresine yüklesek bile, model doğru saymakta zorlanır. RAG ile sorun daha da kötüleşir. Bilgi tabanında 100 bağımsız vaka dokümanı olduğunu (90 siyah kedi ve 10 beyaz kedi, her biri bağımsız bir metin parçası) varsayalım. Kullanıcı "Oran nedir?" diye sorduğunda, top-k (örneğin 20) çoğu vakanın getirilmesini engeller. Model, eksik bir örneklemden yalnızca yanlış bir sonuç çıkarabilir (örneğin 15 siyah kedi ve 3 beyaz kedi görerek).
 
-**Durum 2: Xfinity İndirim Uygunluğunda Sınır Problemi.** Bu kez bilgi tabanı bir müşteri destek kaydı arşivi: birkaç yüz kayıt, her biri tek bir gerçek sonucu tutuyor—Gazi John'un başvurusu onaylandı, Doktor Sarah indirimi aldı, Öğretmen Mike'a uygun olmadığı söylendi ve böyle sürüp gidiyor. Her kayıt tek bir bireysel durumun sonucunu yazar; hiçbiri uygunluğun kapsamını yazmaz. Bir hemşire "ben uygun muyum?" diye sorduğunda engeller üst üste biner. Birincisi, **en yakın komşu yanlılığı**—"hemşire" semantik olarak en çok "doktor"a yakındır, bu yüzden Sarah'nın kaydı en üste çıkar ve model bu akışla hemşirelerin de uygun olduğunu çıkarır; Mike'ın kaydı tesadüfen daha üstte sıralansaydı, aynı soru tam tersi yanıtı alırdı. **Yanıtı, sorguya hangi kaydın en yakın düştüğü belirler; politikanın kendisi değil.** İkincisi, **sınır semantiğinin eksikliği**—k'yı büyütmenin çözemeyeceği bir engel: "yalnızca ..., diğer tüm meslekler uygun değildir" biçimindeki bir ifade evrensel niceleyici ve olumsuzlama taşır, tek bir kaydın içinde bulunmaz, yalnızca bütün corpus'un kapanışında (closure) vardır. Arşiv zaten "hemşire sayılır mı" sorusuna hiç yanıt vermez; dolayısıyla modeli bir avuç bireysel durumdan evrensel bir kural çıkarmaya zorlamak, baştan geçerli olmayan bir sonuç üretir. Üçüncüsü, **eksiksizlik sinyalinin yokluğu**—model kuralın tamamını görüp görmediğini anlayamaz, bu yüzden geri sormaz; elindeki birkaç kayıtla kendinden emin yanıt verir. Çözüm yine indeksleme aşamasındadır: tüm kayıt arşivini çevrimdışı baştan sona okuyun ve resmî uygunluk politikasını ölçüt alarak (retrieve edilen birkaç bireysel durumdan ekstrapolasyon yaparak değil—ki bu tam da ileride uyarılan bilgi kirliliğidir) tek bir kural kartı damıtın: "Xfinity indirimleri muvazzaf askerler ve gaziler ile hemşireler dâhil lisanslı sağlık çalışanları için geçerlidir; öğretmenler gibi diğer meslekler uygun değildir; listelenmemiş meslekler insan incelemesi gerektirir." Sınır ve geri düşüş durumu birlikte yazıldığında, hangi meslek sorulursa sorulsun tek bir retrieval eksiksiz kuralı verir—modelin artık çıkarım yapmasına gerek kalmaz, yalnızca eşleştirmesi yeterlidir.
+Bunun yerine önceden bir özet üretip indekslersek—"100 kedi var: 90 siyah (%90) ve 10 beyaz (%10)"—tek bir retrieval tam bilgiyi döndürür.
+
+**Durum 2: Xfinity İndirim Uygunluğunda Sınır Problemi.** Bu kez bilgi tabanı bir destek bileti arşividir: birkaç yüz bilet, her biri tek bir gerçek sonucu kaydeder—Gazi John onaylandı, Doktor Sarah indirimi aldı, Öğretmen Mike’ın uygun olmadığı söylendi ve benzeri. Her bilet tek bir bireysel vakanın sonucunu belirtir; hiçbirinde uygunluk kapsamının kendisi yazmaz. Bir hemşire "uygun muyum?" diye sorduğunda, birkaç engel üst üste biner:
+- Birincisi, **en yakın komşu yanlılığı**—"hemşire", semantik olarak "doktor"a en yakındır, bu yüzden Sarah’nın bileti ilk sıraya gelir ve model buna uygun olarak hemşirelerin de uygun olduğunu çıkarır; Mike’ın bileti tesadüfen daha yukarı sıralansaydı, aynı soru tam tersi bir yanıt alırdı.
+- İkincisi, **eksik sınır semantiği**—k’yı büyütmekle çözülemeyecek bir engel: "yalnızca ..., diğerleri uygun değildir" biçimindeki bir ifade, herhangi bir tek bilette bulunmayan evrensel bir sınır ve bir olumsuzlama içerir.
+- Son olarak, **eksik bütünlük sinyalleri**—model, her şeyi görüp görmediğini anlayamaz; bu yüzden soru sormaz; elindeki birkaç biletten kendinden emin biçimde yanıt verir.
+
+Çözüm yine indeksleme zamanında yapılır: tüm bilet arşivini çevrimdışı okuyun ve tek bir kural kartı damıtın: "Xfinity indirimleri, aktif görevdeki hizmet mensupları ve gaziler ile hemşireler dâhil lisanslı tıp uzmanları için geçerlidir; öğretmenler gibi diğer meslekler uygun değildir."
 
 Her iki durum da aynı sonuca işaret eder: **naif RAG—ham durumları veya dokümanları işlenmeden bilgi tabanına atmak—yeterince yakın bile değildir.** İster harici bir vektör veritabanında depolanıp retrieval yoluyla context'e enjekte edilsin, ister doğrudan uzun bir context'e yerleştirilsin, bilgi çıkarımı ve yapılandırılmış ön işleme olmadan, model bu bilgiyi verimli ve güvenilir biçimde kullanamaz. Modelin attention mekanizması özünde benzerlik tabanlı yumuşak bir retrieval sistemidir, aktif olarak özetleyen, genelleyen ve bilgi hiyerarşileri kuran bir düşünme motoru değildir. Bu yüzden hesaplama, indeksleme aşamasında ham bilgiyi aktif olarak çıkarmak, soyutlamak ve yapılandırmak için yatırılmalıdır—"100 tek tek durumu" istatistiksel bir özete sıkıştırmak, "yüzlerce kayda dağılmış bireysel durumları" kendi sınırını da söyleyen açık bir kurala damıtmak.
 
