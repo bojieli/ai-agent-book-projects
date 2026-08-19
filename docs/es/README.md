@@ -9,6 +9,10 @@
 
 **Agente = LLM + Contexto + Herramientas** — Este libro se desarrolla en torno a esta fórmula central a lo largo de 10 capítulos, llevando los Agentes de IA desde los principios teóricos hasta la práctica de ingeniería. El texto completo, las ilustraciones y los **95 experimentos complementarios** son de código abierto. Te invitamos a ejecutar los experimentos por ti mismo.
 
+> 📢 **Cambios de la versión 2.0 (respecto a la 1.4):** La versión 2.0 combina la sección «interacción asíncrona» del antiguo capítulo 4 con el contenido sobre «Agentes multimodales» del antiguo capítulo 9, y los reorganiza como el nuevo capítulo 6, «Interacción: la expansión de los espacios de observación y de acción». Los antiguos capítulos 6 («Evaluación de Agentes»), 7 («Post-entrenamiento de Modelos») y 8 («La Evolución Continua del Agente») se desplazan un capítulo y ahora son, respectivamente, los capítulos 7, 8 y 9.
+>
+> Si estás leyendo un PDF antiguo, te recomendamos [descargar el PDF más reciente](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-es.pdf). La nueva edición también incorpora numerosas correcciones y ajustes de contenido; utiliza siempre la versión más reciente.
+
 | 📚 **10 capítulos** de texto, desde lo básico hasta producción | 📂 **95 experimentos** complementarios, incluidos proyectos locales y rutas de reproducción externas | 🌐 **14 idiomas**: CN / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO / HU / HE |
 | :---: | :---: | :---: |
 
@@ -57,10 +61,10 @@ El libro se desarrolla en torno a la fórmula central **Agente = LLM + Contexto 
 | 3 | 📚 **Memoria de Usuario y Bases de Conocimiento** | Memoria de usuario entre sesiones + conocimiento externo: memoria de usuario, RAG, índices estructurados, grafos de conocimiento | [Leer](../../book-es/chapter3.es.md) | [12](../../chapter3/README.es.md) |
 | 4 | 🛠️ **Herramientas** | Las herramientas son las manos del Agente: protocolo MCP, herramientas de percepción/ejecución/colaboración, Agentes asíncronos orientados a eventos, descubrimiento activo de herramientas | [Leer](../../book-es/chapter4.es.md) | [8](../../chapter4/README.es.md) |
 | 5 | 💻 **Coding Agent y Generación de Código** | El código es una "herramienta para crear nuevas herramientas"; panorama completo de un Coding Agent de grado de producción | [Leer](../../book-es/chapter5.es.md) | [13](../../chapter5/README.es.md) |
-| 6 | 🎯 **Evaluación de Agentes** | Convertir el rendimiento en señales comparables: entornos, métricas, significación estadística, selección guiada por evaluación | [Leer](../../book-es/chapter6.es.md) | [17](../../chapter6/README.es.md) |
-| 7 | 🧠 **Post-Entrenamiento de Modelos** | Tres etapas (Pre-entrenamiento/SFT/RL): cuándo elegir SFT vs. RL, internalización de llamadas a herramientas, eficiencia de muestra | [Leer](../../book-es/chapter7.es.md) | [18](../../chapter7/README.es.md) |
-| 8 | 🔄 **Auto-Evolución del Agente** | Crecimiento sin cambiar pesos: aprendizaje a partir de la experiencia, de usuario de herramientas a creador de herramientas | [Leer](../../book-es/chapter8.es.md) | [9](../../chapter8/README.es.md) |
-| 9 | 🎙️ **Multimodalidad e Interacción en Tiempo Real** | Extensión del texto a la voz, GUI y mundo físico: tres paradigmas de voz, Computer Use, robótica | [Leer](../../book-es/chapter9.es.md) | [12](../../chapter9/README.es.md) |
+| 6 | 🎙️ **Interacción: la expansión de los espacios de observación y de acción** | Ampliar los espacios de observación y acción del Agente en modalidad y tiempo: sistemas asíncronos y dirigidos por eventos, voz, Computer Use y robótica | [Leer](../../book-es/chapter6.es.md) | [13](../../chapter6/README.es.md) |
+| 7 | 🎯 **Evaluación de Agentes** | Convertir el rendimiento en señales comparables: entornos, métricas, significación estadística y selección guiada por evaluación | [Leer](../../book-es/chapter7.es.md) | [13](../../chapter7/README.es.md) |
+| 8 | 🧠 **Post-entrenamiento de Modelos** | Tres etapas—preentrenamiento, SFT y RL: cuándo elegir SFT o RL, internalización de llamadas a herramientas y eficiencia de muestra | [Leer](../../book-es/chapter8.es.md) | [19](../../chapter8/README.es.md) |
+| 9 | 🔄 **La Evolución Continua del Agente** | Obtener señales de aprendizaje de las trayectorias de ejecución y actualizar conocimientos, instrucciones, programas y parámetros | [Leer](../../book-es/chapter9.es.md) | [9](../../chapter9/README.es.md) |
 | 10 | 🤝 **Colaboración Multi-Agente** | Inteligencia colectiva > individual: marcos de colaboración, compartición/aislamiento de contexto, "Sociedad de Agentes" emergente | [Leer](../../book-es/chapter10.es.md) | [8](../../chapter10/README.es.md) |
 
 > 💡 **Leer** = leer el texto del capítulo en GitHub (markdown); **N** = número de proyectos complementarios, haz clic para ver el código. Los tipos de proyecto (✅ Independiente / 📖 Reproducción / 🚧 Diseño) se explican en el README de cada capítulo.

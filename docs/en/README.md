@@ -9,6 +9,10 @@
 
 **Agent = LLM + Context + Tools** — This book builds on this core formula across 10 chapters, taking AI Agents from principles to engineering practice. The full text, illustrations, and **93 accompanying experiments** are all open source. You are welcome to run the experiments yourself.
 
+> 📢 **What changed in version 2.0 (compared with 1.4):** Version 2.0 combines the “asynchronous interaction” section from the former Chapter 4 with the material on “multimodal Agents” from the former Chapter 9, reorganizing them into the new Chapter 6, “Interaction: Expanding the Observation and Action Spaces.” The former Chapters 6 (“Evaluating Agents”), 7 (“Model Post-Training”), and 8 (“Continual Evolution of Agents”) each move back one chapter and are now Chapters 7, 8, and 9, respectively.
+>
+> If you are reading an older PDF, we recommend [downloading the latest PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-en.pdf). The new edition also includes many corrections and content adjustments, so please use the latest version.
+
 | 📚 **10 chapters** of text, from basics to production | 📂 **93** companion projects (70+ standalone) | 🌐 **14 languages**: CN / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO / HU / HE |
 | :---: | :---: | :---: |
 
@@ -57,10 +61,10 @@ The book revolves around the core formula **Agent = LLM + Context + Tools**, wit
 | 3 | 📚 **User Memory & Knowledge Bases** | Cross-session user memory + external knowledge: user memory, RAG, structured indexes, knowledge graphs | [Read](../../book-en/chapter3.md) | [12](../../chapter3/README.en.md) |
 | 4 | 🛠️ **Tools** | Tools are the Agent's hands: MCP protocol, perception/execution/collaboration tools, event-driven async Agents, proactive tool discovery | [Read](../../book-en/chapter4.md) | [8](../../chapter4/README.en.md) |
 | 5 | 💻 **Coding Agent & Code Generation** | Code is a "tool that creates new tools"; production-grade Coding Agent in full | [Read](../../book-en/chapter5.md) | [13](../../chapter5/README.en.md) |
-| 6 | 🎯 **Agent Evaluation** | Turn performance into comparable signals: environments, metrics, statistical significance, evaluation-driven selection | [Read](../../book-en/chapter6.md) | [12](../../chapter6/README.en.md) |
-| 7 | 🧠 **Model Post-Training** | Pre-training/SFT/RL three stages: when to choose SFT vs. RL, internalizing tool calls, sample efficiency | [Read](../../book-en/chapter7.md) | [16](../../chapter7/README.en.md) |
-| 8 | 🔄 **Agent Self-Evolution** | Growth without changing weights: learning from experience, from tool user to tool creator | [Read](../../book-en/chapter8.md) | [9](../../chapter8/README.en.md) |
-| 9 | 🎙️ **Multimodal & Real-Time Interaction** | Extending from text to voice, GUI, physical world: three voice paradigms, Computer Use, robotics | [Read](../../book-en/chapter9.md) | [12](../../chapter9/README.en.md) |
+| 6 | 🎙️ **Interaction: Expanding the Observation and Action Spaces** | Expand the Agent's observation and action spaces across modality and time: asynchronous and event-driven systems, voice, Computer Use, and robotics | [Read](../../book-en/chapter6.md) | [13](../../chapter6/README.en.md) |
+| 7 | 🎯 **Evaluating Agents** | Turn performance into comparable signals: evaluation environments, metrics, statistical significance, and evaluation-driven selection | [Read](../../book-en/chapter7.md) | [13](../../chapter7/README.en.md) |
+| 8 | 🧠 **Model Post-Training** | Three stages—pre-training, SFT, and RL: when to choose SFT or RL, internalizing tool calls, and sample efficiency | [Read](../../book-en/chapter8.md) | [19](../../chapter8/README.en.md) |
+| 9 | 🔄 **Continual Evolution of Agents** | Derive learning signals from execution trajectories and update knowledge, instructions, programs, and parameters | [Read](../../book-en/chapter9.md) | [9](../../chapter9/README.en.md) |
 | 10 | 🤝 **Multi-Agent Collaboration** | Collective intelligence > individual: collaboration frameworks, context sharing/isolation, emergent "Agent Society" | [Read](../../book-en/chapter10.md) | [7](../../chapter10/README.en.md) |
 
 > 💡 **Read** = read the chapter text on GitHub (markdown); **N** = number of companion projects, click for code. Project types (✅ Standalone / 📖 Reproduction / 🚧 Design) are explained in each chapter's README.

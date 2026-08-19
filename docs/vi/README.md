@@ -9,6 +9,10 @@
 
 **Agent = LLM + Context + Tools** — Cuốn sách xây dựng trên công thức cốt lõi này qua 10 chương, đưa AI Agent từ nguyên lý đến thực hành kỹ thuật. Toàn bộ nội dung, hình minh họa và **93 thí nghiệm đi kèm** đều là mã nguồn mở. Hoan nghênh bạn tự chạy các thí nghiệm.
 
+> 📢 **Những thay đổi trong bản 2.0 (so với 1.4):** Bản 2.0 hợp nhất phần “tương tác bất đồng bộ” của Chương 4 cũ với nội dung về “Agent đa phương thức” của Chương 9 cũ, rồi tái cấu trúc thành Chương 6 mới, “Tương tác: mở rộng không gian quan sát và không gian hành động”. Các Chương 6 (“Đánh giá Agent”), 7 (“Post-training mô hình”) và 8 (“Sự tiến hóa liên tục của Agent”) trước đây đều lùi lại một chương, nay lần lượt là Chương 7, 8 và 9.
+>
+> Nếu bạn đang đọc một bản PDF cũ, chúng tôi khuyên bạn [tải PDF mới nhất](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-vi.pdf). Ấn bản mới còn có nhiều nội dung được sửa chữa và điều chỉnh; vui lòng sử dụng phiên bản mới nhất.
+
 | 📚 **10 chương** nội dung, từ nền tảng đến sản xuất | 📂 **93** dự án đi kèm (70+ chạy độc lập) | 🌐 **14 ngôn ngữ**: Trung / Anh / Tây Ban Nha / Indonesia / Ả Rập / 繁體中文（台灣） / Nga / Tamil / Việt / Nhật / Thổ Nhĩ Kỳ / Hàn / Hungary / Do Thái |
 | :---: | :---: | :---: |
 
@@ -57,10 +61,10 @@ Sách xoay quanh công thức cốt lõi **Agent = LLM + Context + Tools**, mư�
 | 3 | 📚 **Bộ nhớ người dùng và kho tri thức** | Ghi nhớ người dùng qua phiên + tri thức ngoài: bộ nhớ người dùng, RAG, chỉ mục cấu trúc, đồ thị tri thức | [Đọc](../../book-vi/chapter3.vi.md) | [12](../../chapter3/README.vi.md) |
 | 4 | 🛠️ **Công cụ** | Công cụ là đôi tay Agent: giao thức MCP, cảm nhận/thực thi/cộng tác, Agent bất đồng bộ hướng sự kiện, khám phá công cụ tích cực | [Đọc](../../book-vi/chapter4.vi.md) | [8](../../chapter4/README.vi.md) |
 | 5 | 💻 **Coding Agent và sinh mã** | Mã là "công cụ tạo ra công cụ mới"; Coding Agent cấp sản xuất đầy đủ | [Đọc](../../book-vi/chapter5.vi.md) | [13](../../chapter5/README.vi.md) |
-| 6 | 🎯 **Đánh giá Agent** | Biến biểu hiện thành tín hiệu so sánh được: môi trường, chỉ số, ý nghĩa thống kê, chọn mô hình dựa trên đánh giá | [Đọc](../../book-vi/chapter6.vi.md) | [12](../../chapter6/README.vi.md) |
-| 7 | 🧠 **Hậu huấn luyện mô hình** | Tiền huấn luyện/SFT/RL ba giai đoạn: khi nào SFT, khi nào RL, nội tại hóa gọi công cụ, hiệu quả mẫu | [Đọc](../../book-vi/chapter7.vi.md) | [16](../../chapter7/README.vi.md) |
-| 8 | 🔄 **Tự tiến hóa của Agent** | Trưởng thành không cần sửa trọng số: học từ kinh nghiệm, từ người dùng thành người tạo | [Đọc](../../book-vi/chapter8.vi.md) | [9](../../chapter8/README.vi.md) |
-| 9 | 🎙️ **Đa phương thức và tương tác thời gian thực** | Mở rộng từ văn bản sang giọng nói, GUI, thế giới vật lý: ba mô thức giọng nói, Computer Use, robot | [Đọc](../../book-vi/chapter9.vi.md) | [12](../../chapter9/README.vi.md) |
+| 6 | 🎙️ **Tương tác: mở rộng không gian quan sát và không gian hành động** | Mở rộng không gian quan sát và hành động của Agent theo phương thức và thời gian: hệ thống bất đồng bộ và hướng sự kiện, giọng nói, Computer Use và robot | [Đọc](../../book-vi/chapter6.vi.md) | [13](../../chapter6/README.vi.md) |
+| 7 | 🎯 **Đánh giá Agent** | Biến hiệu suất thành tín hiệu có thể so sánh: môi trường, chỉ số, ý nghĩa thống kê và lựa chọn dựa trên đánh giá | [Đọc](../../book-vi/chapter7.vi.md) | [13](../../chapter7/README.vi.md) |
+| 8 | 🧠 **Post-training mô hình** | Ba giai đoạn—tiền huấn luyện, SFT và RL: khi nào chọn SFT hay RL, nội tại hóa lời gọi công cụ và hiệu quả mẫu | [Đọc](../../book-vi/chapter8.vi.md) | [19](../../chapter8/README.vi.md) |
+| 9 | 🔄 **Sự tiến hóa liên tục của Agent** | Lấy tín hiệu học tập từ quỹ đạo thực thi và cập nhật kiến thức, chỉ dẫn, chương trình và tham số | [Đọc](../../book-vi/chapter9.vi.md) | [9](../../chapter9/README.vi.md) |
 | 10 | 🤝 **Cộng tác đa Agent** | Trí tuệ tập thể cao hơn cá thể: khung cộng tác, chia sẻ/cô lập ngữ cảnh, "xã hội Agent" nổi lên | [Đọc](../../book-vi/chapter10.vi.md) | [7](../../chapter10/README.vi.md) |
 
 

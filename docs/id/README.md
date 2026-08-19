@@ -9,6 +9,10 @@
 
 **Agent = LLM + Konteks + Alat** — buku ini memakai rumus inti tersebut untuk membahas AI Agent, dari prinsip dasar hingga praktik rekayasa, dalam sepuluh bab. Naskah, ilustrasi, dan proyek pendampingnya tersedia sebagai sumber terbuka.
 
+> 📢 **Perubahan pada versi 2.0 (dibandingkan 1.4):** Versi 2.0 menggabungkan bagian “interaksi asinkron” dari Bab 4 lama dengan materi tentang “Agent multimodal” dari Bab 9 lama, lalu menatanya ulang menjadi Bab 6 baru, “Interaksi: Perluasan Ruang Observasi dan Ruang Aksi”. Bab 6 lama (“Mengevaluasi Agent”), Bab 7 (“Pascapelatihan Model”), dan Bab 8 (“Evolusi Kontinual pada Agent”) masing-masing bergeser satu bab menjadi Bab 7, 8, dan 9.
+>
+> Jika Anda membaca PDF lama, sebaiknya [unduh PDF terbaru](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-id.pdf). Edisi baru juga memuat banyak koreksi dan penyesuaian isi; gunakan versi terbaru sebagai acuan.
+
 | 📚 **10 bab** dari dasar hingga produksi | 📂 **104 proyek** pendamping | 🌐 **14 bahasa**: ZH / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO / HU / HE |
 | :---: | :---: | :---: |
 
@@ -52,10 +56,10 @@ Sumber naskah Bahasa Indonesia berada di [`book-id/`](../../book-id/). Edisi ini
 | 3 | 📚 **Memori Pengguna dan Basis Pengetahuan** | Memori lintas sesi, RAG, indeks terstruktur, dan graf pengetahuan | [Baca](../../book-id/chapter3.md) | [12](../../chapter3/README.id.md) |
 | 4 | 🛠️ **Alat** | MCP, alat persepsi/eksekusi/kolaborasi, Agent asinkron berbasis peristiwa | [Baca](../../book-id/chapter4.md) | [8](../../chapter4/README.id.md) |
 | 5 | 💻 **Coding Agent dan Pembuatan Kode** | Kode sebagai alat yang dapat membuat alat baru; implementasi Coding Agent tingkat produksi | [Baca](../../book-id/chapter5.md) | [13](../../chapter5/README.id.md) |
-| 6 | 🎯 **Evaluasi Agent** | Lingkungan evaluasi, metrik, signifikansi statistik, dan pemilihan berbasis evaluasi | [Baca](../../book-id/chapter6.md) | [17](../../chapter6/README.id.md) |
-| 7 | 🧠 **Pascapelatihan Model** | Prapelatihan, SFT, RL, internalisasi pemanggilan alat, dan efisiensi sampel | [Baca](../../book-id/chapter7.md) | [18](../../chapter7/README.id.md) |
-| 8 | 🔄 **Evolusi Berkelanjutan Agent** | Belajar dari jejak eksekusi dan memperbarui pengetahuan, instruksi, program, serta parameter | [Baca](../../book-id/chapter8.md) | [7](../../chapter8/README.id.md) |
-| 9 | 🎙️ **Interaksi Multimodal dan Waktu Nyata** | Suara, GUI, Computer Use, dan robotika | [Baca](../../book-id/chapter9.md) | [10](../../chapter9/README.id.md) |
+| 6 | 🎙️ **Interaksi: Perluasan Ruang Observasi dan Ruang Aksi** | Memperluas ruang observasi dan aksi Agent dalam modalitas dan waktu: sistem asinkron dan berbasis peristiwa, suara, Computer Use, dan robotika | [Baca](../../book-id/chapter6.md) | [13](../../chapter6/README.id.md) |
+| 7 | 🎯 **Mengevaluasi Agent** | Mengubah kinerja menjadi sinyal yang dapat dibandingkan: lingkungan, metrik, signifikansi statistik, dan pemilihan berbasis evaluasi | [Baca](../../book-id/chapter7.md) | [13](../../chapter7/README.id.md) |
+| 8 | 🧠 **Pascapelatihan Model** | Tiga tahap—prapelatihan, SFT, dan RL: kapan memilih SFT atau RL, internalisasi pemanggilan alat, dan efisiensi sampel | [Baca](../../book-id/chapter8.md) | [19](../../chapter8/README.id.md) |
+| 9 | 🔄 **Evolusi Kontinual pada Agent** | Mengambil sinyal pembelajaran dari jejak eksekusi dan memperbarui pengetahuan, instruksi, program, serta parameter | [Baca](../../book-id/chapter9.md) | [9](../../chapter9/README.id.md) |
 | 10 | 🤝 **Kolaborasi Multi-Agent** | Kerangka kolaborasi, berbagi/isolasi konteks, dan kemunculan “masyarakat Agent” | [Baca](../../book-id/chapter10.md) | [8](../../chapter10/README.id.md) |
 
 > 💡 **Baca** membuka naskah bab di GitHub; angka pada kolom **Kode** membuka daftar proyek pendamping.
