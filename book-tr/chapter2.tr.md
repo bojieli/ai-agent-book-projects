@@ -971,7 +971,7 @@ Agent Durum Çubuğu, **context sıkıştırma** (Context Compression) teknikler
 
 ### Sıkıştırma Neden Gereklidir: Sadece Bir Uzunluk Sorunu Değil
 
-Context'i sıkıştırmanın iki farklı motivasyonu vardır. Bunu anlamak, etkili bir sıkıştırma stratejisi tasarlamak için kritiktir.
+Context'i sıkıştırmanın üç farklı motivasyonu vardır. Bunların üçünü de anlamak, etkili bir sıkıştırma stratejisi tasarlamak için kritiktir.
 
 **Birincisi, uzunluk ve maliyet kısıtlarını ele almak.** Bu en sezgisel nedendir: context penceresi sınırlıdır (örn. 128K token), tool calling sonuçları rutin olarak on binlerce karaktere ulaşır ve birkaç etkileşim turu pencereyi doldurup görevi yarıda kesebilir. Daha fazla token aynı zamanda daha yüksek API maliyeti ve keskin biçimde daha yüksek çıkarım gecikmesi anlamına gelir.
 
@@ -980,6 +980,10 @@ Context'i sıkıştırmanın iki farklı motivasyonu vardır. Bunu anlamak, etki
 Somut bir örnek düşünün: karmaşık bir görev sırasında, bir Agent 10 web araması yoluyla bir konu hakkında bilgi biriktirir. Bu arama sonuçları context boyunca ham halleriyle dağılmış durumdadır—2. turun sonuçları başa yakın, 9. turun sonuçları ise sona yakındır. Agent tüm bu bilgiye dayanarak nihai bir karar vermesi gerektiğinde, on binlerce token boyunca ilgili parçaları tekrar tekrar "getirmek" zorundadır, dikkati dağılır ve kilit bilgi kolayca kaçırılır.
 
 Ancak, 10. aramadan sonra, mevcut bilginin yapılandırılmış bir özetini üretmek için tek bir LLM çağrısı kullanılırsa—"Şu anda bilinenler: A ..., B ..., C hakkındaki bilgi hâlâ eksik"—model bu inceltilmiş bilgi temsilini, ham veriden yeniden çıkarmasına gerek kalmadan sonraki düşünmede doğrudan kullanabilir.
+
+**Üçüncüsü, modelin context kaygısını (Context Anxiety) azaltmak**[^ch2-7]. Model context penceresinin tükenmek üzere olduğunu düşündüğünde, görev henüz tamamlanmadan işi toparlamaya başlayabilir. Pencerenin tükenmesine daha çok varken context'i erkenden sıkıştırmak, modelin karar kalitesini artırabilir.
+
+[^ch2-7]: Prithvi Rajasekaran, [“Harness design for long-running application development”](https://www.anthropic.com/engineering/harness-design-long-running-apps), Anthropic Engineering, 2026.
 
 
 ### Bağlam İçi Öğrenmenin İçsel Mekanizması: Retrieval, Reasoning Değil
@@ -1059,7 +1063,7 @@ Yukarıdaki deney, çeşitli sıkıştırma stratejileri arasındaki performans 
 
 ### Sıkıştırma Stratejileri için Tasarım İlkeleri
 
-Sıkıştırmanın iki motivasyonunu (uzunluğu kontrol etmek ve düşünme kalitesini artırmak) ve "bağlam içi öğrenmenin özünde retrieval olduğu" içsel mekanizmayı zaten analiz ettik. Buna dayanarak, belirli sıkıştırma stratejilerinin tasarımına rehberlik edecek dört ilke damıtabiliriz. Burada tartışılan sıkıştırma mevcut göreve hizmet eder; birden fazla görevin trajectory'leri çevrimdışı olarak kalıcı deneyime dönüştürülmek üzere birleştirilecekse, sorun Bölüm 9'de ele alınan sürekli evrim alanına girer.
+Sıkıştırmanın üç motivasyonunu (uzunluğu kontrol etmek, düşünme kalitesini artırmak ve context kaygısını azaltmak) ve "bağlam içi öğrenmenin özünde retrieval olduğu" içsel mekanizmayı zaten analiz ettik. Buna dayanarak, belirli sıkıştırma stratejilerinin tasarımına rehberlik edecek dört ilke damıtabiliriz. Burada tartışılan sıkıştırma mevcut göreve hizmet eder; birden fazla görevin trajectory'leri çevrimdışı olarak kalıcı deneyime dönüştürülmek üzere birleştirilecekse, sorun Bölüm 9'de ele alınan sürekli evrim alanına girer.
 
 - **Bilgi Değerinin Eşit Olmayan Dağılımı**: Kilit karar noktaları (örn. bir personel listesi), destekleyici kanıttan (örn. haber ayrıntıları) daha değerlidir, bu da gereksiz gürültüden (örn. web sayfası navigasyon çubukları, altbilgi reklamları) daha değerlidir.
 - **Semantik Bütünlük**: "Sutskever, OpenAI'den Mayıs 2024'te ayrıldı" ifadesi "Sutskever ayrıldı"ya sıkıştırılamaz—zaman ve şirket adı kritik, pazarlığa kapalı bilgidir.

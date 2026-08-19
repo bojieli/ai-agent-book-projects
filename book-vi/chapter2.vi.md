@@ -968,7 +968,7 @@ Các phần trước đã thảo luận về cách đưa nội dung vào ngữ c
 
 ### Tại sao cần nén: Vấn đề không chỉ là độ dài
 
-Ngữ cảnh nén có hai động cơ riêng biệt và hiểu được điều này là rất quan trọng để thiết kế các chiến lược nén.
+Nén ngữ cảnh có ba động cơ riêng biệt, và việc hiểu cả ba là rất quan trọng để thiết kế một chiến lược nén hiệu quả.
 
 **Đầu tiên, giải ràng buộc về độ dài và ràng buộc về chi phí**. Đây là lý do trực quan nhất: cửa sổ ngữ cảnh bị giới hạn (ví dụ: 128K mã thông báo) và kết quả lệnh gọi công cụ thường chứa hàng chục nghìn ký tự. Một vài vòng tương tác có thể lấp đầy cửa sổ và nhiệm vụ buộc phải bị gián đoạn. Đồng thời, càng nhiều token thì giá API càng cao và độ trễ suy luận cũng sẽ tăng mạnh.
 
@@ -977,6 +977,10 @@ Ngữ cảnh nén có hai động cơ riêng biệt và hiểu được điều 
 Hãy xem xét một ví dụ cụ thể: Agent đã tích lũy thông tin về một chủ đề thông qua 10 tìm kiếm trên web trong quá trình thực hiện một nhiệm vụ phức tạp. Các kết quả tìm kiếm này nằm rải rác trong ngữ cảnh ở dạng thô—kết quả cho vòng 2 cao hơn trong ngữ cảnh và kết quả cho vòng 9 xa hơn. Khi Agent cần đưa ra quyết định cuối cùng dựa trên tất cả thông tin này, nó phải liên tục "truy xuất" các đoạn có liên quan trong số hàng chục nghìn mã thông báo. Sự chú ý bị phân tán và thông tin quan trọng dễ bị bỏ qua.
 
 Và nếu sau lần tìm kiếm thứ 10, lệnh gọi LLM được sử dụng để tạo một bản tóm tắt có cấu trúc của thông tin hiện có - "Hiện đã biết: A là..., B là..., vẫn còn thiếu thông tin về C" - mô hình có thể trực tiếp sử dụng cách biểu diễn kiến thức tinh tế này trong tư duy tiếp theo mà không cần trích xuất lại từ dữ liệu gốc.
+
+**Thứ ba, giảm bớt tình trạng lo lắng về ngữ cảnh (Context Anxiety) của mô hình**[^ch2-7]. Khi mô hình cho rằng cửa sổ ngữ cảnh sắp cạn, nó có thể kết thúc công việc sớm khi nhiệm vụ vẫn chưa hoàn thành. Nén ngữ cảnh từ sớm, khi cửa sổ vẫn còn xa mới cạn, có thể cải thiện chất lượng quyết định của mô hình.
+
+[^ch2-7]: Prithvi Rajasekaran, [“Harness design for long-running application development”](https://www.anthropic.com/engineering/harness-design-long-running-apps), Anthropic Engineering, 2026.
 
 
 ### Hoạt động bên trong của In-Context Learning (học trong ngữ cảnh): truy hồi thay vì suy luận
@@ -1056,7 +1060,7 @@ Các thí nghiệm trên cho thấy sự khác biệt về hiệu quả của c�
 
 ### Nguyên tắc thiết kế chiến lược nén
 
-Trước đây chúng tôi đã phân tích hai động cơ nén (kiểm soát độ dài và nâng cao chất lượng tư duy) và cơ chế bên trong của “học ngữ cảnh về cơ bản là truy xuất”. Trên cơ sở đó, chúng ta có thể rút ra bốn nguyên tắc để hướng dẫn thiết kế các chiến lược nén cụ thể (Chương 9 sẽ thảo luận về cách Claude Code trực tiếp thiết kế phép ẩn dụ về hợp nhất bộ nhớ thành một hệ thống tích hợp bộ nhớ ngoại tuyến định kỳ):
+Trước đây chúng tôi đã phân tích ba động cơ nén (kiểm soát độ dài, nâng cao chất lượng tư duy và giảm bớt lo lắng về ngữ cảnh) cùng cơ chế bên trong của “học ngữ cảnh về cơ bản là truy xuất”. Trên cơ sở đó, chúng ta có thể rút ra bốn nguyên tắc để hướng dẫn thiết kế các chiến lược nén cụ thể (Chương 9 sẽ thảo luận về cách Claude Code trực tiếp thiết kế phép ẩn dụ về hợp nhất bộ nhớ thành một hệ thống tích hợp bộ nhớ ngoại tuyến định kỳ):
 
 - **Phân phối giá trị thông tin không đồng đều**: Giá trị của các điểm quyết định quan trọng (như danh sách nhân sự) cao hơn bằng chứng hỗ trợ (như chi tiết tin tức) và cao hơn tiếng ồn dư thừa (như thanh điều hướng web, quảng cáo ở chân trang, v.v.)
 - **Tính đầy đủ về mặt ngữ nghĩa**: Không thể nén "Sutskever left OpenAI vào tháng 5 năm 2024" thành "Sutskever left" - thời gian và tên công ty là những thông tin quan trọng không thể bị mất

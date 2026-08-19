@@ -972,7 +972,7 @@ A medida que el Agente interactúa con su entorno a través de múltiples rondas
 
 ### Por qué es necesaria la compresión: no es solo una cuestión de longitud
 
-Existen dos motivos completamente distintos para comprimir el contexto, y comprenderlos es crucial para diseñar una estrategia de compresión.
+Existen tres motivos completamente distintos para comprimir el contexto, y comprenderlos es crucial para diseñar una estrategia de compresión.
 
 **Primero, resolver las restricciones de longitud y de coste**. Esta es la razón más evidente: la ventana de contexto es limitada —por ejemplo, 128K tokens—, los resultados de las llamadas a herramientas pueden alcanzar fácilmente decenas de miles de caracteres y unas pocas rondas de interacción pueden bastar para llenar la ventana, obligando a interrumpir la tarea. Al mismo tiempo, cuantos más tokens haya, mayor será el coste de la API y más aumentará la latencia de inferencia.
 
@@ -981,6 +981,10 @@ Existen dos motivos completamente distintos para comprimir el contexto, y compre
 Consideremos un ejemplo concreto: durante la ejecución de una tarea compleja, un Agente acumula información sobre un tema mediante 10 búsquedas web. Los resultados de esas búsquedas quedan dispersos en su forma original por distintas posiciones del contexto—los resultados de la segunda ronda aparecen cerca del principio del contexto, mientras que los de la novena aparecen hacia el final. Cuando el Agente necesita tomar una decisión definitiva basándose en toda esa información, debe «recuperar» repetidamente los fragmentos pertinentes entre decenas de miles de tokens; su atención se dispersa y es fácil que pase por alto información clave.
 
 En cambio, si después de la décima búsqueda se utiliza primero una llamada al LLM para elaborar un resumen estructurado de la información disponible—«Lo que se sabe hasta ahora: A es..., B es..., aún falta información sobre C»—, el modelo puede utilizar directamente esta representación refinada del conocimiento durante el razonamiento posterior, sin tener que volver a extraerla de los datos originales.
+
+**Tercero, mitigar la ansiedad de contexto (Context Anxiety) del modelo**[^ch2-7]. Cuando el modelo cree que su ventana de contexto está a punto de agotarse, puede empezar a cerrar el trabajo antes de haber terminado la tarea. Comprimir el contexto con antelación, cuando la ventana aún está lejos de agotarse, puede mejorar la calidad de sus decisiones.
+
+[^ch2-7]: Prithvi Rajasekaran, [“Harness design for long-running application development”](https://www.anthropic.com/engineering/harness-design-long-running-apps), Anthropic Engineering, 2026.
 
 
 ### El mecanismo interno del aprendizaje en contexto: recuperación, no razonamiento
@@ -1060,7 +1064,7 @@ El experimento anterior muestra las diferencias de eficacia entre distintas estr
 
 ### Principios de diseño de las estrategias de compresión
 
-Ya hemos analizado los dos motivos de la compresión —controlar la longitud y mejorar la calidad del razonamiento— y el mecanismo interno según el cual «el aprendizaje en contexto es esencialmente recuperación». Sobre esta base, podemos extraer cuatro principios que orientan el diseño de estrategias de compresión concretas. Aquí, la compresión está al servicio de la tarea actual; cuando las trayectorias de múltiples tareas deban organizarse sin conexión para convertirlas en experiencia persistente, entraremos en el problema de la evolución continua tratado en el capítulo 9.
+Ya hemos analizado los tres motivos de la compresión —controlar la longitud, mejorar la calidad del razonamiento y mitigar la ansiedad de contexto— y el mecanismo interno según el cual «el aprendizaje en contexto es esencialmente recuperación». Sobre esta base, podemos extraer cuatro principios que orientan el diseño de estrategias de compresión concretas. Aquí, la compresión está al servicio de la tarea actual; cuando las trayectorias de múltiples tareas deban organizarse sin conexión para convertirlas en experiencia persistente, entraremos en el problema de la evolución continua tratado en el capítulo 9.
 
 - **Distribución no uniforme del valor de la información**: los puntos de decisión clave —como una lista de personas— tienen más valor que las pruebas de apoyo —como los detalles de una noticia—, que a su vez tienen más valor que el ruido redundante —como las barras de navegación, los anuncios del pie de página y otros elementos de una web—
 - **Integridad semántica**: «Sutskever dejó OpenAI en mayo de 2024» no puede comprimirse como «Sutskever se marchó»—la fecha y el nombre de la empresa son datos clave que no pueden perderse
