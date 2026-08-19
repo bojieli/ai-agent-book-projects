@@ -179,7 +179,7 @@ Anthropic 2026 年的漏洞挖掘實驗提供了一個案例：45 個 Agent 透�
 
 ### Agent 間的通訊與控制
 
-檔案系統解決 Agent 間**產物交換**的問題，協作還需一條**控制平面**。這正是表 10-2 中生命週期各行的用武之地：建立（`spawn_subagent`）、發訊息（`send_message_to_subagent`）、取消（`cancel_subagent`）、發現（`list_agents`）這組第四章給出的工具原語，對應程序世界的 fork、訊息、kill 和 ps。本節不重複介面定義，而聚焦多 Agent 協作依賴、卻常被忽略的四項能力。
+檔案系統解決 Agent 間**產物交換**的問題，協作還需一條**控制平面**。這正是表 10-2 中生命週期各行的用武之地：第四章給出的這組工具原語——建立（`spawn_subagent`）、發訊息（`send_message_to_subagent`）、取消（`cancel_subagent`）、發現（`list_agents`）——對應程序世界的 fork、訊息、kill 和 ps。本節不重複介面定義，而聚焦多 Agent 協作依賴、卻常被忽略的四項能力。
 
 **一、訊息傳遞。** 最簡形態為點對點：Agent A 直接呼叫 `send_message_to_agent_b(content)`，適用於拓撲固定、Agent 數量少的場景（如本章實驗 10-3 的電話 + 電腦雙 Agent）。當 Agent 數量增多且需非同步並行時，點對點連線數隨 Agent 數呈平方增長，且要求收發雙方同時線上；此時應改用**訊息匯流排**（詳見本章後文「並行協調形態」）：Agent 將訊息釋出至匯流排，由匯流排按訂閱關係轉寄，傳送方無需知曉消費者。無論點對點還是經匯流排，訊息通常應攜帶結構化的**信封**（envelope）：傳送者 ID、目標（指定 Agent 或廣播）、訊息型別（如 `task_assigned`/`status_update`/`result`/`terminate`）及 JSON 負載。統一的信封格式保證接收方可靠地路由與解析，並使協作鏈路可追溯——這很多 Agent 系統除錯的關鍵。
 
