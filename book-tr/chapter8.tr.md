@@ -454,7 +454,7 @@ GRPO'daki "göreli", aynı prompt için grup içi karşılaştırmadan gelir; PP
 >
 > Çalışma, raporda seçilen ölçüm noktasından sonra step 410'a ve toplam 36.92 saate kadar devam etti; ardından W&B durumu `crashed` oldu. Yapılandırılan 10 epochs / 3,140 steps tamamlanmadı. Step 300'de bir checkpoint zamanlama olayı bulunsa da checkpoint kitapla dağıtılmıyor; `run_eval_verl_hf.sh` ile başarıyla değerlendirildiğini veya MMLU'nun yeniden çalıştırıldığını kanıtlayan bağımsız bir yürütme kaydı da yok. Tarihsel kaynak commit'i `9e588202…`; gelecekteki yeniden üretimler doğrudan alt commit'i `0033ad172…` üzerine sabitlenmiştir. Üç giriş noktası dosyası değişmemiştir, ancak eğitim betiğinin ürettiği `-fl-` yolu, değerlendirme betiğinde sabit kodlanmış `-fl4096` yoluyla uyumlu değildir ve elle düzeltilmelidir.
 >
-> Prompt damıtma ile birbirini tamamlayarak bir "hızlı-yavaş çift sistem" oluşturuyor: damıtma, düşünme gerektiren görevlerin oranını düşürüyor; AdaptThink ise kalan görevlerde tetikleme stratejisini optimize ediyor. İkisi birlikte düşünme verimini en üst düzeye çıkarıyor.
+> AdaptThink, prompt damıtma ile birbirini tamamlayarak bir "hızlı-yavaş çift sistem" oluşturuyor: damıtma, düşünme gerektiren görevlerin oranını düşürüyor; AdaptThink ise kalan görevlerde tetikleme stratejisini optimize ediyor. İkisi birlikte düşünme verimini artırıyor.
 
 > **Deney 8-11 ★★: GeneralPoints — Tek Turlu RL'de "Ezber ile Genelleştirme" Karşılaştırması**
 >

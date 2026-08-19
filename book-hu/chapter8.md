@@ -442,7 +442,7 @@ A GRPO „relatív” jelzője az ugyanarra a promptra vonatkozó csoporton bel�
 >
 > A futás a jelentésben kiválasztott mérési pont után a 410. lépésig és összesen 36.92 óráig folytatódott, majd a W&B állapota `crashed` lett; a beállított 10 epochs / 3,140 lépés nem fejeződött be. Bár a 300. lépésnél szerepel checkpoint-időzítési esemény, a checkpointot a könyv nem terjeszti, és nincs független bizonylat arról, hogy a `run_eval_verl_hf.sh` sikeresen kiértékelte volna, vagy hogy újrafuttatták volna rajta az MMLU-t. A korabeli forráscommit `9e588202…`; a jövőbeli reprodukciók ennek közvetlen gyermekcommitjára, a `0033ad172…` verzióra vannak rögzítve. A három belépési pont fájlja változatlan, de a tanítószkript által előállított `-fl-` útvonal nem kompatibilis a kiértékelő szkriptbe kódolt `-fl4096` útvonallal, ezért kézzel kell javítani.
 >
-> A prompt desztillációval együtt az AdaptThink egy "gyors-lassú kettős rendszert" alkot: a desztilláció csökkenti a gondolkodást igénylő feladatok arányát, míg az AdaptThink optimalizálja a triggerelési stratégiát a fennmaradó feladatokhoz, közösen maximalizálva a gondolkodás hatékonyságát.
+> A prompt desztillációval együtt az AdaptThink egy "gyors-lassú kettős rendszert" alkot: a desztilláció csökkenti a gondolkodást igénylő feladatok arányát, míg az AdaptThink optimalizálja a triggerelési stratégiát a fennmaradó feladatokhoz, közösen javítva a gondolkodás hatékonyságát.
 
 > **8-11. kísérlet ★★: GeneralPoints – "Memória és általánosítás" összehasonlítása egymenetes RL-ben**
 >

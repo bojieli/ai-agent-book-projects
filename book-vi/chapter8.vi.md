@@ -454,7 +454,7 @@ Chữ "tương đối" trong GRPO đến từ việc so sánh trong nhóm cho c�
 >
 > Lần chạy tiếp tục sau điểm đo được chọn trong báo cáo đến step 410, tổng cộng 36.92 giờ, rồi W&B ghi trạng thái `crashed`; cấu hình 10 epochs / 3,140 steps chưa hoàn tất. Dù có một sự kiện ghi thời gian checkpoint ở step 300, checkpoint không được phân phối cùng sách và không có biên nhận độc lập chứng minh nó đã được đánh giá thành công bằng `run_eval_verl_hf.sh` hoặc đã chạy lại MMLU. Commit mã nguồn lịch sử là `9e588202…`; các lần tái lập sau này được ghim vào commit con trực tiếp `0033ad172…`. Ba tệp entry point không thay đổi, nhưng đường dẫn `-fl-` do script huấn luyện tạo ra không tương thích với đường dẫn `-fl4096` được hard-code trong script đánh giá và phải sửa thủ công.
 >
-> Bổ sung cho quá trình chắt lọc nhanh chóng để tạo thành một “hệ thống kép nhanh-chậm”: chắt lọc giảm tỷ lệ các nhiệm vụ cần tư duy, đồng thời AdaptThink tối ưu hóa chiến lược kích hoạt các nhiệm vụ còn lại, cùng tối đa hóa hiệu quả tư duy.
+> AdaptThink có thể bổ sung cho chắt lọc prompt để tạo thành một “hệ thống kép nhanh-chậm”: chắt lọc giảm tỷ lệ các nhiệm vụ cần tư duy, đồng thời AdaptThink tối ưu hóa chiến lược kích hoạt các nhiệm vụ còn lại, cùng nâng cao hiệu quả tư duy.
 
 > **Thử nghiệm 8-11 ★★: GeneralPoints - So sánh "Bộ nhớ và khái quát hóa" của RL một vòng**
 >

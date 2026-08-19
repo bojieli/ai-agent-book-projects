@@ -454,7 +454,7 @@ Kata "relatif" pada GRPO berasal dari perbandingan di dalam kelompok untuk promp
 >
 > Setelah titik pengukuran yang dipilih dalam laporan, proses berlanjut hingga langkah 410 dan total 36.92 jam sebelum W&B menandainya sebagai `crashed`; konfigurasi 10 epochs / 3,140 langkah tidak selesai. Walaupun ada peristiwa pengukuran waktu checkpoint pada langkah 300, checkpoint tersebut tidak didistribusikan bersama buku dan tidak ada bukti eksekusi independen bahwa checkpoint itu berhasil dievaluasi dengan `run_eval_verl_hf.sh` atau digunakan untuk menjalankan ulang MMLU. Commit source historisnya adalah `9e588202…`; reproduksi mendatang dipatok ke commit anak langsungnya, `0033ad172…`. Ketiga file entry point tidak berubah, tetapi path `-fl-` yang dihasilkan script training tidak kompatibel dengan path `-fl4096` yang di-hardcode dalam script evaluasi dan harus diperbaiki secara manual.
 >
-> Bersama dengan *prompt distillation*, AdaptThink membentuk "fast-slow dual system": distilasi mengurangi proporsi tugas yang memerlukan pemikiran, sementara AdaptThink mengoptimalkan strategi pemicuan untuk tugas-tugas yang tersisa, secara bersama-sama memaksimalkan efisiensi pemikiran.
+> Bersama dengan *prompt distillation*, AdaptThink membentuk "fast-slow dual system": distilasi mengurangi proporsi tugas yang memerlukan pemikiran, sementara AdaptThink mengoptimalkan strategi pemicuan untuk tugas-tugas yang tersisa, secara bersama-sama meningkatkan efisiensi pemikiran.
 
 > **Eksperimen 8-11 ★★: GeneralPoints—Perbandingan "Memori dan Generalisasi" dalam RL Putaran Tunggal**
 >

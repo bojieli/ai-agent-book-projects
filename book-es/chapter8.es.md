@@ -483,7 +483,7 @@ Lo "relativo" de GRPO viene de comparar los rollouts de un grupo para el mismo p
 >
 > La ejecución continuó más allá del punto de medición elegido en el informe hasta el paso 410 y 36.92 horas acumuladas, tras lo cual W&B la marcó como `crashed`; no se completaron las 10 epochs / 3,140 pasos configurados. Aunque en el paso 300 aparece un evento de temporización de checkpoint, este no se distribuye con el libro y no existe ningún comprobante independiente de que se evaluara correctamente con `run_eval_verl_hf.sh` ni de que se volviera a ejecutar MMLU. El commit histórico del código fuente es `9e588202…`; las futuras reproducciones quedan fijadas en su commit hijo directo `0033ad172…`. Los tres archivos de punto de entrada no han cambiado, pero la ruta `-fl-` generada por el script de entrenamiento es incompatible con la ruta `-fl4096` codificada en el script de evaluación y debe corregirse manualmente.
 >
-> Se complementa con la destilación de prompts formando un sistema dual "rápido-lento": la destilación reduce la proporción de tareas que requieren pensar, y AdaptThink optimiza la estrategia de activación en las tareas restantes, maximizando la eficiencia computacional.
+> AdaptThink puede complementar la destilación de prompts para formar un sistema dual "rápido-lento": la destilación reduce la proporción de tareas que requieren pensar, y AdaptThink optimiza la estrategia de activación en las tareas restantes, mejorando conjuntamente la eficiencia del pensamiento.
 
 > **Experimento 8-11 ★★: GeneralPoints: Comparación entre Memoria y Generalización en RL de Un Solo Turno**
 >
