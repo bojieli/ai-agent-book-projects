@@ -347,13 +347,30 @@ Reasoning içermeyen kısa bir yanıtta VAD, ASR, LLM ve TTS beklemeleri seri bi
 
 #### Seriden akışlı algıya
 
-Akışlı ASR kullanıcı konuşurken geçici bir transkript üretebilir; LLM konuşulabilir ilk cümleyi TTS'ye gönderebilir; TTS de ses parçaları döndürebilir. Bu, ASR, LLM ve TTS'yi baştan sona tamamen paralel yapmaz: kısmi transkript değişirse üretim iptal edilmeli, yeniden başlatılmalı veya düzeltilmelidir; yalnızca \`stream\` seçeneğini açmak yeterli değildir.
+Şekil 6-7'nin tasvir ettiği, VAD+ASR+LLM+TTS'nin tamamen seri işlediği durumdur; bu seri algılama şemasının üç sorunu vardır:
 
-Sıradan streaming, VAD'nin sessizlik beklemesini de ortadan kaldırmaz. VAD + ASR ön ucu gecikme biriktirir, tereddüt/duygu/arka kanal tepkilerini ve ortam sesini kaybeder; isimler ve e-posta adresleri parçalar arasında bölünebilir. Gerçek streaming modelinin nedensel ya da parçalı bir kodlayıcıya ve artımlı kod çözmeye ihtiyacı vardır. Whisper kodlayıcısı tam ses parçasını beklediği için nedensel bir streaming modeli değildir. LLM tabanlı bir ses modeli sürekli sesten metin ve semantik olaylar çıkarabilir, ancak önek simülasyonu nedensel modelin gecikme garantisi değildir.
+1. **Gecikme birikimi**: konuşmanın bittiğini onaylamak için bir sessizlik aralığının geçmesi beklenmelidir.
+2. **Bilgi kaybı**: sesli/sessiz ikili sinyali tereddüdü, duyguyu, onaylayıcı tepkileri ve ortam sesini ifade edemez.
+3. **Bağlamın kesilmesi**: e-posta adresleri, kişi isimleri ve özel adlar parçalara bölünerek tanınabilir ve hatalı çıkabilir.
 
-Metin belirteçlerine ek olarak \`speak_start/end\`, \`interrupt\`, \`emotion\`, \`laugh\`, \`sigh\` ve \`noise\` işaretleri konuşma sınırlarını, kesme niyetini, duyguyu, tereddüdü ve çevresel sesi taşıyabilir. Böylece her akustik olay düz metne sıkıştırılmaz.
+Bu sorunu çözmek için, modüler iş bölümünü korurken bir optimizasyon yolu **akışlı algıdır (streaming perception)**: her aşamanın artımlı sonuçları olabildiğince erken üretmesi sağlanır.
 
-Amaç yalnızca kullanıcının konuşmayı bitirip bitirmediğine karar vermekse, sıra sonu kararı doğrudan akışlı tanıyıcıya yerleştirilebilir. Eğitim etiketleri yalnızca karar anında görülebilen bilgileri kullanmalıdır; aksi hâlde sonradan edinilen bilgi, çevrimiçi ortamda yeniden üretilemeyecek bir karar doğurur. Bu yol, eksiksiz bir ses LLM'sinden daha hafiftir.
+- **ASR dinlerken çevirir**: VAD, kullanıcının konuşmaya başladığını tespit ettiğinde belirli aralıklarla ASR modeli çağrılır ve geçici bir transkript akış hâlinde üretilir; VAD konuşmanın bittiğini tespit ettiğinde nihai metin onaylanır.
+- **LLM speculative execution yapar**: geçici transkript üretilir üretilmez LLM'e gönderilir; nihai metin geçici transkriptle aynıysa LLM tekrar çağrılmaz, aksi hâlde önceki speculative execution'ın düşünmesi iptal edilip LLM yeniden çağrılır.
+- **LLM parça parça çıktı üretir**: seslendirmeye uygun ilk parça üretilir üretilmez, tam yanıt beklenmeden TTS'ye verilir.
+- **TTS artımlı sentez yapar**: ses parçalarını sürekli döndürerek sonraki üretim, sentez ve oynatmanın örtüşmesini sağlar.
+
+Gerçek bir streaming ASR, modelin bunu desteklemesini gerektirir. Whisper'ın kod çözmesi özbağlanımlı olsa da kodlayıcısı tam bir ses parçasını beklediği için doğrudan bir streaming model sayılamaz. LLM tabanlı streaming işitsel modeller sürekli sesten metin ve semantik olaylar çıkarabilir; "tanımayı" ve bir kısım "anlamayı" aynı modelin içine taşır. Konuşmanın başından o ana kadarki bağlamı korur, ayrıca marka adları, kişi isimleri ve özel adları işlemek için dünya bilgisinden yararlanabilir.
+
+Yalnızca "kullanıcı konuşmayı bitirdi mi" sorusu çözülmek isteniyorsa, sıra sonu kararı doğrudan akışlı tanıyıcıya yerleştirilebilir: model semantiği ve sessizliği birlikte değerlendirerek bir cümlenin tamamlanmış olup olmadığına karar verir. Uç nokta kararının eğitim etiketleri yalnızca karar anında görülebilen bilgileri kullanmalıdır; aksi hâlde "tanrı bakış açısıyla" verilmiş etiketler, çevrimiçi ortamda yeniden üretilemeyecek kararlar doğurur.
+
+Modelin ürettiği yalnızca metin değildir; akustik olay işaretleri de içerebilir:
+
+- **speak_start/end, interrupt**: konuşmanın başlangıcı/bitişi ve kesme niyeti;
+- **emotion**: duygu, tereddüt gibi durumlar;
+- **laugh, sigh, noise**: paralinguistik ve ortam sesleri.
+
+Bu işaretler metin token'larıyla birleşerek tek bir olay akışı oluşturur; Agent bunlara dayanarak tereddüdü, kesintiyi ve ortam değişikliklerini tanıyabilir, tüm sesi düz metne sıkıştırmak zorunda kalmaz.
 
 > **Deney 6-4 ★: Qwen2-Audio ile akışlı konuşma algısını simüle etmek**
 >
@@ -361,19 +378,17 @@ Amaç yalnızca kullanıcının konuşmayı bitirip bitirmediğine karar vermeks
 
 ### Paradigma 2 · Uçtan uca omnimodal modeller (Omni)
 
-Streaming algı olsa bile kaskad dinleme, düşünme ve konuşmayı ayrık arayüzlerden geçirir; ses düz metne dönüştüğünde duygu, tonlama ve ortam sesi kaybolabilir. Omni bunları tek modelde yapar; eğitim, hata ayıklama ve bileşen değiştirme maliyeti daha yüksek olsa da gecikmeyi azaltır ve metin dışı sinyalleri korur (Şekil 6-9). Metnin görevi taşıdığı durumlarda öz-kaskad bir algılama hatasını düzeltebilir; yanıt konuşma hızına, duyguya veya ortama bağlıysa metin darboğazı kanıtı geri döndürülemez biçimde siler.
+Kaskad akışlı algı kullansa bile dinleme, düşünme ve konuşma hâlâ ayrık arayüzler üzerinden birbirine devredilir; duygu, tonlama ve ortam sesi gibi bilgiler sese dönüştürülürken kaybolabilir. Omni çözümü aynı modelle sesi doğrudan dinler, yanıtı üretir ve sesi çıktı olarak verir; bu sayede söz konusu bilgileri koruma şansı vardır, ama eğitim maliyeti daha yüksektir (Şekil 6-9). Paradigma 1'deki kaskad çözümle karşılaştırıldığında, Omni'nin avantajı esas olarak gecikmede ve metin dışı bilginin anlaşılması ile üretilmesinde ortaya çıkar.
 
-Omni hâlâ sıra almayı varsayar ve genellikle VAD ya da anlamsal endpointing kullanır. Sayı dizisindeki kısa bir duraklama konuşmanın sonu sanılabilir; akışlı algı kararı iyileştirir ama turları kaldırmaz.
+Anlama tarafında, Omni modelleri sesteki duraklamaları algılayabilir. Üretim tarafında ise Omni modelleri şarkı söylemek veya bir cümleyi özel bir tonlamayla söylemek gibi çok daha zengin paralinguistik bilgiyi aktarabilir.
+
+Omni modelleri hâlâ sırayla konuşmayı varsayar ve genellikle söz hakkını VAD ile belirler. Bu yüzden kullanıcı bir sayı dizisi söylerken yaptığı kısa bir duraklama, yine de konuşmanın bittiği şeklinde yanlış yorumlanabilir.
 
 ![Şekil 6-9: Uçtan uca omnimodal konuşma modeli karşılaştırması](images/fig6-9.svg)
-
-Gerçek zamanlı konuşma API'leri kaskad ile Omni arasında durur: model sesi doğal biçimde işler, ancak etkileşim kontrolü VAD, kesme ve asenkron tool çağrılarına dayanır. Yararlı karşılaştırma leaderboard değil, uçtan uca ve öz-kaskad yolların farklı görevlerde nasıl hata yaptığıdır.
 
 > **Deney 6-5 ★★: MiniCPM-o 4.5'i yerel çalıştırmak — uçtan uca ve öz-kaskad**
 >
 > MiniCPM-o 4.5'i thinking mode kapalı olarak yerelde çalıştırın; sesten doğrudan yanıtı, aynı modelin önce yazıya döküp sonra yanıtladığı self-cascade ile karşılaştırın. Bu, ses bilgisinin korunup korunmadığını ölçer; ilerideki **“konuşurken düşünme”yi değil**.
-
-Step-Audio 2 ham sesi işleyerek metin ve konuşma çıkaran uçtan uca yolu gösterir; duygu, konuşma hızı, tonlama ve ortam sesine odaklanır. Step-Audio R1 düşünmeyi ses modelinin içine alır ve “konuşurken düşünme” örneğini sağlar.
 
 ### Paradigma 3 · Full-duplex etkileşimli modeller
 
@@ -468,7 +483,7 @@ Anthropic'in referans uygulaması eksiksiz etkileşim yeteneğini üç araç tü
 
 ### Görsel Konumlandırma (Grounding)
 
-Döngünün her turunda modelin ekran görüntüsü içinde hedef öğeyi doğru biçimde bulması gerekir — "Arama kutusu nerede?", "Gönder düğmesinin koordinatları ne?" İşte bu, görsel konumlandırma (Grounding) problemidir. Hâlihazırda başlıca **iki yaklaşım** vardır: birincisi konumlandırmayı bir **çoktan seçmeli soruya** dönüştürmek — önce arayüz öğelerini numaralandırarak işaretlemek, böylece modelin yalnızca birini seçmesi yeterli olur; ikincisi **saf koordinat tahmini** — modelin tıpkı bir insan gibi ekran görüntüsüne doğrudan "bakıp" koordinatı söylemesi. Çoktan seçmeli yaklaşımın da iki uygulama biçimi vardır: **saf görsel işaretleme** (orijinal Set-of-Mark; bir segmentasyon modeliyle piksel düzeyinde aday bölgeler çıkarılır) ve **yapısal öğe indeksleme** (DOM/Accessibility Tree; arayüzün kendi yapısı doğrudan okunur). Çoktan seçmeli yaklaşımın ortak avantajı, "ekran görüntüsünde düğmeyi bul ve koordinatını tahmin et" biçimindeki açık uçlu problemi "önceden işaretlenmiş öğelerden birini seç" biçimindeki kapalı uçlu bir probleme çevirmesidir — tıpkı sınavda çoktan seçmeli soruların boşluk doldurmaya göre daha kolay doğru yanıtlanması gibi, modelin "ekranın sol üst köşesinden yaklaşık 200 piksel sağdaki mavi düğmeye tıkla" demesi gerekmez, "[123]'e tıkla" demesi yeter.
+Döngünün her turunda modelin ekran görüntüsü içinde hedef öğeyi doğru biçimde bulması gerekir — "Arama kutusu nerede?", "Gönder düğmesinin koordinatları ne?" İşte bu, görsel konumlandırma (Grounding) problemidir. Hâlihazırda başlıca **iki yaklaşım** vardır: birincisi konumlandırmayı bir **çoktan seçmeli soruya** dönüştürmek — önce arayüz öğelerini numaralandırarak işaretlemek, böylece modelin yalnızca birini seçmesi yeterli olur; ikincisi **saf koordinat tahmini** — modelin tıpkı bir insan gibi ekran görüntüsüne doğrudan "bakıp" koordinatı söylemesi. Çoktan seçmeli yaklaşımın da iki uygulama biçimi vardır: **saf görsel işaretleme** (orijinal Set-of-Mark; bir segmentasyon modeliyle piksel düzeyinde aday bölgeler çıkarılır) ve **yapısal öğe indeksleme** (DOM/Accessibility Tree; arayüzün kendi yapısı doğrudan okunur). Çoktan seçmeli yaklaşımın ortak avantajı, "ekran görüntüsünde düğmeyi bul ve koordinatını tahmin et" biçimindeki açık uçlu problemi "önceden işaretlenmiş öğelerden birini seç" biçimindeki kapalı uçlu bir probleme çevirmesidir — tıpkı sınavda çoktan seçmeli soruların boşluk doldurmaya göre daha kolay doğru yanıtlanması gibi, modelin "ekranın (350, 464) konumundaki düğmeye tıkla" demesi gerekmez, "[123]'e tıkla" demesi yeter. Koordinat çıktısı üretmek model için özellikle zorludur; doğru sonuç verebilmesi çok fazla eğitim gerektirir ve farklı ekran çözünürlüklerinde kolayca hataya düşer.
 
 **Set-of-Mark: görsel işaretleme yöntemi.**
 
@@ -520,7 +535,7 @@ Koordinat tahmini çözümlerinde modelin koordinatları kavrayışı, eğitim s
 
 Computer Use algısı şimdiye kadar örtük bir varsayıma dayandı: **ekran sabittir**—ekran görüntüsü al, bir adım düşün, tıkla, sonra yeniden görüntü al. Gerçek ekranlar video oynatır, kısa ömürlü bildirimler gösterir ve toplantı sesleri verir. Gözlerini yalnızca 3–5 saniyede bir açan ve hiç kulağı olmayan bir Agent, iki kare arasında olanları göremez ve duyamaz.
 
-Yeniden tasarlanması gereken action interface değil, **observation interface'tir**[^ch6-9]. Agent–bilgisayar gözlem arayüzü (AOI), ortamın sürekli gözlemini modelin işleyebileceği ayrık olaylara dönüştürür. Temel teknikleri şunlardır: neredeyse değişmeyen ekranları atlayıp küçük bir modelle yalnızca anlamlı değişimleri tutan **kareler arası anahtar kare yakalama**; yalnızca ses varken tanımayı çağıran **ses düzeyi kapılı konuşma dökümü**; ve özgün görüntü context'ten çıktıktan sonra da açıklamayı bellekte tutup çok modlu etkileşim geçmişini sıkıştıran **kareleri metin olarak anlatma**.
+Burada asıl yeniden tasarlanması gereken şey "eylem arayüzü" değil, "**gözlem arayüzü**"dür[^ch6-9]. Temel fikir, sürekli ortam gözlemini modelin kolayca işleyebileceği ayrık olaylara dönüştüren bir Agent–bilgisayar gözlem arayüzü (AOI) kurmaktır. Bu, birkaç kilit teknik içerir: birincisi, **ekranın anahtar kare yakalaması** — küçük bir modelle ekranda anlamlı bir değişim olup olmadığına karar verilir, yalnızca belirgin değişimlerde ekran görüntüsü alınır; değişim sık olduğunda saniyede 1 kare almak bile iyi sonuç verir. İkincisi, **ses düzeyi kapılı konuşma dökümü** — ses varken konuşma tanıma çağrılır, tanınan metin bağlama eklenir, böylece Agent sesi "duyabilir". Üçüncüsü, **görüntüyü metinle betimlemek** — model yakaladığı ekran görüntüsünü tek bir cümleyle betimler; böylece orijinal görüntü daha sonra bağlamdan temizlense bile bu cümle bağlamda kalır ve çok modlu etkileşim geçmişinin sıkıştırılması sağlanır.
 
 [^ch6-9]: Bkz. Li, Bojie and Noah Shi. *Agent-Computer Observation Interfaces Enable Dynamic Computer Use.* arXiv:2606.29472, 2026.
 

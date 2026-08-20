@@ -345,25 +345,22 @@ Production queueing amplifies idle latency further (Figure 6-8), but capacity pl
 
 #### From serial to streaming perception
 
-Figure 6-7 describes the fully serial case in which each stage waits for the previous one. A production system can retain the modular split while producing increments as early as possible:
-
-- **Streaming ASR** continuously produces a provisional transcript while the user speaks, then confirms the final text at the turn boundary.
-- **Segmented LLM output** sends the first speakable sentence to TTS without waiting for the full reply.
-- **Incremental TTS** returns audio chunks so later generation, synthesis, and playback overlap.
-
-“Streaming every stage” does not make ASR, LLM, and TTS fully parallel from start to finish. In a standard cascade, ASR overlaps with the user's speech and TTS overlaps with the LLM's later tokens, but the final reply still depends on a stable transcript. A more aggressive system starts the LLM from a partial transcript; if later text changes, it must cancel, restart, or correct the generation. Speculation requires explicit commit, invalidation, and rollback mechanisms; enabling \`stream\` alone does not provide them.
-
-Ordinary streaming also cannot remove VAD's silence wait. A traditional VAD + ASR front end has three problems:
+Figure 6-7 describes the fully serial case: VAD, ASR, LLM, and TTS run one after another. This serial perception approach has three problems:
 
 1. **Accumulated latency:** it must wait through silence before confirming the end.
 2. **Lost information:** a voiced/unvoiced bit cannot express hesitation, emotion, backchannels, or ambient sound.
 3. **Broken context:** email addresses, names, and proper nouns may be split across chunks and misrecognized.
 
-A truly streaming model needs a causal or chunked encoder with incremental decoding. Whisper's decoder is autoregressive, but its encoder expects a complete audio segment, so it should not be called a causal streaming model. RNN-T and streaming Conformer ASR have long been used in industry; the focus here is semantic listening built on an LLM backbone.
+To address this while keeping the modular split, one optimization is **streaming perception**, which lets each stage produce incremental results as early as possible:
 
-An LLM-based streaming-audio model can emit text and semantic events from continuous audio, placing recognition and part of understanding in one model. It keeps the conversation context from the beginning and can use world knowledge for brands, names, and proper nouns. Simulated chunking is still not a performance promise for a causal model.
+- **Streaming ASR:** once VAD detects that the user has started speaking, the ASR model is called at fixed intervals to produce a provisional transcript in a streaming fashion; once VAD detects that the user has finished, the final text is confirmed.
+- **LLM speculative execution:** the provisional transcript is sent to the LLM as soon as it exists. If the final text matches the provisional transcript, the LLM is not called again; otherwise the earlier speculative thinking is cancelled and the LLM is called again.
+- **Segmented LLM output:** the first speakable sentence goes to TTS without waiting for the full reply.
+- **Incremental TTS:** audio chunks are returned continuously so later generation, synthesis, and playback overlap.
 
-If the only goal is deciding whether the user has finished, endpointing can be built into the streaming recognizer. The model combines semantics and silence to judge whether an utterance is complete. Training labels must contain only information visible at decision time, or hindsight will produce a judgment that cannot be reproduced online. This is lighter than a complete audio-capable LLM.
+A truly streaming ASR needs model-level support. Whisper's decoder is autoregressive, but its encoder expects a complete audio segment, so it cannot simply be equated with a streaming model. An LLM-based streaming-audio model can emit text and semantic events from continuous audio, placing recognition and part of understanding in one model. It keeps the conversation context from the beginning up to the present moment and can use world knowledge for brands, names, and proper nouns.
+
+If the only goal is deciding whether the user has finished, endpointing can be built into the streaming recognizer. The model combines semantics and silence to judge whether an utterance is complete. Training labels must contain only information visible at decision time, or hindsight will produce a judgment that cannot be reproduced online.
 
 The model can emit acoustic-event markers as well as words:
 
@@ -379,21 +376,17 @@ Together with text tokens, these markers form one event stream. The Agent can de
 
 ### Paradigm 2 · End-to-end omnimodal models (Omni)
 
-Even with streaming perception, a cascade passes listening, thinking, and speaking through discrete interfaces; emotion, intonation, and ambient sound may be lost when audio becomes plain text. Omni uses one model to listen to audio, generate a reply, and speak it, which can preserve those signals at the cost of higher training, debugging, and component-replacement costs (Figure 6-9).
+Even with streaming perception, a cascade passes listening, thinking, and speaking through discrete interfaces; emotion, intonation, and ambient sound may be lost when audio becomes plain text. The Omni approach uses one model to listen to audio, generate a reply, and speak it, which can preserve those signals, though at a higher training cost (Figure 6-9). Compared with the cascaded pipeline of Paradigm 1, Omni's advantage shows up mainly in latency and in understanding and generating non-text information.
 
-The end-to-end advantage is mainly latency and non-text information, not necessarily accuracy. A self-cascade first transcribes with the same model and then answers from the transcript: when text carries the task information, it may correct a perception error; when the answer depends on speech rate, emotion, or ambient sound, the text bottleneck irreversibly loses evidence. The key question is not whether there is an intermediate representation, but what information it carries.
+On the understanding side, Omni models can pick up on pauses in the voice. On the generation side, Omni models can convey richer paralinguistic information—singing, or delivering a line in a distinctive tone.
 
-Omni still assumes turn-taking and generally uses VAD or semantic endpointing to assign the floor. A pause in a spoken sequence of numbers can still be mistaken for the end; streaming perception improves the judgment but does not remove turns.
+Omni models still assume turn-taking and generally use VAD to assign the floor. A mid-utterance pause while the user reads out a string of digits can therefore still be mistaken for the end of the turn.
 
 ![Figure 6-9: End-to-end omnimodal speech-model comparison](images/fig6-9.svg)
-
-Realtime speech APIs sit between cascaded and Omni systems: the model handles audio natively, but interaction control still relies on VAD, interruption, and asynchronous tool calls. Qwen3-Omni's Thinker-Talker and MiniCPM-o's local path show that this approach can combine thinking, expression, and multimodal input at different model sizes. The useful comparison is not a leaderboard; it is how end-to-end and self-cascade paths fail on different tasks.
 
 > **Experiment 6-5 ★★: Run MiniCPM-o 4.5 locally—end-to-end versus self-cascade**
 >
 > Run MiniCPM-o 4.5 locally with thinking mode disabled, comparing direct answers from audio against a self-cascade that first transcribes and then answers with the same model. This measures whether audio information is preserved, **not** the “thinking while speaking” discussed later.
-
-Step-Audio 2 demonstrates an end-to-end path that processes raw audio and emits text and speech; it focuses on emotion, speaking rate, intonation, and ambient sound beyond semantics. Step-Audio R1 extends this path by internalizing reasoning in the audio model; it will serve as the example for “thinking while speaking.”
 
 ### Paradigm 3 · Full-duplex interactive models
 
@@ -488,7 +481,7 @@ Anthropic's reference implementation divides a complete interaction capability i
 
 ### Visual Grounding
 
-In each iteration of the loop, the model needs to accurately locate the target element in the screenshot—"Where is the search box?" "What are the coordinates of the submit button?" This is the visual grounding problem. Currently, there are **two main approaches**: one is to turn localization into a **multiple-choice problem**—first annotate the interface elements with numbers, and the model only needs to select one; the other is **pure coordinate prediction**—letting the model "look" at the screenshot and report coordinates directly, just like a human. The multiple-choice approach has two implementation methods: **pure visual annotation** (the original Set-of-Mark, using a segmentation model to segment candidate regions in the image) and **structured element indexing** (DOM/Accessibility Tree, directly reading the interface's inherent structure). The common advantage of the multiple-choice approach is that it transforms the open-ended problem of "find the button in the screenshot and predict its coordinates" into a closed-ended one of "choose one from the already annotated elements"—just as multiple-choice questions are easier to answer correctly than fill-in-the-blank questions in an exam, the model only needs to say "click [123]" instead of "click the blue button approximately 200 pixels to the right of the top-left corner of the screen."
+In each iteration of the loop, the model needs to accurately locate the target element in the screenshot—"Where is the search box?" "What are the coordinates of the submit button?" This is the visual grounding problem. Currently, there are **two main approaches**: one is to turn localization into a **multiple-choice problem**—first annotate the interface elements with numbers, and the model only needs to select one; the other is **pure coordinate prediction**—letting the model "look" at the screenshot and report coordinates directly, just like a human. The multiple-choice approach has two implementation methods: **pure visual annotation** (the original Set-of-Mark, using a segmentation model to segment candidate regions in the image) and **structured element indexing** (DOM/Accessibility Tree, directly reading the interface's inherent structure). The common advantage of the multiple-choice approach is that it transforms the open-ended problem of "find the button in the screenshot and predict its coordinates" into a closed-ended one of "choose one from the already annotated elements." Just as multiple-choice questions are easier to answer correctly than fill-in-the-blank questions in an exam, the model only needs to say "click [123]" instead of "click the button at screen coordinates (350, 464)." Predicting coordinates directly is especially hard for a model—it takes extensive training to get right, and it is prone to error across different screen resolutions.
 
 **Set-of-Mark: Visual Annotation Method.**
 
@@ -496,7 +489,7 @@ The original Set-of-Mark (SoM) was proposed by Microsoft Research in 2023, initi
 
 **Structured Element Indexing: A Structured Implementation of the SoM Idea on the Web.**
 
-When the interface itself provides structured information, annotation can be more precise. Before rendering, modern web pages define a complete element structure (the DOM tree) and semantic roles that identify buttons, input fields, and other controls. Accessibility trees provide similar information for many desktop applications. Rather than asking a segmentation model to guess which region is a button from pixels alone, the system can query the interface directly for its clickable elements. Web Agent systems such as `browser-use` do exactly this: they enumerate and number interactive elements from the DOM. This is a structured implementation of the SoM idea for the web (Figure 6-13). The process has four steps:
+When the interface itself provides structured information, annotation can be more precise. Before rendering, modern web pages define a complete element structure (the DOM tree) and semantic roles that identify buttons, input fields, and other controls. Accessibility trees provide similar information for many desktop applications. Web Agent systems such as `browser-use` take exactly this route: they enumerate and number interactive elements from the DOM. This is a structured implementation of the SoM idea for the web (Figure 6-13). The process has four steps:
 
 1. Obtain the structured representation (DOM tree) and accessibility information for the page through the browser's debugging interface (CDP, Chrome DevTools Protocol)
 2. Automatically detect which elements are interactive (buttons, input boxes, links, etc.)
@@ -540,7 +533,7 @@ The choice among the three routes can be summarized as follows: **when structure
 
 So far, Computer Use perception has rested on an implicit assumption: **the screen is static**—take a screenshot, reason one step, click, and take the next screenshot. Real screens play videos, flash short-lived notifications, and carry voices from meetings. An Agent that opens its eyes only once every 3–5 seconds and has no ears cannot see or hear what happens between two frames.
 
-What needs redesign is not the action interface but the **observation interface**[^ch6-9]. An Agent–computer observation interface (AOI) converts continuous environmental observation into discrete events the model can handle. Its key techniques are: **inter-frame keyframe capture**, which skips nearly unchanged screens and uses a small model to retain only meaningful changes; **volume-gated speech transcription**, which invokes recognition only when sound is present; and **describing frames as text**, so the description remains in memory after the original image leaves the context, compressing multimodal interaction history.
+What needs redesign is not the action interface but the **observation interface**[^ch6-9]. An Agent–computer observation interface (AOI) converts continuous environmental observation into discrete events the model can handle. Its key techniques are: **screen keyframe capture**, which uses a small model to judge whether the screen has changed meaningfully and only takes a screenshot on a significant change—when changes are frequent, capturing once per second already works well; **volume-gated speech transcription**, which invokes recognition when sound is present and feeds the recognized text into the context so the Agent can hear; and **describing the screen as text**, so the model turns each captured screenshot into a one-sentence description that stays in the context after the original image leaves it, compressing multimodal interaction history.
 
 [^ch6-9]: See Li, Bojie and Noah Shi. *Agent-Computer Observation Interfaces Enable Dynamic Computer Use.* arXiv:2606.29472, 2026.
 

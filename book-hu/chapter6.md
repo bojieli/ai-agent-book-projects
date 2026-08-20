@@ -344,9 +344,20 @@ Rövid válasznál is sorosan összeadódik a VAD, ASR, LLM és TTS várakozása
 
 #### A sorostól a streaming észlelésig
 
-Az ASR beszéd közben ideiglenes átiratot adhat, az LLM az első felolvasható mondatot átadhatja a TTS-nek, a TTS pedig hangblokkokat küldhet. Ettől a három szakasz nem lesz teljesen párhuzamos; előreindításkor a későbbi átirat változását törléssel, újraindítással vagy visszagörgetéssel kell kezelni.
+A 6-7. ábra a VAD + ASR + LLM + TTS teljesen soros esetét mutatja; ennek a soros észlelésnek három gondja van:
 
-A VAD + ASR front-end három gondja a csend miatti **késleltetés**, a hezitálás, érzelem és környezeti hang elvesztése, valamint az e-mail-címek és tulajdonnevek **kontextustörése**. A valódi streaminghez kauzális vagy darabolt kódoló és inkrementális dekódolás kell; a Whisper teljes hangszegmenst vár. Az LLM-alapú hallási modell szöveget és szemantikai eseményeket adhat ki.
+1. **Halmozódó késleltetés**: csak egy szakasznyi csend után lehet megerősíteni, hogy a felhasználó befejezte a mondandóját.
+2. **Információvesztés**: a hangos/néma bináris jel nem tudja kifejezni a hezitálást, az érzelmet, a hümmögést és a környezeti hangot.
+3. **Kontextustörés**: az e-mail-címek, a személynevek és a tulajdonnevek darabokra szabdalva félreismerhetők.
+
+A moduláris munkamegosztás megtartása mellett erre a **streaming észlelés** kínál megoldást: minden szakasz a lehető legkorábban ad inkrementális eredményt.
+
+- **Az ASR hallgatás közben ír át**: amint a VAD érzékeli, hogy a felhasználó beszélni kezdett, a rendszer adott időközönként meghívja az ASR modellt, és folyamatosan ideiglenes átiratot állít elő; miután a VAD a beszéd végét jelzi, megerősíti a végleges szöveget.
+- **Az LLM spekulatív végrehajtása**: az ideiglenes átirat azonnal az LLM-hez kerül; ha a végleges szöveg megegyezik az ideiglenes átirattal, az LLM-et nem kell újra meghívni, ellenkező esetben a korábbi spekulatív gondolkodás megszakad, és az LLM újra lefut.
+- **Az LLM szakaszos kimenete**: az első felolvasható szövegrész azonnal a TTS-hez kerül, nem kell megvárni a teljes választ.
+- **A TTS inkrementális szintézise**: folyamatosan ad vissza hangblokkokat, így a további generálás, a szintézis és a lejátszás átfedheti egymást.
+
+A valódi streaming ASR-hez a modellnek is támogatnia kell ezt a működést. A Whisper dekódolása ugyan autoregresszív, de a kódolója teljes hangszegmenst vár, ezért nem tekinthető streaming modellnek. Az LLM-alapú streaming hallási modell folyamatos hangból ad ki szöveget és szemantikai eseményeket, vagyis a „felismerést” és a „megértés” egy részét ugyanabba a modellbe helyezi. Megőrzi a beszélgetés kezdetétől az aktuális pillanatig tartó kontextust, és világtudását felhasználva kezeli a márkaneveket, személyneveket és tulajdonneveket.
 
 A végpont eldöntése beépíthető a streaming felismerőbe, de a címkék csak a döntéskor látható információt használhatják. A speak_start/end, interrupt, emotion, laugh, sigh és noise jelölők megőrzik a nem szöveges jeleket.
 
@@ -356,17 +367,17 @@ A végpont eldöntése beépíthető a streaming felismerőbe, de a címkék csa
 
 ### Paradigma 2 · Végponttól végpontig tartó omnimodális modellek (Omni)
 
-A kaszkád szöveges határa elveszítheti az érzelmet, intonációt és környezeti hangot. Az Omni egy modellben hallgat, válaszol és beszél, de drágább tanítani, hibakeresni és cserélni. Előnye főként a késleltetés és a nem szöveges információ, nem szükségszerűen a pontosság. Az önkaszkád akkor javíthat felismerési hibát, ha a szöveg elég; beszédsebesség vagy érzelem esetén a szöveges szűk keresztmetszet bizonyítékot veszít.
+A kaszkád még streaming észleléssel is diszkrét interfészeken adja tovább a hallgatást, a gondolkodást és a beszédet; az érzelem, az intonáció és a környezeti hang elveszhet, amikor a hangból tiszta szöveg lesz. Az Omni megoldás ugyanazzal a modellel hallgatja a hangot, fogalmazza meg a választ és mondja ki, ezért megőrizheti ezeket a jeleket, cserébe viszont drágább a tanítása. Az első paradigma kaszkádjához képest az Omni előnye főként a késleltetésben, valamint a nem szöveges információ megértésében és generálásában mutatkozik meg.
+
+A megértés oldalán az Omni modell felfogja a hangban lévő szüneteket. A generálás oldalán gazdagabb paralingvisztikai információt tud átadni: például énekelhet, vagy különleges hanglejtéssel mondhat ki egy mondatot.
+
+Az Omni modell továbbra is a felváltva beszélést feltételezi, és a szólójogot rendszerint VAD osztja ki. Ezért ha a felhasználó számsort diktál, a közben tartott szünetet a rendszer még mindig a beszéd végének vélheti.
 
 ![6-9. ábra: End-to-end omnimodális hangmodellek](images/fig6-9.svg)
-
-A valós idejű hang API-k köztes megoldások: natívan kezelik a hangot, de VAD-ra, megszakításra és aszinkron eszközhívásra támaszkodnak. A feladatfüggő hibák fontosabbak, mint a ranglista.
 
 > **6-5. kísérlet ★★: MiniCPM-o 4.5 helyi futtatása — end-to-end és önkaszkád**
 >
 > Futtasd helyben a MiniCPM-o 4.5-öt kikapcsolt thinking mode-dal, és hasonlítsd össze a közvetlen hangalapú választ azzal az önkaszkáddal, amely ugyanazzal a modellel előbb átír, majd válaszol. Ez azt méri, megmarad-e a hanginformáció, **nem** a későbbi „beszéd közbeni gondolkodást”.
-
-Step-Audio 2 nyers hangból szöveget és hangot állít elő; a Step-Audio R1 a következtetést is a hangmodellbe építi.
 
 ### Paradigma 3 · Teljes duplex interaktív modellek
 
@@ -458,7 +469,7 @@ Az Anthropic referencia-megvalósítása három eszköztípusra bontja a teljes 
 
 ### Vizuális Helymeghatározás
 
-A ciklus minden iterációjában a modellnek pontosan meg kell találnia a cél elemet a képernyőképen — "Hol van a keresőmező?" "Mik a beküldő gomb koordinátái?" Ez a vizuális helymeghatározás problémája. Jelenleg "két fő megközelítés" létezik: az egyik a lokalizációt "többválasztásos problémává" alakítja — először számokkal annotáljuk a felületi elemeket, a modellnek csak ki kell választania egyet; a másik a "tiszta koordináta előrejelzés" — hagyjuk, hogy a modell "nézze" a képernyőképet, és közvetlenül adjon meg koordinátákat, akár egy ember. A többválasztásos megközelítésnek két implementációs módja van: "tiszta vizuális annotáció" (az eredeti Set-of-Mark, egy szegmentációs modell használatával a képen lévő jelölt régiók szegmentálására) és "strukturált elemindexálás" (DOM/Accessibility Tree, a felület eredeti struktúrájának közvetlen olvasása). A többválasztásos megközelítés közös előnye, hogy a "keresd meg a gombot a képernyőképen és jelezd előre a koordinátáit" nyílt végű problémát egy "válassz egyet a már annotált elemek közül" zárt végű problémává alakítja — ahogy a többválasztásos kérdésekre könnyebb helyesen válaszolni, mint a kitöltendő kérdésekre egy vizsgán, a modellnek csak annyit kell mondania, hogy "kattints [123]-ra" ahelyett, hogy "kattints a kék gombra, körülbelül 200 pixellel a képernyő bal felső sarkától jobbra".
+A ciklus minden iterációjában a modellnek pontosan meg kell találnia a cél elemet a képernyőképen — "Hol van a keresőmező?" "Mik a beküldő gomb koordinátái?" Ez a vizuális helymeghatározás problémája. Jelenleg "két fő megközelítés" létezik: az egyik a lokalizációt "többválasztásos problémává" alakítja — először számokkal annotáljuk a felületi elemeket, a modellnek csak ki kell választania egyet; a másik a "tiszta koordináta előrejelzés" — hagyjuk, hogy a modell "nézze" a képernyőképet, és közvetlenül adjon meg koordinátákat, akár egy ember. A többválasztásos megközelítésnek két implementációs módja van: "tiszta vizuális annotáció" (az eredeti Set-of-Mark, egy szegmentációs modell használatával a képen lévő jelölt régiók szegmentálására) és "strukturált elemindexálás" (DOM/Accessibility Tree, a felület eredeti struktúrájának közvetlen olvasása). A többválasztásos megközelítés közös előnye, hogy a "keresd meg a gombot a képernyőképen és jelezd előre a koordinátáit" nyílt végű problémát egy "válassz egyet a már annotált elemek közül" zárt végű problémává alakítja. Ahogy egy vizsgán a többválasztásos kérdésekre könnyebb helyesen válaszolni, mint a kitöltendőkre, a modellnek is elég annyit mondania, hogy "kattints [123]-ra" ahelyett, hogy "kattints a képernyő (350, 464) pontján lévő gombra". A koordináták kiadása különösen nagy kihívás a modell számára: sok tanítás kell ahhoz, hogy pontos legyen, ráadásul eltérő képernyőfelbontásokon könnyen hibázik.
 
 **Set-of-Mark: Vizuális Annotációs Módszer.**
 
@@ -466,7 +477,7 @@ Az eredeti Set-of-Mark (SoM) a Microsoft Research által 2023-ban javasolt, kezd
 
 **Strukturált Elemindexálás: Az SoM-ötlet strukturált implementációja a weben.**
 
-Amikor a felület maga biztosít strukturált információt, az annotáció pontosabb lehet. A modern weboldalak a renderelés előtt meghatároznak egy teljes elemstruktúrát (a DOM fát) és szemantikus szerepeket, amelyek azonosítják a gombokat, beviteli mezőket és más vezérlőket. Az akadálymentesítési fák hasonló információt nyújtanak sok asztali alkalmazáshoz. Ahelyett, hogy egy szegmentációs modellt kérnénk meg, hogy pixel alapján találja ki, melyik régió egy gomb, a rendszer közvetlenül lekérdezheti a felületről a kattintható elemeket. A webes ügynökrendszerek, mint a `browser-use`, pontosan ezt teszik: felsorolják és számozzák az interaktív elemeket a DOM-ból. Ez az SoM-ötlet strukturált implementációja a web számára (6-13. ábra). A folyamat négy lépésből áll:
+Amikor a felület maga biztosít strukturált információt, az annotáció pontosabb lehet. A modern weboldalak a renderelés előtt meghatároznak egy teljes elemstruktúrát (a DOM fát) és szemantikus szerepeket, amelyek azonosítják a gombokat, beviteli mezőket és más vezérlőket. Az akadálymentesítési fák hasonló információt nyújtanak sok asztali alkalmazáshoz. A webes ügynökrendszerek, mint a `browser-use`, pontosan ezt teszik: felsorolják és számozzák az interaktív elemeket a DOM-ból. Ez az SoM-ötlet strukturált implementációja a web számára (6-13. ábra). A folyamat négy lépésből áll:
 
 1. A strukturált reprezentáció (DOM fa) és akadálymentesítési információk lekérése a böngésző hibakereső felületén keresztül (CDP, Chrome DevTools Protocol)
 2. Automatikusan érzékelni, hogy mely elemek interaktívak (gombok, beviteli mezők, linkek stb.)
@@ -507,7 +518,7 @@ A három út közötti választás a következőképpen foglalható össze: **ha
 
 A Computer Use érzékelése eddig egy hallgatólagos feltételezésre épült: **a képernyő áll**—képernyőkép, egy lépés átgondolása, kattintás, majd újabb kép. A valós képernyők videót játszanak, felvillanó értesítéseket és értekezletek hangját közvetítik. Egy ügynök, amely csak 3–5 másodpercenként nyitja ki a szemét, és nincs füle, nem látja és nem hallja, mi történik két képkocka között.
 
-Nem a cselekvési, hanem a **megfigyelési interfészt** kell újratervezni[^ch6-9]. Az ügynök–számítógép megfigyelési interfész (AOI) a környezet folyamatos megfigyelését a modell számára kezelhető diszkrét eseményekké alakítja. Fő technikái: **képkockák közötti kulcskép-rögzítés**, amely átugorja a szinte változatlan képet, és kis modellel csak a jelentős változásokat tartja meg; **hangerővezérelt beszédátírás**, amely csak hang esetén fut; valamint **a képkockák szöveges leírása**, amely az eredeti kép kontextusból való törlése után is megmarad, tömörítve a multimodális előzményt.
+Nem a cselekvési, hanem a **megfigyelési interfészt** kell újratervezni[^ch6-9]. Az ügynök–számítógép megfigyelési interfész (AOI) a környezet folyamatos megfigyelését a modell számára kezelhető diszkrét eseményekké alakítja. Fő technikái: **a képernyő kulcskép-alapú rögzítése**, amelynél egy kis modell dönti el, hogy a képernyő jelentősen megváltozott-e, és csak jelentős változáskor készül képernyőkép — gyakori változás esetén már a másodpercenként egyszeri képernyőkép is jó eredményt ad; **hangerővezérelt beszédátírás**, amely hang esetén meghívja a beszédfelismerést, és a felismert szöveget a kontextusba helyezi, hogy az Agent hallhasson; valamint **a képernyő szöveges leírása**, amelynél a modell egyetlen mondatban írja le az elkapott képernyőképet, így az eredeti kép kontextusból való törlése után is a kontextusban marad ez a mondat, tömörítve a multimodális interakciós előzményt.
 
 [^ch6-9]: Lásd Li, Bojie and Noah Shi. *Agent-Computer Observation Interfaces Enable Dynamic Computer Use.* arXiv:2606.29472, 2026.
 

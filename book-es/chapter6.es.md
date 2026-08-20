@@ -346,11 +346,22 @@ En una respuesta breve, las esperas de VAD, ASR, LLM y TTS se acumulan en serie 
 
 #### De lo serial a la percepción en streaming
 
-ASR puede emitir una transcripción provisional mientras se habla, el LLM puede enviar la primera frase pronunciable a TTS y TTS puede devolver bloques de audio. Eso no hace que las tres etapas sean completamente paralelas: la generación anticipada exige cancelar, invalidar, reiniciar o revertir cuando cambia la transcripción.
+La Figura 6-7 describe el caso completamente serial de VAD+ASR+LLM+TTS. Ese esquema de percepción serial tiene tres problemas:
 
-El frente VAD + ASR acumula latencia por esperar silencio, pierde dudas, emoción, apoyos y ambiente, y rompe el contexto de nombres o correos. Un modelo realmente streaming necesita codificador causal o por bloques y decodificación incremental; Whisper no es causal porque su codificador espera el segmento completo. Un modelo auditivo basado en LLM puede emitir texto y eventos semánticos, pero simular prefijos no garantiza el rendimiento de un modelo causal. Los marcadores speak_start/end, interrupt, emotion, laugh, sigh y noise conservan señales que no caben en texto.
+1. **Acumulación de latencia**: hay que esperar un tramo de silencio para confirmar que el usuario ha terminado de hablar.
+2. **Pérdida de información**: una señal binaria de voz/silencio no puede expresar dudas, emoción, apoyos ni sonido ambiente.
+3. **Contexto cortado**: los correos, los nombres de persona y los nombres propios pueden fragmentarse y reconocerse mal.
 
-Si el único objetivo es decidir si el usuario ha terminado de hablar, el juicio de fin de turno puede integrarse directamente en el reconocedor streaming. Las etiquetas de entrenamiento solo deben usar información visible en el momento de la decisión; de lo contrario, la retrospectiva producirá un juicio imposible de reproducir en línea. Esta vía es más ligera que un LLM de audio completo.
+Para resolverlo, y sin renunciar al reparto modular, una vía de optimización es la **percepción en streaming**, que hace que cada etapa produzca resultados incrementales lo antes posible:
+
+- **ASR que transcribe mientras escucha**: cuando VAD detecta que el usuario empieza a hablar, se invoca el modelo ASR a intervalos regulares para generar en streaming una transcripción provisional; cuando VAD detecta que el usuario ha terminado, se confirma el texto definitivo.
+- **Ejecución especulativa del LLM**: la transcripción provisional se envía al LLM en cuanto se genera; si el texto definitivo coincide con ella, no hace falta volver a invocar al LLM; si no coincide, se cancela el pensamiento especulativo anterior y se invoca al LLM de nuevo.
+- **Salida por fragmentos del LLM**: el primer fragmento de texto apto para pronunciarse pasa de inmediato a TTS, sin esperar la respuesta completa.
+- **Síntesis incremental en TTS**: se devuelven bloques de audio de forma continua, de modo que la generación posterior, la síntesis y la reproducción se solapen.
+
+Un ASR realmente en streaming necesita soporte del propio modelo. Aunque la decodificación de Whisper es autorregresiva, su codificador necesita el segmento de audio completo, así que no equivale a un modelo en streaming. Un modelo auditivo en streaming basado en LLM puede emitir texto y eventos semánticos a partir de audio continuo, y así reúne el «reconocimiento» y parte de la «comprensión» dentro de un mismo modelo. Conserva el contexto desde el inicio de la conversación hasta el instante actual y puede aprovechar su conocimiento del mundo para tratar marcas, nombres de persona y nombres propios. Los marcadores speak_start/end, interrupt, emotion, laugh, sigh y noise conservan señales que no caben en texto.
+
+Si el único objetivo es decidir si el usuario ha terminado de hablar, el juicio de fin de turno puede integrarse directamente en el reconocedor streaming. Las etiquetas de entrenamiento solo deben usar información visible en el momento de la decisión; de lo contrario, la retrospectiva producirá un juicio imposible de reproducir en línea.
 
 > **Experimento 6-4 ★: Simular percepción de voz en streaming con Qwen2-Audio**
 >
@@ -358,17 +369,17 @@ Si el único objetivo es decidir si el usuario ha terminado de hablar, el juicio
 
 ### Paradigma 2 · Modelos omnimodales de extremo a extremo (Omni)
 
-La cascada pierde emoción, entonación y sonido ambiente en la interfaz textual. Omni escucha, genera y habla con un único modelo, pero cuesta más entrenarlo, depurarlo y sustituir componentes. Su ventaja principal es la latencia y la información no textual, no una precisión necesariamente mayor. La autocascada puede corregir un error de percepción cuando el texto basta; si la respuesta depende de velocidad, emoción o ambiente, el cuello de botella textual destruye la evidencia. Omni todavía supone turnos y puede confundir una pausa en una secuencia de números con el final.
+Aunque la cascada adopte percepción en streaming, escuchar, pensar y hablar siguen intercambiándose a través de interfaces discretas, y la emoción, la entonación y el sonido ambiente pueden perderse al convertirlo todo en texto plano. El esquema Omni escucha el audio, genera la respuesta y emite la voz con un único modelo, por lo que tiene la oportunidad de conservar esa información, aunque su entrenamiento cuesta más (Figura 6-9). Frente a la cascada del paradigma 1, la ventaja de Omni está sobre todo en la latencia y en la comprensión y la generación de información no textual.
+
+En la comprensión, un modelo Omni es capaz de interpretar las pausas de la voz. En la generación, puede transmitir información paralingüística más rica: cantar o pronunciar una frase con una entonación particular.
+
+Los modelos Omni siguen suponiendo que se habla por turnos y normalmente dependen de VAD para decidir quién tiene la palabra. Por eso, una pausa a mitad de camino mientras el usuario dicta una secuencia de números todavía puede confundirse con el final del turno.
 
 ![Figura 6-9: Comparación de modelos de voz omnimodales](images/fig6-9.svg)
-
-Las API de voz en tiempo real ocupan una posición intermedia: procesan audio de forma nativa, pero conservan VAD, interrupciones y llamadas asíncronas a herramientas. Lo importante es comparar los fallos por tarea, no una tabla de posiciones.
 
 > **Experimento 6-5 ★★: Ejecutar MiniCPM-o 4.5 localmente, extremo a extremo frente a autocascada**
 >
 > Ejecute MiniCPM-o 4.5 localmente con thinking mode desactivado y compare la respuesta directa desde el audio con una autocascada que primero transcribe y luego responde con el mismo modelo. Esto mide si se conserva la información sonora, **no** el «pensar mientras se habla» tratado más adelante.
-
-Step-Audio 2 procesa audio crudo y produce texto y voz; Step-Audio R1 incorpora el razonamiento en el modelo de audio.
 
 ### Paradigma 3 · Modelos interactivos de dúplex completo
 
@@ -460,7 +471,7 @@ La implementación de referencia de Anthropic divide la capacidad de interacció
 
 ### Grounding visual (Visual Grounding)
 
-En cada ronda del bucle, el modelo necesita localizar con precisión el elemento objetivo en la captura de pantalla: "¿Dónde está la casilla de búsqueda?", "¿Cuáles son las coordenadas del botón de envío?". Este es el problema de grounding visual (Visual Grounding). Actualmente existen **dos enfoques principales**: el primero convierte la localización en una **pregunta de opción múltiple** (etiquetando previamente los elementos de la interfaz con números para que el modelo solo tenga que elegir uno); el segundo es la **predicción directa de coordenadas** (permitiendo que el modelo "mire" directamente la captura de pantalla e informe las coordenadas como haría un humano). El enfoque de opción múltiple tiene dos formas de implementación: **anotación puramente visual** (el Set-of-Mark original, utilizando modelos de segmentación para recortar regiones candidatas sobre los píxeles) e **indexación de elementos estructurados** (DOM/Accessibility Tree, leyendo directamente la estructura interna de la interfaz). La ventaja común del enfoque de opción múltiple es que transforma la tarea abierta de "encontrar el botón en la captura de pantalla y predecir las coordenadas" en una tarea cerrada de "elegir uno entre los elementos ya etiquetados" (al igual que en un examen las preguntas de opción múltiple son más fáciles de responder correctamente que las de rellenar espacios), donde el modelo solo necesita decir "hacer clic en [123]" en lugar de "hacer clic en el botón azul situado aproximadamente a 200 píxeles a la derecha de la esquina superior izquierda de la pantalla".
+En cada ronda del bucle, el modelo necesita localizar con precisión el elemento objetivo en la captura de pantalla: "¿Dónde está la casilla de búsqueda?", "¿Cuáles son las coordenadas del botón de envío?". Este es el problema de grounding visual (Visual Grounding). Actualmente existen **dos enfoques principales**: el primero convierte la localización en una **pregunta de opción múltiple** (etiquetando previamente los elementos de la interfaz con números para que el modelo solo tenga que elegir uno); el segundo es la **predicción directa de coordenadas** (permitiendo que el modelo "mire" directamente la captura de pantalla e informe las coordenadas como haría un humano). El enfoque de opción múltiple tiene dos formas de implementación: **anotación puramente visual** (el Set-of-Mark original, utilizando modelos de segmentación para recortar regiones candidatas sobre los píxeles) e **indexación de elementos estructurados** (DOM/Accessibility Tree, leyendo directamente la estructura interna de la interfaz). La ventaja común del enfoque de opción múltiple es que transforma la tarea abierta de "encontrar el botón en la captura de pantalla y predecir las coordenadas" en una tarea cerrada de "elegir uno entre los elementos ya etiquetados". Al igual que en un examen las preguntas de opción múltiple son más fáciles de responder correctamente que las de rellenar espacios, el modelo solo necesita decir "hacer clic en [123]" en lugar de "hacer clic en el botón situado en la posición (350, 464) de la pantalla". Emitir coordenadas resulta especialmente difícil para el modelo: requiere una gran cantidad de entrenamiento para lograr precisión, y es fácil equivocarse cuando cambia la resolución de la pantalla.
 
 **Set-of-Mark: Método de anotación visual.**
 
@@ -468,7 +479,7 @@ El Set-of-Mark (SoM) original fue propuesto por Microsoft Research en 2023, inic
 
 **Indexación de elementos estructurados: Implementación estructurada de la idea SoM en la Web.**
 
-Cuando la propia interfaz puede proporcionar información estructurada, las anotaciones se pueden realizar con mayor precisión. Las páginas web modernas ya definen la estructura completa de los elementos (árbol DOM) y los roles semánticos (cuál es un botón, cuál es una casilla de entrada) antes de renderizar, y las interfaces de accesibilidad (Accessibility Tree) proporcionan información similar para muchas aplicaciones de escritorio. En lugar de dejar que el modelo de segmentación adivine entre los píxeles "qué región es un botón", es mejor preguntar directamente a la propia interfaz "¿qué elementos interactivos tienes?". Las soluciones de Web Agent representadas por el proyecto `browser-use` funcionan precisamente de esta manera: enumeran y numeran los elementos interactivos desde el DOM, lo que puede considerarse una implementación estructurada de la idea SoM en la Web (Figura 6-13). El flujo consta de cuatro pasos:
+Cuando la propia interfaz puede proporcionar información estructurada, las anotaciones se pueden realizar con mayor precisión. Las páginas web modernas ya definen la estructura completa de los elementos (árbol DOM) y los roles semánticos (cuál es un botón, cuál es una casilla de entrada) antes de renderizar, y las interfaces de accesibilidad (Accessibility Tree) proporcionan información similar para muchas aplicaciones de escritorio. Las soluciones de Web Agent representadas por el proyecto `browser-use` funcionan precisamente de esta manera: enumeran y numeran los elementos interactivos desde el DOM, lo que puede considerarse una implementación estructurada de la idea SoM en la Web (Figura 6-13). El flujo consta de cuatro pasos:
 
 1. Obtener la representación estructurada de la página web (árbol DOM) y la información de accesibilidad a través de la interfaz de depuración del navegador (CDP, Chrome DevTools Protocol).
 2. Detectar automáticamente qué elementos son interactivos (botones, casillas de entrada, enlaces, etc.).
@@ -509,7 +520,7 @@ La lógica de elección entre las tres rutas se puede resumir de la siguiente ma
 
 Hasta ahora, la percepción de Computer Use se ha basado en una suposición implícita: **la pantalla es estática**—capturar, razonar un paso, hacer clic y volver a capturar. Las pantallas reales reproducen vídeo, muestran notificaciones fugaces y emiten voces de reuniones. Un Agente que abre los ojos cada 3–5 segundos y carece de oídos no puede ver ni oír lo que ocurre entre dos fotogramas.
 
-Lo que debe rediseñarse no es la interfaz de acción, sino la **interfaz de observación**[^ch6-9]. Una interfaz de observación Agente–ordenador (AOI) convierte la observación continua del entorno en eventos discretos que el modelo puede procesar. Sus técnicas clave son: **captura de fotogramas clave entre frames**, que omite pantallas casi idénticas y usa un modelo pequeño para conservar solo los cambios significativos; **transcripción de voz controlada por volumen**, que invoca el reconocimiento solo cuando hay sonido; y **descripción textual de los fotogramas**, para que persista en memoria cuando la imagen original salga del contexto y comprima el historial multimodal.
+Lo que debe rediseñarse no es la interfaz de acción, sino la **interfaz de observación**[^ch6-9]. Una interfaz de observación Agente–ordenador (AOI) convierte la observación continua del entorno en eventos discretos que el modelo puede procesar. Sus técnicas clave son: primero, la **captura de fotogramas clave de la pantalla**, en la que un modelo pequeño decide si la pantalla ha cambiado de forma significativa y solo se toma una captura cuando el cambio es relevante (si los cambios son frecuentes, basta con una captura por segundo para obtener buenos resultados); segundo, la **transcripción de voz controlada por volumen**, que invoca el reconocimiento cuando hay sonido e incorpora el texto reconocido al contexto, de modo que el Agente pueda oír; y tercero, la **descripción textual de la pantalla**, que hace que el modelo resuma en una frase cada captura obtenida, de manera que, aunque la imagen original se limpie después del contexto, esa frase permanezca en el contexto y comprima el historial de interacción multimodal.
 
 [^ch6-9]: Véase Li, Bojie and Noah Shi. *Agent-Computer Observation Interfaces Enable Dynamic Computer Use.* arXiv:2606.29472, 2026.
 
