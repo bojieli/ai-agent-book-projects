@@ -347,11 +347,30 @@ Pada jawaban singkat, waktu tunggu VAD, ASR, LLM, dan TTS terakumulasi secara se
 
 #### Dari serial ke persepsi streaming
 
-ASR dapat menghasilkan transkrip sementara saat pengguna berbicara, LLM mengirim kalimat pertama ke TTS, dan TTS mengembalikan potongan audio. Ketiganya tidak menjadi paralel penuh: generasi lebih awal memerlukan pembatalan, invalidasi, mulai ulang, dan rollback ketika transkrip berubah.
+Gambar 6-7 menggambarkan kasus yang sepenuhnya serial: VAD, ASR, LLM, dan TTS berjalan satu demi satu. Skema persepsi serial ini memiliki tiga masalah:
 
-Front-end VAD + ASR menimbulkan akumulasi latensi karena menunggu hening, kehilangan keraguan, emosi, backchannel, dan suara lingkungan, serta memutus konteks nama atau alamat email. Model streaming sejati membutuhkan encoder kausal/ber-chunk dan decoding inkremental; encoder Whisper menunggu segmen audio lengkap. Model audio berbasis LLM dapat mengeluarkan teks dan event semantik, tetapi simulasi prefix bukan jaminan performa kausal. Marker speak_start/end, interrupt, emotion, laugh, sigh, dan noise mempertahankan sinyal nonteks.
+1. **Akumulasi latensi**: sistem harus menunggu satu penggal hening sebelum dapat memastikan pengguna selesai berbicara.
+2. **Kehilangan informasi**: sinyal biner ada suara/tanpa suara tidak dapat menyatakan keraguan, emosi, backchannel, dan suara lingkungan.
+3. **Konteks terputus**: alamat email, nama orang, dan nama diri dapat dikenali secara terpotong sehingga menjadi salah.
 
-Jika tujuannya hanya menentukan apakah pengguna sudah selesai berbicara, penilaian akhir giliran dapat ditanamkan langsung ke recognizer streaming. Label pelatihan hanya boleh memakai informasi yang terlihat pada saat keputusan dibuat; jika tidak, informasi masa depan akan menghasilkan penilaian yang tidak dapat direproduksi secara online. Jalur ini lebih ringan daripada LLM audio lengkap.
+Untuk mengatasinya, sambil tetap mempertahankan pembagian modular, salah satu optimasinya adalah **persepsi streaming**, yaitu membuat setiap tahap menghasilkan hasil inkremental sedini mungkin:
+
+- **ASR mentranskripsi sambil mendengar**: begitu VAD mendeteksi pengguna mulai berbicara, model ASR dipanggil pada interval waktu tertentu untuk menghasilkan transkrip sementara secara streaming; setelah VAD mendeteksi pengguna selesai berbicara, barulah teks final dikonfirmasi.
+- **Eksekusi spekulatif LLM**: transkrip sementara langsung dikirim ke LLM begitu tersedia; jika teks final sama dengan transkrip sementara, LLM tidak perlu dipanggil lagi, jika tidak, proses berpikir spekulatif sebelumnya dibatalkan dan LLM dipanggil ulang.
+- **Keluaran LLM per segmen**: kalimat pertama yang layak dibacakan langsung diserahkan ke TTS tanpa menunggu jawaban lengkap.
+- **Sintesis TTS inkremental**: potongan audio dikembalikan terus-menerus sehingga generasi, sintesis, dan pemutaran berikutnya saling tumpang tindih.
+
+ASR streaming yang sesungguhnya membutuhkan dukungan pada level model. Decoding Whisper memang autoregresif, tetapi encoder-nya memerlukan segmen audio yang utuh, sehingga tidak dapat begitu saja disamakan dengan model streaming. Model auditori streaming berbasis LLM dapat mengeluarkan teks dan event semantik dari audio kontinu, sehingga "pengenalan" dan sebagian "pemahaman" berada dalam satu model. Model ini mempertahankan konteks sejak awal percakapan hingga saat ini, dan dapat memanfaatkan pengetahuan dunia untuk menangani merek, nama orang, dan nama diri.
+
+Jika tujuannya hanya menentukan apakah pengguna sudah selesai berbicara, penilaian akhir giliran dapat ditanamkan langsung ke recognizer streaming. Label pelatihan hanya boleh memakai informasi yang terlihat pada saat keputusan dibuat; jika tidak, informasi masa depan akan menghasilkan penilaian yang tidak dapat direproduksi secara online.
+
+Keluaran model tidak hanya berupa teks, tetapi juga dapat menyertakan penanda peristiwa akustik:
+
+- **speak_start/end, interrupt**: awal-akhir ucapan dan niat menyela;
+- **emotion**: emosi, keraguan, dan status lainnya;
+- **laugh, sigh, noise**: sinyal paralinguistik dan suara lingkungan.
+
+Penanda-penanda ini bersama token teks membentuk satu aliran peristiwa yang sama; berdasarkan itu, Agent dapat mengenali keraguan, interupsi, dan perubahan lingkungan tanpa harus memampatkan semua suara menjadi teks murni.
 
 > **Eksperimen 6-4 ★: Mensimulasikan persepsi suara streaming dengan Qwen2-Audio**
 >
@@ -359,17 +378,17 @@ Jika tujuannya hanya menentukan apakah pengguna sudah selesai berbicara, penilai
 
 ### Paradigma 2 · Model omnimodal end-to-end (Omni)
 
-Cascade dapat kehilangan emosi, intonasi, dan suara lingkungan ketika audio menjadi teks. Omni mendengar, menjawab, dan berbicara dengan satu model, tetapi lebih mahal untuk dilatih, di-debug, dan diganti. Keunggulannya terutama latensi dan informasi nonteks, bukan akurasi yang pasti lebih tinggi. Self-cascade dapat memperbaiki kesalahan persepsi bila teks cukup; bila jawaban bergantung pada kecepatan, emosi, atau lingkungan, bottleneck teks menghapus bukti. Omni tetap mengasumsikan giliran dan dapat mengira jeda di tengah angka sebagai akhir.
+Meski memakai persepsi streaming, cascade tetap menyerahkan proses mendengar, berpikir, dan berbicara melalui antarmuka diskret; emosi, intonasi, dan suara lingkungan dapat hilang ketika audio menjadi teks murni. Skema Omni memakai satu model untuk langsung mendengar audio, menghasilkan jawaban, dan mengeluarkan suara, sehingga berpeluang mempertahankan informasi tersebut, tetapi biaya pelatihannya lebih mahal (Gambar 6-9). Dibandingkan skema cascade pada Paradigma 1, keunggulan Omni terutama terletak pada latensi serta pada pemahaman dan penghasilan informasi nonteks.
+
+Dari sisi pemahaman, model Omni dapat memahami jeda di dalam suara. Dari sisi penghasilan, model Omni dapat menyampaikan informasi paralinguistik yang lebih kaya, misalnya bernyanyi atau mengucapkan sebuah kalimat dengan intonasi khusus.
+
+Model Omni tetap mengasumsikan orang berbicara bergantian dan umumnya mengandalkan VAD untuk membagi kepemilikan giliran. Karena itu, jeda di tengah ucapan saat pengguna membacakan deretan angka masih dapat disalahartikan sebagai akhir giliran.
 
 ![Gambar 6-9: Perbandingan model suara omnimodal end-to-end](images/fig6-9.svg)
-
-API suara real-time berada di tengah: audio diproses native, tetapi kontrol masih bergantung pada VAD, interupsi, dan pemanggilan alat asinkron. Bandingkan mode kegagalan per tugas, bukan papan peringkat.
 
 > **Eksperimen 6-5 ★★: Menjalankan MiniCPM-o 4.5 secara lokal, end-to-end versus self-cascade**
 >
 > Jalankan MiniCPM-o 4.5 secara lokal dengan thinking mode dimatikan, lalu bandingkan jawaban langsung dari audio dengan self-cascade yang mentranskripsikan terlebih dahulu dan menjawab memakai model yang sama. Ini mengukur apakah informasi audio dipertahankan, **bukan** “berpikir sambil berbicara” yang dibahas kemudian.
-
-Step-Audio 2 memproses audio mentah dan menghasilkan teks serta suara; Step-Audio R1 menginternalisasi penalaran dalam model audio.
 
 ### Paradigma 3 · Model interaktif full-duplex
 
@@ -461,7 +480,7 @@ Implementasi referensi Anthropic membagi kemampuan interaksi lengkap menjadi tig
 
 ### Visual Grounding
 
-Dalam setiap iterasi loop, model perlu menemukan elemen target di tangkapan layar secara akurat—"Di mana kotak pencariannya?" "Apa koordinat tombol kirim?" Ini adalah masalah visual grounding. Saat ini, ada **dua pendekatan utama**: yang pertama adalah mengubah pelokalan menjadi **masalah pilihan ganda**—pertama beri anotasi elemen antarmuka dengan angka, dan model hanya perlu memilih satu; yang lainnya adalah **prediksi koordinat murni**—membiarkan model "melihat" tangkapan layar dan melaporkan koordinat secara langsung, persis seperti manusia. Pendekatan pilihan ganda memiliki dua metode implementasi: **anotasi visual murni** (Set-of-Mark asli, menggunakan model segmentasi untuk menyegmentasi wilayah kandidat dalam gambar) dan **pengindeksan elemen terstruktur** (DOM/Accessibility Tree, secara langsung membaca struktur inheren antarmuka). Keuntungan umum dari pendekatan pilihan ganda adalah mengubah masalah terbuka "temukan tombol dalam tangkapan layar dan prediksi koordinatnya" menjadi masalah tertutup "pilih satu dari elemen yang sudah dianotasi"—sama seperti pertanyaan pilihan ganda yang lebih mudah dijawab dengan benar daripada pertanyaan isian dalam ujian, model hanya perlu mengatakan "klik [123]" daripada "klik tombol biru sekitar 200 piksel di sebelah kanan sudut kiri atas layar."
+Dalam setiap iterasi loop, model perlu menemukan elemen target di tangkapan layar secara akurat—"Di mana kotak pencariannya?" "Apa koordinat tombol kirim?" Ini adalah masalah visual grounding. Saat ini, ada **dua pendekatan utama**: yang pertama adalah mengubah pelokalan menjadi **masalah pilihan ganda**—pertama beri anotasi elemen antarmuka dengan angka, dan model hanya perlu memilih satu; yang lainnya adalah **prediksi koordinat murni**—membiarkan model "melihat" tangkapan layar dan melaporkan koordinat secara langsung, persis seperti manusia. Pendekatan pilihan ganda memiliki dua metode implementasi: **anotasi visual murni** (Set-of-Mark asli, menggunakan model segmentasi untuk menyegmentasi wilayah kandidat dalam gambar) dan **pengindeksan elemen terstruktur** (DOM/Accessibility Tree, secara langsung membaca struktur inheren antarmuka). Keuntungan umum dari pendekatan pilihan ganda adalah mengubah masalah terbuka "temukan tombol dalam tangkapan layar dan prediksi koordinatnya" menjadi masalah tertutup "pilih satu dari elemen yang sudah dianotasi". Sama seperti pertanyaan pilihan ganda yang lebih mudah dijawab dengan benar daripada pertanyaan isian dalam ujian, model hanya perlu mengatakan "klik [123]" daripada "klik tombol pada posisi (350, 464) di layar". Mengeluarkan koordinat adalah tantangan yang sangat berat bagi model: dibutuhkan pelatihan dalam jumlah besar agar akurat, dan hasilnya mudah meleset pada resolusi layar yang berbeda-beda.
 
 **Set-of-Mark: Metode Anotasi Visual.**
 
@@ -469,7 +488,7 @@ Set-of-Mark (SoM) asli diusulkan oleh Microsoft Research pada tahun 2023, awalny
 
 **Pengindeksan Elemen Terstruktur: Implementasi Terstruktur dari Ide SoM di Web.**
 
-Ketika antarmuka itu sendiri menyediakan informasi terstruktur, anotasi dapat menjadi lebih presisi. Sebelum rendering, halaman web modern mendefinisikan struktur elemen lengkap (pohon DOM) dan peran semantik yang mengidentifikasi tombol, bidang input, dan kontrol lainnya. Accessibility tree memberikan informasi serupa untuk banyak aplikasi desktop. Daripada meminta model segmentasi untuk menebak wilayah mana yang merupakan tombol dari piksel saja, sistem dapat menanyakan antarmuka secara langsung untuk elemen yang dapat dikliknya. Sistem Web Agent seperti `browser-use` melakukan hal ini: mereka menghitung dan menomori elemen interaktif dari DOM. Ini adalah implementasi terstruktur dari ide SoM untuk web (Gambar 6-13). Prosesnya memiliki empat langkah:
+Ketika antarmuka itu sendiri menyediakan informasi terstruktur, anotasi dapat menjadi lebih presisi. Sebelum rendering, halaman web modern mendefinisikan struktur elemen lengkap (pohon DOM) dan peran semantik yang mengidentifikasi tombol, bidang input, dan kontrol lainnya. Accessibility tree memberikan informasi serupa untuk banyak aplikasi desktop. Sistem Web Agent seperti `browser-use` melakukan hal ini: mereka menghitung dan menomori elemen interaktif dari DOM. Ini adalah implementasi terstruktur dari ide SoM untuk web (Gambar 6-13). Prosesnya memiliki empat langkah:
 
 1. Mendapatkan representasi terstruktur (pohon DOM) dan informasi aksesibilitas untuk halaman tersebut melalui antarmuka debugging browser (CDP, Chrome DevTools Protocol)
 2. Mendeteksi elemen mana yang interaktif secara otomatis (tombol, kotak input, tautan, dll.)
@@ -510,7 +529,7 @@ Pilihan di antara ketiga rute tersebut dapat diringkas sebagai berikut: **ketika
 
 Sejauh ini, persepsi Computer Use bertumpu pada asumsi implisit: **layar bersifat statis**—ambil screenshot, pikirkan satu langkah, klik, lalu ambil screenshot berikutnya. Layar nyata memutar video, menampilkan notifikasi singkat, dan mengeluarkan suara rapat. Agent yang hanya membuka mata setiap 3–5 detik dan tidak memiliki telinga tidak dapat melihat atau mendengar apa yang terjadi di antara dua frame.
 
-Yang perlu didesain ulang bukan action interface, melainkan **observation interface**[^ch6-9]. Agent–computer observation interface (AOI) mengubah observasi environment yang kontinu menjadi event diskret yang mudah diproses model. Teknik utamanya: **penangkapan keyframe antark bingkai**, yang melewati layar nyaris tidak berubah dan memakai model kecil untuk menyimpan perubahan bermakna saja; **transkripsi ucapan berbasis volume**, yang memanggil pengenalan hanya saat ada suara; dan **mendeskripsikan frame sebagai teks**, sehingga deskripsi tetap berada dalam memori setelah gambar asli keluar dari context dan memampatkan riwayat interaksi multimodal.
+Yang perlu didesain ulang bukan action interface, melainkan **observation interface**[^ch6-9]. Agent–computer observation interface (AOI) mengubah observasi environment yang kontinu menjadi event diskret yang mudah diproses model. Teknik utamanya: **screenshot keyframe layar**, yang memakai model kecil untuk menilai apakah layar mengalami perubahan yang bermakna dan hanya mengambil screenshot ketika perubahannya signifikan—saat perubahan berlangsung sering, satu screenshot per detik pun sudah memberi hasil yang cukup baik; **transkripsi ucapan berbasis volume**, yang memanggil pengenalan suara saat ada suara dan memasukkan teks hasil pengenalan ke dalam context sehingga Agent dapat mendengar; dan **mendeskripsikan frame sebagai teks**, yaitu meminta model mendeskripsikan screenshot yang ditangkap menjadi satu kalimat, sehingga meskipun gambar aslinya kemudian dibersihkan dari context, kalimat itu tetap berada dalam context dan riwayat interaksi multimodal pun termampatkan.
 
 [^ch6-9]: Lihat Li, Bojie and Noah Shi. *Agent-Computer Observation Interfaces Enable Dynamic Computer Use.* arXiv:2606.29472, 2026.
 
