@@ -24,13 +24,14 @@ Pada pembacaan pertama, lewati kredensial, presentasi, dan kompatibilitas provid
 | 5-4 | [paper-to-ppt](paper-to-ppt/) | ✅ | Menghasilkan presentasi Slidev melalui loop Proposer dan Reviewer visual. |
 | 5-5 | [paper-to-video](paper-to-video/) | ✅ | Mengubah presentasi menjadi video bernarasi menggunakan TTS dan ffmpeg. |
 | 5-6 | [video-edit](video-edit/) | ✅ | Menemukan dan memotong adegan video berdasarkan permintaan bahasa alami. |
-| 5-7 | [adaptive-log-parser](adaptive-log-parser/) | ✅ | Membuat parser baru secara otomatis saat format log yang belum dikenal muncul. |
-| 5-8 | [log-diagnosis](log-diagnosis/) | ✅ | Mendiagnosis trajectory HTTP, memutar ulang regresi, dan membuat Issue terverifikasi. |
-| 5-9 | [dynamic-form](dynamic-form/) | ✅ | Menghasilkan formulir HTML dinamis untuk mengklarifikasi permintaan yang belum lengkap. |
-| 5-10 | [erp-agent](erp-agent/) | ✅ | Menghasilkan artefak SQL untuk kueri ERP tanpa memindahkan seluruh data melalui LLM. |
-| 5-11 | [conversational-ui](conversational-ui/) | ✅ | Memodifikasi UI React berdasarkan bahasa alami dan menerapkan perubahan dengan HMR. |
-| 5-12 | [permission-embedded-data-objects](permission-embedded-data-objects/) | ✅ | Penyimpanan objek berbasis PostgreSQL yang menegakkan otorisasi, validasi, dan integritas referensial di bawah kode aplikasi yang dibuat secara dinamis. |
-| 5-13 | [agent-creator](agent-creator/) | ✅ | Membandingkan pembuatan Agent dari referensi tervalidasi dengan pembuatan dari nol. |
+| 5-7 | [cad-vs-diffusion](cad-vs-diffusion/) | ✅ | Pengujian nyata dua rute pada spesifikasi flange yang sama: CadQuery 17 baris dari Kimi menunjukkan deviasi nol untuk semua dimensi; Hunyuan3D-2.1 (HF Space publik) kehilangan 4 lubang tembus dan menyimpang −99.4% pada diameter luar. Perubahan M5→M6: rute kode mengubah satu baris parameter, 0 panggilan LLM, nol drift; rute generatif menjalankan ulang seluruhnya dengan +283% drift dan pembalikan aksial. Kontrol tanaman: kealamian 3 vs 8, batas penerapan terbalik. |
+| 5-8 | [adaptive-log-parser](adaptive-log-parser/) | ✅ | Membuat parser baru secara otomatis saat format log yang belum dikenal muncul. |
+| 5-9 | [log-diagnosis](log-diagnosis/) | ✅ | Mendiagnosis trajectory HTTP, memutar ulang regresi, dan membuat Issue terverifikasi. |
+| 5-10 | [dynamic-form](dynamic-form/) | ✅ | Menghasilkan formulir HTML dinamis untuk mengklarifikasi permintaan yang belum lengkap. |
+| 5-11 | [erp-agent](erp-agent/) | ✅ | Menghasilkan artefak SQL untuk kueri ERP tanpa memindahkan seluruh data melalui LLM. |
+| 5-12 | [conversational-ui](conversational-ui/) | ✅ | Memodifikasi UI React berdasarkan bahasa alami dan menerapkan perubahan dengan HMR. |
+| 5-13 | [permission-embedded-data-objects](permission-embedded-data-objects/) | ✅ | Penyimpanan objek berbasis PostgreSQL yang menegakkan otorisasi, validasi, dan integritas referensial di bawah kode aplikasi yang dibuat secara dinamis. |
+| 5-14 | [agent-creator](agent-creator/) | ✅ | Membandingkan pembuatan Agent dari referensi tervalidasi dengan pembuatan dari nol. |
 
 ## Jenis Proyek
 

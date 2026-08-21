@@ -21,6 +21,7 @@ Pada pembacaan pertama, lewati kredensial, presentasi, dan kompatibilitas provid
 | 1-1 | [context](context/) | ✅ | Menunjukkan pentingnya komponen context melalui eksperimen ablasi pada beberapa penyedia LLM. |
 | 1-2 | [web-search-agent](web-search-agent/) | ✅ | Menerapkan Agent pencarian mendalam dasar dengan pencarian multi-putaran dan integrasi informasi. |
 | 1-3 | [search-codegen](search-codegen/) | ✅ | Menggabungkan pencarian web dan sandbox kode untuk analisis yang lebih kompleks. |
+| 1-4 | [image-gen-workflow](image-gen-workflow/) | ✅ | Perbandingan nyata dua rute antara kebutuhan konkret/luas × workflow (penulisan ulang kimi-k3 + Tongyi Wanxiang) vs. asli (Gemini / GPT-Image 2): untuk kebutuhan konkret rute asli lebih setia (teks poster dibuang ke prompt negatif oleh node penulisan ulang); untuk kebutuhan luas, konkretisasi adegan menambah imajinasi, tetapi GPT-Image 2 bisa memberikan sudut pandang sendiri—bukti empiris bahwa lapisan adapter diinternalisasi model |
 | 7-1, 7-2 | [learning-from-experience](learning-from-experience/) | ✅ | Membandingkan Q-learning dengan in-context learning berbasis LLM pada permainan pencarian harta karun. |
 
 ## Jenis Proyek
