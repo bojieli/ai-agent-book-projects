@@ -561,6 +561,28 @@ Tái cấu trúc việc chỉnh sửa video thành các vấn đề về gọi v
 > **Tiêu chí chấp nhận**: Agent có thể xác định chính xác các cảnh khác nhau trong video và tạo chính xác các tập lệnh chỉnh sửa dựa trên hướng dẫn ngôn ngữ tự nhiên. Vị trí điểm bắt đầu và điểm kết thúc là chính xác (với sai số dưới 3 giây). Nếu hướng dẫn chứa các yêu cầu về hiệu ứng đặc biệt (chuyển động chậm, chuyển tiếp, phụ đề) thì video được tạo sẽ áp dụng các hiệu ứng một cách chính xác. Người đánh giá Agent phát hiện các lỗi rõ ràng (thiếu nội dung quan trọng, bao gồm các phân đoạn không liên quan) và yêu cầu sửa lỗi. Định dạng tệp video đầu ra cuối cùng là chính xác và chất lượng hình ảnh như mong đợi.
 >
 
+**3D và linh kiện công nghiệp: Ranh giới giữa tạo mã và mô hình sinh.**
+
+Cùng là "tạo ra một thứ", trước mặt Agent có hai con đường: một là viết mã để dựng chính xác (CadQuery, OpenSCAD, Blender API), hai là gọi trực tiếp mô hình sinh 3D (các mô hình text/image-to-3D kiểu Hunyuan 3D, cùng họ diffusion với sinh ảnh từ văn bản). Nhiều người băn khoăn: rốt cuộc khi nào nên dùng tạo mã, khi nào nên dùng mô hình sinh ảnh/3D?
+
+**Thứ nhất, xem sản phẩm có mô tả chính xác gọn hay không.** Linh kiện công nghiệp vốn có mô tả chính xác gọn. Một mặt bích: đường kính ngoài, độ dày, đường kính vòng tròn vị trí lỗ, đường kính lỗ, số lỗ — năm sáu tham số là định nghĩa trọn vẹn, mã là biểu diễn **không mất mát** của nó. Một chậu cây xanh, một tảng đá Thái Hồ, một khuôn mặt người thì khác — chúng có vô số chi tiết, **độ phức tạp nội tại gần như vô hạn**.
+
+**Thứ hai, xem yêu cầu độ chính xác và khả năng xác minh.** Mỗi kích thước của linh kiện đều là ràng buộc cứng — đường kính lỗ 5mm, dung sai ±0.05mm, sai một ly cũng thành phế phẩm. Linh kiện do mã tạo ra có thể được xác minh theo chương trình: nạp lưới, đo đường kính ngoài, vị trí lỗ, đối chiếu từng mục với đặc tả. Còn linh kiện do mô hình sinh 3D tạo ra thì không thể trực tiếp đối chiếu với đặc tả.
+
+Hai con đường còn có một khác biệt thực tế hơn nữa: **dạng biểu diễn và khả năng chỉnh sửa**. Quy trình chế tạo cần thực thể tham số hóa B-rep (biểu diễn biên) — tệp STEP lưu cây đặc trưng và các tham số kích thước, có thể trực tiếp điều khiển gia công CNC. Còn thứ mô hình sinh 3D nhả ra là lưới tam giác: mặt cong được xấp xỉ bằng vô số mảnh nhỏ vụn, phóng to lên thấy gồ ghề. Đợi đến khi phía khách hàng nói một câu "đổi lỗ lắp từ M5 thành M6", khác biệt lập tức phân minh: tuyến mã chỉ cần sửa một con số rồi chạy lại, các kích thước còn lại không sai một ly; tuyến mô hình sinh chỉ có thể tạo lại toàn bộ — các kích thước khác có bị lệch đi theo hay không hoàn toàn dựa vào may rủi.
+
+Vì vậy, đi đường nào vốn chính là một quyết định Agent phải đưa ra: cân nhắc độ phức tạp nội tại và yêu cầu độ chính xác của sản phẩm, giao nhiệm vụ cho tạo mã hoặc mô hình sinh 3D. Trong hệ thống thực tế, hai đường còn có thể đi lẫn nhau — hình học dùng mã để tạo có tham số hóa, vân bề mặt giao cho mô hình sinh, mỗi bên lấy thế mạnh của mình.
+
+> **Thử nghiệm 5-7 ★★: Hai tuyến tạo cùng một linh kiện — mã và mô hình sinh**
+>
+> **Mục tiêu thử nghiệm**: Với cùng một linh kiện cơ khí có đặc tả kích thước, so sánh hai tuyến tạo mã và mô hình sinh 3D về độ chính xác kích thước, khả năng chỉnh sửa và tính khả dụng cho chế tạo, kiểm chứng khung phán đoán "chọn đường theo độ phức tạp nội tại và yêu cầu độ chính xác".
+>
+> **Giải pháp kỹ thuật**: Nhu cầu ngôn ngữ tự nhiên có đặc tả rõ ràng (chẳng hạn "mặt bích, đường kính ngoài 80mm, độ dày 10mm, 4 lỗ lắp M5 phân bố đều, đường kính vòng tròn vị trí lỗ 60mm"). **Tuyến A**: Agent viết mã CadQuery (hoặc OpenSCAD) để dựng linh kiện, xuất STEP và STL. **Tuyến B**: đưa cùng đặc tả đó cho mô hình sinh 3D (chẳng hạn Hunyuan 3D), nhận được lưới tam giác. **Xác minh theo chương trình**: đo độ lệch giữa các kích thước then chốt (đường kính ngoài, độ dày, vị trí lỗ, đường kính lỗ) của sản phẩm hai tuyến so với đặc tả, đồng thời kiểm tra độ phẳng của mặt lắp.
+>
+> Sau đó đưa ra yêu cầu thay đổi "lỗ lắp từ M5 đổi thành M6", ghi lại chi phí sửa đổi của từng tuyến — tuyến mã chỉ sửa một tham số rồi chạy lại, tuyến mô hình sinh chỉ có thể tạo lại toàn bộ, còn các kích thước khác có giữ nguyên hay không không thể bảo đảm.
+>
+> **Nhóm đối chứng**: Sinh một chậu cây xanh — ưu khuyết của hai tuyến đảo ngược hẳn: tuyến mã dù có thêm nhiễu theo chương trình vẫn cứng nhắc gò bó, còn tuyến mô hình sinh thì tự nhiên sinh động.
+
 ### Mã làm bộ điều hợp hệ thống
 
 Hầu hết mã trong các phần trước đều tạo ra những thứ "hướng đến con người" - báo cáo, slide, giao diện. Mã trong phần này chỉ theo một hướng khác: **kết nối máy với máy**. Trong các hệ thống thực, các dịch vụ bên ngoài mà Agent cần xử lý thường không có SDK tạo sẵn và giao diện có thể không được chuẩn hóa - thiếu tài liệu, định dạng trả về không chuẩn và các trường trôi theo phiên bản. Đối mặt với tình huống này, Agent không cần phải đợi ai đó viết trước lớp thích ứng. Thay vào đó, nó đọc tài liệu giao diện ngay tại chỗ hoặc quan sát trực tiếp một hoặc hai phản hồi thực và ngay lập tức tạo mã thích ứng: xây dựng ứng dụng khách HTTP, tập hợp tiêu đề xác thực, phân tích cú pháp cấu trúc trả về không chuẩn và dịch mô hình dữ liệu ngược dòng thành hình dạng mà phía hạ lưu có thể sử dụng. Đoạn mã ở đây trở thành “chất keo vạn năng” kết nối bất kỳ hệ thống nào - nơi nào không thể kết nối được, một miếng keo sẽ được tạo ra tại chỗ để bù đắp. Đây là cốt lõi của hướng "giao diện hệ thống" của siêu khả năng. Phân tích cú pháp nhật ký thích ứng sẽ được phát triển bên dưới là hiện thân của khả năng này trong kịch bản observability: trước định dạng nhật ký ngày càng phát triển, Agent cũng dựa vào mã phân tích cú pháp được tạo tại chỗ để thích ứng.
@@ -577,7 +599,7 @@ Observability của hệ thống Agent phụ thuộc vào việc trực quan hó
 
 Việc tạo mã cung cấp một giải pháp tinh tế: thiết lập vòng phản hồi tự động sửa lỗi. Khi giao diện người dùng gặp định dạng nhật ký không thể phân tích cú pháp, thay vì hiển thị lỗi, nó sẽ tự động báo cáo thông tin lỗi (mẫu nhật ký gốc, báo cáo lỗi chi tiết) tới Agent. Agent phân tích cấu trúc dữ liệu mẫu và tạo mã giao diện người dùng có thể được phân tích cú pháp chính xác. Mã trước tiên được kiểm tra tự động trong trình duyệt ảo (xác minh tính chính xác của phân tích cú pháp, sử dụng Vision LLM để kiểm tra hiệu ứng trực quan), sau đó cập nhật nóng lên hệ thống giao diện người dùng sau khi vượt qua bài kiểm tra.
 
-> **Thử nghiệm 5-7 ★★★: Hệ thống phân tích cú pháp nhật ký thích ứng**
+> **Thử nghiệm 5-8 ★★★: Hệ thống phân tích cú pháp nhật ký thích ứng**
 >
 > **Mục tiêu thử nghiệm**: Xây dựng hệ thống hiển thị nhật ký Agent tự phát triển.
 >

@@ -21,6 +21,7 @@
 | 1-1 | [context](context/) | ✅ | 系統性消融實驗展示 Agent 上下文各元件的重要性；支援 SiliconFlow Qwen、字節 Doubao、月之暗面 Kimi 等多提供商 |
 | 1-2 | [web-search-agent](web-search-agent/) | ✅ | Kimi K3 模型即 Agent，具備基礎深度搜尋能力，能進行多輪搜尋和資訊整合 |
 | 1-3 | [search-codegen](search-codegen/) | ✅ | GPT-5 原生工具整合，綜合利用網路搜尋與程式碼沙箱實現複雜分析 |
+| 1-4 | [image-gen-workflow](image-gen-workflow/) | ✅ | 具體/寬泛兩類需求 × 工作流（kimi-k3 改寫 + 通義萬相）與原生（Gemini / GPT-Image 2）雙路線真實對照：具體需求下原生更忠實（海報文案被改寫節點丟進負面詞），寬泛需求下改寫的場景具象化帶來想象力，但 GPT-Image 2 自己就能補觀點——適配層被模型內化的實證 |
 | 7-1, 7-2 | [learning-from-experience](learning-from-experience/) | ✅ | 對比 Q-learning 與基於 LLM 的上下文學習，復現 Shunyu Yao 的 "The Second Half"：LLM 以 250–400 倍樣本效率超越傳統 RL |
 
 ## 專案型別說明

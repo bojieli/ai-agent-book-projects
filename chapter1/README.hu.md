@@ -21,6 +21,7 @@ Első olvasáskor átugorható a hitelesítő adatok betöltése, a megjelenít�
 | 1-1 | [context](context/) | ✅ | Több LLM-szolgáltatóval végzett ablációs kísérleteken mutatja be a kontextus összetevőinek fontosságát. |
 | 1-2 | [web-search-agent](web-search-agent/) | ✅ | Alapszintű mélykereső ágenst valósít meg többkörös kereséssel és információ-összesítéssel. |
 | 1-3 | [search-codegen](search-codegen/) | ✅ | Webes keresést és kódsandboxot kapcsol össze összetettebb elemzési feladatokhoz. |
+| 1-4 | [image-gen-workflow](image-gen-workflow/) | ✅ | Konkrét és tág igények × munkafolyamat (Kimi K3 átírás + Tongyi Wanxiang) és natív (Gemini / GPT-Image 2) kétútvonalas valós összevetése: konkrét igénynél a natív út a hűsegesebb (a plakátszöveget az átíró csomópont a negatív promptba tette), tág igénynél az átírás jelenetkonkretizálása fantáziát ad, de a GPT-Image 2 önmaga is kiegészíti a nézőpontot – az adapterréteg modell általi interiorizálásának empirikus bizonyítéka. |
 | 7-1, 7-2 | [learning-from-experience](learning-from-experience/) | ✅ | A Q-learninget és az LLM-alapú kontextuson belüli tanulást hasonlítja össze egy kincskereső játékban. |
 
 ## Projekttípusok

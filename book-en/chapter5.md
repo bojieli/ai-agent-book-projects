@@ -558,6 +558,28 @@ Reframing video editing as API calls and code generation cuts the complexity dra
 > **Acceptance criteria**: The Agent can accurately identify different scenes in the video and correctly generate editing scripts based on natural language instructions. The start and end points are accurate (error within 3 seconds). If the instructions include special effects requirements (slow motion, transitions, subtitles), the generated video correctly applies the effects. The Reviewer Agent can detect obvious errors (missing key content, including irrelevant segments) and trigger corrections. The final output video file has the correct format and meets expected quality.
 >
 
+**3D and Industrial Parts: The Boundary Between Code Generation and Generative Models.**
+
+When it comes to "generating a thing," the Agent faces two routes: one is writing code to construct it precisely (CadQuery, OpenSCAD, Blender API); the other is calling a 3D generative model directly (text/image-to-3D models like Hunyuan 3D, which belong to the same diffusion family as text-to-image models). Many people wrestle with the question: when should you use code generation, and when should you use an image/3D generative model?
+
+**First, check whether the artifact has a compact, precise description.** Industrial parts naturally have one. A flange is fully defined by five or six parameters—outer diameter, thickness, bolt-circle diameter, hole diameter, hole count—and code is a **lossless** expression of it. A potted plant, a Taihu rock, or a human face is different—they have countless details, and their **intrinsic complexity is nearly unbounded**.
+
+**Second, check the precision requirements and verifiability.** Every dimension of a part is a hard constraint—hole diameter 5mm, tolerance ±0.05mm; off by a hair and it is scrap. A code-generated part can be verified programmatically: load the mesh, measure the outer diameter and hole positions, and check them item by item against the specification. A part produced by a 3D generative model cannot be checked against the specification directly.
+
+The two routes differ in one more practical way: **representation and editability**. Manufacturing workflows demand B-rep (boundary representation) parametric solids—the STEP file stores the feature tree and dimensional parameters and can drive CNC machining directly. What a 3D generative model spits out is a triangle mesh: curved surfaces are approximated by countless tiny facets and look pitted under magnification. The difference becomes clear when the client says "change the mounting holes from M5 to M6": on the code route, you change one number and rerun, and every other dimension stays exactly the same; on the generative-model route, the only option is to regenerate the whole thing—whether the other dimensions drift is a matter of luck.
+
+So choosing a route is itself a decision the Agent must make: weigh the artifact's intrinsic complexity and precision requirements, and assign the task to code generation or to a 3D generative model. In real systems the two routes can also be mixed—generate the geometry parametrically with code and hand the surface texture to a generative model, taking the best of each.
+
+> **Experiment 5-7 ★★: Two Generation Routes for the Same Part—Code vs. Generative Model**
+>
+> **Experiment objective**: Take the same mechanical part with dimensional specifications and compare the code-generation and 3D-generative-model routes on dimensional accuracy, editability, and manufacturability, verifying the "choose the route by intrinsic complexity and precision requirements" decision framework.
+>
+> **Technical approach**: A natural-language requirement with an explicit specification (e.g., "a flange, outer diameter 80mm, thickness 10mm, 4 evenly spaced M5 mounting holes on a 60mm bolt circle"). **Route A**: the Agent writes CadQuery (or OpenSCAD) code to construct the part and exports STEP and STL. **Route B**: hand the same specification to a 3D generative model (such as Hunyuan 3D) to obtain a triangle mesh. **Programmatic verification**: measure the key dimensions of both routes' outputs (outer diameter, thickness, hole positions, hole diameters) against the specification, and check the flatness of the mounting face.
+>
+> Then issue the change request "change the mounting holes from M5 to M6" and record the modification cost of each route—on the code route, change one parameter and rerun; on the generative-model route, the only option is to regenerate the whole thing, with no guarantee that the other dimensions stay unchanged.
+>
+> **Control group**: generate a potted plant, and the merits of the two routes are exactly reversed—on the code route, even with procedural noise added, the result is stiff and lifeless; on the generative-model route, it is natural and vivid.
+
 ### Code as a System Adapter
 
 The code in the previous sections mostly produces "human-facing" things — reports, slides, interfaces. The code in this section points in another direction: **connecting machine to machine**. In real systems, the external services an Agent must talk to often have no ready-made SDK, and their interfaces are rarely tidy — documentation may be missing, response formats may be nonstandard, and fields may drift across versions. The Agent need not wait for a prebuilt adapter. It can read the API documentation or inspect a few real responses, then generate the adapter on demand: construct an HTTP client, assemble authentication headers, parse the nonstandard response structure, and translate the upstream data model into a shape the downstream can consume. Code here is "universal glue" for connecting arbitrary systems — wherever there is a gap, a piece of glue is generated on demand to fill it. This is the heart of the meta-capability's "system interface" direction. The adaptive log parsing developed below is this capability made concrete in the observability setting: facing log formats that never stop evolving, the Agent likewise adapts by generating parsing code on the fly.
@@ -574,7 +596,7 @@ The observability of Agent systems depends on the visualization of execution flo
 
 Code generation offers an elegant solution: establishing an auto-repair feedback loop. When the frontend encounters an unparseable log format, instead of displaying an error, it automatically reports the failure information (raw log sample, detailed error) to the Agent. The Agent analyzes the sample data structure and generates frontend code that can correctly parse it. The code is first tested automatically in a virtual browser to verify parsing correctness, while a Vision LLM assesses the visualization. If it passes both checks, it is deployed to the frontend as a hot update.
 
-> **Experiment 5-7 ★★★: Adaptive Log Parsing System**
+> **Experiment 5-8 ★★★: Adaptive Log Parsing System**
 >
 > **Experiment Goal**: Build a self-evolving Agent log visualization system.
 >
@@ -589,7 +611,7 @@ Agents in production generate a large volume of trajectory logs (recording the c
 
 Code generation provides an automated path for diagnosis. The Agent can read production logs, combine them with architecture documents and PRDs (Product Requirement Documents) to automatically determine whether the execution flow meets expectations, and pinpoint the problematic components and modules. Based on the analysis results, it generates structured problem reports (priority, module, description, improvement suggestions) and regression test cases—the test cases reference the problem trajectory ID and key interaction rounds, and the test framework automatically replays them to verify that the fixed system produces correct behavior for the same input. Finally, the Agent connects to GitHub via MCP to create an Issue and assign it to the relevant developer, completing the full automation from problem discovery to task assignment.
 
-> **Experiment 5-8 ★★★: Intelligent Diagnostic System for Production Logs**
+> **Experiment 5-9 ★★★: Intelligent Diagnostic System for Production Logs**
 >
 > **Experiment Goal**: Automatically discover problems from production trajectories, generate test cases, and create work items.
 >
@@ -629,7 +651,7 @@ Through code generation, the Agent can create structured interactive interfaces 
 ![Figure 5-8: Dynamic Form Generation Process](images/fig5-8.svg)
 
 
-> **Experiment 5-9 ★★: Intent Clarification System with Dynamic Forms**
+> **Experiment 5-10 ★★: Intent Clarification System with Dynamic Forms**
 >
 > **Experiment Goal**: Verify the Agent's ability to clarify user intent by dynamically generating HTML forms.
 >
@@ -651,7 +673,7 @@ Generated SQL and visualization code must not be executed directly. The executio
 
 Going further, the Agent can generate two artifacts that form a pipeline: an SQL query and visualization code, such as code for a bar chart. The frontend passes the SQL results directly to the visualization code. The LLM generates the code but does not participate in the data path—this is the essence of code generation as an interface.
 
-> **Experiment 5-10 ★★: Natural Language Interaction ERP Agent**
+> **Experiment 5-11 ★★: Natural Language Interaction ERP Agent**
 >
 > ERP (Enterprise Resource Planning) software is a critical system for businesses, typically using a GUI interface where complex operations require multiple mouse clicks. An AI Agent can translate users' natural-language requests into SQL queries, enabling automated database access.
 >
@@ -675,7 +697,7 @@ The ultimate application of code generation is letting the Agent create software
 
 Fully dynamic generation, however, is costly and slow—better suited to demonstrations of what is possible than to production use. A more pragmatic approach is to **customize an existing framework**. This "semi-custom" model preserves the stability of the base software while exposing selected aspects to user control. The user can say "make the button blue," "add a shortcut menu to the sidebar," or "switch to a more readable font"; the Agent updates the frontend code, and HMR (Hot Module Replacement—which updates affected modules without a full-page reload and usually preserves application state) applies the changes immediately. A one-size-fits-all product becomes an experience tailored to each user.
 
-> **Experiment 5-11 ★★: Conversational Interface Customization System**
+> **Experiment 5-12 ★★: Conversational Interface Customization System**
 >
 > **Experiment Goal**: Enable users to customize the software interface instantly through natural-language dialogue, and evaluate whether code generation with hot reload can effectively provide personalized user experiences.
 >
@@ -690,7 +712,7 @@ A more robust architecture **moves the trust boundary down to the data layer**. 
 
 Moving authorization downward does not mean putting all business logic in the database. The application layer may still perform pre-checks to provide fast feedback, but the data layer must retain final decision authority. The same rule can improve the experience above and provide a guarantee below. That guarantee also requires every data-access path to pass through the trusted data layer; generated code must not be able to connect directly around it. The result is an application whose upper layer can keep changing while its non-negotiable permission constraints remain in a layer that is not rewritten on every generation. This is the data layer of Chapter 1's three-layer skeleton—the one that is hardest to bypass.
 
-> **Experiment 5-12 ★★★: Permission-Embedded Data Objects for Dynamic Software**
+> **Experiment 5-13 ★★★: Permission-Embedded Data Objects for Dynamic Software**
 >
 > **Experiment Goal**: Build an object store that allows application code to be generated or rewritten dynamically while still enforcing authorization and data integrity at the data layer. Verify that generated code cannot cross the stable data boundary by skipping a state-machine transition, writing an out-of-range value, or reading across tenants.
 >
@@ -735,7 +757,7 @@ The advantage of example-based generation is plain: the example code itself carr
 
 When an Agent receives a task to develop a new Agent, it should first copy its own code (or other validated, high-quality implementations) and then make targeted modifications: adjust the system prompt to match the new role, replace or add tools to suit new functions, modify business logic while preserving the architectural framework. This "self-replication with adaptive modification" pattern ensures the new Agent inherits core technical advantages while allowing differentiation in specific dimensions—much like gene replication with mutation in biology.
 
-> **Experiment 5-13 ★★★: Develop an Agent That Can Create Agents**
+> **Experiment 5-14 ★★★: Develop an Agent That Can Create Agents**
 >
 > **Experiment Goal**: Build a Coding Agent with metaprogramming capabilities—the ability to write programs that generate or modify other programs—so that it can automatically create new Agent systems from user requirements while adhering to best practices.
 >
@@ -760,7 +782,7 @@ The second part demonstrated the broad value of code generation beyond programmi
 
 - **Thinking Tool**: Leveraging symbolic computation and constraint solving to compensate for the shortcomings of probabilistic thinking
 - **Business Rule Constraints**: Expressing business rules unambiguously and providing a deterministic safety backstop for irreversible operations, where the value of the guarantee far exceeds its implementation cost
-- **Multimedia Generation**: Creating multimodal content like PPTs and videos through a Proposer-Reviewer mechanism
+- **Multimedia Generation**: Creating multimodal content like PPTs and videos through a Proposer-Reviewer mechanism; the choice between code generation and generative models depends on the artifact's intrinsic complexity and precision requirements
 - **System Adapter**: Automatically following format evolution to achieve full automation of log parsing and problem diagnosis
 - **Generative UI**: Dynamically creating forms, visualizations, and even complete customizable applications, breaking free from plain text limitations
 - **Agent Bootstrapping**: Using code to repair existing Agents and create new ones, ultimately enabling an Agent to create other Agents

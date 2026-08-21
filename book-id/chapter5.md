@@ -556,6 +556,28 @@ Membingkai ulang pengeditan video sebagai panggilan API dan code generation mema
 > **Kriteria penerimaan**: Agent dapat mengidentifikasi adegan yang berbeda dalam video secara akurat dan menghasilkan skrip pengeditan dengan benar berdasarkan instruksi bahasa alami. Titik awal dan akhir akurat (kesalahan dalam 3 detik). Jika instruksi menyertakan persyaratan efek khusus (gerak lambat, transisi, subtitel), video yang dihasilkan menerapkan efek dengan benar. Reviewer Agent dapat mendeteksi kesalahan yang jelas (konten kunci hilang, menyertakan segmen yang tidak relevan) dan memicu koreksi. File video output akhir memiliki format yang benar dan memenuhi kualitas yang diharapkan.
 >
 
+**3D dan Komponen Industri: Batas antara Code Generation dan Model Generatif.**
+
+Sama-sama "membuat sebuah objek", di hadapan Agent terdapat dua jalur: satu adalah menulis kode untuk membangunnya secara presisi (CadQuery, OpenSCAD, Blender API), yang lain adalah langsung memanggil model generasi 3D (model text/image-to-3D seperti Hunyuan 3D, yang sama-sama berasal dari keluarga diffusion dengan text-to-image). Banyak orang bingung: kapan seharusnya menggunakan code generation, dan kapan seharusnya menggunakan model generasi gambar/3D?
+
+**Pertama, lihat apakah produknya memiliki deskripsi presisi yang ringkas.** Komponen industri secara alami memiliki deskripsi presisi yang ringkas. Sebuah flensa (flange)—diameter luar, ketebalan, diameter lingkaran posisi lubang, diameter lubang, jumlah lubang—cukup didefinisikan secara lengkap dengan lima atau enam parameter; kode adalah ekspresi **lossless**-nya. Tanaman hijau dalam pot, batu Taihu, atau wajah manusia tidaklah demikian—mereka memiliki detail yang tak terhitung, dan **kompleksitas intrinsiknya nyaris tak terbatas**.
+
+**Kedua, lihat persyaratan presisi dan verifiability.** Setiap dimensi komponen adalah constraint keras—diameter lubang 5mm, toleransi ±0.05mm; selisih sedikit saja berarti barang cacat. Komponen yang dihasilkan kode dapat diverifikasi secara terprogram: muat mesh-nya, ukur diameter luar dan posisi lubangnya, lalu cocokkan satu per satu dengan spesifikasi. Sedangkan komponen yang dihasilkan model generasi 3D tidak dapat dicocokkan secara langsung dengan spesifikasi.
+
+Kedua jalur juga memiliki perbedaan yang lebih praktis: **bentuk representasi dan editability**. Proses manufaktur membutuhkan solid parametrik B-rep (boundary representation)—file STEP menyimpan feature tree dan parameter dimensi, yang dapat langsung menggerakkan pemesinan CNC. Yang dikeluarkan model generasi 3D adalah mesh segitiga: permukaan melengkung diaproksimasi oleh segi-segi kecil yang tak terhitung jumlahnya, dan terlihat berlekuk-lekuk ketika diperbesar. Begitu klien berkata "ubah lubang pemasangan dari M5 menjadi M6", perbedaannya langsung terlihat: jalur kode cukup mengubah satu angka lalu menjalankan ulang, dengan semua dimensi lainnya tidak berubah sedikit pun; jalur model generatif hanya bisa membuat ulang keseluruhannya—apakah dimensi lain ikut bergeser atau tidak, sepenuhnya bergantung pada keberuntungan.
+
+Jadi, memilih jalur mana itu sendiri adalah sebuah keputusan yang harus dibuat Agent: menimbang kompleksitas intrinsik dan persyaratan presisi produk, lalu membagi tugas antara code generation dan model generasi 3D. Dalam sistem nyata, kedua jalur juga dapat dikombinasikan—geometri dihasilkan secara parametrik dengan kode, sedangkan tekstur permukaan diserahkan ke model generatif, masing-masing mengambil kelebihannya.
+
+> **Eksperimen 5-7 ★★: Dua Rute Pembuatan untuk Komponen yang Sama—Kode dan Model Generatif**
+>
+> **Tujuan Eksperimen**: Mengambil satu komponen mekanik yang sama dengan spesifikasi dimensi, membandingkan perbedaan antara dua rute—code generation dan model generasi 3D—dalam presisi dimensi, editability, dan kesiapan manufaktur, serta memverifikasi kerangka penilaian "memilih rute berdasarkan kompleksitas intrinsik dan persyaratan presisi".
+>
+> **Pendekatan Teknis**: Kebutuhan bahasa alami dengan spesifikasi yang eksplisit (misalnya, "flensa, diameter luar 80mm, ketebalan 10mm, 4 lubang pemasangan M5 yang terdistribusi merata, diameter lingkaran posisi lubang 60mm"). **Rute A**: Agent menulis kode CadQuery (atau OpenSCAD) untuk membangun komponen tersebut, lalu mengekspor STEP dan STL. **Rute B**: Serahkan spesifikasi yang sama ke model generasi 3D (misalnya Hunyuan 3D) untuk mendapatkan mesh segitiga. **Verifikasi terprogram**: Ukur deviasi dimensi kunci (diameter luar, ketebalan, posisi lubang, diameter lubang) dari produk kedua rute terhadap spesifikasi, dan periksa kerataan permukaan pemasangannya.
+>
+> Kemudian kirimkan permintaan perubahan "ubah lubang pemasangan dari M5 menjadi M6", dan catat biaya modifikasi masing-masing rute—rute kode cukup mengubah satu parameter lalu menjalankan ulang; rute model generatif hanya dapat membuat ulang keseluruhannya, dan tidak ada jaminan bahwa dimensi lainnya tetap tidak berubah.
+>
+> **Grup kontrol**: Buat tanaman hijau dalam pot; keunggulan kedua rute justru terbalik—rute kode tetap kaku dan artifisial bahkan setelah ditambahkan noise prosedural, sedangkan rute model generatif tampak alami dan hidup.
+
 ### Kode sebagai Adapter Sistem
 
 Kode pada bagian sebelumnya sebagian besar menghasilkan hal-hal yang "menghadap ke manusia" — laporan, slide, antarmuka. Kode pada bagian ini menunjuk ke arah yang berbeda: **menghubungkan mesin dengan mesin**. Dalam sistem nyata, layanan eksternal yang harus diajak bicara oleh Agent sering kali tidak memiliki SDK yang sudah jadi, dan antarmukanya jarang tertata rapi — dokumentasi mungkin hilang, format respons mungkin tidak standar, dan field dapat bergeser di seluruh versi. Agent tidak perlu menunggu adapter prabangun (prebuilt adapter). Agent dapat membaca dokumentasi API atau menginspeksi beberapa respons nyata, kemudian menghasilkan adapter sesuai permintaan: membangun klien HTTP, merakit header autentikasi, mem-parsing struktur respons nonstandar, dan menerjemahkan model data hulu ke dalam bentuk yang dapat dikonsumsi oleh hilir. Kode di sini adalah "lem universal" untuk menghubungkan sistem mana pun secara arbitrer — di mana pun ada celah, sepotong lem dihasilkan sesuai permintaan untuk mengisinya. Ini adalah jantung dari arah "antarmuka sistem" (system interface) meta-capability. Pem-parsing-an log adaptif yang dikembangkan di bawah ini adalah perwujudan konkret kemampuan ini dalam pengaturan observabilitas: menghadapi format log yang tidak pernah berhenti berevolusi, Agent pun beradaptasi dengan menghasilkan kode pem-parsing-an secara langsung (on the fly).
@@ -572,7 +594,7 @@ Observabilitas dari sistem Agent bergantung pada visualisasi alur eksekusi. Tuga
 
 Code generation menawarkan solusi elegan: membangun loop umpan balik perbaikan otomatis (auto-repair feedback loop). Ketika frontend menemukan format log yang tidak dapat di-parsing, alih-alih menampilkan pesan error, ia secara otomatis melaporkan informasi kegagalan (sampel log mentah, error mendetail) ke Agent. Agent menganalisis struktur data sampel dan menghasilkan kode frontend yang dapat mem-parsing-nya dengan benar. Kode pertama-tama diuji secara otomatis dalam browser virtual untuk memverifikasi kebenaran parsing, sementara Vision LLM menilai visualisasinya. Jika lulus kedua pemeriksaan, kode di-deploy ke frontend sebagai hot update.
 
-> **Eksperimen 5-7 ★★★: Sistem Log Parsing Adaptif**
+> **Eksperimen 5-8 ★★★: Sistem Log Parsing Adaptif**
 >
 > **Tujuan Eksperimen**: Membangun sistem visualisasi log Agent yang mampu berevolusi mandiri.
 >
@@ -587,7 +609,7 @@ Agents di lingkungan produksi (production) menghasilkan log trajectory dalam vol
 
 Code generation menyediakan jalur otomatis untuk diagnosis. Agent dapat membaca log produksi, menggabungkannya dengan dokumen arsitektur dan PRD (Product Requirement Documents) untuk secara otomatis menentukan apakah alur eksekusi memenuhi ekspektasi, dan menunjukkan secara tepat komponen serta modul yang bermasalah. Berdasarkan hasil analisis, Agent menghasilkan laporan masalah terstruktur (prioritas, modul, deskripsi, saran perbaikan) dan kasus uji regresi—kasus uji tersebut merujuk pada ID trajectory masalah dan putaran interaksi utama, lalu framework pengujian akan memutarnya ulang secara otomatis untuk memverifikasi bahwa sistem yang telah diperbaiki menghasilkan perilaku yang benar untuk input yang sama. Terakhir, Agent terhubung ke GitHub melalui MCP untuk membuat Issue dan menugaskannya kepada pengembang terkait, menyelesaikan otomatisasi penuh dari penemuan masalah hingga penugasan tugas.
 
-> **Eksperimen 5-8 ★★★: Sistem Diagnostik Cerdas untuk Log Produksi**
+> **Eksperimen 5-9 ★★★: Sistem Diagnostik Cerdas untuk Log Produksi**
 >
 > **Tujuan Eksperimen**: Secara otomatis menemukan masalah dari trajectory produksi, menghasilkan kasus uji, dan membuat item pekerjaan.
 >
@@ -628,7 +650,7 @@ Melalui code generation, Agent dapat membuat antarmuka interaktif yang terstrukt
 ![Gambar 5-8: Proses Pembuatan Formulir Dinamis](images/fig5-8.svg)
 
 
-> **Eksperimen 5-9 ★★: Sistem Klarifikasi Maksud dengan Formulir Dinamis**
+> **Eksperimen 5-10 ★★: Sistem Klarifikasi Maksud dengan Formulir Dinamis**
 >
 > **Tujuan Eksperimen**: Memverifikasi kemampuan Agent untuk mengklarifikasi maksud pengguna dengan menghasilkan formulir HTML secara dinamis.
 >
@@ -650,7 +672,7 @@ SQL dan kode visualisasi yang dihasilkan tidak boleh dieksekusi secara langsung.
 
 Lebih jauh lagi, Agent dapat menghasilkan dua artefak yang membentuk pipeline: sebuah SQL query dan kode visualisasi, seperti kode untuk diagram batang. Frontend meneruskan hasil SQL secara langsung ke kode visualisasi. LLM menghasilkan kode tetapi tidak berpartisipasi dalam jalur data—inilah esensi dari code generation sebagai antarmuka.
 
-> **Eksperimen 5-10 ★★: Agent ERP dengan Interaksi Bahasa Alami**
+> **Eksperimen 5-11 ★★: Agent ERP dengan Interaksi Bahasa Alami**
 >
 > Perangkat lunak ERP (Enterprise Resource Planning) adalah sistem kritis untuk bisnis, biasanya menggunakan antarmuka GUI di mana operasi yang kompleks memerlukan beberapa klik mouse. Sebuah AI Agent dapat menerjemahkan permintaan natural-language pengguna menjadi SQL queries, memungkinkan akses database otomatis.
 >
@@ -674,7 +696,7 @@ Aplikasi puncak dari code generation adalah membiarkan Agent membuat perangkat l
 
 Namun, fully dynamic generation membutuhkan biaya besar dan lambat—lebih cocok untuk demonstrasi tentang apa yang mungkin terjadi daripada untuk production use. Pendekatan yang lebih pragmatis adalah **menyesuaikan framework yang sudah ada**. Model "semi-custom" ini mempertahankan stabilitas perangkat lunak dasar sembari mengekspos aspek-aspek tertentu ke kendali pengguna. Pengguna dapat mengatakan "jadikan tombolnya biru," "tambahkan menu pintasan ke sidebar," atau "beralih ke font yang lebih mudah dibaca"; Agent memperbarui frontend code, dan HMR (Hot Module Replacement—yang memperbarui modul terdampak tanpa reload seluruh halaman dan biasanya mempertahankan state aplikasi) menerapkan perubahannya seketika. Sebuah produk one-size-fits-all menjadi pengalaman yang disesuaikan untuk setiap pengguna.
 
-> **Eksperimen 5-11 ★★: Sistem Kustomisasi Antarmuka Percakapan**
+> **Eksperimen 5-12 ★★: Sistem Kustomisasi Antarmuka Percakapan**
 >
 > **Tujuan Eksperimen**: Memungkinkan pengguna menyesuaikan antarmuka perangkat lunak secara instan melalui dialog bahasa alami, lalu mengevaluasi apakah pembuatan kode dengan hot reload dapat memberikan pengalaman yang dipersonalisasi secara efektif.
 >
@@ -688,7 +710,7 @@ Arsitektur yang lebih kuat **memindahkan batas kepercayaan ke lapisan data**. Ko
 
 Memindahkan otorisasi ke bawah bukan berarti menaruh seluruh logika bisnis di basis data. Lapisan aplikasi tetap dapat melakukan pemeriksaan awal untuk memberikan umpan balik cepat, tetapi lapisan data harus mempertahankan kewenangan keputusan akhir. Aturan yang sama dapat memperbaiki pengalaman di atas dan memberi jaminan di bawah. Semua jalur akses data harus melewati lapisan data tepercaya; kode yang dihasilkan tidak boleh terhubung langsung untuk mengitarinya. Hasilnya, lapisan atas dapat terus berubah, sedangkan batas izin yang tidak dapat dinegosiasikan tetap berada di lapisan yang tidak dibuat ulang pada setiap permintaan. Inilah lapis data pada kerangka tiga lapis di Bab 1—lapis yang paling sulit dilewati.
 
-> **Eksperimen 5-12 ★★★: Objek Data Tertanam-Izin untuk Perangkat Lunak Dinamis**
+> **Eksperimen 5-13 ★★★: Objek Data Tertanam-Izin untuk Perangkat Lunak Dinamis**
 >
 > **Tujuan Eksperimen**: Bangun object store yang memungkinkan kode aplikasi dibuat atau ditulis ulang secara dinamis, namun otorisasi dan integritas data tetap ditegakkan di lapisan data. Verifikasi bahwa kode yang dihasilkan tidak dapat menembus batas stabil dengan melewati transisi state, menulis nilai di luar rentang, atau membaca lintas tenant.
 >

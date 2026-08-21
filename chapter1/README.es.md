@@ -21,6 +21,7 @@ En la primera pasada puedes omitir credenciales, presentación y compatibilidad 
 | 1-1 | [context](context/) | ✅ | Experimentos de ablación sistemática que muestran la importancia de los componentes del contexto; compatible con SiliconFlow Qwen, ByteDance Doubao y Moonshot Kimi |
 | 1-2 | [web-search-agent](web-search-agent/) | ✅ | Agente Kimi K3 con capacidad de búsqueda profunda básica, capaz de realizar búsquedas multirronda e integración de información |
 | 1-3 | [search-codegen](search-codegen/) | ✅ | Integración de herramientas nativas de GPT-5, utilizando búsqueda web y sandbox de código para análisis complejos |
+| 1-4 | [image-gen-workflow](image-gen-workflow/) | ✅ | Comparación real de dos clases de necesidades (concretas/amplias) × dos rutas, workflow (reescritura con kimi-k3 + Tongyi Wanxiang) y nativa (Gemini / GPT-Image 2): con necesidades concretas la ruta nativa es más fiel (el nodo de reescritura envió el texto del cartel a los prompts negativos); con necesidades amplias la concreción de la escena mediante la reescritura aporta imaginación, pero GPT-Image 2 ya aporta ideas por sí mismo—evidencia empírica de la internalización de la capa de adaptación por el modelo |
 | 7-1, 7-2 | [learning-from-experience](learning-from-experience/) | ✅ | Comparación entre Q-learning tradicional y aprendizaje en contexto basado en LLM, reproduciendo la eficiencia de muestra (250–400x) |
 
 ## Tipos de Proyectos
