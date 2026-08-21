@@ -1,9 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 480" width="820" height="480" style="background:#ffffff">
-<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<title>图 1-5 “模型即 Agent” 架构——原生工具调用</title>
+<desc>LLM 通过服务端 Harness 闭环调用 web_search 与 code_interpreter 等原生工具，图中以比特币技术分析任务展示一次 ReAct 执行过程。</desc>
+<defs><marker id="ah" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
 <rect x="260" y="70" width="300" height="100" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
 <text x="410" y="100" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">LLM（Kimi K3 / GPT-5.6）</text>
 <text x="410" y="130" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">RL 训练后的原生 Agent 能力</text>
-<rect x="620" y="70" width="180" height="210" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<rect x="620" y="70" width="180" height="230" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
 <text x="632" y="88" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">原生工具</text>
 <rect x="635" y="105" width="150" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
 <text x="710.0" y="130.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">$web_search</text>
@@ -25,7 +27,7 @@
 <rect x="340" y="250" width="200" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
 <text x="440.0" y="267.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">调用 $web_search</text>
 <text x="440.0" y="288.7" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">&quot;BTC price last month&quot;</text>
-<line x1="322" y1="277" x2="338" y2="277" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<path d="M 322,352 L 330,352 L 330,277 L 338,277" fill="none" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
 <rect x="340" y="325" width="200" height="55" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
 <text x="440.0" y="342.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">结果：[价格数据]</text>
 <text x="440.0" y="363.7" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">$67,230 → $71,450</text>
@@ -33,16 +35,16 @@
 <rect x="120" y="400" width="200" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
 <text x="220.0" y="417.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">调用 code_interpreter</text>
 <text x="220.0" y="438.7" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">RSI, MACD 计算代码</text>
-<line x1="340" y1="377" x2="220" y2="398" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
+<line x1="400" y1="382" x2="240" y2="398" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
 <rect x="340" y="400" width="200" height="55" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
 <text x="440.0" y="417.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">最终输出：技术分析</text>
 <text x="440.0" y="438.7" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">报告 + 可视化图表</text>
 <line x1="322" y1="427" x2="338" y2="427" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<path d="M 565,480 Q 523.2305639386065,308.0187097062208 410,172" fill="none" stroke="#999999" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah-light)"/>
+<path d="M 562,450 Q 640,300 545,172" fill="none" stroke="#999999" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah-light)"/>
 <text x="605" y="330" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">RL 训练信号</text>
 <rect x="15" y="70" width="230" height="120" rx="8" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
 <text x="27" y="88" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">与传统框架的区别</text>
-<text x="130" y="110" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ 编排由服务端 Harness 托管</text>
-<text x="130" y="135" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ 客户端无需手写 ReAct 循环</text>
-<text x="130" y="160" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ 模型自主决定工具调用</text>
+<text x="30" y="110" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">✓ 编排由服务端 Harness 托管</text>
+<text x="30" y="135" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">✓ 客户端无需手写 ReAct 循环</text>
+<text x="30" y="160" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">✓ 模型自主决定工具调用</text>
 </svg>
