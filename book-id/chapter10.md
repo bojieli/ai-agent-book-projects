@@ -493,6 +493,8 @@ MetaGPT mengodekan prosedur operasi standar perusahaan perangkat lunak. Peran be
 
 > Sejak 2025, “Agent Swarm” digunakan untuk lebih dari satu arsitektur. Istilah ini dapat berarti jaringan handoff terdesentralisasi ala OpenAI Swarm, atau Manager pattern berskala besar tempat Agent utama membuat banyak sub-Agent paralel, seperti Kimi K2.5/K3 dan AgentEnv[^ch10-kimi-swarm]. Sistem riset multi-Agent Anthropic dan Manus juga menggunakan topologi orchestrator-worker.
 
+**Beberapa instance Agent sejawat pada mesin yang sama.** Agent pada ketiga sistem di atas sama-sama mengerjakan satu tugas yang sama; ada pula desentralisasi yang sebaliknya: setiap Agent punya tugasnya sendiri, dan mereka berkomunikasi bukan untuk membagi pekerjaan melainkan untuk mengoordinasikan penggunaan sumber daya bersama. Claude Code kini mendukung beberapa Agent pada satu mesin untuk saling menemukan (inilah gunanya `list_agents` pada Bab 4) dan saling berkirim pesan: ketika dua Agent mengubah kumpulan file yang sama, keduanya merundingkan penyelesaian konflik; ketika mesin hanya punya satu GPU sementara kedua instance perlu menjalankan training, keduanya mengoordinasikan pemakaian GPU.
+
 Evolusi selanjutnya dari pola terdesentralisasi adalah masyarakat Agent.
 
 [^ch10-kimi-swarm]: Moonshot AI, *Kimi Agent Swarm: 100 Sub-Agents at Scale*, 2026, https://www.kimi.com/blog/agent-swarm. Pada GTC 2026 batas 300 sub-Agent diumumkan; AgentEnv dirilis bersama Kimi K3 pada Juli 2026.

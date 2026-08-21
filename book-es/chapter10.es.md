@@ -486,6 +486,8 @@ MetaGPT codifica los procedimientos operativos estándar de una empresa de softw
 
 > Desde 2025, “Agent Swarm” se usa para arquitecturas distintas. Puede referirse a una red de handoff descentralizada como OpenAI Swarm o a un patrón de Manager a gran escala, donde el Agente principal crea muchos subagentes en paralelo, como Kimi K2.5/K3 y AgentEnv[^ch10-kimi-swarm]. Los sistemas de investigación multiagente de Anthropic y Manus también usan una topología orquestador-trabajador.
 
+**Varias instancias de Agentes pares en la misma máquina.** Los Agentes de los tres sistemas anteriores colaboran en una misma tarea; otro tipo de descentralización es el contrario: cada Agente tiene su propia tarea y se comunican no para repartirse el trabajo, sino para coordinar el uso de los recursos compartidos. Claude Code ya permite que varios Agentes de una misma máquina se descubran entre sí (justo para eso sirve `list_agents` del capítulo 4) y se envíen mensajes: cuando dos Agentes modifican el mismo conjunto de archivos, negocian cómo resolver el conflicto; cuando la máquina solo tiene una GPU y ambas instancias necesitan entrenar, coordinan su uso.
+
 La siguiente evolución del patrón descentralizado es la sociedad de Agentes, presentada más adelante.
 
 [^ch10-kimi-swarm]: Moonshot AI, *Kimi Agent Swarm: 100 Sub-Agents at Scale*, 2026, https://www.kimi.com/blog/agent-swarm. En GTC 2026 se anunció un límite de 300 subagentes; AgentEnv se publicó con Kimi K3 en julio de 2026.

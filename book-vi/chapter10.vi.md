@@ -492,6 +492,8 @@ MetaGPT mã hóa quy trình vận hành chuẩn của công ty phần mềm. Cá
 
 > Từ năm 2025, “Agent Swarm” được dùng cho nhiều kiến trúc: mạng handoff phi tập trung kiểu OpenAI Swarm, hoặc mô hình Manager quy mô lớn nơi Agent chính tạo nhiều Agent con song song, như Kimi K2.5/K3 và AgentEnv[^ch10-kimi-swarm]. Các hệ thống nghiên cứu đa Agent của Anthropic và Manus cũng dùng cấu trúc orchestrator-worker.
 
+**Nhiều instance Agent ngang hàng trên cùng một máy.** Agent trong ba hệ thống trên đều hợp tác để hoàn thành cùng một việc; còn có một kiểu phi tập trung ngược lại: mỗi Agent có công việc riêng, và chúng giao tiếp không phải để phân công mà để phối hợp sử dụng tài nguyên dùng chung. Claude Code đã hỗ trợ nhiều Agent trên cùng một máy khám phá lẫn nhau (đây chính là công dụng của `list_agents` ở Chương 4) và gửi tin nhắn cho nhau: khi hai Agent cùng sửa một nhóm tập tin, chúng thương lượng để giải quyết xung đột; khi máy chỉ có một GPU mà cả hai instance đều cần chạy huấn luyện, chúng phối hợp việc dùng GPU.
+
 Bước phát triển tiếp theo của mô hình phi tập trung là xã hội Agent.
 
 [^ch10-kimi-swarm]: Moonshot AI, *Kimi Agent Swarm: 100 Sub-Agents at Scale*, 2026, https://www.kimi.com/blog/agent-swarm. Tại GTC 2026, giới hạn 300 Agent con được công bố; AgentEnv phát hành cùng Kimi K3 vào tháng 7 năm 2026.

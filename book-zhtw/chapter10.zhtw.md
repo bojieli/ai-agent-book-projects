@@ -492,6 +492,8 @@ MetaGPT 把軟體公司的標準作業程序編碼進系統。角色依 Product 
 
 > 2025 年以來，「Agent Swarm」可指不同架構：OpenAI Swarm 式的去中心化 handoff 網路，或 Kimi K2.5/K3 與 AgentEnv 這類由主 Agent 建立大量平行子 Agent 的大規模管理者模式[^ch10-kimi-swarm]。Anthropic 與 Manus 的多 Agent 研究系統也屬 orchestrator-worker 拓撲。
 
+**同一台機器上的多個對等 Agent 實例。** 以上三個系統的 Agent 都在合作完成同一件事，還有一類去中心化則是各做各的：每個 Agent 有自己的任務，它們之間通訊不是為了分工，而是為了協調使用共享資源。Claude Code 已經支援同一台機器上的多個 Agent 互相發現（這正是第四章 `list_agents` 的用途）並互相發訊息：兩個 Agent 在修改同一組檔案時協商解決衝突，機器上只有一塊 GPU 而兩個實例都要跑訓練時要協調使用 GPU。
+
 去中心化模式的下一步演進是 Agent 社會。
 
 [^ch10-kimi-swarm]: Moonshot AI, *Kimi Agent Swarm: 100 Sub-Agents at Scale*, 2026, https://www.kimi.com/blog/agent-swarm。GTC 2026 已披露平行子 Agent 上限擴至 300 個；AgentEnv 於 2026 年 7 月隨 Kimi K3 發布。

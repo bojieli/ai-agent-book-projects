@@ -497,6 +497,8 @@ MetaGPT는 소프트웨어 회사의 표준 작업 절차를 코드화한다. �
 
 > 2025년 이후 “Agent Swarm”은 여러 아키텍처를 가리킨다. OpenAI Swarm식 탈중앙 handoff 네트워크를 뜻하기도 하고, Kimi K2.5/K3와 AgentEnv처럼 주 Agent가 많은 하위 Agent를 병렬 생성하는 대규모 관리자 패턴을 뜻하기도 한다[^ch10-kimi-swarm]. Anthropic과 Manus의 멀티 에이전트 연구 시스템도 orchestrator-worker 토폴로지다.
 
+**같은 머신에서 도는 여러 대등한 Agent 인스턴스.** 앞의 세 시스템은 모두 Agent들이 같은 일을 함께 해내지만, 각자 다른 일을 하는 탈중앙화도 있다. 각 Agent는 자기 작업을 가지며, 이들 사이의 통신은 분업을 위한 것이 아니라 공유 자원의 사용을 조율하기 위한 것이다. Claude Code는 이미 같은 머신의 여러 Agent가 서로를 발견하고(4장의 `list_agents`가 바로 이 용도다) 서로 메시지를 주고받도록 지원한다. 두 Agent가 같은 파일들을 수정할 때는 충돌 해결을 협상하고, 머신에 GPU가 하나뿐인데 두 인스턴스 모두 학습을 돌려야 할 때는 GPU 사용을 조율한다.
+
 탈중앙화 패턴의 다음 발전은 Agent 사회다.
 
 [^ch10-kimi-swarm]: Moonshot AI, *Kimi Agent Swarm: 100 Sub-Agents at Scale*, 2026, https://www.kimi.com/blog/agent-swarm. GTC 2026에서 한도가 300개 하위 Agent로 확대됐다고 발표했고, AgentEnv는 2026년 7월 Kimi K3와 함께 공개됐다.
