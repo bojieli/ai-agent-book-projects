@@ -15,7 +15,7 @@
 <text x="390" y="165" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">根據寬高比選擇最匹配</text>
 <rect x="540" y="65" width="200" height="120" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
 <text x="640" y="85" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">模型輸出座標</text>
-<text x="640" y="108" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">基於縮小後影象</text>
+<text x="640" y="108" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">基於縮小後影像</text>
 <text x="640" y="128" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">預測: (683, 384)</text>
 <circle cx="650" cy="145" r="4" fill="#333333" stroke="#333333" stroke-width="2"/>
 <text x="640" y="168" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">→ 放大回實際解析度</text>

@@ -48,7 +48,7 @@
 <text x="480" y="395" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">部署 H1+H3+H6 → 88%→94%</text>
 <text x="480" y="419" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">新報告顯示不同失敗模式:</text>
 <text x="480" y="443" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">  H7: 條件化思考啟用</text>
-<text x="480" y="467" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">  H8: 擴充套件手勢動作空間</text>
+<text x="480" y="467" font-family="'Courier New', Courier, monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">  H8: 擴展手勢動作空間</text>
 <line x1="870" y1="415" x2="870" y2="125" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
 <text x="885" y="270" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">↑ 迴圈</text>
 <rect x="80" y="500" width="720" height="42" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>

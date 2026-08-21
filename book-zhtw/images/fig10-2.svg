@@ -39,7 +39,7 @@
 <text x="105" y="270" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central">Scratchpad</text>
 <line x1="40" y1="284" x2="170" y2="284" stroke="#cccccc" stroke-width="1"/>
 <text x="105" y="303" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central">私有 · 僅該 Agent</text>
-<text x="105" y="324" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central">隨例項銷燬</text>
+<text x="105" y="324" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central">隨實例銷燬</text>
 <text x="105" y="345" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central">讀寫 · 無需併發控制</text>
 <text x="105" y="372" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central">每個 Agent 各一份</text>
 
@@ -69,7 +69,7 @@
 <text x="675" y="250" font-family="'Courier New', Courier, monospace" font-size="12" fill="#444444" text-anchor="middle" dominant-baseline="central">/skills</text>
 <text x="675" y="270" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central">Skills · 模板 · 手冊</text>
 <line x1="604" y1="284" x2="746" y2="284" stroke="#cccccc" stroke-width="1"/>
-<text x="675" y="303" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central">全域性共享 · 只讀</text>
+<text x="675" y="303" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central">全域共享 · 只讀</text>
 <text x="675" y="324" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central">跨會話穩定</text>
 <text x="675" y="345" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central">漸進式披露</text>
 

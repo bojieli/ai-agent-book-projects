@@ -44,7 +44,7 @@
 <text x="578" y="392" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central"> &quot;return&quot;: &quot;2025-08-22&quot;}</text>
 <line x1="560" y1="390" x2="400" y2="440" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
 <rect x="100" y="430" width="500" height="50" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="350" y="448" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Agent 攜帶完整引數繼續執行任務</text>
+<text x="350" y="448" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Agent 攜帶完整參數繼續執行任務</text>
 <text x="350" y="468" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">search_flights(from='上海', to='北京', depart='2025-08-15', ...)</text>
 <rect x="20" y="280" width="250" height="140" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
 <text x="145" y="300" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">對比: 純文字 vs 表單</text>

@@ -14,7 +14,7 @@
 <text x="500" y="156" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">· 文件分塊 · 多模態提取</text>
 <text x="500" y="184" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">· 稠密/稀疏嵌入 · 混合檢索</text>
 <text x="500" y="212" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">· 結構化索引：RAPTOR · GraphRAG</text>
-<text x="500" y="240" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">· 檔案系統正規化 · 智慧體化 RAG</text>
+<text x="500" y="240" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">· 檔案系統範式 · 智慧體化 RAG</text>
 <text x="500" y="268" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">· 上下文感知檢索 · 深度知識提取</text>
 <line x1="240" y1="320" x2="240" y2="288" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
 <line x1="680" y1="320" x2="680" y2="288" stroke="#999999" stroke-width="2" marker-end="url(#ah-light)"/>
