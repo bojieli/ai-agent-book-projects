@@ -68,12 +68,22 @@ def assert_anchors(locale: str, chapter: int, figure: int, anchors: tuple[str, .
         ), f"{locale} Figure {chapter}-{figure} is missing {anchor!r}"
 
 
+def assert_absent(locale: str, chapter: int, figure: int, needle: str) -> None:
+    text = " ".join(svg_text(locale, chapter, figure).split()).casefold()
+    assert (
+        needle.casefold() not in text
+    ), f"{locale} Figure {chapter}-{figure} still contains {needle!r}"
+
+
 def test_chapter_1_localized_figures_match_their_captions():
     for locale, localized_anchors in CHAPTER_1_LOCALE_ANCHORS.items():
         for figure, anchors in localized_anchors.items():
             assert_anchors(locale, 1, figure, anchors)
         assert_anchors(locale, 1, 4, ("convert_currency", "assistant.reasoning"))
-        assert_anchors(locale, 1, 5, ("$web_search", "code_interpreter"))
+        # Figure 1-5 names the Responses API built-in tools; the Moonshot-only
+        # "$" prefix was dropped so one spelling covers both Kimi K3 and GPT-5.6.
+        assert_anchors(locale, 1, 5, ("web_search", "code_interpreter"))
+        assert_absent(locale, 1, 5, "$web_search")
 
     assert_anchors("es", 1, 6, ("while not done:", "SWE-bench"))
 
