@@ -10,7 +10,7 @@
 <rect x="620" y="70" width="180" height="230" rx="8" fill="none" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
 <text x="632" y="88" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="bold">原生工具</text>
 <rect x="635" y="105" width="150" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="710.0" y="130.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">$web_search</text>
+<text x="710.0" y="130.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">web_search</text>
 <rect x="635" y="170" width="150" height="50" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
 <text x="710.0" y="195.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">code_interpreter</text>
 <rect x="635" y="235" width="150" height="50" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2"/>
@@ -39,7 +39,7 @@
 <line x1="242" y1="422" x2="298" y2="422" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
 
 <rect x="300" y="384" width="220" height="76" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="410.0" y="404.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">第 1 轮：调用 $web_search</text>
+<text x="410.0" y="404.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">第 1 轮：调用 web_search</text>
 <text x="410.0" y="424.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">&quot;BTC price last month&quot;</text>
 <text x="410.0" y="444.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">第 2 轮：code_interpreter</text>
 <line x1="522" y1="422" x2="578" y2="422" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
