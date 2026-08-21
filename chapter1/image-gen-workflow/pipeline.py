@@ -1,8 +1,9 @@
 """
-实验 1-4 的两条路线实现。
+实验 1-4 的三条路线实现。
 
-工作流路线（workflow）：改写节点（Kimi）→ 生图节点（通义万相）
-原生路线（native）：Gemini 原生图像生成，一次调用直接出图
+工作流路线（workflow）：改写节点（Kimi kimi-k3）→ 生图节点（通义万相 wan2.2-t2i-flash）
+原生路线（native）：Gemini 3 Pro Image（Nano Banana 2）直接出图，一次调用
+原生路线 GPT-Image 2（native_gptimage）：OpenAI gpt-image-2 直接出图，一次调用
 
 每次真实 API 调用都产生一条 call record（模型名、请求参数、响应 ID、
 用量、时间戳、耗时），绝不记录密钥。
@@ -227,14 +228,14 @@ def generate_image_wanx(
 
 
 # ---------------------------------------------------------------------------
-# 原生路线：Gemini 原生图像生成
+# 原生路线：Gemini 3 Pro Image（Nano Banana 2）原生图像生成
 # ---------------------------------------------------------------------------
 
 
 def generate_image_gemini(
     requirement: str,
 ) -> Tuple[bytes, str, Dict[str, Any], Optional[str]]:
-    """把口语化需求原样发给 Gemini，一次调用直接出图。
+    """把口语化需求原样发给 Gemini 3 Pro Image（Nano Banana 2），一次调用直接出图。
 
     返回 (图片字节, mime, call record, 模型附带文本)。
     """
@@ -267,7 +268,10 @@ def generate_image_gemini(
             }
         image_bytes, mime, text = None, None, None
         for cand in resp.candidates or []:
-            for part in cand.content.parts:
+            content = getattr(cand, "content", None)
+            if not content:
+                continue
+            for part in content.parts or []:
                 if getattr(part, "inline_data", None) and part.inline_data.data:
                     raw = part.inline_data.data
                     image_bytes = (
@@ -288,7 +292,7 @@ def generate_image_gemini(
 
 
 # ---------------------------------------------------------------------------
-# 原生路线补充对照：OpenAI GPT-Image 2（可选，仅宽泛需求主用例）
+# 原生路线 B：OpenAI GPT-Image 2
 # ---------------------------------------------------------------------------
 
 
@@ -337,7 +341,7 @@ def generate_image_gpt_image(
 
 
 # ---------------------------------------------------------------------------
-# 两条路线的编排
+# 三条路线的编排
 # ---------------------------------------------------------------------------
 
 
@@ -385,7 +389,7 @@ def run_native_route(requirement: str) -> Dict[str, Any]:
 
 
 def run_native_gpt_image_route(requirement: str) -> Dict[str, Any]:
-    """原生路线补充对照：GPT-Image 2 一次调用直接出图。"""
+    """原生路线 B：GPT-Image 2（gpt-image-2）一次调用直接出图。"""
     image_bytes, mime, rec = generate_image_gpt_image(requirement)
     return {
         "route": "native_gptimage",

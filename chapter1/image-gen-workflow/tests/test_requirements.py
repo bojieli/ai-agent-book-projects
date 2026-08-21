@@ -1,6 +1,6 @@
 """需求清单的两类对照设计（离线）。"""
 
-from main import GPT_IMAGE_REQUIREMENT_ID, REQUIREMENTS
+from main import ALL_ROUTES, REQUIREMENTS
 
 
 def test_every_requirement_has_category():
@@ -14,10 +14,11 @@ def test_both_categories_present():
     assert cats == {"specific", "broad"}
 
 
-def test_gpt_image_main_case_is_broad():
-    by_id = {r["id"]: r for r in REQUIREMENTS}
-    assert GPT_IMAGE_REQUIREMENT_ID in by_id
-    assert by_id[GPT_IMAGE_REQUIREMENT_ID]["category"] == "broad"
+def test_all_routes_include_native_models():
+    """三条路线中应包含两条原生路线（Nano Banana 2 和 GPT-Image 2）及一条工作流路线。"""
+    assert "workflow" in ALL_ROUTES
+    assert "native" in ALL_ROUTES       # Nano Banana 2 = gemini-3-pro-image
+    assert "native_gptimage" in ALL_ROUTES   # GPT-Image 2 = gpt-image-2
 
 
 def test_book_main_case_text():

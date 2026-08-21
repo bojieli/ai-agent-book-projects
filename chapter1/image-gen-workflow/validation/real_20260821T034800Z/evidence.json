@@ -1,0 +1,317 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "1-4",
+  "evidence_mode": "real_api",
+  "created_at": "2026-08-21T03:50:04.691410+00:00",
+  "canonical_source": "book/chapter1.md#实验-1-4-文生图工作流与原生图像生成的对照",
+  "credential_source_env": [
+    "KIMI_API_KEY",
+    "DASHSCOPE_API_KEY",
+    "GEMINI_API_KEY"
+  ],
+  "credential_value_recorded": false,
+  "host": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "python": "3.11.4 (main, Jul  5 2023, 08:40:20) [Clang 14.0.6 ]",
+    "machine": "arm64"
+  },
+  "repository": {
+    "commit": "dfff5b253cf41d8b21828b5583e2963d19de975b",
+    "branch": "exp/ch1-1-4-ch5-5-7-20260821",
+    "worktree_dirty": true
+  },
+  "requirements": [
+    {
+      "id": "agi-programmer",
+      "category": "broad",
+      "text": "帮我画一个 AGI 实现以后程序员的工作场景"
+    }
+  ],
+  "runs": [
+    {
+      "requirement_id": "agi-programmer",
+      "route": "workflow",
+      "input": "帮我画一个 AGI 实现以后程序员的工作场景",
+      "rewrite": {
+        "prompt": "masterpiece, best quality, highly detailed, sci-fi concept art, cinematic lighting, a relaxed programmer in a futuristic minimalist office, leaning back in an ergonomic chair sipping coffee, supervising instead of typing, surrounded by floating holographic screens where code writes itself, glowing translucent blue holograms, a friendly AI assistant avatar projected beside the desk, no physical keyboard, gesture-based interaction, floor-to-ceiling windows, futuristic city skyline at dusk outside, indoor green plants, warm sunlight mixed with cool hologram glow, wide-angle composition, depth of field, harmonious human-AI collaboration, calm contemplative mood, ultra detailed, 8k",
+        "negative_prompt": "lowres, bad anatomy, bad hands, extra fingers, missing fingers, blurry, watermark, text, signature, logo, jpeg artifacts, worst quality, distorted face, cluttered composition, oversaturated, dark, gloomy",
+        "style_notes": "将『AGI 后的程序员』具象化为从写代码转为监督与指挥的角色：全息屏上代码自动生成、AI 助手在旁、程序员悠闲喝咖啡，用冷暖对比光线和科幻概念艺术风格强化人机协作的松弛感与未来感。"
+      },
+      "nodes": [
+        {
+          "node": "rewrite",
+          "call": {
+            "call_id": "7909a61bb7d4",
+            "provider": "moonshot",
+            "model": "kimi-k3",
+            "endpoint": "https://api.moonshot.cn/v1/chat/completions",
+            "started_at": "2026-08-21T03:48:01.054629+00:00",
+            "finished_at": "2026-08-21T03:48:29.249278+00:00",
+            "latency_ms": 28194.6,
+            "status": "ok",
+            "request": {
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "你是 Stable Diffusion 风格的文生图提示词专家。用户会给你一句口语化的中文需求，\n你需要把它改写成经典文生图模型（如 Stable Diffusion / FLUX）能消化的提示词。\n\n要求：\n1. prompt 字段：逗号分隔的英文 tag，先主体后细节，包含质量词\n   （如 masterpiece, best quality, highly detailed），必要时包含画风、构图、光线、情绪词。\n2. negative_prompt 字段：逗号分隔的英文负面提示词（如 lowres, bad anatomy, blurry, watermark, text 等）。\n3. style_notes 字段：一句中文，说明你这次改写做了哪些关键增补/取舍。\n4. 只输出一个 JSON 对象，不要输出任何其他文字。格式：\n{\"prompt\": \"...\", \"negative_prompt\": \"...\", \"style_notes\": \"...\"}\n"
+                },
+                {
+                  "role": "user",
+                  "content": "帮我画一个 AGI 实现以后程序员的工作场景"
+                }
+              ]
+            },
+            "response_id": "chatcmpl-6a87ca724ea6f6a3f11b5e5a",
+            "usage": {
+              "completion_tokens": 848,
+              "prompt_tokens": 284,
+              "total_tokens": 1132,
+              "completion_tokens_details": {
+                "accepted_prediction_tokens": null,
+                "audio_tokens": null,
+                "reasoning_tokens": 593,
+                "rejected_prediction_tokens": null
+              },
+              "prompt_tokens_details": null
+            },
+            "error": null,
+            "raw_output": "{\"prompt\": \"masterpiece, best quality, highly detailed, sci-fi concept art, cinematic lighting, a relaxed programmer in a futuristic minimalist office, leaning back in an ergonomic chair sipping coffee, supervising instead of typing, surrounded by floating holographic screens where code writes itself, glowing translucent blue holograms, a friendly AI assistant avatar projected beside the desk, no physical keyboard, gesture-based interaction, floor-to-ceiling windows, futuristic city skyline at dusk outside, indoor green plants, warm sunlight mixed with cool hologram glow, wide-angle composition, depth of field, harmonious human-AI collaboration, calm contemplative mood, ultra detailed, 8k\", \"negative_prompt\": \"lowres, bad anatomy, bad hands, extra fingers, missing fingers, blurry, watermark, text, signature, logo, jpeg artifacts, worst quality, distorted face, cluttered composition, oversaturated, dark, gloomy\", \"style_notes\": \"将『AGI 后的程序员』具象化为从写代码转为监督与指挥的角色：全息屏上代码自动生成、AI 助手在旁、程序员悠闲喝咖啡，用冷暖对比光线和科幻概念艺术风格强化人机协作的松弛感与未来感。\"}"
+          },
+          "output": {
+            "prompt": "masterpiece, best quality, highly detailed, sci-fi concept art, cinematic lighting, a relaxed programmer in a futuristic minimalist office, leaning back in an ergonomic chair sipping coffee, supervising instead of typing, surrounded by floating holographic screens where code writes itself, glowing translucent blue holograms, a friendly AI assistant avatar projected beside the desk, no physical keyboard, gesture-based interaction, floor-to-ceiling windows, futuristic city skyline at dusk outside, indoor green plants, warm sunlight mixed with cool hologram glow, wide-angle composition, depth of field, harmonious human-AI collaboration, calm contemplative mood, ultra detailed, 8k",
+            "negative_prompt": "lowres, bad anatomy, bad hands, extra fingers, missing fingers, blurry, watermark, text, signature, logo, jpeg artifacts, worst quality, distorted face, cluttered composition, oversaturated, dark, gloomy",
+            "style_notes": "将『AGI 后的程序员』具象化为从写代码转为监督与指挥的角色：全息屏上代码自动生成、AI 助手在旁、程序员悠闲喝咖啡，用冷暖对比光线和科幻概念艺术风格强化人机协作的松弛感与未来感。"
+          }
+        },
+        {
+          "node": "image_generate",
+          "calls": [
+            {
+              "call_id": "a82319b18a10",
+              "provider": "dashscope",
+              "model": "wan2.2-t2i-flash",
+              "endpoint": "https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/text2image/image-synthesis",
+              "started_at": "2026-08-21T03:48:29.249388+00:00",
+              "finished_at": "2026-08-21T03:48:30.315157+00:00",
+              "latency_ms": 1065.8,
+              "status": "ok",
+              "request": {
+                "input": {
+                  "prompt": "masterpiece, best quality, highly detailed, sci-fi concept art, cinematic lighting, a relaxed programmer in a futuristic minimalist office, leaning back in an ergonomic chair sipping coffee, supervising instead of typing, surrounded by floating holographic screens where code writes itself, glowing translucent blue holograms, a friendly AI assistant avatar projected beside the desk, no physical keyboard, gesture-based interaction, floor-to-ceiling windows, futuristic city skyline at dusk outside, indoor green plants, warm sunlight mixed with cool hologram glow, wide-angle composition, depth of field, harmonious human-AI collaboration, calm contemplative mood, ultra detailed, 8k",
+                  "negative_prompt": "lowres, bad anatomy, bad hands, extra fingers, missing fingers, blurry, watermark, text, signature, logo, jpeg artifacts, worst quality, distorted face, cluttered composition, oversaturated, dark, gloomy"
+                },
+                "parameters": {
+                  "size": "1024*1024",
+                  "n": 1
+                }
+              },
+              "response_id": "57467c8f-2306-920c-9ab9-362ef25d0c06",
+              "usage": {},
+              "error": null,
+              "task_id": "69905af7-9115-4153-b647-729a0b765d35"
+            },
+            {
+              "call_id": "4498efac8694",
+              "provider": "dashscope",
+              "model": "wan2.2-t2i-flash",
+              "endpoint": "https://dashscope-intl.aliyuncs.com/api/v1/tasks/69905af7-9115-4153-b647-729a0b765d35",
+              "started_at": "2026-08-21T03:48:30.315262+00:00",
+              "finished_at": "2026-08-21T03:48:42.431631+00:00",
+              "latency_ms": 12116.4,
+              "status": "ok",
+              "request": {},
+              "response_id": "7a456f70-508f-9553-a107-ebc164b6688e",
+              "usage": {
+                "image_count": 1
+              },
+              "error": null,
+              "task_id": "69905af7-9115-4153-b647-729a0b765d35",
+              "task_metrics": {
+                "submit_time": "2026-08-21 11:48:30.920",
+                "scheduled_time": "2026-08-21 11:48:30.938",
+                "end_time": "2026-08-21 11:48:37.244"
+              },
+              "actual_prompt": "Sci-fi concept art, cinematic lighting, ultra-detailed 8K render: A calm, mid-30s East Asian programmer in a sleek futuristic office, reclined in a matte-black ergonomic chair, sipping coffee from a ceramic mug. No keyboard—hands gesturing subtly near glowing translucent blue holographic screens that autonomously scroll elegant code. A friendly, softly radiant AI avatar—gender-neutral, stylized with gentle light contours—hovers beside the desk. Floor-to-ceiling windows reveal a vibrant dusk city"
+            },
+            {
+              "call_id": "6dcebdd25110",
+              "provider": "dashscope",
+              "model": "wan2.2-t2i-flash",
+              "endpoint": "https://dashscope-result-sgp.oss-ap-southeast-1.aliyuncs.com/1d/32/20260821/652f5a73/69905af7-9115-4153-b647-729a0b765d351544179057.png",
+              "started_at": "2026-08-21T03:48:42.431769+00:00",
+              "finished_at": "2026-08-21T03:48:44.658423+00:00",
+              "latency_ms": 2226.7,
+              "status": "ok",
+              "request": {},
+              "response_id": null,
+              "usage": {},
+              "error": null,
+              "response_bytes": 1189176
+            }
+          ],
+          "output": {
+            "prompt_used": "masterpiece, best quality, highly detailed, sci-fi concept art, cinematic lighting, a relaxed programmer in a futuristic minimalist office, leaning back in an ergonomic chair sipping coffee, supervising instead of typing, surrounded by floating holographic screens where code writes itself, glowing translucent blue holograms, a friendly AI assistant avatar projected beside the desk, no physical keyboard, gesture-based interaction, floor-to-ceiling windows, futuristic city skyline at dusk outside, indoor green plants, warm sunlight mixed with cool hologram glow, wide-angle composition, depth of field, harmonious human-AI collaboration, calm contemplative mood, ultra detailed, 8k",
+            "negative_prompt_used": "lowres, bad anatomy, bad hands, extra fingers, missing fingers, blurry, watermark, text, signature, logo, jpeg artifacts, worst quality, distorted face, cluttered composition, oversaturated, dark, gloomy"
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T034800Z/images/agi-programmer_workflow.png",
+        "sha256": "17f43d6c5cb58342674151c8addcf0cacd7ac2ca0b12e122dfcd81a6345cb1cf",
+        "bytes": 1189176,
+        "mime": "image/png"
+      },
+      "error": null
+    },
+    {
+      "requirement_id": "agi-programmer",
+      "route": "native",
+      "input": "帮我画一个 AGI 实现以后程序员的工作场景",
+      "rewrite": null,
+      "nodes": [
+        {
+          "node": "native_generate",
+          "call": {
+            "call_id": "a71ee2ea432b",
+            "provider": "google",
+            "model": "gemini-3.1-flash-image-preview",
+            "endpoint": "google-genai: models.generate_content",
+            "started_at": "2026-08-21T03:48:45.757305+00:00",
+            "finished_at": "2026-08-21T03:48:55.649789+00:00",
+            "latency_ms": 9892.5,
+            "status": "ok",
+            "request": {
+              "contents": "帮我画一个 AGI 实现以后程序员的工作场景",
+              "config": {
+                "response_modalities": [
+                  "IMAGE"
+                ]
+              }
+            },
+            "response_id": "n8qHatKiAbuFqtsPkcrPiQ4",
+            "usage": {
+              "prompt_tokens": 12,
+              "candidates_tokens": 1627,
+              "total_tokens": 1639
+            },
+            "error": null
+          },
+          "output": {
+            "text": null
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T034800Z/images/agi-programmer_native.jpg",
+        "sha256": "3dbb722910ea94aff7a38133ced5afea4317aa50698af26a4298b5656d8d1647",
+        "bytes": 800629,
+        "mime": "image/jpeg"
+      },
+      "error": null
+    },
+    {
+      "requirement_id": "agi-programmer",
+      "route": "native_gemini_pro",
+      "input": "帮我画一个 AGI 实现以后程序员的工作场景",
+      "rewrite": null,
+      "nodes": [
+        {
+          "node": "native_generate",
+          "call": {
+            "call_id": "817546b63bb3",
+            "provider": "google",
+            "model": "gemini-3-pro-image",
+            "endpoint": "google-genai: models.generate_content",
+            "started_at": "2026-08-21T03:48:55.653027+00:00",
+            "finished_at": "2026-08-21T03:49:12.447069+00:00",
+            "latency_ms": 16794.0,
+            "status": "ok",
+            "request": {
+              "contents": "帮我画一个 AGI 实现以后程序员的工作场景",
+              "config": {
+                "response_modalities": [
+                  "IMAGE"
+                ]
+              }
+            },
+            "response_id": "qMqHavfBOKe-qtsP2LOE4A0",
+            "usage": {
+              "prompt_tokens": 12,
+              "candidates_tokens": 1289,
+              "total_tokens": 1540
+            },
+            "error": null
+          },
+          "output": {
+            "text": null
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T034800Z/images/agi-programmer_native_gemini_pro.jpg",
+        "sha256": "3001df63643fa8378ddd1c0e960beec315a580098d52aef6d30450d1047f77d1",
+        "bytes": 796469,
+        "mime": "image/jpeg"
+      },
+      "error": null
+    },
+    {
+      "requirement_id": "agi-programmer",
+      "route": "native_gptimage",
+      "input": "帮我画一个 AGI 实现以后程序员的工作场景",
+      "rewrite": null,
+      "nodes": [
+        {
+          "node": "native_generate",
+          "call": {
+            "call_id": "1064a6af74e4",
+            "provider": "openai",
+            "model": "gpt-image-2",
+            "endpoint": "https://api.openai.com/v1/images/generations",
+            "started_at": "2026-08-21T03:49:12.449477+00:00",
+            "finished_at": "2026-08-21T03:50:04.689495+00:00",
+            "latency_ms": 52240.0,
+            "status": "ok",
+            "request": {
+              "prompt": "帮我画一个 AGI 实现以后程序员的工作场景",
+              "size": "1024x1024",
+              "n": 1
+            },
+            "response_id": "1787284205",
+            "usage": {
+              "input_tokens": 21,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 21
+              },
+              "output_tokens": 781,
+              "total_tokens": 802,
+              "output_tokens_details": {
+                "image_tokens": 781,
+                "text_tokens": 0
+              }
+            },
+            "error": null
+          },
+          "output": {
+            "text": null
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T034800Z/images/agi-programmer_native_gptimage.png",
+        "sha256": "95f1f329ae632cf0359bd5003de07c59a501a6521521c5ad1a1935f75266e9e3",
+        "bytes": 1395689,
+        "mime": "image/png"
+      },
+      "error": null
+    }
+  ],
+  "notes": [
+    "原生路线 A（gemini-3.1-flash-image-preview）：书稿指定的 gemini-3.1-pro-image-preview 在 v1beta API 中不存在（404）；ListModels 实测可用图像模型为 gemini-3.1-flash-image-preview / gemini-3-pro-image(-preview) / gemini-2.5-flash-image 等，正式运行同时采用 gemini-3.1-flash-image-preview（Flash 路线）与 gemini-3-pro-image（书稿所称 Nano Banana 2，Pro 路线）。",
+    "原生路线 B（gemini-3-pro-image / Nano Banana 2）：ListModels 实测可用，实际调用成败以留证为准。",
+    "原生路线 C（gpt-image-2 / GPT-Image 2）：OpenAI images.generations 接口，实测该账户可见 gpt-image-2 / gpt-image-1.5 / gpt-image-1，正式运行扩展至全部需求（不再仅限宽泛需求主用例）。",
+    "工作流路线生图工具：首选 SiliconFlow 托管 FLUX/SD，实测 black-forest-labs/FLUX.1-schnell 与 stabilityai/stable-diffusion-3-5-large 返回 Model disabled，账户余额为 0；OpenRouter 仅提供视觉理解模型，不支持文本转图像生成；改用 DashScope 国际站通义万相 wan2.2-t2i-flash（经典扩散式文生图，接受 SD 风格提示词）。",
+    "改写节点 LLM：Moonshot kimi-k3（OpenAI 兼容接口）；kimi-k3 只允许 temperature=1，显式传其他值被 400 拒绝。"
+  ]
+}

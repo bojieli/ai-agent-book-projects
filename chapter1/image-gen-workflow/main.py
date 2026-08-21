@@ -58,22 +58,19 @@ REQUIREMENTS: List[Dict[str, str]] = [
     },
 ]
 
-# GPT-Image 2 补充对照只跑宽泛需求主用例（成本自律）
-GPT_IMAGE_REQUIREMENT_ID = "agi-programmer"
-
 # 模型选型实录（正式运行写入 manifest.notes，与 README 一致）
 SELECTION_NOTES = [
-    "原生路线：书稿指定的 gemini-3.1-pro-image-preview 在 v1beta API 中不存在（404）；"
-    "ListModels 实测可用图像模型为 gemini-3.1-flash-image-preview / gemini-3-pro-image(-preview) / "
-    "gemini-2.5-flash-image 等，正式运行采用同代的 gemini-3.1-flash-image-preview。",
+    "原生路线 A（native）：gemini-3-pro-image（书稿所称 Nano Banana 2），"
+    "使用官方 google-genai SDK 直接出图（response_modalities=[IMAGE]）；"
+    "ListModels 实测可用，偶发内容过滤（content=None），重跑即恢复。",
+    "原生路线 B（native_gptimage）：gpt-image-2（GPT-Image 2），OpenAI images.generations 接口，"
+    "全部 5 句需求均一次成功；该账户此前 GPT-5.x 的 credit_balance_exhausted 未影响图像接口。",
     "工作流路线生图工具：首选 SiliconFlow 托管 FLUX/SD，实测 black-forest-labs/FLUX.1-schnell 与 "
-    "stabilityai/stable-diffusion-3-5-large 返回 Model disabled，账户余额为 0（Kwai-Kolors/Kolors、"
-    "Tongyi-MAI/Z-Image-Turbo、Qwen/Qwen-Image 均报 balance insufficient）；"
-    "改用 DashScope 国际站通义万相 wan2.2-t2i-flash（经典扩散式文生图模型，接受 SD 风格提示词与负面提示词）。",
-    "改写节点 LLM：Moonshot kimi-k3（OpenAI 兼容接口）。",
-    "宽泛需求扩展轮补充对照：OpenAI 图像接口模型按 gpt-image-2 试"
-    "（ListModels 实测该账户可见 gpt-image-2 / gpt-image-1.5 / gpt-image-1 等）；"
-    "该账户此前 GPT-5.6 因 credit_balance_exhausted 失败过，本路线成败以正式运行留证为准。",
+    "stabilityai/stable-diffusion-3-5-large 返回 Model disabled，账户余额为 0；OpenRouter 仅提供"
+    "视觉理解模型，不支持文本转图像生成；改用 DashScope 国际站通义万相 wan2.2-t2i-flash"
+    "（经典扩散式文生图，接受 SD 风格提示词）。",
+    "改写节点 LLM：Moonshot kimi-k3（OpenAI 兼容接口）；kimi-k3 只允许 temperature=1，"
+    "显式传其他值被 400 拒绝（见第 1 轮失败记录）。",
 ]
 
 MIME_EXT = {"image/png": ".png", "image/jpeg": ".jpg", "image/webp": ".webp"}
@@ -130,13 +127,16 @@ def run_one(requirement: Dict[str, str], route: str, run_dir: Path) -> Dict[str,
     return run_record
 
 
+ALL_ROUTES = ["workflow", "native", "native_gptimage"]
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="实验 1-4 对照运行")
     parser.add_argument(
         "--route",
-        choices=["workflow", "native", "both"],
-        default="both",
-        help="只跑某条路线（默认 both）",
+        choices=ALL_ROUTES + ["all"],
+        default="all",
+        help="只跑某条路线（默认 all：全部三条路线）",
     )
     parser.add_argument(
         "--requirement",
@@ -144,34 +144,22 @@ def main() -> int:
         choices=[r["id"] for r in REQUIREMENTS],
         help="只跑指定需求（可重复，默认全部）",
     )
-    parser.add_argument(
-        "--with-gpt-image",
-        action="store_true",
-        help=f"对宽泛需求主用例（{GPT_IMAGE_REQUIREMENT_ID}）追加 GPT-Image 原生路线对照",
-    )
     args = parser.parse_args()
 
     if not Config.validate():
         return 1
-    if args.with_gpt_image and not Config.OPENAI_API_KEY:
-        print("错误: --with-gpt-image 需要 OPENAI_API_KEY 环境变量")
-        return 1
 
     run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     run_dir = PROJECT_DIR / "outputs" / run_id
-    routes = ["workflow", "native"] if args.route == "both" else [args.route]
+    routes = ALL_ROUTES if args.route == "all" else [args.route]
     requirements = [
         r for r in REQUIREMENTS if not args.requirement or r["id"] in args.requirement
     ]
 
-    print(f"run_id={run_id}  需求 {len(requirements)} 句 × 路线 {routes}"
-          f"{' + native_gptimage' if args.with_gpt_image else ''}")
+    print(f"run_id={run_id}  需求 {len(requirements)} 句 × 路线 {routes}")
     runs: List[Dict[str, Any]] = []
     for requirement in requirements:
-        req_routes = list(routes)
-        if args.with_gpt_image and requirement["id"] == GPT_IMAGE_REQUIREMENT_ID:
-            req_routes.append("native_gptimage")
-        for route in req_routes:
+        for route in routes:
             runs.append(run_one(requirement, route, run_dir))
 
     manifest = build_manifest(

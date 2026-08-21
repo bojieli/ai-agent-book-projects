@@ -33,4 +33,6 @@ def test_env_example_has_no_real_secret():
 def test_config_required_env_matches_validate():
     from config import Config
 
-    assert set(Config.required_env()) == {"KIMI_API_KEY", "DASHSCOPE_API_KEY", "GEMINI_API_KEY"}
+    assert set(Config.required_env()) == {
+        "KIMI_API_KEY", "DASHSCOPE_API_KEY", "GEMINI_API_KEY", "OPENAI_API_KEY"
+    }

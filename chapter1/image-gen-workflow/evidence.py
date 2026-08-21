@@ -96,8 +96,9 @@ def validate_manifest(manifest: Dict[str, Any]) -> List[str]:
                 problems.append(f"runs[{i}] 缺少字段: {key}")
         if run.get("requirement_id") not in req_ids:
             problems.append(f"runs[{i}].requirement_id 未在 requirements 中登记")
-        if run.get("route") not in ("workflow", "native", "native_gptimage"):
-            problems.append(f"runs[{i}].route 必须是 workflow/native/native_gptimage")
+        valid_routes = ("workflow", "native", "native_gptimage")
+        if run.get("route") not in valid_routes:
+            problems.append(f"runs[{i}].route 必须是 {'/'.join(valid_routes)}")
         image = run.get("image")
         if run.get("error") is None:
             if not isinstance(image, dict):

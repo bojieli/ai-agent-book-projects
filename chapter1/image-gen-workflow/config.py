@@ -8,9 +8,7 @@
   实测该账号 FLUX/SD 模型已下线（Model disabled）且余额为 0，
   故正式运行改用 DashScope 国际站的 wan2.2-t2i-flash（经典扩散式文生图模型，
   接受 SD 风格提示词与负面提示词）。详见 README「模型选型实录」。
-- 原生路线：Gemini 原生图像生成模型（官方 google-genai SDK）
-  注：书稿所写的 gemini-3.1-pro-image-preview 在 API 中不存在（404），
-  实测可用并采用的是同代 gemini-3.1-flash-image-preview。
+- 原生路线：gemini-3-pro-image（书稿所称 Nano Banana 2）及 OpenAI gpt-image-2
 """
 
 import os
@@ -47,13 +45,13 @@ class Config:
         "SILICONFLOW_IMAGE_MODEL", "black-forest-labs/FLUX.1-schnell"
     )
 
-    # ---- 原生路线：Gemini 原生图像生成 ----
+    # ---- 原生路线 A：Gemini 3 Pro Image（书稿所称 Nano Banana 2）----
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
     GEMINI_IMAGE_MODEL: str = os.getenv(
-        "GEMINI_IMAGE_MODEL", "gemini-3.1-flash-image-preview"
+        "GEMINI_IMAGE_MODEL", "gemini-3-pro-image"
     )
 
-    # ---- 原生路线补充对照：OpenAI GPT-Image 2（可选，仅宽泛需求主用例）----
+    # ---- 原生路线 B：OpenAI GPT-Image 2 ----
     OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
     OPENAI_BASE_URL: str = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
     GPT_IMAGE_MODEL: str = os.getenv("GPT_IMAGE_MODEL", "gpt-image-2")
@@ -64,7 +62,7 @@ class Config:
 
     @classmethod
     def required_env(cls) -> List[str]:
-        return ["KIMI_API_KEY", "DASHSCOPE_API_KEY", "GEMINI_API_KEY"]
+        return ["KIMI_API_KEY", "DASHSCOPE_API_KEY", "GEMINI_API_KEY", "OPENAI_API_KEY"]
 
     @classmethod
     def validate(cls) -> bool:
