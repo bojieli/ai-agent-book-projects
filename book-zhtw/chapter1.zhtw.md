@@ -422,7 +422,7 @@ while true:
 
 | 框架/平臺 | 核心定位 | 編排模式 | 開發方式 | 適用場景 |
 |---------------|---------------|-------------------|---------------|--------------------------------|
-| **OpenAI Agents SDK** | 輕量級 Agent 開發庫 | 自主（工具迴圈） | 程式碼優先 | 快速原型、單 Agent 應用 |
+| **Codex Harness** | Codex 的開源 Agent 執行層 | 自主 | 程式碼優先，可嵌入自有應用 | Coding Agent、把 Agent 嵌進自家產品 |
 | **Claude Agent SDK** | 生產級 Agent 開發框架 | 自主（工具迴圈 + 子 Agent） | 程式碼優先 | 複雜自主任務、Coding Agent |
 | **LangChain / LangGraph** | 通用 LLM 應用框架 | 工作流 + 自主 | 程式碼優先 | 複雜鏈式思考、多步驟工作流 |
 | **n8n** | 視覺化工作流自動化 | 工作流 + 自主 | 低程式碼（視覺化拖曳） | 業務自動化、非技術團隊 |
@@ -431,6 +431,10 @@ while true:
 | **OpenClaw** | 開源全能個人 Agent | 自主 + 事件驅動 | 配置 + 程式碼（自託管） | 個人助理、Deep Research、Computer Use、多平臺訊息整合 |
 | **DeepSeek Harness** | Agent 自進化框架 | 一切皆外掛 | 程式碼優先，方便客製化 | Agent 開發者、研究者 |
 | **Pi** | 極簡 Coding Agent 框架 | 自主 | 程式碼優先，方便客製化 | Agent 開發者 |
+
+表中前兩行值得單獨澄清。Codex 是 OpenAI 的 Coding Agent 產品（App、CLI、IDE 擴充功能），Codex Harness 就是驅動這幾種形態的那一層執行層[^ch1-codex-harness]。Codex Harness 提供三條整合路徑：`codex exec` 適合腳本與 CI 裡的一次性任務；Codex SDK 適合第三方應用程式碼啟動、恢復與串流處理任務；app-server 則透過 JSON-RPC 協定提供持久工作階段、事件流與審批回呼，適合把 Agent 直接做進產品。Claude Agent SDK 與 Claude Code 也是類似的關係，差別在於 Claude 這邊對外開放的是 SDK 介面，Harness 實作本身並不開源。
+
+[^ch1-codex-harness]: OpenAI. "Codex as a platform: build on the open agent harness", 2026 年 8 月
 
 注意，Agent 框架發展迅速，在您閱讀本書時，很可能有些框架已經過時，流行的又是新的框架了。因此，學會某個具體框架的用法並不重要。選擇框架時，關鍵考量不在於框架本身的複雜度，而在於它能否以最小的抽象層讓你專注於業務邏輯。
 

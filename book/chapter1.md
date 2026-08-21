@@ -433,17 +433,21 @@ while true:
 
 下表梳理了当前主流的 Agent 框架/平台，帮助读者根据场景快速选型：
 
-| 框架/平台                     | 核心定位               | 编排模式           | 开发方式           | 适用场景                                    |
-| ------------------------- | ------------------ | -------------- | -------------- | --------------------------------------- |
-| **OpenAI Agents SDK**     | 轻量级 Agent 开发库      | 自主             | 代码优先           | 快速原型、单 Agent 应用                         |
-| **Claude Agent SDK**      | 生产级 Agent 开发框架     | 自主             | 代码优先           | 复杂自主任务、Coding Agent                     |
-| **LangChain / LangGraph** | 通用 LLM 应用框架        | 工作流 + 自主       | 代码优先           | 复杂链式思考、多步骤工作流                           |
-| **n8n**                   | 可视化工作流自动化          | 工作流 + 自主       | 低代码（可视化拖拽）     | 业务自动化、非技术团队                             |
-| **Dify**                  | LLM 应用开发平台         | 工作流 + 对话式      | 低代码（可视化 + API） | 企业级 RAG、知识库应用                           |
-| **CrewAI**                | 角色化多 Agent 编排      | Multi-Agent 协作 | 代码优先           | 团队式任务分解与执行                              |
-| **OpenClaw**              | 开源全能个人 Agent       | 自主 + 事件驱动      | 配置 + 代码（自托管）   | 个人助理、Deep Research、Computer Use、多平台消息集成 |
-| **DeepSeek Harness**      | Agent 自进化框架        | 一切皆插件          | 代码优先，方便定制      | Agent 开发者、研究者                           |
-| **Pi**                    | 极简 Coding Agent 框架 | 自主             | 代码优先，方便定制      | Agent 开发者                               |
+| 框架/平台                 | 核心定位                  | 编排模式         | 开发方式                 | 适用场景                                              |
+| ------------------------- | ------------------------- | ---------------- | ------------------------ | ----------------------------------------------------- |
+| **Codex Harness**         | Codex 的开源 Agent 运行时 | 自主             | 代码优先，可嵌入自有应用 | Coding Agent、把 Agent 嵌进自家产品                   |
+| **Claude Agent SDK**      | 生产级 Agent 开发框架     | 自主             | 代码优先                 | 复杂自主任务、Coding Agent                            |
+| **LangChain / LangGraph** | 通用 LLM 应用框架         | 工作流 + 自主    | 代码优先                 | 复杂链式思考、多步骤工作流                            |
+| **n8n**                   | 可视化工作流自动化        | 工作流 + 自主    | 低代码（可视化拖拽）     | 业务自动化、非技术团队                                |
+| **Dify**                  | LLM 应用开发平台          | 工作流 + 对话式  | 低代码（可视化 + API）   | 企业级 RAG、知识库应用                                |
+| **CrewAI**                | 角色化多 Agent 编排       | Multi-Agent 协作 | 代码优先                 | 团队式任务分解与执行                                  |
+| **OpenClaw**              | 开源全能个人 Agent        | 自主 + 事件驱动  | 配置 + 代码（自托管）    | 个人助理、Deep Research、Computer Use、多平台消息集成 |
+| **DeepSeek Harness**      | Agent 自进化框架          | 一切皆插件       | 代码优先，方便定制       | Agent 开发者、研究者                                  |
+| **Pi**                    | 极简 Coding Agent 框架    | 自主             | 代码优先，方便定制       | Agent 开发者                                          |
+
+表中前两行值得单独澄清。Codex 是 OpenAI 的 Coding Agent 产品（App、CLI、IDE 扩展），Codex Harness 就是驱动这几种形态的那一层运行时[^ch1-codex-harness]。Codex Harness 提供三条集成路径：`codex exec` 适合脚本与 CI 里的一次性任务；Codex SDK 适合第三方应用代码启动、恢复和流式处理任务；app-server 则通过 JSON-RPC 协议提供持久会话、事件流与审批回调，适合把 Agent 直接做进产品。Claude Agent SDK 与 Claude Code 也是类似的关系，区别在于 Claude 侧对外开放的是 SDK 接口，Harness 实现本身并不开源。
+
+[^ch1-codex-harness]: OpenAI. "Codex as a platform: build on the open agent harness", 2026 年 8 月
 
 注意，Agent 框架发展迅速，在你阅读本书时，很可能有些框架已经过时，又有新的框架流行起来。因此，学会某个具体框架的用法并不重要。选择框架时，关键考量不在于框架本身的复杂度，而在于它能否用尽可能少的抽象层让你专注于业务逻辑。
 

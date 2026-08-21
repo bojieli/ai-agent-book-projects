@@ -424,7 +424,7 @@ Bảng sau đây sắp xếp khung/nền tảng Agent chính thống hiện nay 
 
 | Khung/Nền tảng | Định vị cốt lõi | Chế độ phối hợp | Phương pháp phát triển | Kịch bản áp dụng |
 |-----------|---------|---------|---------|---------|
-|**SDK OpenAI Agents**| Thư viện phát triển Agent nhẹ | Tự động (chu kỳ công cụ) | Code-first | Tạo mẫu nhanh, ứng dụng Agent đơn lẻ |
+|**Codex Harness**| Runtime Agent mã nguồn mở vận hành Codex | Tự chủ | Ưu tiên mã, có thể nhúng vào ứng dụng của bạn | Coding Agent, nhúng Agent vào sản phẩm của mình |
 |**SDK Claude Agent**| Khung phát triển Agent cấp sản xuất | Tự động (vòng lặp công cụ + phụ Agent) | Code-first | Nhiệm vụ tự trị phức tạp, Coding Agent |
 |**LangChain / LangGraph**| Khung ứng dụng phổ quát LLM | Quy trình làm việc + quyền tự chủ | Code-first | Tư duy chuỗi phức tạp, quy trình làm việc nhiều bước |
 |**n8n**| Tự động hóa quy trình làm việc trực quan | Quy trình làm việc + quyền tự chủ | Low-code (kéo và thả trực quan) | Tự động hóa kinh doanh, đội ngũ phi kỹ thuật |
@@ -433,6 +433,10 @@ Bảng sau đây sắp xếp khung/nền tảng Agent chính thống hiện nay 
 |**OpenClaw**| Agent cá nhân toàn diện mã nguồn mở | Tự chủ + theo sự kiện | Cấu hình + mã (tự lưu trữ) | Trợ lý cá nhân, Nghiên cứu sâu, Computer Use, tích hợp tin nhắn đa nền tảng |
 | **DeepSeek Harness** | Framework tự tiến hóa cho Agent | Mọi thứ đều là plugin | Ưu tiên mã, dễ tùy biến | Nhà phát triển Agent, nhà nghiên cứu |
 | **Pi** | Framework Coding Agent tối giản | Tự chủ | Ưu tiên mã, dễ tùy biến | Nhà phát triển Agent |
+
+Hai hàng đầu tiên trong bảng đáng được làm rõ riêng. Codex là sản phẩm Coding Agent của OpenAI (App, CLI, tiện ích mở rộng IDE), còn Codex Harness chính là lớp runtime vận hành tất cả những hình thái đó[^ch1-codex-harness]. Codex Harness cung cấp ba lối tích hợp: `codex exec` phù hợp với các tác vụ một lần trong script và CI; Codex SDK phù hợp với mã ứng dụng bên thứ ba cần khởi động, khôi phục và xử lý tác vụ theo luồng; còn app-server cung cấp phiên làm việc bền vững, luồng sự kiện và callback phê duyệt qua giao thức JSON-RPC, phù hợp để đưa Agent thẳng vào sản phẩm. Claude Agent SDK và Claude Code cũng có quan hệ tương tự, khác ở chỗ thứ được mở ra bên phía Claude là giao diện SDK, còn bản thân phần triển khai Harness thì không mã nguồn mở.
+
+[^ch1-codex-harness]: OpenAI. "Codex as a platform: build on the open agent harness", tháng 8 năm 2026.
 
 Các framework Agent phát triển rất nhanh. Khi bạn đọc cuốn sách này, một số framework có thể đã lỗi thời và những cái mới đã trở nên phổ biến. Vì vậy, học API của một framework cụ thể không phải điều quan trọng. Khi lựa chọn, điều cốt yếu không nằm ở độ phức tạp của framework mà ở việc lớp trừu tượng của nó có đủ mỏng để bạn tập trung vào logic nghiệp vụ hay không.
 

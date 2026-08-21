@@ -420,7 +420,7 @@ Az alábbi táblázat összefoglalja a széles körben használt ügynökkeretre
 
 | Keretrendszer/platform | Alapvető rendeltetés | Összehangolási minta | Fejlesztési mód | Alkalmazási terület |
 |---|---|---|---|---|
-| **OpenAI Agents SDK** | Könnyű ügynökfejlesztési könyvtár | Autonóm | Kódközpontú | Gyors prototípusok, együgynökös alkalmazások |
+| **Codex Harness** | A Codexet hajtó nyílt forráskódú Agent-futtatókörnyezet | Autonóm | Kódközpontú, saját alkalmazásba ágyazható | Coding Agent, Agent beépítése saját termékbe |
 | **Claude Agent SDK** | Éles üzemi ügynökfejlesztési keretrendszer | Autonóm | Kódközpontú | Összetett autonóm feladatok, Coding Agentek |
 | **LangChain / LangGraph** | Általános LLM-alkalmazáskeret | Munkafolyamat + autonóm | Kódközpontú | Összetett gondolatmenetek, többlépéses munkafolyamatok |
 | **n8n** | Vizuális munkafolyamat-automatizálás | Munkafolyamat + autonóm | Low-code | Üzleti automatizálás, nem műszaki csapatok |
@@ -429,6 +429,10 @@ Az alábbi táblázat összefoglalja a széles körben használt ügynökkeretre
 | **OpenClaw** | Nyílt forrású, általános személyes ügynök | Autonóm + eseményvezérelt | Konfiguráció + kód | Személyi asszisztens, Deep Research, Computer Use, többplatformos üzenetkezelés |
 | **DeepSeek Harness** | Ügynök-önevolúciós keretrendszer | Minden bővítmény | Kódközpontú, könnyen testreszabható | Ügynökfejlesztők, kutatók |
 | **Pi** | Minimális Coding Agent keretrendszer | Autonóm | Kódközpontú, könnyen testreszabható | Ügynökfejlesztők |
+
+A táblázat első két sora külön magyarázatot érdemel. A Codex az OpenAI Coding Agent terméke (alkalmazás, CLI, IDE-bővítmény), a Codex Harness pedig az a futtatókörnyezeti réteg, amely mindezeket a formákat hajtja[^ch1-codex-harness]. A Codex Harness három integrációs utat kínál: a `codex exec` a szkriptekben és CI-ben futó egyszeri feladatokhoz való; a Codex SDK olyan harmadik féltől származó alkalmazáskódhoz, amely feladatokat indít, folytat és folyamatosan dolgoz fel; az app-server pedig JSON-RPC protokollon keresztül nyújt tartós munkameneteket, eseményfolyamokat és jóváhagyási visszahívásokat, ami akkor jó, ha az Agentet közvetlenül a termékbe építed. A Claude Agent SDK és a Claude Code is hasonló viszonyban áll egymással, azzal a különbséggel, hogy a Claude oldalán az SDK felülete nyílik meg kifelé, magának a Harnessnek az implementációja nem nyílt forráskódú.
+
+[^ch1-codex-harness]: OpenAI. "Codex as a platform: build on the open agent harness", 2026. augusztus.
 
 Az ügynök-keretrendszerek gyorsan változnak. Mire ezt a könyvet olvasod, némelyikük már elavult lehet, és új keretek válhatnak népszerűvé. Ezért egy adott keretrendszer API-jának megtanulása önmagában nem fontos. Választáskor nem a keret bonyolultsága a döntő, hanem az, hogy elég vékony absztrakcióval hagy-e az üzleti logikára összpontosítani.
 

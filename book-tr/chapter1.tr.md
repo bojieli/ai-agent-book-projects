@@ -423,7 +423,7 @@ Aşağıdaki tablo, okuyucuların kendi senaryoları için doğru olanı hızla 
 
 | Çerçeve/Platform | Temel Konumlandırma | Orkestrasyon Kalıbı | Geliştirme Yaklaşımı | Uygulanabilir Senaryolar |
 |-------------------|--------------------|----------------|----------------|-------------------------|
-| **OpenAI Agents SDK** | Hafif Agent geliştirme kütüphanesi | Autonomous (araç döngüsü) | Kod öncelikli | Hızlı prototipleme, tek Agent'lı uygulamalar |
+| **Codex Harness** | Codex'i çalıştıran açık kaynaklı Agent çalışma zamanı | Autonomous | Kod öncelikli, kendi uygulamanıza gömülebilir | Coding Agent, Agent'ı kendi ürününüze gömme |
 | **Claude Agent SDK** | Üretim düzeyinde Agent geliştirme çerçevesi | Autonomous (araç döngüsü + alt Agent'lar) | Kod öncelikli | Karmaşık otonom görevler, Kodlama Agent'ı |
 | **LangChain / LangGraph** | Genel amaçlı LLM uygulama çerçevesi | Workflow + Autonomous | Kod öncelikli | Karmaşık düşünce zincirleri, çok adımlı workflow'lar |
 | **n8n** | Görsel workflow otomasyonu | Workflow + Autonomous | Düşük kod (görsel sürükle-bırak) | İş otomasyonu, teknik olmayan ekipler |
@@ -432,6 +432,10 @@ Aşağıdaki tablo, okuyucuların kendi senaryoları için doğru olanı hızla 
 | **OpenClaw** | Açık kaynak hepsi bir arada kişisel Agent | Autonomous + Olay güdümlü | Yapılandırma + Kod (self-hosted) | Kişisel asistan, Deep Research, Computer Use, çok platformlu mesaj entegrasyonu |
 | **DeepSeek Harness** | Agent öz-evrim çerçevesi | Her şey bir eklentidir | Kod öncelikli, kolay özelleştirme | Agent geliştiricileri, araştırmacılar |
 | **Pi** | Minimal Coding Agent çerçevesi | Otonom | Kod öncelikli, kolay özelleştirme | Agent geliştiricileri |
+
+Tablodaki ilk iki satır ayrıca açıklanmayı hak ediyor. Codex, OpenAI'nin Coding Agent ürünüdür (uygulama, CLI, IDE eklentisi); Codex Harness ise bu biçimlerin hepsini çalıştıran çalışma zamanı katmanıdır[^ch1-codex-harness]. Codex Harness üç entegrasyon yolu sunar: `codex exec` betiklerdeki ve CI'daki tek seferlik işler için uygundur; Codex SDK, görevleri başlatan, sürdüren ve akış hâlinde işleyen üçüncü taraf uygulama kodu için uygundur; app-server ise JSON-RPC protokolü üzerinden kalıcı oturumlar, olay akışları ve onay geri çağırmaları sağladığından Agent'ı doğrudan ürünün içine koymaya uygundur. Claude Agent SDK ile Claude Code arasında da benzer bir ilişki vardır; fark şu ki Claude tarafında dışarıya açılan SDK arayüzüdür, Harness'ın uygulamasının kendisi açık kaynak değildir.
+
+[^ch1-codex-harness]: OpenAI. "Codex as a platform: build on the open agent harness", Ağustos 2026.
 
 Agent çerçeveleri hızla gelişir. Siz bu kitabı okurken bunların bazıları eskimiş, yeni çerçeveler popülerleşmiş olabilir. Bu yüzden belirli bir çerçevenin API'sini öğrenmek önemli değildir. Seçimde asıl ölçüt çerçevenin karmaşıklığı değil, iş mantığına odaklanmanızı sağlayacak kadar ince bir soyutlama katmanı sunup sunmadığıdır.
 

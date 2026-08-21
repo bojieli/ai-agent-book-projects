@@ -420,7 +420,7 @@ The following table summarizes widely used Agent frameworks and platforms to hel
 
 | Framework/Platform | Core Positioning | Orchestration Pattern | Development Approach | Suitable Scenarios |
 |---|---|---|---|---|
-| **OpenAI Agents SDK** | Lightweight Agent development library | Autonomous | Code-first | Rapid prototypes, single-Agent applications |
+| **Codex Harness** | Open-source Agent runtime behind Codex | Autonomous | Code-first, embeddable in your own app | Coding Agents, embedding an Agent into your own product |
 | **Claude Agent SDK** | Production-grade Agent development framework | Autonomous | Code-first | Complex autonomous tasks, Coding Agents |
 | **LangChain / LangGraph** | General LLM application framework | Workflow + autonomous | Code-first | Complex reasoning chains, multi-step workflows |
 | **n8n** | Visual workflow automation | Workflow + autonomous | Low-code | Business automation, nontechnical teams |
@@ -429,6 +429,10 @@ The following table summarizes widely used Agent frameworks and platforms to hel
 | **OpenClaw** | Open-source all-purpose personal Agent | Autonomous + event-driven | Configuration + code | Personal assistants, Deep Research, Computer Use, multiplatform messaging |
 | **DeepSeek Harness** | Agent self-evolution framework | Everything is a plugin | Code-first, easy to customize | Agent developers, researchers |
 | **Pi** | Minimal Coding Agent framework | Autonomous | Code-first, easy to customize | Agent developers |
+
+The first two rows deserve a separate clarification. Codex is OpenAI's Coding Agent product (App, CLI, IDE extension), and the Codex Harness is the runtime layer that drives all of these forms[^ch1-codex-harness]. The Codex Harness offers three integration paths: `codex exec` suits one-off tasks in scripts and CI; the Codex SDK suits third-party application code that starts, resumes, and streams tasks; and the app-server provides persistent sessions, event streams, and approval callbacks over the JSON-RPC protocol, which suits building an Agent directly into a product. Claude Agent SDK and Claude Code stand in a similar relationship, except that what Claude opens up is the SDK interface—the Harness implementation itself is not open source.
+
+[^ch1-codex-harness]: OpenAI. "Codex as a platform: build on the open agent harness", August 2026.
 
 Agent frameworks evolve rapidly. By the time you read this book, some of these frameworks may already be obsolete and new ones may be popular. Learning the API of one particular framework is therefore not important. When choosing a framework, the key question is not its sophistication, but whether its abstraction is thin enough to let you focus on business logic.
 
