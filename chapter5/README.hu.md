@@ -24,13 +24,14 @@ Első olvasáskor átugorható a hitelesítő adatok betöltése, a megjelenít�
 | 5-4 | [paper-to-ppt](paper-to-ppt/) | ✅ | Slidev-prezentációt készít javaslattevő és vizuális felülvizsgáló iteratív együttműködésével. |
 | 5-5 | [paper-to-video](paper-to-video/) | ✅ | TTS és ffmpeg segítségével narrált videóvá alakítja a prezentációt. |
 | 5-6 | [video-edit](video-edit/) | ✅ | Természetes nyelvű kérés alapján megkeresi és kivágja a megfelelő videójelenetet. |
-| 5-7 | [adaptive-log-parser](adaptive-log-parser/) | ✅ | Ismeretlen naplóformátum esetén automatikusan új elemzőfüggvényt készít és regisztrál. |
-| 5-8 | [log-diagnosis](log-diagnosis/) | ✅ | HTTP-nyomvonalakat diagnosztizál, regressziót játszik vissza, és ellenőrizhető Issue-t hoz létre. |
-| 5-9 | [dynamic-form](dynamic-form/) | ✅ | Dinamikus HTML-űrlapot készít a hiányos kérés összes szükséges adatának egyszeri tisztázására. |
-| 5-10 | [erp-agent](erp-agent/) | ✅ | SQL-artefaktumot készít ERP-lekérdezésekhez anélkül, hogy a teljes adathalmazt átvezetné az LLM-en. |
-| 5-11 | [conversational-ui](conversational-ui/) | ✅ | Természetes nyelv alapján módosít React-felületet, és HMR-rel azonnal alkalmazza a változásokat. |
-| 5-12 | [permission-embedded-data-objects](permission-embedded-data-objects/) | ✅ | PostgreSQL-alapú objektumtár, amely a dinamikusan generált alkalmazáskód alatt kényszeríti ki a jogosultságot, az ellenőrzést és a referenciális integritást. |
-| 5-13 | [agent-creator](agent-creator/) | ✅ | Egy ellenőrzött referencia alapján, illetve nulláról létrehozott ágenseket hasonlít össze. |
+| 5-7 | [cad-vs-diffusion](cad-vs-diffusion/) | ✅ | Ugyanazon karimaspecifikáció kétútvonalas mérése: a Kimi által írt 17 soros CadQuery minden méretben nulla eltérésű; a Hunyuan3D-2.1 (HF nyilvános Space) mind a 4 átmenő furatot elhagyta, a külső átmérő eltérése −99,4%. M5→M6 módosítás: a kódútvonalon egy paramétersor átírása, 0 LLM-hívás, a többi méret nulla driftje; a generatív útvonal teljes újrafuttatása mellett a külső átmérő +283%-kal sodródott el, és axiálisan átfordult. A zöldnövény-kontrollcsoport természetességi pontszáma 3 vs 8, az alkalmazhatósági határ megfordul. |
+| 5-8 | [adaptive-log-parser](adaptive-log-parser/) | ✅ | Ismeretlen naplóformátum esetén automatikusan új elemzőfüggvényt készít és regisztrál. |
+| 5-9 | [log-diagnosis](log-diagnosis/) | ✅ | HTTP-nyomvonalakat diagnosztizál, regressziót játszik vissza, és ellenőrizhető Issue-t hoz létre. |
+| 5-10 | [dynamic-form](dynamic-form/) | ✅ | Dinamikus HTML-űrlapot készít a hiányos kérés összes szükséges adatának egyszeri tisztázására. |
+| 5-11 | [erp-agent](erp-agent/) | ✅ | SQL-artefaktumot készít ERP-lekérdezésekhez anélkül, hogy a teljes adathalmazt átvezetné az LLM-en. |
+| 5-12 | [conversational-ui](conversational-ui/) | ✅ | Természetes nyelv alapján módosít React-felületet, és HMR-rel azonnal alkalmazza a változásokat. |
+| 5-13 | [permission-embedded-data-objects](permission-embedded-data-objects/) | ✅ | PostgreSQL-alapú objektumtár, amely a dinamikusan generált alkalmazáskód alatt kényszeríti ki a jogosultságot, az ellenőrzést és a referenciális integritást. |
+| 5-14 | [agent-creator](agent-creator/) | ✅ | Egy ellenőrzött referencia alapján, illetve nulláról létrehozott ágenseket hasonlít össze. |
 
 ## Projekttípusok
 

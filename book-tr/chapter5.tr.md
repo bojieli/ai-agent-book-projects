@@ -561,6 +561,29 @@ Video düzenlemeyi API çağrıları ve kod üretimi olarak yeniden çerçevelem
 > **Kabul kriterleri**: Agent, videodaki farklı sahneleri doğru biçimde belirleyebilir ve doğal dil talimatlarına dayanarak düzenleme betiklerini doğru biçimde üretebilir. Başlangıç ve bitiş noktaları doğrudur (3 saniye içinde hata). Talimatlar özel efekt gereksinimleri (ağır çekim, geçişler, altyazılar) içeriyorsa, üretilen video efektleri doğru biçimde uygular. Reviewer Agent belirgin hataları (kilit içeriğin eksik olması, ilgisiz parçaların dahil edilmesi) tespit edebilir ve düzeltmeleri tetikleyebilir. Nihai çıktı video dosyası doğru formata sahiptir ve beklenen kaliteyi karşılar.
 >
 
+**3D ve Endüstriyel Parçalar: Kod Üretimi ile Üretim Modellerinin Sınırı.**
+
+Aynı "bir şey üretmek" görevi karşısında Agent'ın önünde iki yol vardır: biri kod yazarak hassas biçimde inşa etmek (CadQuery, OpenSCAD, Blender API), diğeri doğrudan bir 3D üretim modeli çağırmak (Hunyuan 3D gibi text/image-to-3D modelleri; bunlar metinden görüntüye modellerle aynı diffusion ailesindendir). Birçok kişi şunu merak eder: ne zaman kod üretimi, ne zaman görüntü/3D üretim modeli kullanılmalı?
+
+**Birincisi, ürünün kompakt ve kesin bir tanımının olup olmadığına bakın.** Endüstriyel parçalar doğal olarak kompakt ve kesin tanımlara sahiptir. Bir flanş; dış çap, kalınlık, delik dairesi çapı, delik çapı ve delik sayısı—beş altı parametreyle eksiksiz tanımlanır ve kod onun **kayıpsız** ifadesidir. Bir saksı bitkisi, bir Taihu taşı veya bir insan yüzü ise öyle değildir—sayısız ayrıntıları vardır, **içsel karmaşıklıkları neredeyse sonsuzdur**.
+
+**İkincisi, hassasiyet gereksinimine ve doğrulanabilirliğe bakın.** Bir parçanın her ölçüsü katı bir kısıttır—delik çapı 5mm, tolerans ±0.05mm; saç teli kadar sapma hurda demektir. Kodla üretilen bir parça programatik olarak doğrulanabilir: mesh'i yükleyin, dış çapı ve delik konumlarını ölçün, spesifikasyonla madde madde karşılaştırın. 3D üretim modelinin ürettiği parça ise spesifikasyonla doğrudan karşılaştırılamaz.
+
+İki yol arasında daha pratik bir fark daha vardır: **temsil biçimi ve düzenlenebilirlik**. Üretim süreçleri B-rep (sınır temsili) parametrik katılar ister—STEP dosyası özellik ağacını ve boyut parametrelerini saklar ve CNC işlemeyi doğrudan sürebilir. 3D üretim modelinin çıktısı ise üçgen yüzlü bir mesh'tir: eğri yüzeyler sayısız ince yüzey parçasıyla yaklaşık olarak ifade edilir, yakınlaştırdığınızda inişli çıkışlı görünür. Müşteri "montaj deliklerini M5'ten M6'ya değiştirin" dediğinde fark ortaya çıkar: kod rotasında bir sayı değiştirip yeniden çalıştırırsınız, diğer tüm ölçüler milimetriğine kadar aynı kalır; üretim modeli rotasında ise her şeyi baştan üretmek zorundasınız—diğer ölçülerin sapıp sapmayacağı tamamen şansa kalır.
+
+Dolayısıyla hangi yolun izleneceği, Agent'ın vermesi gereken bir karardır: ürünün içsel karmaşıklığını ve hassasiyet gereksinimini tartar ve görevi kod üretimine ya da 3D üretim modeline dağıtır. Gerçek sistemlerde iki yol harmanlanabilir—geometri kodla parametrik olarak üretilir, yüzey dokusu üretim modeline bırakılır; her birinin güçlü yanı alınır.
+
+> **Deney 5-7 ★★: Aynı Parçanın İki Üretim Rotası—Kod ve Üretim Modeli**
+>
+> **Deney amacı**: Boyut spesifikasyonlu aynı mekanik parçayı alarak kod üretimi ile 3D üretim modeli rotalarının boyut hassasiyeti, düzenlenebilirlik ve üretimde kullanılabilirlik açısından farklarını karşılaştırmak; "içsel karmaşıklık ve hassasiyet gereksinimine göre yol seçme" karar çerçevesini doğrulamak.
+>
+> **Teknik yaklaşım**: Net spesifikasyonlu bir doğal dil isteği (örn. "flanş, dış çap 80mm, kalınlık 10mm, eşit aralıklı 4 adet M5 montaj deliği, delik dairesi çapı 60mm"). **Rota A**: Agent, parçayı inşa etmek için CadQuery (veya OpenSCAD) kodu yazar, STEP ve STL olarak dışa aktarır. **Rota B**: Aynı spesifikasyon bir 3D üretim modeline (örn. Hunyuan 3D) verilir, üçgen yüzlü mesh elde edilir. **Programatik doğrulama**: iki rotanın ürünlerinin kilit ölçülerinin (dış çap, kalınlık, delik konumu, delik çapı) spesifikasyondan sapmasını ölçün ve montaj yüzeyinin düzlüğünü kontrol edin.
+>
+> Ardından "montaj deliklerini M5'ten M6'ya değiştirin" değişiklik isteğini gönderin ve iki rotanın değişiklik maliyetlerini kaydedin—kod rotasında bir parametre değiştirip yeniden çalıştırırsınız; üretim modeli rotasında yalnızca tamamen yeniden üretilebilir ve diğer ölçülerin aynı kalacağı garanti edilemez.
+>
+> **Kontrol grubu**: Bir saksı bitkisi üretin; iki rotanın artıları ve eksileri tam olarak tersine döner—kod rotası prosedürel gürültü eklense bile katı ve yapay kalır, üretim modeli rotası ise doğal ve canlıdır.
+>
+
 ### Bir Sistem Adaptörü Olarak Kod
 
 Önceki bölümlerdeki kod çoğunlukla "insanla yüzleşen" şeyler üretiyordu — raporlar, slaytlar, arayüzler. Bu bölümdeki kod başka bir yöne işaret ediyor: **makineyi makineye bağlamak**. Gerçek sistemlerde, bir Agent'ın konuşması gereken dış servislerin genellikle hazır bir SDK'sı yoktur ve arayüzleri nadiren düzenlidir — eksik dokümantasyon, standart olmayan dönüş formatları, sürümden sürüme kayan alanlar. Agent, birinin önceden bir uyarlama katmanı yazmasını beklemek zorunda değildir. Arayüz dokümantasyonunu anında okuyabilir, veya yalnızca bir veya iki gerçek yanıtı gözlemleyip adaptörü o anda üretebilir: bir HTTP istemcisi oluşturur, kimlik doğrulama başlıklarını derler, standart olmayan dönüş yapısını ayrıştırır ve yukarı akış veri modelini alt akışın tüketebileceği bir şekle çevirir. Kod burada keyfi sistemleri bağlamak için "evrensel yapıştırıcıdır"—bir boşluk olduğunda, onu doldurmak için o anda bir parça yapıştırıcı üretilir. Bu, meta-yeteneğin "sistem arayüzü" yönünün kalbidir. Aşağıda geliştirilen uyarlanabilir log ayrıştırma, bu yeteneğin gözlemlenebilirlik ortamında somutlaşmış halidir: hiç durmadan evrilen log formatlarıyla karşı karşıya olan Agent, benzer şekilde anında ayrıştırma kodu üreterek uyum sağlar.
@@ -577,7 +600,7 @@ Agent sistemlerinin gözlemlenebilirliği, yürütme akışlarının görselleş
 
 Kod üretimi zarif bir çözüm sunar: bir otomatik onarım geri bildirim döngüsü kurmak. Frontend ayrıştırılamayan bir log formatıyla karşılaştığında, bir hata göstermek yerine, başarısızlık bilgisini (ham log örneği, ayrıntılı hata) otomatik olarak Agent'a bildirir. Agent örnek veri yapısını analiz eder ve bunu doğru biçimde ayrıştırabilecek frontend kodu üretir. Kod önce sanal bir tarayıcıda otomatik olarak test edilir (ayrıştırma doğruluğunu doğrulama, görselleştirme efektlerini kontrol etmek için bir Vision LLM kullanma) ve geçtikten sonra, frontend sistemine sıcak güncellenir.
 
-> **Deney 5-7 ★★★: Uyarlanabilir Log Ayrıştırma Sistemi**
+> **Deney 5-8 ★★★: Uyarlanabilir Log Ayrıştırma Sistemi**
 >
 > **Deney Amacı**: Kendi kendine evrilen bir Agent log görselleştirme sistemi inşa etmek.
 >
@@ -592,7 +615,7 @@ Kod üretimi zarif bir çözüm sunar: bir otomatik onarım geri bildirim döng�
 
 Kod üretimi teşhis için otomatikleştirilmiş bir yol sağlar. Agent üretim loglarını okuyabilir, bunları mimari dokümanları ve PRD'lerle (Ürün Gereksinim Dokümanları) birleştirerek yürütme akışının beklentileri karşılayıp karşılamadığını otomatik olarak belirleyebilir ve sorunlu bileşenleri ve modülleri belirleyebilir. Analiz sonuçlarına dayanarak, yapılandırılmış sorun raporları (öncelik, modül, açıklama, iyileştirme önerileri) ve regresyon test durumları üretir—test durumları sorun trajectory ID'sine ve kilit etkileşim turlarına başvurur ve test çerçevesi bunları otomatik olarak yeniden oynatarak düzeltilmiş sistemin aynı girdi için doğru davranış ürettiğini doğrular. Son olarak, Agent bir Issue oluşturmak ve ilgili geliştiriciye atamak için MCP aracılığıyla GitHub'a bağlanır, sorun keşfinden görev atamasına kadar tam otomasyonu tamamlar.
 
-> **Deney 5-8 ★★★: Üretim Logları için Akıllı Teşhis Sistemi**
+> **Deney 5-9 ★★★: Üretim Logları için Akıllı Teşhis Sistemi**
 >
 > **Deney Amacı**: Üretim trajectory'lerinden sorunları otomatik olarak keşfetmek, test durumları üretmek ve iş öğeleri oluşturmak.
 >
@@ -632,7 +655,7 @@ Kod üretimi aracılığıyla, Agent metin tabanlı soru-cevabın yerini almak i
 ![Şekil 5-8: Dinamik Form Üretim Süreci](images/fig5-8.svg)
 
 
-> **Deney 5-9 ★★: Dinamik Formlarla Niyet Netleştirme Sistemi**
+> **Deney 5-10 ★★: Dinamik Formlarla Niyet Netleştirme Sistemi**
 >
 > **Deney Amacı**: Agent'ın HTML formlarını dinamik olarak üreterek kullanıcı niyetini netleştirme yeteneğini doğrulamak.
 >
@@ -654,7 +677,7 @@ Birinci yaklaşım daha "akıllı" görünür ama son derece verimsizdir—büy�
 
 Daha ileri giderek, Agent bir boru hattı oluşturan iki artifact üretebilir: SQL sorgusu + görselleştirme kodu (örn. bir çubuk grafik). Frontend, SQL sonuçlarını doğrudan görselleştirme koduna geçirir. LLM yalnızca kodu üretmekten sorumludur, veri aktarımına katılmaktan değil—bu, bir arayüz olarak kod üretiminin özüdür.
 
-> **Deney 5-10 ★★: Doğal Dil Etkileşimli ERP Agent'ı**
+> **Deney 5-11 ★★: Doğal Dil Etkileşimli ERP Agent'ı**
 >
 > ERP (Kurumsal Kaynak Planlaması) yazılımı, işletmeler için kritik bir sistemdir, tipik olarak karmaşık işlemlerin birden fazla fare tıklaması gerektirdiği bir GUI arayüzü kullanır. Bir AI Agent, kullanıcının doğal dil sorgularını SQL ifadelerine dönüştürerek otomatikleştirilmiş sorgulamayı mümkün kılabilir.
 >
@@ -678,7 +701,7 @@ Kod üretiminin nihai uygulaması, Agent'ın yazılımı tamamen dinamik olarak,
 
 Ancak tam dinamik üretim maliyetlidir ve yavaştır—üretimden çok neyin mümkün olduğunu göstermeye daha uygundur. Daha pragmatik bir yön, **mevcut bir çerçeve üzerine özelleştirilmiş değişikliktir**. Bu "yarı özel" model, temel yazılımın kararlılığını korurken belirli boyutları kullanıcı kontrolüne açar—kullanıcı "düğmeyi mavi yap," "kenar çubuğuna bir kısayol menüsü ekle," "daha okunabilir bir yazı tipine geç" der; Agent frontend kodunu anlar ve değiştirir, ve HMR (Hot Module Replacement—uygulama durumunu koruyan ve tam sayfa yenilemesi olmadan etkili olan kısmi sıcak değiştirme) bunu anında uygular. Tek beden herkese uyar ürünü, her kullanıcıya kişiselleştirilmiş bir deneyime dönüşür.
 
-> **Deney 5-11 ★★: Konuşmalı Arayüz Özelleştirme Sistemi**
+> **Deney 5-12 ★★: Konuşmalı Arayüz Özelleştirme Sistemi**
 >
 > **Deney Amacı**: Kullanıcıların doğal dil diyaloğu yoluyla yazılım arayüzünü anında özelleştirme yeteneğini uygulamak, sıcak yeniden yükleme mekanizmalarıyla desteklenen kod üretiminin kişiselleştirilmiş kullanıcı deneyimleri sunmadaki etkinliğini doğrulamak.
 >
@@ -692,7 +715,7 @@ Daha sağlam bir mimari **güven sınırını veri katmanına indirir**. Dinamik
 
 Yetkilendirmeyi aşağı taşımak tüm iş mantığını veritabanına koymak anlamına gelmez. Uygulama katmanı hızlı geri bildirim için ön kontroller yapabilir, fakat nihai karar yetkisi veri katmanında kalmalıdır. Aynı kural üstte deneyimi iyileştirirken altta garanti sağlayabilir. Bunun için her veri erişim yolu güvenilir veri katmanından geçmeli ve üretilen kod doğrudan bağlanarak bu katmanı aşamamalıdır. Böylece üst katman sürekli değişebilir; pazarlık konusu olmayan izin kısıtları ise her üretimde yeniden yazılmayan bir katmanda kalır. Bu, Bölüm 1'deki üç katmanlı iskeletin en zor atlatılan katmanı olan veri katmanıdır.
 
-> **Deney 5-12 ★★★: Dinamik Yazılım için İzin Gömülü Veri Nesneleri**
+> **Deney 5-13 ★★★: Dinamik Yazılım için İzin Gömülü Veri Nesneleri**
 >
 > **Deney Amacı**: Uygulama kodunun dinamik olarak üretilmesine veya yeniden yazılmasına izin veren, ancak yetkilendirme ve veri bütünlüğünü veri katmanında zorlayan bir nesne deposu kurmak. Üretilen kodun durum geçişini atlayarak, aralık dışı değer yazarak veya kiracılar arası okuyarak sabit veri sınırını geçemediğini doğrulamak.
 >
@@ -737,7 +760,7 @@ Bu sorunları çözmenin en etkili yolu tüm kuralları prompt'ta kapsamlı biç
 
 Bir Agent yeni bir Agent geliştirme görevi aldığında, önce kendi kodunu (veya diğer doğrulanmış, yüksek kaliteli uygulamaları) kopyalamalı, ardından hedefe yönelik değişiklikler yapmalıdır: yeni role uyacak şekilde system prompt'u ayarlamak, yeni işlevlere uyacak şekilde araçları değiştirmek veya eklemek, mimari çerçeveyi korurken iş mantığını değiştirmek. Bu "uyarlanabilir değişiklikle kendi kendini çoğaltma" kalıbı, yeni Agent'ın temel teknik avantajları miras almasını sağlarken belirli boyutlarda farklılaşmaya izin verir—biyolojideki mutasyonlu gen replikasyonuna çok benzer.
 
-> **Deney 5-13 ★★★: Agent'lar Yaratabilen Bir Agent Geliştirmek**
+> **Deney 5-14 ★★★: Agent'lar Yaratabilen Bir Agent Geliştirmek**
 >
 > **Deney Amacı**: Metaprogramlama (diğer programları üreten veya değiştiren programlar yazma yeteneği) yeteneklerine sahip bir Kodlama Agent'ı inşa etmek, en iyi uygulamalara uyumu sağlarken kullanıcı gereksinimlerine dayanarak yeni Agent sistemlerini otomatik olarak yaratmasını sağlamak.
 >
@@ -762,7 +785,7 @@ Harness engineering bölümü bir merkezi sonuca ulaştı: Kodlama Agent'ları o
 
 - **Düşünme Aracı**: Olasılıksal düşünmenin eksikliklerini telafi etmek için sembolik hesaplama ve kısıt çözümünden yararlanmak
 - **İş Kuralı Kısıtları**: İş kurallarını belirsizliksiz ifade etmek, geri alınamaz işlem senaryolarında deterministik bir güvenlik hattı sağlamak—bu güvenlik garantisinin değeri uygulama maliyetini çok aşıyor
-- **Multimedya Üretimi**: Bir proposer-reviewer mekanizması aracılığıyla PPT'ler ve videolar gibi çok modlu içerik yaratmak
+- **Multimedya Üretimi**: Bir proposer-reviewer mekanizması aracılığıyla PPT'ler ve videolar gibi çok modlu içerik yaratmak; kod üretimi ile üretim modeli arasındaki seçim, ürünün içsel karmaşıklığına ve hassasiyet gereksinimine bağlıdır
 - **Sistem Adaptörü**: Log ayrıştırma ve sorun teşhisinin tam otomasyonunu elde etmek için format evrimini otomatik olarak takip etmek
 - **Üretici UI**: Formları, görselleştirmeleri ve hatta tam özelleştirilebilir uygulamaları dinamik olarak yaratmak, düz metin sınırlamalarından kurtulmak
 - **Agent Bootstrapping**: Benzer Agent'ları onarmak ve yaratmak için kod kullanmak, Agent'lar yaratabilen bir Agent gerçekleştirmek

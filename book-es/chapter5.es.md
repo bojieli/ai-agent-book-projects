@@ -547,6 +547,28 @@ Reestructurar la edición de video como un problema de llamadas API y generació
 >
 > **Criterios de aceptación**: El Agente identifica con precisión diferentes escenas en el video y genera el script de edición correcto según las instrucciones. Los puntos de inicio y fin son precisos (error inferior a 3 segundos). Si las instrucciones incluyen efectos (cámara lenta, transiciones, subtítulos), el video generado los aplica correctamente. El Reviewer Agent detecta errores evidentes (omisión de contenido clave, inclusión de fragmentos no relacionados) y activa correcciones. El archivo de video final presenta un formato e imagen conforme a lo esperado.
 
+**3D y piezas industriales: la frontera entre la generación de código y los modelos generativos.**
+
+Ante una misma petición de «generar algo», el Agente tiene dos caminos: uno es construirlo con precisión escribiendo código (CadQuery, OpenSCAD, la API de Blender), y el otro es invocar directamente un modelo de generación 3D (modelos text/image-to-3D como Hunyuan 3D, pertenecientes a la misma familia de diffusion que la generación de imágenes a partir de texto). A muchas personas les asalta la duda: ¿cuándo conviene usar generación de código y cuándo un modelo de generación de imágenes o 3D?
+
+**Primero: comprobar si el producto admite una descripción precisa y compacta.** Las piezas industriales poseen de forma natural una descripción precisa y compacta. Una brida queda completamente definida por cinco o seis parámetros—diámetro exterior, espesor, diámetro del círculo de taladros, diámetro de los orificios y número de orificios—y el código es su expresión **sin pérdidas**. Una planta en maceta, una roca de Taihu o un rostro humano son cosas distintas: tienen detalles incontables y su **complejidad intrínseca es prácticamente infinita**.
+
+**Segundo: comprobar los requisitos de precisión y la verificabilidad.** Cada dimensión de una pieza es una restricción estricta—un orificio de 5 mm con una tolerancia de ±0,05 mm, donde la más mínima desviación la convierte en un desecho. La pieza generada por código puede verificarse programáticamente: se carga la malla, se miden el diámetro exterior y la posición de los taladros, y se contrastan uno a uno con la especificación. En cambio, la pieza producida por un modelo de generación 3D no puede contrastarse directamente con la especificación.
+
+Los dos caminos difieren además en algo más práctico: la **forma de representación y la editabilidad**. El proceso de fabricación exige sólidos paramétricos en B-rep (representación de fronteras): el archivo STEP almacena el árbol de características y los parámetros dimensionales, y puede accionar directamente el mecanizado CNC. Lo que produce el modelo de generación 3D es una malla de triángulos: las superficies curvas se aproximan con innumerables caras diminutas, que al ampliarlas se ven llenas de baches. Cuando el cliente dice «cambia los orificios de montaje de M5 a M6», la diferencia queda a la vista: en la ruta de código basta cambiar un número y volver a ejecutar, y el resto de las dimensiones no varía ni un ápice; en la ruta del modelo generativo solo cabe regenerar el conjunto completo—que las demás dimensiones se desvíen o no queda librado a la suerte.
+
+Por tanto, elegir el camino es en sí mismo una decisión que el Agente debe tomar: sopesar la complejidad intrínseca del producto y sus requisitos de precisión, y asignar la tarea a la generación de código o al modelo de generación 3D. En los sistemas reales ambos caminos pueden combinarse—la geometría se genera de forma paramétrica con código y la textura de superficie se confía al modelo generativo, aprovechando lo mejor de cada uno.
+
+> **Experimento 5-7 ★★: Dos rutas de generación para una misma pieza—código frente a modelo generativo**
+>
+> **Objetivo del experimento**: Tomar una misma pieza mecánica con especificación dimensional y comparar las rutas de generación por código y por modelo de generación 3D en cuanto a precisión dimensional, editabilidad y aptitud para la fabricación, verificando el marco de decisión de «elegir la ruta según la complejidad intrínseca y los requisitos de precisión».
+>
+> **Solución técnica**: Una necesidad en lenguaje natural con especificación explícita (por ejemplo, «brida con diámetro exterior de 80 mm, espesor de 10 mm, 4 orificios de montaje M5 uniformemente distribuidos en un círculo de taladros de 60 mm de diámetro»). **Ruta A**: el Agente escribe código CadQuery (u OpenSCAD) para construir la pieza y exporta STEP y STL. **Ruta B**: entregar la misma especificación a un modelo de generación 3D (como Hunyuan 3D) para obtener una malla de triángulos. **Verificación programática**: medir las desviaciones respecto a la especificación de las dimensiones clave de los productos de ambas rutas (diámetro exterior, espesor, posición y diámetro de los orificios) y comprobar la planeidad de la superficie de montaje.
+>
+> A continuación se emite la petición de cambio «orificios de montaje de M5 a M6» y se registra el coste de modificación de cada ruta: la ruta de código cambia un parámetro y vuelve a ejecutarse; la ruta del modelo generativo solo puede regenerar el conjunto completo, sin garantía de que las demás dimensiones se mantengan inalteradas.
+>
+> **Grupo de control**: Generar una planta en maceta; la superioridad de las dos rutas se invierte con exactitud—la ruta de código resulta rígida y artificiosa incluso añadiendo ruido procedural, mientras que la ruta del modelo generativo resulta natural y vívida.
+
 ### El código como adaptador del sistema
 
 La mayoría de los códigos de las secciones anteriores producían artefactos "orientados a humanos": informes, presentaciones, interfaces. El código de esta sección apunta en otra dirección: **conectar máquina con máquina**. En los sistemas reales, los servicios externos con los que debe interactuar el Agente suelen carecer de SDK listos para usar y sus interfaces no siempre están estandarizadas: documentación ausente, formatos de respuesta no estándar o campos que derivan entre versiones. Ante estas situaciones, el Agente no necesita esperar a que un humano escriba previamente una capa de adaptación, sino que puede leer la documentación de la interfaz o observar directamente una o dos respuestas reales para generar en el acto código de adaptación: construyendo clientes HTTP, ensamblando encabezados de autenticación, parseando estructuras de retorno no estándar y traduciendo los modelos de datos ascendentes a la forma que puede consumir la cadena descendente. El código actúa aquí como un "pegamento universal" para conectar cualquier sistema: donde no hay empalme, se genera un fragmento de pegamento en el sitio para unirlo, representando el núcleo de la metacapacidad en la dirección de "interfaces del sistema". El parseo adaptativo de registros que se detalla a continuación es la concreción de esta capacidad en escenarios de observabilidad: ante formatos de registros en continua evolución, el Agente se adapta generando código de parseo sobre la marcha.
@@ -563,7 +585,7 @@ La observabilidad de los sistemas de Agentes depende de la visualización de sus
 
 La generación de código ofrece una solución elegante: establecer un bucle de retroalimentación de autorreparación. Cuando el frontend encuentra un formato de registro que no puede parsear, en lugar de mostrar un error, reporta automáticamente la información de falla (muestra del registro original, error detallado) al Agente. El Agente analiza la estructura de los datos de muestra y genera código de frontend capaz de parsearlos correctamente. El código se prueba automáticamente en un navegador virtual (verificando la corrección del parseo y revisando el efecto visual con un Vision LLM), y tras aprobar se despliega mediante actualización en caliente en el sistema frontend.
 
-> **Experimento 5-7 ★★★: Sistema adaptativo de parseo de logs**
+> **Experimento 5-8 ★★★: Sistema adaptativo de parseo de logs**
 >
 > **Objetivo del experimento**: Construir un sistema de visualización de registros de Agentes capaz de autoevolucionar.
 >
@@ -577,7 +599,7 @@ Los Agentes en entornos de producción generan un gran volumen de registros de t
 
 La generación de código ofrece una ruta automatizada para el diagnóstico. El Agente puede leer registros de producción y combinarlos con documentos de arquitectura y PRD (documentos de requisitos de producto) para juzgar automáticamente si el flujo de ejecución cumple con lo esperado, localizando los módulos y eslabones con problemas. Basándose en los resultados del análisis, genera informes de problemas estructurados (prioridad, módulo, descripción, sugerencias de mejora) y casos de prueba de regresión (los casos de prueba referencian el ID de trayectoria y los turnos de interacción clave, y el marco de pruebas los reproduce automáticamente para verificar si el sistema corregido produce el comportamiento adecuado ante la misma entrada). Finalmente, el Agente se conecta con GitHub a través de MCP para crear incidencias (Issues) y asignarlas a los desarrolladores correspondientes, completando la automatización integral desde el descubrimiento del problema hasta la asignación de la tarea.
 
-> **Experimento 5-8 ★★★: Sistema de diagnóstico inteligente para logs de producción**
+> **Experimento 5-9 ★★★: Sistema de diagnóstico inteligente para logs de producción**
 >
 > **Objetivo del experimento**: Descubrir problemas automáticamente a partir de trayectorias de producción, generar casos de prueba y crear elementos de trabajo.
 >
@@ -613,7 +635,7 @@ Mediante la generación de código, el Agente puede crear interfaces de interacc
 
 ![Figura 5-8: Proceso de generación de formularios dinámicos](images/fig5-8.svg)
 
-> **Experimento 5-9 ★★: Sistema de clarificación de intención con formularios dinámicos**
+> **Experimento 5-10 ★★: Sistema de clarificación de intención con formularios dinámicos**
 >
 > **Objetivo del experimento**: Verificar la capacidad del Agente para clarificar la intención del usuario generando dinámicamente formularios HTML.
 >
@@ -633,7 +655,7 @@ El SQL y el código de visualización generados no deben ejecutarse directamente
 
 Más aún, el Agente puede generar dos Artifacts formando una canalización: consulta SQL + código de visualización (como un gráfico de barras). El frontend entrega los resultados de SQL directamente al código de visualización, mientras el LLM solo se encarga de generar el código sin intervenir en la transferencia de datos, lo que representa la esencia del código como interfaz.
 
-> **Experimento 5-10 ★★: Agente ERP con interacción en lenguaje natural**
+> **Experimento 5-11 ★★: Agente ERP con interacción en lenguaje natural**
 >
 > El software ERP (Planificación de Recursos Empresariales) es un sistema crítico en las empresas que actualmente suele utilizar interfaces GUI con múltiples clics de mouse. Un Agente de IA puede traducir consultas en lenguaje natural del usuario a sentencias SQL para lograr consultas automatizadas.
 >
@@ -656,7 +678,7 @@ La aplicación extrema de la capacidad de generación de código consiste en per
 
 Sin embargo, este modo completamente dinámico presenta costos y latencias elevados, siendo más adecuado como un experimento para mostrar límites de capacidad. Una dirección más práctica es la **personalización basada en marcos existentes**. Este modo de "semipersonalización" conserva la estabilidad del software base al tiempo que abre el control al usuario en dimensiones específicas: el usuario indica "cambia el botón a azul", "añade un menú rápido en la barra lateral" o "modifica la fuente a un estilo más legible", el Agente comprende la necesidad y modifica el código frontend, y el reemplazo térmico de módulos (HMR, Hot Module Replacement: reemplazo local en caliente que conserva el estado de la aplicación sin refrescar la página completa) surte efecto de inmediato. Esto transforma productos estandarizados "talle único" en experiencias personalizadas únicas para cada usuario.
 
-> **Experimento 5-11 ★★: Sistema de personalización conversacional de interfaces**
+> **Experimento 5-12 ★★: Sistema de personalización conversacional de interfaces**
 >
 > **Objetivo del experimento**: Lograr que el usuario personalice instantáneamente la interfaz del software mediante diálogo en lenguaje natural, verificando la efectividad de la generación de código respaldada por mecanismos de reemplazo térmico para ofrecer experiencias de usuario personalizadas.
 >
@@ -670,7 +692,7 @@ Una arquitectura más robusta **desplaza el límite de confianza hacia la capa d
 
 Desplazar la autorización hacia abajo no significa colocar toda la lógica de negocio en la base de datos. La capa de aplicación puede seguir realizando comprobaciones previas para ofrecer una respuesta rápida, pero la capa de datos debe conservar la autoridad de decisión final. La misma regla puede mejorar la experiencia arriba y proporcionar una garantía abajo. Para ello, todas las rutas de acceso a datos deben pasar por la capa de datos confiable; el código generado no debe poder conectarse directamente para rodearla. Así, la capa superior puede cambiar continuamente mientras las restricciones de permisos no negociables permanecen en una capa que no se regenera con cada solicitud. Esta es la capa de datos del esqueleto de tres capas del capítulo 1: la más difícil de esquivar.
 
-> **Experimento 5-12 ★★★: Objetos de datos con permisos integrados para software dinámico**
+> **Experimento 5-13 ★★★: Objetos de datos con permisos integrados para software dinámico**
 >
 > **Objetivo del experimento**: Construir un almacén de objetos que permita generar o reescribir dinámicamente el código de la aplicación y que, aun así, aplique autorización e integridad de datos en la capa de datos. Verificar que el código generado no pueda atravesar el límite estable omitiendo una transición de estado, escribiendo un valor fuera de rango o leyendo datos de otros inquilinos.
 >
@@ -713,7 +735,7 @@ La "generación basada en plantillas" presenta ventajas claras: el código de la
 
 Al recibir la tarea de desarrollar un nuevo Agente, el Agente debe copiar primero su propio código (u otra implementación de alta calidad verificada) y luego realizar modificaciones orientadas: ajustando los prompts del sistema para coincidir con el nuevo rol, reemplazando o añadiendo/eliminando herramientas para adaptarse a las nuevas funciones, y modificando la lógica de negocio mientras conserva el marco de arquitectura. Esta modalidad de "autorreplicación y modificación adaptativa" garantiza que el nuevo Agente herede las ventajas técnicas nucleares al tiempo que permite la diferenciación en dimensiones específicas, de forma análoga a la replicación genética con variación en biología.
 
-> **Experimento 5-13 ★★★: Desarrollar un Agente capaz de crear Agentes**
+> **Experimento 5-14 ★★★: Desarrollar un Agente capaz de crear Agentes**
 >
 > **Objetivo del experimento**: Construir un Coding Agent con capacidad de metaprogramación (Metaprogramming: escribir programas capaces de generar o modificar otros programas), capaz de crear nuevos sistemas de Agentes de forma automática según las necesidades del usuario, garantizando el cumplimiento de las mejores prácticas.
 >
@@ -735,7 +757,7 @@ La segunda parte mostró el amplio valor de la generación de código más allá
 
 - **Herramienta de pensamiento**: Compensar las deficiencias del pensamiento probabilístico mediante el cálculo simbólico y la resolución de restricciones.
 - **Restricción para reglas de negocio**: Expresar reglas de negocio sin ambigüedades, ofreciendo una línea de defensa determinista en escenarios de operaciones irreversibles, con un valor de seguridad que supera con creces el costo de implementación.
-- **Generación multimedia**: Crear contenidos multimodales como PPT y video mediante el mecanismo Proponente-Revisor.
+- **Generación multimedia**: Crear contenidos multimodales como PPT y video mediante el mecanismo Proponente-Revisor; la elección entre la generación de código y los modelos generativos depende de la complejidad intrínseca del producto y de sus requisitos de precisión.
 - **Adaptador del sistema**: Seguir automáticamente la evolución de los formatos para lograr la automatización completa del parseo de registros y el diagnóstico de problemas.
 - **UI generativa**: Construir dinámicamente formularios, gráficos de visualización e incluso aplicaciones personalizables completas, superando las limitaciones del texto plano.
 - **Autoinicio del Agente**: Reparar y crear Agentes de la misma especie mediante código, logrando Agentes capaces de crear Agentes.

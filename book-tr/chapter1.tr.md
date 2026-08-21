@@ -395,6 +395,23 @@ Workflow kalıbının iki temel avantajı vardır. Birincisi, **sıkı süreç k
 
 Bir workflow'un başlıca sınırlaması **esneklik eksikliğidir**. Akışın hiç öngörmediği bir şey olduğunda—kullanıcı ödeme sırasında rezervasyonu değiştirmeye karar verir, ya da bir uçuş aniden iptal edilir ve alternatif önerilmesi gerekir—sabit yol uyum sağlayamaz; yapabileceği tek şey önceden belirlenmiş bir istisna dalını izlemek ya da kontrolü bir insana geri vermektir.
 
+En basit workflow örneğini ele alalım: **metinden görüntüye üretim (text-to-image)**. Kullanıcının ihtiyacı genellikle günlük dilde tek bir cümledir, örneğin "AGI gerçekleştikten sonra programcıların çalışma sahnesini çiz"; oysa Stable Diffusion gibi metinden görüntüye modeller yalnızca belirli bir tarzdaki prompt'ları kabul eder—virgülle ayrılmış İngilizce etiketler, kalite sözcükleri, negatif prompt'lar. Bu yüzden workflow, kullanıcı ile görüntü üretim modeli arasına iki sabit düğüm yerleştirir:
+
+1. **Prompt yeniden yazımı**—kullanıcının doğal dil isteğini metinden görüntüye modelin alışık olduğu prompt formatına dönüştürmek için bir LLM kullanılır. Yukarıdaki örnekte "AGI gerçekleştikten sonra programcıların çalışma sahnesi" çok geniş bir istektir, bu yüzden LLM'in önce ciddi biçimde düşünmesi gerekir (örneğin, "AGI gerçekleştikten sonra programcıların kod yazmasına gerek kalmayacak, bu yüzden sahilde güneşlenen ve beyin-bilgisayar arayüzüyle AI çalışanları yöneten bir programcı çizilmeli"), ardından somut bir sahne tanımı verir.
+2. **Görüntü üretimi**—yeniden yazılan prompt ile metinden görüntüye model çağrılır ve görüntü elde edilir.
+
+Yürütme yolu kodla sabitlenmiştir. Bu workflow'daki LLM düğümünün yaptığı şey **çeviridir**—insan dilini aracın anlayabileceği girdi formatına dönüştürür; var olma nedeni, metinden görüntüye modelin "insan dilini anlamaması"dır. Bir aracın (veya modelin) yetenek açığını bu şekilde yamayan Harness koduna **uyarlama katmanı** (adaptation layer) demek yerinde olur.
+
+Ama görüntü üretim aracını **yerli görüntü üretimi** (native image generation) yeteneğine sahip çok modlu bir modelle değiştirirseniz—örneğin Nano Banana 2, GPT-Image 2—prompt yeniden yazımına artık gerek kalmaz. Kullanıcı nasıl ifade ederse etsin, model kendisi anlar ve doğrudan görüntü üretir.
+
+> **Deney 1-4 ★: Metinden Görüntüye Workflow ile Yerli Görüntü Üretiminin Karşılaştırılması**
+>
+> Aynı günlük dil isteğini iki rotadan geçirin. **Workflow rotası**: LLM önce isteği Stable Diffusion tarzı bir prompt'a yeniden yazar, ardından metinden görüntüye modeli çağırarak görüntü üretir; **yerli rota**: cümleyi olduğu gibi yerli görüntü üretimini destekleyen çok modlu bir modele (örn. GPT-Image 2) gönderin, tek çağrıyla doğrudan görüntü alın.
+>
+> Karşılaştırın: prompt yeniden yazım düğümü orijinal isteği nasıl bir şeye dönüştürdü ve iki rotanın ürettiği görüntülerden hangisi orijinal isteğe daha yakın. İki tür isteği karşılaştırmaya değer: biri somut betimlemeli (örneğin poster metni belirtilmiş); diğeri geniş kapsamlı (örneğin yukarıdaki AGI çalışma sahnesi)—bu tür isteklerde workflow rotasının hâlâ kendi avantajları olabilir.
+
+Bu deney şunu gösterir: **Harness'te modelin yetenek açıklarını yamayan parçalar, model güçlendikçe modelin kendisi tarafından içselleştirilir.** Yalnızca bu kitabın birinci bölümünde bile bu birkaç tur yaşandı: few-shot örnekleri ve "adım adım düşünelim" tarzı prompt teknikleri, instruction tuning ve reasoning modelleri tarafından içselleştirildi; çıktı formatı onarımı ve JSON ayrıştırma toleransı, structured output ve yerli tool calling tarafından içselleştirildi; metinden görüntüye prompt yeniden yazımı ise modelin yerli çok modlu anlama ve üretme yeteneği tarafından yutuldu. Her içselleştirme turunun yok ettiği şey, "çeviri" ve "iskele" (scaffolding) türü uyarlama katmanı kodudur.
+
 #### Autonomous Agent: Dinamik Otonom Karar Alma
 
 Bir workflow'un sabit yolu yetersiz kaldığında, bir **autonomous Agent'a** ihtiyaç duyarız. Autonomous Agent ile workflow arasındaki temel fark, yürütme yolunun önceden tanımlanmamış olması, bunun yerine **ortam geri bildirimine** dayanarak Agent tarafından gerçek zamanlı belirlenmesidir.

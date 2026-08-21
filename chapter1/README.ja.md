@@ -21,6 +21,7 @@
 | 1-1 | [context](context/) | ✅ | 体系的なアブレーション（実験）を通じて、Agent のさまざまなコンテキスト構成要素の重要性を示す。複数の LLM プロバイダー（SiliconFlow Qwen、ByteDance Doubao、Moonshot Kimi）をサポートし、異なるコンテキストモードを設定して Agent の挙動の変化を観察できる。 |
 | 1-2 | [web-search-agent](web-search-agent/) | ✅ | 基本的なディープ検索能力を持つ Agent を実装し、複数ラウンドの検索と情報統合を可能にする。 |
 | 1-3 | [search-codegen](search-codegen/) | ✅ | 基本的なディープ検索とコードサンドボックス能力を備えた Agent を構築し、Web 検索やコード実行などのツールを活用して複雑な分析を行う。 |
+| 1-4 | [image-gen-workflow](image-gen-workflow/) | ✅ | 具体的/曖昧な 2 類の要求 × ワークフロー（kimi-k3 による書き換え + 通義万相）とネイティブ（Gemini / GPT-Image 2）の 2 経路の実際の対照：具体的な要求ではネイティブがより忠実（ポスターの文案が書き換えノードによってネガティブワードに放り込まれた）、曖昧な要求では書き換えによる場面の具象化が想像力をもたらすが、GPT-Image 2 は自ら視点を補える——アダプタ層がモデルに内在化されることの実証。 |
 | 7-1, 7-2 | [learning-from-experience](learning-from-experience/) | ✅ | 従来の強化学習（Q 学習）と LLM ベースのインコンテキスト学習を比較し、Shunyu Yao のブログ記事「The Second Half」の重要な洞察を再現する。宝探しゲームを通じて、LLM が 250〜400 倍のサンプル効率で従来の RL を上回る様子を示す。 |
 ## プロジェクトの種類
 

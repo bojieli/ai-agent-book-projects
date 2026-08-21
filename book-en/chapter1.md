@@ -392,6 +392,23 @@ The workflow pattern has two core advantages. First, **strict process control**:
 
 The main limitation of a workflow is its **lack of flexibility**. When an unanticipated event occurs—for example, the user changes the booking during payment, or a flight is canceled and the system needs to recommend an alternative—the fixed path cannot adapt on its own; it can only follow a preset exception branch or hand control back to a human.
 
+Take the simplest workflow example: **text-to-image generation**. The user's need is usually a single plain-language sentence, such as "Draw me a scene of programmers at work after AGI is achieved"; but text-to-image models like Stable Diffusion only accept prompts in a specific style—comma-separated English tags, quality words, negative prompts. So the workflow places two fixed nodes between the user and the image-generation model:
+
+1.  **Prompt Rewriting**—Use an LLM to rewrite the user's natural-language request into the prompt format a text-to-image model expects. For the example above, "programmers at work after AGI is achieved" is a very broad requirement, so the LLM also needs to think carefully (for example, "after AGI is achieved, programmers no longer need to write code, so the image should show a programmer sunbathing on a beach, directing AI employees through a brain-computer interface") and then produce a concrete scene description.
+2.  **Image Generation**—Call the text-to-image model with the rewritten prompt to obtain the image.
+
+The execution path is hard-coded. The LLM node in this workflow performs **translation**—converting human language into an input format the tool can understand—and it exists because text-to-image models "don't understand plain speech." Harness code that specifically patches a capability shortcoming of a tool (or model) like this can be called an **adapter layer**.
+
+But if the image-generation tool is replaced with a multimodal model that has **native image generation** capability, such as Nano Banana 2 or GPT-Image 2, prompt rewriting is no longer needed. No matter how the user phrases the request, the model understands it on its own and produces the image directly.
+
+> **Experiment 1-4 ★: Text-to-Image Workflow vs. Native Image Generation**
+>
+> Send the same plain-language request through two routes. **Workflow route**: an LLM first rewrites the request into a Stable Diffusion-style prompt, then calls the text-to-image model to produce the image; **native route**: send the sentence as-is to a multimodal model that supports native image generation (such as GPT-Image 2), producing the image in a single call.
+>
+> Compare two things: what the prompt-rewriting node turns the original request into, and which route's image stays closer to the original request. It is worth comparing two categories of requests: one that is concrete (for example, a poster with specified copy), and one that is broad (such as the AGI work scene above)—for this category, the workflow route may still have advantages of its own.
+
+This experiment shows that **the parts of a Harness that patch the model's capability shortcomings will be internalized by the model itself as the model grows stronger**. In this first chapter alone, this has already happened several times: few-shot examples and prompting tricks like "let's think step by step" were internalized by instruction tuning and reasoning models; output-format repair and JSON parsing tolerance were internalized by structured output and native tool calling; and text-to-image prompt rewriting was absorbed by the model's native multimodal understanding and generation capabilities. Each round of internalization eliminates adapter-layer code of the "translation" and "scaffolding" kind.
+
 #### Autonomous Agent: Runtime Decision-Making
 
 When the fixed path of a workflow is insufficient, we need an **autonomous Agent**. The core difference between an autonomous Agent and a workflow is that the execution path is not predefined but is determined at runtime by the Agent based on **environmental feedback**.
