@@ -492,6 +492,8 @@ MetaGPT bir yazılım şirketinin standart çalışma prosedürlerini kodlar. Ro
 
 > 2025'ten beri “Agent Swarm” birden fazla mimariyi anlatır: OpenAI Swarm benzeri merkezsiz handoff ağı veya Kimi K2.5/K3 ve AgentEnv'de olduğu gibi ana Agent'ın çok sayıda paralel alt Agent oluşturduğu büyük ölçekli Manager modeli[^ch10-kimi-swarm]. Anthropic ve Manus'ın çoklu Agent araştırma sistemleri de orchestrator-worker topolojisindedir.
 
+**Aynı makinedeki birden çok eş Agent örneği.** Yukarıdaki üç sistemde Agent'lar aynı işi birlikte yapar; merkezsizliğin bunun tersi olan bir türü de vardır: her Agent'ın kendi işi vardır ve aralarındaki iletişim iş bölümü için değil, paylaşılan kaynakların kullanımını eşgüdümlemek içindir. Claude Code artık aynı makinedeki birden çok Agent'ın birbirini keşfetmesini (Bölüm 4'teki `list_agents` tam da bunun içindir) ve birbirine mesaj göndermesini destekliyor: iki Agent aynı dosya kümesini değiştirirken çakışmayı müzakereyle çözer; makinede tek bir GPU varken iki örnek de eğitim çalıştıracaksa GPU kullanımını aralarında ayarlar.
+
 Merkezsiz modelin sonraki evrimi Agent toplumudur.
 
 [^ch10-kimi-swarm]: Moonshot AI, *Kimi Agent Swarm: 100 Sub-Agents at Scale*, 2026, https://www.kimi.com/blog/agent-swarm. GTC 2026'da sınırın 300 alt Agent'a çıktığı açıklandı; AgentEnv Temmuz 2026'da Kimi K3 ile yayımlandı.

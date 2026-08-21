@@ -491,6 +491,8 @@ MetaGPT はソフトウェア会社の標準作業手順を符号化します。
 
 > 2025 年以降、「Agent Swarm」は複数のアーキテクチャを指します。OpenAI Swarm 型の去中心化 handoff ネットワークを意味する場合と、Kimi K2.5/K3 や AgentEnv のように主 Agent が多数のサブ Agent を並列作成する大規模な管理者パターンを意味する場合があります[^ch10-kimi-swarm]。Anthropic と Manus のマルチ Agent 研究システムも orchestrator-worker 型です。
 
+**同一マシン上の複数の対等な Agent インスタンス。** 以上三つのシステムの Agent はいずれも同じ一つの仕事を協力して進めますが、各自が別々の仕事をする去中心化もあります。各 Agent は自分のタスクを持ち、相互の通信は分業のためではなく、共有資源の利用を調整するためです。Claude Code はすでに、同一マシン上の複数の Agent が互いを発見し（第 4 章の `list_agents` はまさにこのためのものです）、メッセージを送り合うことに対応しています。二つの Agent が同じファイル群を変更するときは衝突の解消を交渉し、マシンに GPU が一枚しかなく両インスタンスとも学習を回したいときは GPU の利用を調整します。
+
 去中心化パターンの次の発展が Agent 社会です。
 
 [^ch10-kimi-swarm]: Moonshot AI, *Kimi Agent Swarm: 100 Sub-Agents at Scale*, 2026, https://www.kimi.com/blog/agent-swarm。GTC 2026 では上限が 300 サブ Agent へ拡大したと発表され、AgentEnv は 2026 年 7 月に Kimi K3 とともに公開されました。

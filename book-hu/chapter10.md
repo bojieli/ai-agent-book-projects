@@ -523,6 +523,8 @@ A MetaGPT egy szoftvercég szabványos eljárásait kódolja. A szerepek Product
 
 > Az „Agent Swarm” 2025 óta több architektúrát jelölhet: OpenAI Swarm-szerű decentralizált handoff hálózatot, vagy nagy léptékű Manager-mintát, ahol a fő Agent sok párhuzamos al-Agentet indít, mint a Kimi K2.5/K3 és az AgentEnv[^ch10-kimi-swarm]. Az Anthropic és a Manus több-Agentes kutatórendszerei is orchestrator-worker csillagtopológiát használnak.
 
+**Több egyenrangú Agent-példány ugyanazon a gépen.** A fenti három rendszer Agentjei ugyanazon a feladaton dolgoznak együtt; a decentralizációnak van ezzel ellentétes fajtája is: minden Agentnek saját feladata van, és nem a munkamegosztás miatt kommunikálnak egymással, hanem hogy összehangolják a közös erőforrások használatát. A Claude Code már támogatja, hogy az azonos gépen futó Agentek felfedezzék egymást (pontosan erre való a 4. fejezet `list_agents` primitívje) és üzenetet küldjenek egymásnak: ha két Agent ugyanazt a fájlcsoportot módosítja, egyeztetik az ütközés feloldását; ha a gépben csak egy GPU van, és mindkét példánynak tanítást kell futtatnia, egyeztetik a GPU használatát.
+
 A decentralizált minta következő fejlődési lépése az Agent-társadalom.
 
 [^ch10-kimi-swarm]: Moonshot AI, *Kimi Agent Swarm: 100 Sub-Agents at Scale*, 2026, https://www.kimi.com/blog/agent-swarm. A GTC 2026-on 300 párhuzamos al-Agentes felső határt jelentettek be; az AgentEnv a Kimi K3-mal együtt, 2026 júliusában jelent meg.
