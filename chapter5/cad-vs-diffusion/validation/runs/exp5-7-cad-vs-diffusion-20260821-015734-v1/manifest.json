@@ -1,0 +1,481 @@
+{
+  "schema_version": "1.0",
+  "experiment": "5-7",
+  "run_id": "exp5-7-cad-vs-diffusion-20260821-015734-v1",
+  "generated_at_utc": "2026-08-21T02:00:09Z",
+  "python": "3.11.4",
+  "spec": {
+    "text": "法兰盘，外径 80mm，厚度 10mm，4 个均布 M5 安装孔（孔径 5.5mm），孔位圆直径 60mm",
+    "m5": {
+      "outer_diameter_mm": 80.0,
+      "thickness_mm": 10.0,
+      "hole_count": 4,
+      "hole_diameter_mm": 5.5,
+      "hole_circle_diameter_mm": 60.0
+    }
+  },
+  "change_request": {
+    "text": "安装孔从 M5 改为 M6（孔径 6.5mm）",
+    "m6": {
+      "outer_diameter_mm": 80.0,
+      "thickness_mm": 10.0,
+      "hole_count": 4,
+      "hole_diameter_mm": 6.5,
+      "hole_circle_diameter_mm": 60.0
+    }
+  },
+  "route_a": {
+    "status": "completed",
+    "approach": "Kimi (kimi-k2.5) 生成 CadQuery 代码，本地真实执行导出 STEP/STL",
+    "initial": {
+      "source_code": "output/route_a/flange_m5.py",
+      "artifacts": [
+        "output/route_a/flange_m5.step",
+        "output/route_a/flange_m5.stl"
+      ],
+      "measurement": {
+        "outer_diameter_mm": 80.0,
+        "thickness_mm": 10.0,
+        "hole_count_detected": 4,
+        "holes": [
+          {
+            "diameter_mm": 5.498860360086653,
+            "radius_mm": 30.00000011814324
+          },
+          {
+            "diameter_mm": 5.498860360086659,
+            "radius_mm": 30.0000001181432
+          },
+          {
+            "diameter_mm": 5.498860360086659,
+            "radius_mm": 30.00000011814317
+          },
+          {
+            "diameter_mm": 5.498860360086659,
+            "radius_mm": 30.000000118143205
+          }
+        ],
+        "hole_diameter_mm": 5.498860360086658,
+        "hole_circle_diameter_mm": 60.000000236286404,
+        "mounting_face_flatness_rms_mm": 0.0,
+        "mesh_watertight": true,
+        "mesh_face_count": 2532,
+        "deviations": {
+          "outer_diameter_mm": {
+            "spec": 80.0,
+            "measured": 80.0,
+            "abs_error_mm": 0.0,
+            "rel_error_pct": 0.0
+          },
+          "thickness_mm": {
+            "spec": 10.0,
+            "measured": 10.0,
+            "abs_error_mm": 0.0,
+            "rel_error_pct": 0.0
+          },
+          "hole_diameter_mm": {
+            "spec": 5.5,
+            "measured": 5.4989,
+            "abs_error_mm": -0.0011,
+            "rel_error_pct": -0.021
+          },
+          "hole_circle_diameter_mm": {
+            "spec": 60.0,
+            "measured": 60.0,
+            "abs_error_mm": 0.0,
+            "rel_error_pct": 0.0
+          },
+          "hole_count": {
+            "spec": 4,
+            "measured": 4,
+            "match": true
+          }
+        }
+      }
+    },
+    "after_change": {
+      "source_code": "output/route_a/flange_m6.py",
+      "artifacts": [
+        "output/route_a/flange_m6.step",
+        "output/route_a/flange_m6.stl"
+      ],
+      "measurement": {
+        "outer_diameter_mm": 80.0,
+        "thickness_mm": 10.0,
+        "hole_count_detected": 4,
+        "holes": [
+          {
+            "diameter_mm": 6.498652956852737,
+            "radius_mm": 29.99999998832867
+          },
+          {
+            "diameter_mm": 6.498652956852737,
+            "radius_mm": 29.9999999883287
+          },
+          {
+            "diameter_mm": 6.498652956852726,
+            "radius_mm": 29.9999999883287
+          },
+          {
+            "diameter_mm": 6.498652956852737,
+            "radius_mm": 29.99999998832869
+          }
+        ],
+        "hole_diameter_mm": 6.498652956852735,
+        "hole_circle_diameter_mm": 59.99999997665738,
+        "mounting_face_flatness_rms_mm": 0.0,
+        "mesh_watertight": true,
+        "mesh_face_count": 2532,
+        "deviations": {
+          "outer_diameter_mm": {
+            "spec": 80.0,
+            "measured": 80.0,
+            "abs_error_mm": 0.0,
+            "rel_error_pct": 0.0
+          },
+          "thickness_mm": {
+            "spec": 10.0,
+            "measured": 10.0,
+            "abs_error_mm": 0.0,
+            "rel_error_pct": 0.0
+          },
+          "hole_diameter_mm": {
+            "spec": 6.5,
+            "measured": 6.4987,
+            "abs_error_mm": -0.0013,
+            "rel_error_pct": -0.021
+          },
+          "hole_circle_diameter_mm": {
+            "spec": 60.0,
+            "measured": 60.0,
+            "abs_error_mm": -0.0,
+            "rel_error_pct": -0.0
+          },
+          "hole_count": {
+            "spec": 4,
+            "measured": 4,
+            "match": true
+          }
+        }
+      }
+    },
+    "change_cost": {
+      "file": "/Users/boj/book/ai-agent-book/chapter5/cad-vs-diffusion/output/route_a/flange_m6.py",
+      "parameter": "PARAMS.hole_diameter",
+      "old_value": "5.5",
+      "new_value": 6.5,
+      "lines_changed": 1,
+      "llm_calls": 0
+    },
+    "drift_on_unchanged_dims": {
+      "outer_diameter_mm": {
+        "before": 80.0,
+        "after": 80.0,
+        "drift": 0.0
+      },
+      "thickness_mm": {
+        "before": 10.0,
+        "after": 10.0,
+        "drift": 0.0
+      },
+      "hole_count_detected": {
+        "before": 4,
+        "after": 4,
+        "drift": 0
+      },
+      "hole_circle_diameter_mm": {
+        "before": 60.000000236286404,
+        "after": 59.99999997665738,
+        "drift": -0.0
+      },
+      "hole_diameter_mm": {
+        "before": 5.498860360086658,
+        "after": 6.498652956852735,
+        "drift": 0.9998
+      }
+    }
+  },
+  "route_b": {
+    "status": "completed",
+    "approach": "两段式 text-to-3D：Gemini (gemini-2.5-flash-image) 由规格文本生成零件图，再经 Hugging Face 公共 Space tencent/Hunyuan3D-2.1 的 /shape_generation 图生 3D（GLB）",
+    "initial": {
+      "input_image": "output/route_b/flange_m5_input.png",
+      "artifacts": [
+        "output/route_b/flange_m5.glb"
+      ],
+      "measurement": {
+        "outer_diameter_mm": 0.51860111951828,
+        "thickness_mm": 1.9892160296440125,
+        "hole_count_detected": 0,
+        "holes": [],
+        "hole_diameter_mm": null,
+        "hole_circle_diameter_mm": null,
+        "mounting_face_flatness_rms_mm": 0.030254641485798806,
+        "mesh_watertight": true,
+        "mesh_face_count": 144580,
+        "deviations": {
+          "outer_diameter_mm": {
+            "spec": 80.0,
+            "measured": 0.5186,
+            "abs_error_mm": -79.4814,
+            "rel_error_pct": -99.352
+          },
+          "thickness_mm": {
+            "spec": 10.0,
+            "measured": 1.9892,
+            "abs_error_mm": -8.0108,
+            "rel_error_pct": -80.108
+          },
+          "hole_diameter_mm": {
+            "spec": 5.5,
+            "measured": null,
+            "abs_error_mm": null,
+            "rel_error_pct": null
+          },
+          "hole_circle_diameter_mm": {
+            "spec": 60.0,
+            "measured": null,
+            "abs_error_mm": null,
+            "rel_error_pct": null
+          },
+          "hole_count": {
+            "spec": 4,
+            "measured": 0,
+            "match": false
+          }
+        }
+      }
+    },
+    "after_change": {
+      "input_image": "output/route_b/flange_m6_input.png",
+      "artifacts": [
+        "output/route_b/flange_m6.glb"
+      ],
+      "measurement": {
+        "outer_diameter_mm": 1.988262951374054,
+        "thickness_mm": 1.9877071976661682,
+        "hole_count_detected": 0,
+        "holes": [],
+        "hole_diameter_mm": null,
+        "hole_circle_diameter_mm": null,
+        "mounting_face_flatness_rms_mm": 0.005750797466827464,
+        "mesh_watertight": true,
+        "mesh_face_count": 310652,
+        "deviations": {
+          "outer_diameter_mm": {
+            "spec": 80.0,
+            "measured": 1.9883,
+            "abs_error_mm": -78.0117,
+            "rel_error_pct": -97.515
+          },
+          "thickness_mm": {
+            "spec": 10.0,
+            "measured": 1.9877,
+            "abs_error_mm": -8.0123,
+            "rel_error_pct": -80.123
+          },
+          "hole_diameter_mm": {
+            "spec": 6.5,
+            "measured": null,
+            "abs_error_mm": null,
+            "rel_error_pct": null
+          },
+          "hole_circle_diameter_mm": {
+            "spec": 60.0,
+            "measured": null,
+            "abs_error_mm": null,
+            "rel_error_pct": null
+          },
+          "hole_count": {
+            "spec": 4,
+            "measured": 0,
+            "match": false
+          }
+        }
+      }
+    },
+    "change_cost": {
+      "description": "修改提示词后两条流水线（文生图 + 图生 3D）整体重跑",
+      "llm_calls": 2,
+      "parameter_patch": null
+    },
+    "drift_on_unchanged_dims": {
+      "outer_diameter_mm": {
+        "before": 0.51860111951828,
+        "after": 1.988262951374054,
+        "drift": 1.4697
+      },
+      "thickness_mm": {
+        "before": 1.9892160296440125,
+        "after": 1.9877071976661682,
+        "drift": -0.0015
+      },
+      "hole_count_detected": {
+        "before": 0,
+        "after": 0,
+        "drift": 0
+      },
+      "hole_circle_diameter_mm": {
+        "before": null,
+        "after": null,
+        "drift": null
+      },
+      "hole_diameter_mm": {
+        "before": null,
+        "after": null,
+        "drift": null
+      }
+    }
+  },
+  "control_group": {
+    "task": "一盆绿植（带花盆的室内观叶植物），写实风格",
+    "procedural_image": "output/control/plant_procedural.png",
+    "generative_image": "output/control/plant_generative.png",
+    "vision_review": {
+      "judge_model": "moonshot-v1-8k-vision-preview",
+      "raw_response": "{\n  \"procedural\": {\"naturalness\": 3, \"comment\": \"过于简化，缺乏细节和真实感\"},\n  \"generative\": {\"naturalness\": 8, \"comment\": \"细节丰富，光影效果逼真\"},\n  \"verdict\": \"第二张图更自然，因为它具有丰富的细节和逼真的光影效果，更接近真实世界的一盆绿植。相比之下，第一张图过于简化，缺乏真实感。\"\n}\n",
+      "parsed": {
+        "procedural": {
+          "naturalness": 3,
+          "comment": "过于简化，缺乏细节和真实感"
+        },
+        "generative": {
+          "naturalness": 8,
+          "comment": "细节丰富，光影效果逼真"
+        },
+        "verdict": "第二张图更自然，因为它具有丰富的细节和逼真的光影效果，更接近真实世界的一盆绿植。相比之下，第一张图过于简化，缺乏真实感。"
+      }
+    }
+  },
+  "receipts": [
+    {
+      "name": "route-a-codegen-m5",
+      "path": "/Users/boj/book/ai-agent-book/chapter5/cad-vs-diffusion/validation/runs/exp5-7-cad-vs-diffusion-20260821-015734-v1/receipts/01-route-a-codegen-m5.json",
+      "sha256": "19109b9acf530df94175701d89282fb68f1afc8aed1a06673a298872800d20db",
+      "status": "ok",
+      "latency_ms": 76331
+    },
+    {
+      "name": "route-a-execute-m5",
+      "path": "/Users/boj/book/ai-agent-book/chapter5/cad-vs-diffusion/validation/runs/exp5-7-cad-vs-diffusion-20260821-015734-v1/receipts/02-route-a-execute-m5.json",
+      "sha256": "38f743ef835dd94125ae2efa7e641f825b0f514d8ceb40e85467b6ff293784d9",
+      "status": "ok",
+      "latency_ms": 2169
+    },
+    {
+      "name": "route-a-execute-m6",
+      "path": "/Users/boj/book/ai-agent-book/chapter5/cad-vs-diffusion/validation/runs/exp5-7-cad-vs-diffusion-20260821-015734-v1/receipts/03-route-a-execute-m6.json",
+      "sha256": "88b2e535fbad6358f3b81137de57c0a99ae785662a9c3815150b65d1876a553b",
+      "status": "ok",
+      "latency_ms": 2128
+    },
+    {
+      "name": "route-b-text2image-m5",
+      "path": "/Users/boj/book/ai-agent-book/chapter5/cad-vs-diffusion/validation/runs/exp5-7-cad-vs-diffusion-20260821-015734-v1/receipts/04-route-b-text2image-m5.json",
+      "sha256": "9a2dfb6fc4a0b4a8a3f6fca42797c8f16b66dd6e3877044376215bd1188a4e91",
+      "status": "ok",
+      "latency_ms": 6924
+    },
+    {
+      "name": "route-b-shape-gen-m5",
+      "path": "/Users/boj/book/ai-agent-book/chapter5/cad-vs-diffusion/validation/runs/exp5-7-cad-vs-diffusion-20260821-015734-v1/receipts/05-route-b-shape-gen-m5.json",
+      "sha256": "b8d204b8576c6f35253ac2722fbf8f003b964f3a0acb31a4db9a83783db79476",
+      "status": "ok",
+      "latency_ms": 27593
+    },
+    {
+      "name": "route-b-text2image-m6",
+      "path": "/Users/boj/book/ai-agent-book/chapter5/cad-vs-diffusion/validation/runs/exp5-7-cad-vs-diffusion-20260821-015734-v1/receipts/06-route-b-text2image-m6.json",
+      "sha256": "a474b5d32514143195655ca1032902bfa490e0ad3a1ade82188bc668a3eb5a77",
+      "status": "ok",
+      "latency_ms": 5898
+    },
+    {
+      "name": "route-b-shape-gen-m6",
+      "path": "/Users/boj/book/ai-agent-book/chapter5/cad-vs-diffusion/validation/runs/exp5-7-cad-vs-diffusion-20260821-015734-v1/receipts/07-route-b-shape-gen-m6.json",
+      "sha256": "76f15c665b133a00151815bc28a88a8231be4d9fe6d10a422aeefcf50ccc7905",
+      "status": "ok",
+      "latency_ms": 24628
+    },
+    {
+      "name": "control-plant-text2image",
+      "path": "/Users/boj/book/ai-agent-book/chapter5/cad-vs-diffusion/validation/runs/exp5-7-cad-vs-diffusion-20260821-015734-v1/receipts/08-control-plant-text2image.json",
+      "sha256": "bc378e914994b52384a52302af863f66bf307305a8a2094b67f9d46c70861181",
+      "status": "ok",
+      "latency_ms": 5265
+    },
+    {
+      "name": "control-plant-vision-judge",
+      "path": "/Users/boj/book/ai-agent-book/chapter5/cad-vs-diffusion/validation/runs/exp5-7-cad-vs-diffusion-20260821-015734-v1/receipts/09-control-plant-vision-judge.json",
+      "sha256": "dbf4d7fd7b7ca138fc624851f17968e956451e95b1afeb66b53d5235ab4a14e9",
+      "status": "ok",
+      "latency_ms": 3470
+    }
+  ],
+  "gates": {
+    "route_a_llm_generated_code_executed": true,
+    "route_a_step_and_stl_exported": true,
+    "route_a_dimensions_within_tolerance": true,
+    "route_b_real_external_generation": true,
+    "route_b_mesh_measured_as_is": true,
+    "change_request_route_a_single_param_patch": true,
+    "change_request_route_b_full_regeneration": true,
+    "control_group_both_images_real": true,
+    "control_group_vision_judge_real": true,
+    "receipts_complete": true
+  },
+  "artifacts": {
+    "output/route_a/flange_m5.py": {
+      "sha256": "b05c03af6af778a9b07c032037ca3ce8261a35ebff4c946fb2f2b203fd78f9b2",
+      "bytes": 464
+    },
+    "output/route_a/flange_m6.py": {
+      "sha256": "189d26f066627de370e867b26e048411e2b3d163491326a41e609d3d21ba436f",
+      "bytes": 464
+    },
+    "output/route_a/flange_m5.step": {
+      "sha256": "2a69392fa46d7eebb0561208cefa56e8ff27d51a67da0ef9c60ba5e8578a6c5b",
+      "bytes": 25598
+    },
+    "output/route_a/flange_m5.stl": {
+      "sha256": "32d89a91ee6c9e6ee941916eace441c15e9c0afe6280b7de6167ebb0a2ec3171",
+      "bytes": 126684
+    },
+    "output/route_a/flange_m6.step": {
+      "sha256": "7db53a362116a4535f4dd6c2f323db5147adfcb00f0b25d6eb5d090407ed905c",
+      "bytes": 25607
+    },
+    "output/route_a/flange_m6.stl": {
+      "sha256": "9753fd2b9052f6a4fee629791fd526e427150485473ffcaa8c5d54e0382c6e58",
+      "bytes": 126684
+    },
+    "output/route_a/_cq_driver.py": {
+      "sha256": "88297030c5f690c75e20ee7c2b9712d5c4acc47a0b91b7091915d920560aed3a",
+      "bytes": 244
+    },
+    "output/route_b/flange_m5_input.png": {
+      "sha256": "7dae75df104e7c53061291abf89deb0aa491c1fda505624748cb03f096eaeb39",
+      "bytes": 1547338
+    },
+    "output/route_b/flange_m5.glb": {
+      "sha256": "147b08d0ae9a7c0dbc69eb548cfbc9d27f6e507dbdf799a697da53bac1b98b0f",
+      "bytes": 2603732
+    },
+    "output/route_b/flange_m6_input.png": {
+      "sha256": "0001768af917bcda7ff213eaff2c7c434db115a019263bf329ed440711fdbc2d",
+      "bytes": 1375052
+    },
+    "output/route_b/flange_m6.glb": {
+      "sha256": "36504fecac778343ed6ad724bdd31e4969a8eaf366e985591f5148fa6ebd4452",
+      "bytes": 5593052
+    },
+    "output/control/plant_procedural.png": {
+      "sha256": "503210336f53dc152575b27bef0c069e7cce58e74d92919abf2666038c8f23e1",
+      "bytes": 42861
+    },
+    "output/control/plant_generative.png": {
+      "sha256": "7c9b623264e74266ff60cf0ea4f8b45c2ec668a38405bd6d1decd1560b60e740",
+      "bytes": 1738655
+    }
+  }
+}

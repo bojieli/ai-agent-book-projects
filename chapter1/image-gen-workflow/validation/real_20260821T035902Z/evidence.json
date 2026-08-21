@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "1-4",
+  "evidence_mode": "real_api",
+  "created_at": "2026-08-21T03:59:25.049318+00:00",
+  "canonical_source": "book/chapter1.md#实验-1-4-文生图工作流与原生图像生成的对照",
+  "credential_source_env": [
+    "KIMI_API_KEY",
+    "DASHSCOPE_API_KEY",
+    "GEMINI_API_KEY"
+  ],
+  "credential_value_recorded": false,
+  "host": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "python": "3.11.4 (main, Jul  5 2023, 08:40:20) [Clang 14.0.6 ]",
+    "machine": "arm64"
+  },
+  "repository": {
+    "commit": "dfff5b253cf41d8b21828b5583e2963d19de975b",
+    "branch": "exp/ch1-1-4-ch5-5-7-20260821",
+    "worktree_dirty": true
+  },
+  "requirements": [
+    {
+      "id": "agi-programmer",
+      "category": "broad",
+      "text": "帮我画一个 AGI 实现以后程序员的工作场景"
+    }
+  ],
+  "runs": [
+    {
+      "requirement_id": "agi-programmer",
+      "route": "native_gemini_pro",
+      "input": "帮我画一个 AGI 实现以后程序员的工作场景",
+      "rewrite": null,
+      "nodes": [
+        {
+          "node": "native_generate",
+          "call": {
+            "call_id": "36a4f2544d79",
+            "provider": "google",
+            "model": "gemini-3-pro-image",
+            "endpoint": "google-genai: models.generate_content",
+            "started_at": "2026-08-21T03:59:03.385199+00:00",
+            "finished_at": "2026-08-21T03:59:25.045936+00:00",
+            "latency_ms": 21660.7,
+            "status": "ok",
+            "request": {
+              "contents": "帮我画一个 AGI 实现以后程序员的工作场景",
+              "config": {
+                "response_modalities": [
+                  "IMAGE"
+                ]
+              }
+            },
+            "response_id": "CM2HavycLOGyqtsPw6Pt6Q0",
+            "usage": {
+              "prompt_tokens": 12,
+              "candidates_tokens": 1298,
+              "total_tokens": 1538
+            },
+            "error": null
+          },
+          "output": {
+            "text": null
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T035902Z/images/agi-programmer_native_gemini_pro.jpg",
+        "sha256": "d39a1bfc4544e7814782a5da362eb38cb6e63e5092991b27b32bfe1c36085475",
+        "bytes": 944313,
+        "mime": "image/jpeg"
+      },
+      "error": null
+    }
+  ],
+  "notes": [
+    "原生路线 A（gemini-3.1-flash-image-preview）：书稿指定的 gemini-3.1-pro-image-preview 在 v1beta API 中不存在（404）；ListModels 实测可用图像模型为 gemini-3.1-flash-image-preview / gemini-3-pro-image(-preview) / gemini-2.5-flash-image 等，正式运行同时采用 gemini-3.1-flash-image-preview（Flash 路线）与 gemini-3-pro-image（书稿所称 Nano Banana 2，Pro 路线）。",
+    "原生路线 B（gemini-3-pro-image / Nano Banana 2）：ListModels 实测可用，实际调用成败以留证为准。",
+    "原生路线 C（gpt-image-2 / GPT-Image 2）：OpenAI images.generations 接口，实测该账户可见 gpt-image-2 / gpt-image-1.5 / gpt-image-1，正式运行扩展至全部需求（不再仅限宽泛需求主用例）。",
+    "工作流路线生图工具：首选 SiliconFlow 托管 FLUX/SD，实测 black-forest-labs/FLUX.1-schnell 与 stabilityai/stable-diffusion-3-5-large 返回 Model disabled，账户余额为 0；OpenRouter 仅提供视觉理解模型，不支持文本转图像生成；改用 DashScope 国际站通义万相 wan2.2-t2i-flash（经典扩散式文生图，接受 SD 风格提示词）。",
+    "改写节点 LLM：Moonshot kimi-k3（OpenAI 兼容接口）；kimi-k3 只允许 temperature=1，显式传其他值被 400 拒绝。"
+  ]
+}

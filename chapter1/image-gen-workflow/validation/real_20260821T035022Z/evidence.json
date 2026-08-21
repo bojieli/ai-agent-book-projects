@@ -1,0 +1,1420 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "1-4",
+  "evidence_mode": "real_api",
+  "created_at": "2026-08-21T03:58:18.800521+00:00",
+  "canonical_source": "book/chapter1.md#实验-1-4-文生图工作流与原生图像生成的对照",
+  "credential_source_env": [
+    "KIMI_API_KEY",
+    "DASHSCOPE_API_KEY",
+    "GEMINI_API_KEY"
+  ],
+  "credential_value_recorded": false,
+  "host": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "python": "3.11.4 (main, Jul  5 2023, 08:40:20) [Clang 14.0.6 ]",
+    "machine": "arm64"
+  },
+  "repository": {
+    "commit": "dfff5b253cf41d8b21828b5583e2963d19de975b",
+    "branch": "exp/ch1-1-4-ch5-5-7-20260821",
+    "worktree_dirty": true
+  },
+  "requirements": [
+    {
+      "id": "programmer-overtime",
+      "category": "specific",
+      "text": "帮我画一个周末加班的程序员，风格丧一点"
+    },
+    {
+      "id": "windowsill-plant",
+      "category": "specific",
+      "text": "帮我画一盆放在窗台上的绿植，早晨的阳光刚好照进来"
+    },
+    {
+      "id": "headphone-poster",
+      "category": "specific",
+      "text": "帮我做一张新款降噪耳机的产品海报，主打“深夜独处也清净”这句文案，风格简约高级"
+    },
+    {
+      "id": "agi-programmer",
+      "category": "broad",
+      "text": "帮我画一个 AGI 实现以后程序员的工作场景"
+    },
+    {
+      "id": "future-city-morning",
+      "category": "broad",
+      "text": "帮我画一幅“未来城市的早晨”的画"
+    }
+  ],
+  "runs": [
+    {
+      "requirement_id": "programmer-overtime",
+      "route": "workflow",
+      "input": "帮我画一个周末加班的程序员，风格丧一点",
+      "rewrite": {
+        "prompt": "masterpiece, best quality, highly detailed, exhausted male programmer, slumped over office desk, messy hair, dark circles under eyes, lifeless expression, wrinkled hoodie, cluttered desk, dual monitors glowing with code, mechanical keyboard, empty coffee cups, instant noodle cup, crumpled papers, empty dark office at night, weekend overtime, city lights through window behind, dim lighting, cold blue screen glow, single desk lamp, muted desaturated colors, gloomy melancholic atmosphere, loneliness, digital painting, cinematic composition, soft shading",
+        "negative_prompt": "lowres, worst quality, bad anatomy, bad hands, extra fingers, missing fingers, blurry, watermark, text, signature, logo, oversaturated, bright vibrant colors, cheerful, smiling, crowded, jpeg artifacts, cropped",
+        "style_notes": "在主体上增补了黑眼圈、乱发、无精打采的表情等疲惫细节，用咖啡杯、泡面杯、空荡的深夜办公室来点出'周末加班'，并以冷蓝屏幕光、低饱和色调和昏暗灯光营造'丧'的情绪，舍弃了明亮欢快的色彩。"
+      },
+      "nodes": [
+        {
+          "node": "rewrite",
+          "call": {
+            "call_id": "59490107c41f",
+            "provider": "moonshot",
+            "model": "kimi-k3",
+            "endpoint": "https://api.moonshot.cn/v1/chat/completions",
+            "started_at": "2026-08-21T03:50:22.376264+00:00",
+            "finished_at": "2026-08-21T03:50:50.705317+00:00",
+            "latency_ms": 28329.0,
+            "status": "ok",
+            "request": {
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "你是 Stable Diffusion 风格的文生图提示词专家。用户会给你一句口语化的中文需求，\n你需要把它改写成经典文生图模型（如 Stable Diffusion / FLUX）能消化的提示词。\n\n要求：\n1. prompt 字段：逗号分隔的英文 tag，先主体后细节，包含质量词\n   （如 masterpiece, best quality, highly detailed），必要时包含画风、构图、光线、情绪词。\n2. negative_prompt 字段：逗号分隔的英文负面提示词（如 lowres, bad anatomy, blurry, watermark, text 等）。\n3. style_notes 字段：一句中文，说明你这次改写做了哪些关键增补/取舍。\n4. 只输出一个 JSON 对象，不要输出任何其他文字。格式：\n{\"prompt\": \"...\", \"negative_prompt\": \"...\", \"style_notes\": \"...\"}\n"
+                },
+                {
+                  "role": "user",
+                  "content": "帮我画一个周末加班的程序员，风格丧一点"
+                }
+              ]
+            },
+            "response_id": "chatcmpl-6a87caff3f58d027d995b258",
+            "usage": {
+              "completion_tokens": 839,
+              "prompt_tokens": 284,
+              "total_tokens": 1123,
+              "completion_tokens_details": {
+                "accepted_prediction_tokens": null,
+                "audio_tokens": null,
+                "reasoning_tokens": 594,
+                "rejected_prediction_tokens": null
+              },
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cached_tokens": 256
+              },
+              "cached_tokens": 256
+            },
+            "error": null,
+            "raw_output": "{\"prompt\": \"masterpiece, best quality, highly detailed, exhausted male programmer, slumped over office desk, messy hair, dark circles under eyes, lifeless expression, wrinkled hoodie, cluttered desk, dual monitors glowing with code, mechanical keyboard, empty coffee cups, instant noodle cup, crumpled papers, empty dark office at night, weekend overtime, city lights through window behind, dim lighting, cold blue screen glow, single desk lamp, muted desaturated colors, gloomy melancholic atmosphere, loneliness, digital painting, cinematic composition, soft shading\", \"negative_prompt\": \"lowres, worst quality, bad anatomy, bad hands, extra fingers, missing fingers, blurry, watermark, text, signature, logo, oversaturated, bright vibrant colors, cheerful, smiling, crowded, jpeg artifacts, cropped\", \"style_notes\": \"在主体上增补了黑眼圈、乱发、无精打采的表情等疲惫细节，用咖啡杯、泡面杯、空荡的深夜办公室来点出'周末加班'，并以冷蓝屏幕光、低饱和色调和昏暗灯光营造'丧'的情绪，舍弃了明亮欢快的色彩。\"}"
+          },
+          "output": {
+            "prompt": "masterpiece, best quality, highly detailed, exhausted male programmer, slumped over office desk, messy hair, dark circles under eyes, lifeless expression, wrinkled hoodie, cluttered desk, dual monitors glowing with code, mechanical keyboard, empty coffee cups, instant noodle cup, crumpled papers, empty dark office at night, weekend overtime, city lights through window behind, dim lighting, cold blue screen glow, single desk lamp, muted desaturated colors, gloomy melancholic atmosphere, loneliness, digital painting, cinematic composition, soft shading",
+            "negative_prompt": "lowres, worst quality, bad anatomy, bad hands, extra fingers, missing fingers, blurry, watermark, text, signature, logo, oversaturated, bright vibrant colors, cheerful, smiling, crowded, jpeg artifacts, cropped",
+            "style_notes": "在主体上增补了黑眼圈、乱发、无精打采的表情等疲惫细节，用咖啡杯、泡面杯、空荡的深夜办公室来点出'周末加班'，并以冷蓝屏幕光、低饱和色调和昏暗灯光营造'丧'的情绪，舍弃了明亮欢快的色彩。"
+          }
+        },
+        {
+          "node": "image_generate",
+          "calls": [
+            {
+              "call_id": "a684baa2e93b",
+              "provider": "dashscope",
+              "model": "wan2.2-t2i-flash",
+              "endpoint": "https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/text2image/image-synthesis",
+              "started_at": "2026-08-21T03:50:50.705371+00:00",
+              "finished_at": "2026-08-21T03:50:51.782243+00:00",
+              "latency_ms": 1076.9,
+              "status": "ok",
+              "request": {
+                "input": {
+                  "prompt": "masterpiece, best quality, highly detailed, exhausted male programmer, slumped over office desk, messy hair, dark circles under eyes, lifeless expression, wrinkled hoodie, cluttered desk, dual monitors glowing with code, mechanical keyboard, empty coffee cups, instant noodle cup, crumpled papers, empty dark office at night, weekend overtime, city lights through window behind, dim lighting, cold blue screen glow, single desk lamp, muted desaturated colors, gloomy melancholic atmosphere, loneliness, digital painting, cinematic composition, soft shading",
+                  "negative_prompt": "lowres, worst quality, bad anatomy, bad hands, extra fingers, missing fingers, blurry, watermark, text, signature, logo, oversaturated, bright vibrant colors, cheerful, smiling, crowded, jpeg artifacts, cropped"
+                },
+                "parameters": {
+                  "size": "1024*1024",
+                  "n": 1
+                }
+              },
+              "response_id": "8e4e6fb3-e3ff-99e4-87c3-b3be9da50c79",
+              "usage": {},
+              "error": null,
+              "task_id": "c7d689fc-a983-41af-90be-4cb9c816d040"
+            },
+            {
+              "call_id": "32ef07a1a0da",
+              "provider": "dashscope",
+              "model": "wan2.2-t2i-flash",
+              "endpoint": "https://dashscope-intl.aliyuncs.com/api/v1/tasks/c7d689fc-a983-41af-90be-4cb9c816d040",
+              "started_at": "2026-08-21T03:50:51.782343+00:00",
+              "finished_at": "2026-08-21T03:50:57.801810+00:00",
+              "latency_ms": 6019.5,
+              "status": "ok",
+              "request": {},
+              "response_id": "f831c254-6dc7-9fc3-8140-1c88f5c49948",
+              "usage": {
+                "image_count": 1
+              },
+              "error": null,
+              "task_id": "c7d689fc-a983-41af-90be-4cb9c816d040",
+              "task_metrics": {
+                "submit_time": "2026-08-21 11:50:52.374",
+                "scheduled_time": "2026-08-21 11:50:52.407",
+                "end_time": "2026-08-21 11:50:58.305"
+              },
+              "actual_prompt": "Cinematic digital painting of an exhausted male programmer slumped over a cluttered office desk at night. He has messy black hair, deep dark circles, pale skin, and a lifeless gaze; wears a wrinkled gray hoodie. Dual monitors glow with dense white-on-black code, a mechanical keyboard sits amid empty coffee cups, a half-eaten instant noodle cup, and scattered crumpled papers. A single warm desk lamp casts soft light against cold blue screen glow. Behind him, floor-to-ceiling windows reveal distan"
+            },
+            {
+              "call_id": "bf17aada1a71",
+              "provider": "dashscope",
+              "model": "wan2.2-t2i-flash",
+              "endpoint": "https://dashscope-result-sgp.oss-ap-southeast-1.aliyuncs.com/1d/51/20260821/652f5a73/c7d689fc-a983-41af-90be-4cb9c816d0402131835434.png",
+              "started_at": "2026-08-21T03:50:57.801845+00:00",
+              "finished_at": "2026-08-21T03:50:59.936307+00:00",
+              "latency_ms": 2134.5,
+              "status": "ok",
+              "request": {},
+              "response_id": null,
+              "usage": {},
+              "error": null,
+              "response_bytes": 1059575
+            }
+          ],
+          "output": {
+            "prompt_used": "masterpiece, best quality, highly detailed, exhausted male programmer, slumped over office desk, messy hair, dark circles under eyes, lifeless expression, wrinkled hoodie, cluttered desk, dual monitors glowing with code, mechanical keyboard, empty coffee cups, instant noodle cup, crumpled papers, empty dark office at night, weekend overtime, city lights through window behind, dim lighting, cold blue screen glow, single desk lamp, muted desaturated colors, gloomy melancholic atmosphere, loneliness, digital painting, cinematic composition, soft shading",
+            "negative_prompt_used": "lowres, worst quality, bad anatomy, bad hands, extra fingers, missing fingers, blurry, watermark, text, signature, logo, oversaturated, bright vibrant colors, cheerful, smiling, crowded, jpeg artifacts, cropped"
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T035022Z/images/programmer-overtime_workflow.png",
+        "sha256": "74b8bb8d315cb4d18a73b89420119992e6408a4cd66220135e0e730053c18460",
+        "bytes": 1059575,
+        "mime": "image/png"
+      },
+      "error": null
+    },
+    {
+      "requirement_id": "programmer-overtime",
+      "route": "native",
+      "input": "帮我画一个周末加班的程序员，风格丧一点",
+      "rewrite": null,
+      "nodes": [
+        {
+          "node": "native_generate",
+          "call": {
+            "call_id": "e97e7181e1b3",
+            "provider": "google",
+            "model": "gemini-3.1-flash-image-preview",
+            "endpoint": "google-genai: models.generate_content",
+            "started_at": "2026-08-21T03:51:00.444677+00:00",
+            "finished_at": "2026-08-21T03:51:10.148172+00:00",
+            "latency_ms": 9703.5,
+            "status": "ok",
+            "request": {
+              "contents": "帮我画一个周末加班的程序员，风格丧一点",
+              "config": {
+                "response_modalities": [
+                  "IMAGE"
+                ]
+              }
+            },
+            "response_id": "JcuHarr3KtvVz7IPuq2s6Qo",
+            "usage": {
+              "prompt_tokens": 13,
+              "candidates_tokens": 1616,
+              "total_tokens": 1629
+            },
+            "error": null
+          },
+          "output": {
+            "text": null
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T035022Z/images/programmer-overtime_native.jpg",
+        "sha256": "8d713ef083c5a06c90a46d77b48335a64678718a1697aa39b13a949dc31eb161",
+        "bytes": 792212,
+        "mime": "image/jpeg"
+      },
+      "error": null
+    },
+    {
+      "requirement_id": "programmer-overtime",
+      "route": "native_gemini_pro",
+      "input": "帮我画一个周末加班的程序员，风格丧一点",
+      "rewrite": null,
+      "nodes": [
+        {
+          "node": "native_generate",
+          "call": {
+            "call_id": "28ccf94130b1",
+            "provider": "google",
+            "model": "gemini-3-pro-image",
+            "endpoint": "google-genai: models.generate_content",
+            "started_at": "2026-08-21T03:51:10.150178+00:00",
+            "finished_at": "2026-08-21T03:51:27.547831+00:00",
+            "latency_ms": 17397.6,
+            "status": "ok",
+            "request": {
+              "contents": "帮我画一个周末加班的程序员，风格丧一点",
+              "config": {
+                "response_modalities": [
+                  "IMAGE"
+                ]
+              }
+            },
+            "response_id": "L8uHavbEF56wqtsP48_q8A0",
+            "usage": {
+              "prompt_tokens": 13,
+              "candidates_tokens": 1239,
+              "total_tokens": 1415
+            },
+            "error": null
+          },
+          "output": {
+            "text": null
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T035022Z/images/programmer-overtime_native_gemini_pro.jpg",
+        "sha256": "d3bb9eae3a5c0131d97a31aa7967525cb0c0ee78e8f5b6c671bbb8e05606ac35",
+        "bytes": 790652,
+        "mime": "image/jpeg"
+      },
+      "error": null
+    },
+    {
+      "requirement_id": "programmer-overtime",
+      "route": "native_gptimage",
+      "input": "帮我画一个周末加班的程序员，风格丧一点",
+      "rewrite": null,
+      "nodes": [
+        {
+          "node": "native_generate",
+          "call": {
+            "call_id": "d5ab7cf295f4",
+            "provider": "openai",
+            "model": "gpt-image-2",
+            "endpoint": "https://api.openai.com/v1/images/generations",
+            "started_at": "2026-08-21T03:51:27.550945+00:00",
+            "finished_at": "2026-08-21T03:51:54.187794+00:00",
+            "latency_ms": 26636.8,
+            "status": "ok",
+            "request": {
+              "prompt": "帮我画一个周末加班的程序员，风格丧一点",
+              "size": "1024x1024",
+              "n": 1
+            },
+            "response_id": "1787284314",
+            "usage": {
+              "input_tokens": 23,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 23
+              },
+              "output_tokens": 196,
+              "total_tokens": 219,
+              "output_tokens_details": {
+                "image_tokens": 196,
+                "text_tokens": 0
+              }
+            },
+            "error": null
+          },
+          "output": {
+            "text": null
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T035022Z/images/programmer-overtime_native_gptimage.png",
+        "sha256": "b7a83ccdf32dab7a43b2e7989e17ae0db5cdc296511d2b10bb9d2fdd47adb8ad",
+        "bytes": 1315709,
+        "mime": "image/png"
+      },
+      "error": null
+    },
+    {
+      "requirement_id": "windowsill-plant",
+      "route": "workflow",
+      "input": "帮我画一盆放在窗台上的绿植，早晨的阳光刚好照进来",
+      "rewrite": {
+        "prompt": "masterpiece, best quality, highly detailed, a potted green plant, lush vibrant green leaves, terracotta ceramic pot, placed on a wooden windowsill, morning sunlight streaming through the window, soft golden sun rays, gentle dappled light and shadow on leaves, tiny dust particles floating in the light beam, white sheer curtain, blurred cozy room interior background, shallow depth of field, bokeh, warm and fresh atmosphere, tranquil peaceful mood, photorealistic, cinematic lighting, 8k",
+        "negative_prompt": "lowres, worst quality, low quality, blurry, watermark, text, signature, logo, bad anatomy, jpeg artifacts, oversaturated, withered leaves, dead plant, deformed pot, harsh shadows, overexposed, people, hands, cluttered background",
+        "style_notes": "在主体绿植基础上增补了陶土花盆、白色纱帘、光束中的尘埃颗粒等氛围细节，用浅景深虚化室内背景突出窗台主体，并定为写实摄影风格配合电影感晨光，以呈现清晨柔和温暖的光影质感。"
+      },
+      "nodes": [
+        {
+          "node": "rewrite",
+          "call": {
+            "call_id": "467daa8883c1",
+            "provider": "moonshot",
+            "model": "kimi-k3",
+            "endpoint": "https://api.moonshot.cn/v1/chat/completions",
+            "started_at": "2026-08-21T03:51:54.189013+00:00",
+            "finished_at": "2026-08-21T03:52:16.675813+00:00",
+            "latency_ms": 22486.8,
+            "status": "ok",
+            "request": {
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "你是 Stable Diffusion 风格的文生图提示词专家。用户会给你一句口语化的中文需求，\n你需要把它改写成经典文生图模型（如 Stable Diffusion / FLUX）能消化的提示词。\n\n要求：\n1. prompt 字段：逗号分隔的英文 tag，先主体后细节，包含质量词\n   （如 masterpiece, best quality, highly detailed），必要时包含画风、构图、光线、情绪词。\n2. negative_prompt 字段：逗号分隔的英文负面提示词（如 lowres, bad anatomy, blurry, watermark, text 等）。\n3. style_notes 字段：一句中文，说明你这次改写做了哪些关键增补/取舍。\n4. 只输出一个 JSON 对象，不要输出任何其他文字。格式：\n{\"prompt\": \"...\", \"negative_prompt\": \"...\", \"style_notes\": \"...\"}\n"
+                },
+                {
+                  "role": "user",
+                  "content": "帮我画一盆放在窗台上的绿植，早晨的阳光刚好照进来"
+                }
+              ]
+            },
+            "response_id": "chatcmpl-6a87cb5b429a2485bc8ad522",
+            "usage": {
+              "completion_tokens": 859,
+              "prompt_tokens": 286,
+              "total_tokens": 1145,
+              "completion_tokens_details": {
+                "accepted_prediction_tokens": null,
+                "audio_tokens": null,
+                "reasoning_tokens": 623,
+                "rejected_prediction_tokens": null
+              },
+              "prompt_tokens_details": null
+            },
+            "error": null,
+            "raw_output": "{\"prompt\": \"masterpiece, best quality, highly detailed, a potted green plant, lush vibrant green leaves, terracotta ceramic pot, placed on a wooden windowsill, morning sunlight streaming through the window, soft golden sun rays, gentle dappled light and shadow on leaves, tiny dust particles floating in the light beam, white sheer curtain, blurred cozy room interior background, shallow depth of field, bokeh, warm and fresh atmosphere, tranquil peaceful mood, photorealistic, cinematic lighting, 8k\", \"negative_prompt\": \"lowres, worst quality, low quality, blurry, watermark, text, signature, logo, bad anatomy, jpeg artifacts, oversaturated, withered leaves, dead plant, deformed pot, harsh shadows, overexposed, people, hands, cluttered background\", \"style_notes\": \"在主体绿植基础上增补了陶土花盆、白色纱帘、光束中的尘埃颗粒等氛围细节，用浅景深虚化室内背景突出窗台主体，并定为写实摄影风格配合电影感晨光，以呈现清晨柔和温暖的光影质感。\"}"
+          },
+          "output": {
+            "prompt": "masterpiece, best quality, highly detailed, a potted green plant, lush vibrant green leaves, terracotta ceramic pot, placed on a wooden windowsill, morning sunlight streaming through the window, soft golden sun rays, gentle dappled light and shadow on leaves, tiny dust particles floating in the light beam, white sheer curtain, blurred cozy room interior background, shallow depth of field, bokeh, warm and fresh atmosphere, tranquil peaceful mood, photorealistic, cinematic lighting, 8k",
+            "negative_prompt": "lowres, worst quality, low quality, blurry, watermark, text, signature, logo, bad anatomy, jpeg artifacts, oversaturated, withered leaves, dead plant, deformed pot, harsh shadows, overexposed, people, hands, cluttered background",
+            "style_notes": "在主体绿植基础上增补了陶土花盆、白色纱帘、光束中的尘埃颗粒等氛围细节，用浅景深虚化室内背景突出窗台主体，并定为写实摄影风格配合电影感晨光，以呈现清晨柔和温暖的光影质感。"
+          }
+        },
+        {
+          "node": "image_generate",
+          "calls": [
+            {
+              "call_id": "cb3c1ce1e346",
+              "provider": "dashscope",
+              "model": "wan2.2-t2i-flash",
+              "endpoint": "https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/text2image/image-synthesis",
+              "started_at": "2026-08-21T03:52:16.675867+00:00",
+              "finished_at": "2026-08-21T03:52:17.735352+00:00",
+              "latency_ms": 1059.5,
+              "status": "ok",
+              "request": {
+                "input": {
+                  "prompt": "masterpiece, best quality, highly detailed, a potted green plant, lush vibrant green leaves, terracotta ceramic pot, placed on a wooden windowsill, morning sunlight streaming through the window, soft golden sun rays, gentle dappled light and shadow on leaves, tiny dust particles floating in the light beam, white sheer curtain, blurred cozy room interior background, shallow depth of field, bokeh, warm and fresh atmosphere, tranquil peaceful mood, photorealistic, cinematic lighting, 8k",
+                  "negative_prompt": "lowres, worst quality, low quality, blurry, watermark, text, signature, logo, bad anatomy, jpeg artifacts, oversaturated, withered leaves, dead plant, deformed pot, harsh shadows, overexposed, people, hands, cluttered background"
+                },
+                "parameters": {
+                  "size": "1024*1024",
+                  "n": 1
+                }
+              },
+              "response_id": "76df4951-6abd-97b9-93c6-2d4d8dea988b",
+              "usage": {},
+              "error": null,
+              "task_id": "b4047d4d-a924-42c1-b46a-278fc6195a83"
+            },
+            {
+              "call_id": "9427d328886c",
+              "provider": "dashscope",
+              "model": "wan2.2-t2i-flash",
+              "endpoint": "https://dashscope-intl.aliyuncs.com/api/v1/tasks/b4047d4d-a924-42c1-b46a-278fc6195a83",
+              "started_at": "2026-08-21T03:52:17.735418+00:00",
+              "finished_at": "2026-08-21T03:52:29.784958+00:00",
+              "latency_ms": 12049.5,
+              "status": "ok",
+              "request": {},
+              "response_id": "faf7d25a-2f0f-9d41-9f8b-73ceb82a97c3",
+              "usage": {
+                "image_count": 1
+              },
+              "error": null,
+              "task_id": "b4047d4d-a924-42c1-b46a-278fc6195a83",
+              "task_metrics": {
+                "submit_time": "2026-08-21 11:52:18.322",
+                "scheduled_time": "2026-08-21 11:52:18.350",
+                "end_time": "2026-08-21 11:52:24.501"
+              },
+              "actual_prompt": "Photorealistic 8K still life: A thriving potted monstera deliciosa with large, glossy, deeply fenestrated emerald-green leaves cascading from a hand-thrown terracotta pot with subtle glaze variations and natural clay texture. Positioned on a weathered light-oak windowsill bathed in soft morning light. Golden sunbeams pierce through delicate white linen curtains, casting gentle dappled shadows and illuminating suspended dust motes. Background softly blurred—hints of a cozy, sunlit living room wit"
+            },
+            {
+              "call_id": "3b80e7ddcf8b",
+              "provider": "dashscope",
+              "model": "wan2.2-t2i-flash",
+              "endpoint": "https://dashscope-result-sgp.oss-ap-southeast-1.aliyuncs.com/1d/d6/20260821/652f5a73/b4047d4d-a924-42c1-b46a-278fc6195a832873289606.png",
+              "started_at": "2026-08-21T03:52:29.785029+00:00",
+              "finished_at": "2026-08-21T03:52:31.982853+00:00",
+              "latency_ms": 2197.8,
+              "status": "ok",
+              "request": {},
+              "response_id": null,
+              "usage": {},
+              "error": null,
+              "response_bytes": 1309058
+            }
+          ],
+          "output": {
+            "prompt_used": "masterpiece, best quality, highly detailed, a potted green plant, lush vibrant green leaves, terracotta ceramic pot, placed on a wooden windowsill, morning sunlight streaming through the window, soft golden sun rays, gentle dappled light and shadow on leaves, tiny dust particles floating in the light beam, white sheer curtain, blurred cozy room interior background, shallow depth of field, bokeh, warm and fresh atmosphere, tranquil peaceful mood, photorealistic, cinematic lighting, 8k",
+            "negative_prompt_used": "lowres, worst quality, low quality, blurry, watermark, text, signature, logo, bad anatomy, jpeg artifacts, oversaturated, withered leaves, dead plant, deformed pot, harsh shadows, overexposed, people, hands, cluttered background"
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T035022Z/images/windowsill-plant_workflow.png",
+        "sha256": "6a8e165952f72d2beb6e51524c8dc64130d74284545091565e0710e4b2755c3b",
+        "bytes": 1309058,
+        "mime": "image/png"
+      },
+      "error": null
+    },
+    {
+      "requirement_id": "windowsill-plant",
+      "route": "native",
+      "input": "帮我画一盆放在窗台上的绿植，早晨的阳光刚好照进来",
+      "rewrite": null,
+      "nodes": [
+        {
+          "node": "native_generate",
+          "call": {
+            "call_id": "a5e6729c4663",
+            "provider": "google",
+            "model": "gemini-3.1-flash-image-preview",
+            "endpoint": "google-genai: models.generate_content",
+            "started_at": "2026-08-21T03:52:31.986994+00:00",
+            "finished_at": "2026-08-21T03:52:40.529461+00:00",
+            "latency_ms": 8542.5,
+            "status": "ok",
+            "request": {
+              "contents": "帮我画一盆放在窗台上的绿植，早晨的阳光刚好照进来",
+              "config": {
+                "response_modalities": [
+                  "IMAGE"
+                ]
+              }
+            },
+            "response_id": "gcuHarPID72Ez7IP6fnN8Q0",
+            "usage": {
+              "prompt_tokens": 20,
+              "candidates_tokens": 1563,
+              "total_tokens": 1583
+            },
+            "error": null
+          },
+          "output": {
+            "text": null
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T035022Z/images/windowsill-plant_native.jpg",
+        "sha256": "2f6ab50090e380c0f2d03fb8baeadb0b746c3e62441a1f0b83d3a9752af26338",
+        "bytes": 816525,
+        "mime": "image/jpeg"
+      },
+      "error": null
+    },
+    {
+      "requirement_id": "windowsill-plant",
+      "route": "native_gemini_pro",
+      "input": "帮我画一盆放在窗台上的绿植，早晨的阳光刚好照进来",
+      "rewrite": null,
+      "nodes": [
+        {
+          "node": "native_generate",
+          "call": {
+            "call_id": "e847860e42f4",
+            "provider": "google",
+            "model": "gemini-3-pro-image",
+            "endpoint": "google-genai: models.generate_content",
+            "started_at": "2026-08-21T03:52:40.533018+00:00",
+            "finished_at": "2026-08-21T03:52:58.347601+00:00",
+            "latency_ms": 17814.6,
+            "status": "ok",
+            "request": {
+              "contents": "帮我画一盆放在窗台上的绿植，早晨的阳光刚好照进来",
+              "config": {
+                "response_modalities": [
+                  "IMAGE"
+                ]
+              }
+            },
+            "response_id": "icuHavipL7m9qtsP8cPJwQo",
+            "usage": {
+              "prompt_tokens": 20,
+              "candidates_tokens": 1223,
+              "total_tokens": 1439
+            },
+            "error": null
+          },
+          "output": {
+            "text": null
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T035022Z/images/windowsill-plant_native_gemini_pro.jpg",
+        "sha256": "6153608bf3c5ade7ea2e906f14adc870a6e69afb273724bf34823e3d270b972b",
+        "bytes": 936958,
+        "mime": "image/jpeg"
+      },
+      "error": null
+    },
+    {
+      "requirement_id": "windowsill-plant",
+      "route": "native_gptimage",
+      "input": "帮我画一盆放在窗台上的绿植，早晨的阳光刚好照进来",
+      "rewrite": null,
+      "nodes": [
+        {
+          "node": "native_generate",
+          "call": {
+            "call_id": "c0f18d613130",
+            "provider": "openai",
+            "model": "gpt-image-2",
+            "endpoint": "https://api.openai.com/v1/images/generations",
+            "started_at": "2026-08-21T03:52:58.349993+00:00",
+            "finished_at": "2026-08-21T03:53:14.026881+00:00",
+            "latency_ms": 15676.9,
+            "status": "ok",
+            "request": {
+              "prompt": "帮我画一盆放在窗台上的绿植，早晨的阳光刚好照进来",
+              "size": "1024x1024",
+              "n": 1
+            },
+            "response_id": "1787284394",
+            "usage": {
+              "input_tokens": 29,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 29
+              },
+              "output_tokens": 196,
+              "total_tokens": 225,
+              "output_tokens_details": {
+                "image_tokens": 196,
+                "text_tokens": 0
+              }
+            },
+            "error": null
+          },
+          "output": {
+            "text": null
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T035022Z/images/windowsill-plant_native_gptimage.png",
+        "sha256": "cf6526d72cc81ea5f19707a375ff5287237b2c2e80fc57f65493dee18d70e8d9",
+        "bytes": 1383502,
+        "mime": "image/png"
+      },
+      "error": null
+    },
+    {
+      "requirement_id": "headphone-poster",
+      "route": "workflow",
+      "input": "帮我做一张新款降噪耳机的产品海报，主打“深夜独处也清净”这句文案，风格简约高级",
+      "rewrite": {
+        "prompt": "masterpiece, best quality, highly detailed, 8k, professional product photography, premium wireless noise-canceling headphones, matte black finish, sleek modern design, floating in mid-air, centered composition, minimalist poster layout, deep midnight blue and black gradient background, subtle moonlight glow, soft cinematic rim lighting, gentle reflection on glossy floor, generous negative space for typography, serene quiet night atmosphere, elegant, luxurious, clean commercial advertising aesthetic, sharp focus",
+        "negative_prompt": "lowres, low quality, blurry, bad anatomy, distorted shape, watermark, text, logo, signature, jpeg artifacts, cluttered background, oversaturated, harsh lighting, extra objects, people, hands, noisy, grainy, cropped",
+        "style_notes": "将“深夜独处也清净”转译为深夜蓝黑渐变背景、柔和轮廓光与大量留白的画面语言，突出简约高级感；因文生图模型生成文字效果差，刻意把文案留作空白排版区并在负面词中排除 text/watermark，方便后期自行添加 slogan。"
+      },
+      "nodes": [
+        {
+          "node": "rewrite",
+          "call": {
+            "call_id": "1b6b12b5d69e",
+            "provider": "moonshot",
+            "model": "kimi-k3",
+            "endpoint": "https://api.moonshot.cn/v1/chat/completions",
+            "started_at": "2026-08-21T03:53:14.029588+00:00",
+            "finished_at": "2026-08-21T03:53:31.199396+00:00",
+            "latency_ms": 17169.8,
+            "status": "ok",
+            "request": {
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "你是 Stable Diffusion 风格的文生图提示词专家。用户会给你一句口语化的中文需求，\n你需要把它改写成经典文生图模型（如 Stable Diffusion / FLUX）能消化的提示词。\n\n要求：\n1. prompt 字段：逗号分隔的英文 tag，先主体后细节，包含质量词\n   （如 masterpiece, best quality, highly detailed），必要时包含画风、构图、光线、情绪词。\n2. negative_prompt 字段：逗号分隔的英文负面提示词（如 lowres, bad anatomy, blurry, watermark, text 等）。\n3. style_notes 字段：一句中文，说明你这次改写做了哪些关键增补/取舍。\n4. 只输出一个 JSON 对象，不要输出任何其他文字。格式：\n{\"prompt\": \"...\", \"negative_prompt\": \"...\", \"style_notes\": \"...\"}\n"
+                },
+                {
+                  "role": "user",
+                  "content": "帮我做一张新款降噪耳机的产品海报，主打“深夜独处也清净”这句文案，风格简约高级"
+                }
+              ]
+            },
+            "response_id": "chatcmpl-6a87cbabad78f3a1f56c5aa8",
+            "usage": {
+              "completion_tokens": 533,
+              "prompt_tokens": 295,
+              "total_tokens": 828,
+              "completion_tokens_details": {
+                "accepted_prediction_tokens": null,
+                "audio_tokens": null,
+                "reasoning_tokens": 301,
+                "rejected_prediction_tokens": null
+              },
+              "prompt_tokens_details": null
+            },
+            "error": null,
+            "raw_output": "{\"prompt\": \"masterpiece, best quality, highly detailed, 8k, professional product photography, premium wireless noise-canceling headphones, matte black finish, sleek modern design, floating in mid-air, centered composition, minimalist poster layout, deep midnight blue and black gradient background, subtle moonlight glow, soft cinematic rim lighting, gentle reflection on glossy floor, generous negative space for typography, serene quiet night atmosphere, elegant, luxurious, clean commercial advertising aesthetic, sharp focus\", \"negative_prompt\": \"lowres, low quality, blurry, bad anatomy, distorted shape, watermark, text, logo, signature, jpeg artifacts, cluttered background, oversaturated, harsh lighting, extra objects, people, hands, noisy, grainy, cropped\", \"style_notes\": \"将“深夜独处也清净”转译为深夜蓝黑渐变背景、柔和轮廓光与大量留白的画面语言，突出简约高级感；因文生图模型生成文字效果差，刻意把文案留作空白排版区并在负面词中排除 text/watermark，方便后期自行添加 slogan。\"}"
+          },
+          "output": {
+            "prompt": "masterpiece, best quality, highly detailed, 8k, professional product photography, premium wireless noise-canceling headphones, matte black finish, sleek modern design, floating in mid-air, centered composition, minimalist poster layout, deep midnight blue and black gradient background, subtle moonlight glow, soft cinematic rim lighting, gentle reflection on glossy floor, generous negative space for typography, serene quiet night atmosphere, elegant, luxurious, clean commercial advertising aesthetic, sharp focus",
+            "negative_prompt": "lowres, low quality, blurry, bad anatomy, distorted shape, watermark, text, logo, signature, jpeg artifacts, cluttered background, oversaturated, harsh lighting, extra objects, people, hands, noisy, grainy, cropped",
+            "style_notes": "将“深夜独处也清净”转译为深夜蓝黑渐变背景、柔和轮廓光与大量留白的画面语言，突出简约高级感；因文生图模型生成文字效果差，刻意把文案留作空白排版区并在负面词中排除 text/watermark，方便后期自行添加 slogan。"
+          }
+        },
+        {
+          "node": "image_generate",
+          "calls": [
+            {
+              "call_id": "4163f4a2c5f9",
+              "provider": "dashscope",
+              "model": "wan2.2-t2i-flash",
+              "endpoint": "https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/text2image/image-synthesis",
+              "started_at": "2026-08-21T03:53:31.199489+00:00",
+              "finished_at": "2026-08-21T03:53:32.240732+00:00",
+              "latency_ms": 1041.3,
+              "status": "ok",
+              "request": {
+                "input": {
+                  "prompt": "masterpiece, best quality, highly detailed, 8k, professional product photography, premium wireless noise-canceling headphones, matte black finish, sleek modern design, floating in mid-air, centered composition, minimalist poster layout, deep midnight blue and black gradient background, subtle moonlight glow, soft cinematic rim lighting, gentle reflection on glossy floor, generous negative space for typography, serene quiet night atmosphere, elegant, luxurious, clean commercial advertising aesthetic, sharp focus",
+                  "negative_prompt": "lowres, low quality, blurry, bad anatomy, distorted shape, watermark, text, logo, signature, jpeg artifacts, cluttered background, oversaturated, harsh lighting, extra objects, people, hands, noisy, grainy, cropped"
+                },
+                "parameters": {
+                  "size": "1024*1024",
+                  "n": 1
+                }
+              },
+              "response_id": "f99f5a59-8f0a-92fd-b1b7-eaf457b5ebcf",
+              "usage": {},
+              "error": null,
+              "task_id": "81c599d1-8249-41c3-b0a3-f6d8e85bb8ea"
+            },
+            {
+              "call_id": "e9dc5be77027",
+              "provider": "dashscope",
+              "model": "wan2.2-t2i-flash",
+              "endpoint": "https://dashscope-intl.aliyuncs.com/api/v1/tasks/81c599d1-8249-41c3-b0a3-f6d8e85bb8ea",
+              "started_at": "2026-08-21T03:53:32.240818+00:00",
+              "finished_at": "2026-08-21T03:53:38.275321+00:00",
+              "latency_ms": 6034.5,
+              "status": "ok",
+              "request": {},
+              "response_id": "08fd9d98-47da-9ec7-9243-4d32bad05e8a",
+              "usage": {
+                "image_count": 1
+              },
+              "error": null,
+              "task_id": "81c599d1-8249-41c3-b0a3-f6d8e85bb8ea",
+              "task_metrics": {
+                "submit_time": "2026-08-21 11:53:32.848",
+                "scheduled_time": "2026-08-21 11:53:32.869",
+                "end_time": "2026-08-21 11:53:38.463"
+              },
+              "actual_prompt": "Professional 8K product photography of premium wireless noise-canceling headphones in matte black finish, featuring sleek aerodynamic contours, precision-milled aluminum ear cups, and plush memory-foam earpads with subtle stitching. Headphones float centered in mid-air against a deep midnight blue-to-black gradient backdrop, evoking a serene nocturnal sky. Soft cinematic rim lighting highlights sculptural edges; a delicate moonlight glow casts gentle specular highlights. Subtle reflection appear"
+            },
+            {
+              "call_id": "6760dbc75e75",
+              "provider": "dashscope",
+              "model": "wan2.2-t2i-flash",
+              "endpoint": "https://dashscope-result-sgp.oss-ap-southeast-1.aliyuncs.com/1d/47/20260821/652f5a73/81c599d1-8249-41c3-b0a3-f6d8e85bb8ea3139708278.png",
+              "started_at": "2026-08-21T03:53:38.275384+00:00",
+              "finished_at": "2026-08-21T03:53:40.361367+00:00",
+              "latency_ms": 2086.0,
+              "status": "ok",
+              "request": {},
+              "response_id": null,
+              "usage": {},
+              "error": null,
+              "response_bytes": 918320
+            }
+          ],
+          "output": {
+            "prompt_used": "masterpiece, best quality, highly detailed, 8k, professional product photography, premium wireless noise-canceling headphones, matte black finish, sleek modern design, floating in mid-air, centered composition, minimalist poster layout, deep midnight blue and black gradient background, subtle moonlight glow, soft cinematic rim lighting, gentle reflection on glossy floor, generous negative space for typography, serene quiet night atmosphere, elegant, luxurious, clean commercial advertising aesthetic, sharp focus",
+            "negative_prompt_used": "lowres, low quality, blurry, bad anatomy, distorted shape, watermark, text, logo, signature, jpeg artifacts, cluttered background, oversaturated, harsh lighting, extra objects, people, hands, noisy, grainy, cropped"
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T035022Z/images/headphone-poster_workflow.png",
+        "sha256": "e7cc04ff085753c0023028f713864295835d7f8b00cadb09028e13c8c1f0e02c",
+        "bytes": 918320,
+        "mime": "image/png"
+      },
+      "error": null
+    },
+    {
+      "requirement_id": "headphone-poster",
+      "route": "native",
+      "input": "帮我做一张新款降噪耳机的产品海报，主打“深夜独处也清净”这句文案，风格简约高级",
+      "rewrite": null,
+      "nodes": [
+        {
+          "node": "native_generate",
+          "call": {
+            "call_id": "e1559bb065b6",
+            "provider": "google",
+            "model": "gemini-3.1-flash-image-preview",
+            "endpoint": "google-genai: models.generate_content",
+            "started_at": "2026-08-21T03:53:40.365629+00:00",
+            "finished_at": "2026-08-21T03:53:50.688607+00:00",
+            "latency_ms": 10323.0,
+            "status": "ok",
+            "request": {
+              "contents": "帮我做一张新款降噪耳机的产品海报，主打“深夜独处也清净”这句文案，风格简约高级",
+              "config": {
+                "response_modalities": [
+                  "IMAGE"
+                ]
+              }
+            },
+            "response_id": "xcuHaoCJJo3Sz7IPtcDOsAs",
+            "usage": {
+              "prompt_tokens": 32,
+              "candidates_tokens": 1527,
+              "total_tokens": 1559
+            },
+            "error": null
+          },
+          "output": {
+            "text": null
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T035022Z/images/headphone-poster_native.jpg",
+        "sha256": "33872dc905fdb22ff5c4d8ce06fef3807d91d5ebe038d92325ceccae337a7b8f",
+        "bytes": 667407,
+        "mime": "image/jpeg"
+      },
+      "error": null
+    },
+    {
+      "requirement_id": "headphone-poster",
+      "route": "native_gemini_pro",
+      "input": "帮我做一张新款降噪耳机的产品海报，主打“深夜独处也清净”这句文案，风格简约高级",
+      "rewrite": null,
+      "nodes": [
+        {
+          "node": "native_generate",
+          "call": {
+            "call_id": "3eda4f901ebe",
+            "provider": "google",
+            "model": "gemini-3-pro-image",
+            "endpoint": "google-genai: models.generate_content",
+            "started_at": "2026-08-21T03:53:50.692071+00:00",
+            "finished_at": "2026-08-21T03:54:10.363032+00:00",
+            "latency_ms": 19670.9,
+            "status": "ok",
+            "request": {
+              "contents": "帮我做一张新款降噪耳机的产品海报，主打“深夜独处也清净”这句文案，风格简约高级",
+              "config": {
+                "response_modalities": [
+                  "IMAGE"
+                ]
+              }
+            },
+            "response_id": "0MuHasr0Aajpz7IPnPzDmQ0",
+            "usage": {
+              "prompt_tokens": 32,
+              "candidates_tokens": 1254,
+              "total_tokens": 1495
+            },
+            "error": null
+          },
+          "output": {
+            "text": null
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T035022Z/images/headphone-poster_native_gemini_pro.jpg",
+        "sha256": "4dfab83bc7e9c07836251210d11d57ac6330874a0bf07e005c568543eb90395b",
+        "bytes": 595036,
+        "mime": "image/jpeg"
+      },
+      "error": null
+    },
+    {
+      "requirement_id": "headphone-poster",
+      "route": "native_gptimage",
+      "input": "帮我做一张新款降噪耳机的产品海报，主打“深夜独处也清净”这句文案，风格简约高级",
+      "rewrite": null,
+      "nodes": [
+        {
+          "node": "native_generate",
+          "call": {
+            "call_id": "aa9f705e9600",
+            "provider": "openai",
+            "model": "gpt-image-2",
+            "endpoint": "https://api.openai.com/v1/images/generations",
+            "started_at": "2026-08-21T03:54:10.365612+00:00",
+            "finished_at": "2026-08-21T03:54:37.204928+00:00",
+            "latency_ms": 26839.3,
+            "status": "ok",
+            "request": {
+              "prompt": "帮我做一张新款降噪耳机的产品海报，主打“深夜独处也清净”这句文案，风格简约高级",
+              "size": "1024x1024",
+              "n": 1
+            },
+            "response_id": "1787284477",
+            "usage": {
+              "input_tokens": 44,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 44
+              },
+              "output_tokens": 439,
+              "total_tokens": 483,
+              "output_tokens_details": {
+                "image_tokens": 439,
+                "text_tokens": 0
+              }
+            },
+            "error": null
+          },
+          "output": {
+            "text": null
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T035022Z/images/headphone-poster_native_gptimage.png",
+        "sha256": "e700149c4c21f7e228cac85149290fe075e92adcf0d51485ccb4da88a60b0803",
+        "bytes": 1181902,
+        "mime": "image/png"
+      },
+      "error": null
+    },
+    {
+      "requirement_id": "agi-programmer",
+      "route": "workflow",
+      "input": "帮我画一个 AGI 实现以后程序员的工作场景",
+      "rewrite": {
+        "prompt": "masterpiece, best quality, highly detailed, 8k, cinematic lighting, sci-fi concept art, a programmer's workspace in the post-AGI era, relaxed young programmer leaning back in an ergonomic chair, calmly gesturing at floating holographic screens filled with glowing cascading code, translucent humanoid AI hologram assistant standing beside him generating solutions, multiple levitating transparent displays showing neural network visualizations and data streams, wearing sleek AR glasses, no keyboard, minimalist high-tech office, floor-to-ceiling windows revealing futuristic city skyline at dusk, ambient blue and cyan glow, volumetric lighting, soft rim light, depth of field, wide shot, harmonious human-AI collaboration atmosphere, contemplative mood, digital painting",
+        "negative_prompt": "lowres, bad anatomy, bad hands, missing fingers, extra fingers, extra limbs, deformed face, mutated, blurry, worst quality, low quality, jpeg artifacts, watermark, text, signature, logo, cropped, duplicate, out of frame, cluttered composition",
+        "style_notes": "把'AGI 实现后'这一抽象概念具象化为'程序员从敲代码转为监督与决策'：加入人形 AI 全息助手、悬浮代码屏幕、AR 眼镜和无键盘设定来体现时代变迁，用蓝青色环境光、落地窗未来都市和电影级打光营造科技氛围，画风定位为科幻概念艺术而非写实照片。"
+      },
+      "nodes": [
+        {
+          "node": "rewrite",
+          "call": {
+            "call_id": "8fb959f13547",
+            "provider": "moonshot",
+            "model": "kimi-k3",
+            "endpoint": "https://api.moonshot.cn/v1/chat/completions",
+            "started_at": "2026-08-21T03:54:37.207254+00:00",
+            "finished_at": "2026-08-21T03:55:07.072549+00:00",
+            "latency_ms": 29865.3,
+            "status": "ok",
+            "request": {
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "你是 Stable Diffusion 风格的文生图提示词专家。用户会给你一句口语化的中文需求，\n你需要把它改写成经典文生图模型（如 Stable Diffusion / FLUX）能消化的提示词。\n\n要求：\n1. prompt 字段：逗号分隔的英文 tag，先主体后细节，包含质量词\n   （如 masterpiece, best quality, highly detailed），必要时包含画风、构图、光线、情绪词。\n2. negative_prompt 字段：逗号分隔的英文负面提示词（如 lowres, bad anatomy, blurry, watermark, text 等）。\n3. style_notes 字段：一句中文，说明你这次改写做了哪些关键增补/取舍。\n4. 只输出一个 JSON 对象，不要输出任何其他文字。格式：\n{\"prompt\": \"...\", \"negative_prompt\": \"...\", \"style_notes\": \"...\"}\n"
+                },
+                {
+                  "role": "user",
+                  "content": "帮我画一个 AGI 实现以后程序员的工作场景"
+                }
+              ]
+            },
+            "response_id": "chatcmpl-6a87cbffd2e9119b58510f6a",
+            "usage": {
+              "completion_tokens": 915,
+              "prompt_tokens": 284,
+              "total_tokens": 1199,
+              "completion_tokens_details": {
+                "accepted_prediction_tokens": null,
+                "audio_tokens": null,
+                "reasoning_tokens": 613,
+                "rejected_prediction_tokens": null
+              },
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cached_tokens": 256
+              },
+              "cached_tokens": 256
+            },
+            "error": null,
+            "raw_output": "{\"prompt\": \"masterpiece, best quality, highly detailed, 8k, cinematic lighting, sci-fi concept art, a programmer's workspace in the post-AGI era, relaxed young programmer leaning back in an ergonomic chair, calmly gesturing at floating holographic screens filled with glowing cascading code, translucent humanoid AI hologram assistant standing beside him generating solutions, multiple levitating transparent displays showing neural network visualizations and data streams, wearing sleek AR glasses, no keyboard, minimalist high-tech office, floor-to-ceiling windows revealing futuristic city skyline at dusk, ambient blue and cyan glow, volumetric lighting, soft rim light, depth of field, wide shot, harmonious human-AI collaboration atmosphere, contemplative mood, digital painting\", \"negative_prompt\": \"lowres, bad anatomy, bad hands, missing fingers, extra fingers, extra limbs, deformed face, mutated, blurry, worst quality, low quality, jpeg artifacts, watermark, text, signature, logo, cropped, duplicate, out of frame, cluttered composition\", \"style_notes\": \"把'AGI 实现后'这一抽象概念具象化为'程序员从敲代码转为监督与决策'：加入人形 AI 全息助手、悬浮代码屏幕、AR 眼镜和无键盘设定来体现时代变迁，用蓝青色环境光、落地窗未来都市和电影级打光营造科技氛围，画风定位为科幻概念艺术而非写实照片。\"}"
+          },
+          "output": {
+            "prompt": "masterpiece, best quality, highly detailed, 8k, cinematic lighting, sci-fi concept art, a programmer's workspace in the post-AGI era, relaxed young programmer leaning back in an ergonomic chair, calmly gesturing at floating holographic screens filled with glowing cascading code, translucent humanoid AI hologram assistant standing beside him generating solutions, multiple levitating transparent displays showing neural network visualizations and data streams, wearing sleek AR glasses, no keyboard, minimalist high-tech office, floor-to-ceiling windows revealing futuristic city skyline at dusk, ambient blue and cyan glow, volumetric lighting, soft rim light, depth of field, wide shot, harmonious human-AI collaboration atmosphere, contemplative mood, digital painting",
+            "negative_prompt": "lowres, bad anatomy, bad hands, missing fingers, extra fingers, extra limbs, deformed face, mutated, blurry, worst quality, low quality, jpeg artifacts, watermark, text, signature, logo, cropped, duplicate, out of frame, cluttered composition",
+            "style_notes": "把'AGI 实现后'这一抽象概念具象化为'程序员从敲代码转为监督与决策'：加入人形 AI 全息助手、悬浮代码屏幕、AR 眼镜和无键盘设定来体现时代变迁，用蓝青色环境光、落地窗未来都市和电影级打光营造科技氛围，画风定位为科幻概念艺术而非写实照片。"
+          }
+        },
+        {
+          "node": "image_generate",
+          "calls": [
+            {
+              "call_id": "7481f23a2624",
+              "provider": "dashscope",
+              "model": "wan2.2-t2i-flash",
+              "endpoint": "https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/text2image/image-synthesis",
+              "started_at": "2026-08-21T03:55:07.072624+00:00",
+              "finished_at": "2026-08-21T03:55:08.137865+00:00",
+              "latency_ms": 1065.3,
+              "status": "ok",
+              "request": {
+                "input": {
+                  "prompt": "masterpiece, best quality, highly detailed, 8k, cinematic lighting, sci-fi concept art, a programmer's workspace in the post-AGI era, relaxed young programmer leaning back in an ergonomic chair, calmly gesturing at floating holographic screens filled with glowing cascading code, translucent humanoid AI hologram assistant standing beside him generating solutions, multiple levitating transparent displays showing neural network visualizations and data streams, wearing sleek AR glasses, no keyboard, minimalist high-tech office, floor-to-ceiling windows revealing futuristic city skyline at dusk, ambient blue and cyan glow, volumetric lighting, soft rim light, depth of field, wide shot, harmonious human-AI collaboration atmosphere, contemplative mood, digital painting",
+                  "negative_prompt": "lowres, bad anatomy, bad hands, missing fingers, extra fingers, extra limbs, deformed face, mutated, blurry, worst quality, low quality, jpeg artifacts, watermark, text, signature, logo, cropped, duplicate, out of frame, cluttered composition"
+                },
+                "parameters": {
+                  "size": "1024*1024",
+                  "n": 1
+                }
+              },
+              "response_id": "295d4c88-7da6-942b-96e6-8557af33391e",
+              "usage": {},
+              "error": null,
+              "task_id": "7c2d8982-aef4-4354-a1f1-730cd8c53394"
+            },
+            {
+              "call_id": "2fe27eee3e14",
+              "provider": "dashscope",
+              "model": "wan2.2-t2i-flash",
+              "endpoint": "https://dashscope-intl.aliyuncs.com/api/v1/tasks/7c2d8982-aef4-4354-a1f1-730cd8c53394",
+              "started_at": "2026-08-21T03:55:08.137914+00:00",
+              "finished_at": "2026-08-21T03:55:20.181941+00:00",
+              "latency_ms": 12044.1,
+              "status": "ok",
+              "request": {},
+              "response_id": "4147c9e2-b194-9e45-b195-f3ea6207ecc8",
+              "usage": {
+                "image_count": 1
+              },
+              "error": null,
+              "task_id": "7c2d8982-aef4-4354-a1f1-730cd8c53394",
+              "task_metrics": {
+                "submit_time": "2026-08-21 11:55:08.747",
+                "scheduled_time": "2026-08-21 11:55:08.771",
+                "end_time": "2026-08-21 11:55:15.331"
+              },
+              "actual_prompt": "Cinematic sci-fi digital painting, 8K resolution: A calm, focused young East Asian programmer reclines in a matte-black ergonomic chair within a minimalist high-tech office. Floor-to-ceiling windows frame a breathtaking dusk cityscape—sleek flying vehicles, tiered megastructures, and soft neon reflections. Around him float translucent holographic displays: cascading glowing code, dynamic neural network visualizations, real-time data streams, and 3D architecture schematics. Beside him stands a se"
+            },
+            {
+              "call_id": "f32986ee955e",
+              "provider": "dashscope",
+              "model": "wan2.2-t2i-flash",
+              "endpoint": "https://dashscope-result-sgp.oss-ap-southeast-1.aliyuncs.com/1d/d2/20260821/652f5a73/7c2d8982-aef4-4354-a1f1-730cd8c533941253637060.png",
+              "started_at": "2026-08-21T03:55:20.182065+00:00",
+              "finished_at": "2026-08-21T03:55:22.550181+00:00",
+              "latency_ms": 2368.1,
+              "status": "ok",
+              "request": {},
+              "response_id": null,
+              "usage": {},
+              "error": null,
+              "response_bytes": 1160318
+            }
+          ],
+          "output": {
+            "prompt_used": "masterpiece, best quality, highly detailed, 8k, cinematic lighting, sci-fi concept art, a programmer's workspace in the post-AGI era, relaxed young programmer leaning back in an ergonomic chair, calmly gesturing at floating holographic screens filled with glowing cascading code, translucent humanoid AI hologram assistant standing beside him generating solutions, multiple levitating transparent displays showing neural network visualizations and data streams, wearing sleek AR glasses, no keyboard, minimalist high-tech office, floor-to-ceiling windows revealing futuristic city skyline at dusk, ambient blue and cyan glow, volumetric lighting, soft rim light, depth of field, wide shot, harmonious human-AI collaboration atmosphere, contemplative mood, digital painting",
+            "negative_prompt_used": "lowres, bad anatomy, bad hands, missing fingers, extra fingers, extra limbs, deformed face, mutated, blurry, worst quality, low quality, jpeg artifacts, watermark, text, signature, logo, cropped, duplicate, out of frame, cluttered composition"
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T035022Z/images/agi-programmer_workflow.png",
+        "sha256": "d2d04d4b51c988631512f510dab1e35c6b69feb5977cfa08c27e712f92975283",
+        "bytes": 1160318,
+        "mime": "image/png"
+      },
+      "error": null
+    },
+    {
+      "requirement_id": "agi-programmer",
+      "route": "native",
+      "input": "帮我画一个 AGI 实现以后程序员的工作场景",
+      "rewrite": null,
+      "nodes": [
+        {
+          "node": "native_generate",
+          "call": {
+            "call_id": "e2a7eb5c77fb",
+            "provider": "google",
+            "model": "gemini-3.1-flash-image-preview",
+            "endpoint": "google-genai: models.generate_content",
+            "started_at": "2026-08-21T03:55:22.552540+00:00",
+            "finished_at": "2026-08-21T03:55:33.102409+00:00",
+            "latency_ms": 10549.9,
+            "status": "ok",
+            "request": {
+              "contents": "帮我画一个 AGI 实现以后程序员的工作场景",
+              "config": {
+                "response_modalities": [
+                  "IMAGE"
+                ]
+              }
+            },
+            "response_id": "K8yHauzAMOvjqtsP0duzkA8",
+            "usage": {
+              "prompt_tokens": 12,
+              "candidates_tokens": 1454,
+              "total_tokens": 1466
+            },
+            "error": null
+          },
+          "output": {
+            "text": null
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T035022Z/images/agi-programmer_native.jpg",
+        "sha256": "fe9b0a26f98b203b72156c6a921517530ef43f3abe51938dff2558ff4b55d635",
+        "bytes": 816621,
+        "mime": "image/jpeg"
+      },
+      "error": null
+    },
+    {
+      "requirement_id": "agi-programmer",
+      "route": "native_gemini_pro",
+      "input": "帮我画一个 AGI 实现以后程序员的工作场景",
+      "rewrite": null,
+      "nodes": [],
+      "image": null,
+      "error": "RuntimeError: Gemini Pro 原生路线调用失败: 'NoneType' object is not iterable"
+    },
+    {
+      "requirement_id": "agi-programmer",
+      "route": "native_gptimage",
+      "input": "帮我画一个 AGI 实现以后程序员的工作场景",
+      "rewrite": null,
+      "nodes": [
+        {
+          "node": "native_generate",
+          "call": {
+            "call_id": "ccddb46e6406",
+            "provider": "openai",
+            "model": "gpt-image-2",
+            "endpoint": "https://api.openai.com/v1/images/generations",
+            "started_at": "2026-08-21T03:55:59.807121+00:00",
+            "finished_at": "2026-08-21T03:56:48.127236+00:00",
+            "latency_ms": 48320.0,
+            "status": "ok",
+            "request": {
+              "prompt": "帮我画一个 AGI 实现以后程序员的工作场景",
+              "size": "1024x1024",
+              "n": 1
+            },
+            "response_id": "1787284608",
+            "usage": {
+              "input_tokens": 21,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 21
+              },
+              "output_tokens": 781,
+              "total_tokens": 802,
+              "output_tokens_details": {
+                "image_tokens": 781,
+                "text_tokens": 0
+              }
+            },
+            "error": null
+          },
+          "output": {
+            "text": null
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T035022Z/images/agi-programmer_native_gptimage.png",
+        "sha256": "f12e863e9372b94ca4ed083cd1f45484553469b6bb51d781f6f544f19eb71c63",
+        "bytes": 1413667,
+        "mime": "image/png"
+      },
+      "error": null
+    },
+    {
+      "requirement_id": "future-city-morning",
+      "route": "workflow",
+      "input": "帮我画一幅“未来城市的早晨”的画",
+      "rewrite": {
+        "prompt": "masterpiece, best quality, highly detailed, futuristic city, morning, sunrise, golden hour, soft warm sunlight, towering skyscrapers, glass and chrome architecture, flying vehicles in sky, holographic billboards, elevated maglev trains, rooftop gardens with greenery, light morning mist, volumetric light rays between buildings, atmospheric perspective, sci-fi cityscape, wide shot, cinematic composition, concept art style, vibrant colors, sharp focus",
+        "negative_prompt": "lowres, worst quality, low quality, blurry, watermark, text, signature, logo, jpeg artifacts, bad anatomy, deformed, oversaturated, underexposed, cropped, out of frame, duplicate",
+        "style_notes": "将'未来城市的早晨'拆解为清晨金色阳光+科幻都市两大核心，补充了飞行器、全息广告牌、磁悬浮轨道等未来元素，并用晨雾和体积光强化'早晨'的氛围感，构图上选择广角城市景观以展现宏大感。"
+      },
+      "nodes": [
+        {
+          "node": "rewrite",
+          "call": {
+            "call_id": "547a859ccc89",
+            "provider": "moonshot",
+            "model": "kimi-k3",
+            "endpoint": "https://api.moonshot.cn/v1/chat/completions",
+            "started_at": "2026-08-21T03:56:48.128560+00:00",
+            "finished_at": "2026-08-21T03:57:01.972582+00:00",
+            "latency_ms": 13844.0,
+            "status": "ok",
+            "request": {
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "你是 Stable Diffusion 风格的文生图提示词专家。用户会给你一句口语化的中文需求，\n你需要把它改写成经典文生图模型（如 Stable Diffusion / FLUX）能消化的提示词。\n\n要求：\n1. prompt 字段：逗号分隔的英文 tag，先主体后细节，包含质量词\n   （如 masterpiece, best quality, highly detailed），必要时包含画风、构图、光线、情绪词。\n2. negative_prompt 字段：逗号分隔的英文负面提示词（如 lowres, bad anatomy, blurry, watermark, text 等）。\n3. style_notes 字段：一句中文，说明你这次改写做了哪些关键增补/取舍。\n4. 只输出一个 JSON 对象，不要输出任何其他文字。格式：\n{\"prompt\": \"...\", \"negative_prompt\": \"...\", \"style_notes\": \"...\"}\n"
+                },
+                {
+                  "role": "user",
+                  "content": "帮我画一幅“未来城市的早晨”的画"
+                }
+              ]
+            },
+            "response_id": "chatcmpl-6a87cc81563486dcd6f08501",
+            "usage": {
+              "completion_tokens": 466,
+              "prompt_tokens": 282,
+              "total_tokens": 748,
+              "completion_tokens_details": {
+                "accepted_prediction_tokens": null,
+                "audio_tokens": null,
+                "reasoning_tokens": 250,
+                "rejected_prediction_tokens": null
+              },
+              "prompt_tokens_details": null
+            },
+            "error": null,
+            "raw_output": "{\"prompt\": \"masterpiece, best quality, highly detailed, futuristic city, morning, sunrise, golden hour, soft warm sunlight, towering skyscrapers, glass and chrome architecture, flying vehicles in sky, holographic billboards, elevated maglev trains, rooftop gardens with greenery, light morning mist, volumetric light rays between buildings, atmospheric perspective, sci-fi cityscape, wide shot, cinematic composition, concept art style, vibrant colors, sharp focus\", \"negative_prompt\": \"lowres, worst quality, low quality, blurry, watermark, text, signature, logo, jpeg artifacts, bad anatomy, deformed, oversaturated, underexposed, cropped, out of frame, duplicate\", \"style_notes\": \"将'未来城市的早晨'拆解为清晨金色阳光+科幻都市两大核心，补充了飞行器、全息广告牌、磁悬浮轨道等未来元素，并用晨雾和体积光强化'早晨'的氛围感，构图上选择广角城市景观以展现宏大感。\"}"
+          },
+          "output": {
+            "prompt": "masterpiece, best quality, highly detailed, futuristic city, morning, sunrise, golden hour, soft warm sunlight, towering skyscrapers, glass and chrome architecture, flying vehicles in sky, holographic billboards, elevated maglev trains, rooftop gardens with greenery, light morning mist, volumetric light rays between buildings, atmospheric perspective, sci-fi cityscape, wide shot, cinematic composition, concept art style, vibrant colors, sharp focus",
+            "negative_prompt": "lowres, worst quality, low quality, blurry, watermark, text, signature, logo, jpeg artifacts, bad anatomy, deformed, oversaturated, underexposed, cropped, out of frame, duplicate",
+            "style_notes": "将'未来城市的早晨'拆解为清晨金色阳光+科幻都市两大核心，补充了飞行器、全息广告牌、磁悬浮轨道等未来元素，并用晨雾和体积光强化'早晨'的氛围感，构图上选择广角城市景观以展现宏大感。"
+          }
+        },
+        {
+          "node": "image_generate",
+          "calls": [
+            {
+              "call_id": "94af6de6f823",
+              "provider": "dashscope",
+              "model": "wan2.2-t2i-flash",
+              "endpoint": "https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/text2image/image-synthesis",
+              "started_at": "2026-08-21T03:57:01.972614+00:00",
+              "finished_at": "2026-08-21T03:57:03.017143+00:00",
+              "latency_ms": 1044.6,
+              "status": "ok",
+              "request": {
+                "input": {
+                  "prompt": "masterpiece, best quality, highly detailed, futuristic city, morning, sunrise, golden hour, soft warm sunlight, towering skyscrapers, glass and chrome architecture, flying vehicles in sky, holographic billboards, elevated maglev trains, rooftop gardens with greenery, light morning mist, volumetric light rays between buildings, atmospheric perspective, sci-fi cityscape, wide shot, cinematic composition, concept art style, vibrant colors, sharp focus",
+                  "negative_prompt": "lowres, worst quality, low quality, blurry, watermark, text, signature, logo, jpeg artifacts, bad anatomy, deformed, oversaturated, underexposed, cropped, out of frame, duplicate"
+                },
+                "parameters": {
+                  "size": "1024*1024",
+                  "n": 1
+                }
+              },
+              "response_id": "088c066c-8dab-93db-8939-06ea84eef025",
+              "usage": {},
+              "error": null,
+              "task_id": "2435e75f-6f3e-43c0-965e-2559b14e05ad"
+            },
+            {
+              "call_id": "3e64a83efdc3",
+              "provider": "dashscope",
+              "model": "wan2.2-t2i-flash",
+              "endpoint": "https://dashscope-intl.aliyuncs.com/api/v1/tasks/2435e75f-6f3e-43c0-965e-2559b14e05ad",
+              "started_at": "2026-08-21T03:57:03.017258+00:00",
+              "finished_at": "2026-08-21T03:57:09.144537+00:00",
+              "latency_ms": 6127.3,
+              "status": "ok",
+              "request": {},
+              "response_id": "b3f2c3a3-1279-9e98-89f7-e60b66ca9544",
+              "usage": {
+                "image_count": 1
+              },
+              "error": null,
+              "task_id": "2435e75f-6f3e-43c0-965e-2559b14e05ad",
+              "task_metrics": {
+                "submit_time": "2026-08-21 11:57:03.626",
+                "scheduled_time": "2026-08-21 11:57:03.647",
+                "end_time": "2026-08-21 11:57:09.670"
+              },
+              "actual_prompt": "Futuristic metropolis at golden hour sunrise: sleek glass-and-chrome skyscrapers pierce soft morning mist, bathed in warm amber light. Volumetric sunbeams slice between towers, illuminating airborne vehicles gliding along designated sky-lanes and shimmering holographic billboards projecting dynamic ads. Elevated maglev trains streak silently on glowing rails above tree-lined boulevards. Rooftop gardens overflow with lush ferns, flowering vines, and solar-paneled pergolas. Distant spires fade int"
+            },
+            {
+              "call_id": "b77201d9cd3f",
+              "provider": "dashscope",
+              "model": "wan2.2-t2i-flash",
+              "endpoint": "https://dashscope-result-sgp.oss-ap-southeast-1.aliyuncs.com/1d/b0/20260821/652f5a73/2435e75f-6f3e-43c0-965e-2559b14e05ad2429038716.png",
+              "started_at": "2026-08-21T03:57:09.144709+00:00",
+              "finished_at": "2026-08-21T03:57:11.700430+00:00",
+              "latency_ms": 2555.7,
+              "status": "ok",
+              "request": {},
+              "response_id": null,
+              "usage": {},
+              "error": null,
+              "response_bytes": 1398509
+            }
+          ],
+          "output": {
+            "prompt_used": "masterpiece, best quality, highly detailed, futuristic city, morning, sunrise, golden hour, soft warm sunlight, towering skyscrapers, glass and chrome architecture, flying vehicles in sky, holographic billboards, elevated maglev trains, rooftop gardens with greenery, light morning mist, volumetric light rays between buildings, atmospheric perspective, sci-fi cityscape, wide shot, cinematic composition, concept art style, vibrant colors, sharp focus",
+            "negative_prompt_used": "lowres, worst quality, low quality, blurry, watermark, text, signature, logo, jpeg artifacts, bad anatomy, deformed, oversaturated, underexposed, cropped, out of frame, duplicate"
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T035022Z/images/future-city-morning_workflow.png",
+        "sha256": "6789857c6ecac47b548031dd62406abb621b4758da465073f4d14156db602127",
+        "bytes": 1398509,
+        "mime": "image/png"
+      },
+      "error": null
+    },
+    {
+      "requirement_id": "future-city-morning",
+      "route": "native",
+      "input": "帮我画一幅“未来城市的早晨”的画",
+      "rewrite": null,
+      "nodes": [
+        {
+          "node": "native_generate",
+          "call": {
+            "call_id": "a845ff016b8c",
+            "provider": "google",
+            "model": "gemini-3.1-flash-image-preview",
+            "endpoint": "google-genai: models.generate_content",
+            "started_at": "2026-08-21T03:57:11.704782+00:00",
+            "finished_at": "2026-08-21T03:57:20.638261+00:00",
+            "latency_ms": 8933.5,
+            "status": "ok",
+            "request": {
+              "contents": "帮我画一幅“未来城市的早晨”的画",
+              "config": {
+                "response_modalities": [
+                  "IMAGE"
+                ]
+              }
+            },
+            "response_id": "mcyHavP2ArLrz7IPvpyCiAM",
+            "usage": {
+              "prompt_tokens": 14,
+              "candidates_tokens": 1565,
+              "total_tokens": 1579
+            },
+            "error": null
+          },
+          "output": {
+            "text": null
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T035022Z/images/future-city-morning_native.jpg",
+        "sha256": "ef553715c6116dea61dfe138130d96dc9b4aa9964ab980722eef863167d35509",
+        "bytes": 1037887,
+        "mime": "image/jpeg"
+      },
+      "error": null
+    },
+    {
+      "requirement_id": "future-city-morning",
+      "route": "native_gemini_pro",
+      "input": "帮我画一幅“未来城市的早晨”的画",
+      "rewrite": null,
+      "nodes": [
+        {
+          "node": "native_generate",
+          "call": {
+            "call_id": "11d8658f1670",
+            "provider": "google",
+            "model": "gemini-3-pro-image",
+            "endpoint": "google-genai: models.generate_content",
+            "started_at": "2026-08-21T03:57:20.640135+00:00",
+            "finished_at": "2026-08-21T03:57:38.760227+00:00",
+            "latency_ms": 18120.1,
+            "status": "ok",
+            "request": {
+              "contents": "帮我画一幅“未来城市的早晨”的画",
+              "config": {
+                "response_modalities": [
+                  "IMAGE"
+                ]
+              }
+            },
+            "response_id": "ocyHasW0OvyeqtsPm-CucA",
+            "usage": {
+              "prompt_tokens": 14,
+              "candidates_tokens": 1229,
+              "total_tokens": 1462
+            },
+            "error": null
+          },
+          "output": {
+            "text": null
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T035022Z/images/future-city-morning_native_gemini_pro.jpg",
+        "sha256": "7d7682b47c9fa8cd4ed72efb23675dd3c314086e177138507f67881c7f7c7660",
+        "bytes": 946312,
+        "mime": "image/jpeg"
+      },
+      "error": null
+    },
+    {
+      "requirement_id": "future-city-morning",
+      "route": "native_gptimage",
+      "input": "帮我画一幅“未来城市的早晨”的画",
+      "rewrite": null,
+      "nodes": [
+        {
+          "node": "native_generate",
+          "call": {
+            "call_id": "35882fecda0e",
+            "provider": "openai",
+            "model": "gpt-image-2",
+            "endpoint": "https://api.openai.com/v1/images/generations",
+            "started_at": "2026-08-21T03:57:38.762644+00:00",
+            "finished_at": "2026-08-21T03:58:18.797817+00:00",
+            "latency_ms": 40035.1,
+            "status": "ok",
+            "request": {
+              "prompt": "帮我画一幅“未来城市的早晨”的画",
+              "size": "1024x1024",
+              "n": 1
+            },
+            "response_id": "1787284699",
+            "usage": {
+              "input_tokens": 19,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 19
+              },
+              "output_tokens": 781,
+              "total_tokens": 800,
+              "output_tokens_details": {
+                "image_tokens": 781,
+                "text_tokens": 0
+              }
+            },
+            "error": null
+          },
+          "output": {
+            "text": null
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T035022Z/images/future-city-morning_native_gptimage.png",
+        "sha256": "4f7587ac6cfad62e3a7e1bef98c1e3bd4acd895c3ce6218da0cb704c92b069f9",
+        "bytes": 1962802,
+        "mime": "image/png"
+      },
+      "error": null
+    }
+  ],
+  "notes": [
+    "原生路线 A（gemini-3.1-flash-image-preview）：书稿指定的 gemini-3.1-pro-image-preview 在 v1beta API 中不存在（404）；ListModels 实测可用图像模型为 gemini-3.1-flash-image-preview / gemini-3-pro-image(-preview) / gemini-2.5-flash-image 等，正式运行同时采用 gemini-3.1-flash-image-preview（Flash 路线）与 gemini-3-pro-image（书稿所称 Nano Banana 2，Pro 路线）。",
+    "原生路线 B（gemini-3-pro-image / Nano Banana 2）：ListModels 实测可用，实际调用成败以留证为准。",
+    "原生路线 C（gpt-image-2 / GPT-Image 2）：OpenAI images.generations 接口，实测该账户可见 gpt-image-2 / gpt-image-1.5 / gpt-image-1，正式运行扩展至全部需求（不再仅限宽泛需求主用例）。",
+    "工作流路线生图工具：首选 SiliconFlow 托管 FLUX/SD，实测 black-forest-labs/FLUX.1-schnell 与 stabilityai/stable-diffusion-3-5-large 返回 Model disabled，账户余额为 0；OpenRouter 仅提供视觉理解模型，不支持文本转图像生成；改用 DashScope 国际站通义万相 wan2.2-t2i-flash（经典扩散式文生图，接受 SD 风格提示词）。",
+    "改写节点 LLM：Moonshot kimi-k3（OpenAI 兼容接口）；kimi-k3 只允许 temperature=1，显式传其他值被 400 拒绝。"
+  ]
+}

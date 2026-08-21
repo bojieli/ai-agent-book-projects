@@ -1,0 +1,19 @@
+{
+  "name": "control-plant-text2image",
+  "provider": "google-gemini",
+  "endpoint": "google-genai:models/generate_content",
+  "model": "gemini-2.5-flash-image",
+  "status": "ok",
+  "started_utc": "2026-08-21T02:00:00Z",
+  "ended_utc": "2026-08-21T02:00:06Z",
+  "latency_ms": 5265,
+  "request": {
+    "model": "gemini-2.5-flash-image",
+    "contents": "一盆绿植（带花盆的室内观叶植物），写实风格，照片级真实感"
+  },
+  "response": {
+    "mime_type": "image/png",
+    "image_bytes": 1738655,
+    "saved_to": "/Users/boj/book/ai-agent-book/chapter5/cad-vs-diffusion/output/control/plant_generative.png"
+  }
+}

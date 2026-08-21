@@ -1,0 +1,10 @@
+# 实验 1-4 文生图工作流与原生图像生成的对照
+
+# 核心依赖
+openai>=1.12.0        # 改写节点（Moonshot Kimi，OpenAI 兼容接口）
+google-genai>=1.0.0   # 原生路线（Gemini 官方 SDK）
+requests>=2.31.0      # DashScope 万相异步任务与图片下载
+python-dotenv>=1.0.0  # 环境变量管理
+
+# 开发依赖
+pytest>=7.4.0         # 测试框架

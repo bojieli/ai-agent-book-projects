@@ -1,0 +1,13 @@
+cadquery==2.8.0
+trimesh>=4.5
+shapely>=2.0
+networkx>=3.0
+rtree>=1.2
+scipy>=1.11
+numpy>=1.26
+requests>=2.31
+pillow>=10.0
+matplotlib>=3.8
+google-genai>=1.0
+gradio_client>=1.0
+pytest>=8.0

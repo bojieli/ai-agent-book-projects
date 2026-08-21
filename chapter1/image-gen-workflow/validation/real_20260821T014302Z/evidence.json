@@ -1,0 +1,209 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "1-4",
+  "evidence_mode": "real_api",
+  "created_at": "2026-08-21T01:43:32.925120+00:00",
+  "canonical_source": "book/chapter1.md#实验-1-4-文生图工作流与原生图像生成的对照",
+  "credential_source_env": [
+    "KIMI_API_KEY",
+    "DASHSCOPE_API_KEY",
+    "GEMINI_API_KEY"
+  ],
+  "credential_value_recorded": false,
+  "host": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "python": "3.11.4 (main, Jul  5 2023, 08:40:20) [Clang 14.0.6 ]",
+    "machine": "arm64"
+  },
+  "repository": {
+    "commit": "2a316325d6386a8d0e97c481c02ef0d5349783ca",
+    "branch": "docs/chapter6-i18n-20260820",
+    "worktree_dirty": true
+  },
+  "requirements": [
+    {
+      "id": "programmer-overtime",
+      "text": "帮我画一个周末加班的程序员，风格丧一点"
+    },
+    {
+      "id": "windowsill-plant",
+      "text": "帮我画一盆放在窗台上的绿植，早晨的阳光刚好照进来"
+    },
+    {
+      "id": "headphone-poster",
+      "text": "帮我做一张新款降噪耳机的产品海报，主打“深夜独处也清净”这句文案，风格简约高级"
+    }
+  ],
+  "runs": [
+    {
+      "requirement_id": "programmer-overtime",
+      "route": "workflow",
+      "input": "帮我画一个周末加班的程序员，风格丧一点",
+      "rewrite": null,
+      "nodes": [],
+      "image": null,
+      "error": "RuntimeError: 改写节点调用失败: Error code: 400 - {'error': {'message': 'invalid temperature: only 1 is allowed for this model', 'type': 'invalid_request_error'}}"
+    },
+    {
+      "requirement_id": "programmer-overtime",
+      "route": "native",
+      "input": "帮我画一个周末加班的程序员，风格丧一点",
+      "rewrite": null,
+      "nodes": [
+        {
+          "node": "native_generate",
+          "call": {
+            "call_id": "745cbfeacd6f",
+            "provider": "google",
+            "model": "gemini-3.1-flash-image-preview",
+            "endpoint": "google-genai: models.generate_content",
+            "started_at": "2026-08-21T01:43:03.695676+00:00",
+            "finished_at": "2026-08-21T01:43:12.505594+00:00",
+            "latency_ms": 8810.0,
+            "status": "ok",
+            "request": {
+              "contents": "帮我画一个周末加班的程序员，风格丧一点",
+              "config": {
+                "response_modalities": [
+                  "IMAGE"
+                ]
+              }
+            },
+            "response_id": "Ka2HasObArKgz7IP0Jr2oQ0",
+            "usage": {
+              "prompt_tokens": 13,
+              "candidates_tokens": 1615,
+              "total_tokens": 1628
+            },
+            "error": null
+          },
+          "output": {
+            "text": null
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T014302Z/images/programmer-overtime_native.jpg",
+        "sha256": "b63fcd7bd081cd51d06e73980e41f30f103b671f11d2ce31209487471e290bf5",
+        "bytes": 803144,
+        "mime": "image/jpeg"
+      },
+      "error": null
+    },
+    {
+      "requirement_id": "windowsill-plant",
+      "route": "workflow",
+      "input": "帮我画一盆放在窗台上的绿植，早晨的阳光刚好照进来",
+      "rewrite": null,
+      "nodes": [],
+      "image": null,
+      "error": "RuntimeError: 改写节点调用失败: Error code: 400 - {'error': {'message': 'invalid temperature: only 1 is allowed for this model', 'type': 'invalid_request_error'}}"
+    },
+    {
+      "requirement_id": "windowsill-plant",
+      "route": "native",
+      "input": "帮我画一盆放在窗台上的绿植，早晨的阳光刚好照进来",
+      "rewrite": null,
+      "nodes": [
+        {
+          "node": "native_generate",
+          "call": {
+            "call_id": "9eea599caf12",
+            "provider": "google",
+            "model": "gemini-3.1-flash-image-preview",
+            "endpoint": "google-genai: models.generate_content",
+            "started_at": "2026-08-21T01:43:12.640698+00:00",
+            "finished_at": "2026-08-21T01:43:21.272154+00:00",
+            "latency_ms": 8631.6,
+            "status": "ok",
+            "request": {
+              "contents": "帮我画一盆放在窗台上的绿植，早晨的阳光刚好照进来",
+              "config": {
+                "response_modalities": [
+                  "IMAGE"
+                ]
+              }
+            },
+            "response_id": "Ma2HapPMO7OeqtsP6O7t-QQ",
+            "usage": {
+              "prompt_tokens": 20,
+              "candidates_tokens": 1539,
+              "total_tokens": 1559
+            },
+            "error": null
+          },
+          "output": {
+            "text": null
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T014302Z/images/windowsill-plant_native.jpg",
+        "sha256": "e6e0943d490a78154f3b7282ee27347e6c99908b0b23ff9830b5180009f2a084",
+        "bytes": 787948,
+        "mime": "image/jpeg"
+      },
+      "error": null
+    },
+    {
+      "requirement_id": "headphone-poster",
+      "route": "workflow",
+      "input": "帮我做一张新款降噪耳机的产品海报，主打“深夜独处也清净”这句文案，风格简约高级",
+      "rewrite": null,
+      "nodes": [],
+      "image": null,
+      "error": "RuntimeError: 改写节点调用失败: Error code: 400 - {'error': {'message': 'invalid temperature: only 1 is allowed for this model', 'type': 'invalid_request_error'}}"
+    },
+    {
+      "requirement_id": "headphone-poster",
+      "route": "native",
+      "input": "帮我做一张新款降噪耳机的产品海报，主打“深夜独处也清净”这句文案，风格简约高级",
+      "rewrite": null,
+      "nodes": [
+        {
+          "node": "native_generate",
+          "call": {
+            "call_id": "5d5cfaee6aab",
+            "provider": "google",
+            "model": "gemini-3.1-flash-image-preview",
+            "endpoint": "google-genai: models.generate_content",
+            "started_at": "2026-08-21T01:43:21.423677+00:00",
+            "finished_at": "2026-08-21T01:43:32.921869+00:00",
+            "latency_ms": 11498.3,
+            "status": "ok",
+            "request": {
+              "contents": "帮我做一张新款降噪耳机的产品海报，主打“深夜独处也清净”这句文案，风格简约高级",
+              "config": {
+                "response_modalities": [
+                  "IMAGE"
+                ]
+              }
+            },
+            "response_id": "Oq2HarCvMrrhz7IPmOXswQM",
+            "usage": {
+              "prompt_tokens": 32,
+              "candidates_tokens": 1613,
+              "total_tokens": 1645
+            },
+            "error": null
+          },
+          "output": {
+            "text": null
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T014302Z/images/headphone-poster_native.jpg",
+        "sha256": "71ba645fff943487adf2e30d198d2567748e0537f9d19e44a8580c4e403b1431",
+        "bytes": 697116,
+        "mime": "image/jpeg"
+      },
+      "error": null
+    }
+  ],
+  "notes": [
+    "原生路线：书稿指定的 gemini-3.1-pro-image-preview 在 v1beta API 中不存在（404）；ListModels 实测可用图像模型为 gemini-3.1-flash-image-preview / gemini-3-pro-image(-preview) / gemini-2.5-flash-image 等，正式运行采用同代的 gemini-3.1-flash-image-preview。",
+    "工作流路线生图工具：首选 SiliconFlow 托管 FLUX/SD，实测 black-forest-labs/FLUX.1-schnell 与 stabilityai/stable-diffusion-3-5-large 返回 Model disabled，账户余额为 0（Kwai-Kolors/Kolors、Tongyi-MAI/Z-Image-Turbo、Qwen/Qwen-Image 均报 balance insufficient）；改用 DashScope 国际站通义万相 wan2.2-t2i-flash（经典扩散式文生图模型，接受 SD 风格提示词与负面提示词）。",
+    "改写节点 LLM：Moonshot kimi-k3（OpenAI 兼容接口）。"
+  ]
+}

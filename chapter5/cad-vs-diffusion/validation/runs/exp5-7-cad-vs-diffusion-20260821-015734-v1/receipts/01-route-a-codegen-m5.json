@@ -1,0 +1,37 @@
+{
+  "name": "route-a-codegen-m5",
+  "provider": "moonshot",
+  "endpoint": "https://api.moonshot.cn/v1/chat/completions",
+  "model": "kimi-k2.5",
+  "status": "ok",
+  "started_utc": "2026-08-21T01:57:34Z",
+  "ended_utc": "2026-08-21T01:58:50Z",
+  "latency_ms": 76331,
+  "request": {
+    "model": "kimi-k2.5",
+    "messages": [
+      {
+        "role": "user",
+        "content": "你是机械 CAD 工程师。请用 Python CadQuery 库编写代码，构造如下零件：\n\n规格：法兰盘，外径 80mm，厚度 10mm，4 个均布 M5 安装孔（孔径 5.5mm），孔位圆直径 60mm\n\n硬性要求：\n1. 文件顶部用一个名为 PARAMS 的 dict 集中全部尺寸参数（单位 mm），键名固定为：\n   outer_diameter、thickness、hole_count、hole_diameter、hole_circle_diameter。\n   值分别为 80.0、10.0、4、5.5、60.0。\n2. 零件轴线为 Z 轴且过原点，底面在 z=0 平面。\n3. 安装孔为通孔，绕 Z 轴在孔位圆上均布。\n4. 最终实体赋值给变量 result（cq.Workplane 或 cq.Shape 均可）。\n5. 只做建模：不要读写文件、不要导出、不要打印，只 import cadquery 及标准库。\n\n只输出一个 ```python 代码块，不要任何其他解释。"
+      }
+    ],
+    "max_tokens": 8192
+  },
+  "response": {
+    "status_code": 200,
+    "content": "```python\nimport cadquery as cq\n\nPARAMS = {\n    \"outer_diameter\": 80.0,\n    \"thickness\": 10.0,\n    \"hole_count\": 4,\n    \"hole_diameter\": 5.5,\n    \"hole_circle_diameter\": 60.0\n}\n\nresult = (cq.Workplane(\"XY\")\n          .circle(PARAMS[\"outer_diameter\"] / 2.0)\n          .extrude(PARAMS[\"thickness\"])\n          .faces(\">Z\")\n          .workplane()\n          .polarArray(PARAMS[\"hole_circle_diameter\"] / 2.0, 0, 360, PARAMS[\"hole_count\"])\n          .hole(PARAMS[\"hole_diameter\"]))\n```",
+    "usage": {
+      "prompt_tokens": 244,
+      "completion_tokens": 2671,
+      "total_tokens": 2915,
+      "cached_tokens": 244,
+      "completion_tokens_details": {
+        "reasoning_tokens": 2514
+      },
+      "prompt_tokens_details": {
+        "cached_tokens": 244
+      }
+    },
+    "error": null
+  }
+}
