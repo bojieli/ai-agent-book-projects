@@ -420,7 +420,7 @@ Tabel berikut ini merangkum kerangka kerja dan platform Agent yang banyak diguna
 
 | Framework/Platform | Posisi Inti | Pola Orkestrasi | Cara Pengembangan | Skenario yang Sesuai |
 |---|---|---|---|---|
-| **OpenAI Agents SDK** | Library pengembangan Agent ringan | Otonom | Code-first | Prototipe cepat, aplikasi satu Agent |
+| **Codex Harness** | Runtime Agent sumber terbuka yang menjalankan Codex | Otonom | Code-first, dapat ditanam di aplikasi sendiri | Coding Agent, menanam Agent ke produk sendiri |
 | **Claude Agent SDK** | Framework pengembangan Agent kelas produksi | Otonom | Code-first | Tugas otonom kompleks, Coding Agent |
 | **LangChain / LangGraph** | Framework aplikasi LLM umum | Workflow + otonom | Code-first | Rantai penalaran kompleks, workflow multi-langkah |
 | **n8n** | Otomasi workflow visual | Workflow + otonom | Low-code | Otomasi bisnis, tim nonteknis |
@@ -429,6 +429,10 @@ Tabel berikut ini merangkum kerangka kerja dan platform Agent yang banyak diguna
 | **OpenClaw** | Agent personal serbaguna open-source | Otonom + berbasis event | Konfigurasi + kode | Asisten personal, Deep Research, Computer Use, pesan multiplatform |
 | **DeepSeek Harness** | Framework evolusi mandiri Agent | Semuanya adalah plugin | Code-first, mudah dikustomisasi | Developer Agent, peneliti |
 | **Pi** | Framework Coding Agent minimal | Otonom | Code-first, mudah dikustomisasi | Developer Agent |
+
+Dua baris pertama pada tabel perlu diperjelas tersendiri. Codex adalah produk Coding Agent dari OpenAI (App, CLI, ekstensi IDE), dan Codex Harness adalah lapisan runtime yang menjalankan semua bentuk tersebut[^ch1-codex-harness]. Codex Harness menyediakan tiga jalur integrasi: `codex exec` cocok untuk tugas sekali jalan di skrip dan CI; Codex SDK cocok untuk kode aplikasi pihak ketiga yang memulai, melanjutkan, dan memproses tugas secara streaming; sedangkan app-server menyediakan sesi persisten, aliran peristiwa, dan callback persetujuan melalui protokol JSON-RPC, sehingga cocok untuk menanam Agent langsung ke dalam produk. Claude Agent SDK dan Claude Code memiliki hubungan serupa, bedanya yang dibuka ke publik di sisi Claude adalah antarmuka SDK, sedangkan implementasi Harness-nya sendiri tidak bersumber terbuka.
+
+[^ch1-codex-harness]: OpenAI. "Codex as a platform: build on the open agent harness", Agustus 2026.
 
 Framework Agent berkembang dengan cepat. Saat Anda membaca buku ini, sebagian mungkin sudah usang dan framework baru telah populer. Karena itu, mempelajari API satu framework tertentu bukanlah hal yang penting. Saat memilih, pertimbangan utamanya bukan kecanggihan framework, melainkan apakah lapisan abstraksinya cukup tipis sehingga Anda dapat berfokus pada logika bisnis.
 
