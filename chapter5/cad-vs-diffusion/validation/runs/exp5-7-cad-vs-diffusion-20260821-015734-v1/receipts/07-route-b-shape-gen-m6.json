@@ -1,0 +1,47 @@
+{
+  "name": "route-b-shape-gen-m6",
+  "provider": "huggingface-space",
+  "endpoint": "tencent/Hunyuan3D-2.1:/shape_generation",
+  "model": "Hunyuan3D-2.1",
+  "status": "ok",
+  "started_utc": "2026-08-21T01:59:36Z",
+  "ended_utc": "2026-08-21T02:00:00Z",
+  "latency_ms": 24628,
+  "request": {
+    "image": "/Users/boj/book/ai-agent-book/chapter5/cad-vs-diffusion/output/route_b/flange_m6_input.png",
+    "steps": 30,
+    "guidance_scale": 5.0,
+    "seed": 1234,
+    "octree_resolution": 256,
+    "check_box_rembg": true,
+    "num_chunks": 8000,
+    "randomize_seed": false
+  },
+  "response": {
+    "mesh_stats": {
+      "model": {
+        "shapegen": "tencent/Hunyuan3D-2.1/hunyuan3d-dit-v2-1",
+        "texgen": "tencent/Hunyuan3D-2.1"
+      },
+      "params": {
+        "caption": null,
+        "steps": 30,
+        "guidance_scale": 5.0,
+        "seed": 1234,
+        "octree_resolution": 256,
+        "check_box_rembg": true,
+        "num_chunks": 8000
+      },
+      "number_of_faces": 310652,
+      "number_of_vertices": 155330,
+      "time": {
+        "remove background": 0.9825780391693115,
+        "shape generation": 16.576255798339844,
+        "export to trimesh": 0.06322741508483887,
+        "total": 17.624479293823242
+      }
+    },
+    "space_file": "/private/var/folders/0l/vk1w1b5n2fxfwdlz3f_w25_w0000gp/T/gradio/36504fecac778343ed6ad724bdd31e4969a8eaf366e985591f5148fa6ebd4452/white_mesh.glb",
+    "saved_to": "/Users/boj/book/ai-agent-book/chapter5/cad-vs-diffusion/output/route_b/flange_m6.glb"
+  }
+}

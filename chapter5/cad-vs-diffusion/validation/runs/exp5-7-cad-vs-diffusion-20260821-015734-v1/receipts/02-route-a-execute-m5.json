@@ -1,0 +1,20 @@
+{
+  "name": "route-a-execute-m5",
+  "provider": "local",
+  "endpoint": "subprocess:cadquery",
+  "model": "cadquery-exec",
+  "status": "ok",
+  "started_utc": "2026-08-21T01:58:50Z",
+  "ended_utc": "2026-08-21T01:58:53Z",
+  "latency_ms": 2169,
+  "request": {
+    "source": "/Users/boj/book/ai-agent-book/chapter5/cad-vs-diffusion/output/route_a/flange_m5.py",
+    "step": "/Users/boj/book/ai-agent-book/chapter5/cad-vs-diffusion/output/route_a/flange_m5.step",
+    "stl": "/Users/boj/book/ai-agent-book/chapter5/cad-vs-diffusion/output/route_a/flange_m5.stl"
+  },
+  "response": {
+    "returncode": 0,
+    "stdout": "exported /Users/boj/book/ai-agent-book/chapter5/cad-vs-diffusion/output/route_a/flange_m5.step /Users/boj/book/ai-agent-book/chapter5/cad-vs-diffusion/output/route_a/flange_m5.stl\n",
+    "stderr": ""
+  }
+}

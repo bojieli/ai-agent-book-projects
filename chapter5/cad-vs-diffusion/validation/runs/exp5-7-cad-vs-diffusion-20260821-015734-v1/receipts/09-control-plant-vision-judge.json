@@ -1,0 +1,55 @@
+{
+  "name": "control-plant-vision-judge",
+  "provider": "moonshot",
+  "endpoint": "https://api.moonshot.cn/v1/chat/completions",
+  "model": "moonshot-v1-8k-vision-preview",
+  "status": "ok",
+  "started_utc": "2026-08-21T02:00:06Z",
+  "ended_utc": "2026-08-21T02:00:09Z",
+  "latency_ms": 3470,
+  "request": {
+    "model": "moonshot-v1-8k-vision-preview",
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "你是图像质量评审。下面是同一任务「一盆绿植（带花盆的室内观叶植物），写实风格」的两个结果：\n- 第一张：程序化代码（matplotlib）渲染\n- 第二张：文生图模型生成\n\n请只输出 JSON（不要 markdown 代码块），格式：\n{\n  \"procedural\": {\"naturalness\": 1-10, \"comment\": \"一句话\"},\n  \"generative\": {\"naturalness\": 1-10, \"comment\": \"一句话\"},\n  \"verdict\": \"哪边更自然、为什么（两三句话）\"\n}\nnaturalness 指「看起来像真实世界的一盆绿植」的程度。"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": {
+                "_truncated_sha256": "dc88d8413cc38ff516686cec2337895eeec68a0d29a4315c1fd1e3bd87406af8",
+                "_len": 57170,
+                "_head": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgkAAAJoCAYAAADsynIHAAAAOnRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjExLjEsIGh0dHBzOi8vbWF0cGxvdGxpYi5vcmcvctoD+AAAAAlwSFlzAAATrwAAE68BY+aOwwAAptlJREFUeJ"
+              }
+            }
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": {
+                "_truncated_sha256": "ba6aeec774b3b2996f5f0bbea00abbe0de483e9b22b20056a96f611e4e9ef9d7",
+                "_len": 2318230,
+                "_head": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABAAAAAQACAIAAADwf7zUAAAXfmNhQlgAABd+anVtYgAAAB5qdW1kYzJwYQARABCAAACqADibcQNjMnBhAAAAF1hqdW1iAAAAR2p1bWRjMm1hABEAEIAAAKoAOJtxA3VybjpjMnBhOmM3MDFhNGFhLTYxYm"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "max_tokens": 1024
+  },
+  "response": {
+    "status_code": 200,
+    "content": "{\n  \"procedural\": {\"naturalness\": 3, \"comment\": \"过于简化，缺乏细节和真实感\"},\n  \"generative\": {\"naturalness\": 8, \"comment\": \"细节丰富，光影效果逼真\"},\n  \"verdict\": \"第二张图更自然，因为它具有丰富的细节和逼真的光影效果，更接近真实世界的一盆绿植。相比之下，第一张图过于简化，缺乏真实感。\"\n}\n",
+    "usage": {
+      "prompt_tokens": 2210,
+      "completion_tokens": 103,
+      "total_tokens": 2313
+    },
+    "error": null
+  }
+}

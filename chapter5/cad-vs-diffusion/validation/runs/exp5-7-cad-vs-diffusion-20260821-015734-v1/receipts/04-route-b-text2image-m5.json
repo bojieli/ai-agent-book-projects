@@ -1,0 +1,19 @@
+{
+  "name": "route-b-text2image-m5",
+  "provider": "google-gemini",
+  "endpoint": "google-genai:models/generate_content",
+  "model": "gemini-2.5-flash-image",
+  "status": "ok",
+  "started_utc": "2026-08-21T01:58:55Z",
+  "ended_utc": "2026-08-21T01:59:02Z",
+  "latency_ms": 6924,
+  "request": {
+    "model": "gemini-2.5-flash-image",
+    "contents": "产品照片：一个金属法兰盘，扁平圆柱体，端面上有 4 个均匀分布的圆形通孔，孔位于一个同心圆上。外径 80mm，厚度 10mm，孔径 5.5mm，孔位圆直径 60mm。纯色背景，正视略俯视角度，工业零件写实风格"
+  },
+  "response": {
+    "mime_type": "image/png",
+    "image_bytes": 1547338,
+    "saved_to": "/Users/boj/book/ai-agent-book/chapter5/cad-vs-diffusion/output/route_b/flange_m5_input.png"
+  }
+}

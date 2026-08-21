@@ -1,0 +1,456 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "1-4",
+  "evidence_mode": "real_api",
+  "created_at": "2026-08-21T02:06:10.833871+00:00",
+  "canonical_source": "book/chapter1.md#实验-1-4-文生图工作流与原生图像生成的对照",
+  "credential_source_env": [
+    "KIMI_API_KEY",
+    "DASHSCOPE_API_KEY",
+    "GEMINI_API_KEY"
+  ],
+  "credential_value_recorded": false,
+  "host": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "python": "3.11.4 (main, Jul  5 2023, 08:40:20) [Clang 14.0.6 ]",
+    "machine": "arm64"
+  },
+  "repository": {
+    "commit": "2a316325d6386a8d0e97c481c02ef0d5349783ca",
+    "branch": "docs/chapter6-i18n-20260820",
+    "worktree_dirty": true
+  },
+  "requirements": [
+    {
+      "id": "agi-programmer",
+      "category": "broad",
+      "text": "帮我画一个 AGI 实现以后程序员的工作场景"
+    },
+    {
+      "id": "future-city-morning",
+      "category": "broad",
+      "text": "帮我画一幅“未来城市的早晨”的画"
+    }
+  ],
+  "runs": [
+    {
+      "requirement_id": "agi-programmer",
+      "route": "workflow",
+      "input": "帮我画一个 AGI 实现以后程序员的工作场景",
+      "rewrite": {
+        "prompt": "programmer in futuristic office, young man sitting relaxed in ergonomic chair, feet on desk, sipping coffee, supervising humanoid robots typing on glowing keyboards, holographic code floating in the air, multiple transparent screens with streaming data, floor-to-ceiling window with cyberpunk city skyline at night, neon blue and cyan rim lighting, clean sci-fi interior, plants on desk, cinematic composition, wide shot, depth of field, digital painting, concept art, masterpiece, best quality, highly detailed, sharp focus, dramatic lighting, 8k",
+        "negative_prompt": "lowres, bad anatomy, bad hands, extra fingers, missing fingers, blurry, watermark, text, signature, logo, worst quality, jpeg artifacts, deformed, ugly, duplicate, out of frame, extra limbs, poorly drawn hands, poorly drawn face, mutation, cluttered composition, oversaturated",
+        "style_notes": "用「程序员悠闲喝咖啡、人形机器人写代码、全息代码漂浮」的对比画面来具象化 AGI 之后的场景，补充了赛博朋克夜景窗景、青蓝色霓虹光线与电影感构图，并选择概念插画风格以强化未来科技氛围。"
+      },
+      "nodes": [
+        {
+          "node": "rewrite",
+          "call": {
+            "call_id": "7862793e7925",
+            "provider": "moonshot",
+            "model": "kimi-k3",
+            "endpoint": "https://api.moonshot.cn/v1/chat/completions",
+            "started_at": "2026-08-21T02:04:06.305502+00:00",
+            "finished_at": "2026-08-21T02:04:30.890152+00:00",
+            "latency_ms": 24584.9,
+            "status": "ok",
+            "request": {
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "你是 Stable Diffusion 风格的文生图提示词专家。用户会给你一句口语化的中文需求，\n你需要把它改写成经典文生图模型（如 Stable Diffusion / FLUX）能消化的提示词。\n\n要求：\n1. prompt 字段：逗号分隔的英文 tag，先主体后细节，包含质量词\n   （如 masterpiece, best quality, highly detailed），必要时包含画风、构图、光线、情绪词。\n2. negative_prompt 字段：逗号分隔的英文负面提示词（如 lowres, bad anatomy, blurry, watermark, text 等）。\n3. style_notes 字段：一句中文，说明你这次改写做了哪些关键增补/取舍。\n4. 只输出一个 JSON 对象，不要输出任何其他文字。格式：\n{\"prompt\": \"...\", \"negative_prompt\": \"...\", \"style_notes\": \"...\"}\n"
+                },
+                {
+                  "role": "user",
+                  "content": "帮我画一个 AGI 实现以后程序员的工作场景"
+                }
+              ]
+            },
+            "response_id": "chatcmpl-6a87b218b07d8c6385568114",
+            "usage": {
+              "completion_tokens": 736,
+              "prompt_tokens": 284,
+              "total_tokens": 1020,
+              "completion_tokens_details": {
+                "accepted_prediction_tokens": null,
+                "audio_tokens": null,
+                "reasoning_tokens": 478,
+                "rejected_prediction_tokens": null
+              },
+              "prompt_tokens_details": null
+            },
+            "error": null,
+            "raw_output": "{\"prompt\": \"programmer in futuristic office, young man sitting relaxed in ergonomic chair, feet on desk, sipping coffee, supervising humanoid robots typing on glowing keyboards, holographic code floating in the air, multiple transparent screens with streaming data, floor-to-ceiling window with cyberpunk city skyline at night, neon blue and cyan rim lighting, clean sci-fi interior, plants on desk, cinematic composition, wide shot, depth of field, digital painting, concept art, masterpiece, best quality, highly detailed, sharp focus, dramatic lighting, 8k\", \"negative_prompt\": \"lowres, bad anatomy, bad hands, extra fingers, missing fingers, blurry, watermark, text, signature, logo, worst quality, jpeg artifacts, deformed, ugly, duplicate, out of frame, extra limbs, poorly drawn hands, poorly drawn face, mutation, cluttered composition, oversaturated\", \"style_notes\": \"用「程序员悠闲喝咖啡、人形机器人写代码、全息代码漂浮」的对比画面来具象化 AGI 之后的场景，补充了赛博朋克夜景窗景、青蓝色霓虹光线与电影感构图，并选择概念插画风格以强化未来科技氛围。\"}"
+          },
+          "output": {
+            "prompt": "programmer in futuristic office, young man sitting relaxed in ergonomic chair, feet on desk, sipping coffee, supervising humanoid robots typing on glowing keyboards, holographic code floating in the air, multiple transparent screens with streaming data, floor-to-ceiling window with cyberpunk city skyline at night, neon blue and cyan rim lighting, clean sci-fi interior, plants on desk, cinematic composition, wide shot, depth of field, digital painting, concept art, masterpiece, best quality, highly detailed, sharp focus, dramatic lighting, 8k",
+            "negative_prompt": "lowres, bad anatomy, bad hands, extra fingers, missing fingers, blurry, watermark, text, signature, logo, worst quality, jpeg artifacts, deformed, ugly, duplicate, out of frame, extra limbs, poorly drawn hands, poorly drawn face, mutation, cluttered composition, oversaturated",
+            "style_notes": "用「程序员悠闲喝咖啡、人形机器人写代码、全息代码漂浮」的对比画面来具象化 AGI 之后的场景，补充了赛博朋克夜景窗景、青蓝色霓虹光线与电影感构图，并选择概念插画风格以强化未来科技氛围。"
+          }
+        },
+        {
+          "node": "image_generate",
+          "calls": [
+            {
+              "call_id": "1298dafeade1",
+              "provider": "dashscope",
+              "model": "wan2.2-t2i-flash",
+              "endpoint": "https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/text2image/image-synthesis",
+              "started_at": "2026-08-21T02:04:30.890271+00:00",
+              "finished_at": "2026-08-21T02:04:32.063952+00:00",
+              "latency_ms": 1173.7,
+              "status": "ok",
+              "request": {
+                "input": {
+                  "prompt": "programmer in futuristic office, young man sitting relaxed in ergonomic chair, feet on desk, sipping coffee, supervising humanoid robots typing on glowing keyboards, holographic code floating in the air, multiple transparent screens with streaming data, floor-to-ceiling window with cyberpunk city skyline at night, neon blue and cyan rim lighting, clean sci-fi interior, plants on desk, cinematic composition, wide shot, depth of field, digital painting, concept art, masterpiece, best quality, highly detailed, sharp focus, dramatic lighting, 8k",
+                  "negative_prompt": "lowres, bad anatomy, bad hands, extra fingers, missing fingers, blurry, watermark, text, signature, logo, worst quality, jpeg artifacts, deformed, ugly, duplicate, out of frame, extra limbs, poorly drawn hands, poorly drawn face, mutation, cluttered composition, oversaturated"
+                },
+                "parameters": {
+                  "size": "1024*1024",
+                  "n": 1
+                }
+              },
+              "response_id": "b0c463ae-f98d-9ee0-a6bf-11ea38fe3630",
+              "usage": {},
+              "error": null,
+              "task_id": "03edd57f-753d-4c48-9b10-54b64eaebdc8"
+            },
+            {
+              "call_id": "2551e64f8adc",
+              "provider": "dashscope",
+              "model": "wan2.2-t2i-flash",
+              "endpoint": "https://dashscope-intl.aliyuncs.com/api/v1/tasks/03edd57f-753d-4c48-9b10-54b64eaebdc8",
+              "started_at": "2026-08-21T02:04:32.064038+00:00",
+              "finished_at": "2026-08-21T02:04:38.057790+00:00",
+              "latency_ms": 5993.8,
+              "status": "ok",
+              "request": {},
+              "response_id": "556bc257-097e-90b2-bf73-292820e85d6f",
+              "usage": {
+                "image_count": 1
+              },
+              "error": null,
+              "task_id": "03edd57f-753d-4c48-9b10-54b64eaebdc8",
+              "task_metrics": {
+                "submit_time": "2026-08-21 10:04:32.740",
+                "scheduled_time": "2026-08-21 10:04:32.757",
+                "end_time": "2026-08-21 10:04:38.716"
+              },
+              "actual_prompt": "Futuristic sci-fi digital painting: A confident young East Asian programmer lounges in a sleek ergonomic chair inside a high-tech office—feet propped on a minimalist desk adorned with succulents and a steaming ceramic mug. Around him, three slender humanoid robots type precisely on translucent, neon-lit keyboards emitting soft cyan glows. Holographic code streams float mid-air in layered, dynamic ribbons. Multiple curved transparent displays show real-time data visualizations. Floor-to-ceiling w"
+            },
+            {
+              "call_id": "4d6cbcb5db65",
+              "provider": "dashscope",
+              "model": "wan2.2-t2i-flash",
+              "endpoint": "https://dashscope-result-sgp.oss-ap-southeast-1.aliyuncs.com/1d/8d/20260821/652f5a73/03edd57f-753d-4c48-9b10-54b64eaebdc83716602780.png",
+              "started_at": "2026-08-21T02:04:38.057816+00:00",
+              "finished_at": "2026-08-21T02:04:40.197733+00:00",
+              "latency_ms": 2140.0,
+              "status": "ok",
+              "request": {},
+              "response_id": null,
+              "usage": {},
+              "error": null,
+              "response_bytes": 1124616
+            }
+          ],
+          "output": {
+            "prompt_used": "programmer in futuristic office, young man sitting relaxed in ergonomic chair, feet on desk, sipping coffee, supervising humanoid robots typing on glowing keyboards, holographic code floating in the air, multiple transparent screens with streaming data, floor-to-ceiling window with cyberpunk city skyline at night, neon blue and cyan rim lighting, clean sci-fi interior, plants on desk, cinematic composition, wide shot, depth of field, digital painting, concept art, masterpiece, best quality, highly detailed, sharp focus, dramatic lighting, 8k",
+            "negative_prompt_used": "lowres, bad anatomy, bad hands, extra fingers, missing fingers, blurry, watermark, text, signature, logo, worst quality, jpeg artifacts, deformed, ugly, duplicate, out of frame, extra limbs, poorly drawn hands, poorly drawn face, mutation, cluttered composition, oversaturated"
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T020405Z/images/agi-programmer_workflow.png",
+        "sha256": "2685a5dde0338c8191cddcff62c433c59bb7dfb78f8698bd38fa35d1f0d69333",
+        "bytes": 1124616,
+        "mime": "image/png"
+      },
+      "error": null
+    },
+    {
+      "requirement_id": "agi-programmer",
+      "route": "native",
+      "input": "帮我画一个 AGI 实现以后程序员的工作场景",
+      "rewrite": null,
+      "nodes": [
+        {
+          "node": "native_generate",
+          "call": {
+            "call_id": "8d69849e0f58",
+            "provider": "google",
+            "model": "gemini-3.1-flash-image-preview",
+            "endpoint": "google-genai: models.generate_content",
+            "started_at": "2026-08-21T02:04:40.348369+00:00",
+            "finished_at": "2026-08-21T02:04:52.296984+00:00",
+            "latency_ms": 11948.7,
+            "status": "ok",
+            "request": {
+              "contents": "帮我画一个 AGI 实现以后程序员的工作场景",
+              "config": {
+                "response_modalities": [
+                  "IMAGE"
+                ]
+              }
+            },
+            "response_id": "ObKHapDpNISgz7IP6qvO4A4",
+            "usage": {
+              "prompt_tokens": 12,
+              "candidates_tokens": 1656,
+              "total_tokens": 1668
+            },
+            "error": null
+          },
+          "output": {
+            "text": null
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T020405Z/images/agi-programmer_native.jpg",
+        "sha256": "112dafc3d2e68856d2452b6c8d6e8a00305768093df3c453aeff5059f7186f51",
+        "bytes": 900668,
+        "mime": "image/jpeg"
+      },
+      "error": null
+    },
+    {
+      "requirement_id": "agi-programmer",
+      "route": "native_gptimage",
+      "input": "帮我画一个 AGI 实现以后程序员的工作场景",
+      "rewrite": null,
+      "nodes": [
+        {
+          "node": "native_generate",
+          "call": {
+            "call_id": "228df929a9eb",
+            "provider": "openai",
+            "model": "gpt-image-2",
+            "endpoint": "https://api.openai.com/v1/images/generations",
+            "started_at": "2026-08-21T02:04:52.300067+00:00",
+            "finished_at": "2026-08-21T02:05:37.391142+00:00",
+            "latency_ms": 45091.6,
+            "status": "ok",
+            "request": {
+              "prompt": "帮我画一个 AGI 实现以后程序员的工作场景",
+              "size": "1024x1024",
+              "n": 1
+            },
+            "response_id": "1787277937",
+            "usage": {
+              "input_tokens": 21,
+              "input_tokens_details": {
+                "image_tokens": 0,
+                "text_tokens": 21
+              },
+              "output_tokens": 781,
+              "total_tokens": 802,
+              "output_tokens_details": {
+                "image_tokens": 781,
+                "text_tokens": 0
+              }
+            },
+            "error": null
+          },
+          "output": {
+            "text": null
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T020405Z/images/agi-programmer_native_gptimage.png",
+        "sha256": "c5819ea3d369f582d0fac70e56b686f3253bc775f1451917246941c1d9b1dc73",
+        "bytes": 1555399,
+        "mime": "image/png"
+      },
+      "error": null
+    },
+    {
+      "requirement_id": "future-city-morning",
+      "route": "workflow",
+      "input": "帮我画一幅“未来城市的早晨”的画",
+      "rewrite": {
+        "prompt": "futuristic city at dawn, sci-fi cityscape, towering glass skyscrapers, flying vehicles, sky bridges, holographic billboards, morning mist, golden hour, soft sunrise light, volumetric lighting, warm orange and cool blue tones, wide panoramic shot, concept art, digital painting, serene atmosphere, hopeful mood, masterpiece, best quality, highly detailed, 8k",
+        "negative_prompt": "lowres, bad anatomy, blurry, watermark, text, signature, worst quality, low quality, jpeg artifacts, oversaturated, deformed, ugly, duplicate, cropped, night, dark",
+        "style_notes": "将“早晨”具体化为黎明黄金时刻的暖光与晨雾，加入飞行载具、空中连廊、全息广告牌等科幻元素强化“未来感”，并选定全景构图与概念艺术画风，负面词中排除夜晚与黑暗以锁定清晨氛围。"
+      },
+      "nodes": [
+        {
+          "node": "rewrite",
+          "call": {
+            "call_id": "ca33fa4b0251",
+            "provider": "moonshot",
+            "model": "kimi-k3",
+            "endpoint": "https://api.moonshot.cn/v1/chat/completions",
+            "started_at": "2026-08-21T02:05:37.394176+00:00",
+            "finished_at": "2026-08-21T02:05:49.660371+00:00",
+            "latency_ms": 12266.3,
+            "status": "ok",
+            "request": {
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "你是 Stable Diffusion 风格的文生图提示词专家。用户会给你一句口语化的中文需求，\n你需要把它改写成经典文生图模型（如 Stable Diffusion / FLUX）能消化的提示词。\n\n要求：\n1. prompt 字段：逗号分隔的英文 tag，先主体后细节，包含质量词\n   （如 masterpiece, best quality, highly detailed），必要时包含画风、构图、光线、情绪词。\n2. negative_prompt 字段：逗号分隔的英文负面提示词（如 lowres, bad anatomy, blurry, watermark, text 等）。\n3. style_notes 字段：一句中文，说明你这次改写做了哪些关键增补/取舍。\n4. 只输出一个 JSON 对象，不要输出任何其他文字。格式：\n{\"prompt\": \"...\", \"negative_prompt\": \"...\", \"style_notes\": \"...\"}\n"
+                },
+                {
+                  "role": "user",
+                  "content": "帮我画一幅“未来城市的早晨”的画"
+                }
+              ]
+            },
+            "response_id": "chatcmpl-6a87b273fd6c68ee6accd3d9",
+            "usage": {
+              "completion_tokens": 418,
+              "prompt_tokens": 282,
+              "total_tokens": 700,
+              "completion_tokens_details": {
+                "accepted_prediction_tokens": null,
+                "audio_tokens": null,
+                "reasoning_tokens": 215,
+                "rejected_prediction_tokens": null
+              },
+              "prompt_tokens_details": null
+            },
+            "error": null,
+            "raw_output": "{\"prompt\": \"futuristic city at dawn, sci-fi cityscape, towering glass skyscrapers, flying vehicles, sky bridges, holographic billboards, morning mist, golden hour, soft sunrise light, volumetric lighting, warm orange and cool blue tones, wide panoramic shot, concept art, digital painting, serene atmosphere, hopeful mood, masterpiece, best quality, highly detailed, 8k\", \"negative_prompt\": \"lowres, bad anatomy, blurry, watermark, text, signature, worst quality, low quality, jpeg artifacts, oversaturated, deformed, ugly, duplicate, cropped, night, dark\", \"style_notes\": \"将“早晨”具体化为黎明黄金时刻的暖光与晨雾，加入飞行载具、空中连廊、全息广告牌等科幻元素强化“未来感”，并选定全景构图与概念艺术画风，负面词中排除夜晚与黑暗以锁定清晨氛围。\"}"
+          },
+          "output": {
+            "prompt": "futuristic city at dawn, sci-fi cityscape, towering glass skyscrapers, flying vehicles, sky bridges, holographic billboards, morning mist, golden hour, soft sunrise light, volumetric lighting, warm orange and cool blue tones, wide panoramic shot, concept art, digital painting, serene atmosphere, hopeful mood, masterpiece, best quality, highly detailed, 8k",
+            "negative_prompt": "lowres, bad anatomy, blurry, watermark, text, signature, worst quality, low quality, jpeg artifacts, oversaturated, deformed, ugly, duplicate, cropped, night, dark",
+            "style_notes": "将“早晨”具体化为黎明黄金时刻的暖光与晨雾，加入飞行载具、空中连廊、全息广告牌等科幻元素强化“未来感”，并选定全景构图与概念艺术画风，负面词中排除夜晚与黑暗以锁定清晨氛围。"
+          }
+        },
+        {
+          "node": "image_generate",
+          "calls": [
+            {
+              "call_id": "a668bdb317b5",
+              "provider": "dashscope",
+              "model": "wan2.2-t2i-flash",
+              "endpoint": "https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/text2image/image-synthesis",
+              "started_at": "2026-08-21T02:05:49.660402+00:00",
+              "finished_at": "2026-08-21T02:05:50.713346+00:00",
+              "latency_ms": 1053.0,
+              "status": "ok",
+              "request": {
+                "input": {
+                  "prompt": "futuristic city at dawn, sci-fi cityscape, towering glass skyscrapers, flying vehicles, sky bridges, holographic billboards, morning mist, golden hour, soft sunrise light, volumetric lighting, warm orange and cool blue tones, wide panoramic shot, concept art, digital painting, serene atmosphere, hopeful mood, masterpiece, best quality, highly detailed, 8k",
+                  "negative_prompt": "lowres, bad anatomy, blurry, watermark, text, signature, worst quality, low quality, jpeg artifacts, oversaturated, deformed, ugly, duplicate, cropped, night, dark"
+                },
+                "parameters": {
+                  "size": "1024*1024",
+                  "n": 1
+                }
+              },
+              "response_id": "2da8f798-d11f-90fd-9059-820eae6144cd",
+              "usage": {},
+              "error": null,
+              "task_id": "147e27db-92d9-4680-b17b-ed49546d7634"
+            },
+            {
+              "call_id": "73bef356d836",
+              "provider": "dashscope",
+              "model": "wan2.2-t2i-flash",
+              "endpoint": "https://dashscope-intl.aliyuncs.com/api/v1/tasks/147e27db-92d9-4680-b17b-ed49546d7634",
+              "started_at": "2026-08-21T02:05:50.713383+00:00",
+              "finished_at": "2026-08-21T02:05:56.714369+00:00",
+              "latency_ms": 6001.1,
+              "status": "ok",
+              "request": {},
+              "response_id": "b5264e46-e121-9b2b-8b25-24dd23dd6bbe",
+              "usage": {
+                "image_count": 1
+              },
+              "error": null,
+              "task_id": "147e27db-92d9-4680-b17b-ed49546d7634",
+              "task_metrics": {
+                "submit_time": "2026-08-21 10:05:51.429",
+                "scheduled_time": "2026-08-21 10:05:51.455",
+                "end_time": "2026-08-21 10:05:57.371"
+              },
+              "actual_prompt": "Futuristic metropolis at dawn: sleek, tapering glass skyscrapers with iridescent facades reflect golden-hour light; autonomous flying vehicles glide along layered aerial highways; interconnected sky bridges pulse with soft LED pathways; dynamic holographic billboards display serene nature scenes and multilingual greetings. Morning mist curls between towers, catching volumetric rays from a low sun casting long, warm orange shadows against cool cerulean sky tones. Wide panoramic composition, cinem"
+            },
+            {
+              "call_id": "3a38f5ee8af3",
+              "provider": "dashscope",
+              "model": "wan2.2-t2i-flash",
+              "endpoint": "https://dashscope-result-sgp.oss-ap-southeast-1.aliyuncs.com/1d/d5/20260821/652f5a73/147e27db-92d9-4680-b17b-ed49546d76342508299503.png",
+              "started_at": "2026-08-21T02:05:56.714435+00:00",
+              "finished_at": "2026-08-21T02:05:59.157861+00:00",
+              "latency_ms": 2443.5,
+              "status": "ok",
+              "request": {},
+              "response_id": null,
+              "usage": {},
+              "error": null,
+              "response_bytes": 1400460
+            }
+          ],
+          "output": {
+            "prompt_used": "futuristic city at dawn, sci-fi cityscape, towering glass skyscrapers, flying vehicles, sky bridges, holographic billboards, morning mist, golden hour, soft sunrise light, volumetric lighting, warm orange and cool blue tones, wide panoramic shot, concept art, digital painting, serene atmosphere, hopeful mood, masterpiece, best quality, highly detailed, 8k",
+            "negative_prompt_used": "lowres, bad anatomy, blurry, watermark, text, signature, worst quality, low quality, jpeg artifacts, oversaturated, deformed, ugly, duplicate, cropped, night, dark"
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T020405Z/images/future-city-morning_workflow.png",
+        "sha256": "c0d374ebd30dce4bc5b809ce68024d5eb766a582c4cf4c760e89e20757cba449",
+        "bytes": 1400460,
+        "mime": "image/png"
+      },
+      "error": null
+    },
+    {
+      "requirement_id": "future-city-morning",
+      "route": "native",
+      "input": "帮我画一幅“未来城市的早晨”的画",
+      "rewrite": null,
+      "nodes": [
+        {
+          "node": "native_generate",
+          "call": {
+            "call_id": "40604b49b213",
+            "provider": "google",
+            "model": "gemini-3.1-flash-image-preview",
+            "endpoint": "google-genai: models.generate_content",
+            "started_at": "2026-08-21T02:05:59.161323+00:00",
+            "finished_at": "2026-08-21T02:06:10.830839+00:00",
+            "latency_ms": 11669.6,
+            "status": "ok",
+            "request": {
+              "contents": "帮我画一幅“未来城市的早晨”的画",
+              "config": {
+                "response_modalities": [
+                  "IMAGE"
+                ]
+              }
+            },
+            "response_id": "iLKHaoeAH8vsz7IPpePqiAs",
+            "usage": {
+              "prompt_tokens": 14,
+              "candidates_tokens": 1490,
+              "total_tokens": 1504
+            },
+            "error": null
+          },
+          "output": {
+            "text": null
+          }
+        }
+      ],
+      "image": {
+        "path": "outputs/20260821T020405Z/images/future-city-morning_native.jpg",
+        "sha256": "a829ad4e2650b41becfc932106d66bf976860d06ec95b36cd2e645fc72ee14f4",
+        "bytes": 1060621,
+        "mime": "image/jpeg"
+      },
+      "error": null
+    }
+  ],
+  "notes": [
+    "原生路线：书稿指定的 gemini-3.1-pro-image-preview 在 v1beta API 中不存在（404）；ListModels 实测可用图像模型为 gemini-3.1-flash-image-preview / gemini-3-pro-image(-preview) / gemini-2.5-flash-image 等，正式运行采用同代的 gemini-3.1-flash-image-preview。",
+    "工作流路线生图工具：首选 SiliconFlow 托管 FLUX/SD，实测 black-forest-labs/FLUX.1-schnell 与 stabilityai/stable-diffusion-3-5-large 返回 Model disabled，账户余额为 0（Kwai-Kolors/Kolors、Tongyi-MAI/Z-Image-Turbo、Qwen/Qwen-Image 均报 balance insufficient）；改用 DashScope 国际站通义万相 wan2.2-t2i-flash（经典扩散式文生图模型，接受 SD 风格提示词与负面提示词）。",
+    "改写节点 LLM：Moonshot kimi-k3（OpenAI 兼容接口）。",
+    "宽泛需求扩展轮补充对照：OpenAI 图像接口模型按 gpt-image-2 试（ListModels 实测该账户可见 gpt-image-2 / gpt-image-1.5 / gpt-image-1 等）；该账户此前 GPT-5.6 因 credit_balance_exhausted 失败过，本路线成败以正式运行留证为准。"
+  ]
+}
