@@ -17,7 +17,7 @@
 <text x="490" y="155" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central"> 傷害等級:重傷二級}</text>
 <rect x="40" y="170" width="400" height="70" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
 <text x="240" y="188" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">模組化資料模式</text>
-<text x="240" y="212" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">核心模式（自首/賠償/前科）+ 罪名擴充套件模式</text>
+<text x="240" y="212" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">核心模式（自首/賠償/前科）+ 罪名擴展模式</text>
 <text x="240" y="232" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">（盜竊→涉案金額, 傷害→傷害等級）</text>
 <rect x="20" y="270" width="840" height="215" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2"/>
 <text x="440" y="293" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">階段二：因子分析與知識建模</text>

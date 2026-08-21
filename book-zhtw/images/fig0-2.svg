@@ -60,7 +60,7 @@
 <!-- Ch8, Ch9, Ch10 in parallel -->
 <rect x="30" y="350" width="248" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" stroke-dasharray="6,3"/>
 <text x="154" y="371" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" font-weight="bold">第 8 章：Agent 自我進化</text>
-<text x="154" y="392" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle">學習正規化 · 經驗學習 · 工具發現與創造</text>
+<text x="154" y="392" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle">學習範式 · 經驗學習 · 工具發現與創造</text>
 
 <rect x="286" y="350" width="248" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2" stroke-dasharray="6,3"/>
 <text x="410" y="371" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" font-weight="bold">第 9 章：多模態與實時互動</text>
