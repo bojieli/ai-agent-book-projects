@@ -8,7 +8,7 @@
 
 Teks utama memakai skeleton mekanisme singkat untuk menjelaskan alur kontrol; direktori eksperimen berisi adapter SDK lengkap, log, pengujian, dan bukti penerimaan. Anda tidak perlu membaca setiap berkas baris demi baris.
 
-- **Starter:** Mulai dari tujuan, perintah minimum, dan syarat penerimaan; awali dengan [async-agent](async-agent/);
+- **Starter:** Mulai dari tujuan, perintah minimum, dan syarat penerimaan; awali dengan [execution-tools](execution-tools/);
 - **Builder:** Telusuri titik masuk, loop inti, skema status/pesan, alat, dan verifier.
 - **Maintainer:** Terakhir, baca pengujian, manifest bukti, penanganan kegagalan, rollback, dan adapter provider.
 

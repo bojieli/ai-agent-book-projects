@@ -34,7 +34,7 @@ Tất cả thí nghiệm trên đều có lối chạy offline và unit test kh�
 
 | Thí nghiệm | Project | Quan hệ |
 | :--: | --- | --- |
-| 7-8 | [prompt-distillation](prompt-distillation/) | Dự án xuyên chương về chưng cất prompt và học tham số hóa; phương pháp huấn luyện thuộc Chương 7 |
+| 8-8 | [prompt-distillation](../chapter8/prompt-distillation/) | Dự án xuyên chương về chưng cất prompt và học tham số hóa; phương pháp huấn luyện thuộc Chương 8 |
 | — | [self-evolving-tools](self-evolving-tools/) | Khám phá, đóng gói và tái sử dụng công cụ kiểu Alita — trường hợp bổ sung của “viết kinh nghiệm thành chương trình” |
 
 ## Phân loại dự án

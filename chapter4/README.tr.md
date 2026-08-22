@@ -8,7 +8,7 @@
 
 Metin, kontrol akışını açıklamak için kısa mekanizma skeleton'ları kullanır; deney dizininde tam SDK adaptörleri, günlükler, testler ve kabul kanıtı bulunur. Her dosyayı satır satır okumanız gerekmez.
 
-- **Starter:** Hedef, en kısa komut ve kabul koşullarıyla başlayın; önce [async-agent](async-agent/);
+- **Starter:** Hedef, en kısa komut ve kabul koşullarıyla başlayın; önce [execution-tools](execution-tools/);
 - **Builder:** Giriş noktasını, ana döngüyü, durum/mesaj şemasını, araçları ve doğrulayıcıyı izleyin.
 - **Maintainer:** Son olarak testleri, kanıt manifestlerini, hata işlemeyi, rollback yollarını ve sağlayıcı adaptörlerini okuyun.
 

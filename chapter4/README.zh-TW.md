@@ -8,7 +8,7 @@
 
 正文用短小的機制 skeleton 說明控制流；實驗目錄放完整的 SDK 適配、日誌、測試與驗收證據，不需要逐行讀完每個檔案。
 
-- **Starter:** 先讀目標、最小指令與驗收條件；可從 [async-agent](async-agent/);
+- **Starter:** 先讀目標、最小指令與驗收條件；可從 [execution-tools](execution-tools/);
 - **Builder:** 沿著入口、核心迴圈、狀態／訊息 schema、工具與驗證器閱讀。
 - **Maintainer:** 最後再看測試、證據 manifest、失敗處理、回滾路徑與 provider adapter。
 

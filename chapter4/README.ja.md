@@ -8,7 +8,7 @@
 
 本文では短い mechanism skeleton で制御フローを説明し、実験ディレクトリには完全な SDK アダプター、ログ、テスト、受け入れ証拠を置きます。すべてのファイルを一行ずつ読む必要はありません。
 
-- **Starter:** 目的・最小コマンド・受け入れ条件から始め、まず [async-agent](async-agent/);
+- **Starter:** 目的・最小コマンド・受け入れ条件から始め、まず [execution-tools](execution-tools/);
 - **Builder:** エントリポイント、中心ループ、状態／メッセージ schema、ツール、検証器を追います。
 - **Maintainer:** 最後にテスト、証拠 manifest、失敗処理、rollback 経路、provider adapter を読みます。
 

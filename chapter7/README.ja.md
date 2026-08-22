@@ -32,7 +32,7 @@
 | 6-2, 6-12 | `android_world/` | 📖 | アプリのナビゲーション、UI 操作、タスク完了能力を含む、Android モバイル環境における Agent の性能を評価する。 |
 | 6-6 | [tts-quality-eval](tts-quality-eval/) | ✅ | さまざまな TTS 構成（異なるモデル/音声/速度）を用いて同じ難易度の高いテキストセットを合成し、次にマルチモーダルの LLM-as-a-Judge を用いて Rubric に従って各次元（明瞭さ、自然さなど）を採点し、結果を再現可能な構成比較表に集約する。 |
 | 6-7 | [elo-leaderboard](elo-leaderboard/) | ✅ | ELO レーティングシステムに基づく Agent 性能リーダーボードを実装し、ペアワイズ比較を通じて異なる Agent の相対的な能力を評価する。 |
-| 6-8 | [model-action-threshold](model-action-threshold/) | ✅ | 同一の中立的な Coding Harness の下で、GPT-5.6-sol と Claude Sonnet 5 が探索から最初の編集へ移るしきい値を比較する。18/18 セルが API エラーなしで完了し、[manifest](model-action-threshold/results/exp6-7-action-threshold-20260731-v1/manifest.json) が軌跡と集計を検証可能なハッシュで結び付ける。 |
+| 6-8 | [model-action-threshold](model-action-threshold/) | ✅ | 同一の中立的な Coding Harness の下で、GPT-5.6-sol と Claude Sonnet 5 が探索から最初の編集へ移るしきい値を比較する。18/18 セルが API エラーなしで完了し、[manifest](model-action-threshold/results/exp7-8-action-threshold-20260731-v1/manifest.json) が軌跡と集計を検証可能なハッシュで結び付ける。 |
 | 6-9 | [agent-cost-analysis](agent-cost-analysis/) | ✅ | 典型的な複数ターンの Agent タスク（カスタマーサービスの返金）に対して全チェーンのコスト内訳を行う。カスタムの軽量トレーシングシステムを用いて各 LLM 呼び出しの入力/出力/キャッシュトークン、レイテンシ、コストを記録し、集計して「どのステップが最も高価か」を特定し、次に A/B テストを用いて KV Cache に優しい設計とコンテキスト圧縮による実際の節約を定量化する。 |
 | 6-10 | [model-benchmark](model-benchmark/) | 🚧 | 複数の OpenAI 互換 LLM API プロバイダーの横断的なベンチマークを実施する。ストリーミングインターフェースを用いて Time to First Token（TTFT）を正確に測定し、並行実行下でのエンドツーエンドレイテンシのパーセンタイル（p50/p95）、スループット、成功率を算出する。単一のコマンドで多次元の比較表を生成し、モデル選定がリーダーボードを見るだけではなく多面的なトレードオフであることを示す。 |
 | 6-12 | [android-world](android-world/) | 📖 | 本書による AndroidWorld 上での T3A Agent の評価レポートと失敗分析ノート（実験 6-12 の起点。ベンチマークのソースコードではない） |

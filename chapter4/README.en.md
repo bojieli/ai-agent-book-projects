@@ -8,7 +8,7 @@
 
 The prose uses short mechanism skeletons to explain control flow; the experiment directory contains complete SDK adapters, logs, tests, and acceptance evidence. You do not need to read every file line by line.
 
-- **Starter:** Start with the goal, minimum command, and acceptance conditions; begin with [async-agent](async-agent/);
+- **Starter:** Start with the goal, minimum command, and acceptance conditions; begin with [execution-tools](execution-tools/);
 - **Builder:** Follow the entry point, core loop, state/message schema, tools, and verifier.
 - **Maintainer:** Then read tests, evidence manifests, failure handling, rollback paths, and provider adapters.
 

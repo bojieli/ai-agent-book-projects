@@ -34,7 +34,7 @@
 
 | 実験 | プロジェクト | 関係 |
 | :--: | --- | --- |
-| 7-8 | [prompt-distillation](prompt-distillation/) | Prompt 蒸留とパラメータ化学習の章横断プロジェクト。訓練手法は第 7 章に属する |
+| 8-8 | [prompt-distillation](../chapter8/prompt-distillation/) | Prompt 蒸留とパラメータ化学習の章横断プロジェクト。訓練手法は第 8 章に属する |
 | — | [self-evolving-tools](self-evolving-tools/) | Alita 式のツール発見・カプセル化・再利用。「経験をプログラムとして書き出す」ことの補足事例 |
 
 ## プロジェクトの種類

@@ -8,7 +8,7 @@
 
 El texto usa skeletons breves para explicar el flujo de control; el directorio de experimentos contiene adaptadores SDK completos, registros, pruebas y evidencias de aceptación. No hace falta leer cada archivo línea por línea.
 
-- **Starter:** Empieza por el objetivo, el comando mínimo y la aceptación; comienza con [async-agent](async-agent/);
+- **Starter:** Empieza por el objetivo, el comando mínimo y la aceptación; comienza con [execution-tools](execution-tools/);
 - **Builder:** Sigue el punto de entrada, el bucle central, el esquema de estado/mensajes, las herramientas y el verificador.
 - **Maintainer:** Después revisa pruebas, manifiestos, fallos, rollback y adaptadores de proveedores.
 

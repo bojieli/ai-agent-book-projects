@@ -32,7 +32,7 @@ En la primera pasada puedes omitir credenciales, presentación y compatibilidad 
 
 | Exp. | Proyecto | Relación |
 | :--: | --- | --- |
-| 7-8 | [prompt-distillation](prompt-distillation/) | Proyecto cruzado de destilación de prompts y aprendizaje parametrizado (Capítulo 7) |
+| 8-8 | [prompt-distillation](../chapter8/prompt-distillation/) | Proyecto cruzado de destilación de prompts y aprendizaje parametrizado (Capítulo 8) |
 | — | [self-evolving-tools](self-evolving-tools/) | Descubrimiento, encapsulación y reutilización de herramientas estilo Alita |
 
 ## Tipos de Proyectos

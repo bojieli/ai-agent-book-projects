@@ -9,7 +9,7 @@
 正文 skeleton 只保留工具安全门、事件循环和主动发现的控制关系；实现和真实门禁在以下项目：
 
 - **Starter**：从 [execution-tools](execution-tools/) 的 `python cli.py demo` 离线调用开始，先找 schema 校验、风险分类和结果验证；
-- **Builder**：阅读 [async-agent](async-agent/) 的 AgentRuntime._dispatcher、_handle_interrupt 与并行工具任务，再看 [active-tool-discovery](active-tool-discovery/) 的检索/追加 schema 路径；
+- **Builder**：阅读 [async-agent](../chapter6/async-agent/) 的 AgentRuntime._dispatcher、_handle_interrupt 与并行工具任务，再看 [active-tool-discovery](active-tool-discovery/) 的检索/追加 schema 路径；
 - **Maintainer**：检查权限策略、沙盒清理、取消确认、原始 provider 回执和 EXPERIMENT_LEDGER.md。
 
 首次可跳过 MCP transport、Web UI 和 provider 适配器；先运行再按上述入口读核心循环。
