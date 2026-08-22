@@ -26,13 +26,7 @@
 | 9-8 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | 实验 9-8：把整本书和源码交给 Hermes；它读完后选择一项改进，亲手修改自己，并把每次 Reviewer 的退回变成下一轮学习，直到通过 |
 | 9-9 | [self-evolution-eval](self-evolution-eval/) | ✅ | 实验 9-9：static、append-only、evolving 三臂 × 3 seeds × 14 任务共 126 次真实调用；[证据](self-evolution-eval/validation/latest.json)保留迁移、规则替换、保持与配对统计 |
 
-除仍处于设计阶段的实验 9-4 外，其余带项目链接的实验都保留无需 API Key 的离线入口和单元测试用于预检；表中 ✅ 来自各目录保存的真实模型、真实轨迹或真实浏览器规范证据，不由离线机制演示代替。历史数值或定性主张未复现时，证据按负结果如实记录。
-
-证据完整性边界：9-6、9-9 的 canonical evidence 与 `latest.json` 都有独立
-SHA-256 sidecar，当前复算一致；9-5 对三个关键浏览器产物保存并核对了 hash。
-9-1、9-2、9-3 的 `latest.json` 虽与各自真实 run 的 `evidence.json` 字节一致，
-但没有顶层 evidence/source hash manifest，因此可审计强度低于 9-6、9-9，
-不能把提交时存在的 JSON 等同于运行时源码已被固定。
+带项目链接的实验都保留无需 API Key 的离线入口和单元测试用于预检。
 
 ## 补充案例
 
