@@ -18,15 +18,15 @@ On a first pass, skip credential loading, presentation code, and provider-compat
 
 | Exp. | Project | Type | Description |
 | :--: | --- | :--: | --- |
-| 8-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | Experiment 8-1: combines environment outcomes, process rules, and language rubrics into evidence-backed diagnoses of customer-service trajectories |
-| 8-2 | [gaia-experience](gaia-experience/) | ✅ | Experiment 8-2: compares successful, partially successful, and failed trajectories to generate cross-trajectory Markdown experience documents |
-| 8-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | Experiment 8-3: generates minimal prompt patches from failed trajectories, controlling release with a boundary set and a retention set |
-| 8-4 | Text experiment | 🚧 | Experiment 8-4: evolves a requirements-clarification and Spec-confirmation Skill from user feedback, with a three-arm A/B design and release gates |
-| 8-5 | [browser-use-rpa](browser-use-rpa/) | ✅ | Experiment 8-5: compiles browser trajectories into workflows with state predicates, verified by reset-and-replay |
-| 8-6 | [self-modifying-agent](self-modifying-agent/) | ✅ | Experiment 8-6: repeated failures trigger retry/circuit-breaker code patches, regression tests, canary rollout, and rollback |
-| 8-7 | [harness-safety-gate](harness-safety-gate/) | ✅ | Experiment 8-7: evolves a high-risk operation confirmation gate from user corrections and audits |
-| 8-8 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Experiment 8-8: gives Hermes the whole book and its own source; it chooses an improvement, changes itself, and turns each Reviewer rejection into another learning round until accepted |
-| 8-9 | [self-evolution-eval](self-evolution-eval/) | ✅ | Experiment 8-9: evaluates long-term evolution across four phases — learning, transfer, rule change, and retention |
+| 9-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | Experiment 9-1: combines environment outcomes, process rules, and language rubrics into evidence-backed diagnoses of customer-service trajectories |
+| 9-2 | [gaia-experience](gaia-experience/) | ✅ | Experiment 9-2: compares successful, partially successful, and failed trajectories to generate cross-trajectory Markdown experience documents |
+| 9-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | Experiment 9-3: generates minimal prompt patches from failed trajectories, controlling release with a boundary set and a retention set |
+| 9-4 | Text experiment | 🚧 | Experiment 9-4: evolves a requirements-clarification and Spec-confirmation Skill from user feedback, with a three-arm A/B design and release gates |
+| 9-5 | [browser-use-rpa](browser-use-rpa/) | ✅ | Experiment 9-5: compiles browser trajectories into workflows with state predicates, verified by reset-and-replay |
+| 9-6 | [self-modifying-agent](self-modifying-agent/) | ✅ | Experiment 9-6: repeated failures trigger retry/circuit-breaker code patches, regression tests, canary rollout, and rollback |
+| 9-7 | [harness-safety-gate](harness-safety-gate/) | ✅ | Experiment 9-7: evolves a high-risk operation confirmation gate from user corrections and audits |
+| 9-8 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Experiment 9-8: gives Hermes the whole book and its own source; it chooses an improvement, changes itself, and turns each Reviewer rejection into another learning round until accepted |
+| 9-9 | [self-evolution-eval](self-evolution-eval/) | ✅ | Experiment 9-9: evaluates long-term evolution across four phases — learning, transfer, rule change, and retention |
 
 All experiments above offer offline entry points and unit tests that require no API Key; extension paths that need real models or a browser are documented in each project's README.
 

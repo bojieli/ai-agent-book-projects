@@ -18,15 +18,15 @@ Lần đầu có thể bỏ qua credential, lớp trình bày và tương thích
 
 | Thí nghiệm | Project | Type | Description |
 | :--: | --- | :--: | --- |
-| 8-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | Thí nghiệm 8-1: kết hợp kết quả môi trường, quy tắc quá trình và rubric ngôn ngữ thành chẩn đoán trajectory chăm sóc khách hàng có bằng chứng |
-| 8-2 | [gaia-experience](gaia-experience/) | ✅ | Thí nghiệm 8-2: so sánh trajectory thành công, thành công một phần và thất bại để sinh tài liệu kinh nghiệm Markdown xuyên trajectory |
-| 8-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | Thí nghiệm 8-3: sinh bản vá prompt tối thiểu từ trajectory thất bại, kiểm soát phát hành bằng tập biên và tập giữ lại |
-| 8-4 | [browser-use-rpa](browser-use-rpa/) | ✅ | Thí nghiệm 8-4: biên dịch trajectory trình duyệt thành workflow có vị từ trạng thái (state predicates), được kiểm chứng bằng phát lại sau reset |
-| 8-5 | [self-modifying-agent](self-modifying-agent/) | ✅ | Thí nghiệm 8-5: lỗi lặp lại kích hoạt bản vá mã retry/circuit-breaker, kiểm thử hồi quy, phát hành canary và rollback |
-| 8-6 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Đưa cho Hermes toàn bộ cuốn sách và mã nguồn của chính nó; Hermes chọn một cải tiến, tự sửa mình và biến mỗi lần Reviewer từ chối thành một vòng học mới cho tới khi được chấp nhận |
-| 8-7 | [self-evolution-eval](self-evolution-eval/) | ✅ | Thí nghiệm 8-7: đánh giá tiến hóa dài hạn qua bốn giai đoạn — học, chuyển giao, thay đổi quy tắc và giữ vững |
-| 8-8 | [harness-safety-gate](harness-safety-gate/) | ✅ | Cổng xác nhận thao tác rủi ro cao |
-| 8-9 | [ai-style-skill](ai-style-skill/) | ✅ | Chuyển phản hồi viết thành Skill có thể kiểm chứng; chương nối Skill dấu ngoặc kép cong với dữ liệu tổng hợp đã kiểm toán và hậu huấn luyện, đồng thời tách lỗi tokenizer/Harness trong sao chép chính xác |
+| 9-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | Thí nghiệm 9-1: kết hợp kết quả môi trường, quy tắc quá trình và rubric ngôn ngữ thành chẩn đoán trajectory chăm sóc khách hàng có bằng chứng |
+| 9-2 | [gaia-experience](gaia-experience/) | ✅ | Thí nghiệm 9-2: so sánh trajectory thành công, thành công một phần và thất bại để sinh tài liệu kinh nghiệm Markdown xuyên trajectory |
+| 9-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | Thí nghiệm 9-3: sinh bản vá prompt tối thiểu từ trajectory thất bại, kiểm soát phát hành bằng tập biên và tập giữ lại |
+| 9-5 | [browser-use-rpa](browser-use-rpa/) | ✅ | Thí nghiệm 9-5: biên dịch trajectory trình duyệt thành workflow có vị từ trạng thái (state predicates), được kiểm chứng bằng phát lại sau reset |
+| 9-6 | [self-modifying-agent](self-modifying-agent/) | ✅ | Thí nghiệm 9-6: lỗi lặp lại kích hoạt bản vá mã retry/circuit-breaker, kiểm thử hồi quy, phát hành canary và rollback |
+| 9-8 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Đưa cho Hermes toàn bộ cuốn sách và mã nguồn của chính nó; Hermes chọn một cải tiến, tự sửa mình và biến mỗi lần Reviewer từ chối thành một vòng học mới cho tới khi được chấp nhận |
+| 9-9 | [self-evolution-eval](self-evolution-eval/) | ✅ | Thí nghiệm 9-9: đánh giá tiến hóa dài hạn qua bốn giai đoạn — học, chuyển giao, thay đổi quy tắc và giữ vững |
+| 9-7 | [harness-safety-gate](harness-safety-gate/) | ✅ | Cổng xác nhận thao tác rủi ro cao |
+| — | [ai-style-skill](ai-style-skill/) | ✅ | Chuyển phản hồi viết thành Skill có thể kiểm chứng; chương nối Skill dấu ngoặc kép cong với dữ liệu tổng hợp đã kiểm toán và hậu huấn luyện, đồng thời tách lỗi tokenizer/Harness trong sao chép chính xác |
 
 Tất cả thí nghiệm trên đều có lối chạy offline và unit test không cần API Key; các hướng mở rộng cần model thật hoặc trình duyệt được ghi trong README của từng dự án.
 
