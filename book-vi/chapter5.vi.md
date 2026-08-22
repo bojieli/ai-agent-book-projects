@@ -49,6 +49,8 @@ Tác nhân: Đã hoàn thành, tìm thấy tổng cộng 3 mục TODO và danh s
 
 Toàn bộ quá trình chỉ sử dụng 2 công cụ: Grep (tìm kiếm nội dung) và Write (ghi file). Nếu tác vụ phức tạp hơn - chẳng hạn như "đếm số lượng TODO trong mỗi mô-đun và vẽ biểu đồ" - Agent cũng sẽ sử dụng Trình thông dịch mã để thực thi mã Python để thống kê và vẽ. Mặc dù bảy công cụ này rất đơn giản nhưng chúng có thể được kết hợp để hoàn thành nhiều nhiệm vụ rất đa dạng.
 
+Bạn đọc có thể thắc mắc: tại sao là bảy công cụ chứ không phải sáu? Thực ra, chỉ một công cụ Bash Shell là đủ. OpenAI Codex chỉ cung cấp duy nhất Bash Shell và thực hiện toàn bộ thao tác đọc ghi file, tìm kiếm bằng một công cụ đó. Nhưng một số Agent khác vẫn giữ lại các công cụ đọc ghi file riêng. Bảy công cụ trong sách này được tách riêng để bạn đọc dễ hình dung những năng lực cơ bản mà một Coding Agent cần có.
+
 Tại sao mọi Agent chung đều có khả năng mã hóa? Bởi vì việc tạo mã không chỉ đơn thuần là viết chương trình—nó còn là một công cụ giải quyết vấn đề có mục đích chung. Khi gặp suy luận toán học, bạn có thể viết một đoạn mã đưa cho bộ giải để tính ra đáp án chính xác; bạn cần củng cố các quy tắc kinh doanh và mã chính xác hơn nhiều so với mô tả bằng ngôn ngữ tự nhiên; nếu bạn thiếu một công cụ nào đó, bạn có thể viết một công cụ tạm thời; nếu định dạng dữ liệu thay đổi, logic phân tích cú pháp sẽ được tạo động. Những kịch bản này sẽ được phát triển lần lượt trong phần còn lại của chương này. Agent với khả năng mã hóa cơ bản, ngay cả khi chỉ có bảy công cụ đơn giản trên trong hộp công cụ, vẫn có thể linh hoạt mở rộng khả năng của nó khi gặp nhu cầu mới.
 
 ### Case: Từ Manus đến OpenClaw - Coding kernel của General Agent
