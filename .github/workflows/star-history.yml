@@ -29,7 +29,7 @@ jobs:
         run: pip install matplotlib
 
       - name: Generate star history chart
-        run: python scripts/gen_star_history.py --refresh
+        run: python scripts/gen_star_history.py
         env:
           # STAR_HISTORY_TOKEN（细粒度 PAT）如存在则优先，否则用内置 GITHUB_TOKEN，
           # 读取公开仓库的 stargazers 时间戳不需要额外权限。
@@ -39,7 +39,9 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/star-history-*.png
+          # 星标历史数据文件必须一起提交：下次运行据此增量拉取新增星标，
+          # 而不是重新遍历全部 stargazer。
+          git add assets/star-history-*.png scripts/star-history-data.json
           git diff --cached --quiet && exit 0
           git commit -m "Update star history chart [skip ci]"
           git push

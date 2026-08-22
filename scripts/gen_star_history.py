@@ -1,29 +1,36 @@
 #!/usr/bin/env python3
 """Render this repo's star history as PNG images (light + dark variants).
 
-Fetches stargazer timestamps from the GitHub REST API, drops everything
-before START_DATE, and draws a cumulative "stars over time" chart with a
-gradient fill. Output: assets/star-history-{light,dark}.png
+Star timestamps come from the GitHub GraphQL API and are kept in a small
+committed data file (see DATA_FILE) as per-hour counts, so each run only has
+to fetch the stars added since the previous one. Output:
+assets/star-history-{light,dark}.png
 
 Usage:
-    python scripts/gen_star_history.py [--repo owner/name] [--refresh]
-                                       [--start-date YYYY-MM-DD] [--out-dir DIR]
+    python scripts/gen_star_history.py [--repo owner/name] [--start-date YYYY-MM-DD]
+                                       [--out-dir DIR] [--rebuild] [--offline]
 
 Auth: set GITHUB_TOKEN (or GH_TOKEN, or have an authenticated `gh` CLI).
-Unauthenticated requests work too but are rate-limited to 60/hour
-(~1 request per 100 stars). Timestamps are cached next to this script so
-style tweaks don't re-hit the API; pass --refresh to re-fetch.
+The GraphQL API requires a token, so --offline is the only way to redraw
+without one.
+
+Why GraphQL and not REST: /repos/{repo}/stargazers refuses to paginate past
+40,000 stargazers (HTTP 422), which this repo passed in August 2026.
 """
 
 from __future__ import annotations
 
 import argparse
+import base64
 import json
 import os
+import struct
 import subprocess
 import sys
 import time
+import urllib.error
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -39,7 +46,23 @@ from matplotlib.ticker import FuncFormatter
 
 REPO = "bojieli/ai-agent-book"
 START_DATE = "2026-07-15"  # UTC; stars before this date are excluded
-CACHE = Path(__file__).with_name(".star-history-cache.json")
+DATA_FILE = Path(__file__).with_name("star-history-data.json")
+
+GRAPHQL_URL = "https://api.github.com/graphql"
+# Stars are stored as counts per bucket rather than as individual timestamps:
+# one hour is ~2px wide on the rendered chart, so the curve is unchanged while
+# the data file stays small enough to commit and diff.
+BUCKET_SECONDS = 3600
+# A rebuild walks the whole history, so it fans out over disjoint time ranges.
+# One request carries several pages as aliased fields, which costs barely more
+# than a single page.
+PAGES_PER_REQUEST = 10
+REBUILD_WORKERS = 6
+STARS_PER_SHARD = 100
+MAX_SHARDS = 1024
+# Below this, following cursors one page at a time is quick enough that it is
+# not worth leaning on synthesized cursors.
+SHARD_THRESHOLD = 2000
 
 ACCENT = "#f5a623"  # warm amber, reads well on both light and dark
 
@@ -71,52 +94,6 @@ def get_token() -> str | None:
     return None
 
 
-def get_json(url: str, headers: dict, retries: int = 4) -> list:
-    req = urllib.request.Request(url, headers=headers)
-    for attempt in range(retries):
-        try:
-            with urllib.request.urlopen(req, timeout=30) as resp:
-                return json.load(resp)
-        except Exception as exc:
-            if attempt == retries - 1:
-                raise
-            wait = 2**attempt
-            print(f"request failed ({exc}); retrying in {wait}s...", file=sys.stderr)
-            time.sleep(wait)
-    return []  # unreachable
-
-
-def fetch_starred_at(repo: str, refresh: bool) -> list[str]:
-    """Return sorted ISO-8601 UTC timestamps of every star event."""
-    if CACHE.exists() and not refresh:
-        print(f"using cached stargazers from {CACHE}", file=sys.stderr)
-        return json.loads(CACHE.read_text())
-
-    headers = {
-        "Accept": "application/vnd.github.star+json",
-        "X-GitHub-Api-Version": "2022-11-28",
-        "User-Agent": "gen-star-history",
-    }
-    if token := get_token():
-        headers["Authorization"] = f"Bearer {token}"
-
-    starred: list[str] = []
-    page = 1
-    while True:
-        url = f"https://api.github.com/repos/{repo}/stargazers?per_page=100&page={page}"
-        data = get_json(url, headers)
-        if not data:
-            break
-        starred.extend(item["starred_at"] for item in data)
-        print(f"\rfetched {len(starred)} stargazers...", end="", file=sys.stderr)
-        page += 1
-    print(file=sys.stderr)
-
-    starred.sort()
-    CACHE.write_text(json.dumps(starred))
-    return starred
-
-
 def parse_iso_timestamp(s: str) -> datetime:
     """Parse ISO-8601 timestamps (including fractional seconds and offsets) into UTC."""
     s = s.strip()
@@ -130,15 +107,341 @@ def parse_iso_timestamp(s: str) -> datetime:
     return dt
 
 
-def build_series(starred: list[str], start: datetime) -> tuple[np.ndarray, np.ndarray]:
-    """Cumulative star count per star event, cropped to `start` (UTC)."""
-    times = [parse_iso_timestamp(s) for s in starred]
-    base = sum(1 for t in times if t < start)
-    times = [t for t in times if t >= start]
-    # Anchor the line at the start date so the curve begins at the axis edge.
-    x = [mdates.date2num(start)] + [mdates.date2num(t) for t in times]
-    y = [base] + [base + i for i in range(1, len(times) + 1)]
+def iso(dt: datetime) -> str:
+    """The exact spelling GitHub uses, so timestamps compare correctly as strings."""
+    return dt.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+# --------------------------------------------------------------------------
+# GraphQL plumbing
+# --------------------------------------------------------------------------
+
+
+class GraphQLError(RuntimeError):
+    pass
+
+
+def graphql(query: str, variables: dict, token: str, retries: int = 4) -> dict:
+    body = json.dumps({"query": query, "variables": variables}).encode()
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json",
+        "User-Agent": "gen-star-history",
+    }
+    for attempt in range(retries):
+        try:
+            req = urllib.request.Request(GRAPHQL_URL, data=body, headers=headers)
+            with urllib.request.urlopen(req, timeout=60) as resp:
+                payload = json.load(resp)
+            if errors := payload.get("errors"):
+                raise GraphQLError("; ".join(e.get("message", str(e)) for e in errors))
+            return payload["data"]
+        except Exception as exc:
+            if attempt == retries - 1:
+                raise
+            # Secondary rate limits want a longer pause than a transient blip.
+            throttled = isinstance(exc, urllib.error.HTTPError) and exc.code in (403, 429)
+            wait = (10 if throttled else 2) * 2**attempt
+            print(f"request failed ({exc}); retrying in {wait}s...", file=sys.stderr)
+            time.sleep(wait)
+    raise AssertionError("unreachable")
+
+
+def repo_summary(repo: str, token: str) -> tuple[int, datetime]:
+    owner, name = repo.split("/", 1)
+    data = graphql(
+        "query($owner:String!,$name:String!){repository(owner:$owner,name:$name)"
+        "{stargazerCount createdAt}}",
+        {"owner": owner, "name": name},
+        token,
+    )
+    node = data["repository"]
+    return node["stargazerCount"], parse_iso_timestamp(node["createdAt"])
+
+
+def page_query(pages: int) -> str:
+    """One query fetching `pages` stargazer pages, each from its own cursor."""
+    args = ",".join(f"$c{i}:String" for i in range(pages))
+    fields = " ".join(
+        f"p{i}:repository(owner:$owner,name:$name)"
+        f"{{stargazers(first:100,orderBy:{{field:STARRED_AT,direction:ASC}},after:$c{i})"
+        f"{{pageInfo{{endCursor hasNextPage}} edges{{starredAt}}}}}}"
+        for i in range(pages)
+    )
+    return f"query($owner:String!,$name:String!,{args}){{{fields}}}"
+
+
+def cursor_at(dt: datetime) -> str:
+    """A stargazer cursor positioned just before `dt`.
+
+    GitHub's stargazer cursors are keyset positions -- base64 of
+    ``cursor:v2:`` plus a msgpack ``[starredAt, user_id]`` pair -- so one can
+    be synthesized to seek straight to a point in time instead of paging there.
+    That is undocumented, hence probe_cursor_synthesis() below; only --rebuild
+    depends on it, and it falls back to plain sequential paging.
+    """
+    stamp = iso(dt)
+    packed = b"\x92" + bytes([0xA0 + len(stamp)]) + stamp.encode() + b"\xce" + struct.pack(">I", 0)
+    return base64.b64encode(b"cursor:v2:" + packed).decode()
+
+
+def probe_cursor_synthesis(repo: str, at: datetime, token: str) -> bool:
+    """Check that a synthesized cursor really seeks to `at` before relying on it."""
+    owner, name = repo.split("/", 1)
+    try:
+        data = graphql(page_query(1), {"owner": owner, "name": name, "c0": cursor_at(at)}, token)
+        edges = data["p0"]["stargazers"]["edges"]
+    except Exception as exc:
+        print(f"cursor synthesis unavailable ({exc})", file=sys.stderr)
+        return False
+    # A cursor GitHub does not understand would restart from the oldest star.
+    return bool(edges) and edges[0]["starredAt"] >= iso(at)
+
+
+# --------------------------------------------------------------------------
+# Fetching
+# --------------------------------------------------------------------------
+
+
+def new_shard(cursor: str | None, hi: str | None) -> dict:
+    """A half-open [cursor, hi) slice of the stargazer list, paged independently."""
+    return {"cursor": cursor, "hi": hi, "times": [], "tail": None, "done": False}
+
+
+def absorb(shard: dict, conn: dict) -> None:
+    edges = conn["edges"]
+    if not edges:
+        shard["done"] = True
+        return
+    overflowed = False
+    for edge in edges:
+        starred_at = edge["starredAt"]
+        if shard["hi"] is not None and starred_at >= shard["hi"]:
+            overflowed = True
+            break
+        shard["times"].append(starred_at)
+    page = conn["pageInfo"]
+    if not overflowed and shard["times"]:
+        # Only meaningful when the whole page was kept: endCursor points at the
+        # last edge, which is then also the last star this shard accepted.
+        shard["tail"] = (shard["times"][-1], page["endCursor"])
+    if overflowed or not page["hasNextPage"]:
+        shard["done"] = True
+    else:
+        shard["cursor"] = page["endCursor"]
+
+
+def run_shards(repo: str, shards: list[dict], token: str, *, pages: int, workers: int) -> None:
+    owner, name = repo.split("/", 1)
+
+    def run_group(group: list[dict]) -> None:
+        variables = {"owner": owner, "name": name}
+        variables.update({f"c{i}": s["cursor"] for i, s in enumerate(group)})
+        data = graphql(page_query(len(group)), variables, token)
+        for i, shard in enumerate(group):
+            absorb(shard, data[f"p{i}"]["stargazers"])
+
+    pending = [s for s in shards if not s["done"]]
+    while pending:
+        groups = [pending[i : i + pages] for i in range(0, len(pending), pages)]
+        if workers > 1 and len(groups) > 1:
+            with ThreadPoolExecutor(min(workers, len(groups))) as pool:
+                list(pool.map(run_group, groups))
+        else:
+            for group in groups:
+                run_group(group)
+        fetched = sum(len(s["times"]) for s in shards)
+        print(f"\rfetched {fetched} stars...", end="", file=sys.stderr)
+        pending = [s for s in pending if not s["done"]]
+    print(file=sys.stderr)
+
+
+def resume_cursor(shards: list[dict]) -> str | None:
+    """Cursor of the newest star seen, to resume from on the next run.
+
+    The page holding the newest star can never have overflowed its shard --
+    nothing sorts after it -- so that shard's tail is always recorded.
+    """
+    tails = [s["tail"] for s in shards if s["tail"]]
+    return max(tails)[1] if tails else None
+
+
+def plan_shards(cursor: str | None, lo: datetime, hi: datetime, expected: int) -> list[dict]:
+    """Cut the stars between `lo` and `hi` into ranges that can be paged in parallel.
+
+    The first range resumes from `cursor` itself -- a real cursor, so the
+    boundary against already-counted stars is exact -- and the rest seek to a
+    timestamp. Ranges are half-open, so no star is counted twice.
+    """
+    count = max(1, min(MAX_SHARDS, -(-expected // STARS_PER_SHARD)))
+    if count == 1:
+        return [new_shard(cursor, None)]
+    step = (hi - lo) / count
+    edges = [lo + step * i for i in range(1, count)]
+    shards = [new_shard(cursor, iso(edges[0]))]
+    for i, edge in enumerate(edges):
+        shards.append(new_shard(cursor_at(edge), iso(edges[i + 1]) if i + 1 < len(edges) else None))
+    return shards
+
+
+def fetch_forward(
+    repo: str, token: str, *, cursor: str | None, lo: datetime, expected: int, what: str
+) -> list[dict]:
+    """Every star after `cursor` (None for the whole history).
+
+    Paging is sequential -- plain, documented cursor following -- unless there
+    is enough to fetch that fanning out over synthesized time ranges is worth
+    the extra machinery.
+    """
+    hi = datetime.now(timezone.utc)
+    if expected >= SHARD_THRESHOLD and probe_cursor_synthesis(repo, lo + (hi - lo) / 2, token):
+        shards = plan_shards(cursor, lo, hi, expected)
+        print(f"{what} over {len(shards)} ranges...", file=sys.stderr)
+        run_shards(repo, shards, token, pages=PAGES_PER_REQUEST, workers=REBUILD_WORKERS)
+        return shards
+
+    print(f"{what} one page at a time...", file=sys.stderr)
+    shards = [new_shard(cursor, None)]
+    run_shards(repo, shards, token, pages=1, workers=1)
+    return shards
+
+
+# --------------------------------------------------------------------------
+# Stored history
+# --------------------------------------------------------------------------
+
+
+def bucket_key(starred_at: str, bucket_seconds: int) -> str:
+    epoch = int(parse_iso_timestamp(starred_at).timestamp())
+    floored = epoch - epoch % bucket_seconds
+    return iso(datetime.fromtimestamp(floored, tz=timezone.utc))
+
+
+def add_to_buckets(buckets: dict[str, int], times: list[str], start: datetime, bucket_seconds: int) -> None:
+    cutoff = iso(start)
+    for starred_at in times:
+        if starred_at < cutoff:
+            continue
+        key = bucket_key(starred_at, bucket_seconds)
+        buckets[key] = buckets.get(key, 0) + 1
+
+
+def save_history(history: dict) -> None:
+    ordered = {
+        "repo": history["repo"],
+        "start": history["start"],
+        "bucket_seconds": history["bucket_seconds"],
+        "total": history["total"],
+        "before_start": history["before_start"],
+        "latest": history["latest"],
+        "cursor": history["cursor"],
+        "buckets": dict(sorted(history["buckets"].items())),
+    }
+    # One bucket per line keeps the daily commit diff to the lines that changed.
+    body = json.dumps(ordered, indent=1)
+    DATA_FILE.write_text(body + "\n")
+
+
+def load_history(repo: str, start: datetime) -> dict | None:
+    if not DATA_FILE.exists():
+        return None
+    history = json.loads(DATA_FILE.read_text())
+    stale = (
+        history.get("repo") != repo
+        or history.get("start") != iso(start)
+        or history.get("bucket_seconds") != BUCKET_SECONDS
+        or not history.get("cursor")
+    )
+    if stale:
+        print("stored history does not match the requested chart; rebuilding", file=sys.stderr)
+        return None
+    return history
+
+
+def rebuild(repo: str, start: datetime, count: int, created_at: datetime, token: str) -> dict:
+    shards = fetch_forward(
+        repo, token, cursor=None, lo=created_at, expected=count, what="rebuilding"
+    )
+    times = sorted(t for shard in shards for t in shard["times"])
+    # Stars keep arriving mid-fetch, so this only has to be close; a real gap
+    # means the time ranges did not tile the history and cannot be trusted.
+    if len(shards) > 1 and abs(len(times) - count) > max(25, count // 1000):
+        print(
+            f"fanned-out fetch got {len(times)} stars but the repo has {count}; "
+            "retrying one page at a time",
+            file=sys.stderr,
+        )
+        shards = [new_shard(None, None)]
+        run_shards(repo, shards, token, pages=1, workers=1)
+        times = sorted(shards[0]["times"])
+    if not times:
+        raise SystemExit(f"{repo} has no stargazers to chart")
+    buckets: dict[str, int] = {}
+    add_to_buckets(buckets, times, start, BUCKET_SECONDS)
+    return {
+        "repo": repo,
+        "start": iso(start),
+        "bucket_seconds": BUCKET_SECONDS,
+        "total": len(times),
+        "before_start": len(times) - sum(buckets.values()),
+        "latest": times[-1],
+        "cursor": resume_cursor(shards),
+        "buckets": buckets,
+    }
+
+
+def update(repo: str, start: datetime, count: int, created_at: datetime, token: str) -> dict:
+    history = load_history(repo, start)
+    if history is None:
+        return rebuild(repo, start, count, created_at, token)
+
+    shards = fetch_forward(
+        repo,
+        token,
+        cursor=history["cursor"],
+        lo=parse_iso_timestamp(history["latest"]),
+        expected=max(0, count - history["total"]),
+        what="updating",
+    )
+    times = sorted(t for shard in shards for t in shard["times"])
+    if times:
+        add_to_buckets(history["buckets"], times, start, BUCKET_SECONDS)
+        history["latest"] = times[-1]
+        history["cursor"] = resume_cursor(shards) or history["cursor"]
+    history["total"] = count
+
+    # Unstarring silently invalidates counts we recorded earlier. Small drifts
+    # are absorbed by the pre-START_DATE base (a rounding error against 40k
+    # stars); a large one means the stored buckets are worth re-deriving.
+    base = count - sum(history["buckets"].values())
+    if base < 0 or abs(base - history["before_start"]) > max(50, count // 1000):
+        print(f"stored history drifted from the live count ({count}); rebuilding", file=sys.stderr)
+        return rebuild(repo, start, count, created_at, token)
+    return history
+
+
+def build_series(history: dict) -> tuple[np.ndarray, np.ndarray]:
+    """Cumulative star count over time, anchored at the chart's start date."""
+    start = parse_iso_timestamp(history["start"])
+    latest = parse_iso_timestamp(history["latest"])
+    step = timedelta(seconds=history["bucket_seconds"])
+    running = max(0, history["total"] - sum(history["buckets"].values()))
+
+    x = [mdates.date2num(start)]
+    y = [running]
+    for key in sorted(history["buckets"]):
+        running += history["buckets"][key]
+        # A bucket's stars are all in by the time it ends -- except the newest
+        # bucket, which is still open.
+        edge = min(parse_iso_timestamp(key) + step, latest)
+        x.append(mdates.date2num(edge))
+        y.append(running)
     return np.array(x), np.array(y)
+
+
+# --------------------------------------------------------------------------
+# Drawing
+# --------------------------------------------------------------------------
 
 
 def pick_xticks(x0: float, x1: float) -> tuple[list[float], str]:
@@ -294,12 +597,32 @@ def main() -> None:
     parser.add_argument("--repo", default=REPO)
     parser.add_argument("--start-date", default=START_DATE)
     parser.add_argument("--out-dir", default="assets")
-    parser.add_argument("--refresh", action="store_true", help="ignore the timestamp cache")
+    parser.add_argument(
+        "--rebuild", action="store_true", help="re-fetch the whole history instead of resuming"
+    )
+    parser.add_argument(
+        "--offline", action="store_true", help="redraw from the stored history without any requests"
+    )
     args = parser.parse_args()
 
     start = parse_iso_timestamp(args.start_date)
-    starred = fetch_starred_at(args.repo, refresh=args.refresh)
-    x, y = build_series(starred, start)
+
+    if args.offline:
+        history = load_history(args.repo, start)
+        if history is None:
+            raise SystemExit(f"--offline needs an up-to-date {DATA_FILE}")
+    else:
+        token = get_token()
+        if not token:
+            raise SystemExit("the GitHub GraphQL API needs a token; set GITHUB_TOKEN")
+        count, created_at = repo_summary(args.repo, token)
+        if args.rebuild:
+            history = rebuild(args.repo, start, count, created_at, token)
+        else:
+            history = update(args.repo, start, count, created_at, token)
+        save_history(history)
+
+    x, y = build_series(history)
 
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
