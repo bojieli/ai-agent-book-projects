@@ -23,50 +23,6 @@
 | 10-5 | [Generative Agents 正式复现](generative-agents/) + `generative_agents/` | 📖 | [Qwen 3.7 Flash 正式运行](generative-agents/validation/runs/exp10-5-qwen37flash-20260804-v1/acceptance.json)完成三组各 25 Agent、17,280 步、两个虚拟日的完整社会实验；148,856 份真实 provider 回执零逻辑错误，14/14 门禁通过。自定义气候韧性工作坊未扩散出发起人，是保留的负结果；关闭反思后证据关联反思为零，基线在 25 人盲评中以 17:8 获偏好且四项均分更高 |
 | 10-6 | [voice-werewolf](voice-werewolf/) | ✅ | [同一次 v11 真实验收](voice-werewolf/validation/runs/exp10-6-simulated-user-openrouter-20260803-v11/acceptance_report.json)完成 3 个昼夜投票循环、6 次 LLM 工具→macOS `say`→OpenRouter 原生音频 ASR 回环、信息隔离和规则胜负；四项策略门禁全通过，13 个唯一响应 ID、1,650 音频 token、27 个非空 TTS 事件、动作历史和裁判溯源均保留，独立验证复核 6/6 音频动作边界 |
 
-章节、项目入口和保存的验收目录均使用当前编号；重编号不改变外部源码的固定提交和原始模型回执。
-
-## 实验 10-3 / 10-5 外部复现锚点
-
-这两个源码目录不随本书 vendoring。实验 10-3 的固定并发基线在 2026-08-03 临时 checkout 中固定并核对不可变提交，随后完成依赖安装、环境启动与 16 局正式基准。默认 Gemini 模拟来电者凭据无效，因此依照源码支持的 `CUV_USER_MODEL` 覆盖为 Anthropic Sonnet；该同族 caller 偏差、完整结果和局限均记录在[复现报告](talkact-reproduction/)中。实验 10-5 也在临时、干净且固定到精确提交的 checkout 上完成；本仓库保留运行器、全部最终状态、逐步 movement、记忆、原始回执、盲评与 hash manifest，而不 vendoring 上游源码。
-
-| 实验 | 权威上游 | 精确本地路径 | 固定提交与已核对入口 |
-| :--: | --- | --- | --- |
-| 10-3 | [`19PINE-AI/TalkAct`](https://github.com/19PINE-AI/TalkAct) | `chapter10/use-computer-while-calling` | `7d70007f72d45ddfc1a14e8e229b6d444e4919a2`；环境 `envs/app.py`，对照基准 `bench/run_bench.py` |
-| 10-5 | [`joonspk-research/generative_agents`](https://github.com/joonspk-research/generative_agents) | `chapter10/generative_agents` | `fe05a71d3e4ed7d10bf68aa4eda6dd995ec070f4`；Django 前端 `environment/frontend_server/manage.py`，模拟器 `reverie/backend_server/reverie.py` |
-
-从本书仓库根目录获取并核验固定源码：
-
-```bash
-git clone https://github.com/19PINE-AI/TalkAct.git chapter10/use-computer-while-calling
-git -C chapter10/use-computer-while-calling fetch origin 7d70007f72d45ddfc1a14e8e229b6d444e4919a2
-git -C chapter10/use-computer-while-calling checkout --detach 7d70007f72d45ddfc1a14e8e229b6d444e4919a2
-git -C chapter10/use-computer-while-calling rev-parse HEAD
-test "$(git -C chapter10/use-computer-while-calling rev-parse HEAD)" = "7d70007f72d45ddfc1a14e8e229b6d444e4919a2"
-
-git clone https://github.com/joonspk-research/generative_agents.git chapter10/generative_agents
-git -C chapter10/generative_agents fetch origin fe05a71d3e4ed7d10bf68aa4eda6dd995ec070f4
-git -C chapter10/generative_agents checkout --detach fe05a71d3e4ed7d10bf68aa4eda6dd995ec070f4
-git -C chapter10/generative_agents rev-parse HEAD
-test "$(git -C chapter10/generative_agents rev-parse HEAD)" = "fe05a71d3e4ed7d10bf68aa4eda6dd995ec070f4"
-```
-
-TalkAct `7d70007…` 要求 Python 3.12。该版本不是 WebSocket 桥：`src/cuv/runner.py` 并发运行 fast/slow Agent，二者通过进程内 `SharedState` 黑板共享滚动 digest、transcript/action log，并用 `fast_to_slow` / `slow_to_fast` 文本队列传递 `@slow:`、`ask_user`、`tell_user` 等消息。本次正式运行使用的入口为：
-
-```bash
-cd chapter10/use-computer-while-calling
-python3.12 -m venv .venv
-.venv/bin/pip install -r requirements.txt
-.venv/bin/playwright install chromium
-.venv/bin/python envs/app.py
-CUV_USER_MODEL=claude-sonnet-4-5-20250929 .venv/bin/python bench/run_bench.py \
-  --tasks forms-insurance booking-flight webmail-report meeting-helper \
-  --conditions duplex strawman --seeds 2
-```
-
-Generative Agents `fe05a71…` 的上游测试环境是 Python 3.9.12，需按该提交 README 创建 `reverie/backend_server/utils.py`。前端在 `environment/frontend_server` 运行 `python manage.py runserver`，模拟器在 `reverie/backend_server` 运行 `python reverie.py`；25-Agent 场景选择 `base_the_ville_n25`。正式复现通过运行时适配层把旧 `openai==0.27.0` 调用映射到 Qwen 3.7 Flash 与 `text-embedding-v4`，没有修改固定上游 checkout；每组按 360 步持久化检查点并可恢复。
-
-合并后的 10-3 仍要求两个 Agent **真实并发**且信息能双向传递；固定拓扑证据保留 39 次 fast→slow relay、33 次 slow→fast 事件和 91 个延迟样本，17 项 validator 门禁全部通过。自主路径另行保留 `tool_choice=auto`、工具参数、原始响应和 WebRTC/RTP 证据；两类证据用于不同对照，不直接合并指标。正文允许固定拓扑下的点对点通信，也允许消息总线配合 Manager/协调 Agent；“没有协调器”不是验收条件。10-5 的三组完整运行均精确结束于 `February 15, 2023, 00:00:00`；关闭反思组新建的证据关联反思为零，基线在 25 人盲评中以 17:8 获偏好且四项均分更高。自定义事件只留在 Isabella 的记忆中，没有扩散，按预注册规则作为完整负结果保留。
-
 ## 项目类型说明
 
 | 图标 | 类型 | 含义 |
