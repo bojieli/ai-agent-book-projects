@@ -21,14 +21,22 @@ Pada pembacaan pertama, lewati kredensial, presentasi, dan kompatibilitas provid
 | 9-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | Menggabungkan hasil lingkungan, aturan proses, dan Rubric menjadi diagnosis berbasis bukti. |
 | 9-2 | [gaia-experience](gaia-experience/) | ✅ | Membandingkan trajectory sukses, parsial, dan gagal untuk membuat dokumen pengalaman. |
 | 9-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | Menghasilkan patch prompt minimal dan mengendalikan rilis dengan set batas serta retensi. |
+| 9-4 | Eksperimen dalam teks | 🚧 | Eksperimen 9-4: mengembangkan Skill "klarifikasi kebutuhan + konfirmasi Spec" dari umpan balik pengguna; teks utama memberikan desain A/B tiga lengan, metrik, dan gerbang rilis, sedangkan implementasi pendampingnya belum tersedia |
 | 9-5 | [browser-use-rpa](browser-use-rpa/) | ✅ | Mengompilasi trajectory browser menjadi workflow yang diverifikasi melalui reset dan replay. |
 | 9-6 | [self-modifying-agent](self-modifying-agent/) | ✅ | Memicu patch kode setelah kegagalan berulang, lalu melakukan regresi, canary, dan rollback. |
+| 9-7 | [harness-safety-gate](harness-safety-gate/) | ✅ | Gerbang konfirmasi operasi berisiko tinggi |
 | 9-8 | [hermes-self-evolution](hermes-self-evolution/) | 📖 | Memberi Hermes seluruh buku dan source-nya sendiri; ia memilih peningkatan, mengubah dirinya, dan menjadikan tiap penolakan Reviewer sebagai putaran belajar baru sampai diterima. |
 | 9-9 | [self-evolution-eval](self-evolution-eval/) | ✅ | Eksperimen 9-9 mengevaluasi pembelajaran, transfer, perubahan aturan, dan retensi jangka panjang. |
-| 9-7 | [harness-safety-gate](harness-safety-gate/) | ✅ | Gerbang konfirmasi operasi berisiko tinggi |
-| — | [ai-style-skill](ai-style-skill/) | ✅ | Mengubah umpan balik tulisan menjadi Skill yang dapat diverifikasi; bab ini menghubungkan Skill tanda kutip lengkung dengan data sintetis yang diaudit dan post-training, serta memisahkan kegagalan tokenizer/Harness pada penyalinan eksak |
 
 Semua eksperimen menyediakan entry point offline dan unit test tanpa API Key; jalur yang membutuhkan model nyata atau browser dijelaskan dalam README proyek.
+
+## Kasus Pelengkap
+
+| Eksperimen | Proyek | Keterkaitan |
+| :--: | --- | --- |
+| 8-8 | [prompt-distillation](../chapter8/prompt-distillation/) | Proyek lintas bab tentang distilasi prompt dan pembelajaran terparameter; metode pelatihannya termasuk Bab 8 |
+| — | [self-evolving-tools](self-evolving-tools/) | Penemuan, enkapsulasi, dan penggunaan ulang alat ala Alita — kasus pelengkap dari "menulis pengalaman menjadi program" |
+| — | [ai-style-skill](ai-style-skill/) | Mengubah umpan balik tulisan menjadi Skill yang dapat diverifikasi; bab ini menghubungkan Skill tanda kutip lengkung dengan data sintetis yang diaudit dan post-training, serta memisahkan kegagalan tokenizer/Harness pada penyalinan eksak |
 
 ## Jenis Proyek
 
