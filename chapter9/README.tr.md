@@ -23,10 +23,10 @@ Metin, kontrol akışını açıklamak için kısa mekanizma skeleton'ları kull
 | [prompt-distillation](../chapter8/prompt-distillation/) | ✅ | Karmaşık promptların etkinliğini model parametrelerine damıtır; çıkarım sırasında prompt uzunluğunu azaltır ve bağlamsal deneyimi parametreli bilgiye dönüştürür. |
 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | İnsan geri bildirimine dayalı otomatik sistem istemi öğrenimi: tau-bench tarzı havayolu müşteri hizmetleri "aşırı aktarma" sorununu örnek alarak, bir Coding Agent sistem istem dosyasını okur, sorunlu kuralları belirler, kesin değişiklikler üretir ve istem dosyasını gerçekten yeniden yazar. Ardından değişiklikleri yeniden değerlendirir, "geri bildirim → yeniden yazma → doğrulama" döngüsü oluşturur. |
 | [self-evolving-tools](self-evolving-tools/) | ✅ | Alita tarzı bir "minimal ön tanım, maksimum kendi kendine evrim" yaklaşımı: ajanın önceden inşa edilmiş alana özgü aracı yoktur, yalnızca beş genel meta-araç vardır. Yapamayacağı bir görevle karşılaştığında, açık kaynak kütüphaneler/API'ler için web'de arama yapar, dokümantasyon okur, bir sandbox'ta test eder, uygulanabilir çözümleri yeni araçlar olarak kapsüller, yeniden kullanım için araç kütüphanesinde saklar ve tüm süreç boyunca halüsinasyon kontrolüne vurgu yapar. |
-| [hermes-self-evolution](hermes-self-evolution/) | 📖 | Deney 8-6: Hermes'e kitabın tamamını ve kendi kaynağını verir; bir iyileştirme seçip kendini değiştirir ve her Reviewer reddini kabul edilene kadar yeni bir öğrenme turuna dönüştürür. |
-| [self-evolution-eval](self-evolution-eval/) | ✅ | Deney 8-7: öğrenme, aktarım, kural değişimi ve korumayı kapsayan uzun vadeli üç kollu değerlendirme; 3 seed × 14 sıralı görev boyunca 126 gerçek çağrının kanıtını saklar. |
-| [harness-safety-gate](harness-safety-gate/) | ✅ | Yüksek riskli işlemler için onay kapısı (8-8). |
-| [ai-style-skill](ai-style-skill/) | ✅ | Yazım geri bildirimini doğrulanabilir Skill'e dönüştürür (8-9); bölüm, kıvrımlı tırnak Skill'ini denetlenmiş sentetik veri ve sonradan eğitimle ilişkilendirir, exact-copy tokenizer/Harness hatalarını ayırır. |
+| [hermes-self-evolution](hermes-self-evolution/) | 📖 | Deney 9-8: Hermes'e kitabın tamamını ve kendi kaynağını verir; bir iyileştirme seçip kendini değiştirir ve her Reviewer reddini kabul edilene kadar yeni bir öğrenme turuna dönüştürür. |
+| [self-evolution-eval](self-evolution-eval/) | ✅ | Deney 9-9: öğrenme, aktarım, kural değişimi ve korumayı kapsayan uzun vadeli üç kollu değerlendirme; 3 seed × 14 sıralı görev boyunca 126 gerçek çağrının kanıtını saklar. |
+| [harness-safety-gate](harness-safety-gate/) | ✅ | Yüksek riskli işlemler için onay kapısı (9-7). |
+| [ai-style-skill](ai-style-skill/) | ✅ | Yazım geri bildirimini doğrulanabilir Skill'e dönüştürür; bölüm, kıvrımlı tırnak Skill'ini denetlenmiş sentetik veri ve sonradan eğitimle ilişkilendirir, exact-copy tokenizer/Harness hatalarını ayırır. |
 
 ## Proje Türleri
 
