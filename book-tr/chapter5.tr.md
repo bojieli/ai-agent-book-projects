@@ -49,6 +49,8 @@ Agent: Tamamlandı. 3 TODO öğesi bulundu, liste TODO_LIST.md'de kaydedildi.
 
 Tüm süreç yalnızca iki araç kullandı: Grep (içerik arama) ve Write (dosya yazma). Görev daha karmaşık olsaydı — "modül başına TODO sayısını say ve bir çubuk grafik çiz" gibi — Agent, istatistik ve çizim için Python kodu yürütmek üzere Code Interpreter'ı da kullanırdı. Yedi araç tek başlarına basittir; birleşimde dikkat çekici bir görev yelpazesini kapsarlar.
 
+Okur şunu sorabilir: neden altı değil de yedi araç? Aslında tek bir Bash Shell aracı bile yeterli olurdu. OpenAI Codex yalnızca Bash Shell sunar ve tüm dosya okuma, yazma ve arama işlemlerini bu tek araçla yapar. Yine de bazı Agent'lar ayrı dosya okuma ve yazma araçlarını korumayı sürdürür. Bu kitaptaki yedi araç, bir Kodlama Agent'ının ihtiyaç duyduğu temel yetenekleri okurun kolayca kavraması için ayrı ayrı verilmiştir.
+
 Neden her genel amaçlı Agent'ın kodlama yeteneği olmalı? Çünkü kod üretimi yalnızca program yazmakla ilgili değildir — problem çözmenin genel amaçlı bir yoludur. Bir matematik problemiyle karşılaşan Agent, kod yazıp kesin bir yanıt için bir çözücüye verebilir; sabitlenmesi gereken bir iş kuralıyla karşılaşan Agent için, kod herhangi bir doğal dil açıklamasından çok daha kesindir; bir araç eksikse, anında bir tane yazabilir; bir veri formatı değiştiğinde, yeni ayrıştırma mantığı üretebilir. Sonraki bölümler bu senaryoların her birini sırayla ele alır. Temel kodlama yeteneğine sahip bir Agent — yukarıdaki yedi basit araçtan başka hiçbir şeyle donatılmamış olsa bile — yeni bir ihtiyaç ortaya çıktığında kendi yetenek sınırını genişletebilir.
 
 ### Vaka Çalışması: Manus'tan OpenClaw'a — Genel Amaçlı Agent'ların Kodlama Çekirdeği

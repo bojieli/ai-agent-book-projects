@@ -49,6 +49,8 @@ Agent: Done. Found 3 TODO items, the list is saved in TODO_LIST.md.
 
 The entire process used only two tools: Grep (search content) and Write (write file). If the task were more complex — like "count the number of TODOs per module and draw a bar chart" — the Agent would also use the Code Interpreter to execute Python code for statistics and plotting. The seven tools are simple individually; in combination they cover a remarkable range of tasks.
 
+A reader might ask: why seven tools and not six? In fact, a single Bash tool would be enough — OpenAI Codex provides nothing but Bash Shell and performs every file read, write, and search operation through that one tool. Other Agents nevertheless keep dedicated file-reading and file-writing tools. The seven tools in this book are broken out separately to make the basic capabilities a Coding Agent needs easy to grasp.
+
 Why should every general-purpose Agent have coding ability? Because code generation is not just about writing programs — it is a general-purpose way of solving problems. Faced with a math problem, the Agent can write code and hand it to a solver for an exact answer; faced with a business rule to pin down, code is far more precise than any natural-language description; missing a tool, it can write one on the spot; when a data format changes, it can generate new parsing logic. Later sections take up each of these scenarios in turn. An Agent with basic coding ability — even one equipped with nothing but the seven simple tools above — can expand its capabilities whenever a new need arises.
 
 ### Case Study: From Manus to OpenClaw — The Coding Core of General-Purpose Agents
