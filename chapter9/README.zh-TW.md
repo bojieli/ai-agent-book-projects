@@ -34,7 +34,7 @@
 
 | 編號 | 專案 | 關係 |
 | :--: | --- | --- |
-| 7-8 | [prompt-distillation](prompt-distillation/) | 將複雜提示的效果蒸餾進模型引數，減少推理提示長度，把上下文經驗固化為引數化知識 |
+| 8-8 | [prompt-distillation](../chapter8/prompt-distillation/) | 將複雜提示的效果蒸餾進模型引數，減少推理提示長度，把上下文經驗固化為引數化知識 |
 | — | [self-evolving-tools](self-evolving-tools/) | Alita 式「最小預定義，最大自我進化」：五個通用元工具，自己上網找庫/讀文件/沙箱測試並封裝複用 |
 | — | [ai-style-skill](ai-style-skill/) | 寫作型 Skill 補充案例；正文示例已移至第二章 |
 

@@ -32,7 +32,7 @@
 | 6-2, 6-12 | `android_world/` | 📖 | 評估 Agent 在 Android 環境的應用導覽、UI 互動與任務完成能力（外部基準倉庫） |
 | 6-6 | [tts-quality-eval](tts-quality-eval/) | ✅ | 多種 TTS 設定合成挑戰文字，LLM-as-a-Judge 按 Rubric 逐維度打分，輸出可復現對比表 |
 | 6-7 | [elo-leaderboard](elo-leaderboard/) | ✅ | 基於 ELO 評分的 Agent 效能排行榜，透過對戰比較相對能力 |
-| 6-8 | [model-action-threshold](model-action-threshold/) | ✅ | 在同一個中性的 Coding Harness 下，比較 GPT-5.6-sol 與 Claude Sonnet 5 從探索轉入首次修改的門檻；18/18 個單元均無 API 錯誤完成，[manifest](model-action-threshold/results/exp6-7-action-threshold-20260731-v1/manifest.json) 以可驗證雜湊綁定軌跡與彙總 |
+| 6-8 | [model-action-threshold](model-action-threshold/) | ✅ | 在同一個中性的 Coding Harness 下，比較 GPT-5.6-sol 與 Claude Sonnet 5 從探索轉入首次修改的門檻；18/18 個單元均無 API 錯誤完成，[manifest](model-action-threshold/results/exp7-8-action-threshold-20260731-v1/manifest.json) 以可驗證雜湊綁定軌跡與彙總 |
 | 6-9 | [agent-cost-analysis](agent-cost-analysis/) | ✅ | 多輪 Agent 任務（客服退款）全鏈路成本拆解 + KV-cache 友善設計/上下文壓縮的 A/B 節省量化 |
 | 6-10 | [model-benchmark](model-benchmark/) | 🚧 | 對多家 OpenAI 相容 API 橫向壓測 TTFT、p50/p95 延遲、吞吐與成功率，一條命令出對比表 |
 | 6-12 | [android-world](android-world/) | 📖 | 本書對 T3A Agent 在 AndroidWorld 上的評估報告與失敗分析筆記（實驗 6-12 起點；非基準原始碼） |

@@ -8,7 +8,7 @@
 
 본문은 짧은 메커니즘 skeleton으로 제어 흐름을 설명하고, 실험 디렉터리에는 완전한 SDK 어댑터·로그·테스트·검수 증거를 둡니다. 모든 파일을 줄 단위로 읽을 필요는 없습니다.
 
-- **Starter:** 목표, 최소 명령, 검수 조건부터 시작하고 다음에서 출발하세요: [async-agent](async-agent/);
+- **Starter:** 목표, 최소 명령, 검수 조건부터 시작하고 다음에서 출발하세요: [execution-tools](execution-tools/);
 - **Builder:** 진입점, 핵심 루프, 상태/메시지 스키마, 도구와 verifier를 따라갑니다.
 - **Maintainer:** 마지막으로 테스트, 증거 manifest, 실패 처리, rollback 경로와 provider adapter를 읽습니다.
 

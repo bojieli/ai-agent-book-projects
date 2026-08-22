@@ -34,7 +34,7 @@ All experiments above offer offline entry points and unit tests that require no 
 
 | Exp. | Project | Relation |
 | :--: | --- | --- |
-| 7-8 | [prompt-distillation](prompt-distillation/) | Cross-chapter project on prompt distillation and parameterized learning; the training method belongs to Chapter 7 |
+| 8-8 | [prompt-distillation](../chapter8/prompt-distillation/) | Cross-chapter project on prompt distillation and parameterized learning; the training method belongs to Chapter 8 |
 | — | [self-evolving-tools](self-evolving-tools/) | Alita-style tool discovery, encapsulation, and reuse — a supplementary case of "writing experience into programs" |
 | — | [ai-style-skill](ai-style-skill/) | Supplementary writing-Skill case; the main example appears in Chapter 2 |
 

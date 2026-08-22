@@ -8,7 +8,7 @@
 
 முதன்மை உரை குறுகிய mechanism skeleton-களால் control flow-ஐ விளக்குகிறது; முழு SDK adapters, logs, tests, acceptance evidence ஆகியவை experiment கோப்பகத்தில் உள்ளன. ஒவ்வொரு கோப்பையும் வரி வரியாகப் படிக்க வேண்டியதில்லை.
 
-- **Starter:** இலக்கு, குறைந்தபட்ச கட்டளை, ஏற்றுக்கொள்ளும் நிபந்தனைகளில் தொடங்குங்கள்; முதலில் [async-agent](async-agent/);
+- **Starter:** இலக்கு, குறைந்தபட்ச கட்டளை, ஏற்றுக்கொள்ளும் நிபந்தனைகளில் தொடங்குங்கள்; முதலில் [execution-tools](execution-tools/);
 - **Builder:** நுழைவுப் புள்ளி, மையச் சுழற்சி, state/message schema, கருவிகள், verifier ஆகியவற்றைப் பின்தொடருங்கள்.
 - **Maintainer:** பின்னர் tests, evidence manifest, தோல்வி கையாளல், rollback பாதை, provider adapter ஆகியவற்றைப் படியுங்கள்.
 

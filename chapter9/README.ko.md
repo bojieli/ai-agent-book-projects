@@ -34,7 +34,7 @@
 
 | 실험 | 프로젝트 | 연관성 |
 | :--: | --- | --- |
-| 7-8 | [prompt-distillation](prompt-distillation/) | 프롬프트 증류와 파라미터 기반 학습을 다루는 장 간 프로젝트입니다. 학습 방법 자체는 제7장에 속합니다. |
+| 8-8 | [prompt-distillation](../chapter8/prompt-distillation/) | 프롬프트 증류와 파라미터 기반 학습을 다루는 장 간 프로젝트입니다. 학습 방법 자체는 제8장에 속합니다. |
 | — | [self-evolving-tools](self-evolving-tools/) | Alita 방식의 도구 발견·캡슐화·재사용을 보여 주는, ‘경험을 프로그램에 기록하기’의 보충 사례입니다. |
 
 ## 프로젝트 유형
