@@ -2,34 +2,40 @@
 
 ← [Back to main README](README.md)
 
+## Core Concept: Agent = LLM + Context + Tools
 
-### Core Concept: Agent = Model + Context + Tools
+The core formula of this book is **Agent = LLM + Context + Tools**. Chapter 1 explains the same Agent at three levels: the implementation level is this formula, the intuitive level is "brain + eyes + hands and feet," and the academic level maps onto policy, observation space, and action space.
 
-The core framework of this book is **Agent = Model + Context + Tools**. These three components collaborate to realize the intelligent behavior of an agent:
+| Component | Metaphor | Responsibility |
+| :--: | :--: | --- |
+| 🧠 **LLM** | Brain | Provides understanding, reasoning, and decision-making |
+| 👁️ **Context** | Eyes | Everything the Agent can see at each decision point: system prompt, tool definitions, user messages, assistant replies, tool results |
+| 🤲 **Tools** | Hands and feet | Perceive the environment, execute actions, interact with the outside world |
 
-- **Model**: The brain of the agent, providing understanding, reasoning, and decision-making capabilities.
-- **Context**: The operating system of the agent, containing system instructions, dialogue history, reasoning processes, tool interaction records, etc.
-- **Tools**: The hands of the agent, enabling it to perceive the environment, execute actions, and interact with the external world.
+For production, Chapter 1 rewrites the same system as **Agent = Model + Harness**, where **Harness = context management + tool interfaces + constraints + verification + correction**. Those last three are exactly the gap between a demo that runs and a product that is reliable.
 
-### Learning Path
+## Learning Path
 
-The learning path corresponds chapter by chapter to the entire book, unfolding layer by layer around the three pillars:
+The Introduction lays out the overall arc: **Chapters 1–6 build a complete method for constructing an Agent; Chapters 7–10 discuss raising its capability from four directions — evaluation, post-training, continuous evolution, and multi-Agent collaboration.** Each chapter carries one key insight:
 
-- **Chapter 1 · Foundations**: Establish a complete cognitive framework for agent systems—understand the definition of an agent in RL, compare the sample efficiency differences between traditional RL and LLM+RL paradigms, grasp the new paradigm of "model as agent," and master the core framework of **Agent = Model + Context + Tools**. **Key Insight**: The importance of prior knowledge surpasses algorithms and environments.
-
-- **Chapters 2–3 · Context**: Context is the agent's operating system. Chapter 2 covers system prompts, KV Cache-friendly design, context compression, and prompt engineering ablation. Chapter 3 covers user memory, dense/sparse/hybrid retrieval, Agentic RAG, context-aware retrieval, and structured knowledge extraction. **Key Insight**: Complete context includes system instructions, dialogue history, reasoning processes, tool interaction records, user memory, and external knowledge.
-
-- **Chapters 4–5 · Tools**: Tools are the bridge for the agent to interact with the world. Chapter 4 covers three types of MCP tools (perception/execution/collaboration), event triggering, and asynchronous architecture. Chapter 5 delves into the complete implementation of a production-grade Coding Agent. **Key Insight**: Tool design should be generalized (a code interpreter is better than a calculator); code is the meta-ability to create new tools.
-
-- **Chapters 6–7 · Model**: How to measure and amplify intelligence. Chapter 6 covers evaluation benchmarks like Terminal-Bench, SWE-bench, GAIA, OSWorld, and Tau2-Bench. Chapter 7 covers post-training techniques like SFT, RL, RLHF, and sample efficiency. **Key Insight**: An independent verification signal is more reliable than "asking the model to think again"; "model as agent" internalizes tool calls as native capabilities through RL.
-
-- **Chapter 8 · Self-Evolution**: Enable agents to grow from experience without changing weights—experience learning, externalizing workflows as tools, distilling prompts and observations into parameters. **Key Insight**: Learning from experience is the key for an agent to move from being "smart" to being "skilled."
-
-- **Chapters 9–10 · Expansion and Collaboration**: Chapter 9 expands perception and action from text to speech, GUI, and the physical world. Chapter 10 uses multi-agent division of labor to handle complex tasks. **Key Insight**: Every design decision in a multi-agent system can find its counterpart in the three elements of a single agent.
+| Part | Ch. | Coverage | Key insight |
+| --- | :--: | --- | --- |
+| **Build** | 1 | The three elements, the ReAct loop, orchestration patterns (workflow vs. autonomy), Harness engineering | The gap between a demo that runs and a reliable product lies in the Harness, not the model |
+| | 2 | API message structure, KV Cache, prompt engineering and prompt-injection defense, Agent Skills, the Agent status bar, context compression | The single most important chapter; context sets the capability ceiling, and the more stable the prefix, the higher the cache hit rate |
+| | 3 | Four progressive strategies for user memory, the RAG stack, organizing and retrieving knowledge, Agentic RAG, multimodal memory | Extends context from a single session into knowledge that accumulates across sessions |
+| | 4 | Five tool categories (perception / execution / collaboration / event-trigger / user-communication), MCP, general design principles, active tool discovery | Perception tools control information volume, execution tools control risk; tool design should be generalized |
+| | 5 | Coding Agent plus a file system, the OpenClaw architecture, six directions for code as a meta-capability | Code is not just writing programs — it is the meta-capability to create new tools at runtime |
+| | 6 | Two axes, modality × timing: async and event-driven, voice, Computer Use, robot manipulation | All four interaction types share the same system primitives: wake-up, safe points, cancellation, preemption, fast/slow path separation |
+| **Improve** | 7 | Evaluation environments, metrics, dataset design, LLM-as-a-Judge, statistical significance, observability, simulation environments | Without evaluation you cannot tell "improvement from design" apart from "random variation" |
+| | 8 | The four-stage panorama, mid-training / SFT / RL, reward design, multi-turn credit assignment, distillation | SFT memorizes, RL generalizes; data and environments matter more than algorithms |
+| | 9 | Learning signals (environment outcomes / process rules / LLM rubrics), four update carriers — knowledge, instructions, programs, parameters — plus staged rollout and rollback | The update carrier depends on how the capability is expressed and verified |
+| | 10 | The classification framework (shared vs. isolated context × peer / manager / decentralized), the A2A protocol, six failure modes, Agent societies | Every multi-Agent design decision has a counterpart in the three elements of a single Agent |
 
 ## Prose and experiments
 
-The book is not a step-by-step tutorial for one SDK. Short pseudocode and skeletons explain state flow, stopping points, and verification boundaries; chapter experiments contain complete implementations, model/environment adapters, tests, logs, and evidence.
+The book is not a step-by-step tutorial for one SDK. Short pseudocode and skeletons in the prose only answer "how state flows, where it can stop, which signals participate in verification"; chapter experiments provide complete implementations, model/environment adapters, tests, logs, and evidence. You do not need to understand every line of every file, and you should not treat one experiment's specific API usage as a general architecture.
+
+Read at the three layers below; for a complex chapter, pick several mechanism experiments at the same layer rather than running only one project:
 
 | Layer | Read first | Skip for now | Question it answers |
 | :--: | --- | --- | --- |
@@ -37,18 +43,27 @@ The book is not a step-by-step tutorial for one SDK. Short pseudocode and skelet
 | **Builder** | entry point, core loop, state/message schema, tools, verifier | compatibility/deployment layers unrelated to the mechanism | Which variable changed the behavior? |
 | **Maintainer** | tests, failure handling, evidence format, manifest/hash, rollback path | third-party details needed only when changing the experiment | Can the result be reproduced, and are failures recorded honestly? |
 
-### Difficulty Levels
+Each chapter README marks its own Starter entry point. The recommended first set is: Ch. 1 `context`, Ch. 2 `context-compression`, Ch. 3 `user-memory`, Ch. 4 `execution-tools`, Ch. 5 `coding-agent`, Ch. 6 `live-audio`, Ch. 7 `tau2-bench-eval`, Ch. 8 `cot-distillation`, Ch. 9 `trajectory-verifier`, Ch. 10 `parallel-web-research`. Each directory's Code map marks Run first, Core behavior, Verifier, and the parts you can skip on a first read.
 
-- **Beginner** (Chapters 1–2): Suitable for beginners, understanding basic concepts.
-- **Intermediate** (Chapters 3–4): Requires some programming foundation, involves system integration.
-- **Advanced** (Chapters 5–6): Requires strong programming skills, involves complex system design.
-- **Expert** (Chapters 7–8): Requires deep learning and training/self-evolution experience.
-- **Application** (Chapters 9–10): Comprehensive application of previous knowledge to build practical applications.
+## Difficulty Levels
 
-### Practical Suggestions
+| Level | Ch. | Suitable for |
+| --- | :--: | --- |
+| 🟢 Beginner | 1–2 | Newcomers; only Python basics and experience using an LLM are required |
+| 🔵 Intermediate | 3–4 | Some programming background; covers retrieval systems and tool integration |
+| 🟣 Advanced | 5–6 | Strong programming skills, complex system design; Ch. 6 assumes familiarity with HTTP/WebSocket |
+| 🟡 Engineering | 7 | Evaluation infrastructure and statistical methods — heavy on engineering, light on mathematics |
+| 🔴 Expert | 8 | The one chapter in the book that requires machine learning and model-training experience |
+| 🟠 Applied | 9–10 | Combines everything above to build continuous-evolution loops and multi-Agent systems |
 
-1.  **Hands-on Practice**: Each project is designed to be run independently. It is recommended to run and modify the code yourself.
-2.  **Combine with the Book**: Read the corresponding chapters in the manuscript in the [`book-en/`](../../book-en/) directory (English) or [`book/`](../../book/) directory (Chinese original) of this repository to understand the combination of theory and practice.
-3.  **Experimental Comparison**: Many projects include ablation studies and comparative experiments. Deepen understanding through comparison.
-4.  **Progressive Learning**: Start with simple projects and gradually delve into complex systems.
-5.  **Focus on Protocols**: The MCP server project in Chapter 4 demonstrates standardized tool protocols, which are key to building scalable agents.
+Experiments and exercises in the prose carry their own star ratings: ★ introductory, suitable for all readers; ★★ moderate, requiring some engineering practice; ★★★ advanced challenges, usually open-ended problems or complex system design.
+
+## Practical Suggestions
+
+| # | Suggestion | Notes |
+| :--: | --- | --- |
+| 1 | 🛠️ **Hands-on practice** | Every project is designed to run independently; run and modify the code yourself |
+| 2 | 📚 **Read alongside the book** | Read the matching chapters in [`book-en/`](../../book-en/) (English) or [`book/`](../../book/) (Chinese original) to connect theory and practice |
+| 3 | 🔬 **Compare experiments** | Many projects include ablation studies and comparative experiments; deepen understanding through comparison |
+| 4 | 🪜 **Learn progressively** | Start with simple projects and gradually move into complex systems |
+| 5 | 🔌 **Watch the protocols** | The MCP tool projects in Chapter 4 demonstrate standardized tool protocols, which are key to building scalable Agents |

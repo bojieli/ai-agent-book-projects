@@ -2,34 +2,40 @@
 
 ← [Volver al README principal](README.md)
 
-
 ## Concepto Central: Agente = LLM + Contexto + Herramientas
 
-El marco central de este libro es **Agente = LLM + Contexto + Herramientas**. Estos tres componentes colaboran para realizar el comportamiento inteligente de un agente:
+La fórmula central de este libro es **Agente = LLM + Contexto + Herramientas**. El Capítulo 1 explica el mismo Agente en tres niveles: el nivel de implementación es esta fórmula, el nivel intuitivo es «cerebro + ojos + manos y pies», y el nivel académico se corresponde con la política (Policy), el espacio de observación (Observation Space) y el espacio de acción (Action Space).
 
-- **LLM**: El cerebro del agente, que proporciona capacidades de comprensión, razonamiento y toma de decisiones.
-- **Contexto**: El sistema operativo del agente, que contiene instrucciones del sistema, historial de diálogo, procesos de razonamiento, registros de interacción con herramientas, etc.
-- **Herramientas**: Las manos del agente, que le permiten percibir el entorno, ejecutar acciones e interactuar con el mundo exterior.
+| Componente | Metáfora | Responsabilidad |
+| :--: | :--: | --- |
+| 🧠 **LLM** | Cerebro | Proporciona capacidades de comprensión, razonamiento y toma de decisiones |
+| 👁️ **Contexto** | Ojos | Toda la información que el Agente puede ver en cada punto de decisión: prompt del sistema, definiciones de herramientas, mensajes del usuario, respuestas del modelo y resultados de las herramientas |
+| 🤲 **Herramientas** | Manos y pies | Percibir el entorno, ejecutar acciones e interactuar con el mundo exterior |
 
-### Ruta de Aprendizaje
+Para producción, el Capítulo 1 reescribe el mismo sistema como **Agente = Model + Harness**, donde **Harness = gestión del contexto + interfaces de herramientas + restricciones + verificación + corrección**. Esos tres últimos elementos son exactamente la distancia entre una demo que funciona y un producto fiable.
 
-La ruta de aprendizaje se corresponde capítulo por capítulo con todo el libro, desplegándose capa por capa alrededor de los tres pilares:
+## Ruta de Aprendizaje
 
-- **Capítulo 1 · Fundamentos**: Establecer un marco cognitivo completo para los sistemas de agentes — comprender la definición de un agente en RL, comparar las diferencias de eficiencia de muestra entre el RL tradicional y el paradigma LLM+RL, captar el nuevo paradigma de "modelo como agente" y dominar el marco central de **Agente = LLM + Contexto + Herramientas**. **Idea clave**: La importancia del conocimiento previo supera a los algoritmos y entornos.
+La Introducción plantea el recorrido general: **los Capítulos 1–6 construyen un método completo para desarrollar un Agente; los Capítulos 7–10 abordan la mejora de sus capacidades desde cuatro direcciones: evaluación, post-entrenamiento, evolución continua y colaboración multi-agente.** Cada capítulo incluye una idea clave:
 
-- **Capítulos 2–3 · Contexto**: El contexto es el sistema operativo del agente. El Capítulo 2 cubre prompts del sistema, diseño optimizado para KV Cache, compresión de contexto y ablación de ingeniería de prompts. El Capítulo 3 cubre memoria de usuario, recuperación densa/dispersa/híbrida, Agentic RAG, recuperación consciente del contexto y extracción de conocimiento estructurado. **Idea clave**: El contexto completo incluye instrucciones del sistema, historial de diálogo, procesos de razonamiento, registros de interacción con herramientas, memoria de usuario y conocimiento externo.
-
-- **Capítulos 4–5 · Herramientas**: Las herramientas son el puente para que el agente interactúe con el mundo. El Capítulo 4 cubre tres tipos de herramientas MCP (percepción/ejecución/colaboración), activación por eventos y arquitectura asíncrona. El Capítulo 5 profundiza en la implementación completa de un Coding Agent de grado de producción. **Idea clave**: El diseño de herramientas debe ser generalizado (un intérprete de código es mejor que una calculadora); el código es la meta-capacidad para crear nuevas herramientas.
-
-- **Capítulos 6–7 · Modelo**: Cómo medir y amplificar la inteligencia. El Capítulo 6 cubre benchmarks de evaluación como Terminal-Bench, SWE-bench, GAIA, OSWorld y Tau2-Bench. El Capítulo 7 cubre técnicas de post-entrenamiento como SFT, RL, RLHF y eficiencia de muestra. **Idea clave**: Una señal de verificación independiente es más confiable que "pedirle al modelo que vuelva a pensar"; el "modelo como agente" internaliza las llamadas a herramientas como capacidades nativas mediante RL.
-
-- **Capítulo 8 · Auto-Evolución**: Permitir que los agentes crezcan a partir de la experiencia sin cambiar los pesos — aprendizaje de la experiencia, externalización de flujos de trabajo como herramientas, destilación de prompts y observaciones en parámetros. **Idea clave**: Aprender de la experiencia es la clave para que un agente pase de ser "inteligente" a estar "capacitado".
-
-- **Capítulos 9–10 · Expansión y Colaboración**: El Capítulo 9 expande la percepción y la acción del texto a la voz, GUI y el mundo físico. El Capítulo 10 utiliza la división del trabajo multi-agente para manejar tareas complejas. **Idea clave**: Cada decisión de diseño en un sistema multi-agente puede encontrar su homólogo en los tres elementos de un solo agente.
+| Parte | Cap. | Contenido | Idea clave |
+| --- | :--: | --- | --- |
+| **Construcción** | 1 | Los tres elementos, el bucle ReAct, patrones de orquestación (flujo de trabajo frente a autonomía), ingeniería del Harness | La distancia entre una demo que funciona y un producto fiable está en el Harness, no en el modelo |
+| | 2 | Estructura de mensajes de la API, KV Cache, ingeniería de prompts y defensa ante prompt injection, Agent Skills, barra de estado del Agente, compresión de contexto | El capítulo más importante del libro; el contexto fija el techo de las capacidades y, cuanto más estable es el prefijo, mayor es el acierto de caché |
+| | 3 | Cuatro estrategias progresivas de memoria de usuario, la pila de RAG, organización y recuperación del conocimiento, Agentic RAG, memoria multimodal | Extiende el contexto de una sola sesión a un conocimiento que se acumula entre sesiones |
+| | 4 | Cinco categorías de herramientas (percepción / ejecución / colaboración / activación por eventos / comunicación con el usuario), MCP, principios generales de diseño, descubrimiento activo de herramientas | Las herramientas de percepción controlan el volumen de información y las de ejecución el riesgo; su diseño debe ser generalizado |
+| | 5 | Coding Agent más sistema de archivos, la arquitectura OpenClaw, seis direcciones del código como meta-capacidad | El código no es solo escribir programas: es la meta-capacidad de crear nuevas herramientas en tiempo de ejecución |
+| | 6 | Dos ejes, modalidad × temporalidad: asincronía y eventos, voz, Computer Use, manipulación robótica | Los cuatro tipos de interacción comparten las mismas primitivas del sistema: activación, puntos seguros, cancelación, preempción y separación de rutas rápida/lenta |
+| **Mejora** | 7 | Entornos de evaluación, sistema de métricas, diseño de conjuntos de datos, LLM-as-a-Judge, significancia estadística, observabilidad, entornos de simulación | Sin evaluación no se puede distinguir «la mejora que aporta el diseño» de «la variación aleatoria» |
+| | 8 | Panorama de cuatro etapas, mid-training / SFT / RL, diseño de recompensas, asignación de crédito multironda, destilación | El SFT memoriza y el RL generaliza; los datos y los entornos importan más que los algoritmos |
+| | 9 | Señales de aprendizaje (resultados del entorno / reglas de proceso / rúbricas LLM), cuatro soportes de actualización —conocimiento, instrucciones, programas y parámetros— más despliegue gradual y rollback | El soporte de la actualización depende de cómo se exprese y se verifique la capacidad |
+| | 10 | Marco de clasificación (contexto compartido o aislado × entre pares / gestor / descentralizado), protocolo A2A, seis modos de fallo, sociedades de Agentes | Cada decisión de diseño multi-agente tiene su homóloga en los tres elementos de un solo Agente |
 
 ## Reparto entre texto y experimentos
 
-El libro no es un tutorial paso a paso de un SDK. El pseudocódigo y los skeletons explican el flujo de estados, los puntos de parada y los límites de verificación; los experimentos contienen implementación, adaptadores, pruebas, registros y evidencias.
+El libro no es un tutorial paso a paso de un SDK. El pseudocódigo y los skeletons del texto solo responden a «cómo fluye el estado, en qué paso puede detenerse, qué señales participan en la verificación»; los experimentos de cada capítulo aportan la implementación completa, adaptadores de modelo y entorno, pruebas, registros y evidencias. Al leer un experimento no hace falta entender cada línea de cada archivo, ni conviene tomar el uso concreto de una API como arquitectura general.
+
+Se recomienda leer en las tres capas siguientes; ante un capítulo complejo, elige varios experimentos de mecanismo de la misma capa en lugar de ejecutar un solo proyecto:
 
 | Capa | Leer primero | Omitir por ahora | Pregunta que responde |
 | :--: | --- | --- | --- |
@@ -37,18 +43,27 @@ El libro no es un tutorial paso a paso de un SDK. El pseudocódigo y los skeleto
 | **Builder** | punto de entrada, bucle central, esquema de estado/mensajes, herramientas y verificador | capas de compatibilidad y despliegue no relacionadas con el mecanismo | ¿Qué variable cambió el comportamiento? |
 | **Maintainer** | pruebas, gestión de fallos, formato de evidencias, manifest/hash y ruta de rollback | detalles de terceros necesarios solo al modificar el experimento | ¿Se puede reproducir el resultado y se registran honestamente los fallos? |
 
-### Niveles de Dificultad
+El README de cada capítulo ya señala su propio punto de entrada Starter. El primer conjunto recomendado es: cap. 1 `context`, cap. 2 `context-compression`, cap. 3 `user-memory`, cap. 4 `execution-tools`, cap. 5 `coding-agent`, cap. 6 `live-audio`, cap. 7 `tau2-bench-eval`, cap. 8 `cot-distillation`, cap. 9 `trajectory-verifier`, cap. 10 `parallel-web-research`. El Code map de cada directorio marca Run first, Core behavior, Verifier y las partes que puedes saltarte en una primera lectura.
 
-- **Principiante** (Capítulos 1–2): Adecuado para principiantes, para entender conceptos básicos.
-- **Intermedio** (Capítulos 3–4): Requiere cierta base de programación e involucra integración de sistemas.
-- **Avanzado** (Capítulos 5–6): Requiere sólidas habilidades de programación e involucra diseño de sistemas complejos.
-- **Experto** (Capítulos 7–8): Requiere experiencia en aprendizaje profundo y entrenamiento/auto-evolución.
-- **Aplicación** (Capítulos 9–10): Aplicación integral de conocimientos previos para construir aplicaciones prácticas.
+## Niveles de Dificultad
 
-### Sugerencias Prácticas
+| Nivel | Cap. | Adecuado para |
+| --- | :--: | --- |
+| 🟢 Principiante | 1–2 | Personas que empiezan; basta con nociones de Python y experiencia usando un LLM |
+| 🔵 Intermedio | 3–4 | Cierta base de programación; cubre sistemas de recuperación e integración de herramientas |
+| 🟣 Avanzado | 5–6 | Sólidas habilidades de programación y diseño de sistemas complejos; el cap. 6 supone familiaridad con HTTP/WebSocket |
+| 🟡 Ingeniería | 7 | Infraestructura de evaluación y métodos estadísticos: mucha ingeniería y pocas matemáticas |
+| 🔴 Experto | 8 | El único capítulo del libro que exige experiencia en aprendizaje profundo y entrenamiento de modelos |
+| 🟠 Aplicación | 9–10 | Integra todo lo anterior para construir bucles de evolución continua y sistemas multi-agente |
 
-1. **Práctica directa**: Cada proyecto está diseñado para ejecutarse de forma independiente. Se recomienda ejecutar y modificar el código por uno mismo.
-2. **Combinar con el libro**: Lee los capítulos correspondientes en la carpeta [`book-es/`](../../book-es/) (español) o [`book/`](../../book/) (chino original) de este repositorio para entender la combinación de teoría y práctica.
-3. **Comparación experimental**: Muchos proyectos incluyen estudios de ablación y experimentos comparativos. Profundiza la comprensión mediante la comparación.
-4. **Aprendizaje progresivo**: Comienza con proyectos simples y profundiza gradualmente en sistemas complejos.
-5. **Enfoque en protocolos**: El proyecto del servidor MCP en el Capítulo 4 demuestra protocolos de herramientas estandarizados, que son clave para construir agentes escalables.
+Los experimentos y las preguntas del texto llevan además una calificación por estrellas: ★ nivel introductorio, apto para todos los lectores; ★★ dificultad media, requiere cierta práctica de ingeniería; ★★★ reto avanzado, normalmente con problemas abiertos o diseño de sistemas complejos.
+
+## Sugerencias Prácticas
+
+| # | Sugerencia | Notas |
+| :--: | --- | --- |
+| 1 | 🛠️ **Práctica directa** | Cada proyecto está diseñado para ejecutarse de forma independiente; ejecuta y modifica el código por tu cuenta |
+| 2 | 📚 **Combinar con el libro** | Lee los capítulos correspondientes en [`book-es/`](../../book-es/) (español) o [`book/`](../../book/) (chino original) para entender la unión de teoría y práctica |
+| 3 | 🔬 **Comparación experimental** | Muchos proyectos incluyen estudios de ablación y experimentos comparativos; profundiza mediante la comparación |
+| 4 | 🪜 **Aprendizaje progresivo** | Comienza con proyectos simples y adéntrate gradualmente en sistemas complejos |
+| 5 | 🔌 **Enfoque en protocolos** | Los proyectos de herramientas MCP del Capítulo 4 muestran protocolos estandarizados, clave para construir Agentes escalables |
