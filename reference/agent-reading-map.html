@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Agent 全书阅读地图</title>
+  <link rel="stylesheet" href="../assets/teaching.css">
+</head>
+<body>
+  <main class="page">
+    <p class="eyebrow">Quick reference · 一页打印</p>
+    <h1>用一个项目读懂全书</h1>
+    <p class="lede">目标不是“读过十章”，而是每读一个机制，就让同一个 Agent 多一种可验证的能力。</p>
+
+    <section>
+      <h2>第一轮：可用闭环</h2>
+      <ol class="route">
+        <li>
+          <strong>第 1 章 · 看懂循环</strong>
+          <p>产物：一个 LLM 能根据环境反馈反复选择工具，并在明确条件下停止。</p>
+        </li>
+        <li>
+          <strong>第 2 章 · 管好上下文</strong>
+          <p>产物：稳定的系统指令、消息历史、状态与长度上限。</p>
+        </li>
+        <li>
+          <strong>第 4 章 · 设计工具</strong>
+          <p>产物：两个窄权限工具，参数清楚、错误可观察、危险操作受约束。</p>
+        </li>
+        <li>
+          <strong>第 7 章 · 证明可用</strong>
+          <p>产物：10 个真实任务、成功标准、运行轨迹和失败归因。</p>
+        </li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>第二轮：按瓶颈选章</h2>
+      <div class="formula">
+        <div><strong>缺知识</strong><span>第 3 章：记忆与 RAG</span></div>
+        <div><strong>缺行动</strong><span>第 5–6 章：代码与交互</span></div>
+        <div><strong>缺协作</strong><span>第 10 章：多 Agent</span></div>
+        <div><strong>缺模型能力</strong><span>第 8 章：后训练，最后考虑</span></div>
+        <div><strong>缺持续改进</strong><span>第 9 章：从轨迹学习</span></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>读任何一节，只问四件事</h2>
+      <ol class="checklist">
+        <li><strong>环境：</strong>Agent 正在改变什么外部状态？</li>
+        <li><strong>观察：</strong>做决定时，模型能看到哪些信息？</li>
+        <li><strong>行动：</strong>模型可以调用哪些工具，权限边界在哪里？</li>
+        <li><strong>验证：</strong>系统如何知道完成了、做对了，或应该停止？</li>
+      </ol>
+    </section>
+
+    <aside class="principle">
+      <strong>通过标准：</strong>合上书后，能画出“观察 → 决策 → 行动 → 新观察”的循环，并能在自己的代码中指出每一部分。
+    </aside>
+
+    <p class="source-note">依据：本书《导言》、第 1 章和《学习建议》。详细课程见 <a href="../lessons/0001-read-with-a-project.html">第 1 课</a>。</p>
+  </main>
+</body>
+</html>

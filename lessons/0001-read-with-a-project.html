@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>第 1 课：不要按章节读，要按闭环读</title>
+  <link rel="stylesheet" href="../assets/teaching.css">
+  <script src="../assets/lesson-quiz.js" defer></script>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <p class="eyebrow">Lesson 0001 · 约 8 分钟</p>
+      <h1>不要按章节读，要按闭环读</h1>
+      <p class="lede">你真正要学会的不是复述十章目录，而是看见一个 Agent 如何观察世界、采取行动、验证结果，然后继续或停止。</p>
+      <ul class="meta">
+        <li>起点：三项入门认知</li>
+        <li>终点：独立做出可用 Agent</li>
+        <li>本课胜利：会安排第一轮阅读</li>
+      </ul>
+    </header>
+
+    <aside class="principle">
+      <strong>本课唯一结论：</strong>始终用同一个小项目检验书中的机制。正文负责解释“为什么”，实验负责让你看到“改变哪里、结果怎样”。
+    </aside>
+
+    <section id="mental-model">
+      <h2>先抓住一张图</h2>
+      <p>第 1 章给出工程公式 <strong>Agent = LLM + 上下文 + 工具</strong>。把它放进环境后，真正运行的是一个循环：</p>
+      <div class="formula" aria-label="Agent 的三个核心组成">
+        <div><strong>观察 / 上下文</strong><span>模型此刻知道什么</span></div>
+        <div><strong>决策 / LLM</strong><span>模型决定下一步做什么</span></div>
+        <div><strong>行动 / 工具</strong><span>系统怎样读取或改变环境</span></div>
+      </div>
+      <p>工具执行后，环境产生新的观察，循环再次开始。可用系统还需要 Harness 提供约束、验证和纠正。因此，“模型回答得像不像”不是唯一标准；更重要的是系统能否<strong>做成、验真、停下</strong>。</p>
+    </section>
+
+    <section id="route">
+      <h2>第一轮只精读四章</h2>
+      <ol class="route">
+        <li>
+          <strong>第 1 章：建立最小循环</strong>
+          <p>精读 Agent/Environment、ReAct、Model–Harness 和停止条件。先读正文，再看 <a href="../chapter1/context/">实验 1-1</a> 的目标、入口和验收条件。</p>
+        </li>
+        <li>
+          <strong>第 2 章：让循环不失忆、不失控</strong>
+          <p>精读 API 消息结构、工具调用循环、提示注入和上下文压缩。KV Cache 原理第一遍只记三条结论即可。</p>
+        </li>
+        <li>
+          <strong>第 4 章：给 Agent 两只可靠的“手”</strong>
+          <p>选择两个真实工具，重点看工具描述、参数保真、权限和错误返回；MCP 是接入方式，不是学习终点。</p>
+        </li>
+        <li>
+          <strong>第 7 章：证明它确实可用</strong>
+          <p>准备 10 个目标任务，写清成功标准，保存轨迹并找出第一个错误。没有评估的 Agent 只是 Demo。</p>
+        </li>
+      </ol>
+      <p>第一轮完成后，再按瓶颈选章：需要记忆或知识库读第 3 章；需要文件与代码能力读第 5 章；需要语音、浏览器或异步事件读第 6 章；第 8–10 章留到你真的遇到模型能力、持续进化或协作瓶颈时。</p>
+      <p><a href="../reference/agent-reading-map.html">打开可打印的全书阅读地图 →</a></p>
+    </section>
+
+    <section id="method">
+      <h2>每次阅读都留下一个改动</h2>
+      <p>先用“资料研究 Agent”作为默认贯穿项目：输入问题，调用搜索与网页读取工具，输出带来源的答案，并检查引用是否真的支持结论。以后可以换项目，但不要频繁换主线。</p>
+      <ol class="checklist">
+        <li>读前：写下“这一节可能改变 Agent 的哪一部分”。</li>
+        <li>读中：只标出一个机制、一条边界和一个失败模式。</li>
+        <li>读后：在项目里做一个最小改动，运行同一组任务。</li>
+        <li>隔天：不看书画出循环，并解释改动为什么有效或无效。</li>
+      </ol>
+    </section>
+
+    <section class="quiz no-print" data-quiz>
+      <h3>30 秒检索练习</h3>
+      <p>哪种行为最可能让你真正读懂这本书？</p>
+      <label><input type="radio" name="q1"> 先把十章概念都背熟再动手</label>
+      <label><input type="radio" name="q1" data-correct="true"> 每读一个机制就改一次项目</label>
+      <label><input type="radio" name="q1"> 先学模型训练再补系统设计</label>
+      <button type="button">检查答案</button>
+      <p class="feedback" data-feedback aria-live="polite"></p>
+    </section>
+
+    <section id="first-action">
+      <h2>现在只做一件事</h2>
+      <div class="card">
+        <p><strong>阅读：</strong><a href="../book/chapter1.md">第 1 章</a>开头至“ReAct 循环”。</p>
+        <p><strong>输出：</strong>不用查书，用四句话回答：环境是什么？Agent 看见什么？能做什么？怎样知道完成？</p>
+        <p><strong>时间盒：</strong>20 分钟阅读，5 分钟回忆。遇到陌生细节先做问号标记，不展开搜索。</p>
+      </div>
+    </section>
+
+    <section id="sources">
+      <h2>本课主来源</h2>
+      <p>优先阅读本书作者提供的 <a href="../docs/zh-CN/LEARNING.md">学习建议</a> 与 <a href="../book/chapter1.md">第 1 章</a>。作为外部校准，可阅读 Anthropic 的 <a href="https://www.anthropic.com/research/building-effective-agents">Building Effective AI Agents</a>，重点看“何时使用工作流、何时使用自主 Agent”。</p>
+    </section>
+
+    <footer>
+      卡住时直接把原文、代码或你的四句话发给我。下一课会根据你的回答，带你画出第一个 Agent 的闭环，而不是继续灌输新术语。
+    </footer>
+  </main>
+</body>
+</html>
