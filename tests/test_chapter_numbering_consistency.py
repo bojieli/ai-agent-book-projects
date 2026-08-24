@@ -12,11 +12,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 CHAPTERS = {
-    1: ("AI Agent 入门", 3),
+    1: ("AI Agent 入门", 4),
     2: ("上下文工程", 10),
     3: ("用户记忆和知识库", 12),
     4: ("工具", 5),
-    5: ("Coding Agent 与通用 Agent", 13),
+    5: ("Coding Agent 与通用 Agent", 16),
     6: ("交互：观察与动作空间的扩展", 13),
     7: ("Agent 的评估", 13),
     8: ("模型后训练", 19),
@@ -62,7 +62,7 @@ def test_public_chapter_indexes_use_the_2_0_structure():
 
     for document in (root_readme, zh_readme):
         assert "书稿版本已由 1.4 升级为 2.0" in document
-        assert "**103 个配套实验**" in document
+        assert "**107 个配套实验**" in document
         for number, (title, count) in CHAPTERS.items():
             assert f"| {number} |" in document
             assert f"**{title}**" in document

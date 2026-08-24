@@ -185,15 +185,15 @@ $ uv run python chapter5/agent-creator/demo.py --no-live --output chapter5/agent
 
 <div class="grid grid-cols-3 gap-4 mt-6">
 <a class="course-link" href="../chapter5/log-diagnosis/">
-<span class="course-link-title">Experiment 5-8: log diagnosis</span>
+<span class="course-link-title">Experiment 5-11: log diagnosis</span>
 <span class="course-link-path">chapter5/log-diagnosis/</span>
 </a>
 <a class="course-link" href="../chapter5/erp-agent/">
-<span class="course-link-title">Experiment 5-10: ERP SQL Agent</span>
+<span class="course-link-title">Experiment 5-13: ERP SQL Agent</span>
 <span class="course-link-path">chapter5/erp-agent/</span>
 </a>
 <a class="course-link" href="../chapter5/conversational-ui/">
-<span class="course-link-title">Experiment 5-11: conversational UI</span>
+<span class="course-link-title">Experiment 5-14: conversational UI</span>
 <span class="course-link-path">chapter5/conversational-ui/</span>
 </a>
 <a class="course-link" href="../book-en/images/fig5-8.svg">
