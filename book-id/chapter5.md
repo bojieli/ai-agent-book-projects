@@ -201,6 +201,28 @@ Kesalahan *tool-layer* mengambil jalur yang berbeda: **jangan hentikan sesi; uba
 
 Prinsip inti dari bagian ini adalah: **unit penanganan kesalahan bukanlah permintaan tunggal, melainkan seluruh putaran pemulihan (recovery loop)**. Sebelum pemulihan dipastikan mustahil, kesalahan sementara tidak boleh diekspos kepada konsumen—baik itu pengguna atau sistem *downstream* yang berlangganan acara (events): tahan pesan kesalahan selama proses pemulihan; jika pemulihan berhasil, konsumen tidak akan pernah menyadarinya; hanya ketika semuanya gagal, kesalahan yang ditahan akan dilepaskan. Ini adalah perwujudan rekayasa dari prinsip koreksi Bab 1—"jangan ekspos keadaan sementara sampai pemulihan dipastikan tidak mungkin".
 
+**Serah terima: menyerahkan trajektori yang belum selesai kepada model lain.** Ketika model utama terus tidak tersedia, penyedia lain harus menyelesaikan trajektori ini. Hambatan yang sebenarnya bukanlah alamat endpoint yang berbeda, melainkan adanya bagian trajektori yang hanya milik penyedia asal. Panggilan alat dan hasil alat berbeda strukturnya di tiap penyedia tetapi maknanya sama, jadi cukup dirender ulang; yang sulit adalah penalaran model. Penalaran biasanya terdiri atas dua bagian: teks yang bisa dibaca, dan kredensial yang dilekatkan penyedia untuk membuktikan bahwa penalaran itu memang berasal dari dirinya. Teksnya tetap terbaca oleh model lain, kredensialnya kehilangan daya begitu berpindah penyedia — **serah terima lintas penyedia dapat membawa teks, tetapi tidak dapat membawa kredensial**.
+
+Tuntutan tiap penyedia terhadap kredensial tidak seragam. Ujung yang longgar sama sekali tidak memvalidasi, ujung yang ketat menolak setiap kredensial yang bukan terbitannya sendiri. Kredensial pun belum tentu melekat pada penalaran, bisa saja melekat pada panggilan alat. Karena itu strategi yang tampak aman — "hapus bersih saja seluruh penalaran" — justru tidak lolos di sebagian penyedia. Rancangan serah terima hanya bisa mengikuti ujung yang paling ketat, sekaligus menyiapkan jalan mundur untuk keadaan yang tuntutannya tidak terpenuhi: menuliskan ulang panggilan alat lama menjadi narasi teks. Model tidak lagi menganggapnya alat yang benar-benar pernah dipanggil, tetapi setidaknya bisa melanjutkan.
+
+Dari sini lahir satu prinsip perancangan: trajektori tidak sepatutnya disimpan dalam format antarmuka penyedia mana pun, melainkan disimpan dalam satu format netral. Tiap penggal penalaran dipecah menjadi teks yang dapat dibawa dan kredensial yang tidak dapat dibawa; panggilan alat hanya mencatat nama dan argumen, sedangkan pengenalnya dibangkitkan ulang mengikuti penyedia tujuan saat dirender menjadi permintaan yang konkret. Ketika berpindah, kredensial selalu dibuang dan teksnya dibawa masuk sebagai konten biasa, bukan disorongkan kembali ke tempat penyedia tujuan menaruh penalaran. Ringkasan penalaran yang dikembalikan penyedia memang salinan yang dapat dibawa dan disiapkan untuk situasi seperti ini: cukup disimpan, tidak perlu memanggil model sekali lagi untuk memampatkannya. Nilai trajektori netral pun tidak terbatas pada peralihan saat gangguan: pemutaran ulang evaluasi di Bab 7, penyusunan sampel pelatihan di Bab 8, dan penyarian pengalaman di Bab 9 sama-sama bersandar pada artefak yang sama.
+
+> **Eksperimen 5-1 ★★★: Serah terima trajektori lintas penyedia**
+>
+> **Tujuan Eksperimen**: Memverifikasi apakah sebuah format trajektori netral memungkinkan trajektori Agent yang baru berjalan separuh diselesaikan oleh model penyedia lain, sekaligus mengukur ongkos dari "meneruskan apa adanya" dan "membuang semuanya sekaligus".
+>
+> **Pendekatan Teknis**: Gunakan tugas yang menuntut beberapa putaran panggilan alat; di tengah jalan, suntikkan respons pembatasan laju dan kelebihan beban secara berturut-turut untuk penyedia yang sedang dipakai, lalu setelah pemutus arus terpicu, berpindah ke penyedia lain dan melanjutkan. Trajektori disimpan dalam format netral: penalaran dipisah menjadi teks yang dapat dibawa dan kredensial yang tidak dapat dibawa, sedangkan panggilan alat hanya mencatat nama dan argumen. Tiga pendekatan diperbandingkan: **penerusan** memindahkan pesan penyedia asal apa adanya ke struktur penyedia baru; **pembuangan** menghapus seluruh penalaran dan kredensial; **netral** membuang kredensial lalu membawa teks atau ringkasan penalaran dari penyedia sebagai konten biasa, membangkitkan ulang pengenal untuk penyedia tujuan, dan menuliskan ulang panggilan lama menjadi narasi teks bila sisi penerima mewajibkan kredensial. Pilih tiga penyedia yang format antarmukanya berbeda-beda, lalu berpindah antar tiap pasangan.
+>
+> **Kriteria Penerimaan**: Permintaan pertama setelah setiap perpindahan harus menyimpan respons aslinya; kegagalan penerusan wajib berupa galat yang sungguh-sungguh dikembalikan penyedia, bukan galat simulasi. Pendekatan netral disyaratkan tidak memunculkan galat antarmuka pada seluruh pasangan penyedia, sementara pada pasangan mana dua pendekatan lain gagal dan dengan galat apa dicatat apa adanya. Ketiganya dibandingkan pada tingkat penyelesaian tugas, jumlah pemanggilan ulang alat yang sama setelah perpindahan (dihitung dengan sidik jari "nama alat + argumen"), serta putaran dan token tambahan yang dibutuhkan untuk menyelesaikan setelah perpindahan. Bila pendekatan netral ternyata tidak lebih baik daripada pembuangan dalam hal panggilan berulang, hal itu dicatat dengan kejujuran yang sama.
+
+> **Eksperimen 5-2 ★★: Melanjutkan setelah keluaran terputus di tengah jalan**
+>
+> **Tujuan Eksperimen**: Membandingkan "mengirim ulang satu putaran penuh" dengan "melanjutkan dengan keluaran separuh sebagai awalan" dari sisi biaya, ketepatan, dan efek samping.
+>
+> **Pendekatan Teknis**: Putuskan koneksi pada tiga titik dalam respons aliran — di tengah penalaran, di tengah teks, dan di tengah argumen panggilan alat. Tiga cara pemulihan: membuang penggalan lalu mengirim ulang seluruh putaran; melekatkan penggalan sebagai pesan assistant terakhir dan meminta model menuliskan lanjutannya (sebagian penyedia mendukungnya secara bawaan, sebagian menuntut pesan itu ditandai secara eksplisit sebagai pesan yang menunggu dilanjutkan, dan yang tidak punya antarmuka semacam itu mundur ke cara berikutnya); menambahkan satu meta-instruksi yang menyatakan agar melanjutkan dari titik putus. Panggilan alat yang separuh jadi tidak bisa dikembalikan dalam struktur aslinya, jadi harus diubah dulu menjadi teks agar model melengkapinya, lalu diurai dan divalidasi kembali setelah disambung. Bila pada penggalan itu sudah ada alat yang telanjur dijalankan lebih awal karena aliran, sebelum melanjutkan lakukan deduplikasi berdasarkan sidik jari panggilan agar efek sampingnya tidak terulang.
+>
+> **Kriteria Penerimaan**: Ulangi masing-masing dari tiga titik putus beberapa kali dan laporkan, untuk tiap cara, tingkat keberhasilan pemulihan, token keluaran yang dihemat dibandingkan pengiriman ulang penuh, tingkat keabsahan dan tingkat ketepatan makna argumen yang dilengkapi (di titik sambungan mudah muncul spasi berlebih atau karakter berulang, dan sah tidak sama dengan benar), serta jumlah efek samping yang terulang. Catat pula titik putus mana yang tidak dapat direproduksi di penyedia mana, dan apakah jalur mundurnya dapat dipakai.
+
 **Penghentian (Termination): setiap jalur pemulihan membutuhkan batas atas.** Mekanisme pemulihan itu sendiri bisa gagal, jadi setiap jalur pemulihan harus memiliki batas atas (retry ceiling) yang eksplisit: kompresi konteks menyerah setelah beberapa kegagalan berturut-turut; pengklasifikasi izin akan *fall back* dengan bertanya kepada manusia setelah kegagalan berulang; kelanjutan *output* dicoba paling banyak sejumlah waktu tertentu. Dari mana ambang batas ini berasal? Data produksi, bukan tebakan. Ambil contoh *circuit breaker* kompresi Claude Code: ambang batas "3 kegagalan berturut-turut" berasal dari statistik sesi nyata—sebuah sesi pernah gagal lebih dari tiga ribu kali berturut-turut pada jalur pemulihan ini, dan upaya ulang yang sia-sia semacam itu saja menghabiskan sekitar 250.000 panggilan API per hari di seluruh dunia; lebih dari seribu sesi mengalami rentetan 50+ kegagalan beruntun. Tiga adalah titik belok (inflection point) empiris antara "sebagian besar kegagalan pulih sebelum ini" dan "upaya ulang lebih lanjut pada dasarnya tidak ada harapan."
 
 Lebih berbahaya daripada *breaker* titik tunggal adalah **spiral kematian (death spiral)**: logika yang dipicu pada jalur kesalahan itu sendiri memanggil LLM, gagal lagi, dan terus berjenjang. Satu kaskade (*cascade*) nyata: Agent berhenti karena kesalahan *context-overflow*, yang memicu *stop hook* (logika pembersihan yang berjalan otomatis saat Agent berakhir) yang melakukan "commit code on exit", *hook* tersebut memanggil LLM untuk menulis pesan *commit*, konteks *overflow* lagi, dan *hook* menyala sekali lagi. Pertahanan datang dalam dua bagian: nonaktifkan semua efek samping pemanggilan model (model-invoking side effects) pada jalur kesalahan (lebih baik kehilangan fitur tambahan sekali saja, seperti ekstraksi *memory* otomatis), dan gunakan penghitung kedalaman rekursi (*recursion-depth counter*) untuk mendeteksi dan mematahkan kaskade sisa. Akhirnya, di atas semua mekanisme otomatis terdapat kondisi penghentian dan eskalasi global: jumlah putaran maksimum, batas anggaran sesi, dan eskalasi ke intervensi manusia ketika kegagalan berturut-turut melampaui ambang batas mereka.
@@ -377,7 +399,7 @@ Biarkan LLM bertanggung jawab untuk memahami masalah dan menulis kodenya, dan bi
 
 Stephen Wolfram, pencipta Mathematica, menawarkan sebuah wawasan mendalam mengenai hal ini. Sebelum LLM ada, sudah ada sistem yang mampu melakukan komputasi matematis yang presisi—mereka bekerja menggunakan **Komputasi Simbolik** (Symbolic Computation), yaitu memproses ekspresi menggunakan simbol matematika daripada perkiraan nilai numerik. Misalnya, sebuah kalkulator konvensional akan memperkirakan $\sqrt{2}$ sebagai 1.414, sedangkan sistem komputasi simbolik akan mempertahankan bentuk pasti $\sqrt{2}$, dan hanya mengubahnya menjadi desimal jika diperlukan. Wolfram Alpha, yang diciptakan oleh Wolfram, adalah sistem semacam itu: pengguna memasukkan soal matematika, dan sistem mengembalikan jawaban yang pasti. Namun, pemahaman bahasa alaminya cukup rapuh dan cakupannya sempit—sistem ini mengandalkan parser tata bahasa bawaan yang hanya dapat mengenali kumpulan frasa yang terbatas; sedikit perubahan dalam penyusunan frasa dapat menyebabkan kegagalan penguraian, dan hal itu tentu saja tidak dapat menangani penalaran multi-langkah pada domain terbuka. LLM secara sempurna mengisi celah ini—mereka sangat unggul dalam memahami berbagai ekspresi bahasa alami tetapi tidak pandai dalam kalkulasi yang presisi. Model kolaboratif yang baru adalah: biarkan LLM bertanggung jawab untuk memahami pertanyaan bahasa alami pengguna, mengidentifikasi struktur matematis atau logis di dalamnya, dan menerjemahkannya ke dalam bahasa formal (seperti bahasa Mathematica atau pustaka SymPy Python); kemudian serahkan ke mesin komputasi simbolik khusus atau pemecah kendala (constraint solver) untuk dieksekusi guna mendapatkan hasil yang presisi.
 
-> **Eksperimen 5-1 ★★: Menggunakan Alat Pembuatan Kode untuk Meningkatkan Kemampuan Pemecahan Masalah Matematis**
+> **Eksperimen 5-3 ★★: Menggunakan Alat Pembuatan Kode untuk Meningkatkan Kemampuan Pemecahan Masalah Matematis**
 >
 > **Tujuan Eksperimen**: Memverifikasi peningkatan akurasi pemikiran matematis Agent saat dibantu oleh Code Interpreter.
 >
@@ -385,7 +407,7 @@ Stephen Wolfram, pencipta Mathematica, menawarkan sebuah wawasan mendalam mengen
 >
 > **Kriteria Penerimaan**: Evaluasi menggunakan masalah bergaya AIME (dimodelkan dari American Invitational Mathematics Examination). Bandingkan akurasi dari penalaran chain-of-thought murni dengan penalaran yang dibantu oleh kode; mode yang dibantu kode harus mencapai akurasi yang jauh lebih tinggi. Periksa apakah kode tersebut menggunakan pustaka matematika dengan benar dan apakah proses penyelesaiannya jelas secara logika.
 
-> **Eksperimen 5-2 ★★: Menggunakan Alat Pembuatan Kode untuk Meningkatkan Kemampuan Penalaran Logis**
+> **Eksperimen 5-4 ★★: Menggunakan Alat Pembuatan Kode untuk Meningkatkan Kemampuan Penalaran Logis**
 >
 > **Tujuan Eksperimen**: Menilai kemampuan Agent untuk melakukan penalaran logis dengan bantuan kode pemecahan-kendala (constraint-solving code).
 >
@@ -485,7 +507,7 @@ Nilai dari desain ini harus dipahami pada dua tingkat.
 
 Dengan demikian pengamanan tiga tingkat menjadi lengkap: (1) aturan bahasa alami di dalam System Prompt membantu pemahaman dan penjelasan; (2) deskripsi alat dan desain parameter berfungsi sebagai daftar periksa, memandu *model* untuk secara eksplisit memverifikasi kondisi sebelum memanggil; (3) validasi berbasis kode di sisi server yang menggunakan *database ground truth* bertindak sebagai *gatekeeper* terakhir. Dua tingkat pertama mengurangi terjadinya kesalahan, dan tingkat ketiga memastikan bahwa kesalahan tidak menjadi kerugian yang tidak dapat diubah.
 
-> **Eksperimen 5-3 ★★: Model kecil meningkatkan akurasi eksekusi aturan melalui pengetahuan berbasis kode**
+> **Eksperimen 5-5 ★★: Model kecil meningkatkan akurasi eksekusi aturan melalui pengetahuan berbasis kode**
 >
 > **Tujuan eksperimen**: Memverifikasi bahwa pengkodean aturan bisnis yang kompleks di dalam kode secara signifikan meningkatkan akurasi dan konsistensi di mana *model* kecil (Qwen3-4B) mengeksekusi aturan tersebut.
 >
@@ -513,7 +535,7 @@ Proposer menerima umpan balik, menginterpretasikannya, memodifikasi kode, dan me
 
 Loop Proposer-Reviewer di sini mengikuti pola yang sama dengan mekanisme **pre-approval** pada Bab 4: satu Agent menghasilkan, dan Agent lain mengevaluasi secara independen. Kedua aplikasi tersebut berbeda dalam tujuan dan alur kerja. Bab 4 menggunakan pola tersebut untuk menyetujui atau menolak satu operasi ireversibel tunggal; di sini, pola tersebut mendorong perbaikan konten secara iteratif selama beberapa putaran, dengan Reviewer melihat output render yang tidak tersedia bagi Proposer. Prinsip desain intinya konsisten (batasan tujuan bersama, menggunakan keluarga model yang berbeda untuk mengurangi kemungkinan kesalahan serupa, umpan balik sebagai event khusus yang ditambahkan ke trajectory Proposer). **Keuntungan inti** dari penggunaan pembagian kerja dual-agent daripada loop single-agent terletak pada **manajemen konteks**: Reviewer hanya memproses gambar render dari versi terbaru, tidak terpengaruh oleh versi historis; Proposer hanya mengakumulasi umpan balik teks terstruktur, mengonsumsi lebih sedikit token dan membuat penalaran menjadi lebih mudah. Solusi single-agent akan perlu mengakumulasi gambar render dari beberapa putaran untuk puluhan halaman dalam konteks yang sama, yang dengan cepat melampaui batas konteks. Mekanisme ini akan digunakan kembali dalam eksperimen-eksperimen selanjutnya pada pengeditan video dan visualisasi log; Bab 10 akan mengeksplorasi lebih jauh mode kolaborasi multi-agent lainnya di luar paradigma Proposer-Reviewer.
 
-> **Eksperimen 5-4 ★★: Pembuatan PPT otomatis dari makalah**
+> **Eksperimen 5-6 ★★: Pembuatan PPT otomatis dari makalah**
 >
 > **Tujuan eksperimen**: Secara otomatis menghasilkan presentasi berkualitas tinggi dari makalah akademik, memverifikasi efektivitas mekanisme Proposer-Reviewer dalam kontrol kualitas pembuatan konten.
 >
@@ -522,11 +544,11 @@ Loop Proposer-Reviewer di sini mengikuti pola yang sama dengan mekanisme **pre-a
 > **Kriteria penerimaan**: Menghasilkan 10-20 slide yang mencakup kontribusi utama makalah. Menyertakan setidaknya 3 gambar asli yang sesuai dengan teks yang menyertai. Tidak ada teks yang meluap saat dirender, tata letak masuk akal. Membandingkan konsumsi konteks dan kualitas pembuatan antara tinjauan mandiri single-agent dan pembagian kerja Proposer-Reviewer.
 >
 
-> **Eksperimen 5-5 ★★: Pembuatan otomatis video penjelasan makalah**
+> **Eksperimen 5-7 ★★: Pembuatan otomatis video penjelasan makalah**
 >
 > **Tujuan eksperimen**: Memperluas kemampuan pembuatan PPT, menggabungkan saluran visual dan auditori untuk mencapai pembuatan video penjelasan secara otomatis.
 >
-> **Pendekatan teknis**: Membangun berdasarkan alur kerja presentasi dari Eksperimen 5-4, Agent juga menghasilkan narasi percakapan untuk setiap slide—memandu penonton alih-alih mengulangi teks slide—menggunakan TTS (text-to-speech) untuk menyintesis audio, dan menggabungkan gambar slide serta audio menggunakan FFmpeg untuk memproduksi video akhir.
+> **Pendekatan teknis**: Membangun berdasarkan alur kerja presentasi dari Eksperimen 5-6, Agent juga menghasilkan narasi percakapan untuk setiap slide—memandu penonton alih-alih mengulangi teks slide—menggunakan TTS (text-to-speech) untuk menyintesis audio, dan menggabungkan gambar slide serta audio menggunakan FFmpeg untuk memproduksi video akhir.
 >
 > **Kriteria penerimaan**: Menghasilkan video berdurasi 5 hingga 15 menit di mana waktu tayang setiap slide persis cocok dengan narasinya dan narasi tersebut sesuai dengan elemen visual.
 >
@@ -541,7 +563,7 @@ Mengedit video melalui antarmuka Computer Use yang bertujuan umum menghadirkan h
 
 Membingkai ulang pengeditan video sebagai panggilan API dan code generation memangkas kerumitannya secara drastis. Banyak perangkat lunak profesional (seperti Blender — alat pembuatan 3D dan pengomposisian video open-source yang mendukung skrip Python; FFmpeg — alat serbaguna (Swiss Army knife) command-line untuk pemrosesan audio/video) menyediakan antarmuka API terprogram yang mengekspos fungsionalitas inti dengan cara yang terstruktur dan dapat disusun (composable). Misalnya, Blender Python API memungkinkan kontrol presisi atas operasi seperti mengimpor, memotong (trimming), mengatur, menambahkan efek transisi, dan mencampur audio untuk klip video, dengan setiap operasi sesuai dengan panggilan fungsi yang jelas. Bagi sebuah Agent, mengonversi kebutuhan bahasa alami menjadi panggilan API jauh lebih mudah daripada memahami antarmuka GUI dan menyimulasikan klik mouse. Mirip dengan pembuatan PPT, pengeditan video juga mengadopsi mekanisme Proposer-Reviewer — Proposer Agent menghasilkan skrip Blender, Reviewer Agent merender frame kunci (keyframes) dan menggunakan Vision LLM untuk memeriksa efeknya, memberikan umpan balik untuk modifikasi.
 
-> **Eksperimen 5-6 ★★: Pengeditan video cerdas berbasis API**
+> **Eksperimen 5-8 ★★: Pengeditan video cerdas berbasis API**
 >
 > **Tujuan eksperimen**: Memverifikasi kemampuan Agent untuk melakukan pengeditan video dengan menghasilkan kode Blender Python API, dan mengevaluasi peran mekanisme Proposer-Reviewer berbasis umpan balik visi dalam pemrosesan konten multimedia.
 >
@@ -570,7 +592,7 @@ Kedua jalur juga memiliki perbedaan yang lebih praktis: **bentuk representasi da
 
 Jadi, memilih jalur mana itu sendiri adalah sebuah keputusan yang harus dibuat Agent: menimbang kompleksitas intrinsik dan persyaratan presisi produk, lalu membagi tugas antara code generation dan model generasi 3D. Dalam sistem nyata, kedua jalur juga dapat dikombinasikan—geometri dihasilkan secara parametrik dengan kode, sedangkan tekstur permukaan diserahkan ke model generatif, masing-masing mengambil kelebihannya.
 
-> **Eksperimen 5-7 ★★: Dua Rute Pembuatan untuk Komponen yang Sama—Kode dan Model Generatif**
+> **Eksperimen 5-9 ★★: Dua Rute Pembuatan untuk Komponen yang Sama—Kode dan Model Generatif**
 >
 > **Tujuan Eksperimen**: Mengambil satu komponen mekanik yang sama dengan spesifikasi dimensi, membandingkan perbedaan antara dua rute—code generation dan model generasi 3D—dalam presisi dimensi, editability, dan kesiapan manufaktur, serta memverifikasi kerangka penilaian "memilih rute berdasarkan kompleksitas intrinsik dan persyaratan presisi".
 >
@@ -596,7 +618,7 @@ Observabilitas dari sistem Agent bergantung pada visualisasi alur eksekusi. Tuga
 
 Code generation menawarkan solusi elegan: membangun loop umpan balik perbaikan otomatis (auto-repair feedback loop). Ketika frontend menemukan format log yang tidak dapat di-parsing, alih-alih menampilkan pesan error, ia secara otomatis melaporkan informasi kegagalan (sampel log mentah, error mendetail) ke Agent. Agent menganalisis struktur data sampel dan menghasilkan kode frontend yang dapat mem-parsing-nya dengan benar. Kode pertama-tama diuji secara otomatis dalam browser virtual untuk memverifikasi kebenaran parsing, sementara Vision LLM menilai visualisasinya. Jika lulus kedua pemeriksaan, kode di-deploy ke frontend sebagai hot update.
 
-> **Eksperimen 5-8 ★★★: Sistem Log Parsing Adaptif**
+> **Eksperimen 5-10 ★★★: Sistem Log Parsing Adaptif**
 >
 > **Tujuan Eksperimen**: Membangun sistem visualisasi log Agent yang mampu berevolusi mandiri.
 >
@@ -611,7 +633,7 @@ Agents di lingkungan produksi (production) menghasilkan log trajectory dalam vol
 
 Code generation menyediakan jalur otomatis untuk diagnosis. Agent dapat membaca log produksi, menggabungkannya dengan dokumen arsitektur dan PRD (Product Requirement Documents) untuk secara otomatis menentukan apakah alur eksekusi memenuhi ekspektasi, dan menunjukkan secara tepat komponen serta modul yang bermasalah. Berdasarkan hasil analisis, Agent menghasilkan laporan masalah terstruktur (prioritas, modul, deskripsi, saran perbaikan) dan kasus uji regresi—kasus uji tersebut merujuk pada ID trajectory masalah dan putaran interaksi utama, lalu framework pengujian akan memutarnya ulang secara otomatis untuk memverifikasi bahwa sistem yang telah diperbaiki menghasilkan perilaku yang benar untuk input yang sama. Terakhir, Agent terhubung ke GitHub melalui MCP untuk membuat Issue dan menugaskannya kepada pengembang terkait, menyelesaikan otomatisasi penuh dari penemuan masalah hingga penugasan tugas.
 
-> **Eksperimen 5-9 ★★★: Sistem Diagnostik Cerdas untuk Log Produksi**
+> **Eksperimen 5-11 ★★★: Sistem Diagnostik Cerdas untuk Log Produksi**
 >
 > **Tujuan Eksperimen**: Secara otomatis menemukan masalah dari trajectory produksi, menghasilkan kasus uji, dan membuat item pekerjaan.
 >
@@ -652,7 +674,7 @@ Melalui code generation, Agent dapat membuat antarmuka interaktif yang terstrukt
 ![Gambar 5-8: Proses Pembuatan Formulir Dinamis](images/fig5-8.svg)
 
 
-> **Eksperimen 5-10 ★★: Sistem Klarifikasi Maksud dengan Formulir Dinamis**
+> **Eksperimen 5-12 ★★: Sistem Klarifikasi Maksud dengan Formulir Dinamis**
 >
 > **Tujuan Eksperimen**: Memverifikasi kemampuan Agent untuk mengklarifikasi maksud pengguna dengan menghasilkan formulir HTML secara dinamis.
 >
@@ -674,7 +696,7 @@ SQL dan kode visualisasi yang dihasilkan tidak boleh dieksekusi secara langsung.
 
 Lebih jauh lagi, Agent dapat menghasilkan dua artefak yang membentuk pipeline: sebuah SQL query dan kode visualisasi, seperti kode untuk diagram batang. Frontend meneruskan hasil SQL secara langsung ke kode visualisasi. LLM menghasilkan kode tetapi tidak berpartisipasi dalam jalur data—inilah esensi dari code generation sebagai antarmuka.
 
-> **Eksperimen 5-11 ★★: Agent ERP dengan Interaksi Bahasa Alami**
+> **Eksperimen 5-13 ★★: Agent ERP dengan Interaksi Bahasa Alami**
 >
 > Perangkat lunak ERP (Enterprise Resource Planning) adalah sistem kritis untuk bisnis, biasanya menggunakan antarmuka GUI di mana operasi yang kompleks memerlukan beberapa klik mouse. Sebuah AI Agent dapat menerjemahkan permintaan natural-language pengguna menjadi SQL queries, memungkinkan akses database otomatis.
 >
@@ -698,7 +720,7 @@ Aplikasi puncak dari code generation adalah membiarkan Agent membuat perangkat l
 
 Namun, fully dynamic generation membutuhkan biaya besar dan lambat—lebih cocok untuk demonstrasi tentang apa yang mungkin terjadi daripada untuk production use. Pendekatan yang lebih pragmatis adalah **menyesuaikan framework yang sudah ada**. Model "semi-custom" ini mempertahankan stabilitas perangkat lunak dasar sembari mengekspos aspek-aspek tertentu ke kendali pengguna. Pengguna dapat mengatakan "jadikan tombolnya biru," "tambahkan menu pintasan ke sidebar," atau "beralih ke font yang lebih mudah dibaca"; Agent memperbarui frontend code, dan HMR (Hot Module Replacement—yang memperbarui modul terdampak tanpa reload seluruh halaman dan biasanya mempertahankan state aplikasi) menerapkan perubahannya seketika. Sebuah produk one-size-fits-all menjadi pengalaman yang disesuaikan untuk setiap pengguna.
 
-> **Eksperimen 5-12 ★★: Sistem Kustomisasi Antarmuka Percakapan**
+> **Eksperimen 5-14 ★★: Sistem Kustomisasi Antarmuka Percakapan**
 >
 > **Tujuan Eksperimen**: Memungkinkan pengguna menyesuaikan antarmuka perangkat lunak secara instan melalui dialog bahasa alami, lalu mengevaluasi apakah pembuatan kode dengan hot reload dapat memberikan pengalaman yang dipersonalisasi secara efektif.
 >
@@ -712,7 +734,7 @@ Arsitektur yang lebih kuat **memindahkan batas kepercayaan ke lapisan data**. Ko
 
 Memindahkan otorisasi ke bawah bukan berarti menaruh seluruh logika bisnis di basis data. Lapisan aplikasi tetap dapat melakukan pemeriksaan awal untuk memberikan umpan balik cepat, tetapi lapisan data harus mempertahankan kewenangan keputusan akhir. Aturan yang sama dapat memperbaiki pengalaman di atas dan memberi jaminan di bawah. Semua jalur akses data harus melewati lapisan data tepercaya; kode yang dihasilkan tidak boleh terhubung langsung untuk mengitarinya. Hasilnya, lapisan atas dapat terus berubah, sedangkan batas izin yang tidak dapat dinegosiasikan tetap berada di lapisan yang tidak dibuat ulang pada setiap permintaan. Inilah lapis data pada kerangka tiga lapis di Bab 1—lapis yang paling sulit dilewati.
 
-> **Eksperimen 5-13 ★★★: Objek Data Tertanam-Izin untuk Perangkat Lunak Dinamis**
+> **Eksperimen 5-15 ★★★: Objek Data Tertanam-Izin untuk Perangkat Lunak Dinamis**
 >
 > **Tujuan Eksperimen**: Bangun object store yang memungkinkan kode aplikasi dibuat atau ditulis ulang secara dinamis, namun otorisasi dan integritas data tetap ditegakkan di lapisan data. Verifikasi bahwa kode yang dihasilkan tidak dapat menembus batas stabil dengan melewati transisi state, menulis nilai di luar rentang, atau membaca lintas tenant.
 >
@@ -757,7 +779,7 @@ Keuntungan dari pembuatan berbasis contoh sangat jelas: kode contoh itu sendiri 
 
 Ketika Agent menerima tugas untuk mengembangkan Agent baru, ia pertama-tama harus menyalin kodenya sendiri (atau implementasi tervalidasi dan berkualitas tinggi lainnya) dan kemudian melakukan modifikasi yang terarah: menyesuaikan System Prompt agar sesuai dengan peran baru, mengganti atau menambahkan *tools* yang sesuai dengan fungsi baru, mengubah logika bisnis sembari mempertahankan kerangka arsitektur. Pola "replikasi mandiri dengan modifikasi adaptif" ini memastikan Agent baru mewarisi keunggulan teknis inti sambil memungkinkan diferensiasi dalam dimensi tertentu—sangat mirip dengan replikasi gen yang disertai mutasi dalam biologi.
 
-> **Eksperimen 5-13 ★★★: Mengembangkan Agent yang Dapat Membuat Agent**
+> **Eksperimen 5-15 ★★★: Mengembangkan Agent yang Dapat Membuat Agent**
 >
 > **Tujuan Eksperimen**: Membangun Coding Agent dengan kemampuan *metaprogramming*—kemampuan untuk menulis program yang menghasilkan atau memodifikasi program lain—sehingga dapat secara otomatis menciptakan sistem Agent baru dari persyaratan pengguna sambil mematuhi praktik terbaik.
 >
@@ -776,7 +798,7 @@ Ketika Agent menerima tugas untuk mengembangkan Agent baru, ia pertama-tama haru
 
 Bab ini telah mendebatkan satu hal di sepanjang penjelasannya: kode bukan hanya sekadar alat untuk menulis program—kode adalah bahasa dari pemikiran yang diformalkan dan ekspresi presisi dari sebuah Agent.
 
-Bagian rekayasa Harness mencapai satu kesimpulan sentral: Coding Agent menjadi matang bukan karena model pembuatan kode yang sangat kuat, melainkan karena infrastruktur rekayasa perangkat lunak yang terakumulasi selama beberapa dekade—rangkaian pengujian, sistem tipe, kontrol versi—secara alami membentuk Harness yang kuat. Kesimpulan tersebut layak dibawa ke skenario Agent lainnya. Bagian tentang kegagalan dan pemulihan kesalahan (*error recovery*) menawarkan sisi lain dari tema yang sama: keandalan Agent tidak ditentukan oleh apakah model tersebut membuat kesalahan, melainkan oleh apakah setiap kelas kegagalan memiliki jalur deteksi, pemulihan, dan penghentian yang sesuai.
+Bagian rekayasa Harness mencapai satu kesimpulan sentral: Coding Agent menjadi matang bukan karena model pembuatan kode yang sangat kuat, melainkan karena infrastruktur rekayasa perangkat lunak yang terakumulasi selama beberapa dekade—rangkaian pengujian, sistem tipe, kontrol versi—secara alami membentuk Harness yang kuat. Kesimpulan tersebut layak dibawa ke skenario Agent lainnya. Bagian tentang kegagalan dan pemulihan kesalahan (*error recovery*) menawarkan sisi lain dari tema yang sama: keandalan Agent tidak ditentukan oleh apakah model tersebut membuat kesalahan, melainkan oleh apakah setiap kelas kegagalan memiliki jalur deteksi, pemulihan, serah terima, dan penghentian yang sesuai.
 
 Bagian kedua mendemonstrasikan nilai luas dari pembuatan kode di luar pemrograman, yang sesuai dengan enam dimensi pada teks utama:
 

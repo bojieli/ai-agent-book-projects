@@ -204,6 +204,28 @@ Araç katmanı hataları farklı bir yol izler: **oturumu sonlandırmayın; hata
 
 Bu bölümün temel ilkesi şudur: **hata işlemenin birimi tek bir istek değil, tüm kurtarma döngüsüdür**. Kurtarmanın imkânsız olduğu doğrulanana kadar, ara hatalar tüketicilere—kullanıcı olsun olayları abone olan alt akış sistemleri olsun—açığa çıkarılmamalıdır: kurtarma sırasında hata mesajlarını bekletin; kurtarma başarılı olursa, tüketiciler hiç fark etmez; yalnızca her şey başarısız olduğunda bekletilen hatalar serbest bırakılır. Bu, Bölüm 1'in düzeltme ilkesinin—"kurtarmanın imkânsız olduğu doğrulanana kadar ara durumları açığa çıkarmayın"—mühendislik gerçekleştirimidir.
 
+**Devralma: yarım kalmış bir yörüngeyi başka bir modele vermek.** Ana model uzun süre kullanılamaz durumda kalınca yörüngeyi başka bir sağlayıcının tamamlaması gerekir. Asıl engel uç noktanın farklı olması değil, yörüngenin bir bölümünün yalnızca özgün sağlayıcıya ait olmasıdır. Araç çağrıları ile araç sonuçları her sağlayıcıda farklı yapıda olsa da aynı anlamı taşır, yeniden işlemek yeterlidir; zor olan modelin düşüncesidir. Düşünce genellikle iki parçadan oluşur: okunabilir bir metin ve sağlayıcının o düşüncenin gerçekten kendisinden çıktığını kanıtlamak için iliştirdiği bir kimlik belgesi. Metni başka bir model de okuyabilir, belge ise sağlayıcı değişince geçerliliğini yitirir — **sağlayıcılar arası devralmada taşınabilen metindir, taşınamayan belgedir**.
+
+Sağlayıcıların belgeden beklentileri birbirini tutmaz. Esnek uç hiçbir doğrulama yapmaz, katı uç ise kendi düzenlemediği her belgeyi reddeder. Üstelik belge ille de düşünceye iliştirilmiş olmayabilir, araç çağrısının üzerinde de durabilir. Bu yüzden "düşünceyi tamamen silersen sorun kalmaz" gibi görünüşte sağlam bir strateji, bazı sağlayıcılarda tam da geçmeyen strateji olur. Devralma tasarımı yalnızca en katı uca göre yapılabilir; karşılanamayan durumlar için de bir geri çekilme yolu hazırlanır: geçmiş araç çağrılarını düz metin anlatıya dönüştürmek. Model onları gerçekten çağrılmış araçlar saymaz, ama en azından yoluna devam edebilir.
+
+Buradan bir tasarım ilkesi çıkar: yörünge hiçbir sağlayıcının arayüz biçiminde saklanmamalı, tarafsız bir biçimde tutulmalıdır. Her düşünce parçası taşınabilir metin ile taşınamaz belge olarak ikiye ayrılır, araç çağrısı yalnızca adını ve argümanlarını kaydeder, tanımlayıcılar ise somut isteğe dönüştürülürken hedef sağlayıcıya göre yeniden üretilir. Geçiş sırasında belge her koşulda atılır; metin, hedef sağlayıcının düşünceyi tuttuğu yere geri sokulmak yerine sıradan içerik olarak taşınır. Sağlayıcının döndürdüğü düşünce özeti zaten tam da bu durum için hazırlanmış taşınabilir bir kopyadır: saklamak yeterlidir, ayrıca bir model çağırıp yeniden sıkıştırmaya gerek yoktur. Tarafsız yörüngenin değeri arıza anındaki geçişle de sınırlı değildir: 7. bölümdeki değerlendirme tekrarları, 8. bölümdeki eğitim örneği üretimi ve 9. bölümdeki deneyim çıkarımı hep aynı ürüne dayanır.
+
+> **Deney 5-1 ★★★: Sağlayıcılar arası yörünge devralma**
+>
+> **Deney Amacı**: Tarafsız bir yörünge biçiminin, yarısına gelmiş bir Agent yörüngesinin başka bir modelde tamamlanmasını sağlayıp sağlamadığını doğrulamak ve "olduğu gibi aktarma" ile "hepsini kesip atma" yaklaşımlarının bedelini ölçmek.
+>
+> **Teknik Yaklaşım**: Birkaç tur araç çağrısı gerektiren bir görev kullanılır; yolun ortasında geçerli sağlayıcıya art arda hız sınırı ve aşırı yük yanıtları enjekte edilir, sigorta attıktan sonra başka bir sağlayıcıya geçilip devam edilir. Yörünge tarafsız biçimde saklanır: düşünce taşınabilir metin ile taşınamaz belge olarak ayrılır, araç çağrısı yalnızca ad ve argüman kaydeder. Üç yaklaşım karşılaştırılır: **aktarma**, özgün sağlayıcının döndürdüğü mesajları olduğu gibi yeni sağlayıcının yapısına taşır; **ayıklama**, bütün düşünceyi ve belgeleri siler; **tarafsız**, belgeyi atar, metni ya da sağlayıcının verdiği düşünce özetini sıradan içerik olarak taşır, tanımlayıcıları hedef sağlayıcıya göre yeniden üretir ve belgeyi zorunlu tutan bir alıcı söz konusuysa geçmiş çağrıları düz metne dönüştürür. Arayüz biçimleri birbirinden farklı üç sağlayıcı seçilir ve ikişerli geçişler yapılır.
+>
+> **Kabul Kriterleri**: Her geçişten sonraki ilk isteğin ham yanıtı saklanır; aktarmanın başarısızlığı sağlayıcının gerçekten döndürdüğü hata olmalıdır, benzetilmiş hata kabul edilmez. Tarafsız yaklaşımın hiçbir sağlayıcı çiftinde arayüz hatası vermemesi beklenir; diğer ikisinin hangi çiftlerde ve hangi hatayla başarısız olduğu olduğu gibi kaydedilir. Üç yaklaşım görev tamamlama oranı, geçişten sonra aynı aracın yeniden çağrılma sayısı ("araç adı + argüman" parmak izine göre) ve geçişten sonra tamamlamak için gereken ek tur ve token bakımından karşılaştırılır. Tarafsız yaklaşım yinelenen çağrılarda ayıklamayı geçemezse bu da aynı dürüstlükle kaydedilir.
+
+> **Deney 5-2 ★★: Çıktı yarıda kesildikten sonra devam ettirme**
+>
+> **Deney Amacı**: "Turu baştan yeniden gönderme" ile "yarım çıktıyı ön ek alıp devam ettirme" yaklaşımlarını maliyet, doğruluk ve yan etki açısından karşılaştırmak.
+>
+> **Teknik Yaklaşım**: Akışlı yanıt üç noktada kesilir: düşüncenin ortasında, metnin ortasında ve araç çağrısı argümanının ortasında. Üç kurtarma yolu: yarım parçayı atıp turu bütünüyle yeniden göndermek; yarım içeriği son assistant mesajı olarak ekleyip modelden devamını yazmasını istemek (kimi sağlayıcı bunu doğrudan destekler, kimi mesajın devam bekleyen bir mesaj olduğunun açıkça işaretlenmesini ister, böyle bir arayüzü olmayan ise bir sonraki yola çekilir); kesme noktasından devam edilmesini söyleyen bir üst yönerge eklemek. Yarım kalmış bir araç çağrısı kendi yapısıyla geri gönderilemez, önce metne çevrilip modele tamamlatılır, birleştirildikten sonra yeniden ayrıştırılıp doğrulanır. Yarım çıktıda akış sırasında önceden çalıştırılmış bir araç varsa, devam ettirmeden önce çağrı parmak izine göre yinelenenler ayıklanır ve yan etkinin tekrarı önlenir.
+>
+> **Kabul Kriterleri**: Üç kesme noktasının her biri birkaç kez yinelenir; her yol için kurtarma başarı oranı, tam yeniden gönderime kıyasla tasarruf edilen çıktı token'ları, tamamlanan argümanların geçerlilik oranı ile anlamsal doğruluk oranı (birleşme yerinde fazladan boşluk ya da yinelenen karakter kolayca oluşur, geçerli olmak doğru olmak demek değildir) ve yinelenen yan etki sayısı raporlanır. Ayrıca hangi kesme noktalarının hangi sağlayıcılarda yeniden üretilemediği ve geri çekilme yolunun işe yarayıp yaramadığı kaydedilir.
+
 **Sonlandırma: her kurtarma yolunun bir tavana ihtiyacı vardır.** Kurtarma mekanizmalarının kendisi başarısız olabilir, bu yüzden her kurtarma yolunun açık bir circuit-breaking tavanı olmalıdır: context sıkıştırma birkaç ardışık başarısızlıktan sonra vazgeçer; izin sınıflandırıcısı tekrarlanan başarısızlıklardan sonra bir insana sormaya geri döner; çıktı devamı en fazla sabit sayıda denenir. Eşikler nereden gelir? Tahminden değil üretim verisinden. Claude Code'un sıkıştırma circuit breaker'ını ele alalım: "3 ardışık başarısızlık" eşiği gerçek oturum istatistiklerinden gelir—bir oturum bir keresinde tam olarak bu kurtarma yolunda üç binden fazla kez arka arkaya başarısız oldu ve yalnızca bu tür beyhude yeniden denemeler dünya çapında günde yaklaşık 250.000 API çağrısını israf etti; binden fazla oturum 50+ ardışık başarısızlık serileri gördü. Üç, "başarısızlıkların büyük çoğunluğunun bundan önce kurtulduğu" ile "daha fazla yeniden denemenin esasen umutsuz olduğu" arasındaki deneysel dönüm noktasıdır.
 
 Tek noktalı bir kesiciden daha sinsi olan **ölüm sarmalıdır**: hata yolunda tetiklenen mantığın kendisi LLM'i çağırır, yeniden başarısız olur ve basamaklanır. Gerçek bir basamaklanma: Agent bir context taşması hatasında durur, bu bir stop hook'unu (Agent bittiğinde otomatik olarak çalışan temizlik mantığı) tetikler, bu da "çıkışta kodu commit eder", hook bir commit mesajı yazmak için LLM'i çağırır, context yeniden taşar ve hook bir kez daha tetiklenir. Savunma iki parçadan gelir: hata yolundaki tüm model çağıran yan etkileri devre dışı bırakmak (yardımcı bir özelliği—otomatik bellek çıkarımı gibi—bir kez kaybetmek daha iyidir) ve herhangi bir kalıntı basamaklanmayı tespit edip kırmak için bir özyineleme derinliği sayacı kullanmak. Son olarak, tüm otomatik mekanizmaların üzerinde küresel sonlandırma ve yükseltme koşulları oturur: maksimum tur sayısı, bir oturum bütçe tavanı ve ardışık başarısızlıklar eşiklerini aştığında insan müdahalesine yükseltme.
@@ -382,7 +404,7 @@ LLM'i problemi anlamaktan ve kodu yazmaktan sorumlu kılın, kod yorumlayıcıs�
 
 Mathematica'nın yaratıcısı Stephen Wolfram, bu konuda derin bir içgörü sundu. LLM'ler var olmadan önce, hassas matematiksel hesaplama yapabilen sistemler zaten vardı—**Sembolik Hesaplama (Symbolic Computation)** kullanarak çalışıyorlardı, yani ifadeleri yaklaşık sayısal değerler yerine matematiksel semboller kullanarak işliyorlardı. Örneğin, sıradan bir hesap makinesi $\sqrt{2}$'yi 1,414 olarak hesaplardı, ama sembolik bir hesaplama sistemi tam formu $\sqrt{2}$ olarak tutar, yalnızca gerektiğinde bir ondalığa dönüştürürdü. Wolfram'ın yarattığı Wolfram Alpha böyle bir sistemdir: kullanıcılar bir matematik problemi girer ve o kesin bir yanıt döndürür. Ancak, doğal dil anlayışı oldukça kırılgandır ve kapsamı dardır—yalnızca sınırlı bir ifade kümesini tanıyabilen yerleşik bir gramer ayrıştırıcısına dayanır; ifadedeki hafif bir değişiklik ayrıştırmanın başarısız olmasına neden olabilir ve kesinlikle açık alan çok adımlı reasoning'i ele alamaz. LLM'ler bu boşluğu mükemmel biçimde doldurur—çeşitli doğal dil ifadelerini anlamada üstündür ama hassas hesaplamada iyi değildir. Yeni iş birlikçi model şudur: LLM'i kullanıcının doğal dil sorusunu anlamaktan, içindeki matematiksel veya mantıksal yapıyı belirlemekten ve bunu biçimsel bir dile (Mathematica dili veya Python'un SymPy kütüphanesi gibi) çevirmekten sorumlu kılın; ardından hassas sonuçlar elde etmek için yürütme üzere özel bir sembolik hesaplama motoruna veya kısıt çözücüsüne verin.
 
-> **Deney 5-1 ★★: Matematiksel Problem Çözme Yeteneğini İyileştirmek için Kod Üretim Araçlarını Kullanmak**
+> **Deney 5-3 ★★: Matematiksel Problem Çözme Yeteneğini İyileştirmek için Kod Üretim Araçlarını Kullanmak**
 >
 > **Deney Amacı**: Bir Agent'ın matematiksel düşünmesinin bir Code Interpreter tarafından desteklendiğinde doğruluk iyileşmesini doğrulamak.
 >
@@ -391,7 +413,7 @@ Mathematica'nın yaratıcısı Stephen Wolfram, bu konuda derin bir içgörü su
 > **Kabul Kriterleri**: AIME tarzı problemleri (Amerikan Davetli Matematik Sınavı'ndan modellenmiş) kullanarak değerlendirin. Salt düşünce zinciri reasoning'i ile kod destekli reasoning'in doğruluğunu karşılaştırın, kod destekli modun önemli ölçüde daha yüksek olmasını gerektirin. Kodun matematiksel kütüphaneleri doğru kullanıp kullanmadığını ve çözüm sürecinin mantıksal olarak net olup olmadığını kontrol edin.
 >
 
-> **Deney 5-2 ★★: Mantıksal Reasoning Yeteneğini İyileştirmek için Kod Üretim Araçlarını Kullanmak**
+> **Deney 5-4 ★★: Mantıksal Reasoning Yeteneğini İyileştirmek için Kod Üretim Araçlarını Kullanmak**
 >
 > **Deney Amacı**: Agent'ın kısıt çözme kodunun yardımıyla mantıksal reasoning gerçekleştirme yeteneğini değerlendirmek.
 >
@@ -489,7 +511,7 @@ Bu tasarımın değeri iki düzeyde anlaşılmalıdır.
 
 Üç katmanlı güvenlik önlemi böylece tamamlanır: (1) system prompt'taki doğal dil kuralları anlama ve açıklamaya yardımcı olur; (2) araç açıklamaları ve parametre tasarımı bir kontrol listesi görevi görür, modeli çağırmadan önce koşulları açıkça doğrulamaya yönlendirir; (3) veritabanı gerçek değerini kullanan sunucu tarafı kod tabanlı doğrulama nihai kapı bekçisi olarak hareket eder. İlk iki katman hataların oluşumunu azaltır ve üçüncüsü hataların geri alınamaz kayıplara dönüşmemesini sağlar.
 
-> **Deney 5-3 ★★: Küçük modeller kod tabanlı bilgi yoluyla kural yürütme doğruluğunu iyileştirir**
+> **Deney 5-5 ★★: Küçük modeller kod tabanlı bilgi yoluyla kural yürütme doğruluğunu iyileştirir**
 >
 > **Deney amacı**: Küçük parametreli modellerin (Qwen3-4B) kod tabanlı iş kuralları yoluyla karmaşık politika yürütmesinin doğruluğunu ve tutarlılığını önemli ölçüde iyileştirdiğini doğrulamak.
 >
@@ -518,7 +540,7 @@ Proposer geri bildirimi alır, niyeti anlar ve kodu değiştirir. Yeni sürüm, 
 
 Bu bölümdeki Proposer-Reviewer yinelemeli döngüsü, Bölüm 4'teki **ön onay** uygulamasıyla aynı kökeni paylaşır — ikisi de Proposer-Reviewer paradigmasının örnekleridir: üretim ve inceleme ayrımı, iki model tarafından bağımsız değerlendirme (Loop Engineering terimleriyle, ayrı alt Agent'lar olarak yapıcı ve kontrolör). Fark hedefte ve biçimdedir: Bölüm 4 bunu geri alınamaz işlemlerin güvenlik incelemesi için kullanır, burada inceleyen tek bir işlem için onay veya ret verir; bu bölüm bunu içerik kalitesinin yinelemeli iyileştirilmesi için kullanır — birden fazla tur ve inceleyenin, önerenin göremediği yeni bilgiye (render sonuçları) erişimi vardır. Temel tasarım ilkeleri tutarlıdır (paylaşılan hedef kısıtları, benzer hataların olasılığını azaltmak için farklı model ailelerini kullanmak, geri bildirimin Proposer'ın trajectory'sine eklenen özel bir olay olarak ele alınması). Tek Agent'lı bir döngü yerine ikili Agent iş bölümü kullanmanın **temel avantajı** **context yönetiminde** yatar: Reviewer her seferinde yalnızca en son sürümün render görüntülerini işler, geçmiş sürümlerden etkilenmez; Proposer yalnızca yapılandırılmış metin geri bildirimini biriktirir, daha az token tüketir ve reasoning'i kolaylaştırır. Tek Agent'lı bir çözüm, aynı context'te düzinelerce sayfa için birden fazla tur render görüntüsünü biriktirmesi gerekirdi, hızla context sınırını aşardı. Bu mekanizma, video düzenleme ve log görselleştirme üzerine sonraki deneylerde yeniden kullanılacak; Bölüm 10, Proposer-Reviewer paradigmasının ötesinde diğer multi-agent iş birliği modlarını daha ileri düzeyde keşfedecek.
 
-> **Deney 5-4 ★★: Makalelerden otomatik PPT üretimi**
+> **Deney 5-6 ★★: Makalelerden otomatik PPT üretimi**
 >
 > **Deney amacı**: Akademik makalelerden yüksek kaliteli sunumlar otomatik olarak üretmek, Proposer-Reviewer mekanizmasının içerik oluşturma kalite kontrolündeki etkinliğini doğrulamak.
 >
@@ -527,11 +549,11 @@ Bu bölümdeki Proposer-Reviewer yinelemeli döngüsü, Bölüm 4'teki **ön ona
 > **Kabul kriterleri**: Makalenin ana katkılarını kapsayan 10-20 slayt üretin. Eşlik eden metinle eşleşen en az 3 orijinal şekil ekleyin. Render'da metin taşması yok, makul düzen. Tek Agent'lı öz inceleme ile Proposer-Reviewer iş bölümü arasındaki context tüketimi ve üretim kalitesi farklarını karşılaştırın.
 >
 
-> **Deney 5-5 ★★: Makale açıklama videolarının otomatik üretimi**
+> **Deney 5-7 ★★: Makale açıklama videolarının otomatik üretimi**
 >
 > **Deney amacı**: PPT üretim yeteneklerini genişletmek, açıklama videolarının otomatik üretimini gerçekleştirmek için görsel ve işitsel kanalları birleştirmek.
 >
-> **Teknik yaklaşım**: Deney 5-4'teki PPT üretim iş akışına dayanarak, Agent eş zamanlı olarak her slayt için konuşmalı açıklama metni üretir (tekrar yerine yönlendirici anlatım), konuşma sentezlemek için TTS'i (metinden konuşmaya) çağırır ve videoyu sentezlemek için PPT ekran görüntülerini ses ile senkronize etmek üzere ffmpeg kullanır.
+> **Teknik yaklaşım**: Deney 5-6'teki PPT üretim iş akışına dayanarak, Agent eş zamanlı olarak her slayt için konuşmalı açıklama metni üretir (tekrar yerine yönlendirici anlatım), konuşma sentezlemek için TTS'i (metinden konuşmaya) çağırır ve videoyu sentezlemek için PPT ekran görüntülerini ses ile senkronize etmek üzere ffmpeg kullanır.
 >
 > **Kabul kriterleri**: Video 5-15 dakika uzunluğundadır, her slaytın gösterim süresi konuşma süresiyle hassas biçimde eşleşir ve açıklama içeriği görsel öğelere karşılık gelir.
 >
@@ -546,7 +568,7 @@ Genel Computer Use aracılığıyla video düzenleme yapmak temel bir engelle ka
 
 Video düzenlemeyi API çağrıları ve kod üretimi olarak yeniden çerçevelemek karmaşıklığı dramatik biçimde azaltır. Birçok profesyonel yazılım aracı (Python betiklerini destekleyen açık kaynak bir 3D oluşturma ve video birleştirme aracı olan Blender gibi; ses/video işleme için komut satırı İsviçre çakısı olan FFmpeg gibi) temel işlevselliği yapılandırılmış, birleştirilebilir biçimde sunan programatik API arayüzleri sağlar. Örneğin, Blender Python API'si, video klipleri için içe aktarma, kırpma, düzenleme, geçiş efektleri ekleme ve ses karıştırma gibi işlemler üzerinde hassas kontrol sağlar, her işlem net bir fonksiyon çağrısına karşılık gelir. Bir Agent için, doğal dil gereksinimlerini API çağrılarına dönüştürmek, bir GUI arayüzünü anlamaktan ve fare tıklamalarını simüle etmekten çok daha kolaydır. PPT üretimine benzer şekilde, video düzenleme de Proposer-Reviewer mekanizmasını benimser — Proposer Agent Blender betikleri üretir, Reviewer Agent anahtar kareleri render eder ve efekti kontrol etmek için bir Vision LLM kullanır, değişiklik için geri bildirim sağlar.
 
-> **Deney 5-6 ★★: API tabanlı akıllı video düzenleme**
+> **Deney 5-8 ★★: API tabanlı akıllı video düzenleme**
 >
 > **Deney amacı**: Agent'ın Blender Python API kodu üreterek video düzenleme yapma yeteneğini doğrulamak ve görsel geri bildirim tabanlı Proposer-Reviewer mekanizmasının multimedya içerik işlemedeki rolünü değerlendirmek.
 >
@@ -575,7 +597,7 @@ Aynı "bir şey üretmek" görevi karşısında Agent'ın önünde iki yol vard�
 
 Dolayısıyla hangi yolun izleneceği, Agent'ın vermesi gereken bir karardır: ürünün içsel karmaşıklığını ve hassasiyet gereksinimini tartar ve görevi kod üretimine ya da 3D üretim modeline dağıtır. Gerçek sistemlerde iki yol harmanlanabilir—geometri kodla parametrik olarak üretilir, yüzey dokusu üretim modeline bırakılır; her birinin güçlü yanı alınır.
 
-> **Deney 5-7 ★★: Aynı Parçanın İki Üretim Rotası—Kod ve Üretim Modeli**
+> **Deney 5-9 ★★: Aynı Parçanın İki Üretim Rotası—Kod ve Üretim Modeli**
 >
 > **Deney amacı**: Boyut spesifikasyonlu aynı mekanik parçayı alarak kod üretimi ile 3D üretim modeli rotalarının boyut hassasiyeti, düzenlenebilirlik ve üretimde kullanılabilirlik açısından farklarını karşılaştırmak; "içsel karmaşıklık ve hassasiyet gereksinimine göre yol seçme" karar çerçevesini doğrulamak.
 >
@@ -602,7 +624,7 @@ Agent sistemlerinin gözlemlenebilirliği, yürütme akışlarının görselleş
 
 Kod üretimi zarif bir çözüm sunar: bir otomatik onarım geri bildirim döngüsü kurmak. Frontend ayrıştırılamayan bir log formatıyla karşılaştığında, bir hata göstermek yerine, başarısızlık bilgisini (ham log örneği, ayrıntılı hata) otomatik olarak Agent'a bildirir. Agent örnek veri yapısını analiz eder ve bunu doğru biçimde ayrıştırabilecek frontend kodu üretir. Kod önce sanal bir tarayıcıda otomatik olarak test edilir (ayrıştırma doğruluğunu doğrulama, görselleştirme efektlerini kontrol etmek için bir Vision LLM kullanma) ve geçtikten sonra, frontend sistemine sıcak güncellenir.
 
-> **Deney 5-8 ★★★: Uyarlanabilir Log Ayrıştırma Sistemi**
+> **Deney 5-10 ★★★: Uyarlanabilir Log Ayrıştırma Sistemi**
 >
 > **Deney Amacı**: Kendi kendine evrilen bir Agent log görselleştirme sistemi inşa etmek.
 >
@@ -617,7 +639,7 @@ Kod üretimi zarif bir çözüm sunar: bir otomatik onarım geri bildirim döng�
 
 Kod üretimi teşhis için otomatikleştirilmiş bir yol sağlar. Agent üretim loglarını okuyabilir, bunları mimari dokümanları ve PRD'lerle (Ürün Gereksinim Dokümanları) birleştirerek yürütme akışının beklentileri karşılayıp karşılamadığını otomatik olarak belirleyebilir ve sorunlu bileşenleri ve modülleri belirleyebilir. Analiz sonuçlarına dayanarak, yapılandırılmış sorun raporları (öncelik, modül, açıklama, iyileştirme önerileri) ve regresyon test durumları üretir—test durumları sorun trajectory ID'sine ve kilit etkileşim turlarına başvurur ve test çerçevesi bunları otomatik olarak yeniden oynatarak düzeltilmiş sistemin aynı girdi için doğru davranış ürettiğini doğrular. Son olarak, Agent bir Issue oluşturmak ve ilgili geliştiriciye atamak için MCP aracılığıyla GitHub'a bağlanır, sorun keşfinden görev atamasına kadar tam otomasyonu tamamlar.
 
-> **Deney 5-9 ★★★: Üretim Logları için Akıllı Teşhis Sistemi**
+> **Deney 5-11 ★★★: Üretim Logları için Akıllı Teşhis Sistemi**
 >
 > **Deney Amacı**: Üretim trajectory'lerinden sorunları otomatik olarak keşfetmek, test durumları üretmek ve iş öğeleri oluşturmak.
 >
@@ -657,7 +679,7 @@ Kod üretimi aracılığıyla, Agent metin tabanlı soru-cevabın yerini almak i
 ![Şekil 5-8: Dinamik Form Üretim Süreci](images/fig5-8.svg)
 
 
-> **Deney 5-10 ★★: Dinamik Formlarla Niyet Netleştirme Sistemi**
+> **Deney 5-12 ★★: Dinamik Formlarla Niyet Netleştirme Sistemi**
 >
 > **Deney Amacı**: Agent'ın HTML formlarını dinamik olarak üreterek kullanıcı niyetini netleştirme yeteneğini doğrulamak.
 >
@@ -679,7 +701,7 @@ Birinci yaklaşım daha "akıllı" görünür ama son derece verimsizdir—büy�
 
 Daha ileri giderek, Agent bir boru hattı oluşturan iki artifact üretebilir: SQL sorgusu + görselleştirme kodu (örn. bir çubuk grafik). Frontend, SQL sonuçlarını doğrudan görselleştirme koduna geçirir. LLM yalnızca kodu üretmekten sorumludur, veri aktarımına katılmaktan değil—bu, bir arayüz olarak kod üretiminin özüdür.
 
-> **Deney 5-11 ★★: Doğal Dil Etkileşimli ERP Agent'ı**
+> **Deney 5-13 ★★: Doğal Dil Etkileşimli ERP Agent'ı**
 >
 > ERP (Kurumsal Kaynak Planlaması) yazılımı, işletmeler için kritik bir sistemdir, tipik olarak karmaşık işlemlerin birden fazla fare tıklaması gerektirdiği bir GUI arayüzü kullanır. Bir AI Agent, kullanıcının doğal dil sorgularını SQL ifadelerine dönüştürerek otomatikleştirilmiş sorgulamayı mümkün kılabilir.
 >
@@ -703,7 +725,7 @@ Kod üretiminin nihai uygulaması, Agent'ın yazılımı tamamen dinamik olarak,
 
 Ancak tam dinamik üretim maliyetlidir ve yavaştır—üretimden çok neyin mümkün olduğunu göstermeye daha uygundur. Daha pragmatik bir yön, **mevcut bir çerçeve üzerine özelleştirilmiş değişikliktir**. Bu "yarı özel" model, temel yazılımın kararlılığını korurken belirli boyutları kullanıcı kontrolüne açar—kullanıcı "düğmeyi mavi yap," "kenar çubuğuna bir kısayol menüsü ekle," "daha okunabilir bir yazı tipine geç" der; Agent frontend kodunu anlar ve değiştirir, ve HMR (Hot Module Replacement—uygulama durumunu koruyan ve tam sayfa yenilemesi olmadan etkili olan kısmi sıcak değiştirme) bunu anında uygular. Tek beden herkese uyar ürünü, her kullanıcıya kişiselleştirilmiş bir deneyime dönüşür.
 
-> **Deney 5-12 ★★: Konuşmalı Arayüz Özelleştirme Sistemi**
+> **Deney 5-14 ★★: Konuşmalı Arayüz Özelleştirme Sistemi**
 >
 > **Deney Amacı**: Kullanıcıların doğal dil diyaloğu yoluyla yazılım arayüzünü anında özelleştirme yeteneğini uygulamak, sıcak yeniden yükleme mekanizmalarıyla desteklenen kod üretiminin kişiselleştirilmiş kullanıcı deneyimleri sunmadaki etkinliğini doğrulamak.
 >
@@ -717,7 +739,7 @@ Daha sağlam bir mimari **güven sınırını veri katmanına indirir**. Dinamik
 
 Yetkilendirmeyi aşağı taşımak tüm iş mantığını veritabanına koymak anlamına gelmez. Uygulama katmanı hızlı geri bildirim için ön kontroller yapabilir, fakat nihai karar yetkisi veri katmanında kalmalıdır. Aynı kural üstte deneyimi iyileştirirken altta garanti sağlayabilir. Bunun için her veri erişim yolu güvenilir veri katmanından geçmeli ve üretilen kod doğrudan bağlanarak bu katmanı aşamamalıdır. Böylece üst katman sürekli değişebilir; pazarlık konusu olmayan izin kısıtları ise her üretimde yeniden yazılmayan bir katmanda kalır. Bu, Bölüm 1'deki üç katmanlı iskeletin en zor atlatılan katmanı olan veri katmanıdır.
 
-> **Deney 5-13 ★★★: Dinamik Yazılım için İzin Gömülü Veri Nesneleri**
+> **Deney 5-15 ★★★: Dinamik Yazılım için İzin Gömülü Veri Nesneleri**
 >
 > **Deney Amacı**: Uygulama kodunun dinamik olarak üretilmesine veya yeniden yazılmasına izin veren, ancak yetkilendirme ve veri bütünlüğünü veri katmanında zorlayan bir nesne deposu kurmak. Üretilen kodun durum geçişini atlayarak, aralık dışı değer yazarak veya kiracılar arası okuyarak sabit veri sınırını geçemediğini doğrulamak.
 >
@@ -762,7 +784,7 @@ Bu sorunları çözmenin en etkili yolu tüm kuralları prompt'ta kapsamlı biç
 
 Bir Agent yeni bir Agent geliştirme görevi aldığında, önce kendi kodunu (veya diğer doğrulanmış, yüksek kaliteli uygulamaları) kopyalamalı, ardından hedefe yönelik değişiklikler yapmalıdır: yeni role uyacak şekilde system prompt'u ayarlamak, yeni işlevlere uyacak şekilde araçları değiştirmek veya eklemek, mimari çerçeveyi korurken iş mantığını değiştirmek. Bu "uyarlanabilir değişiklikle kendi kendini çoğaltma" kalıbı, yeni Agent'ın temel teknik avantajları miras almasını sağlarken belirli boyutlarda farklılaşmaya izin verir—biyolojideki mutasyonlu gen replikasyonuna çok benzer.
 
-> **Deney 5-14 ★★★: Agent'lar Yaratabilen Bir Agent Geliştirmek**
+> **Deney 5-16 ★★★: Agent'lar Yaratabilen Bir Agent Geliştirmek**
 >
 > **Deney Amacı**: Metaprogramlama (diğer programları üreten veya değiştiren programlar yazma yeteneği) yeteneklerine sahip bir Kodlama Agent'ı inşa etmek, en iyi uygulamalara uyumu sağlarken kullanıcı gereksinimlerine dayanarak yeni Agent sistemlerini otomatik olarak yaratmasını sağlamak.
 >
@@ -781,7 +803,7 @@ Agent bootstrapping, kod üretiminin nihai uygulamasıdır—Agent'lar yaratabil
 
 Bu bölüm boyunca tek bir şeyi savundu: kod salt program yazmak için bir araç değildir—bir Agent'ın biçimselleştirilmiş düşünmesinin ve hassas ifadesinin dilidir.
 
-Harness engineering bölümü bir merkezi sonuca ulaştı: Kodlama Agent'ları olgun çünkü kod üretim modelleri istisnai derecede güçlü olduğu için değil, on yıllarca biriken yazılım mühendisliği altyapısı—test kümeleri, tip sistemleri, sürüm kontrolü—doğal olarak güçlü bir Harness oluşturduğu için. Bu sonuç diğer Agent senaryolarına da taşınmayı hak ediyor. Başarısızlık ve hata kurtarma bölümü aynı temanın diğer yüzünü sunuyor: bir Agent'ın güvenilirliği modelin hata yapıp yapmadığıyla değil, her başarısızlık sınıfının karşılık gelen bir tespit, kurtarma ve sonlandırma yoluna sahip olup olmadığıyla belirlenir.
+Harness engineering bölümü bir merkezi sonuca ulaştı: Kodlama Agent'ları olgun çünkü kod üretim modelleri istisnai derecede güçlü olduğu için değil, on yıllarca biriken yazılım mühendisliği altyapısı—test kümeleri, tip sistemleri, sürüm kontrolü—doğal olarak güçlü bir Harness oluşturduğu için. Bu sonuç diğer Agent senaryolarına da taşınmayı hak ediyor. Başarısızlık ve hata kurtarma bölümü aynı temanın diğer yüzünü sunuyor: bir Agent'ın güvenilirliği modelin hata yapıp yapmadığıyla değil, her başarısızlık sınıfının karşılık gelen bir tespit, kurtarma, devralma ve sonlandırma yoluna sahip olup olmadığıyla belirlenir.
 
 İkinci kısım, ana metindeki altı boyuta karşılık gelen, kod üretiminin programlamanın ötesindeki geniş değerini gösterdi:
 

@@ -203,6 +203,28 @@ Tool-layer errors take a different path: **do not terminate the session; turn th
 
 The core principle of this section is: **the unit of error handling is not the single request, but the entire recovery loop**. Until recovery is confirmed impossible, intermediate errors should not be exposed to consumers—whether the user or downstream systems subscribed to events: withhold error messages during recovery; if recovery succeeds, consumers never notice; only when everything fails are the withheld errors released. This is the engineering realization of Chapter 1's correction principle—"do not expose intermediate states until recovery is confirmed impossible."
 
+**Handover: passing an unfinished trajectory to another model.** When the primary model stays unavailable, another vendor has to finish the trajectory. The real obstacle is not that the endpoint differs, but that part of the trajectory belongs to the original vendor alone. Tool calls and tool results are structured differently across vendors yet carry the same meaning, so re-rendering them is enough; the model's reasoning is the hard part. Reasoning usually consists of two things: readable text, and a credential the vendor attaches to it to prove the reasoning really came from itself. The text is still legible to another model, the credential is worthless there—**a cross-vendor handover can carry the text, but not the credential**.
+
+Vendors do not agree on what they require of a credential. The permissive end validates nothing; the strict end rejects any credential it did not issue. Nor is the credential necessarily attached to the reasoning—it may be attached to the tool call instead. So the seemingly safe policy "just delete all the reasoning and you are fine" is precisely what fails at some vendors. A handover has to be designed for the strictest end, with a fallback for the cases it cannot satisfy: rewrite the historical tool calls as prose, which stops the model from treating them as tools it actually invoked, but at least lets it carry on.
+
+This yields a design principle: a trajectory should not be stored in any single vendor's wire format, but kept in a neutral one. Each reasoning segment is split into portable text and a non-portable credential; a tool call records only its name and arguments, and identifiers are regenerated for the target vendor when the request is rendered. On a switch the credential is always discarded and the text is carried across as ordinary content, rather than being pushed back into wherever the target vendor keeps reasoning. The reasoning summary a vendor returns is exactly the portable copy meant for this situation—keep it, and there is no need to call a model again to compress anything. The value of a neutral trajectory is not limited to failover either: the evaluation replays of Chapter 7, the training-sample construction of Chapter 8 and the experience extraction of Chapter 9 all rely on the same artifact.
+
+> **Experiment 5-1 ★★★: Cross-Vendor Trajectory Handover**
+>
+> **Experiment Goal**: Verify whether a neutral trajectory format lets a half-finished Agent trajectory be finished by a different vendor's model, and quantify what "verbatim pass-through" and "strip everything" each cost.
+>
+> **Technical Approach**: Use a task that needs several rounds of tool calls; midway, inject consecutive rate-limit and overload responses for the current vendor, and after the circuit breaker trips, switch to another vendor and continue. Store the trajectory in a neutral format where reasoning is split into portable text and a non-portable credential and a tool call records only its name and arguments. Compare three treatments: **pass-through** moves the original vendor's messages verbatim into the new vendor's structure; **stripping** deletes all reasoning and credentials; **neutral** discards the credential and carries the text, or the reasoning summary the vendor returned, as ordinary content, regenerating identifiers for the target vendor and rewriting historical calls as prose when the receiving side insists on a credential. Pick three vendors whose wire formats differ and switch between each pair.
+>
+> **Acceptance Criteria**: Retain the raw response of the first request after every switch; a pass-through failure must be the vendor's real error, never a simulated one. Require the neutral treatment to produce no API error on any vendor pair, and record faithfully which pairs the other two fail on and with what error. Compare the three on task completion, on how often the same tool is called again after the switch (fingerprinted by tool name plus arguments), and on the extra rounds and tokens needed to finish after the switch. If the neutral treatment does not beat stripping on redundant calls, record that just as faithfully.
+
+> **Experiment 5-2 ★★: Continuing After the Output Is Cut Off Halfway**
+>
+> **Experiment Goal**: Compare "resend the whole turn" against "continue from the half-written output as a prefix" in cost, correctness and side effects.
+>
+> **Technical Approach**: Cut the connection at three points in a streaming response—mid-reasoning, mid-prose, and mid tool-call argument. Three recovery routes: discard the fragment and resend the whole turn; append the fragment as a trailing assistant message and ask the model to continue it (some vendors support this natively, some require the message to be explicitly marked as one awaiting continuation, and those without such an interface fall back to the next route); append a meta-instruction saying to continue from the break. A half-written tool call cannot be sent back in its native structure, so it must be turned into text for the model to complete, then re-parsed and validated after splicing. If a tool was already executed eagerly from the fragment, deduplicate by call fingerprint before continuing to avoid repeating the side effect.
+>
+> **Acceptance Criteria**: Repeat each of the three break points several times and report, for each route, the recovery rate, the output tokens saved relative to a full resend, the validity and the semantic correctness of the completed arguments (a splice easily adds stray whitespace or duplicated characters, and valid is not the same as correct), and the number of repeated side effects. Also record which break points cannot be reproduced at which vendors, and whether the fallback route works.
+
 **Termination: every recovery path needs a ceiling.** Recovery mechanisms themselves can fail, so every recovery path must have an explicit retry ceiling: context compaction gives up after several consecutive failures; the permission classifier falls back to asking a human after repeated failures; output continuation is attempted at most a fixed number of times. Where do the thresholds come from? Production data, not guesswork. Take Claude Code's compaction circuit breaker: the "3 consecutive failures" threshold comes from real session statistics—one session once failed over three thousand times in a row on this very recovery path, and such futile retries alone wasted about 250,000 API calls per day worldwide; more than a thousand sessions saw streaks of 50+ consecutive failures. Three is the empirical inflection point between "the vast majority of failures recover before this" and "further retries are essentially hopeless."
 
 More insidious than a single-point breaker is the **death spiral**: logic triggered on the error path itself calls the LLM, fails again, and cascades. One real cascade: the Agent stops on a context-overflow error, which fires a stop hook (cleanup logic that runs automatically when the Agent ends) that "commits code on exit," the hook calls the LLM to write a commit message, context overflows again, and the hook fires once more. Defense comes in two parts: disable all model-invoking side effects on the error path (better to lose an auxiliary feature once, such as automatic memory extraction), and use a recursion-depth counter to detect and break any residual cascade. Finally, above all automatic mechanisms sit global termination and escalation conditions: a maximum number of turns, a session budget cap, and escalation to human intervention when consecutive failures exceed their threshold.
@@ -379,7 +401,7 @@ Let the LLM be responsible for understanding the problem and writing the code, a
 
 Stephen Wolfram, the creator of Mathematica, offered a profound insight on this. Before LLMs existed, there were already systems capable of precise mathematical computation—they worked using **Symbolic Computation**, i.e., processing expressions using mathematical symbols rather than approximate numerical values. For example, a conventional calculator would approximate $\sqrt{2}$ as 1.414, whereas a symbolic computation system would preserve the exact form $\sqrt{2}$, only converting to a decimal when necessary. Wolfram Alpha, created by Wolfram, is such a system: users input a math problem, and it returns an exact answer. However, its natural language understanding is quite fragile and its coverage is narrow—it relies on a built-in grammar parser that can only recognize a limited set of phrasings; a slight change in phrasing could cause parsing to fail, and it certainly cannot handle open-domain multi-step reasoning. LLMs perfectly fill this gap—they excel at understanding various natural language expressions but are not good at precise calculation. The new collaborative model is: let the LLM be responsible for understanding the user's natural language question, identifying the mathematical or logical structure within it, and translating it into a formal language (such as the Mathematica language or Python's SymPy library); then hand it over to a dedicated symbolic computation engine or constraint solver for execution to obtain precise results.
 
-> **Experiment 5-1 ★★: Using Code Generation Tools to Improve Mathematical Problem-Solving Ability**
+> **Experiment 5-3 ★★: Using Code Generation Tools to Improve Mathematical Problem-Solving Ability**
 >
 > **Experiment Goal**: Verify the accuracy improvement of an Agent's mathematical thinking when assisted by a Code Interpreter.
 >
@@ -388,7 +410,7 @@ Stephen Wolfram, the creator of Mathematica, offered a profound insight on this.
 > **Acceptance Criteria**: Evaluate using AIME-style problems (modeled after the American Invitational Mathematics Examination). Compare the accuracy of pure chain-of-thought reasoning with that of code-assisted reasoning; the code-assisted mode should achieve significantly higher accuracy. Check whether the code correctly uses the mathematical libraries and whether the solution process is logically clear.
 >
 
-> **Experiment 5-2 ★★: Using Code Generation Tools to Improve Logical Reasoning Ability**
+> **Experiment 5-4 ★★: Using Code Generation Tools to Improve Logical Reasoning Ability**
 >
 > **Experiment Goal**: Assess the Agent's ability to perform logical reasoning with the help of constraint-solving code.
 >
@@ -487,7 +509,7 @@ The value of this design should be understood on two levels.
 
 The three-tier safeguard is thus complete: (1) natural language rules in the system prompt aid understanding and explanation; (2) tool descriptions and parameter design serve as a checklist, guiding the model to explicitly verify conditions before calling; (3) server-side code-based validation using database ground truth acts as the final gatekeeper. The first two tiers reduce the occurrence of errors, and the third ensures that errors do not become irreversible losses.
 
-> **Experiment 5-3 ★★: Small models improve rule execution accuracy through code-based knowledge**
+> **Experiment 5-5 ★★: Small models improve rule execution accuracy through code-based knowledge**
 >
 > **Experiment objective**: Verify that encoding complex business rules in code significantly improves the accuracy and consistency with which a small model (Qwen3-4B) executes those rules.
 >
@@ -515,7 +537,7 @@ The Proposer receives the feedback, interprets it, modifies the code, and resubm
 
 The Proposer-Reviewer loop here follows the same pattern as the **pre-approval** mechanism in Chapter 4: one Agent generates, and another independently evaluates. The two applications differ in purpose and workflow. Chapter 4 uses the pattern to approve or reject a single irreversible operation; here, it drives iterative content improvement over multiple rounds, with the Reviewer seeing rendered output unavailable to the Proposer. The core design principles are consistent (shared goal constraints, using different model families to reduce the probability of similar errors, feedback as a special event added to the Proposer's trajectory). The **core advantage** of using a dual-agent division of labor rather than a single-agent loop lies in **context management**: the Reviewer processes only the latest version's rendered images, unaffected by historical versions; the Proposer only accumulates structured text feedback, consuming fewer tokens and making reasoning easier. A single-agent solution would need to accumulate rendered images from multiple rounds for dozens of pages in the same context, quickly exceeding the context limit. This mechanism will be reused in subsequent experiments on video editing and log visualization; Chapter 10 will further explore other multi-agent collaboration modes beyond the Proposer-Reviewer paradigm.
 
-> **Experiment 5-4 ★★: Automatic PPT generation from papers**
+> **Experiment 5-6 ★★: Automatic PPT generation from papers**
 >
 > **Experiment objective**: Automatically generate high-quality presentations from academic papers, verifying the effectiveness of the Proposer-Reviewer mechanism in content creation quality control.
 >
@@ -524,11 +546,11 @@ The Proposer-Reviewer loop here follows the same pattern as the **pre-approval**
 > **Acceptance criteria**: Generate 10-20 slides covering the paper's main contributions. Include at least 3 original figures that match the accompanying text. No text overflow in rendering, reasonable layout. Compare context consumption and generation quality between single-agent self-review and a Proposer-Reviewer division of labor.
 >
 
-> **Experiment 5-5 ★★: Automatic generation of paper explanation videos**
+> **Experiment 5-7 ★★: Automatic generation of paper explanation videos**
 >
 > **Experiment objective**: Extend PPT generation capabilities, combining visual and auditory channels to achieve automatic generation of explanation videos.
 >
-> **Technical approach**: Building on the presentation workflow from Experiment 5-4, the Agent also generates conversational narration for each slide—guiding the viewer rather than repeating the slide text—uses TTS (text-to-speech) to synthesize the audio, and combines the slide images and audio with FFmpeg to produce the final video.
+> **Technical approach**: Building on the presentation workflow from Experiment 5-6, the Agent also generates conversational narration for each slide—guiding the viewer rather than repeating the slide text—uses TTS (text-to-speech) to synthesize the audio, and combines the slide images and audio with FFmpeg to produce the final video.
 >
 > **Acceptance criteria**: Produce a video lasting 5 to 15 minutes in which each slide's display time precisely matches its narration and the narration corresponds to the visual elements.
 >
@@ -543,7 +565,7 @@ Editing video through a general-purpose Computer Use interface presents a fundam
 
 Reframing video editing as API calls and code generation cuts the complexity dramatically. Many professional software tools (such as Blender — an open-source 3D creation and video compositing tool that supports Python scripting; FFmpeg — the command-line Swiss Army knife for audio/video processing) provide programmatic API interfaces that expose core functionality in a structured, composable manner. For example, the Blender Python API allows precise control over operations such as importing, trimming, arranging, adding transition effects, and mixing audio for video clips, with each operation corresponding to a clear function call. For an Agent, converting natural language requirements into API calls is far easier than understanding a GUI interface and simulating mouse clicks. Similar to PPT generation, video editing also adopts the Proposer-Reviewer mechanism — the Proposer Agent generates Blender scripts, the Reviewer Agent renders keyframes and uses a Vision LLM to check the effect, providing feedback for modification.
 
-> **Experiment 5-6 ★★: API-based intelligent video editing**
+> **Experiment 5-8 ★★: API-based intelligent video editing**
 >
 > **Experiment objective**: Verify the Agent's ability to perform video editing by generating Blender Python API code, and evaluate the role of the vision-feedback-based Proposer-Reviewer mechanism in multimedia content processing.
 >
@@ -572,7 +594,7 @@ The two routes differ in one more practical way: **representation and editabilit
 
 So choosing a route is itself a decision the Agent must make: weigh the artifact's intrinsic complexity and precision requirements, and assign the task to code generation or to a 3D generative model. In real systems the two routes can also be mixed—generate the geometry parametrically with code and hand the surface texture to a generative model, taking the best of each.
 
-> **Experiment 5-7 ★★: Two Generation Routes for the Same Part—Code vs. Generative Model**
+> **Experiment 5-9 ★★: Two Generation Routes for the Same Part—Code vs. Generative Model**
 >
 > **Experiment objective**: Take the same mechanical part with dimensional specifications and compare the code-generation and 3D-generative-model routes on dimensional accuracy, editability, and manufacturability, verifying the "choose the route by intrinsic complexity and precision requirements" decision framework.
 >
@@ -598,7 +620,7 @@ The observability of Agent systems depends on the visualization of execution flo
 
 Code generation offers an elegant solution: establishing an auto-repair feedback loop. When the frontend encounters an unparseable log format, instead of displaying an error, it automatically reports the failure information (raw log sample, detailed error) to the Agent. The Agent analyzes the sample data structure and generates frontend code that can correctly parse it. The code is first tested automatically in a virtual browser to verify parsing correctness, while a Vision LLM assesses the visualization. If it passes both checks, it is deployed to the frontend as a hot update.
 
-> **Experiment 5-8 ★★★: Adaptive Log Parsing System**
+> **Experiment 5-10 ★★★: Adaptive Log Parsing System**
 >
 > **Experiment Goal**: Build a self-evolving Agent log visualization system.
 >
@@ -613,7 +635,7 @@ Agents in production generate a large volume of trajectory logs (recording the c
 
 Code generation provides an automated path for diagnosis. The Agent can read production logs, combine them with architecture documents and PRDs (Product Requirement Documents) to automatically determine whether the execution flow meets expectations, and pinpoint the problematic components and modules. Based on the analysis results, it generates structured problem reports (priority, module, description, improvement suggestions) and regression test cases—the test cases reference the problem trajectory ID and key interaction rounds, and the test framework automatically replays them to verify that the fixed system produces correct behavior for the same input. Finally, the Agent connects to GitHub via MCP to create an Issue and assign it to the relevant developer, completing the full automation from problem discovery to task assignment.
 
-> **Experiment 5-9 ★★★: Intelligent Diagnostic System for Production Logs**
+> **Experiment 5-11 ★★★: Intelligent Diagnostic System for Production Logs**
 >
 > **Experiment Goal**: Automatically discover problems from production trajectories, generate test cases, and create work items.
 >
@@ -653,7 +675,7 @@ Through code generation, the Agent can create structured interactive interfaces 
 ![Figure 5-8: Dynamic Form Generation Process](images/fig5-8.svg)
 
 
-> **Experiment 5-10 ★★: Intent Clarification System with Dynamic Forms**
+> **Experiment 5-12 ★★: Intent Clarification System with Dynamic Forms**
 >
 > **Experiment Goal**: Verify the Agent's ability to clarify user intent by dynamically generating HTML forms.
 >
@@ -675,7 +697,7 @@ Generated SQL and visualization code must not be executed directly. The executio
 
 Going further, the Agent can generate two artifacts that form a pipeline: an SQL query and visualization code, such as code for a bar chart. The frontend passes the SQL results directly to the visualization code. The LLM generates the code but does not participate in the data path—this is the essence of code generation as an interface.
 
-> **Experiment 5-11 ★★: Natural Language Interaction ERP Agent**
+> **Experiment 5-13 ★★: Natural Language Interaction ERP Agent**
 >
 > ERP (Enterprise Resource Planning) software is a critical system for businesses, typically using a GUI interface where complex operations require multiple mouse clicks. An AI Agent can translate users' natural-language requests into SQL queries, enabling automated database access.
 >
@@ -699,7 +721,7 @@ The ultimate application of code generation is letting the Agent create software
 
 Fully dynamic generation, however, is costly and slow—better suited to demonstrations of what is possible than to production use. A more pragmatic approach is to **customize an existing framework**. This "semi-custom" model preserves the stability of the base software while exposing selected aspects to user control. The user can say "make the button blue," "add a shortcut menu to the sidebar," or "switch to a more readable font"; the Agent updates the frontend code, and HMR (Hot Module Replacement—which updates affected modules without a full-page reload and usually preserves application state) applies the changes immediately. A one-size-fits-all product becomes an experience tailored to each user.
 
-> **Experiment 5-12 ★★: Conversational Interface Customization System**
+> **Experiment 5-14 ★★: Conversational Interface Customization System**
 >
 > **Experiment Goal**: Enable users to customize the software interface instantly through natural-language dialogue, and evaluate whether code generation with hot reload can effectively provide personalized user experiences.
 >
@@ -714,7 +736,7 @@ A more robust architecture **moves the trust boundary down to the data layer**. 
 
 Moving authorization downward does not mean putting all business logic in the database. The application layer may still perform pre-checks to provide fast feedback, but the data layer must retain final decision authority. The same rule can improve the experience above and provide a guarantee below. That guarantee also requires every data-access path to pass through the trusted data layer; generated code must not be able to connect directly around it. The result is an application whose upper layer can keep changing while its non-negotiable permission constraints remain in a layer that is not rewritten on every generation. This is the data layer of Chapter 1's three-layer skeleton—the one that is hardest to bypass.
 
-> **Experiment 5-13 ★★★: Permission-Embedded Data Objects for Dynamic Software**
+> **Experiment 5-15 ★★★: Permission-Embedded Data Objects for Dynamic Software**
 >
 > **Experiment Goal**: Build an object store that allows application code to be generated or rewritten dynamically while still enforcing authorization and data integrity at the data layer. Verify that generated code cannot cross the stable data boundary by skipping a state-machine transition, writing an out-of-range value, or reading across tenants.
 >
@@ -759,7 +781,7 @@ The advantage of example-based generation is plain: the example code itself carr
 
 When an Agent receives a task to develop a new Agent, it should first copy its own code (or other validated, high-quality implementations) and then make targeted modifications: adjust the system prompt to match the new role, replace or add tools to suit new functions, modify business logic while preserving the architectural framework. This "self-replication with adaptive modification" pattern ensures the new Agent inherits core technical advantages while allowing differentiation in specific dimensions—much like gene replication with mutation in biology.
 
-> **Experiment 5-14 ★★★: Develop an Agent That Can Create Agents**
+> **Experiment 5-16 ★★★: Develop an Agent That Can Create Agents**
 >
 > **Experiment Goal**: Build a Coding Agent with metaprogramming capabilities—the ability to write programs that generate or modify other programs—so that it can automatically create new Agent systems from user requirements while adhering to best practices.
 >
@@ -778,7 +800,7 @@ Agent bootstrapping is the ultimate application of code generation—an Agent th
 
 This chapter has argued one thing throughout: code is not merely a tool for writing programs—it is the language of an Agent's formalized thinking and precise expression.
 
-The Harness engineering section reached one central conclusion: Coding Agents are mature not because code generation models are exceptionally strong, but because decades of accumulated software engineering infrastructure—test suites, type systems, version control—naturally form a powerful Harness. That conclusion deserves to travel to other Agent scenarios. The section on failure and error recovery offers the flip side of the same theme: an Agent's reliability is determined not by whether the model makes mistakes, but by whether every class of failure has a corresponding detection, recovery, and termination path.
+The Harness engineering section reached one central conclusion: Coding Agents are mature not because code generation models are exceptionally strong, but because decades of accumulated software engineering infrastructure—test suites, type systems, version control—naturally form a powerful Harness. That conclusion deserves to travel to other Agent scenarios. The section on failure and error recovery offers the flip side of the same theme: an Agent's reliability is determined not by whether the model makes mistakes, but by whether every class of failure has a corresponding detection, recovery, handover, and termination path.
 
 The second part demonstrated the broad value of code generation beyond programming, corresponding to the six dimensions in the main text:
 

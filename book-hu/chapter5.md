@@ -202,6 +202,28 @@ Az eszközréteg hibák eltérő utat követnek: **ne szakítsuk meg a kapcsolat
 
 A szakasz központi elve: **a hiba kezelésének egysége nem az egyedi kérés, hanem a teljes helyreállítási hurok**. Amíg a helyreállítás nem bizonyul lehetetlennek, a köztes hibákat nem szabad elérhetővé tenni a fogyasztók számára — legyen az a felhasználó vagy az eseményekre feliratkozott downstream rendszerek: tartsd vissza a hibaüzeneteket a helyreállítás során; ha a helyreállítás sikeres, a fogyasztók soha nem veszik észre; csak amikor minden elbukik, a visszatartott hibák felszabadításra kerülnek. Ez az 1. fejezet korrekciós elvének mérnöki megvalósítása — "ne tedd elérhetővé a köztes állapotokat, amíg a helyreállítás lehetetlennek nem bizonyul."
 
+**Átvétel: a félbehagyott trajektória átadása egy másik modellnek.** Amikor a fő modell tartósan elérhetetlen, egy másik szolgáltatónak kell végigfuttatnia a trajektóriát. A valódi akadály nem az, hogy más a végpont címe, hanem az, hogy a trajektória egy része kizárólag az eredeti szolgáltatóhoz tartozik. Az eszközhívások és az eszközeredmények szolgáltatónként eltérő szerkezetűek, de azonos jelentésűek, így elég őket újrarajzolni; a nehéz rész a modell gondolkodása. A gondolkodás rendszerint két részből áll: egy olvasható szövegből, és egy igazolásból, amelyet a szolgáltató csatol hozzá annak bizonyítására, hogy a gondolatmenet valóban tőle származik. A szöveget egy másik modell is érti, az igazolás viszont szolgáltatóváltáskor érvényét veszti — **a szolgáltatók közötti átvétel a szöveget tudja átvinni, az igazolást nem**.
+
+Az igazolással szemben támasztott elvárások szolgáltatónként eltérnek. A megengedő végén egyáltalán nincs ellenőrzés, a szigorú végén minden olyan igazolást elutasítanak, amelyet nem ők állítottak ki. Az igazolás ráadásul nem feltétlenül a gondolkodáshoz tartozik, tapadhat az eszközhíváshoz is. Így a látszólag biztonságos „töröljük ki az egész gondolkodást, és rendben leszünk" stratégia éppen az, ami egyes szolgáltatóknál nem megy át. Az átvételt csak a legszigorúbb véghez lehet tervezni, és tartalék útvonalat kell készíteni azokra az esetekre, amelyek a követelményt nem tudják teljesíteni: a korábbi eszközhívásokat szöveges elbeszéléssé kell átírni. A modell így már nem tekinti őket ténylegesen meghívott eszközöknek, de legalább tovább tud haladni.
+
+Ebből egy tervezési elv adódik: a trajektóriát nem szabad egyetlen szolgáltató interfészformátumában tárolni, hanem semleges formátumban kell megőrizni. Minden gondolkodási szakasz átvihető szövegre és át nem vihető igazolásra bomlik; az eszközhívás csak a nevét és az argumentumait rögzíti, az azonosítókat pedig a konkrét kéréssé alakításkor kell a célszolgáltató szerint újragenerálni. Váltáskor az igazolást minden esetben eldobjuk, a szöveget pedig közönséges tartalomként visszük be, nem pedig oda toljuk vissza, ahol a célszolgáltató a gondolkodást tartja. A szolgáltató által visszaadott gondolkodási összefoglaló épp az erre az alkalomra készített, átvihető másolat: elég megőrizni, nem kell külön modellhívással újra tömöríteni. A semleges trajektória értéke nem korlátozódik a hibaátvételre sem: a 7. fejezet kiértékelés-visszajátszása, a 8. fejezet tanítómintáinak előállítása és a 9. fejezet tapasztalatkinyerése ugyanarra a termékre támaszkodik.
+
+> **5-1. kísérlet ★★★: Trajektória átvétele szolgáltatók között**
+>
+> **Kísérlet célja**: Ellenőrizze, hogy egy semleges trajektóriaformátum lehetővé teszi-e, hogy egy félig lefutott ügynöki trajektóriát egy másik szolgáltató modellje fusson végig, és számszerűsítse a „változatlan továbbadás" és a „mindent letisztítás" költségét.
+>
+> **Technikai megközelítés**: Használjon több környi eszközhívást igénylő feladatot; félúton adjon be az aktuális szolgáltatónak egymást követő sebességkorlát- és túlterhelés-válaszokat, majd a megszakító kioldása után váltson másik szolgáltatóra és folytassa. A trajektóriát semleges formátumban tárolja: a gondolkodás átvihető szövegre és át nem vihető igazolásra válik szét, az eszközhívás pedig csak nevet és argumentumokat rögzít. Három megközelítést vessen össze: a **továbbadás** az eredeti szolgáltató üzeneteit változatlanul viszi át az új szolgáltató szerkezetébe; a **letisztítás** minden gondolkodást és igazolást töröl; a **semleges** eldobja az igazolást, a szöveget vagy a szolgáltató által adott gondolkodási összefoglalót közönséges tartalomként viszi be, az azonosítókat a célszolgáltató szerint újragenerálja, az igazolást kötelezően megkövetelő fogadó oldalon pedig a korábbi hívásokat szöveges elbeszéléssé írja át. Válasszon három, egymástól eltérő interfészformátumú szolgáltatót, és váltson közöttük páronként.
+>
+> **Elfogadási kritériumok**: Minden váltás utáni első kérésnél őrizze meg a nyers választ; a továbbadás kudarcának a szolgáltató valódi hibájának kell lennie, szimulált hiba nem helyettesítheti. Követelmény, hogy a semleges megközelítés egyetlen szolgáltatópárnál se adjon interfészhibát; azt pedig, hogy a másik kettő mely párokon és milyen hibával bukik el, híven rögzítse. Hasonlítsa össze a hármat a feladat teljesítési arányában, a váltás után ugyanazon eszköz ismételt hívásainak számában (az „eszköznév + argumentumok" ujjlenyomata szerint), valamint a befejezéshez a váltás után szükséges további körökben és tokenekben. Ha a semleges megközelítés az ismételt hívásokban nem bizonyul jobbnak a letisztításnál, azt ugyanilyen híven rögzítse.
+
+> **5-2. kísérlet ★★: Folytatás azután, hogy a kimenet félbeszakadt**
+>
+> **Kísérlet célja**: Hasonlítsa össze a „teljes kör újraküldése" és a „félbemaradt kimenet előtagként való folytatása" megközelítést költség, helyesség és mellékhatások szempontjából.
+>
+> **Technikai megközelítés**: Szakítsa meg a kapcsolatot a folyamatos válasz három pontján — a gondolkodás közben, a szöveg közben és az eszközhívás argumentuma közben. Három helyreállítási út: a töredék eldobása és a teljes kör újraküldése; a töredék hozzáfűzése záró assistant üzenetként, és a modell megkérése, hogy írja tovább (egyes szolgáltatók ezt natívan támogatják, mások megkövetelik az üzenet kifejezett megjelölését folytatásra várónak, az ilyen interfésszel nem rendelkezők pedig a következő útra esnek vissza); egy meta-utasítás hozzáfűzése, amely a megszakítási ponttól való folytatásra utasít. A félbemaradt eszközhívás natív szerkezetben nem küldhető vissza, ezért előbb szöveggé kell alakítani, hogy a modell kiegészítse, majd az összefűzés után újra kell elemezni és ellenőrizni. Ha a töredékben már futott eszköz a folyamatos feldolgozás miatt, a folytatás előtt a hívás ujjlenyomata alapján szűrje ki az ismétlődést, elkerülve a mellékhatás megkettőzését.
+>
+> **Elfogadási kritériumok**: Ismételje meg többször mindhárom megszakítási pontot, és utanként számoljon be a helyreállítás sikerarányáról, a teljes újraküldéshez képest megtakarított kimeneti tokenekről, a kiegészített argumentumok érvényességi és jelentésbeli helyességi arányáról (az illesztésnél könnyen keletkezik fölösleges szóköz vagy ismételt karakter, és az érvényes nem azonos a helyessel), valamint az ismételt mellékhatások számáról. Rögzítse azt is, mely megszakítási pontok mely szolgáltatóknál nem reprodukálhatók, és hogy a tartalék útvonal működik-e.
+
 **Megszakítás: minden helyreállítási útnak szüksége van egy plafonra.** Maguk a helyreállítási mechanizmusok is meghiúsulhatnak, ezért minden helyreállítási útnak rendelkeznie kell egy explicit újrapróbálkozási plafonnal: a kontextustömörítés feladja több egymást követő hiba után; a jogosultsági osztályozó visszaesik az emberi megkérdezésre ismételt hibák után; a kimenet folytatását legfeljebb rögzített számú alkalommal kíséreljük meg. Honnan származnak a küszöbértékek? Production adatokból, nem találgatásból. Vegyük a Claude Code tömörítési megszakítóját: a "3 egymást követő hiba" küszöb valós kapcsolati statisztikákból származik — egy kapcsolat egyszer több mint háromezerszer hibázott egymás után ezen a helyreállítási útvonalon, és az ilyen hiábavaló újrapróbálkozások önmagukban körülbelül 250 000 API hívást pazaroltak el világszerte naponta; több mint ezer kapcsolat esetében volt 50+ egymást követő hiba sorozat. A három az empirikus inflexiós pont a "a hibák túlnyomó többsége ezelőtt helyreáll" és a "további újrapróbálkozások lényegében reménytelenek" között.
 
 A pontszerű megszakítónál is alattomosabb a "halálspirál": a hibadvonalon triggerekett logika maga hívja az LLM-et, újra hibázik, és lépcsőzetesen terjed. Egy valós lépcsőzetes eset: az Ágens megáll egy kontextus-túlcsordulási hibán, ami elindít egy stop hook-ot (egy takarítási logika, amely automatikusan fut, amikor az Ágens véget ér), amely "kódot commitol kilépéskor," a hook meghívja az LLM-et egy commit üzenet írásához, a kontextus újra túlcsordul, és a hook újra elindul. A védelem két részből áll: tiltsunk le minden modell-meghívó mellékhatást a hibadvonalon (jobb egyszer elveszíteni egy segédfunkciót, mint az automatikus memóriakinyerést), és használjunk rekurziómélység-számlálót a maradék lépcsőzetes esetek érzékelésére és megtörésére. Végül, az összes automatikus mechanizmus felett globális megszakítási és eszkalációs feltételek állnak: maximális lépésszám, kapcsolati költségvetési korlát, és eszkaláció emberi beavatkozáshoz, ha az egymást követő hibák meghaladják a küszöbértéket.
@@ -395,7 +417,7 @@ Legyen az LLM felelős a probléma megértéséért és a kód megírásáért, 
 
 Stephen Wolfram, a Mathematica megalkotója mélyreható betekintést nyújtott ebbe. Az LLM-ek létezése előtt már léteztek olyan rendszerek, amelyek képesek voltak precíz matematikai számításokra – **Symbolic Computation** használatával dolgoztak, azaz a kifejezéseket matematikai szimbólumokkal dolgozták fel, nem pedig hozzávetőleges numerikus értékeket. Például egy hagyományos számológép a $\sqrt{2}$ értéket 1,414-re közelíti, míg egy szimbolikus számítási rendszer megőrzi a pontos $\sqrt{2}$ formát, és csak szükség esetén konvertálja tizedesjegyre. A Wolfram által létrehozott Wolfram Alpha egy ilyen rendszer: a felhasználók beírnak egy matematikai feladatot, amely pontos választ ad vissza. Természetes nyelvi értelmezése azonban meglehetősen törékeny, lefedettsége pedig szűk – egy beépített nyelvtani elemzőre támaszkodik, amely csak korlátozott számú megfogalmazást képes felismerni; a megfogalmazás enyhe módosítása az elemzés sikertelenségét okozhatja, és természetesen nem tudja kezelni a nyílt tartományú többlépéses érvelést. Az LLM-ek tökéletesen kitöltik ezt a hiányt – kiválóak a különféle természetes nyelvi kifejezések megértésében, de nem jók a precíz számításban. Az új kollaboratív modell a következő: legyen az LLM felelős a felhasználó természetes nyelvi kérdésének megértéséért, a benne lévő matematikai vagy logikai struktúra azonosításáért, és formális nyelvre (például a Mathematica nyelvre vagy a Python SymPy könyvtárára) történő lefordításáért; majd adja át egy dedikált szimbolikus számítási motornak vagy kényszermegoldónak végrehajtásra a pontos eredmények elérése érdekében.
 
-> **5-1. kísérlet ★★: Kódgeneráló eszközök használata a matematikai problémamegoldó képesség javítására**
+> **5-3. kísérlet ★★: Kódgeneráló eszközök használata a matematikai problémamegoldó képesség javítására**
 >
 > **Kísérlet célja**: Ellenőrizze, hogy egy ügynök matematikai gondolkodása pontosabban fejlődött-e, ha Kódtolmács segíti.
 >
@@ -404,7 +426,7 @@ Stephen Wolfram, a Mathematica megalkotója mélyreható betekintést nyújtott 
 > **Elfogadási kritériumok**: Értékelje az AIME-stílusú feladatokat (az American Invitational Mathematics Examination mintájára). Hasonlítsa össze a tiszta gondolatlánc pontosságát a kóddal segített érvelés pontosságával; a kód-asszisztált módnak lényegesen nagyobb pontosságot kell elérnie. Ellenőrizze, hogy a kód megfelelően használja-e a matematikai könyvtárakat, és hogy a megoldási folyamat logikailag egyértelmű-e.
 >
 
-> **5-2. kísérlet ★★: Kódgeneráló eszközök használata a logikai érvelési képesség javítására**
+> **5-4. kísérlet ★★: Kódgeneráló eszközök használata a logikai érvelési képesség javítására**
 >
 > **Kísérlet célja**: Felméri az ügynök azon képességét, hogy logikai érvelést hajtson végre a kényszermegoldó kód segítségével.
 >
@@ -503,7 +525,7 @@ Ennek a kialakításnak az értékét két szinten kell megérteni.
 
 A háromszintű biztosíték így teljes: (1) a rendszer természetes nyelvi szabályai azonnali segítik a megértést és a magyarázatot; (2) az eszközleírások és a paramétertervezés ellenőrzőlistaként szolgálnak, és a modellt a feltételek explicit ellenőrzéséhez irányítják a hívás előtt; (3) A szerveroldali kódalapú érvényesítés az adatbázis alapigazságát használva a végső kapuőr szerepét tölti be. Az első két szint csökkenti a hibák előfordulását, a harmadik pedig biztosítja, hogy a hibák ne váljanak visszafordíthatatlan veszteséggé.
 
-> **5-3. kísérlet ★★: A kis modellek kódalapú tudás révén javítják a szabályvégrehajtás pontosságát**
+> **5-5. kísérlet ★★: A kis modellek kódalapú tudás révén javítják a szabályvégrehajtás pontosságát**
 >
 > **Kísérlet célja**: Győződjön meg arról, hogy az összetett üzleti szabályok kódban való kódolása jelentősen javítja a pontosságot és konzisztenciát, amellyel egy kis modell (Qwen3-4B) végrehajtja ezeket a szabályokat.
 >
@@ -531,7 +553,7 @@ A Javaslattevő megkapja a visszajelzést, értelmezi azt, módosítja a kódot,
 
 A javaslattevő-ellenőrző ciklus itt ugyanazt a mintát követi, mint a 4. fejezet **előzetes jóváhagyási** mechanizmusa: az egyik ügynök generál, a másik pedig függetlenül értékeli. A két alkalmazás célja és munkafolyamata tekintetében különbözik. A 4. fejezet a mintát használja egyetlen visszafordíthatatlan művelet jóváhagyására vagy elutasítására; itt az iteratív tartalomfejlesztést hajtja végre több körön keresztül, miközben a felülvizsgáló azt látja, hogy a kimenet nem érhető el a Javaslattevő számára. A tervezési alapelvek konzisztensek (megosztott cél megkötései, különböző modellcsaládok használata a hasonló hibák valószínűségének csökkentése érdekében, visszacsatolás, mint speciális esemény, amely hozzáadódik a Javaslattevő pályájához). Az együgynökös hurok helyett a kettős munkamegosztás használatának **alapvető előnye** a **környezetkezelésben** rejlik: a Reviewer csak a legújabb verzió renderelt képeit dolgozza fel, a korábbi verziók nem befolyásolják; a Javaslattevő csak strukturált szöveges visszajelzést halmoz fel, kevesebb tokent fogyaszt, és megkönnyíti az érvelést. Együgynökös megoldásnak több körből több tucat oldalra, ugyanabban a kontextusban kellene felhalmoznia a renderelt képeket, gyorsan túllépve a kontextuskorlátot. Ezt a mechanizmust a későbbi videószerkesztési és naplómegjelenítési kísérletekben újra felhasználják; A 10. fejezet a Javaslattevő-Recenzens paradigmán túl további többügynökös együttműködési módokat is megvizsgál.
 
-> **5-4. kísérlet ★★: Automatikus PPT előállítás papírokból**
+> **5-6. kísérlet ★★: Automatikus PPT előállítás papírokból**
 >
 > **Kísérlet célja**: Kiváló minőségű prezentációk automatikus generálása tudományos dolgozatokból, igazolva a javaslattevő-ellenőri mechanizmus hatékonyságát a tartalomkészítés minőségellenőrzésében.
 >
@@ -540,11 +562,11 @@ A javaslattevő-ellenőrző ciklus itt ugyanazt a mintát követi, mint a 4. fej
 > **Elfogadási feltételek**: Készítsen 10-20 diát, amelyek lefedik a dolgozat főbb hozzájárulásait. Tartalmazzon legalább 3 eredeti ábrát, amelyek megegyeznek a kísérő szöveggel. Nincs túlcsordulás a szövegben, ésszerű elrendezés. Hasonlítsa össze a kontextusfogyasztást és a generálás minőségét az együgynök által végzett önellenőrzés és a javaslattevő-bíráló munkamegosztás között.
 >
 
-> **5-5. kísérlet ★★: papíralapú magyarázó videók automatikus generálása**
+> **5-7. kísérlet ★★: papíralapú magyarázó videók automatikus generálása**
 >
 > **Kísérlet célja**: A PPT-generálási képességek bővítése a vizuális és hallható csatornák kombinálásával a magyarázó videók automatikus generálása érdekében.
 >
-> **Technikai megközelítés**: Az 5-4. kísérlet prezentációs munkafolyamatára építve az ügynök társalgási narrációt is generál minden diához – a dia szövegének megismétlése helyett – a nézőt irányítva – TTS (text-to-speech) segítségével szintetizálja a hangot, és a diaképeket és a hangot az FFmpeggel kombinálja a végső videó elkészítéséhez.
+> **Technikai megközelítés**: Az 5-6. kísérlet prezentációs munkafolyamatára építve az ügynök társalgási narrációt is generál minden diához – a dia szövegének megismétlése helyett – a nézőt irányítva – TTS (text-to-speech) segítségével szintetizálja a hangot, és a diaképeket és a hangot az FFmpeggel kombinálja a végső videó elkészítéséhez.
 >
 > **Elfogadási feltételek**: Készítsen egy 5–15 perces videót, amelyben minden dia megjelenítési ideje pontosan igazodik a narrációhoz, a narráció pedig megfelel a vizuális elemeknek.
 >
@@ -559,7 +581,7 @@ A videó szerkesztése általános célú számítógép-használati felületen 
 
 A videószerkesztés API-hívásokká és kódgenerálássá történő átkeretezése drámaian csökkenti a bonyolultságot. Számos professzionális szoftvereszköz (mint például a Blender – egy nyílt forráskódú 3D-s készítő és videó-összeállító eszköz, amely támogatja a Python-szkripteket; az FFmpeg – a svájci hadsereg parancssori kése audio/videó feldolgozásához) programozott API-felületeket biztosít, amelyek strukturáltan, komponálható módon teszik elérhetővé az alapvető funkciókat. Például a Blender Python API lehetővé teszi az olyan műveletek precíz vezérlését, mint az importálás, vágás, rendezés, átmeneti effektusok hozzáadása és hangkeverés a videoklipekhez, minden művelet egy tiszta függvényhívásnak felel meg. Egy ügynök számára a természetes nyelvi követelmények API-hívásokká konvertálása sokkal könnyebb, mint a grafikus felület megértése és az egérkattintások szimulálása. A PPT generálásához hasonlóan a videószerkesztés is alkalmazza a Proposer-Reviewer mechanizmust – a Proposer Agent Blender szkripteket generál, a Reviewer Agent kulcskockákat jelenít meg, és Vision LLM segítségével ellenőrzi a hatást, visszajelzést adva a módosításokhoz.
 
-> **5-6. kísérlet ★★: API-alapú intelligens videószerkesztés**
+> **5-8. kísérlet ★★: API-alapú intelligens videószerkesztés**
 >
 > **Kísérlet célja**: A Blender Python API kód ​​generálásával ellenőrizze az ügynök videószerkesztési képességét, és értékelje a látás-visszacsatoláson alapuló Proposer-Reviewer mechanizmus szerepét a multimédiás tartalomfeldolgozásban.
 >
@@ -586,7 +608,7 @@ A hagyományos naplóelemzés forgatókönyvekben, amikor a naplóformátum megv
 
 Ez a képesség különösen értékes a nem strukturált naplók kezelésére, és azért, mert a naplóformátumok gyakran frissülnek. A statikus elemzők megszakítják a folyamatot, amikor a formátum változik. Ezzel szemben a kódot generáló Ágens minden alkalommal új elemzőt hoz létre, természetesen alkalmazkodva a formátum fejlődéséhez. Az elemzési logika nem meghatározott, hanem a bemeneti adatokból kód formájában van levezetve. Ez a kód mint rendszer adapter lényege: **a rendszer a generált kódon keresztül alkalmazkodik a külső szabványok változásaihoz anélkül, hogy az Ágens kódban rögzített eszközöket kellene frissíteni**.
 
-> **5-7. kísérlet ★★★: Adaptív naplóelemző rendszer**
+> **5-9. kísérlet ★★★: Adaptív naplóelemző rendszer**
 >
 > **Kísérlet célja**: Önfejlesztésre képes ügynöki naplóvizualizációs rendszer építése.
 >
@@ -598,7 +620,7 @@ Ez a képesség különösen értékes a nem strukturált naplók kezelésére, 
 
 A naplóelemzésen túl egy teljes intelligens napló diagnosztikai csővezeték építhető a kódgenerálás és a termelési technikák alapján. Az Ágens elemzi a termelési trajektóriák halmazát a rendszerarchitektúra dokumentumokkal és PRD-kkel együtt, hogy azonosítsa a problémamintákat és az érintett modulokat. Ezt követően strukturált problémajelentéseket generál, amelyek a prioritást, a modult, a leírást és az ajánlott fejlesztéseket tartalmazzák. Ezen felül regressziós teszteket generál, amelyek a trajektória ID-khoz és interakciós körökhöz vannak kötve; a tesztkeretrendszer visszajátssza ezeket az eseteket és ellenőrzi az eredményeket. Végül az Ágens GitHub issue-kat hoz létre MCP-n keresztül.
 
-> **5-8. kísérlet ★★★: Termelési naplók intelligens diagnosztikai rendszere**
+> **5-10. kísérlet ★★★: Termelési naplók intelligens diagnosztikai rendszere**
 >
 > **Kísérlet Célja**: Ellenőrizze, hogy a Kódoló Ágens képes-e intelligens naplóelemzésre a kódgenerálás és a termelési technikák alapján.
 >
@@ -638,7 +660,7 @@ Kódgeneráláson keresztül az Ágens strukturált interaktív felületeket hoz
 ![5-8. ábra: Dinamikus űrlap generálási folyamata](images/fig5-8.svg)
 
 
-> **Kísérlet 5-9 ★★: Szándék Tisztázó Rendszer Dinamikus Űrlapokkal**
+> **Kísérlet 5-11 ★★: Szándék Tisztázó Rendszer Dinamikus Űrlapokkal**
 >
 > **Kísérlet Célja**: Annak ellenőrzése, hogy az Ágens képes-e tisztázni a felhasználói szándékot dinamikusan generált HTML űrlapok segítségével.
 >
@@ -660,7 +682,7 @@ A generált SQL-t és vizualizációs kódot nem szabad közvetlenül végrehajt
 
 Továbbmenve, az Ágens két artefaktumot generálhat, amelyek egy csővezetéket alkotnak: egy SQL lekérdezést és egy vizualizációs kódot, például egy oszlopdiagram kódját. A frontend közvetlenül átadja az SQL eredményeket a vizualizációs kódnak. Az LLM generálja a kódot, de nem vesz részt az adat útvonalban — ez a kódgenerálás mint felület lényege.
 
-> **Kísérlet 5-10 ★★: Természetes Nyelvű Interakciós ERP Ágens**
+> **Kísérlet 5-12 ★★: Természetes Nyelvű Interakciós ERP Ágens**
 >
 > Az ERP (Enterprise Resource Planning) szoftver kritikus rendszer a vállalkozások számára, jellemzően GUI felületet használ, ahol az összetett műveletek több egérkattintást igényelnek. Egy AI Ágens lefordíthatja a felhasználók természetes nyelvű kéréseit SQL lekérdezésekké, lehetővé téve az automatizált adatbázis-hozzáférést.
 >
@@ -684,7 +706,7 @@ A kódgenerálás végső alkalmazása, hogy az Ágens teljesen dinamikusan, a s
 
 A teljesen dinamikus generálás azonban költséges és lassú — inkább a lehetőségek bemutatására alkalmas, mint termelési használatra. Egy pragmatikusabb megközelítés egy "meglévő keretrendszer testreszabása". Ez a "fél-egyedi" modell megőrzi az alapszoftver stabilitását, miközben kiválasztott szempontokat a felhasználói kontroll alá helyez. A felhasználó mondhatja, hogy "tedd kékre a gombot," "adj hozzá egy gyorsmenüt az oldalsávhoz," vagy "válts olvashatóbb betűtípusra"; az Ágens frissíti a frontend kódot, és a HMR (Hot Module Replacement — amely érintett modulokat frissít teljes oldal újratöltés nélkül, és általában megőrzi az alkalmazás állapotát) azonnal alkalmazza a változtatásokat. Egy mindenre egyforma termék minden felhasználóra szabott élménnyé válik.
 
-> **Kísérlet 5-11 ★★: Beszélgetéses Felület Testreszabási Rendszer**
+> **Kísérlet 5-13 ★★: Beszélgetéses Felület Testreszabási Rendszer**
 >
 > **Kísérlet Célja**: Lehetővé tenni a felhasználók számára a szoftverfelület azonnali testreszabását természetes nyelvű párbeszéden keresztül, és kiértékelni, hogy a kódgenerálás gyors újratöltéssel hatékonyan tud-e személyre szabott felhasználói élményeket nyújtani.
 >
@@ -698,7 +720,7 @@ Robusztusabb architektúra **a bizalmi határt az adatrétegbe helyezi át**. A 
 
 A jogosultság lefelé helyezése nem jelenti az összes üzleti logika adatbázisba költöztetését. Az alkalmazási réteg továbbra is végezhet előzetes ellenőrzéseket a gyors visszajelzésért, de a végső döntési jogkört az adatrétegnek kell megtartania. Ugyanaz a szabály javíthatja a felső réteg felhasználói élményét, és garanciát adhat az alsó rétegben. Ehhez minden adatelérési útvonalnak a megbízható adatrétegen kell áthaladnia; a generált kód nem kerülheti meg közvetlen adatbázis-kapcsolattal. Így a felső réteg folyamatosan változhat, miközben a nem alkuképes jogosultsági korlátok egy olyan rétegben maradnak, amelyet nem generálunk újra minden kérésnél. Ez az 1. fejezet háromrétegű vázának adatrétege — az, amelyet a legnehezebb megkerülni.
 
-> **Kísérlet 5-12 ★★★: Jogosultságot beágyazó adatobjektumok dinamikus szoftverhez**
+> **Kísérlet 5-14 ★★★: Jogosultságot beágyazó adatobjektumok dinamikus szoftverhez**
 >
 > **Kísérlet célja**: Olyan objektumtároló építése, amely lehetővé teszi az alkalmazási kód dinamikus generálását vagy átírását, miközben az engedélyezést és az adatintegritást az adatréteg kényszeríti ki. Ellenőrizze, hogy a generált kód nem lépheti át a stabil határt állapotátmenet kihagyásával, határon kívüli érték írásával vagy bérlők közötti olvasással.
 >
@@ -743,7 +765,7 @@ A példa alapú generálás előnye nyilvánvaló: a példakód magában hordozz
 
 Amikor egy Ágens feladatot kap egy új Ágens kifejlesztésére, először másolja le a saját kódját (vagy más validált, kiváló minőségű implementációkat), majd végezzen célzott módosításokat: igazítsa a rendszer promptot az új szerephez, cserélje ki vagy adjon hozzá eszközöket az új funkciókhoz, módosítsa az üzleti logikát az architekturális keret megőrzése mellett. Ez az "önreplikáció adaptív módosítással" minta biztosítja, hogy az új Ágens örökölje a mag technikai előnyöket, miközben lehetővé teszi a differenciálódást specifikus dimenziókban — akárcsak a génreplikáció mutációval a biológiában.
 
-> **Kísérlet 5-13 ★★★: Fejlessz Egy Ágenst, Amely Képes Ágenseket Létrehozni**
+> **Kísérlet 5-15 ★★★: Fejlessz Egy Ágenst, Amely Képes Ágenseket Létrehozni**
 >
 > **Kísérlet Célja**: Építs egy Kódoló Ágenst metaprogramozási képességekkel — olyan képességgel, hogy olyan programokat írjon, amelyek más programokat generálnak vagy módosítanak —, hogy automatikusan létre tudjon hozni új Ágens rendszereket a felhasználói követelményekből, miközben betartja a legjobb gyakorlatokat.
 >
@@ -762,7 +784,7 @@ Az Ágens bootstrapping a kódgenerálás végső alkalmazása — egy Ágens, a
 
 Ez a fejezet egy dolgot állított végig: a kód nem csupán egy eszköz programok írására — ez az Ágens formalizált gondolkodásának és precíz kifejezésének nyelve.
 
-A Harness mérnökség szakasz egy központi következtetésre jutott: a Kódoló Ágensek azért érettek, nem azért, mert a kódgeneráló modellek kivételesen erősek, hanem mert a szoftvermérnökség évtizedek alatt felhalmozott infrastruktúrája — tesztcsomagok, típusrendszerek, verziókezelés — természetes módon alkot egy erős Harness-t. Ennek a következtetésnek át kell utaznia más Ágens forgatókönyvekhez. A hibák és hibahelyreállítás szakasz ugyanazon téma másik oldalát kínálja: egy Ágens megbízhatóságát nem az határozza meg, hogy a modell követ-e el hibákat, hanem hogy minden hibafajtához tartozik-e megfelelő érzékelési, helyreállítási és megszakítási útvonal.
+A Harness mérnökség szakasz egy központi következtetésre jutott: a Kódoló Ágensek azért érettek, nem azért, mert a kódgeneráló modellek kivételesen erősek, hanem mert a szoftvermérnökség évtizedek alatt felhalmozott infrastruktúrája — tesztcsomagok, típusrendszerek, verziókezelés — természetes módon alkot egy erős Harness-t. Ennek a következtetésnek át kell utaznia más Ágens forgatókönyvekhez. A hibák és hibahelyreállítás szakasz ugyanazon téma másik oldalát kínálja: egy Ágens megbízhatóságát nem az határozza meg, hogy a modell követ-e el hibákat, hanem hogy minden hibafajtához tartozik-e megfelelő érzékelési, helyreállítási, átvételi és megszakítási útvonal.
 
 A második rész a kódgenerálás széleskörű értékét mutatta be a programozáson túl, ami a fő szöveg hat dimenziójának felel meg:
 
