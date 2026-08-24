@@ -1124,5 +1124,5 @@ MIT License - 详见 LICENSE 文件
 
 - Start with `python event_loop_demo.py --mock` (no API key).  
 - 建议先跑 `python event_loop_demo.py --mock`（无需 API Key）。  
-- MCP servers expected: [collaboration-tools](../collaboration-tools/), [execution-tools](../execution-tools/), [perception-tools](../perception-tools/).  
-- MCP 服务器见同章三个工具项目。
+- Chapter 4 MCP servers expected: [collaboration-tools](../../chapter4/collaboration-tools/), [execution-tools](../../chapter4/execution-tools/), [perception-tools](../../chapter4/perception-tools/).
+- MCP 服务器见第 4 章的三个工具项目。

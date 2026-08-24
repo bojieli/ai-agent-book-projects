@@ -162,8 +162,8 @@ python validate_rubric.py \
   --output results/live_6_3_layer1.json
 ```
 
-Experiments 6-4 and 6-9 use this judge in the end-to-end runner at
-[`chapter6/user-memory-system-evaluation`](../../chapter6/user-memory-system-evaluation/).
+Experiments 7-4 and 7-11 use this judge in the end-to-end runner at
+[`chapter7/user-memory-system-evaluation`](../../chapter7/user-memory-system-evaluation/).
 
 ### Configuration
 
