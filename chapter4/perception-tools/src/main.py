@@ -6,9 +6,12 @@ This MCP server provides comprehensive perception capabilities including:
 - Multimodal understanding (web pages, documents, images, videos)
 - File system operations (read, grep, summarization)
 - Public data sources (weather, stocks, currency, Wikipedia, ArXiv, Wayback)
+- Optional metered X post search through Xquik
 - Private data sources (Google Calendar, Notion)
 """
 import logging
+from typing import Literal
+
 from dotenv import load_dotenv
 from mcp.server import MCPServer
 from pydantic import Field
@@ -38,6 +41,7 @@ from google_search_enhanced import google_search_api, read_webpage_content
 from wiki_enhanced import get_article_content, get_article_categories, get_article_links, get_article_history
 from arxiv_enhanced import get_paper_details, download_paper, get_arxiv_categories
 from wayback_enhanced import get_archived_content
+from xquik_tools import search_x_posts
 from expanded_catalog import enrich_existing_tools, register_expanded_tools
 
 
@@ -83,6 +87,7 @@ A comprehensive MCP server providing various perception and data retrieval capab
 - Wikipedia search
 - ArXiv academic papers
 - Wayback Machine archives
+- X post search through Xquik (optional, metered)
 
 ## Private Data Sources
 - Google Calendar events
@@ -295,6 +300,25 @@ async def poi_search(
 ):
     """Search points of interest."""
     return await search_poi(query, latitude, longitude, radius, limit)
+
+
+@mcp.tool(
+    description=(
+        "Search X posts with Xquik. Read-only, metered, and requires "
+        "XQUIK_API_KEY plus an active subscription"
+    )
+)
+async def xquik_search_posts(
+    query: str = Field(description="X search query, Tweet ID, or X status URL"),
+    limit: int = Field(default=10, ge=1, le=100, description="Maximum posts to return"),
+    cursor: str | None = Field(default=None, description="Opaque next-page cursor"),
+    query_type: Literal["Latest", "Top"] = Field(
+        default="Latest",
+        description="Latest for chronological results or Top for ranked results",
+    ),
+):
+    """Search X posts through Xquik."""
+    return await search_x_posts(query, limit, cursor, query_type)
 
 
 @mcp.tool(description="Search Wikipedia and get article summary")
@@ -683,13 +707,13 @@ async def notion_search(
     return await search_notion(query, database_id, page_size)
 
 
-# Complete the 56 native schema descriptions before adding the expanded
+# Complete the 57 native schema descriptions before adding the expanded
 # catalog. The implementations and native parameter schemas remain unchanged.
 enrich_existing_tools(mcp)
 
 # Experiment 4-7 requires 120+ tools from this perception MCP server.  The
-# 56 native tools plus 70 additional real-backed, read-mostly tools bring the
-# server catalog to 126 tools. Registration is dynamic only to avoid repetitive
+# 57 native tools plus 70 additional real-backed, read-mostly tools bring the
+# server catalog to 127 tools. Registration is dynamic only to avoid repetitive
 # wrapper functions; tools/list still
 # returns ordinary full JSON schemas and every tool is callable over MCP.
 register_expanded_tools(mcp)

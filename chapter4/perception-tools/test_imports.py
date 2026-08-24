@@ -30,6 +30,9 @@ try:
     
     print("✓ Importing private_data_tools module...")
     from private_data_tools import get_calendar_events, search_notion
+
+    print("✓ Importing xquik_tools module...")
+    from xquik_tools import search_x_posts
     
     print("✓ Importing main module...")
     from main import mcp

@@ -1,7 +1,7 @@
 """Expanded, real-backed perception tool catalog for Experiments 4-1 and 4-6.
 
 The book's active-discovery experiment requires the perception MCP server to
-expose 120+ tools. The native server exposes 56 useful tools; this module adds
+expose 120+ tools. The native server exposes 57 useful tools; this module adds
 70 narrowly named, read-mostly tools backed by real local operations or
 public APIs.  They intentionally share a compact two-argument transport
 (`query` plus JSON options), while each MCP schema has a detailed operational
@@ -255,7 +255,7 @@ and timeout are returned as observed and never replaced by a successful mock."""
 }
 
 
-# The 56 native tools use tool-specific parameters but historically
+# The 57 native tools use tool-specific parameters but historically
 # had one-line descriptions. These contracts add the missing provenance,
 # success shape, and failure semantics without changing their implementations.
 EXISTING_TOOL_CONTRACTS: dict[str, tuple[str, str, str]] = {
@@ -281,6 +281,7 @@ EXISTING_TOOL_CONTRACTS: dict[str, tuple[str, str, str]] = {
     "wikipedia_search": ("MediaWiki search API for the requested language edition", "page IDs, titles, snippets, canonical URLs, result count, and language", "unsupported language hosts, empty queries, no matches, MediaWiki errors, and timeout"),
     "arxiv_search": ("the live arXiv Atom API through the arxiv client", "ordered paper titles, authors, summaries, publication times, entry/PDF URLs, categories, query, and count", "invalid query syntax, empty feeds, arXiv throttling, feed parsing errors, and timeout"),
     "wayback_search": ("Internet Archive CDX search API", "snapshot timestamps, original URLs, status codes, MIME types, archive URLs, requested year, and count", "invalid URLs/years, no captures, CDX access denial, malformed rows, and timeout"),
+    "xquik_search_posts": ("Xquik GET /api/v1/x/tweets/search using an environment-only API key", "the unchanged query, returned X post objects, count, pagination state, opaque next cursor, and provider metadata", "missing credentials or subscription, invalid limits or sort order, insufficient credits, rate limiting, malformed provider responses, HTTP errors, and timeout"),
     "youtube_transcript": ("YouTube transcript endpoints through youtube-transcript-api", "video ID, language, ordered timestamped transcript segments, combined text, and segment count", "invalid/private/removed videos, disabled captions, unavailable language tracks, throttling, and timeout"),
     "pubchem_search": ("PubChem PUG REST compound-name search", "compound CIDs matching the query together with query and match-count metadata", "empty names, no compounds, invalid namespace responses, PubChem throttling, and timeout"),
     "pubchem_properties": ("PubChem PUG REST property lookup for one CID", "CID and requested molecular formula, weight, canonical/isomeric SMILES, InChI, XLogP, and related properties", "invalid/missing CIDs, unavailable properties, non-2xx responses, throttling, and timeout"),
