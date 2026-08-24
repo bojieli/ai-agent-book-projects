@@ -1,0 +1,81 @@
+{
+  "row": {
+    "provider": "anthropic",
+    "break_point": "text",
+    "repeat": 2,
+    "reproducible": true,
+    "strategy": "meta",
+    "cut": {
+      "reasoning_chars": 0,
+      "text_chars": 30,
+      "tool_name": null,
+      "tool_args": "",
+      "truncated": true,
+      "closed": false
+    },
+    "applicable": true,
+    "note": null,
+    "output_tokens": 590,
+    "recovered": true,
+    "json_valid": null,
+    "args_correct": null,
+    "duplicate_side_effects": 0,
+    "answer_correct": true
+  },
+  "partial": {
+    "reasoning": "",
+    "text": "好的，让我为您整理一下北京到东京3晚4天出差的总预算：\n\n*",
+    "tool_name": null,
+    "tool_args": "",
+    "tool_index": null,
+    "tool_args_closed": false,
+    "truncated": true,
+    "finished": false
+  },
+  "result": {
+    "strategy": "meta",
+    "applicable": true,
+    "note": null,
+    "usage": {
+      "input": 1539,
+      "output": 590
+    },
+    "raw": {
+      "model": "claude-haiku-4-5-20251001",
+      "id": "msg_011CeMou344G6JCUJkRvsvCR",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "thinking",
+          "thinking": "用户说我之前的回复被截断了，让我从断点继续。用户让我不要重复已经输出的部分。\n\n根据我已经收集到的数据：\n1. 往返机票：3200 人民币\n2. 酒店价格：18000 日元/晚，共3晚\n3. 餐费：6000 日元/天，共4天\n4. 汇率：1 日元 = 0.048 人民币\n\n现在我需要计算：\n- 酒店：18000 × 3 × 0.048 = 2592 人民币\n- 餐费：6000 × 4 × 0.048 = 1152 人民币\n- 往返机票：3200 人民币\n- 总计：3200 + 2592 + 1152 = 6944 人民币\n\n我应该从\"*\"之后继续输出详细的预算明细。",
+          "signature": "ErQGCpoBCBEYAipAQ8G2Z2sWiTblTSw2ADkMJgeZFq2BikgMtBN+7YlgxIKKp7l0b7nH8TBmWVb48iGma9EPyDoXg4r/OWf7cbbFvzIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okNTM3MTEzZjQtZmI1Ny00NDc0LTgyOTYtYTA0OWExMGQ2YzMyqAH5xbHUBhIMRsLBJIwHFzUgjeu4GgyFiDAaPrJj74+nZZEiMBO/xc+cL1Q24T17FrfeCEVGmk/cTjHFYzOc3ggOtPfiDGLdiAYjqU5048PzS6vfXSrGBH5MBuIPtCmXUL66SpYo1Bs1Ax+zWBPRitK0a95EoHmJsjxC5qQsc3zqSxuVCC/gmY6b3JBapde1QkD2U01gcPbFyy5V2aSZBhyZc9jnXZamDSMoW6Jf2Q3O3QYgQ88Q8RnPL48InQUrqwJhgZt8YZE75b643pBndNTV3b46GMZqSh39UWrayCiNE/gw/cAm8oo8KYponGdh+v/qYkTcicZFPngK/MTfSn2JXKLhlYTNWbYcyglliaGhv5QmSK7aKl6wAAydYViBwBj/SbgzYie9jFvIlV4w4342DZlnCTJ+ukzmLAPx2WI+56hcvUdIZgxOCbgWiVwITg6bmyRmFaf43O3+N/Tub184SPGcZcNLNG+pf1QNFYNIaAScmKsUXfkCmBWrBOPy4FtFkPHMzHOfL/rq6VknZrG2Afe6SZplm+R+HfABWT+CGkd7cECz/fNnv87VyX+Qcb2ePow1SOZRACbLN6x4AUHCx+tkafR0HfKuW2q0a6It0j3B03rDjCZ50U1xqheQ6t1K8RY9Zbt0J2iZLSvhcQ1UnIkp1nJj2hTNUCxmXP/5MfIBpN410sCe/4ozDu0v/3jqlYG/IJQyMIFcL+Xc0jp5Pzw/DZcXE9/+gV6Tkj1LhcN8yJJUVvN1US2CtcRsW0KpAPgRZbLm3KrBFGElYDvuU3I/GGHR5buHz8Ys6DmruMhGkkwRvDBH81lMqrsTwvNEZcnJzbv6GE+5eMsJyOlMFhxYOtisjFOdKtqbX6pMXN4y0ApCnFkZ0/LyPhgB"
+        },
+        {
+          "type": "text",
+          "text": "## 北京到东京 3晚4天出差预算明细\n\n**1. 往返机票**\n- 北京 ↔ 东京：3,200 元（人民币）\n\n**2. 住宿费用**\n- 单价：18,000 日元/晚\n- 共3晚：18,000 × 3 = 54,000 日元\n- 换算人民币：54,000 × 0.048 = 2,592 元\n\n**3. 餐费**\n- 单价：6,000 日元/天\n- 共4天：6,000 × 4 = 24,000 日元\n- 换算人民币：24,000 × 0.048 = 1,152 元\n\n---\n\n## 总预算汇总\n\n| 项目 | 金额（人民币） |\n|------|--------------|\n| 往返机票 | 3,200 元 |\n| 住宿（3晚） | 2,592 元 |\n| 餐费（4天） | 1,152 元 |\n| **合计** | **6,944 元** |\n\n**最终预算：6,944 元人民币**"
+        }
+      ],
+      "stop_reason": "end_turn",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 1539,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 590,
+        "output_tokens_details": {
+          "thinking_tokens": 264
+        },
+        "service_tier": "standard",
+        "inference_geo": "not_available"
+      }
+    },
+    "text": "## 北京到东京 3晚4天出差预算明细\n\n**1. 往返机票**\n- 北京 ↔ 东京：3,200 元（人民币）\n\n**2. 住宿费用**\n- 单价：18,000 日元/晚\n- 共3晚：18,000 × 3 = 54,000 日元\n- 换算人民币：54,000 × 0.048 = 2,592 元\n\n**3. 餐费**\n- 单价：6,000 日元/天\n- 共4天：6,000 × 4 = 24,000 日元\n- 换算人民币：24,000 × 0.048 = 1,152 元\n\n---\n\n## 总预算汇总\n\n| 项目 | 金额（人民币） |\n|------|--------------|\n| 往返机票 | 3,200 元 |\n| 住宿（3晚） | 2,592 元 |\n| 餐费（4天） | 1,152 元 |\n| **合计** | **6,944 元** |\n\n**最终预算：6,944 元人民币**",
+    "tool_calls": []
+  }
+}

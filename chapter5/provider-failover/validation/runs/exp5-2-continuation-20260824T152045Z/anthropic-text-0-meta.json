@@ -1,0 +1,81 @@
+{
+  "row": {
+    "provider": "anthropic",
+    "break_point": "text",
+    "repeat": 0,
+    "reproducible": true,
+    "strategy": "meta",
+    "cut": {
+      "reasoning_chars": 0,
+      "text_chars": 30,
+      "tool_name": null,
+      "tool_args": "",
+      "truncated": true,
+      "closed": false
+    },
+    "applicable": true,
+    "note": null,
+    "output_tokens": 521,
+    "recovered": true,
+    "json_valid": null,
+    "args_correct": null,
+    "duplicate_side_effects": 0,
+    "answer_correct": true
+  },
+  "partial": {
+    "reasoning": "",
+    "text": "现在为您计算北京往返东京出差的总预算：\n\n**预算明细：**",
+    "tool_name": null,
+    "tool_args": "",
+    "tool_index": null,
+    "tool_args_closed": false,
+    "truncated": true,
+    "finished": false
+  },
+  "result": {
+    "strategy": "meta",
+    "applicable": true,
+    "note": null,
+    "usage": {
+      "input": 1536,
+      "output": 521
+    },
+    "raw": {
+      "model": "claude-haiku-4-5-20251001",
+      "id": "msg_011CeMosah1tZx9WAztPNhcy",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "thinking",
+          "thinking": "用户说我上一次的回复被截断了，让我继续从\"**预算明细：**\"这个断点继续。我已经获取了所有的数据：\n\n1. 往返机票：3200 CNY\n2. 酒店：每晚 18000 JPY，需要 3 晚\n3. 餐费：每天 6000 JPY，需要 4 天\n4. 汇率：1 JPY = 0.048 CNY\n\n现在我需要计算总额：\n\n- 机票：3200 CNY\n- 酒店：18000 JPY/晚 × 3 晚 = 54000 JPY = 54000 × 0.048 = 2592 CNY\n- 餐费：6000 JPY/天 × 4 天 = 24000 JPY = 24000 × 0.048 = 1152 CNY\n\n总额 = 3200 + 2592 + 1152 = 6944 CNY\n\n让我从预算明细这部分继续输出。",
+          "signature": "ErgGCpoBCBEYAipAEcU0Dkfaa15E3e0f39LRShKcpKM4dge60l3L2DkbhqNgVnOgyDJ2b05Pca2GkU7i9gUW3d4fA1ygXxl8OFsDizIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okNTM3MTEzZjQtZmI1Ny00NDc0LTgyOTYtYTA0OWExMGQ2YzMyqAHkxbHUBhIMXYIEVsIs92AjRA5ZGgy2jBlaJkdKWklelaAiMMoI6T2f6XHrPJ0BHWBz7OOjAlRkkzWo7S4ly691quPHBfgRJ7LGbIVwd1y/DAbvairKBNyA5bmx3wKWhHwP3aBqntXC5AuNGH66tMBZOqrJyW4NLatpRscys/bgQoUOsGNUqxSNNQQw/7+CNqj4uuvsA54Mrv/mow06VM1b0clpElXoT4keCWh1yJhqu9thqY9kZng+8s/J17ZpzZCDyw+X/q8jxxljMsJ29p91gObvi7hJ8WbcKsr7YR9AB+SK/OXLil0mwT5lwydAqqK8pnblUuJaEi4NRPcuxviTiPBnJLreM5Ik03CjTy44MqhX/GypDzS7TPP5e2YQwZNdBxluS5ZEQrSOjffqe29Y8RFYg5pBrQle57xs18/8gPJXf27b4lWb2ZFPr5GuypMuGX1pdyeU3vz0A4DkjqwPXml0NVC4MNiRbbQWBtWXuZlpZ/yDBeyo4dNFC5RNdA1t08P2Fc3qzpXrs3J1bOAXHd0sdXgHpdeZeI0KNwheyVOUAsAdXJOebkZvvJrUOtrQisFfl+T+pqCUFhAw9Mg8oNcY/qawvM91MvtXHTLisdh+nCPgOCHokWM/ktovk0hSGMwtnhDhV+fuUlkUFBGy2NtG7Su1pSwHziEpQeD/eowFC6fwQahhuqAzP6yzsF+6Nq2/uAeC7Vc6EyDskrVrKs4ZDMjqGWEw2+VHxN3r7+5beSx+Q77WF5dcpjbDIcfY97AeVjmX5RYDh/o/c90lH6x9p23RLxaYneWCk4mPppZonURi+j2YfFsqg+3fEguM+82v0SnAssh1gMWs5HEmYfleMVdZTbwzv5iK6VyIPqMxpvQpLNlYEZssmBWoOQMYAQ=="
+        },
+        {
+          "type": "text",
+          "text": "**预算明细：**\n\n1. **往返机票**：3,200 元（人民币）\n\n2. **住宿**（3晚）：\n   - 每晚 18,000 日元\n   - 3晚共计：18,000 × 3 = 54,000 日元\n   - 转换为人民币：54,000 × 0.048 = 2,592 元\n\n3. **餐费**（4天）：\n   - 每天 6,000 日元\n   - 4天共计：6,000 × 4 = 24,000 日元\n   - 转换为人民币：24,000 × 0.048 = 1,152 元\n\n---\n\n**出差总预算：3,200 + 2,592 + 1,152 = 6,944 元**"
+        }
+      ],
+      "stop_reason": "end_turn",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 1536,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 521,
+        "output_tokens_details": {
+          "thinking_tokens": 294
+        },
+        "service_tier": "standard",
+        "inference_geo": "not_available"
+      }
+    },
+    "text": "**预算明细：**\n\n1. **往返机票**：3,200 元（人民币）\n\n2. **住宿**（3晚）：\n   - 每晚 18,000 日元\n   - 3晚共计：18,000 × 3 = 54,000 日元\n   - 转换为人民币：54,000 × 0.048 = 2,592 元\n\n3. **餐费**（4天）：\n   - 每天 6,000 日元\n   - 4天共计：6,000 × 4 = 24,000 日元\n   - 转换为人民币：24,000 × 0.048 = 1,152 元\n\n---\n\n**出差总预算：3,200 + 2,592 + 1,152 = 6,944 元**",
+    "tool_calls": []
+  }
+}

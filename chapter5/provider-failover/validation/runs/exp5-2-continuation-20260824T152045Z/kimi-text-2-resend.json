@@ -1,0 +1,75 @@
+{
+  "row": {
+    "provider": "kimi",
+    "break_point": "text",
+    "repeat": 2,
+    "reproducible": true,
+    "strategy": "resend",
+    "cut": {
+      "reasoning_chars": 173,
+      "text_chars": 30,
+      "tool_name": null,
+      "tool_args": "",
+      "truncated": true,
+      "closed": false
+    },
+    "applicable": true,
+    "note": null,
+    "output_tokens": 324,
+    "recovered": true,
+    "json_valid": null,
+    "args_correct": null,
+    "duplicate_side_effects": 0,
+    "answer_correct": true
+  },
+  "partial": {
+    "reasoning": "Calculate:\n- Flight: 3200 CNY\n- Hotel: 18000 JPY × 3 = 54000 JPY × 0.048 = 2592 CNY\n- Meals: 6000 JPY × 4 = 24000 JPY × 0.048 = 1152 CNY\nTotal: 3200 + 2592 + 1152 = 6944 CNY",
+    "text": "根据查询到的数据，为您核算北京—东京 3 晚 4 天出差预算",
+    "tool_name": null,
+    "tool_args": "",
+    "tool_index": null,
+    "tool_args_closed": false,
+    "truncated": true,
+    "finished": false
+  },
+  "result": {
+    "strategy": "resend",
+    "applicable": true,
+    "note": null,
+    "usage": {
+      "input": 785,
+      "output": 324
+    },
+    "raw": {
+      "id": "chatcmpl-6a8c62260e9ae22d520c290b",
+      "object": "chat.completion",
+      "created": 1787585066,
+      "model": "kimi-k3",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "北京—东京 3 晚 4 天出差预算：\n\n- 往返机票：¥3,200\n- 住宿：18,000 JPY/晚 × 3 晚 = 54,000 JPY ≈ ¥2,592\n- 餐费：6,000 JPY/天 × 4 天 = 24,000 JPY ≈ ¥1,152\n\n日元按 1 JPY = 0.048 CNY 折算。\n\n**总预算：¥6,944 人民币**",
+            "reasoning_content": "We have data:\nFlight round trip CNY 3200.\nHotel 18000 JPY/night *3 = 54000 JPY. Meal 6000 JPY/day *4 = 24000 JPY. Total JPY = 78000. Exchange 0.048 CNY per JPY. 78000*0.048 = 3744 CNY. Add flight 3200 = 6944 CNY.\nNeed present concise breakdown. Mention assumptions. Could say 东京 hotel/meal in JPY converted at 0.048. Total RMB 6944. Need maybe formula. Ensure no fabricated. Final in Chinese. Maybe mention if汇率按查询结果. Also breakdown: 住宿 54000*0.048=2592; 餐费 24000*0.048=1152; 机票 3200; total 6944.\nNeed perhaps call it 总预算. Good."
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 785,
+        "completion_tokens": 324,
+        "total_tokens": 1109,
+        "cached_tokens": 768,
+        "completion_tokens_details": {
+          "reasoning_tokens": 195
+        },
+        "prompt_tokens_details": {
+          "cached_tokens": 768
+        }
+      }
+    },
+    "text": "北京—东京 3 晚 4 天出差预算：\n\n- 往返机票：¥3,200\n- 住宿：18,000 JPY/晚 × 3 晚 = 54,000 JPY ≈ ¥2,592\n- 餐费：6,000 JPY/天 × 4 天 = 24,000 JPY ≈ ¥1,152\n\n日元按 1 JPY = 0.048 CNY 折算。\n\n**总预算：¥6,944 人民币**",
+    "tool_calls": []
+  }
+}

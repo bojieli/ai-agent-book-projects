@@ -1,0 +1,73 @@
+{
+  "row": {
+    "provider": "anthropic",
+    "break_point": "text",
+    "repeat": 2,
+    "reproducible": true,
+    "strategy": "prefill",
+    "cut": {
+      "reasoning_chars": 0,
+      "text_chars": 30,
+      "tool_name": null,
+      "tool_args": "",
+      "truncated": true,
+      "closed": false
+    },
+    "applicable": true,
+    "note": null,
+    "output_tokens": 219,
+    "recovered": true,
+    "json_valid": null,
+    "args_correct": null,
+    "duplicate_side_effects": 0,
+    "answer_correct": true
+  },
+  "partial": {
+    "reasoning": "",
+    "text": "好的，让我为您整理一下北京到东京3晚4天出差的总预算：\n\n*",
+    "tool_name": null,
+    "tool_args": "",
+    "tool_index": null,
+    "tool_args_closed": false,
+    "truncated": true,
+    "finished": false
+  },
+  "result": {
+    "strategy": "prefill",
+    "applicable": true,
+    "note": null,
+    "usage": {
+      "input": 1538,
+      "output": 219
+    },
+    "raw": {
+      "model": "claude-haiku-4-5-20251001",
+      "id": "msg_011CeMotqJshqJgTYAqiDECB",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "*(1) 往返机票** \n- 3,200 元（人民币）\n\n**(2) 住宿**（3晚）\n- 单价：18,000 日元/晚\n- 小计：18,000 × 3 = 54,000 日元\n- 换算人民币：54,000 × 0.048 = **2,592 元**\n\n**(3) 餐费**（4天）\n- 单价：6,000 日元/天\n- 小计：6,000 × 4 = 24,000 日元\n- 换算人民币：24,000 × 0.048 = **1,152 元**\n\n**总预算（人民币）：**\n3,200 + 2,592 + 1,152 = **6,944 元**"
+        }
+      ],
+      "stop_reason": "end_turn",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 1538,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 219,
+        "service_tier": "standard",
+        "inference_geo": "not_available"
+      }
+    },
+    "text": "*(1) 往返机票** \n- 3,200 元（人民币）\n\n**(2) 住宿**（3晚）\n- 单价：18,000 日元/晚\n- 小计：18,000 × 3 = 54,000 日元\n- 换算人民币：54,000 × 0.048 = **2,592 元**\n\n**(3) 餐费**（4天）\n- 单价：6,000 日元/天\n- 小计：6,000 × 4 = 24,000 日元\n- 换算人民币：24,000 × 0.048 = **1,152 元**\n\n**总预算（人民币）：**\n3,200 + 2,592 + 1,152 = **6,944 元**",
+    "tool_calls": []
+  }
+}

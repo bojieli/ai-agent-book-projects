@@ -1,0 +1,107 @@
+{
+  "row": {
+    "provider": "kimi",
+    "break_point": "tool_args",
+    "repeat": 0,
+    "reproducible": true,
+    "strategy": "meta",
+    "cut": {
+      "reasoning_chars": 202,
+      "text_chars": 0,
+      "tool_name": "get_hotel_price",
+      "tool_args": "{\"city\":\"东",
+      "truncated": true,
+      "closed": false
+    },
+    "applicable": true,
+    "note": null,
+    "output_tokens": 220,
+    "recovered": true,
+    "json_valid": true,
+    "args_correct": true,
+    "duplicate_side_effects": 0
+  },
+  "partial": {
+    "reasoning": "Got the flight price: 3200 CNY round trip.\n\nNow hotel and meal prices. The hotel/meal prices may be in local currency (JPY), so I'll likely need the exchange rate too. Let me query hotel and meal first.",
+    "text": "",
+    "tool_name": "get_hotel_price",
+    "tool_args": "{\"city\":\"东",
+    "tool_index": 0,
+    "tool_args_closed": false,
+    "truncated": true,
+    "finished": false
+  },
+  "result": {
+    "strategy": "meta",
+    "applicable": true,
+    "note": null,
+    "usage": {
+      "input": 527,
+      "output": 220
+    },
+    "raw": {
+      "id": "chatcmpl-6a8c6271d9ccd67300ac9c2e",
+      "object": "chat.completion",
+      "created": 1787585139,
+      "model": "kimi-k3",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "好的，继续查询住宿和餐费数据：",
+            "reasoning_content": "The user's message claims my previous reply was truncated, but actually the previous turn shows a tool result (the flight price for Tokyo), and now they're asking me to continue. Actually the setup: I called get_flight_price and got the result. Now I need to continue by calling the hotel and meal budget tools. The user message says \"you were truncated, continue from the breakpoint\" — but what I should actually do is continue the task: get hotel price, meal budget, then exchange rates, then compute total.\n\nLet me call get_hotel_price and get_meal_budget for Tokyo in parallel since they're independent.",
+            "tool_calls": [
+              {
+                "index": 0,
+                "id": "get_hotel_price_1",
+                "type": "function",
+                "function": {
+                  "name": "get_hotel_price",
+                  "arguments": "{\"city\":\"东京\"}"
+                }
+              },
+              {
+                "index": 1,
+                "id": "get_meal_budget_2",
+                "type": "function",
+                "function": {
+                  "name": "get_meal_budget",
+                  "arguments": "{\"city\":\"东京\"}"
+                }
+              }
+            ]
+          },
+          "finish_reason": "tool_calls"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 527,
+        "completion_tokens": 220,
+        "total_tokens": 747,
+        "cached_tokens": 256,
+        "completion_tokens_details": {
+          "reasoning_tokens": 125
+        },
+        "prompt_tokens_details": {
+          "cached_tokens": 256
+        }
+      }
+    },
+    "text": "好的，继续查询住宿和餐费数据：",
+    "tool_calls": [
+      {
+        "name": "get_hotel_price",
+        "arguments": {
+          "city": "东京"
+        }
+      },
+      {
+        "name": "get_meal_budget",
+        "arguments": {
+          "city": "东京"
+        }
+      }
+    ]
+  }
+}

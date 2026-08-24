@@ -1,0 +1,111 @@
+{
+  "row": {
+    "provider": "anthropic",
+    "break_point": "tool_args",
+    "repeat": 2,
+    "reproducible": true,
+    "strategy": "meta",
+    "cut": {
+      "reasoning_chars": 0,
+      "text_chars": 28,
+      "tool_name": "get_hotel_price",
+      "tool_args": "{\"city\": \"",
+      "truncated": true,
+      "closed": false
+    },
+    "applicable": true,
+    "note": null,
+    "output_tokens": 249,
+    "recovered": true,
+    "json_valid": true,
+    "args_correct": true,
+    "duplicate_side_effects": 0
+  },
+  "partial": {
+    "reasoning": "",
+    "text": "现在我获取东京的住宿和餐费信息，并获取日元汇率用于转换：",
+    "tool_name": "get_hotel_price",
+    "tool_args": "{\"city\": \"",
+    "tool_index": 1,
+    "tool_args_closed": false,
+    "truncated": true,
+    "finished": false
+  },
+  "result": {
+    "strategy": "meta",
+    "applicable": true,
+    "note": null,
+    "usage": {
+      "input": 1257,
+      "output": 249
+    },
+    "raw": {
+      "model": "claude-haiku-4-5-20251001",
+      "id": "msg_011CeMoxYLGyh8mZG4g6z9T9",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "thinking",
+          "thinking": "用户说我的回复被截断了。让我查看一下之前的调用结果。我已经成功调用了 get_flight_price，得到了东京往返机票价格 3200 元。\n\n现在我需要继续获取其他信息：\n1. 东京的酒店价格（3晚）\n2. 东京的餐费预算（4天）\n3. 日元兑人民币的汇率（如果价格不是人民币的话）\n\n让我继续调用这些函数。",
+          "signature": "EoAFCpoBCBEYAipAH423/Lv2imFcoffyC26u3SYOiAkYggyK7MheP/jtCHxMcaCNVLae7ueLY/TsaLpc6pba0rx1LIjbl24Ut/wZ4jIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okNTM3MTEzZjQtZmI1Ny00NDc0LTgyOTYtYTA0OWExMGQ2YzMyqAGnxrHUBhIMe3aBD/5PKY8cLLeeGgzolL8w4h9HRcG0gdgiMBT7EsKSO0zu+H/UB0rkAB7SAM6gCYLNxDCmXtsLbnEp/gW2XGkS72T31TGpAJxzyCqSAwPbH6UMUiVPWCEdAbDTq9FPPTg4JvW/VFHkODjMuvK2u/1zDAjbKN1vUNctH9ZsmTlBd2WptH/LoTrNLcjFkGoiq9/QF9wLMN+dpz4RU+8ZWKOl+7gtnT4yur9F69d3PfCgyC7aqfTUUPHVQA+nD77ZvqkZTXcZ3J2VlY5onlADGM5vy8LjxG5v209v2B/2bptmF+x/MANvZTpiXaZrfkzIXgG4194MVa0jrK3kV1B9+zCRZ5MCqEgV8h+eebETK75nJtASAMAOKsSA8GAmOCHeLiM8FML5jG8hWXk6Z906ICSTWDvL6KPOrHFM3pCehlbf5V6j0DHz8wlNvRHdtFGNc2d+wFwV9UiKNZBhkoouXltEty3jiGKNkL3pCgDLZYpmYiWhI+wfU7QftmFO8Jwq+7au1YEPqkd+RbwgrmY92eygZzYSM9Ev+lrBz+q+L5gDy4rhnxgxCxJMGwfGtRO2VLQIL8NIe8K9+odiBIrKQIQawuw1z33Q6zyXl9qCaygNcIbIn3YD4wdB0kqil8bvmxgB"
+        },
+        {
+          "type": "tool_use",
+          "id": "toolu_01XGwmh6zvEXcWvjzK5RWeVc",
+          "name": "get_hotel_price",
+          "input": {
+            "city": "东京"
+          },
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "type": "tool_use",
+          "id": "toolu_01UFwgGqtqYepccw87HJmHZp",
+          "name": "get_meal_budget",
+          "input": {
+            "city": "东京"
+          },
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "stop_reason": "tool_use",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 1257,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 249,
+        "output_tokens_details": {
+          "thinking_tokens": 152
+        },
+        "service_tier": "standard",
+        "inference_geo": "not_available"
+      }
+    },
+    "text": "",
+    "tool_calls": [
+      {
+        "name": "get_hotel_price",
+        "arguments": {
+          "city": "东京"
+        }
+      },
+      {
+        "name": "get_meal_budget",
+        "arguments": {
+          "city": "东京"
+        }
+      }
+    ]
+  }
+}

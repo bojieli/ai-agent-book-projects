@@ -1,0 +1,85 @@
+{
+  "row": {
+    "provider": "kimi",
+    "break_point": "tool_args",
+    "repeat": 0,
+    "reproducible": true,
+    "strategy": "prefill",
+    "cut": {
+      "reasoning_chars": 202,
+      "text_chars": 0,
+      "tool_name": "get_hotel_price",
+      "tool_args": "{\"city\":\"东",
+      "truncated": true,
+      "closed": false
+    },
+    "applicable": true,
+    "note": null,
+    "output_tokens": 67,
+    "recovered": true,
+    "json_valid": true,
+    "args_correct": false,
+    "duplicate_side_effects": 0,
+    "spliced": "{\"city\":\"东\"}，这里接上次输出继续。工具调用在下方，json 字符串只补一个 `}`："
+  },
+  "partial": {
+    "reasoning": "Got the flight price: 3200 CNY round trip.\n\nNow hotel and meal prices. The hotel/meal prices may be in local currency (JPY), so I'll likely need the exchange rate too. Let me query hotel and meal first.",
+    "text": "",
+    "tool_name": "get_hotel_price",
+    "tool_args": "{\"city\":\"东",
+    "tool_index": 0,
+    "tool_args_closed": false,
+    "truncated": true,
+    "finished": false
+  },
+  "result": {
+    "strategy": "prefill",
+    "applicable": true,
+    "note": null,
+    "usage": {
+      "input": 543,
+      "output": 67
+    },
+    "raw": {
+      "id": "chatcmpl-6a8c626b16d4c5fdfcda77ba",
+      "object": "chat.completion",
+      "created": 1787585132,
+      "model": "kimi-k3",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "\"}，这里接上次输出继续。工具调用在下方，json 字符串只补一个 `}`：",
+            "tool_calls": [
+              {
+                "index": 0,
+                "id": "get_hotel_price_1",
+                "type": "function",
+                "function": {
+                  "name": "get_hotel_price",
+                  "arguments": "{\"city\":\"东\"}"
+                }
+              }
+            ]
+          },
+          "finish_reason": "tool_calls"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 543,
+        "completion_tokens": 67,
+        "total_tokens": 610
+      }
+    },
+    "text": "\"}，这里接上次输出继续。工具调用在下方，json 字符串只补一个 `}`：",
+    "tool_calls": [
+      {
+        "name": "get_hotel_price",
+        "arguments": {
+          "city": "东"
+        }
+      }
+    ]
+  }
+}

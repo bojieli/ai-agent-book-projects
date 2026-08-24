@@ -1,0 +1,536 @@
+{
+  "source": "anthropic",
+  "target": "kimi",
+  "arm": "strip",
+  "models": {
+    "anthropic": "claude-haiku-4-5-20251001",
+    "kimi": "kimi-k3"
+  },
+  "outage": {
+    "injected": true,
+    "statuses": [
+      429,
+      429,
+      503
+    ],
+    "note": "人为注入的连续过载，用来触发熔断；非厂商真实故障"
+  },
+  "handoff": {
+    "status": 200
+  },
+  "data_complete": true,
+  "answer_correct": true,
+  "repeated_calls": [],
+  "rounds_after_switch": 1,
+  "tokens_after_switch": 282,
+  "final_text": "北京—东京 3 晚 4 天出差预算明细：\n\n| 项目 | 计算方式 | 人民币金额 |\n|---|---|---|\n| 往返机票 | 直接报价 | 3,200 元 |\n| 住宿 | 18,000 日元/晚 × 3 晚 = 54,000 日元 × 0.048 | 2,592 元 |\n| 餐费 | 6,000 日元/天 × 4 天 = 24,000 日元 × 0.048 | 1,152 元 |\n\n**总预算：3,200 + 2,592 + 1,152 = 6,944 元人民币**\n\n说明：住宿和餐费均按日元兑人民币汇率 0.048 折算，汇率可能随时间波动，实际出行前建议复核。",
+  "error": null,
+  "trace": {
+    "steps": [
+      {
+        "role": "user",
+        "text": "帮我算一下从北京去东京出差的总预算：往返机票、住宿和餐费都要算上，行程是 3 晚 4 天，住宿按 3 晚、餐费按 4 天计。最后用人民币给出一个总额。",
+        "reasoning": null,
+        "tool_calls": [],
+        "tool_call_id": null,
+        "tool_name": null,
+        "issuer": null,
+        "native": null
+      },
+      {
+        "role": "assistant",
+        "text": null,
+        "reasoning": {
+          "text": "用户要求计算从北京去东京出差的总预算，包括：\n1. 往返机票（人民币）\n2. 住宿（3晚，目的地是东京）\n3. 餐费（4天，目的地是东京）\n\n我需要调用以下工具：\n1. get_flight_price - 查询到东京的往返机票价格\n2. get_hotel_price - 查询东京的每晚住宿价格\n3. get_meal_budget - 查询东京的每日餐费预算\n4. get_exchange_rate - 如果需要，查询日元到人民币的汇率（虽然机票通常用人民币报价，但住宿和餐费可能用日元）\n\n目的地城市是东京（Tokyo）。这些工具可以独立调用，所以我可以一次性调用所有相关的工具。",
+          "credential": "Eo8HCpoBCBEYAipAQ4AcI0h4u6pJQwXsDuf6bt8OWltEIQKzwb8mniLO2+uaxdH7Kjxe0ZczFyNeGoKlyFzJLvB+Ms6/IhBx1QaYDDIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okNTM3MTEzZjQtZmI1Ny00NDc0LTgyOTYtYTA0OWExMGQ2YzMyqAGju7HUBhIMfGP9Rl/iES0VxIgGGgxnafK47H9+9OIeR5YiMNbCu2Xz5BkGvl6NBx7PsDiS8MurO23GDp0BVg85NqS7CVPERrlWGPEnc48TWsw1LCqhBW1onQIJjZ3hmshHhDJfPqgcEXvyUuEDfPXCEQURWmXsLYOOKiVXYMlZKIfkbpcC8gil0E2nKlE1bQ5kES9R5ySOpu7HSIKcTjJ6FUPyeMEL300zX1GvzrRHpBxiZTiF6GJAY2R3mYLd2ftiP0FhB4kpFgpLmfWhk+ht7782ELabhE8tNPxEGmY9YaesELUQqyy62Aqf04WwfacB5kjdZ8bUfgAIo1j5jnq4vFfFyRroAy94lOR3O5fQp5tLhJ+572CmOcrm1nzw8eAmYQ6Zjdz4iIrMkoJLaOAVVfiScCJn6/cBqrFQ1Z8eDzFjNI5wYdRTvVBJaCytpFl0JGi3IP9fEXlKXYXkr0l9zFZG5o37RsHQwPte/uW5AtotGDdgcHnWitKIDZp2EVHoQDoe8xLkXXC+70vexMm1tzHN8xhFsLODCkDNA8HuMutGqqKDVKaImZ1MG1+Mpr5jNifqhG0j6oDLoLJRwIFqwCTgAHD7iv9LXZX38CmeJzA13LhSh4w2SC5m34EIRy00wZfLhxJ7wzNzjZZdCexkSHH98XIURd0sALK0ToM40bi0dmmdwh3jkRbdYLdvKowewaD+9q6RVizPtlj12VgzrdvgLN8rpnJgj69s+1DGIZwoIp4C/rjO/KHK8CHyJzY4Zyq35MclXQckg/ykUlUrfr3t3tLkNE4jOKkBydxV2jY2Gr9C+ninY1tKcCyWgQOkwZEEvGapbXg+ZPqwVoAiit5sadntsHHS7jroxD0QTdnXUp3hkm35Y+aFdidRoUTjY8D3phjrIrnudbANS12kwrXtaNrlxmBa3aBcoqdSIAzSzks1XkyPByvwPodaz5Sz4HDMEJDWGtsF9qfBNQlOGyMhK1Pvw+awXyJtmrObGtjCBAj/FbEYAQ==",
+          "issuer": "anthropic",
+          "kind": "signed"
+        },
+        "tool_calls": [
+          {
+            "name": "get_flight_price",
+            "arguments": {
+              "city": "东京"
+            },
+            "call_id": "toolu_011HwwFDU2BmLYiSZ1SFUJeN"
+          },
+          {
+            "name": "get_hotel_price",
+            "arguments": {
+              "city": "东京"
+            },
+            "call_id": "toolu_0164fNHx5jYVA4VevoxXD7m7"
+          },
+          {
+            "name": "get_meal_budget",
+            "arguments": {
+              "city": "东京"
+            },
+            "call_id": "toolu_01AL5HbdFPWDDdV8NYPsxaCf"
+          },
+          {
+            "name": "get_exchange_rate",
+            "arguments": {
+              "currency": "JPY"
+            },
+            "call_id": "toolu_017a8CgThZwakpzv1DYRAGNY"
+          }
+        ],
+        "tool_call_id": null,
+        "tool_name": null,
+        "issuer": "anthropic",
+        "native": {
+          "content": [
+            {
+              "type": "thinking",
+              "thinking": "用户要求计算从北京去东京出差的总预算，包括：\n1. 往返机票（人民币）\n2. 住宿（3晚，目的地是东京）\n3. 餐费（4天，目的地是东京）\n\n我需要调用以下工具：\n1. get_flight_price - 查询到东京的往返机票价格\n2. get_hotel_price - 查询东京的每晚住宿价格\n3. get_meal_budget - 查询东京的每日餐费预算\n4. get_exchange_rate - 如果需要，查询日元到人民币的汇率（虽然机票通常用人民币报价，但住宿和餐费可能用日元）\n\n目的地城市是东京（Tokyo）。这些工具可以独立调用，所以我可以一次性调用所有相关的工具。",
+              "signature": "Eo8HCpoBCBEYAipAQ4AcI0h4u6pJQwXsDuf6bt8OWltEIQKzwb8mniLO2+uaxdH7Kjxe0ZczFyNeGoKlyFzJLvB+Ms6/IhBx1QaYDDIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okNTM3MTEzZjQtZmI1Ny00NDc0LTgyOTYtYTA0OWExMGQ2YzMyqAGju7HUBhIMfGP9Rl/iES0VxIgGGgxnafK47H9+9OIeR5YiMNbCu2Xz5BkGvl6NBx7PsDiS8MurO23GDp0BVg85NqS7CVPERrlWGPEnc48TWsw1LCqhBW1onQIJjZ3hmshHhDJfPqgcEXvyUuEDfPXCEQURWmXsLYOOKiVXYMlZKIfkbpcC8gil0E2nKlE1bQ5kES9R5ySOpu7HSIKcTjJ6FUPyeMEL300zX1GvzrRHpBxiZTiF6GJAY2R3mYLd2ftiP0FhB4kpFgpLmfWhk+ht7782ELabhE8tNPxEGmY9YaesELUQqyy62Aqf04WwfacB5kjdZ8bUfgAIo1j5jnq4vFfFyRroAy94lOR3O5fQp5tLhJ+572CmOcrm1nzw8eAmYQ6Zjdz4iIrMkoJLaOAVVfiScCJn6/cBqrFQ1Z8eDzFjNI5wYdRTvVBJaCytpFl0JGi3IP9fEXlKXYXkr0l9zFZG5o37RsHQwPte/uW5AtotGDdgcHnWitKIDZp2EVHoQDoe8xLkXXC+70vexMm1tzHN8xhFsLODCkDNA8HuMutGqqKDVKaImZ1MG1+Mpr5jNifqhG0j6oDLoLJRwIFqwCTgAHD7iv9LXZX38CmeJzA13LhSh4w2SC5m34EIRy00wZfLhxJ7wzNzjZZdCexkSHH98XIURd0sALK0ToM40bi0dmmdwh3jkRbdYLdvKowewaD+9q6RVizPtlj12VgzrdvgLN8rpnJgj69s+1DGIZwoIp4C/rjO/KHK8CHyJzY4Zyq35MclXQckg/ykUlUrfr3t3tLkNE4jOKkBydxV2jY2Gr9C+ninY1tKcCyWgQOkwZEEvGapbXg+ZPqwVoAiit5sadntsHHS7jroxD0QTdnXUp3hkm35Y+aFdidRoUTjY8D3phjrIrnudbANS12kwrXtaNrlxmBa3aBcoqdSIAzSzks1XkyPByvwPodaz5Sz4HDMEJDWGtsF9qfBNQlOGyMhK1Pvw+awXyJtmrObGtjCBAj/FbEYAQ=="
+            },
+            {
+              "type": "tool_use",
+              "id": "toolu_011HwwFDU2BmLYiSZ1SFUJeN",
+              "name": "get_flight_price",
+              "input": {
+                "city": "东京"
+              },
+              "caller": {
+                "type": "direct"
+              }
+            },
+            {
+              "type": "tool_use",
+              "id": "toolu_0164fNHx5jYVA4VevoxXD7m7",
+              "name": "get_hotel_price",
+              "input": {
+                "city": "东京"
+              },
+              "caller": {
+                "type": "direct"
+              }
+            },
+            {
+              "type": "tool_use",
+              "id": "toolu_01AL5HbdFPWDDdV8NYPsxaCf",
+              "name": "get_meal_budget",
+              "input": {
+                "city": "东京"
+              },
+              "caller": {
+                "type": "direct"
+              }
+            },
+            {
+              "type": "tool_use",
+              "id": "toolu_017a8CgThZwakpzv1DYRAGNY",
+              "name": "get_exchange_rate",
+              "input": {
+                "currency": "JPY"
+              },
+              "caller": {
+                "type": "direct"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "role": "tool",
+        "text": "{\"city\":\"东京\",\"round_trip_cny\":3200}",
+        "reasoning": null,
+        "tool_calls": [],
+        "tool_call_id": "toolu_011HwwFDU2BmLYiSZ1SFUJeN",
+        "tool_name": "get_flight_price",
+        "issuer": null,
+        "native": null
+      },
+      {
+        "role": "tool",
+        "text": "{\"city\":\"东京\",\"per_night\":18000,\"currency\":\"JPY\"}",
+        "reasoning": null,
+        "tool_calls": [],
+        "tool_call_id": "toolu_0164fNHx5jYVA4VevoxXD7m7",
+        "tool_name": "get_hotel_price",
+        "issuer": null,
+        "native": null
+      },
+      {
+        "role": "tool",
+        "text": "{\"city\":\"东京\",\"per_day\":6000,\"currency\":\"JPY\"}",
+        "reasoning": null,
+        "tool_calls": [],
+        "tool_call_id": "toolu_01AL5HbdFPWDDdV8NYPsxaCf",
+        "tool_name": "get_meal_budget",
+        "issuer": null,
+        "native": null
+      },
+      {
+        "role": "tool",
+        "text": "{\"currency\":\"JPY\",\"cny_per_unit\":0.048}",
+        "reasoning": null,
+        "tool_calls": [],
+        "tool_call_id": "toolu_017a8CgThZwakpzv1DYRAGNY",
+        "tool_name": "get_exchange_rate",
+        "issuer": null,
+        "native": null
+      },
+      {
+        "role": "assistant",
+        "text": "北京—东京 3 晚 4 天出差预算明细：\n\n| 项目 | 计算方式 | 人民币金额 |\n|---|---|---|\n| 往返机票 | 直接报价 | 3,200 元 |\n| 住宿 | 18,000 日元/晚 × 3 晚 = 54,000 日元 × 0.048 | 2,592 元 |\n| 餐费 | 6,000 日元/天 × 4 天 = 24,000 日元 × 0.048 | 1,152 元 |\n\n**总预算：3,200 + 2,592 + 1,152 = 6,944 元人民币**\n\n说明：住宿和餐费均按日元兑人民币汇率 0.048 折算，汇率可能随时间波动，实际出行前建议复核。",
+        "reasoning": {
+          "text": "Calculate:\n- Flight: 3200 CNY\n- Hotel: 18000 JPY × 3 nights = 54000 JPY × 0.048 = 2592 CNY\n- Meals: 6000 JPY × 4 days = 24000 JPY × 0.048 = 1152 CNY\nTotal: 3200 + 2592 + 1152 = 6944 CNY",
+          "credential": null,
+          "issuer": "kimi",
+          "kind": "plaintext"
+        },
+        "tool_calls": [],
+        "tool_call_id": null,
+        "tool_name": null,
+        "issuer": "kimi",
+        "native": {
+          "role": "assistant",
+          "content": "北京—东京 3 晚 4 天出差预算明细：\n\n| 项目 | 计算方式 | 人民币金额 |\n|---|---|---|\n| 往返机票 | 直接报价 | 3,200 元 |\n| 住宿 | 18,000 日元/晚 × 3 晚 = 54,000 日元 × 0.048 | 2,592 元 |\n| 餐费 | 6,000 日元/天 × 4 天 = 24,000 日元 × 0.048 | 1,152 元 |\n\n**总预算：3,200 + 2,592 + 1,152 = 6,944 元人民币**\n\n说明：住宿和餐费均按日元兑人民币汇率 0.048 折算，汇率可能随时间波动，实际出行前建议复核。",
+          "reasoning_content": "Calculate:\n- Flight: 3200 CNY\n- Hotel: 18000 JPY × 3 nights = 54000 JPY × 0.048 = 2592 CNY\n- Meals: 6000 JPY × 4 days = 24000 JPY × 0.048 = 1152 CNY\nTotal: 3200 + 2592 + 1152 = 6944 CNY"
+        }
+      }
+    ]
+  },
+  "exchanges": [
+    {
+      "provider": "anthropic",
+      "arm": "strip",
+      "request": {
+        "model": "claude-haiku-4-5-20251001",
+        "max_tokens": 4096,
+        "thinking": {
+          "type": "enabled",
+          "budget_tokens": 2048
+        },
+        "tools": [
+          {
+            "name": "get_flight_price",
+            "description": "查询往返机票价格（人民币）",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "city": {
+                  "type": "string",
+                  "description": "目的地城市"
+                }
+              },
+              "required": [
+                "city"
+              ]
+            }
+          },
+          {
+            "name": "get_hotel_price",
+            "description": "查询每晚住宿价格及其币种",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "city": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "city"
+              ]
+            }
+          },
+          {
+            "name": "get_meal_budget",
+            "description": "查询每日餐费预算及其币种",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "city": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "city"
+              ]
+            }
+          },
+          {
+            "name": "get_exchange_rate",
+            "description": "查询该币种兑人民币的汇率",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "currency": {
+                  "type": "string",
+                  "description": "如 JPY"
+                }
+              },
+              "required": [
+                "currency"
+              ]
+            }
+          }
+        ],
+        "messages": [
+          {
+            "role": "user",
+            "content": "帮我算一下从北京去东京出差的总预算：往返机票、住宿和餐费都要算上，行程是 3 晚 4 天，住宿按 3 晚、餐费按 4 天计。最后用人民币给出一个总额。"
+          }
+        ],
+        "system": "你是一个差旅助理。需要数据时调用工具，不要凭印象编造价格或汇率。拿齐数据后给出人民币总额。"
+      },
+      "status": 200,
+      "response": {
+        "model": "claude-haiku-4-5-20251001",
+        "id": "msg_011CeMnAPBxJ9vyNguuHicg9",
+        "type": "message",
+        "role": "assistant",
+        "content": [
+          {
+            "type": "thinking",
+            "thinking": "用户要求计算从北京去东京出差的总预算，包括：\n1. 往返机票（人民币）\n2. 住宿（3晚，目的地是东京）\n3. 餐费（4天，目的地是东京）\n\n我需要调用以下工具：\n1. get_flight_price - 查询到东京的往返机票价格\n2. get_hotel_price - 查询东京的每晚住宿价格\n3. get_meal_budget - 查询东京的每日餐费预算\n4. get_exchange_rate - 如果需要，查询日元到人民币的汇率（虽然机票通常用人民币报价，但住宿和餐费可能用日元）\n\n目的地城市是东京（Tokyo）。这些工具可以独立调用，所以我可以一次性调用所有相关的工具。",
+            "signature": "Eo8HCpoBCBEYAipAQ4AcI0h4u6pJQwXsDuf6bt8OWltEIQKzwb8mniLO2+uaxdH7Kjxe0ZczFyNeGoKlyFzJLvB+Ms6/IhBx1QaYDDIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okNTM3MTEzZjQtZmI1Ny00NDc0LTgyOTYtYTA0OWExMGQ2YzMyqAGju7HUBhIMfGP9Rl/iES0VxIgGGgxnafK47H9+9OIeR5YiMNbCu2Xz5BkGvl6NBx7PsDiS8MurO23GDp0BVg85NqS7CVPERrlWGPEnc48TWsw1LCqhBW1onQIJjZ3hmshHhDJfPqgcEXvyUuEDfPXCEQURWmXsLYOOKiVXYMlZKIfkbpcC8gil0E2nKlE1bQ5kES9R5ySOpu7HSIKcTjJ6FUPyeMEL300zX1GvzrRHpBxiZTiF6GJAY2R3mYLd2ftiP0FhB4kpFgpLmfWhk+ht7782ELabhE8tNPxEGmY9YaesELUQqyy62Aqf04WwfacB5kjdZ8bUfgAIo1j5jnq4vFfFyRroAy94lOR3O5fQp5tLhJ+572CmOcrm1nzw8eAmYQ6Zjdz4iIrMkoJLaOAVVfiScCJn6/cBqrFQ1Z8eDzFjNI5wYdRTvVBJaCytpFl0JGi3IP9fEXlKXYXkr0l9zFZG5o37RsHQwPte/uW5AtotGDdgcHnWitKIDZp2EVHoQDoe8xLkXXC+70vexMm1tzHN8xhFsLODCkDNA8HuMutGqqKDVKaImZ1MG1+Mpr5jNifqhG0j6oDLoLJRwIFqwCTgAHD7iv9LXZX38CmeJzA13LhSh4w2SC5m34EIRy00wZfLhxJ7wzNzjZZdCexkSHH98XIURd0sALK0ToM40bi0dmmdwh3jkRbdYLdvKowewaD+9q6RVizPtlj12VgzrdvgLN8rpnJgj69s+1DGIZwoIp4C/rjO/KHK8CHyJzY4Zyq35MclXQckg/ykUlUrfr3t3tLkNE4jOKkBydxV2jY2Gr9C+ninY1tKcCyWgQOkwZEEvGapbXg+ZPqwVoAiit5sadntsHHS7jroxD0QTdnXUp3hkm35Y+aFdidRoUTjY8D3phjrIrnudbANS12kwrXtaNrlxmBa3aBcoqdSIAzSzks1XkyPByvwPodaz5Sz4HDMEJDWGtsF9qfBNQlOGyMhK1Pvw+awXyJtmrObGtjCBAj/FbEYAQ=="
+          },
+          {
+            "type": "tool_use",
+            "id": "toolu_011HwwFDU2BmLYiSZ1SFUJeN",
+            "name": "get_flight_price",
+            "input": {
+              "city": "东京"
+            },
+            "caller": {
+              "type": "direct"
+            }
+          },
+          {
+            "type": "tool_use",
+            "id": "toolu_0164fNHx5jYVA4VevoxXD7m7",
+            "name": "get_hotel_price",
+            "input": {
+              "city": "东京"
+            },
+            "caller": {
+              "type": "direct"
+            }
+          },
+          {
+            "type": "tool_use",
+            "id": "toolu_01AL5HbdFPWDDdV8NYPsxaCf",
+            "name": "get_meal_budget",
+            "input": {
+              "city": "东京"
+            },
+            "caller": {
+              "type": "direct"
+            }
+          },
+          {
+            "type": "tool_use",
+            "id": "toolu_017a8CgThZwakpzv1DYRAGNY",
+            "name": "get_exchange_rate",
+            "input": {
+              "currency": "JPY"
+            },
+            "caller": {
+              "type": "direct"
+            }
+          }
+        ],
+        "stop_reason": "tool_use",
+        "stop_sequence": null,
+        "stop_details": null,
+        "usage": {
+          "input_tokens": 1126,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 429,
+          "output_tokens_details": {
+            "thinking_tokens": 254
+          },
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        }
+      }
+    },
+    {
+      "provider": "kimi",
+      "arm": "strip",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "你是一个差旅助理。需要数据时调用工具，不要凭印象编造价格或汇率。拿齐数据后给出人民币总额。"
+          },
+          {
+            "role": "user",
+            "content": "帮我算一下从北京去东京出差的总预算：往返机票、住宿和餐费都要算上，行程是 3 晚 4 天，住宿按 3 晚、餐费按 4 天计。最后用人民币给出一个总额。"
+          },
+          {
+            "role": "assistant",
+            "content": "",
+            "tool_calls": [
+              {
+                "id": "toolu_011HwwFDU2BmLYiSZ1SFUJeN",
+                "type": "function",
+                "function": {
+                  "name": "get_flight_price",
+                  "arguments": "{\"city\": \"东京\"}"
+                }
+              },
+              {
+                "id": "toolu_0164fNHx5jYVA4VevoxXD7m7",
+                "type": "function",
+                "function": {
+                  "name": "get_hotel_price",
+                  "arguments": "{\"city\": \"东京\"}"
+                }
+              },
+              {
+                "id": "toolu_01AL5HbdFPWDDdV8NYPsxaCf",
+                "type": "function",
+                "function": {
+                  "name": "get_meal_budget",
+                  "arguments": "{\"city\": \"东京\"}"
+                }
+              },
+              {
+                "id": "toolu_017a8CgThZwakpzv1DYRAGNY",
+                "type": "function",
+                "function": {
+                  "name": "get_exchange_rate",
+                  "arguments": "{\"currency\": \"JPY\"}"
+                }
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "toolu_011HwwFDU2BmLYiSZ1SFUJeN",
+            "content": "{\"city\":\"东京\",\"round_trip_cny\":3200}"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "toolu_0164fNHx5jYVA4VevoxXD7m7",
+            "content": "{\"city\":\"东京\",\"per_night\":18000,\"currency\":\"JPY\"}"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "toolu_01AL5HbdFPWDDdV8NYPsxaCf",
+            "content": "{\"city\":\"东京\",\"per_day\":6000,\"currency\":\"JPY\"}"
+          },
+          {
+            "role": "tool",
+            "tool_call_id": "toolu_017a8CgThZwakpzv1DYRAGNY",
+            "content": "{\"currency\":\"JPY\",\"cny_per_unit\":0.048}"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "get_flight_price",
+              "description": "查询往返机票价格（人民币）",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "city": {
+                    "type": "string",
+                    "description": "目的地城市"
+                  }
+                },
+                "required": [
+                  "city"
+                ]
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "get_hotel_price",
+              "description": "查询每晚住宿价格及其币种",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "city": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "city"
+                ]
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "get_meal_budget",
+              "description": "查询每日餐费预算及其币种",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "city": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "city"
+                ]
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "get_exchange_rate",
+              "description": "查询该币种兑人民币的汇率",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "currency": {
+                    "type": "string",
+                    "description": "如 JPY"
+                  }
+                },
+                "required": [
+                  "currency"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "status": 200,
+      "response": {
+        "id": "chatcmpl-6a8c5da5d91cbadb094f913c",
+        "object": "chat.completion",
+        "created": 1787583914,
+        "model": "kimi-k3",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "北京—东京 3 晚 4 天出差预算明细：\n\n| 项目 | 计算方式 | 人民币金额 |\n|---|---|---|\n| 往返机票 | 直接报价 | 3,200 元 |\n| 住宿 | 18,000 日元/晚 × 3 晚 = 54,000 日元 × 0.048 | 2,592 元 |\n| 餐费 | 6,000 日元/天 × 4 天 = 24,000 日元 × 0.048 | 1,152 元 |\n\n**总预算：3,200 + 2,592 + 1,152 = 6,944 元人民币**\n\n说明：住宿和餐费均按日元兑人民币汇率 0.048 折算，汇率可能随时间波动，实际出行前建议复核。",
+              "reasoning_content": "Calculate:\n- Flight: 3200 CNY\n- Hotel: 18000 JPY × 3 nights = 54000 JPY × 0.048 = 2592 CNY\n- Meals: 6000 JPY × 4 days = 24000 JPY × 0.048 = 1152 CNY\nTotal: 3200 + 2592 + 1152 = 6944 CNY"
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 698,
+          "completion_tokens": 282,
+          "total_tokens": 980,
+          "completion_tokens_details": {
+            "reasoning_tokens": 91
+          }
+        }
+      }
+    }
+  ],
+  "tool_calls_total": 4
+}

@@ -1,0 +1,82 @@
+{
+  "row": {
+    "provider": "gemini",
+    "break_point": "text",
+    "repeat": 0,
+    "reproducible": true,
+    "strategy": "resend",
+    "cut": {
+      "reasoning_chars": 0,
+      "text_chars": 30,
+      "tool_name": null,
+      "tool_args": "",
+      "truncated": true,
+      "closed": false
+    },
+    "applicable": true,
+    "note": null,
+    "output_tokens": 516,
+    "recovered": true,
+    "json_valid": null,
+    "args_correct": null,
+    "duplicate_side_effects": 0,
+    "answer_correct": true
+  },
+  "partial": {
+    "reasoning": "",
+    "text": "根据您提供的数据，为您计算的北京往返东京出差（3晚4天）的总",
+    "tool_name": null,
+    "tool_args": "",
+    "tool_index": null,
+    "tool_args_closed": false,
+    "truncated": true,
+    "finished": false
+  },
+  "result": {
+    "strategy": "resend",
+    "applicable": true,
+    "note": null,
+    "usage": {
+      "input": 470,
+      "output": 516
+    },
+    "raw": {
+      "candidates": [
+        {
+          "content": {
+            "parts": [
+              {
+                "text": "**Calculating the Total Trip Budget (CNY)**\n\nOkay, let's break down this travel budget from Beijing to Tokyo. First, I need to calculate the total cost in CNY. I've got the data points:\n\n*   **Round-trip airfare:** 3200 CNY – that's straightforward.\n*   **Accommodation:** 18000 JPY per night, for 3 nights.\n*   **Meal expenses:** 6000 JPY per day, for 4 days.\n*   **Exchange Rate:** 0.048 JPY to CNY – that's the key conversion factor.\n\nNow, let's do the math:\n\n1.  **Airfare:** 3200 CNY. Done.\n2.  **Accommodation (in JPY):** 18000 JPY/night * 3 nights = 54000 JPY.\n3.  **Meals (in JPY):** 6000 JPY/day * 4 days = 24000 JPY.\n4.  **Total JPY Cost:** 54000 JPY + 24000 JPY = 78000 JPY.\n5.  **JPY to CNY conversion:** 78000 JPY * 0.048 CNY/JPY = 3744 CNY.\n6.  **Total Budget (CNY):** 3200 CNY (airfare) + 3744 CNY (accommodation & meals) = 6944 CNY.\n\nDouble-checking that the data is accurate, and I'm ready to present the final budget of 6944 CNY along with the detailed breakdown to the user.\n\n\n",
+                "thought": true
+              },
+              {
+                "text": "根据您提供的数据，为您计算的东京 3 晚 4 天出差预算明细如下（已全部换算为人民币）：\n\n1. **往返机票**：3,200 元\n2. **住宿费用**（3 晚）：\n   * 单价：18,000 JPY/晚\n   * 总计：18,000 JPY × 3 晚 = 54,000 JPY\n   * 折合人民币：54,000 JPY × 0.048 = 2,592 元\n3. **餐饮费用**（4 天）：\n   * 单价：6,000 JPY/天\n   * 总计：6,000 JPY × 4 天 = 24,000 JPY\n   * 折合人民币：24,000 JPY × 0.048 = 1,152 元\n\n**总预算合计**：3,200 + 2,592 + 1,152 = **6,944 元人民币**。",
+                "thoughtSignature": "EtYFCtMFARFNMg82yE45rNSqWla+N2Y7aB9ZkJIozr832NtE1trNZ/6zOr8bTSow/KtDQbgNz4+Gs5LiRPi9TdjzrVGpNoOv7bXHUATDQjY0++1sPJ8VXftYpTsMvIE3158n51Uvo3Yzonh3Ih7ZQOCMPMFcYGS1metOhZ68x6oXuEzhvKebqfp/eSD5KG9Ug7ftpyWh1MJ3UziryNGz5U8oZokKyNchS7Z7x4Hd2yRBiYdi0cGp7ejfVs4c19sdZEb3MN0Mo/4DVqaYsYOjw5YFHnwZj8fBDcy/d6LX7NDpVjyaaqZ++WKr7K3vRqjmv8p8bpE4IiuiZnCuwEjTfStGEF2mH3UVLOEoMUCtydBrpZvxn1PyDleuZVGY1ZXAhnOBNmFRNiV2Hbhn1LzX4JOzraDaiPSeGRYlSBYtHUP4K9VSEuCS/8ukwTsN2ROywv6kKVBvl5V81qcoz7Bo/WzWflsgawJ5m3/5w75GKIy78u1d5/hcfoKgAg4XkSXiJN8uZ8ERvXZbEYFwhTEcvLDGhPgtBatuSQwIu9r42lZypOOUv4Cme7epkg7p1OOw2dzpeV5hUjC4DfbSWEIANX368DYP9AZtZsMr55l9CNxi6jX6n5+RTF5XzYUcn1WViWoy3/w8JAUZZwvJFsBCRQ0Y/TUc5C0j/wow1q9bqC/7O/z2kCeZddIJzli3qlcqaRpYiycVPr/f+3YwLzuw81N+6XiEgLLjanUmCjhOtXTh+JxR/entK8QrImXqqmv89kJf2eQiEvCy4i0gSktPgvWOrXswKkbq6hIBEsTGZccGz7eWdI+3GY7oN9HtlKGJt3SwWDBxo6yMd1U+LRiohRHiawmZE+hrUJ7km6UuD3cAj6FzH+/3x2QeLvgI3J69ik85XAFi2JOW2A0YFInXwZg8lbXMziNDSZgOz2qJ3lVAo1vb6LTUdvim5kvV8me1/P6mNLEYN73D"
+              }
+            ],
+            "role": "model"
+          },
+          "finishReason": "STOP",
+          "index": 0
+        }
+      ],
+      "usageMetadata": {
+        "promptTokenCount": 470,
+        "candidatesTokenCount": 252,
+        "totalTokenCount": 986,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 470
+          }
+        ],
+        "thoughtsTokenCount": 264,
+        "serviceTier": "standard"
+      },
+      "modelVersion": "gemini-3.5-flash",
+      "responseId": "MGOMaobCEPm2qtsPnKuzsQc"
+    },
+    "text": "根据您提供的数据，为您计算的东京 3 晚 4 天出差预算明细如下（已全部换算为人民币）：\n\n1. **往返机票**：3,200 元\n2. **住宿费用**（3 晚）：\n   * 单价：18,000 JPY/晚\n   * 总计：18,000 JPY × 3 晚 = 54,000 JPY\n   * 折合人民币：54,000 JPY × 0.048 = 2,592 元\n3. **餐饮费用**（4 天）：\n   * 单价：6,000 JPY/天\n   * 总计：6,000 JPY × 4 天 = 24,000 JPY\n   * 折合人民币：24,000 JPY × 0.048 = 1,152 元\n\n**总预算合计**：3,200 + 2,592 + 1,152 = **6,944 元人民币**。",
+    "tool_calls": []
+  }
+}

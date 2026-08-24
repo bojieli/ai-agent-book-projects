@@ -1,0 +1,82 @@
+{
+  "row": {
+    "provider": "gemini",
+    "break_point": "text",
+    "repeat": 2,
+    "reproducible": true,
+    "strategy": "meta",
+    "cut": {
+      "reasoning_chars": 0,
+      "text_chars": 30,
+      "tool_name": null,
+      "tool_args": "",
+      "truncated": true,
+      "closed": false
+    },
+    "applicable": true,
+    "note": null,
+    "output_tokens": 1261,
+    "recovered": true,
+    "json_valid": null,
+    "args_correct": null,
+    "duplicate_side_effects": 0,
+    "answer_correct": true
+  },
+  "partial": {
+    "reasoning": "",
+    "text": "根据您提供的数据，我为您计算了北京往返东京 3 晚 4 天的",
+    "tool_name": null,
+    "tool_args": "",
+    "tool_index": null,
+    "tool_args_closed": false,
+    "truncated": true,
+    "finished": false
+  },
+  "result": {
+    "strategy": "meta",
+    "applicable": true,
+    "note": null,
+    "usage": {
+      "input": 516,
+      "output": 1261
+    },
+    "raw": {
+      "candidates": [
+        {
+          "content": {
+            "parts": [
+              {
+                "text": "**Budget Calculation for Beijing-Tokyo Trip**\n\nOkay, the user wants me to pick up where I left off: \"根据您提供的数据，我为您计算了北京往返东京 3 晚 4 天的\". Right. I need to calculate the total budget for the trip in CNY. Let's see, I need to include the round-trip flight (already in CNY), the hotel cost for three nights (in JPY), meals for four days (in JPY), and the exchange rate (JPY to CNY). I have to begin the response right from where the previous one was cut off. No need to start at the beginning.\n\nFirst, I'll calculate the hotel cost: 18,000 JPY per night * 3 nights = 54,000 JPY. Then convert this to CNY: 54,000 JPY * 0.048 = 2,592 CNY. Next, calculate the meal cost: 6,000 JPY per day * 4 days = 24,000 JPY, and convert it to CNY: 24,000 JPY * 0.048 = 1,152 CNY. Now, to make sure everything adds up. So, the total budget in CNY is: 3200 (flight) + 2592 (hotel) + 1152 (meals) = 6944.\n\nNow, to formulate the response, starting with the prompt: \"...根据您提供的数据，我为您计算了北京往返东京 3 晚 4 天的\", I can continue it with the following: \"出差预算。具体明细如下：\\n\\n1. **往返机票**：3,200 元人民币\\n2. **住宿（3晚）**：每晚 18,000 日元，3 晚共计 54,000 日元。按 0.048 的汇率折合为 2,592 元人民币。\\n3. **餐费（4天）**：每日 6,000 日元，4 天共计 24,000 日元。折合为 1,152 元人民币。\\n\\n**总预算合共**：3,200 + 2,592 + 1,152 = **6,944 元人民币**。\" Perfect. I think this should be a suitable response.\n\n\n",
+                "thought": true
+              },
+              {
+                "text": "出差预算。具体明细如下：\n\n1. **往返机票**：3,200 元人民币。\n2. **住宿费用（3晚）**：每晚 18,000 日元，共计 54,000 日元。按 0.048 的汇率折合为 2,592 元人民币。\n3. **餐饮预算（4天）**：每日 6,000 日元，共计 24,000 日元。按 0.048 的汇率折合为 1,152 元人民币。\n\n**总预算合共**：3,200 + 2,592 + 1,152 = **6,944 元人民币**。",
+                "thoughtSignature": "EsQWCsEWARFNMg+kmaE8wDTUvREcnBEjx9/AS5hDujeJcjWfX59+/C0dtHz/rlwuw4Pae8lKHg/EvewV0gGXrrVj5OTc9l8bpWqZpGIYsZyk9T4qBpudpGXsrwhOprgp63W68ArqoDUXYYYL9lyiL2dlPCGFGaRxrGFKWeSWxAqZMMkYqdDrDiHEiYL6/dolkaYhKzuO4nag2F+D4gIRt3GNj1uJw1wE4rq8Y09Fn9UdFJ/SJLn1BCubp1ZFeSpWFASW0/KLUsD4SOU8hW1dHAFD3hrR5KIXVKh9tsaWVjccbas8Rl+xsg1nwwSKAEgh5qPl+ILqJvj20bkM2heLJUJ2ppTCmWjJKkEIuPxCMS9cUGO52ktcgUHoV0VW0QQshpBCXGxQmPOhYKxqltp4MgDV/CRAd8/1fB1jf6KELtYQXqGSPHTxRekjEKZBdcyCBPSt9HJwC7jk4hL/fqiBEb4ma7yzqnz3xnzBr7WPt+JAcqYoZxcHcJPnJdNJrIk26tJFGFmOwVjUTch23hNBN9Zft+hInmWml98GveYW1272YeKBC3W7HNqDsQWZQzEuCSgd5ursikWXrgTvsMgf0Q3eeVW+61IWXiYNSSLPp+T2Y1upAvukKfn9lOmmqDurBnsSgEuqr/wr3oCC/5WzAfUvkCC6MpKd70j2eY9LkM3sS7ODAoN/ITfnIdJFifESRjSrkBwRB5h2w/qTsVjO1q+hSmNVB3ThaxDLglAnX30oHB8TpytY01maRPw9YhmwPzWR99gLjbv9vJ+DeHye5xawNK8TXSNe282zEXu0oUkpFd2EWCXGHYj/bXcyZupfzoHmp1E9Hmk7XnySco6DiSp4IuBVUU9CK0k1x5IVCDOQYCTYx6WU0iA+fAnXxNNBFofmPPJrnAyshQiRAboC9pZtV0bu9+7LwX5bfd3AVzRD1hBhLr50IQonAj1KWW7UUmZoRW8OfIcpZVvgAErcI8ar62MLQ8hxzaLsTMBhSBzU6EIIrlrcg74pqpWjfdIMDAQCPtlALKNYlbgcuk4Wba8nW41DHckNpfkRd7I76YqELYrYA6HwaxtSOKOIt2VGCKkl15pqXxtJyJYzn+LSTRPSVNPDDhVvxdxUB64efOdiKNz+BxK4rexZbPcaUUjAuXBkkPlIRBioHnsaZA+7KPTj+p8hiOkmm2NSMqn6+VUIK62bCu4eftTs8TWAvvZVeiO74l2oe/bDV5pyY+errUauLxBSbKPPUWaYu0P1hE28XpBKrpYfJJPCuKHizMIxIntAnjzq9+Y5o+EDpqCyk/BADnCayUZpCGUoR8zTPtRiIs3N1zE1UPWgfTu5UnKePUVfG4vyX04Po8/KoGC9qJPPGxQwXwPLdV9QDzA5hEoxdzqqmEJurpaqEJ1zRgbWvvp+r8q8OkiMIXF9d+4kZxZcFS8i1UsiqZjkim+8NNTTRsKl4cU9sFjDExsmwBFJ9SxlL0fESjn2w4v0Re0hXqnL6r/leWMxlcaBow2kuwT77mWQovgXDWcVryMamq63NrZHd4n0PfUNJbZkf9x5z7tnDqJipA2309iFXcUA9tFpH4QLTPE18cfM4nDunxfB+0r1Gqg9L5oqquP14bgHsMASIz04tOgSaA4NyHREyNXdgjoovcbcNgtM4EmiAD7G2HFDsIpSSPZHqwixuUWPHqGTQpRQLwBwUiWKbhsKBOZ37DxOFbvBC9XmtkZ/uxidyGqC71gM2sGW8Kf1stA7N8RLptoy9wvf8r6xfDCRI1hP6rmMbMiTRrqcwhguTrY4+ZPpIlzbv+4THKWPzxuo6vkffokH+HWEnfQgh+pYqlvUpvOpycsyzefnew3MKxTjeSEGnOwgLi6kGHESwKMq1DESpLSIPOePMTMG1xBdDjfXMmF3/DCELcNSxsPf4d/OmVYMYgowFWriqFqIuFHQLn4+/kaOUya207mM+rWucYcKYcEuQDRJjg/Fw5tWVDiTM5glemu5EcULS2hs3kvHBhY8CDl9jfBqBMxy4YUCJ/XItMOLiNOyGWf5rgbeqaV7SbfZ8CcT8vyyAmXxmDCESyV6duXq4fj3riA85S96jFO99jkBiENhBZHLVci9lqh4saAPfwCpO4L8QPzvF/v7L7ADn+aKjtqocxr7Fl6v8Gcq8cOQ4uH6ZYQopY+2KfdRZCzm2R76racufDDkpePOUS4dxCqlIIxCbLJO5z8cNNYNlJQFZsQGb0QbXNsSOa+FtP9qngtkpegdTQA0dUSlkMzW5MC4qYjfwN/qCJG20hwXwMQGopYuOb8TepjTeCsyRDHIvqZBSYFm/bmorNJW/Vp/Z6JH0UGeBKTaoNRD3HU2Tle1k+3D+gPzzgcbdiJ/kYq/qkBc8nPOt2oUinXaiBw2ykwSrng7P/Ew2fQ/+O7f++Lb0KRNY5/s1sP5F3XWxbt6EF24sM6bc1vVnpca4Jk0r89m7wX96AkNHiK8hpxl+Nzc9HGMORqECSzJcHUpUm71ze6PBQMqELex9fA1d9kxhLBbaKMG+YPcYxEBCsQksJ7Xk4TwtBhocHah/pJs7J63WOPx1Ennn8udThwX1VLvZx8YK3Ed2yhdK43B2i6Ob9ZYqS9gURX/cmtrHZULtCwsiSf8DjZ+uGbvU/U2YkB0Xx3td/J7xvVkgKwW2ady2QDjKHYjmHeSkID+Muu4QBP2rHuof21+4aZW3Ra8y+GpMoF2kfsvnhMg0cTMx54iFUuNfI6zIIwvuS8KO3b/iohKCaRsJ9W5ZFNjNTNQb1VHNpLoRbBWfiBC+wpV6CDAZoiDjEONxm5mzJLTaSumTQmPlIoDyidTGL+Awk3Iijoo9kJcRfzOO0ETqT1xuaFLHAtFlFGBOd7eHc0uIGjU/n9Il44+Ixwca3rlYG8NQ23GT0FmDXdSA0W2ibu5YGRT+sRXZkIm0dyAWngXsvZ6vdMh8HwzLuaQMLVoXLnZS+vOqpP3ULFOBN8EApk8ofWxSRc6sqezi+aHbe/vJ2z2K+vGjdbhV6pOHKeWC6ngo2jYkSApXTLJftuwH2tOTjleFNtWHoH97xNHfjEhyia9kx8LPJZr5ymQcGQw6MaisL5KeaUfsb0TtYaitKPXEptMfOu4MtFjtO5hMG0AlO+H9YiQPCWa7JA1qLsd5CCkM5vxO0v3KhAbLl7q5Y+8VLBn7JTPJ6GkJi/Ml6j04oaKuQSprtxAoeHdpTNUIDHuhCtmsckiHbh1PpnzqRZ84j5mCbMMvsZf2NsCV2RyxSOUrts0khwFzY3wEbMFQ61BINyMXCoytRdGxHAe3aDp8FqyQdHulk21dibdsJ5LVRkjc0uebFF6bNKVQO8ZDt3QUPXysZ9zrfUMKCm904kFuqcYgpsqypGa3TtG0XvdLOntJCZVKuExUlx3zcWIINNjHuvsyF1a9bgGNcHZCT+iBIhrirppl188UjwjVSITLuzxLbROHH51wuuZP3ZUEz3UDjfvF8xSJTKu9HXv4EYNRkd0HEE4A7InqnRqkMATV/a3l+H/4duBvI5xnF7flKlg1Y+fr2HkzG5noKLYseWhxk80DwR7NnhayGZpCzBuEdNs40f9fq5rGvrBZ4tjvUVlcoR3GkVH9vFe351qv8KUs+PNeBJraesllUQeWpDddSevfwBeTHQIxcDx65Kq4HmGYfC6eOTo4sDN6/5T+K0t//LcG+NbmdyQEdRHEO0WN+eRwloMmHntnAX/hpva5lyP7xcj4arAcv37+/38xh/Uen3vju1zM+w8X/SoUwP/DspJ3o+l2abuafiWY+FPpwx4f6wsWa/feL+wlBPmWI86PbiTDxB7y24oM/YkQxs2LUwY68qDaEtsRQ=="
+              }
+            ],
+            "role": "model"
+          },
+          "finishReason": "STOP",
+          "index": 0
+        }
+      ],
+      "usageMetadata": {
+        "promptTokenCount": 516,
+        "candidatesTokenCount": 178,
+        "totalTokenCount": 1777,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 516
+          }
+        ],
+        "thoughtsTokenCount": 1083,
+        "serviceTier": "standard"
+      },
+      "modelVersion": "gemini-3.5-flash",
+      "responseId": "fWOMas7mC8bAqtsPsoiouQk"
+    },
+    "text": "出差预算。具体明细如下：\n\n1. **往返机票**：3,200 元人民币。\n2. **住宿费用（3晚）**：每晚 18,000 日元，共计 54,000 日元。按 0.048 的汇率折合为 2,592 元人民币。\n3. **餐饮预算（4天）**：每日 6,000 日元，共计 24,000 日元。按 0.048 的汇率折合为 1,152 元人民币。\n\n**总预算合共**：3,200 + 2,592 + 1,152 = **6,944 元人民币**。",
+    "tool_calls": []
+  }
+}

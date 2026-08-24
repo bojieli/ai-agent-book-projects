@@ -1,0 +1,278 @@
+{
+  "experiment": "5-1",
+  "generated_at": "20260824T150228Z",
+  "switch_after_tool_calls": 2,
+  "outage": {
+    "injected": true,
+    "statuses": [
+      429,
+      429,
+      503
+    ],
+    "note": "人为注入的连续过载，用来触发熔断；非厂商真实故障"
+  },
+  "models": {
+    "kimi": "kimi-k3",
+    "anthropic": "claude-haiku-4-5-20251001",
+    "gemini": "gemini-3.5-flash"
+  },
+  "rows": [
+    {
+      "source": "kimi",
+      "target": "anthropic",
+      "arm": "naive",
+      "handoff": {
+        "status": 400,
+        "error_body": "{\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"messages.1.content.0.thinking.signature: Field required\"},\"request_id\":\"req_011CeMmzRpBdBArttrQEWFoE\"}"
+      },
+      "data_complete": false,
+      "answer_correct": false,
+      "rounds_after_switch": 0,
+      "tokens_after_switch": 0,
+      "repeated_calls": 0,
+      "error": "400: {\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"messages.1.content.0.thinking.signature: Field required\"},\"request_id\":\"req_011CeMmzRpBdBArttrQEWFoE\"}"
+    },
+    {
+      "source": "kimi",
+      "target": "anthropic",
+      "arm": "strip",
+      "handoff": {
+        "status": 200
+      },
+      "data_complete": true,
+      "answer_correct": true,
+      "rounds_after_switch": 2,
+      "tokens_after_switch": 318,
+      "repeated_calls": 0,
+      "error": null
+    },
+    {
+      "source": "kimi",
+      "target": "anthropic",
+      "arm": "neutral",
+      "handoff": {
+        "status": 200
+      },
+      "data_complete": true,
+      "answer_correct": true,
+      "rounds_after_switch": 2,
+      "tokens_after_switch": 364,
+      "repeated_calls": 0,
+      "error": null
+    },
+    {
+      "source": "kimi",
+      "target": "gemini",
+      "arm": "naive",
+      "handoff": {
+        "status": 400,
+        "error_body": "{\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Function call is missing a thought_signature in functionCall parts. This is required for tools to work correctly, and missing thought_signature may lead to degraded model performance. Additional data, function call `default_api:get_flight_price` , position 2. Please refer to https://ai.google.dev/gemini-api/docs/thought-signatures for more details.\",\n    \"status\": \"INVALID_ARGUMENT\"\n  }\n}\n"
+      },
+      "data_complete": false,
+      "answer_correct": false,
+      "rounds_after_switch": 0,
+      "tokens_after_switch": 0,
+      "repeated_calls": 0,
+      "error": "400: {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Function call is missing a thought_signature in functionCall parts. This is required for tools to work correctly, and missing thought_signature may lead to degraded model performance. Additional data, function call `default_api:get_flight_price` , posi"
+    },
+    {
+      "source": "kimi",
+      "target": "gemini",
+      "arm": "strip",
+      "handoff": {
+        "status": 400,
+        "error_body": "{\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Function call is missing a thought_signature in functionCall parts. This is required for tools to work correctly, and missing thought_signature may lead to degraded model performance. Additional data, function call `default_api:get_flight_price` , position 2. Please refer to https://ai.google.dev/gemini-api/docs/thought-signatures for more details.\",\n    \"status\": \"INVALID_ARGUMENT\"\n  }\n}\n"
+      },
+      "data_complete": false,
+      "answer_correct": false,
+      "rounds_after_switch": 0,
+      "tokens_after_switch": 0,
+      "repeated_calls": 0,
+      "error": "400: {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Function call is missing a thought_signature in functionCall parts. This is required for tools to work correctly, and missing thought_signature may lead to degraded model performance. Additional data, function call `default_api:get_flight_price` , posi"
+    },
+    {
+      "source": "kimi",
+      "target": "gemini",
+      "arm": "neutral",
+      "handoff": {
+        "status": 200
+      },
+      "data_complete": true,
+      "answer_correct": true,
+      "rounds_after_switch": 2,
+      "tokens_after_switch": 758,
+      "repeated_calls": 0,
+      "error": null
+    },
+    {
+      "source": "anthropic",
+      "target": "kimi",
+      "arm": "naive",
+      "handoff": {
+        "status": 200
+      },
+      "data_complete": true,
+      "answer_correct": true,
+      "rounds_after_switch": 1,
+      "tokens_after_switch": 526,
+      "repeated_calls": 0,
+      "error": null
+    },
+    {
+      "source": "anthropic",
+      "target": "kimi",
+      "arm": "strip",
+      "handoff": {
+        "status": 200
+      },
+      "data_complete": true,
+      "answer_correct": true,
+      "rounds_after_switch": 1,
+      "tokens_after_switch": 282,
+      "repeated_calls": 0,
+      "error": null
+    },
+    {
+      "source": "anthropic",
+      "target": "kimi",
+      "arm": "neutral",
+      "handoff": {
+        "status": 200
+      },
+      "data_complete": true,
+      "answer_correct": true,
+      "rounds_after_switch": 1,
+      "tokens_after_switch": 522,
+      "repeated_calls": 0,
+      "error": null
+    },
+    {
+      "source": "anthropic",
+      "target": "gemini",
+      "arm": "naive",
+      "handoff": {
+        "status": 200
+      },
+      "data_complete": true,
+      "answer_correct": true,
+      "rounds_after_switch": 1,
+      "tokens_after_switch": 605,
+      "repeated_calls": 0,
+      "error": null
+    },
+    {
+      "source": "anthropic",
+      "target": "gemini",
+      "arm": "strip",
+      "handoff": {
+        "status": 400,
+        "error_body": "{\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Function call is missing a thought_signature in functionCall parts. This is required for tools to work correctly, and missing thought_signature may lead to degraded model performance. Additional data, function call `default_api:get_flight_price` , position 2. Please refer to https://ai.google.dev/gemini-api/docs/thought-signatures for more details.\",\n    \"status\": \"INVALID_ARGUMENT\"\n  }\n}\n"
+      },
+      "data_complete": false,
+      "answer_correct": false,
+      "rounds_after_switch": 0,
+      "tokens_after_switch": 0,
+      "repeated_calls": 0,
+      "error": "400: {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Function call is missing a thought_signature in functionCall parts. This is required for tools to work correctly, and missing thought_signature may lead to degraded model performance. Additional data, function call `default_api:get_flight_price` , posi"
+    },
+    {
+      "source": "anthropic",
+      "target": "gemini",
+      "arm": "neutral",
+      "handoff": {
+        "status": 200
+      },
+      "data_complete": true,
+      "answer_correct": true,
+      "rounds_after_switch": 1,
+      "tokens_after_switch": 599,
+      "repeated_calls": 0,
+      "error": null
+    },
+    {
+      "source": "gemini",
+      "target": "kimi",
+      "arm": "naive",
+      "handoff": {
+        "status": 200
+      },
+      "data_complete": true,
+      "answer_correct": true,
+      "rounds_after_switch": 3,
+      "tokens_after_switch": 1016,
+      "repeated_calls": 0,
+      "error": null
+    },
+    {
+      "source": "gemini",
+      "target": "kimi",
+      "arm": "strip",
+      "handoff": {
+        "status": 200
+      },
+      "data_complete": true,
+      "answer_correct": true,
+      "rounds_after_switch": 3,
+      "tokens_after_switch": 459,
+      "repeated_calls": 0,
+      "error": null
+    },
+    {
+      "source": "gemini",
+      "target": "kimi",
+      "arm": "neutral",
+      "handoff": {
+        "status": 200
+      },
+      "data_complete": true,
+      "answer_correct": true,
+      "rounds_after_switch": 3,
+      "tokens_after_switch": 384,
+      "repeated_calls": 0,
+      "error": null
+    },
+    {
+      "source": "gemini",
+      "target": "anthropic",
+      "arm": "naive",
+      "handoff": {
+        "status": 400,
+        "error_body": "{\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"messages.1.content.0: Invalid `signature` in `thinking` block\"},\"request_id\":\"req_011CeMneSoXPoTTcPe3w6cwA\"}"
+      },
+      "data_complete": false,
+      "answer_correct": false,
+      "rounds_after_switch": 0,
+      "tokens_after_switch": 0,
+      "repeated_calls": 0,
+      "error": "400: {\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"messages.1.content.0: Invalid `signature` in `thinking` block\"},\"request_id\":\"req_011CeMneSoXPoTTcPe3w6cwA\"}"
+    },
+    {
+      "source": "gemini",
+      "target": "anthropic",
+      "arm": "strip",
+      "handoff": {
+        "status": 200
+      },
+      "data_complete": true,
+      "answer_correct": true,
+      "rounds_after_switch": 2,
+      "tokens_after_switch": 377,
+      "repeated_calls": 0,
+      "error": null
+    },
+    {
+      "source": "gemini",
+      "target": "anthropic",
+      "arm": "neutral",
+      "handoff": {
+        "status": 200
+      },
+      "data_complete": true,
+      "answer_correct": true,
+      "rounds_after_switch": 2,
+      "tokens_after_switch": 414,
+      "repeated_calls": 0,
+      "error": null
+    }
+  ]
+}

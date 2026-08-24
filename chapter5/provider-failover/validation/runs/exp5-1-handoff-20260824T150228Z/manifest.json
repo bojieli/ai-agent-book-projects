@@ -1,0 +1,329 @@
+{
+  "experiment": "5-1",
+  "run": "exp5-1-handoff-20260824T150228Z",
+  "rows": [
+    {
+      "pair": "anthropic→gemini",
+      "arm": "naive",
+      "handoff_status": 200,
+      "error": null,
+      "data_complete": true,
+      "answer_correct": true,
+      "repeated_calls": 0,
+      "rounds_after_switch": 1,
+      "tokens_after_switch": {
+        "input": 638,
+        "output": 605
+      },
+      "file": "anthropic-to-gemini-naive.json",
+      "sha256": "2e740e730282773e483a3d6c28f6f98f36b616ea01898d8867a347e270f6f8e3"
+    },
+    {
+      "pair": "anthropic→gemini",
+      "arm": "neutral",
+      "handoff_status": 200,
+      "error": null,
+      "data_complete": true,
+      "answer_correct": true,
+      "repeated_calls": 0,
+      "rounds_after_switch": 1,
+      "tokens_after_switch": {
+        "input": 640,
+        "output": 599
+      },
+      "file": "anthropic-to-gemini-neutral.json",
+      "sha256": "eda4abee620bc9fc2527ee700c7cf8c0a4527257e7d5a1bc1e2fc75bc350a377"
+    },
+    {
+      "pair": "anthropic→gemini",
+      "arm": "strip",
+      "handoff_status": 400,
+      "error": "{\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Function call is missing a thought_signature in functionCall parts. This is required for tools to work correctly",
+      "data_complete": false,
+      "answer_correct": false,
+      "repeated_calls": 0,
+      "rounds_after_switch": 0,
+      "tokens_after_switch": {
+        "input": 0,
+        "output": 0
+      },
+      "file": "anthropic-to-gemini-strip.json",
+      "sha256": "6b993de3ecf8287484ad21a7ac7340d0f05dedc711a43eab03a58abf0051844f"
+    },
+    {
+      "pair": "anthropic→kimi",
+      "arm": "naive",
+      "handoff_status": 200,
+      "error": null,
+      "data_complete": true,
+      "answer_correct": true,
+      "repeated_calls": 0,
+      "rounds_after_switch": 1,
+      "tokens_after_switch": {
+        "input": 806,
+        "output": 526
+      },
+      "file": "anthropic-to-kimi-naive.json",
+      "sha256": "6461eed68d7d12155f0f46655aaad73616a25658650da9ca52e09a168c4791a2"
+    },
+    {
+      "pair": "anthropic→kimi",
+      "arm": "neutral",
+      "handoff_status": 200,
+      "error": null,
+      "data_complete": true,
+      "answer_correct": true,
+      "repeated_calls": 0,
+      "rounds_after_switch": 1,
+      "tokens_after_switch": {
+        "input": 839,
+        "output": 522
+      },
+      "file": "anthropic-to-kimi-neutral.json",
+      "sha256": "a27c2f60671be459cf4001eeeeab7a52c04706e0efce09c928c05c6ae03c14c4"
+    },
+    {
+      "pair": "anthropic→kimi",
+      "arm": "strip",
+      "handoff_status": 200,
+      "error": null,
+      "data_complete": true,
+      "answer_correct": true,
+      "repeated_calls": 0,
+      "rounds_after_switch": 1,
+      "tokens_after_switch": {
+        "input": 698,
+        "output": 282
+      },
+      "file": "anthropic-to-kimi-strip.json",
+      "sha256": "7cf20d09fdbf3a23398beaa14e32b1daf197a883e712310ec29b00bf40e24fe4"
+    },
+    {
+      "pair": "gemini→anthropic",
+      "arm": "naive",
+      "handoff_status": 400,
+      "error": "{\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"messages.1.content.0: Invalid `signature` in `thinking` block\"},\"request_id\":\"req_011CeMneSoX",
+      "data_complete": false,
+      "answer_correct": false,
+      "repeated_calls": 0,
+      "rounds_after_switch": 0,
+      "tokens_after_switch": {
+        "input": 0,
+        "output": 0
+      },
+      "file": "gemini-to-anthropic-naive.json",
+      "sha256": "be3192e5c2e9e97f0a1f344ec2dd2b16b8a460f62cc11cc49729d2145f3cde7b"
+    },
+    {
+      "pair": "gemini→anthropic",
+      "arm": "neutral",
+      "handoff_status": 200,
+      "error": null,
+      "data_complete": true,
+      "answer_correct": true,
+      "repeated_calls": 0,
+      "rounds_after_switch": 2,
+      "tokens_after_switch": {
+        "input": 3898,
+        "output": 414
+      },
+      "file": "gemini-to-anthropic-neutral.json",
+      "sha256": "49b7f876602a96411557ee88b65898c3a9b0c05ffa1b830c81ade1f02ef4587d"
+    },
+    {
+      "pair": "gemini→anthropic",
+      "arm": "strip",
+      "handoff_status": 200,
+      "error": null,
+      "data_complete": true,
+      "answer_correct": true,
+      "repeated_calls": 0,
+      "rounds_after_switch": 2,
+      "tokens_after_switch": {
+        "input": 2728,
+        "output": 377
+      },
+      "file": "gemini-to-anthropic-strip.json",
+      "sha256": "45b4980aa4aa9839cdd379ba27b02763a3939467ace02216f984e504ce9b4722"
+    },
+    {
+      "pair": "gemini→kimi",
+      "arm": "naive",
+      "handoff_status": 200,
+      "error": null,
+      "data_complete": true,
+      "answer_correct": true,
+      "repeated_calls": 0,
+      "rounds_after_switch": 3,
+      "tokens_after_switch": {
+        "input": 4083,
+        "output": 1016
+      },
+      "file": "gemini-to-kimi-naive.json",
+      "sha256": "c4b661623625ae6d8f6527cdaa3eca06e6fe99aa01df859e991a68c993552964"
+    },
+    {
+      "pair": "gemini→kimi",
+      "arm": "neutral",
+      "handoff_status": 200,
+      "error": null,
+      "data_complete": true,
+      "answer_correct": true,
+      "repeated_calls": 0,
+      "rounds_after_switch": 3,
+      "tokens_after_switch": {
+        "input": 3344,
+        "output": 384
+      },
+      "file": "gemini-to-kimi-neutral.json",
+      "sha256": "558567ec361441f4248a9ee570141c87fc30391d6df3bb88f82310111c15a50a"
+    },
+    {
+      "pair": "gemini→kimi",
+      "arm": "strip",
+      "handoff_status": 200,
+      "error": null,
+      "data_complete": true,
+      "answer_correct": true,
+      "repeated_calls": 0,
+      "rounds_after_switch": 3,
+      "tokens_after_switch": {
+        "input": 2062,
+        "output": 459
+      },
+      "file": "gemini-to-kimi-strip.json",
+      "sha256": "5104fdba7f5e33774ce5acf0004908c272912d4d5a3e918850e0e3528e118cf9"
+    },
+    {
+      "pair": "kimi→anthropic",
+      "arm": "naive",
+      "handoff_status": 400,
+      "error": "{\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"messages.1.content.0.thinking.signature: Field required\"},\"request_id\":\"req_011CeMmzRpBdBArtt",
+      "data_complete": false,
+      "answer_correct": false,
+      "repeated_calls": 0,
+      "rounds_after_switch": 0,
+      "tokens_after_switch": {
+        "input": 0,
+        "output": 0
+      },
+      "file": "kimi-to-anthropic-naive.json",
+      "sha256": "794c78397b4398c798bcfb2f73d55bc9acd3b4612680406bedbf091bda141399"
+    },
+    {
+      "pair": "kimi→anthropic",
+      "arm": "neutral",
+      "handoff_status": 200,
+      "error": null,
+      "data_complete": true,
+      "answer_correct": true,
+      "repeated_calls": 0,
+      "rounds_after_switch": 2,
+      "tokens_after_switch": {
+        "input": 3273,
+        "output": 364
+      },
+      "file": "kimi-to-anthropic-neutral.json",
+      "sha256": "d6ec9cee24b819896ad7835dbba0fa913b8c72cd1d8f568913c6f6a71ca9fa45"
+    },
+    {
+      "pair": "kimi→anthropic",
+      "arm": "strip",
+      "handoff_status": 200,
+      "error": null,
+      "data_complete": true,
+      "answer_correct": true,
+      "repeated_calls": 0,
+      "rounds_after_switch": 2,
+      "tokens_after_switch": {
+        "input": 2912,
+        "output": 318
+      },
+      "file": "kimi-to-anthropic-strip.json",
+      "sha256": "04897beea457e56c23fbdff0d094e4c1d50f620fa50169d28ab317014e5e8b02"
+    },
+    {
+      "pair": "kimi→gemini",
+      "arm": "naive",
+      "handoff_status": 400,
+      "error": "{\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Function call is missing a thought_signature in functionCall parts. This is required for tools to work correctly",
+      "data_complete": false,
+      "answer_correct": false,
+      "repeated_calls": 0,
+      "rounds_after_switch": 0,
+      "tokens_after_switch": {
+        "input": 0,
+        "output": 0
+      },
+      "file": "kimi-to-gemini-naive.json",
+      "sha256": "f97871500950e0fd46444ff8e3cdf4f4e33b2bbd8955c403357a337cbb066c83"
+    },
+    {
+      "pair": "kimi→gemini",
+      "arm": "neutral",
+      "handoff_status": 200,
+      "error": null,
+      "data_complete": true,
+      "answer_correct": true,
+      "repeated_calls": 0,
+      "rounds_after_switch": 2,
+      "tokens_after_switch": {
+        "input": 1763,
+        "output": 758
+      },
+      "file": "kimi-to-gemini-neutral.json",
+      "sha256": "3f333b70357223723950755bff2c9a842f792507ac5ed65835712e660a931b03"
+    },
+    {
+      "pair": "kimi→gemini",
+      "arm": "strip",
+      "handoff_status": 400,
+      "error": "{\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Function call is missing a thought_signature in functionCall parts. This is required for tools to work correctly",
+      "data_complete": false,
+      "answer_correct": false,
+      "repeated_calls": 0,
+      "rounds_after_switch": 0,
+      "tokens_after_switch": {
+        "input": 0,
+        "output": 0
+      },
+      "file": "kimi-to-gemini-strip.json",
+      "sha256": "e44cb05f79124a2bfa423df4581674949c4bad44316b91fa0ae516892e27bf74"
+    }
+  ],
+  "by_arm": {
+    "naive": {
+      "cells": 6,
+      "handoff_ok": 3,
+      "data_complete": 3,
+      "answer_correct": 3,
+      "repeated_calls": 0,
+      "input_tokens": 5527,
+      "output_tokens": 2147
+    },
+    "neutral": {
+      "cells": 6,
+      "handoff_ok": 6,
+      "data_complete": 6,
+      "answer_correct": 6,
+      "repeated_calls": 0,
+      "input_tokens": 13757,
+      "output_tokens": 3041
+    },
+    "strip": {
+      "cells": 6,
+      "handoff_ok": 4,
+      "data_complete": 4,
+      "answer_correct": 4,
+      "repeated_calls": 0,
+      "input_tokens": 8400,
+      "output_tokens": 1436
+    }
+  },
+  "gates": {
+    "中立臂在全部厂商组合上切换成功": true,
+    "直传臂的失败都是厂商真实报错": true,
+    "每个单元都留下了原始响应": true,
+    "三条臂各覆盖六种厂商组合": true
+  }
+}

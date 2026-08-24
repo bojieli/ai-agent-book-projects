@@ -1,0 +1,125 @@
+{
+  "row": {
+    "provider": "anthropic",
+    "break_point": "tool_args",
+    "repeat": 2,
+    "reproducible": true,
+    "strategy": "prefill",
+    "cut": {
+      "reasoning_chars": 0,
+      "text_chars": 28,
+      "tool_name": "get_hotel_price",
+      "tool_args": "{\"city\": \"",
+      "truncated": true,
+      "closed": false
+    },
+    "applicable": true,
+    "note": null,
+    "output_tokens": 161,
+    "recovered": true,
+    "json_valid": true,
+    "args_correct": true,
+    "duplicate_side_effects": 0,
+    "spliced": "{\"city\": \"东京\"}，在这个系统中调用该工具查询东京的酒店价格。"
+  },
+  "partial": {
+    "reasoning": "",
+    "text": "现在我获取东京的住宿和餐费信息，并获取日元汇率用于转换：",
+    "tool_name": "get_hotel_price",
+    "tool_args": "{\"city\": \"",
+    "tool_index": 1,
+    "tool_args_closed": false,
+    "truncated": true,
+    "finished": false
+  },
+  "result": {
+    "strategy": "prefill",
+    "applicable": true,
+    "note": null,
+    "usage": {
+      "input": 1272,
+      "output": 161
+    },
+    "raw": {
+      "model": "claude-haiku-4-5-20251001",
+      "id": "msg_011CeMowgXcctntD93teT3Yj",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "东京\"}，在这个系统中调用该工具查询东京的酒店价格。"
+        },
+        {
+          "type": "tool_use",
+          "id": "toolu_012qEYx2WR3NAoKuwTXhZgVH",
+          "name": "get_hotel_price",
+          "input": {
+            "city": "东京"
+          },
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "type": "tool_use",
+          "id": "toolu_01CNyXhyaY76Q5FAPnVBi75t",
+          "name": "get_meal_budget",
+          "input": {
+            "city": "东京"
+          },
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "type": "tool_use",
+          "id": "toolu_018Vo1dHxNxJLTTaKWV73qjc",
+          "name": "get_exchange_rate",
+          "input": {
+            "currency": "JPY"
+          },
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "stop_reason": "tool_use",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 1272,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 161,
+        "service_tier": "standard",
+        "inference_geo": "not_available"
+      }
+    },
+    "text": "东京\"}，在这个系统中调用该工具查询东京的酒店价格。",
+    "tool_calls": [
+      {
+        "name": "get_hotel_price",
+        "arguments": {
+          "city": "东京"
+        }
+      },
+      {
+        "name": "get_meal_budget",
+        "arguments": {
+          "city": "东京"
+        }
+      },
+      {
+        "name": "get_exchange_rate",
+        "arguments": {
+          "currency": "JPY"
+        }
+      }
+    ]
+  }
+}
