@@ -1,0 +1,654 @@
+{
+  "source": "gemini",
+  "target": "anthropic",
+  "arm": "naive",
+  "models": {
+    "gemini": "gemini-3.5-flash",
+    "anthropic": "claude-haiku-4-5-20251001"
+  },
+  "outage": {
+    "injected": true,
+    "statuses": [
+      429,
+      429,
+      503
+    ],
+    "note": "人为注入的连续过载，用来触发熔断；非厂商真实故障"
+  },
+  "handoff": {
+    "status": 400,
+    "error_body": "{\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"messages.1.content.0: Invalid `signature` in `thinking` block\"},\"request_id\":\"req_011CeMneSoXPoTTcPe3w6cwA\"}"
+  },
+  "data_complete": false,
+  "answer_correct": false,
+  "repeated_calls": [],
+  "rounds_after_switch": 0,
+  "tokens_after_switch": 0,
+  "final_text": null,
+  "error": "400: {\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"messages.1.content.0: Invalid `signature` in `thinking` block\"},\"request_id\":\"req_011CeMneSoXPoTTcPe3w6cwA\"}",
+  "trace": {
+    "steps": [
+      {
+        "role": "user",
+        "text": "帮我算一下从北京去东京出差的总预算：往返机票、住宿和餐费都要算上，行程是 3 晚 4 天，住宿按 3 晚、餐费按 4 天计。最后用人民币给出一个总额。",
+        "reasoning": null,
+        "tool_calls": [],
+        "tool_call_id": null,
+        "tool_name": null,
+        "issuer": null,
+        "native": null
+      },
+      {
+        "role": "assistant",
+        "text": null,
+        "reasoning": {
+          "text": "**My Thought Process: Budgeting a Trip to Tokyo**\n\nOkay, here's how I'm going to approach calculating the total budget for my upcoming business trip from Beijing to Tokyo. First, I need to be absolutely clear on what I'm aiming for: a total budget in Chinese Yuan (CNY) for the round-trip flight, three nights of accommodation, and four days of meals. Clear goal, clear starting point.\n\nNow, I'm breaking down the required data. I'll need:\n\n*   The price of round-trip flights between Beijing and Tokyo, or just the \"Tokyo\" ticket price. I'll need to confirm that.\n*   The nightly cost of accommodation in Tokyo, and in what currency it's priced.\n*   The daily food budget for Tokyo, and again, the currency.\n\nThe currency part is key. If the hotel or food prices are *not* in CNY, I *must* get the appropriate exchange rate.\n\nNext, it's about planning the sequence of tools I'll be using. Here's my strategy:\n\n*   I'll start with `get_flight_price` to grab those flight costs.\n*   Next, I'll call `get_hotel_price` for the accommodation info.\n*   Then, `get_meal_budget` to figure out my food costs.\n*   Here's where it gets interesting: I'll need to check the currencies returned by those three calls. If I get anything other than CNY (like JPY, for example), I need to immediately call `get_exchange_rate` to convert it.\n*   Finally, with all the data converted to CNY, it's simple math. I'll total everything up.\n\nSo, first step: I'm calling those first three tools to get the core numbers.\n\n\n",
+          "credential": "EuAHCt0HARFNMg8zzvLOX70ECnLCg5023TbRLffmTUSUPdN0SbfM6u8mMf1DMaf1Cqk0zLCQjlVEjd+Y4menqebD9n3ALx/gJeOe3F8ttlQkXfi/VtCTpsiZUripXGHWmZtEZ090IVyzjwOE5MW8x9XbhsGl5uMMsw/leHIDH03rtWwDPoZ2buFlH3JQcEHk7xAlLXOZxjz75QtLFbHHG4CvT0u3l7IyxXqrSAcG4k37fIy8e1K1TzmmCziQ860//Yr9PH729mMOyoFcXfkxcc2vC8IfOdO0ZrkaNHjIzfVePDwnMhK4srcTc6XqaIAvq/cxT9JrBN7EtcvsiQYC2hm+85NPCeCEO5mZB/AkduII044S72SEW02OQ1b0+uasCQ9/k1BrqFi4O/bVVtMiXncnlcTbLvngYeDtsk6EkXtfDXLnn5h3WELMn4qInJvDuIBjS302ldHzCi60hOthcEdT+zA7IoQbgGw17mDchJqPKbLh+xncCFnUR4+EPLtyKl+FyLKlxeMa1Sn6LdfGrzJ9IkYJAmAyarGp6igRqpkdAGHo1wV+JBzPv5C+x2yJJHomC75/R8J9SobCc3/JrC3SPlNvl82pDiR69il6Ww/1asrUD1YJJmP6vNbf2znAIbvsXcxwUpEVAdbInstQKeie7+1DxwhUJdCIrUIOmBCgbJnXPCdPOT3gOyVK7lMQuZPoXI/TV4aT/UFlaM5g3rsIDLX34iq1WZbXYjDPUw1AMqlD7yua4oPILyvBoJOaUtg3rmABA99ag/xkX7Pt8Q2xfjbuaEtVXjWaTFXn/4uXiXADahGfSRLyXhyxhuEBNOh5zGMgvl3cNCr2X5GaAfJPyc7gF41YPSnJLA8n2f+GmRGzq/g5CftqXeJsN0+py2Y9bKCnHl68nm1Oa4+vpPcGlQ6nJroe1geO+DId6RB7rXT11LDyCumY9gCyaDGm/TyAcW74AMQS2TRzIUCAHjmJ7tctl0QIhgXLDMbbGpju1Y/GhRHAvYgGz5oiksenBK/yL2hdnSSLVKsUwbE7ucooGOwEFBc/FshqFID9tplq/CUzusHAHhvV2H7MVRqZGUHjzBFLtkPkJStK1cRbcdPwHISS85eAh9TUB+OO6EkOkr/O4MSbxMuWDY1THK9KKJRuRQ5imGvfFfwv1mQ5HajZARg/uJAkv6F+/F41XmnsRFi3Kbj+xybckGmCqIrnRXokGrv2pcLftrzXQjnjo4WiAkPOJs6k37Pm9maS9MLzRiEik0rm1zwoJdV5ulAoSyMxJdR0TkRL9tGcL/7VN+oaO++DN2kNdnTnRwbeycKq3oE=",
+          "issuer": "gemini",
+          "kind": "summary"
+        },
+        "tool_calls": [
+          {
+            "name": "get_flight_price",
+            "arguments": {
+              "city": "东京"
+            },
+            "call_id": "call_6987088"
+          }
+        ],
+        "tool_call_id": null,
+        "tool_name": null,
+        "issuer": "gemini",
+        "native": {
+          "parts": [
+            {
+              "text": "**My Thought Process: Budgeting a Trip to Tokyo**\n\nOkay, here's how I'm going to approach calculating the total budget for my upcoming business trip from Beijing to Tokyo. First, I need to be absolutely clear on what I'm aiming for: a total budget in Chinese Yuan (CNY) for the round-trip flight, three nights of accommodation, and four days of meals. Clear goal, clear starting point.\n\nNow, I'm breaking down the required data. I'll need:\n\n*   The price of round-trip flights between Beijing and Tokyo, or just the \"Tokyo\" ticket price. I'll need to confirm that.\n*   The nightly cost of accommodation in Tokyo, and in what currency it's priced.\n*   The daily food budget for Tokyo, and again, the currency.\n\nThe currency part is key. If the hotel or food prices are *not* in CNY, I *must* get the appropriate exchange rate.\n\nNext, it's about planning the sequence of tools I'll be using. Here's my strategy:\n\n*   I'll start with `get_flight_price` to grab those flight costs.\n*   Next, I'll call `get_hotel_price` for the accommodation info.\n*   Then, `get_meal_budget` to figure out my food costs.\n*   Here's where it gets interesting: I'll need to check the currencies returned by those three calls. If I get anything other than CNY (like JPY, for example), I need to immediately call `get_exchange_rate` to convert it.\n*   Finally, with all the data converted to CNY, it's simple math. I'll total everything up.\n\nSo, first step: I'm calling those first three tools to get the core numbers.\n\n\n",
+              "thought": true
+            },
+            {
+              "functionCall": {
+                "name": "get_flight_price",
+                "args": {
+                  "city": "东京"
+                },
+                "id": "call_6987088"
+              },
+              "thoughtSignature": "EuAHCt0HARFNMg8zzvLOX70ECnLCg5023TbRLffmTUSUPdN0SbfM6u8mMf1DMaf1Cqk0zLCQjlVEjd+Y4menqebD9n3ALx/gJeOe3F8ttlQkXfi/VtCTpsiZUripXGHWmZtEZ090IVyzjwOE5MW8x9XbhsGl5uMMsw/leHIDH03rtWwDPoZ2buFlH3JQcEHk7xAlLXOZxjz75QtLFbHHG4CvT0u3l7IyxXqrSAcG4k37fIy8e1K1TzmmCziQ860//Yr9PH729mMOyoFcXfkxcc2vC8IfOdO0ZrkaNHjIzfVePDwnMhK4srcTc6XqaIAvq/cxT9JrBN7EtcvsiQYC2hm+85NPCeCEO5mZB/AkduII044S72SEW02OQ1b0+uasCQ9/k1BrqFi4O/bVVtMiXncnlcTbLvngYeDtsk6EkXtfDXLnn5h3WELMn4qInJvDuIBjS302ldHzCi60hOthcEdT+zA7IoQbgGw17mDchJqPKbLh+xncCFnUR4+EPLtyKl+FyLKlxeMa1Sn6LdfGrzJ9IkYJAmAyarGp6igRqpkdAGHo1wV+JBzPv5C+x2yJJHomC75/R8J9SobCc3/JrC3SPlNvl82pDiR69il6Ww/1asrUD1YJJmP6vNbf2znAIbvsXcxwUpEVAdbInstQKeie7+1DxwhUJdCIrUIOmBCgbJnXPCdPOT3gOyVK7lMQuZPoXI/TV4aT/UFlaM5g3rsIDLX34iq1WZbXYjDPUw1AMqlD7yua4oPILyvBoJOaUtg3rmABA99ag/xkX7Pt8Q2xfjbuaEtVXjWaTFXn/4uXiXADahGfSRLyXhyxhuEBNOh5zGMgvl3cNCr2X5GaAfJPyc7gF41YPSnJLA8n2f+GmRGzq/g5CftqXeJsN0+py2Y9bKCnHl68nm1Oa4+vpPcGlQ6nJroe1geO+DId6RB7rXT11LDyCumY9gCyaDGm/TyAcW74AMQS2TRzIUCAHjmJ7tctl0QIhgXLDMbbGpju1Y/GhRHAvYgGz5oiksenBK/yL2hdnSSLVKsUwbE7ucooGOwEFBc/FshqFID9tplq/CUzusHAHhvV2H7MVRqZGUHjzBFLtkPkJStK1cRbcdPwHISS85eAh9TUB+OO6EkOkr/O4MSbxMuWDY1THK9KKJRuRQ5imGvfFfwv1mQ5HajZARg/uJAkv6F+/F41XmnsRFi3Kbj+xybckGmCqIrnRXokGrv2pcLftrzXQjnjo4WiAkPOJs6k37Pm9maS9MLzRiEik0rm1zwoJdV5ulAoSyMxJdR0TkRL9tGcL/7VN+oaO++DN2kNdnTnRwbeycKq3oE="
+            },
+            {
+              "functionCall": {
+                "name": "get_hotel_price",
+                "args": {
+                  "city": "东京"
+                },
+                "id": "call_6987089"
+              }
+            },
+            {
+              "functionCall": {
+                "name": "get_meal_budget",
+                "args": {
+                  "city": "东京"
+                },
+                "id": "call_6987090"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "role": "tool",
+        "text": "{\"city\":\"东京\",\"round_trip_cny\":3200}",
+        "reasoning": null,
+        "tool_calls": [],
+        "tool_call_id": "call_6987088",
+        "tool_name": "get_flight_price",
+        "issuer": null,
+        "native": null
+      },
+      {
+        "role": "assistant",
+        "text": null,
+        "reasoning": {
+          "text": "Here's my thought process, as it stands:\n\n**Initial Travel Planning - Cost Analysis Begins**\n\nOkay, so the airfare's confirmed: 3200 RMB. That's a decent starting point. Now, I need to drill down and understand the projected costs for the trip. The next logical step is to get a handle on the budget for accommodation. I'm thinking I'll also need to break down the expected cost of food and beverage to get a better overall picture of the trip's finances. This is all part of the due diligence process and ensures a realistic budget.\n\n\n",
+          "credential": "Er0BCroBARFNMg95ZKgNS5ah6wPlNs73O/caT+e+TepLrHvqFQ/aQwOxzTZ+WYWIpqSYl+3ZhLvq4Xi3+bXSmXwqXsZKbzt17oZqj13tdU72HpYmnBS4Ok2lfmNdcNiEnA0MKlhx40Nsr2xh/9S39ZxaKjkwKc2jkOAyq6k6yJ1UGrJR9R67nktUXlY6irRH9UJt6bTPHJasnJO+nhLCRB/wzBkEjhnhRinR7T5gT3pGL859c0eBtuOlDKeog7dh",
+          "issuer": "gemini",
+          "kind": "summary"
+        },
+        "tool_calls": [
+          {
+            "name": "get_hotel_price",
+            "arguments": {
+              "city": "东京"
+            },
+            "call_id": "call_982005"
+          }
+        ],
+        "tool_call_id": null,
+        "tool_name": null,
+        "issuer": "gemini",
+        "native": {
+          "parts": [
+            {
+              "text": "Here's my thought process, as it stands:\n\n**Initial Travel Planning - Cost Analysis Begins**\n\nOkay, so the airfare's confirmed: 3200 RMB. That's a decent starting point. Now, I need to drill down and understand the projected costs for the trip. The next logical step is to get a handle on the budget for accommodation. I'm thinking I'll also need to break down the expected cost of food and beverage to get a better overall picture of the trip's finances. This is all part of the due diligence process and ensures a realistic budget.\n\n\n",
+              "thought": true
+            },
+            {
+              "functionCall": {
+                "name": "get_hotel_price",
+                "args": {
+                  "city": "东京"
+                },
+                "id": "call_982005"
+              },
+              "thoughtSignature": "Er0BCroBARFNMg95ZKgNS5ah6wPlNs73O/caT+e+TepLrHvqFQ/aQwOxzTZ+WYWIpqSYl+3ZhLvq4Xi3+bXSmXwqXsZKbzt17oZqj13tdU72HpYmnBS4Ok2lfmNdcNiEnA0MKlhx40Nsr2xh/9S39ZxaKjkwKc2jkOAyq6k6yJ1UGrJR9R67nktUXlY6irRH9UJt6bTPHJasnJO+nhLCRB/wzBkEjhnhRinR7T5gT3pGL859c0eBtuOlDKeog7dh"
+            },
+            {
+              "functionCall": {
+                "name": "get_meal_budget",
+                "args": {
+                  "city": "东京"
+                },
+                "id": "call_982006"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "role": "tool",
+        "text": "{\"city\":\"东京\",\"per_night\":18000,\"currency\":\"JPY\"}",
+        "reasoning": null,
+        "tool_calls": [],
+        "tool_call_id": "call_982005",
+        "tool_name": "get_hotel_price",
+        "issuer": null,
+        "native": null
+      }
+    ]
+  },
+  "exchanges": [
+    {
+      "provider": "gemini",
+      "arm": "naive",
+      "request": {
+        "contents": [
+          {
+            "role": "user",
+            "parts": [
+              {
+                "text": "帮我算一下从北京去东京出差的总预算：往返机票、住宿和餐费都要算上，行程是 3 晚 4 天，住宿按 3 晚、餐费按 4 天计。最后用人民币给出一个总额。"
+              }
+            ]
+          }
+        ],
+        "tools": [
+          {
+            "functionDeclarations": [
+              {
+                "name": "get_flight_price",
+                "description": "查询往返机票价格（人民币）",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "city": {
+                      "type": "string",
+                      "description": "目的地城市"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ]
+                }
+              },
+              {
+                "name": "get_hotel_price",
+                "description": "查询每晚住宿价格及其币种",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ]
+                }
+              },
+              {
+                "name": "get_meal_budget",
+                "description": "查询每日餐费预算及其币种",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ]
+                }
+              },
+              {
+                "name": "get_exchange_rate",
+                "description": "查询该币种兑人民币的汇率",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "currency": {
+                      "type": "string",
+                      "description": "如 JPY"
+                    }
+                  },
+                  "required": [
+                    "currency"
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "generationConfig": {
+          "thinkingConfig": {
+            "includeThoughts": true
+          }
+        },
+        "_model": "gemini-3.5-flash",
+        "systemInstruction": {
+          "parts": [
+            {
+              "text": "你是一个差旅助理。需要数据时调用工具，不要凭印象编造价格或汇率。拿齐数据后给出人民币总额。"
+            }
+          ]
+        }
+      },
+      "status": 200,
+      "response": {
+        "candidates": [
+          {
+            "content": {
+              "parts": [
+                {
+                  "text": "**My Thought Process: Budgeting a Trip to Tokyo**\n\nOkay, here's how I'm going to approach calculating the total budget for my upcoming business trip from Beijing to Tokyo. First, I need to be absolutely clear on what I'm aiming for: a total budget in Chinese Yuan (CNY) for the round-trip flight, three nights of accommodation, and four days of meals. Clear goal, clear starting point.\n\nNow, I'm breaking down the required data. I'll need:\n\n*   The price of round-trip flights between Beijing and Tokyo, or just the \"Tokyo\" ticket price. I'll need to confirm that.\n*   The nightly cost of accommodation in Tokyo, and in what currency it's priced.\n*   The daily food budget for Tokyo, and again, the currency.\n\nThe currency part is key. If the hotel or food prices are *not* in CNY, I *must* get the appropriate exchange rate.\n\nNext, it's about planning the sequence of tools I'll be using. Here's my strategy:\n\n*   I'll start with `get_flight_price` to grab those flight costs.\n*   Next, I'll call `get_hotel_price` for the accommodation info.\n*   Then, `get_meal_budget` to figure out my food costs.\n*   Here's where it gets interesting: I'll need to check the currencies returned by those three calls. If I get anything other than CNY (like JPY, for example), I need to immediately call `get_exchange_rate` to convert it.\n*   Finally, with all the data converted to CNY, it's simple math. I'll total everything up.\n\nSo, first step: I'm calling those first three tools to get the core numbers.\n\n\n",
+                  "thought": true
+                },
+                {
+                  "functionCall": {
+                    "name": "get_flight_price",
+                    "args": {
+                      "city": "东京"
+                    },
+                    "id": "call_6987088"
+                  },
+                  "thoughtSignature": "EuAHCt0HARFNMg8zzvLOX70ECnLCg5023TbRLffmTUSUPdN0SbfM6u8mMf1DMaf1Cqk0zLCQjlVEjd+Y4menqebD9n3ALx/gJeOe3F8ttlQkXfi/VtCTpsiZUripXGHWmZtEZ090IVyzjwOE5MW8x9XbhsGl5uMMsw/leHIDH03rtWwDPoZ2buFlH3JQcEHk7xAlLXOZxjz75QtLFbHHG4CvT0u3l7IyxXqrSAcG4k37fIy8e1K1TzmmCziQ860//Yr9PH729mMOyoFcXfkxcc2vC8IfOdO0ZrkaNHjIzfVePDwnMhK4srcTc6XqaIAvq/cxT9JrBN7EtcvsiQYC2hm+85NPCeCEO5mZB/AkduII044S72SEW02OQ1b0+uasCQ9/k1BrqFi4O/bVVtMiXncnlcTbLvngYeDtsk6EkXtfDXLnn5h3WELMn4qInJvDuIBjS302ldHzCi60hOthcEdT+zA7IoQbgGw17mDchJqPKbLh+xncCFnUR4+EPLtyKl+FyLKlxeMa1Sn6LdfGrzJ9IkYJAmAyarGp6igRqpkdAGHo1wV+JBzPv5C+x2yJJHomC75/R8J9SobCc3/JrC3SPlNvl82pDiR69il6Ww/1asrUD1YJJmP6vNbf2znAIbvsXcxwUpEVAdbInstQKeie7+1DxwhUJdCIrUIOmBCgbJnXPCdPOT3gOyVK7lMQuZPoXI/TV4aT/UFlaM5g3rsIDLX34iq1WZbXYjDPUw1AMqlD7yua4oPILyvBoJOaUtg3rmABA99ag/xkX7Pt8Q2xfjbuaEtVXjWaTFXn/4uXiXADahGfSRLyXhyxhuEBNOh5zGMgvl3cNCr2X5GaAfJPyc7gF41YPSnJLA8n2f+GmRGzq/g5CftqXeJsN0+py2Y9bKCnHl68nm1Oa4+vpPcGlQ6nJroe1geO+DId6RB7rXT11LDyCumY9gCyaDGm/TyAcW74AMQS2TRzIUCAHjmJ7tctl0QIhgXLDMbbGpju1Y/GhRHAvYgGz5oiksenBK/yL2hdnSSLVKsUwbE7ucooGOwEFBc/FshqFID9tplq/CUzusHAHhvV2H7MVRqZGUHjzBFLtkPkJStK1cRbcdPwHISS85eAh9TUB+OO6EkOkr/O4MSbxMuWDY1THK9KKJRuRQ5imGvfFfwv1mQ5HajZARg/uJAkv6F+/F41XmnsRFi3Kbj+xybckGmCqIrnRXokGrv2pcLftrzXQjnjo4WiAkPOJs6k37Pm9maS9MLzRiEik0rm1zwoJdV5ulAoSyMxJdR0TkRL9tGcL/7VN+oaO++DN2kNdnTnRwbeycKq3oE="
+                },
+                {
+                  "functionCall": {
+                    "name": "get_hotel_price",
+                    "args": {
+                      "city": "东京"
+                    },
+                    "id": "call_6987089"
+                  }
+                },
+                {
+                  "functionCall": {
+                    "name": "get_meal_budget",
+                    "args": {
+                      "city": "东京"
+                    },
+                    "id": "call_6987090"
+                  }
+                }
+              ],
+              "role": "model"
+            },
+            "finishReason": "STOP",
+            "index": 0,
+            "finishMessage": "Model generated function call(s)."
+          }
+        ],
+        "usageMetadata": {
+          "promptTokenCount": 294,
+          "candidatesTokenCount": 54,
+          "totalTokenCount": 586,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 294
+            }
+          ],
+          "thoughtsTokenCount": 238,
+          "serviceTier": "standard"
+        },
+        "modelVersion": "gemini-3.5-flash",
+        "responseId": "DV-MauHJO5HyqtsP2Lvi6QU"
+      }
+    },
+    {
+      "provider": "gemini",
+      "arm": "naive",
+      "request": {
+        "contents": [
+          {
+            "role": "user",
+            "parts": [
+              {
+                "text": "帮我算一下从北京去东京出差的总预算：往返机票、住宿和餐费都要算上，行程是 3 晚 4 天，住宿按 3 晚、餐费按 4 天计。最后用人民币给出一个总额。"
+              }
+            ]
+          },
+          {
+            "role": "model",
+            "parts": [
+              {
+                "text": "**My Thought Process: Budgeting a Trip to Tokyo**\n\nOkay, here's how I'm going to approach calculating the total budget for my upcoming business trip from Beijing to Tokyo. First, I need to be absolutely clear on what I'm aiming for: a total budget in Chinese Yuan (CNY) for the round-trip flight, three nights of accommodation, and four days of meals. Clear goal, clear starting point.\n\nNow, I'm breaking down the required data. I'll need:\n\n*   The price of round-trip flights between Beijing and Tokyo, or just the \"Tokyo\" ticket price. I'll need to confirm that.\n*   The nightly cost of accommodation in Tokyo, and in what currency it's priced.\n*   The daily food budget for Tokyo, and again, the currency.\n\nThe currency part is key. If the hotel or food prices are *not* in CNY, I *must* get the appropriate exchange rate.\n\nNext, it's about planning the sequence of tools I'll be using. Here's my strategy:\n\n*   I'll start with `get_flight_price` to grab those flight costs.\n*   Next, I'll call `get_hotel_price` for the accommodation info.\n*   Then, `get_meal_budget` to figure out my food costs.\n*   Here's where it gets interesting: I'll need to check the currencies returned by those three calls. If I get anything other than CNY (like JPY, for example), I need to immediately call `get_exchange_rate` to convert it.\n*   Finally, with all the data converted to CNY, it's simple math. I'll total everything up.\n\nSo, first step: I'm calling those first three tools to get the core numbers.\n\n\n",
+                "thought": true
+              },
+              {
+                "functionCall": {
+                  "name": "get_flight_price",
+                  "args": {
+                    "city": "东京"
+                  }
+                },
+                "thoughtSignature": "EuAHCt0HARFNMg8zzvLOX70ECnLCg5023TbRLffmTUSUPdN0SbfM6u8mMf1DMaf1Cqk0zLCQjlVEjd+Y4menqebD9n3ALx/gJeOe3F8ttlQkXfi/VtCTpsiZUripXGHWmZtEZ090IVyzjwOE5MW8x9XbhsGl5uMMsw/leHIDH03rtWwDPoZ2buFlH3JQcEHk7xAlLXOZxjz75QtLFbHHG4CvT0u3l7IyxXqrSAcG4k37fIy8e1K1TzmmCziQ860//Yr9PH729mMOyoFcXfkxcc2vC8IfOdO0ZrkaNHjIzfVePDwnMhK4srcTc6XqaIAvq/cxT9JrBN7EtcvsiQYC2hm+85NPCeCEO5mZB/AkduII044S72SEW02OQ1b0+uasCQ9/k1BrqFi4O/bVVtMiXncnlcTbLvngYeDtsk6EkXtfDXLnn5h3WELMn4qInJvDuIBjS302ldHzCi60hOthcEdT+zA7IoQbgGw17mDchJqPKbLh+xncCFnUR4+EPLtyKl+FyLKlxeMa1Sn6LdfGrzJ9IkYJAmAyarGp6igRqpkdAGHo1wV+JBzPv5C+x2yJJHomC75/R8J9SobCc3/JrC3SPlNvl82pDiR69il6Ww/1asrUD1YJJmP6vNbf2znAIbvsXcxwUpEVAdbInstQKeie7+1DxwhUJdCIrUIOmBCgbJnXPCdPOT3gOyVK7lMQuZPoXI/TV4aT/UFlaM5g3rsIDLX34iq1WZbXYjDPUw1AMqlD7yua4oPILyvBoJOaUtg3rmABA99ag/xkX7Pt8Q2xfjbuaEtVXjWaTFXn/4uXiXADahGfSRLyXhyxhuEBNOh5zGMgvl3cNCr2X5GaAfJPyc7gF41YPSnJLA8n2f+GmRGzq/g5CftqXeJsN0+py2Y9bKCnHl68nm1Oa4+vpPcGlQ6nJroe1geO+DId6RB7rXT11LDyCumY9gCyaDGm/TyAcW74AMQS2TRzIUCAHjmJ7tctl0QIhgXLDMbbGpju1Y/GhRHAvYgGz5oiksenBK/yL2hdnSSLVKsUwbE7ucooGOwEFBc/FshqFID9tplq/CUzusHAHhvV2H7MVRqZGUHjzBFLtkPkJStK1cRbcdPwHISS85eAh9TUB+OO6EkOkr/O4MSbxMuWDY1THK9KKJRuRQ5imGvfFfwv1mQ5HajZARg/uJAkv6F+/F41XmnsRFi3Kbj+xybckGmCqIrnRXokGrv2pcLftrzXQjnjo4WiAkPOJs6k37Pm9maS9MLzRiEik0rm1zwoJdV5ulAoSyMxJdR0TkRL9tGcL/7VN+oaO++DN2kNdnTnRwbeycKq3oE="
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "functionResponse": {
+                  "name": "get_flight_price",
+                  "response": {
+                    "result": "{\"city\":\"东京\",\"round_trip_cny\":3200}"
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "tools": [
+          {
+            "functionDeclarations": [
+              {
+                "name": "get_flight_price",
+                "description": "查询往返机票价格（人民币）",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "city": {
+                      "type": "string",
+                      "description": "目的地城市"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ]
+                }
+              },
+              {
+                "name": "get_hotel_price",
+                "description": "查询每晚住宿价格及其币种",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ]
+                }
+              },
+              {
+                "name": "get_meal_budget",
+                "description": "查询每日餐费预算及其币种",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ]
+                }
+              },
+              {
+                "name": "get_exchange_rate",
+                "description": "查询该币种兑人民币的汇率",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "currency": {
+                      "type": "string",
+                      "description": "如 JPY"
+                    }
+                  },
+                  "required": [
+                    "currency"
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "generationConfig": {
+          "thinkingConfig": {
+            "includeThoughts": true
+          }
+        },
+        "_model": "gemini-3.5-flash",
+        "systemInstruction": {
+          "parts": [
+            {
+              "text": "你是一个差旅助理。需要数据时调用工具，不要凭印象编造价格或汇率。拿齐数据后给出人民币总额。"
+            }
+          ]
+        }
+      },
+      "status": 200,
+      "response": {
+        "candidates": [
+          {
+            "content": {
+              "parts": [
+                {
+                  "text": "Here's my thought process, as it stands:\n\n**Initial Travel Planning - Cost Analysis Begins**\n\nOkay, so the airfare's confirmed: 3200 RMB. That's a decent starting point. Now, I need to drill down and understand the projected costs for the trip. The next logical step is to get a handle on the budget for accommodation. I'm thinking I'll also need to break down the expected cost of food and beverage to get a better overall picture of the trip's finances. This is all part of the due diligence process and ensures a realistic budget.\n\n\n",
+                  "thought": true
+                },
+                {
+                  "functionCall": {
+                    "name": "get_hotel_price",
+                    "args": {
+                      "city": "东京"
+                    },
+                    "id": "call_982005"
+                  },
+                  "thoughtSignature": "Er0BCroBARFNMg95ZKgNS5ah6wPlNs73O/caT+e+TepLrHvqFQ/aQwOxzTZ+WYWIpqSYl+3ZhLvq4Xi3+bXSmXwqXsZKbzt17oZqj13tdU72HpYmnBS4Ok2lfmNdcNiEnA0MKlhx40Nsr2xh/9S39ZxaKjkwKc2jkOAyq6k6yJ1UGrJR9R67nktUXlY6irRH9UJt6bTPHJasnJO+nhLCRB/wzBkEjhnhRinR7T5gT3pGL859c0eBtuOlDKeog7dh"
+                },
+                {
+                  "functionCall": {
+                    "name": "get_meal_budget",
+                    "args": {
+                      "city": "东京"
+                    },
+                    "id": "call_982006"
+                  }
+                }
+              ],
+              "role": "model"
+            },
+            "finishReason": "STOP",
+            "index": 0,
+            "finishMessage": "Model generated function call(s)."
+          }
+        ],
+        "usageMetadata": {
+          "promptTokenCount": 975,
+          "candidatesTokenCount": 36,
+          "totalTokenCount": 1031,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 975
+            }
+          ],
+          "thoughtsTokenCount": 20,
+          "serviceTier": "standard"
+        },
+        "modelVersion": "gemini-3.5-flash",
+        "responseId": "G1-MasDoC6qEz7IPjonNuQM"
+      }
+    },
+    {
+      "provider": "anthropic",
+      "arm": "naive",
+      "request": {
+        "model": "claude-haiku-4-5-20251001",
+        "max_tokens": 4096,
+        "thinking": {
+          "type": "enabled",
+          "budget_tokens": 2048
+        },
+        "tools": [
+          {
+            "name": "get_flight_price",
+            "description": "查询往返机票价格（人民币）",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "city": {
+                  "type": "string",
+                  "description": "目的地城市"
+                }
+              },
+              "required": [
+                "city"
+              ]
+            }
+          },
+          {
+            "name": "get_hotel_price",
+            "description": "查询每晚住宿价格及其币种",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "city": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "city"
+              ]
+            }
+          },
+          {
+            "name": "get_meal_budget",
+            "description": "查询每日餐费预算及其币种",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "city": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "city"
+              ]
+            }
+          },
+          {
+            "name": "get_exchange_rate",
+            "description": "查询该币种兑人民币的汇率",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "currency": {
+                  "type": "string",
+                  "description": "如 JPY"
+                }
+              },
+              "required": [
+                "currency"
+              ]
+            }
+          }
+        ],
+        "messages": [
+          {
+            "role": "user",
+            "content": "帮我算一下从北京去东京出差的总预算：往返机票、住宿和餐费都要算上，行程是 3 晚 4 天，住宿按 3 晚、餐费按 4 天计。最后用人民币给出一个总额。"
+          },
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "thinking",
+                "thinking": "**My Thought Process: Budgeting a Trip to Tokyo**\n\nOkay, here's how I'm going to approach calculating the total budget for my upcoming business trip from Beijing to Tokyo. First, I need to be absolutely clear on what I'm aiming for: a total budget in Chinese Yuan (CNY) for the round-trip flight, three nights of accommodation, and four days of meals. Clear goal, clear starting point.\n\nNow, I'm breaking down the required data. I'll need:\n\n*   The price of round-trip flights between Beijing and Tokyo, or just the \"Tokyo\" ticket price. I'll need to confirm that.\n*   The nightly cost of accommodation in Tokyo, and in what currency it's priced.\n*   The daily food budget for Tokyo, and again, the currency.\n\nThe currency part is key. If the hotel or food prices are *not* in CNY, I *must* get the appropriate exchange rate.\n\nNext, it's about planning the sequence of tools I'll be using. Here's my strategy:\n\n*   I'll start with `get_flight_price` to grab those flight costs.\n*   Next, I'll call `get_hotel_price` for the accommodation info.\n*   Then, `get_meal_budget` to figure out my food costs.\n*   Here's where it gets interesting: I'll need to check the currencies returned by those three calls. If I get anything other than CNY (like JPY, for example), I need to immediately call `get_exchange_rate` to convert it.\n*   Finally, with all the data converted to CNY, it's simple math. I'll total everything up.\n\nSo, first step: I'm calling those first three tools to get the core numbers.\n\n\n",
+                "signature": "EuAHCt0HARFNMg8zzvLOX70ECnLCg5023TbRLffmTUSUPdN0SbfM6u8mMf1DMaf1Cqk0zLCQjlVEjd+Y4menqebD9n3ALx/gJeOe3F8ttlQkXfi/VtCTpsiZUripXGHWmZtEZ090IVyzjwOE5MW8x9XbhsGl5uMMsw/leHIDH03rtWwDPoZ2buFlH3JQcEHk7xAlLXOZxjz75QtLFbHHG4CvT0u3l7IyxXqrSAcG4k37fIy8e1K1TzmmCziQ860//Yr9PH729mMOyoFcXfkxcc2vC8IfOdO0ZrkaNHjIzfVePDwnMhK4srcTc6XqaIAvq/cxT9JrBN7EtcvsiQYC2hm+85NPCeCEO5mZB/AkduII044S72SEW02OQ1b0+uasCQ9/k1BrqFi4O/bVVtMiXncnlcTbLvngYeDtsk6EkXtfDXLnn5h3WELMn4qInJvDuIBjS302ldHzCi60hOthcEdT+zA7IoQbgGw17mDchJqPKbLh+xncCFnUR4+EPLtyKl+FyLKlxeMa1Sn6LdfGrzJ9IkYJAmAyarGp6igRqpkdAGHo1wV+JBzPv5C+x2yJJHomC75/R8J9SobCc3/JrC3SPlNvl82pDiR69il6Ww/1asrUD1YJJmP6vNbf2znAIbvsXcxwUpEVAdbInstQKeie7+1DxwhUJdCIrUIOmBCgbJnXPCdPOT3gOyVK7lMQuZPoXI/TV4aT/UFlaM5g3rsIDLX34iq1WZbXYjDPUw1AMqlD7yua4oPILyvBoJOaUtg3rmABA99ag/xkX7Pt8Q2xfjbuaEtVXjWaTFXn/4uXiXADahGfSRLyXhyxhuEBNOh5zGMgvl3cNCr2X5GaAfJPyc7gF41YPSnJLA8n2f+GmRGzq/g5CftqXeJsN0+py2Y9bKCnHl68nm1Oa4+vpPcGlQ6nJroe1geO+DId6RB7rXT11LDyCumY9gCyaDGm/TyAcW74AMQS2TRzIUCAHjmJ7tctl0QIhgXLDMbbGpju1Y/GhRHAvYgGz5oiksenBK/yL2hdnSSLVKsUwbE7ucooGOwEFBc/FshqFID9tplq/CUzusHAHhvV2H7MVRqZGUHjzBFLtkPkJStK1cRbcdPwHISS85eAh9TUB+OO6EkOkr/O4MSbxMuWDY1THK9KKJRuRQ5imGvfFfwv1mQ5HajZARg/uJAkv6F+/F41XmnsRFi3Kbj+xybckGmCqIrnRXokGrv2pcLftrzXQjnjo4WiAkPOJs6k37Pm9maS9MLzRiEik0rm1zwoJdV5ulAoSyMxJdR0TkRL9tGcL/7VN+oaO++DN2kNdnTnRwbeycKq3oE="
+              },
+              {
+                "type": "tool_use",
+                "id": "call_6987088",
+                "name": "get_flight_price",
+                "input": {
+                  "city": "东京"
+                }
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "tool_result",
+                "tool_use_id": "call_6987088",
+                "content": "{\"city\":\"东京\",\"round_trip_cny\":3200}"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "thinking",
+                "thinking": "Here's my thought process, as it stands:\n\n**Initial Travel Planning - Cost Analysis Begins**\n\nOkay, so the airfare's confirmed: 3200 RMB. That's a decent starting point. Now, I need to drill down and understand the projected costs for the trip. The next logical step is to get a handle on the budget for accommodation. I'm thinking I'll also need to break down the expected cost of food and beverage to get a better overall picture of the trip's finances. This is all part of the due diligence process and ensures a realistic budget.\n\n\n",
+                "signature": "Er0BCroBARFNMg95ZKgNS5ah6wPlNs73O/caT+e+TepLrHvqFQ/aQwOxzTZ+WYWIpqSYl+3ZhLvq4Xi3+bXSmXwqXsZKbzt17oZqj13tdU72HpYmnBS4Ok2lfmNdcNiEnA0MKlhx40Nsr2xh/9S39ZxaKjkwKc2jkOAyq6k6yJ1UGrJR9R67nktUXlY6irRH9UJt6bTPHJasnJO+nhLCRB/wzBkEjhnhRinR7T5gT3pGL859c0eBtuOlDKeog7dh"
+              },
+              {
+                "type": "tool_use",
+                "id": "call_982005",
+                "name": "get_hotel_price",
+                "input": {
+                  "city": "东京"
+                }
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "tool_result",
+                "tool_use_id": "call_982005",
+                "content": "{\"city\":\"东京\",\"per_night\":18000,\"currency\":\"JPY\"}"
+              }
+            ]
+          }
+        ],
+        "system": "你是一个差旅助理。需要数据时调用工具，不要凭印象编造价格或汇率。拿齐数据后给出人民币总额。"
+      },
+      "status": 400,
+      "error_body": "{\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"messages.1.content.0: Invalid `signature` in `thinking` block\"},\"request_id\":\"req_011CeMneSoXPoTTcPe3w6cwA\"}"
+    }
+  ],
+  "tool_calls_total": 2
+}

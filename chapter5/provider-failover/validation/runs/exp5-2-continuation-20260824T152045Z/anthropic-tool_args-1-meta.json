@@ -1,0 +1,128 @@
+{
+  "row": {
+    "provider": "anthropic",
+    "break_point": "tool_args",
+    "repeat": 1,
+    "reproducible": true,
+    "strategy": "meta",
+    "cut": {
+      "reasoning_chars": 0,
+      "text_chars": 17,
+      "tool_name": "get_hotel_price",
+      "tool_args": "{\"city\": \"",
+      "truncated": true,
+      "closed": false
+    },
+    "applicable": true,
+    "note": null,
+    "output_tokens": 291,
+    "recovered": true,
+    "json_valid": true,
+    "args_correct": true,
+    "duplicate_side_effects": 0
+  },
+  "partial": {
+    "reasoning": "",
+    "text": "现在让我获取东京的住宿和餐费信息：",
+    "tool_name": "get_hotel_price",
+    "tool_args": "{\"city\": \"",
+    "tool_index": 1,
+    "tool_args_closed": false,
+    "truncated": true,
+    "finished": false
+  },
+  "result": {
+    "strategy": "meta",
+    "applicable": true,
+    "note": null,
+    "usage": {
+      "input": 1257,
+      "output": 291
+    },
+    "raw": {
+      "model": "claude-haiku-4-5-20251001",
+      "id": "msg_011CeMowDfqdyBYGerpS3Lwb",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "thinking",
+          "thinking": "用户说我之前的回复被截断了，在\"{\"city\": \"」处。但我看我刚才的输出是完整的，只是我调用了get_flight_price函数，并得到了返回结果：{\"city\":\"东京\",\"round_trip_cny\":3200}\n\n现在我需要继续调用其他函数来获取酒店价格、餐费预算和汇率信息。由于东京在日本，可能需要用日元或人民币的汇率。让我继续调用剩下的函数。",
+          "signature": "Ep4FCpoBCBEYAipABN0ebrMdB0lQThKxA185G3F71oeEHKuvsYFmwL1Dp4XfF6Yo8OWEL2b5xdLAVX3Bhym0Ge2Z94RIXt8TuDCA1TIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okNTM3MTEzZjQtZmI1Ny00NDc0LTgyOTYtYTA0OWExMGQ2YzMyqAGVxrHUBhIM+29l2mLasFryhh6IGgyMBZNpAuKauRGqsbYiMJnCt50ZtjSaSU5oSm06nvqkdOzppvFAk3pZvUXAQaamdifiAjasYQkaY+HmrgCmmyqwA3BFQmLYQAPtoe5kp8NoeYLQqltJy7ugYRsLvtWAXmNauRDfg6lqlaP+rM3Qtq9a2zc5Gw08Dk+OtAWDsgBQ/SpJEFg/e1UvOpHNRGt4y2cSSWKtoc12sSRwK5Sv8gzgajpEQhUq7OsPRm9gP/4XB3uf07iFGrmCmCQDm8uSnDmIGupNX3TzI4MWpNDItp6XC44vzyCwewHC1ayU/ldLCAoZKQT5jwP3o7JEGdeXPfds/i3kUpPP3gpEGgNoeQ2rQfiN52eJ8T3YtA4wdwuHhi9bSrRPAaHi5/SgKteXCSoR9Ob5uM7dbiHJkI+J6WiQFmiQ64O6dhahf9fCP9HWLFZkbpeoRDggGElgcSyLbKSCzhRy49Vc95hPV+ow4GTBrf7mGqIx2b+yizsZcq8mbWNFhDiZsx4nFBTPrjms0d6GLVh01sdy5grw+PC0tEc9Ox5/wlDLbnbwq4rTHFLhQhRumVbqhvVkywF+m4NPj9lThaF7NadhOM4zGhcnrIgTOPvAXtRtp8iULFAsjkR4TAebvQBW6lgF8s5PgYcBWlq9Vvtv1mm1UIAJMexgFH+bDRgB"
+        },
+        {
+          "type": "tool_use",
+          "id": "toolu_018t9A99tsHEuYLyRLLxCvDw",
+          "name": "get_hotel_price",
+          "input": {
+            "city": "东京"
+          },
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "type": "tool_use",
+          "id": "toolu_01DE3TSZfGynzzSK2TEEeU7n",
+          "name": "get_meal_budget",
+          "input": {
+            "city": "东京"
+          },
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "type": "tool_use",
+          "id": "toolu_01KQAg9tLkKMA3hGqKafVN9r",
+          "name": "get_exchange_rate",
+          "input": {
+            "currency": "JPY"
+          },
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "stop_reason": "tool_use",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 1257,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 291,
+        "output_tokens_details": {
+          "thinking_tokens": 155
+        },
+        "service_tier": "standard",
+        "inference_geo": "not_available"
+      }
+    },
+    "text": "",
+    "tool_calls": [
+      {
+        "name": "get_hotel_price",
+        "arguments": {
+          "city": "东京"
+        }
+      },
+      {
+        "name": "get_meal_budget",
+        "arguments": {
+          "city": "东京"
+        }
+      },
+      {
+        "name": "get_exchange_rate",
+        "arguments": {
+          "currency": "JPY"
+        }
+      }
+    ]
+  }
+}

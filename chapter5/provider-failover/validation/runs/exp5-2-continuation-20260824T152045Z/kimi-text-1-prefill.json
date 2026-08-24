@@ -1,0 +1,71 @@
+{
+  "row": {
+    "provider": "kimi",
+    "break_point": "text",
+    "repeat": 1,
+    "reproducible": true,
+    "strategy": "prefill",
+    "cut": {
+      "reasoning_chars": 193,
+      "text_chars": 30,
+      "tool_name": null,
+      "tool_args": "",
+      "truncated": true,
+      "closed": false
+    },
+    "applicable": true,
+    "note": null,
+    "output_tokens": 234,
+    "recovered": true,
+    "json_valid": null,
+    "args_correct": null,
+    "duplicate_side_effects": 0,
+    "answer_correct": true
+  },
+  "partial": {
+    "reasoning": "Flight: 3200 CNY round trip.\nHotel: 18000 JPY/night × 3 nights = 54000 JPY × 0.048 = 2592 CNY.\nMeals: 6000 JPY/day × 4 days = 24000 JPY × 0.048 = 1152 CNY.\nTotal: 3200 + 2592 + 1152 = 6944 CNY.",
+    "text": "已查到东京差旅所需全部数据，计算如下：\n\n**费用明细（按 ",
+    "tool_name": null,
+    "tool_args": "",
+    "tool_index": null,
+    "tool_args_closed": false,
+    "truncated": true,
+    "finished": false
+  },
+  "result": {
+    "strategy": "prefill",
+    "applicable": true,
+    "note": null,
+    "usage": {
+      "input": 843,
+      "output": 234
+    },
+    "raw": {
+      "id": "chatcmpl-6a8c61feba8094f1c046dd10",
+      "object": "chat.completion",
+      "created": 1787585023,
+      "model": "kimi-k3",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "3 晚 4 天）**\n\n| 项目 | 计算方式 | 金额 |\n|---|---|---|\n| 往返机票 | 北京 ⇄ 东京 | ¥3,200 |\n| 住宿 | 18,000 日元/晚 × 3 晚 | 54,000 日元 |\n| 餐费 | 6,000 日元/天 × 4 天 | 24,000 日元 |\n\n**日元部分换算**（汇率：1 日元 = 0.048 人民币）\n\n- 住宿：54,000 × 0.048 = ¥2,592\n- 餐费：24,000 × 0.048 = ¥1,152\n- 日元部分小计：78,000 日元 = ¥3,744\n\n**总预算**\n\n3,200（机票）+ 2,592（住宿）+ 1,152（餐费）= **¥6,944**\n\n北京至东京 3 晚 4 天出差总预算约为 **人民币 6,944 元**。"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 843,
+        "completion_tokens": 234,
+        "total_tokens": 1077,
+        "cached_tokens": 768,
+        "prompt_tokens_details": {
+          "cached_tokens": 768
+        }
+      }
+    },
+    "text": "3 晚 4 天）**\n\n| 项目 | 计算方式 | 金额 |\n|---|---|---|\n| 往返机票 | 北京 ⇄ 东京 | ¥3,200 |\n| 住宿 | 18,000 日元/晚 × 3 晚 | 54,000 日元 |\n| 餐费 | 6,000 日元/天 × 4 天 | 24,000 日元 |\n\n**日元部分换算**（汇率：1 日元 = 0.048 人民币）\n\n- 住宿：54,000 × 0.048 = ¥2,592\n- 餐费：24,000 × 0.048 = ¥1,152\n- 日元部分小计：78,000 日元 = ¥3,744\n\n**总预算**\n\n3,200（机票）+ 2,592（住宿）+ 1,152（餐费）= **¥6,944**\n\n北京至东京 3 晚 4 天出差总预算约为 **人民币 6,944 元**。",
+    "tool_calls": []
+  }
+}

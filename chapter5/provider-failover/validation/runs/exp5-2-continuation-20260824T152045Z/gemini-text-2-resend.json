@@ -1,0 +1,82 @@
+{
+  "row": {
+    "provider": "gemini",
+    "break_point": "text",
+    "repeat": 2,
+    "reproducible": true,
+    "strategy": "resend",
+    "cut": {
+      "reasoning_chars": 0,
+      "text_chars": 30,
+      "tool_name": null,
+      "tool_args": "",
+      "truncated": true,
+      "closed": false
+    },
+    "applicable": true,
+    "note": null,
+    "output_tokens": 705,
+    "recovered": true,
+    "json_valid": null,
+    "args_correct": null,
+    "duplicate_side_effects": 0,
+    "answer_correct": true
+  },
+  "partial": {
+    "reasoning": "",
+    "text": "根据您提供的数据，我为您计算了北京往返东京 3 晚 4 天的",
+    "tool_name": null,
+    "tool_args": "",
+    "tool_index": null,
+    "tool_args_closed": false,
+    "truncated": true,
+    "finished": false
+  },
+  "result": {
+    "strategy": "resend",
+    "applicable": true,
+    "note": null,
+    "usage": {
+      "input": 470,
+      "output": 705
+    },
+    "raw": {
+      "candidates": [
+        {
+          "content": {
+            "parts": [
+              {
+                "text": "**My Calculation of the Beijing to Tokyo Business Trip Budget**\n\nAlright, let's break this down methodically. My objective is to calculate the total budget in CNY for this business trip from Beijing to Tokyo. I've got the following information: 3 nights, 4 days.\n\nFirst, I see the round-trip airfare is 3200 CNY. That's a straightforward starting point.\n\nNext, I need to convert the Japanese Yen expenses to CNY. The hotel is 18000 JPY per night for 3 nights, totaling 54000 JPY. The daily meal allowance is 6000 JPY for 4 days, which is 24000 JPY.\n\nNow, let's sum up the expenses in JPY: 54000 JPY (accommodation) + 24000 JPY (meals) = 78000 JPY.\n\nThe exchange rate is 0.048 CNY per JPY. So, to convert the JPY expenses to CNY, I multiply: 78000 JPY * 0.048 = 3744 CNY.\n\nFinally, I add the airfare to the converted JPY expenses: 3200 CNY (airfare) + 3744 CNY (JPY expenses) = 6944 CNY.\n\nTherefore, the total estimated budget for this business trip is 6944 CNY. I've double-checked my calculations, and I'm confident in this figure.\n\n\n",
+                "thought": true
+              },
+              {
+                "text": "根据您提供的数据，以下是北京往返东京 3 晚 4 天出差预算的计算明细：\n\n1. **往返机票**：\n   * 3,200 元人民币\n\n2. **住宿费用（3晚）**：\n   * 单价：18,000 日元/晚\n   * 总额：18,000 * 3 = 54,000 日元\n\n3. **餐费（4天）**：\n   * 单价：6,000 日元/天\n   * 总额：6,000 * 4 = 24,000 日元\n\n4. **汇率换算**：\n   * 日元总消费：54,000（住宿） + 24,000（餐费） = 78,000 日元\n   * 按当前汇率 0.048 折算：78,000 * 0.048 = 3,744 元人民币\n\n**总预算合计**：\n3,200（机票） + 3,744（住宿及餐饮） = **6,944 元人民币**",
+                "thoughtSignature": "EoEICv4HARFNMg8FBGp6hzR9rBSf4Y4sfyzXjafPCdcUO6F7csYKWxGKuQasG0zfweFOuIuNah3/DhHY4bx9Ovs6XzvEFyyC9XWxdUa4QRpGbLWYH+nu4X12FkXlfdCQHEuzJOgSmDedUoeHwz6xNjmCF1hvJe3VSEmApLSnaY4ajmqgIOMLDPFWnerkL5U70py4+0Jm622aBZdLBV4782M11oKQWtXNJGPEXbSUwaqsRYC213ZaA6pFB73ZqpQAGPso6LYJLyuUAYOfUXvqgdaY7MOSowGbJmPJtSNmM4vPDatfgJ9VVEOISOh6UQJoqGCnjspy9P8LJqN36CeECSJp6T9KHOX/5mczwSwlTgqouH5DdQbIWK7U9VSCkc93fMzYU2iVpoI/LbvOalPFuYTVNuhFdwy5kvc5WNsYAo+w6A2l2Ya5XEnz/ZfemUYrd+aja+zcH3mjVXT6d29hmZpq8TYZJsj4frYh8D5fez30hHWSW2znEY6OhdZpUsHQazNRdFcfRsV+9qhCKVscJj+qrASQMA8JTEQrw34jGkF27WR5+VsKDiC1l52tkUncgjMmZHCadwjskgqpbleR/xkOjbjnApPozdVz4cEo3IgzD+xaMKCFDuZ4eDAkqBf06uE3OCgWCcGC+Xf1Xnr3Py3Oxnt5FOVFiV7lle5R/Vn046R3mTN6hFCvKj8qG1f+NDgE2esyWQXbF6vEKzhKDtoHI6hCjI2xbVhODqDYshyuiTMctucjk+lk/yQn+3BgZ/gGJTEfv6Dj4dM1XbKVgl4D/5QlHFWc6spFrFTQNji2eHBkbrt8VRToJKlzrPMtK0+I0JtO3U1ozSJqh92caMigS8hvvEhIEGPwwCuWI/0N8PnxZyo7I5vk5FusyUt05ymn9133BU8cINHWLI28L9XkaHAqFQcEPidy9pR0BAbKFfflSu6qWKLCOCr+RXrq+U3MNxlHzpBmpGS+K5QKIPBNO8JINuvIdYVhKXOlfskPQ2Xp9inOea77YM37T4KckJxJ3NzPCSYUa2ttQIm68jA8VstzusEZ/7lc8eej0BYnlUG4EOjUygrmVZF+bwjEndSpKEzHv+bIuT3l1JZwYUX3aXmjOGGG9EKr+FdrgsonVYvfkcaedWWes+FxEDviE0i0fKrgXOFXrwvR5avUG5pU+PIMRLtZZ9xYdsuagqYIhjy4c5aSzApOrjnpkHtgsa/zKwfCR58iad1sI+NmuqnTwJgni5cdMBuXsnxUnrjVN8aO+Z7m8uD289SlP+cf5F31gz+by+2zXHgJsEqKEROinRQ0Bcy7k1H5w7AC0ZeOLXBmhfvyrrJJvKVe4dVlbuGF+SIRcwv7JIug8xa4j3i6r4c="
+              }
+            ],
+            "role": "model"
+          },
+          "finishReason": "STOP",
+          "index": 0
+        }
+      ],
+      "usageMetadata": {
+        "promptTokenCount": 470,
+        "candidatesTokenCount": 275,
+        "totalTokenCount": 1175,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 470
+          }
+        ],
+        "thoughtsTokenCount": 430,
+        "serviceTier": "standard"
+      },
+      "modelVersion": "gemini-3.5-flash",
+      "responseId": "dmOMaq6MD426mtkPpIDPwQY"
+    },
+    "text": "根据您提供的数据，以下是北京往返东京 3 晚 4 天出差预算的计算明细：\n\n1. **往返机票**：\n   * 3,200 元人民币\n\n2. **住宿费用（3晚）**：\n   * 单价：18,000 日元/晚\n   * 总额：18,000 * 3 = 54,000 日元\n\n3. **餐费（4天）**：\n   * 单价：6,000 日元/天\n   * 总额：6,000 * 4 = 24,000 日元\n\n4. **汇率换算**：\n   * 日元总消费：54,000（住宿） + 24,000（餐费） = 78,000 日元\n   * 按当前汇率 0.048 折算：78,000 * 0.048 = 3,744 元人民币\n\n**总预算合计**：\n3,200（机票） + 3,744（住宿及餐饮） = **6,944 元人民币**",
+    "tool_calls": []
+  }
+}

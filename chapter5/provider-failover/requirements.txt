@@ -1,0 +1,3 @@
+# 只用 requests：这个实验关心的就是线上的 JSON 长什么样，SDK 会把差异藏起来。
+requests>=2.31
+pytest>=8.0

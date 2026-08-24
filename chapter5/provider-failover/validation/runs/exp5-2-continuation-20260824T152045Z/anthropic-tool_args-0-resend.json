@@ -1,0 +1,107 @@
+{
+  "row": {
+    "provider": "anthropic",
+    "break_point": "tool_args",
+    "repeat": 0,
+    "reproducible": true,
+    "strategy": "resend",
+    "cut": {
+      "reasoning_chars": 0,
+      "text_chars": 25,
+      "tool_name": "get_hotel_price",
+      "tool_args": "{\"city\": \"",
+      "truncated": true,
+      "closed": false
+    },
+    "applicable": true,
+    "note": null,
+    "output_tokens": 110,
+    "recovered": true,
+    "json_valid": true,
+    "args_correct": true,
+    "duplicate_side_effects": 0
+  },
+  "partial": {
+    "reasoning": "",
+    "text": "现在让我获取东京的住宿和餐费信息，以及日元的汇率：",
+    "tool_name": "get_hotel_price",
+    "tool_args": "{\"city\": \"",
+    "tool_index": 1,
+    "tool_args_closed": false,
+    "truncated": true,
+    "finished": false
+  },
+  "result": {
+    "strategy": "resend",
+    "applicable": true,
+    "note": null,
+    "usage": {
+      "input": 1180,
+      "output": 110
+    },
+    "raw": {
+      "model": "claude-haiku-4-5-20251001",
+      "id": "msg_011CeMoudTkw4kLdVpyBTt12",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "现在获取住宿和餐费信息："
+        },
+        {
+          "type": "tool_use",
+          "id": "toolu_018d1v1ZzfGfWVZwVphqChK6",
+          "name": "get_hotel_price",
+          "input": {
+            "city": "东京"
+          },
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "type": "tool_use",
+          "id": "toolu_01DsWbHmQPQA41Rky5oDHzug",
+          "name": "get_meal_budget",
+          "input": {
+            "city": "东京"
+          },
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "stop_reason": "tool_use",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 1180,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 110,
+        "service_tier": "standard",
+        "inference_geo": "not_available"
+      }
+    },
+    "text": "现在获取住宿和餐费信息：",
+    "tool_calls": [
+      {
+        "name": "get_hotel_price",
+        "arguments": {
+          "city": "东京"
+        }
+      },
+      {
+        "name": "get_meal_budget",
+        "arguments": {
+          "city": "东京"
+        }
+      }
+    ]
+  }
+}

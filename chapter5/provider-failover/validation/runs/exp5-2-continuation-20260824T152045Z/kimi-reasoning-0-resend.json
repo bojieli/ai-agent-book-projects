@@ -1,0 +1,107 @@
+{
+  "row": {
+    "provider": "kimi",
+    "break_point": "reasoning",
+    "repeat": 0,
+    "reproducible": true,
+    "strategy": "resend",
+    "cut": {
+      "reasoning_chars": 40,
+      "text_chars": 0,
+      "tool_name": null,
+      "tool_args": "",
+      "truncated": true,
+      "closed": false
+    },
+    "applicable": true,
+    "note": null,
+    "output_tokens": 113,
+    "recovered": true,
+    "json_valid": null,
+    "args_correct": null,
+    "duplicate_side_effects": 0
+  },
+  "partial": {
+    "reasoning": "Now I need hotel price and meal budget f",
+    "text": "",
+    "tool_name": null,
+    "tool_args": "",
+    "tool_index": null,
+    "tool_args_closed": false,
+    "truncated": true,
+    "finished": false
+  },
+  "result": {
+    "strategy": "resend",
+    "applicable": true,
+    "note": null,
+    "usage": {
+      "input": 489,
+      "output": 113
+    },
+    "raw": {
+      "id": "chatcmpl-6a8c6177be8f059a8b06fff9",
+      "object": "chat.completion",
+      "created": 1787584889,
+      "model": "kimi-k3",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "",
+            "reasoning_content": "We need need hotel and meal and exchange likely currency from outputs. Can parallel because flight known but independent. Hotel and meal for Tokyo.",
+            "tool_calls": [
+              {
+                "index": 0,
+                "id": "get_hotel_price_1",
+                "type": "function",
+                "function": {
+                  "name": "get_hotel_price",
+                  "arguments": "{\"city\":\"东京\"}"
+                }
+              },
+              {
+                "index": 1,
+                "id": "get_meal_budget_2",
+                "type": "function",
+                "function": {
+                  "name": "get_meal_budget",
+                  "arguments": "{\"city\":\"东京\"}"
+                }
+              }
+            ]
+          },
+          "finish_reason": "tool_calls"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 489,
+        "completion_tokens": 113,
+        "total_tokens": 602,
+        "cached_tokens": 256,
+        "completion_tokens_details": {
+          "reasoning_tokens": 28
+        },
+        "prompt_tokens_details": {
+          "cached_tokens": 256
+        }
+      }
+    },
+    "text": "",
+    "tool_calls": [
+      {
+        "name": "get_hotel_price",
+        "arguments": {
+          "city": "东京"
+        }
+      },
+      {
+        "name": "get_meal_budget",
+        "arguments": {
+          "city": "东京"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,514 @@
+{
+  "source": "anthropic",
+  "target": "gemini",
+  "arm": "strip",
+  "models": {
+    "anthropic": "claude-haiku-4-5-20251001",
+    "gemini": "gemini-3.5-flash"
+  },
+  "outage": {
+    "injected": true,
+    "statuses": [
+      429,
+      429,
+      503
+    ],
+    "note": "人为注入的连续过载，用来触发熔断；非厂商真实故障"
+  },
+  "handoff": {
+    "status": 400,
+    "error_body": "{\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Function call is missing a thought_signature in functionCall parts. This is required for tools to work correctly, and missing thought_signature may lead to degraded model performance. Additional data, function call `default_api:get_flight_price` , position 2. Please refer to https://ai.google.dev/gemini-api/docs/thought-signatures for more details.\",\n    \"status\": \"INVALID_ARGUMENT\"\n  }\n}\n"
+  },
+  "data_complete": false,
+  "answer_correct": false,
+  "repeated_calls": [],
+  "rounds_after_switch": 0,
+  "tokens_after_switch": 0,
+  "final_text": null,
+  "error": "400: {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Function call is missing a thought_signature in functionCall parts. This is required for tools to work correctly, and missing thought_signature may lead to degraded model performance. Additional data, function call `default_api:get_flight_price` , posi",
+  "trace": {
+    "steps": [
+      {
+        "role": "user",
+        "text": "帮我算一下从北京去东京出差的总预算：往返机票、住宿和餐费都要算上，行程是 3 晚 4 天，住宿按 3 晚、餐费按 4 天计。最后用人民币给出一个总额。",
+        "reasoning": null,
+        "tool_calls": [],
+        "tool_call_id": null,
+        "tool_name": null,
+        "issuer": null,
+        "native": null
+      },
+      {
+        "role": "assistant",
+        "text": null,
+        "reasoning": {
+          "text": "用户要求计算从北京去东京出差的总预算。需要计算：\n1. 往返机票价格（到东京）\n2. 住宿价格（3晚）\n3. 餐费（4天）\n4. 最后转换成人民币\n\n需要调用的工具：\n1. get_flight_price - 查询往返机票价格到东京\n2. get_hotel_price - 查询东京住宿价格\n3. get_meal_budget - 查询东京餐费\n4. get_exchange_rate - 查询日元对人民币的汇率\n\n这些调用之间没有依赖关系，可以一起调用。\n\n东京的城市名应该是\"东京\"。",
+          "credential": "EvwFCpoBCBEYAipAGdrYAwSJsIVgxMqS99LSseCclLSa2SG1lRr/sFU/OkBdwH1HXp6fAFjvbKOfLT2JmxKyFg7O7rtx98kuH93URTIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okNTM3MTEzZjQtZmI1Ny00NDc0LTgyOTYtYTA0OWExMGQ2YzMyqAHDvLHUBhIMFG/mKi2ktbXe6NzYGgy9uM1uJ2FQj2XYYxYiMGCP7gcfjirncdZprTJWCimqK8eeVglzJnF15yqx9XzyHgCobMDoLyXslFlUCyAdySqOBIIfK4l/01pARSzEBNgLniYIczHrwirdNZ2E34tJbeDESIjfgvFE79aQPEzLTBc7nDi+513bM3DIEtJBVWdDs50mpwlkrCjjKraUxeV1fMeL5mcrKnyeXPtNwtjZJpfsEEM6EaRLopXGePec+3yeaemjue8SPYWqzIOO664bd66NQTe+mwpHSs+TVn7a24NzpYBjZs8av4u6i5RagJYfGSksDEJ4e69OA5WVGjW9WMG6QOSnROqi74XDszNklzYjS3Hk64a2w61wmJiOtVtxejAJWfMyymiEBo6aXWVHD0NVvF/l26DsHp0mabPLt01eNqmpRK5r6By96Pm4loSiOnLbREpbdTHxIRRHaO2cF3yd8PAar6d1B9wyjnWeq7KcFbSC24CevqxDlB3ljMycFjJIKiMF/FHHRy24kdv8dBJ/WL7s65qUeEPXVJV8suwABStQJpjcAW2JFFREexnY24o/DcaCJZ4mV6i/DoNaCoCQpYahOtndBFu1YSte+CvCHUfu0ag6n1dT1Ap9J18eFVNavvuxrTOoJ0FzlEwuPceSOyEy500CJdr71CEUkLqZDbPrR+1IVQrKTAmq5DzDyWqdZovaonsgdLLn4Z+GOB/YynHV1QdIXBi95leEMOjGF0jDoJZB6xPKM+iwB1cJ7n+WsL/nZn+1N75hSySOUmv1Y6upFxC9Wguk178WguAYAQ==",
+          "issuer": "anthropic",
+          "kind": "signed"
+        },
+        "tool_calls": [
+          {
+            "name": "get_flight_price",
+            "arguments": {
+              "city": "东京"
+            },
+            "call_id": "toolu_01E5wqQZTowvhKsEV7ZPqEBB"
+          },
+          {
+            "name": "get_hotel_price",
+            "arguments": {
+              "city": "东京"
+            },
+            "call_id": "toolu_01JELfKtGvjEU9UjrmMgknFY"
+          },
+          {
+            "name": "get_meal_budget",
+            "arguments": {
+              "city": "东京"
+            },
+            "call_id": "toolu_01AkR9kgrqMFP8gXH5qiWes2"
+          },
+          {
+            "name": "get_exchange_rate",
+            "arguments": {
+              "currency": "JPY"
+            },
+            "call_id": "toolu_01AdWSoTqzhjSed8HU8n1s1v"
+          }
+        ],
+        "tool_call_id": null,
+        "tool_name": null,
+        "issuer": "anthropic",
+        "native": {
+          "content": [
+            {
+              "type": "thinking",
+              "thinking": "用户要求计算从北京去东京出差的总预算。需要计算：\n1. 往返机票价格（到东京）\n2. 住宿价格（3晚）\n3. 餐费（4天）\n4. 最后转换成人民币\n\n需要调用的工具：\n1. get_flight_price - 查询往返机票价格到东京\n2. get_hotel_price - 查询东京住宿价格\n3. get_meal_budget - 查询东京餐费\n4. get_exchange_rate - 查询日元对人民币的汇率\n\n这些调用之间没有依赖关系，可以一起调用。\n\n东京的城市名应该是\"东京\"。",
+              "signature": "EvwFCpoBCBEYAipAGdrYAwSJsIVgxMqS99LSseCclLSa2SG1lRr/sFU/OkBdwH1HXp6fAFjvbKOfLT2JmxKyFg7O7rtx98kuH93URTIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okNTM3MTEzZjQtZmI1Ny00NDc0LTgyOTYtYTA0OWExMGQ2YzMyqAHDvLHUBhIMFG/mKi2ktbXe6NzYGgy9uM1uJ2FQj2XYYxYiMGCP7gcfjirncdZprTJWCimqK8eeVglzJnF15yqx9XzyHgCobMDoLyXslFlUCyAdySqOBIIfK4l/01pARSzEBNgLniYIczHrwirdNZ2E34tJbeDESIjfgvFE79aQPEzLTBc7nDi+513bM3DIEtJBVWdDs50mpwlkrCjjKraUxeV1fMeL5mcrKnyeXPtNwtjZJpfsEEM6EaRLopXGePec+3yeaemjue8SPYWqzIOO664bd66NQTe+mwpHSs+TVn7a24NzpYBjZs8av4u6i5RagJYfGSksDEJ4e69OA5WVGjW9WMG6QOSnROqi74XDszNklzYjS3Hk64a2w61wmJiOtVtxejAJWfMyymiEBo6aXWVHD0NVvF/l26DsHp0mabPLt01eNqmpRK5r6By96Pm4loSiOnLbREpbdTHxIRRHaO2cF3yd8PAar6d1B9wyjnWeq7KcFbSC24CevqxDlB3ljMycFjJIKiMF/FHHRy24kdv8dBJ/WL7s65qUeEPXVJV8suwABStQJpjcAW2JFFREexnY24o/DcaCJZ4mV6i/DoNaCoCQpYahOtndBFu1YSte+CvCHUfu0ag6n1dT1Ap9J18eFVNavvuxrTOoJ0FzlEwuPceSOyEy500CJdr71CEUkLqZDbPrR+1IVQrKTAmq5DzDyWqdZovaonsgdLLn4Z+GOB/YynHV1QdIXBi95leEMOjGF0jDoJZB6xPKM+iwB1cJ7n+WsL/nZn+1N75hSySOUmv1Y6upFxC9Wguk178WguAYAQ=="
+            },
+            {
+              "type": "tool_use",
+              "id": "toolu_01E5wqQZTowvhKsEV7ZPqEBB",
+              "name": "get_flight_price",
+              "input": {
+                "city": "东京"
+              },
+              "caller": {
+                "type": "direct"
+              }
+            },
+            {
+              "type": "tool_use",
+              "id": "toolu_01JELfKtGvjEU9UjrmMgknFY",
+              "name": "get_hotel_price",
+              "input": {
+                "city": "东京"
+              },
+              "caller": {
+                "type": "direct"
+              }
+            },
+            {
+              "type": "tool_use",
+              "id": "toolu_01AkR9kgrqMFP8gXH5qiWes2",
+              "name": "get_meal_budget",
+              "input": {
+                "city": "东京"
+              },
+              "caller": {
+                "type": "direct"
+              }
+            },
+            {
+              "type": "tool_use",
+              "id": "toolu_01AdWSoTqzhjSed8HU8n1s1v",
+              "name": "get_exchange_rate",
+              "input": {
+                "currency": "JPY"
+              },
+              "caller": {
+                "type": "direct"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "role": "tool",
+        "text": "{\"city\":\"东京\",\"round_trip_cny\":3200}",
+        "reasoning": null,
+        "tool_calls": [],
+        "tool_call_id": "toolu_01E5wqQZTowvhKsEV7ZPqEBB",
+        "tool_name": "get_flight_price",
+        "issuer": null,
+        "native": null
+      },
+      {
+        "role": "tool",
+        "text": "{\"city\":\"东京\",\"per_night\":18000,\"currency\":\"JPY\"}",
+        "reasoning": null,
+        "tool_calls": [],
+        "tool_call_id": "toolu_01JELfKtGvjEU9UjrmMgknFY",
+        "tool_name": "get_hotel_price",
+        "issuer": null,
+        "native": null
+      },
+      {
+        "role": "tool",
+        "text": "{\"city\":\"东京\",\"per_day\":6000,\"currency\":\"JPY\"}",
+        "reasoning": null,
+        "tool_calls": [],
+        "tool_call_id": "toolu_01AkR9kgrqMFP8gXH5qiWes2",
+        "tool_name": "get_meal_budget",
+        "issuer": null,
+        "native": null
+      },
+      {
+        "role": "tool",
+        "text": "{\"currency\":\"JPY\",\"cny_per_unit\":0.048}",
+        "reasoning": null,
+        "tool_calls": [],
+        "tool_call_id": "toolu_01AdWSoTqzhjSed8HU8n1s1v",
+        "tool_name": "get_exchange_rate",
+        "issuer": null,
+        "native": null
+      }
+    ]
+  },
+  "exchanges": [
+    {
+      "provider": "anthropic",
+      "arm": "strip",
+      "request": {
+        "model": "claude-haiku-4-5-20251001",
+        "max_tokens": 4096,
+        "thinking": {
+          "type": "enabled",
+          "budget_tokens": 2048
+        },
+        "tools": [
+          {
+            "name": "get_flight_price",
+            "description": "查询往返机票价格（人民币）",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "city": {
+                  "type": "string",
+                  "description": "目的地城市"
+                }
+              },
+              "required": [
+                "city"
+              ]
+            }
+          },
+          {
+            "name": "get_hotel_price",
+            "description": "查询每晚住宿价格及其币种",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "city": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "city"
+              ]
+            }
+          },
+          {
+            "name": "get_meal_budget",
+            "description": "查询每日餐费预算及其币种",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "city": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "city"
+              ]
+            }
+          },
+          {
+            "name": "get_exchange_rate",
+            "description": "查询该币种兑人民币的汇率",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "currency": {
+                  "type": "string",
+                  "description": "如 JPY"
+                }
+              },
+              "required": [
+                "currency"
+              ]
+            }
+          }
+        ],
+        "messages": [
+          {
+            "role": "user",
+            "content": "帮我算一下从北京去东京出差的总预算：往返机票、住宿和餐费都要算上，行程是 3 晚 4 天，住宿按 3 晚、餐费按 4 天计。最后用人民币给出一个总额。"
+          }
+        ],
+        "system": "你是一个差旅助理。需要数据时调用工具，不要凭印象编造价格或汇率。拿齐数据后给出人民币总额。"
+      },
+      "status": 200,
+      "response": {
+        "model": "claude-haiku-4-5-20251001",
+        "id": "msg_011CeMnNC354ufkHgbpUqiPV",
+        "type": "message",
+        "role": "assistant",
+        "content": [
+          {
+            "type": "thinking",
+            "thinking": "用户要求计算从北京去东京出差的总预算。需要计算：\n1. 往返机票价格（到东京）\n2. 住宿价格（3晚）\n3. 餐费（4天）\n4. 最后转换成人民币\n\n需要调用的工具：\n1. get_flight_price - 查询往返机票价格到东京\n2. get_hotel_price - 查询东京住宿价格\n3. get_meal_budget - 查询东京餐费\n4. get_exchange_rate - 查询日元对人民币的汇率\n\n这些调用之间没有依赖关系，可以一起调用。\n\n东京的城市名应该是\"东京\"。",
+            "signature": "EvwFCpoBCBEYAipAGdrYAwSJsIVgxMqS99LSseCclLSa2SG1lRr/sFU/OkBdwH1HXp6fAFjvbKOfLT2JmxKyFg7O7rtx98kuH93URTIZY2xhdWRlLWhhaWt1LTQtNS0yMDI1MTAwMTgAQgh0aGlua2luZ1okNTM3MTEzZjQtZmI1Ny00NDc0LTgyOTYtYTA0OWExMGQ2YzMyqAHDvLHUBhIMFG/mKi2ktbXe6NzYGgy9uM1uJ2FQj2XYYxYiMGCP7gcfjirncdZprTJWCimqK8eeVglzJnF15yqx9XzyHgCobMDoLyXslFlUCyAdySqOBIIfK4l/01pARSzEBNgLniYIczHrwirdNZ2E34tJbeDESIjfgvFE79aQPEzLTBc7nDi+513bM3DIEtJBVWdDs50mpwlkrCjjKraUxeV1fMeL5mcrKnyeXPtNwtjZJpfsEEM6EaRLopXGePec+3yeaemjue8SPYWqzIOO664bd66NQTe+mwpHSs+TVn7a24NzpYBjZs8av4u6i5RagJYfGSksDEJ4e69OA5WVGjW9WMG6QOSnROqi74XDszNklzYjS3Hk64a2w61wmJiOtVtxejAJWfMyymiEBo6aXWVHD0NVvF/l26DsHp0mabPLt01eNqmpRK5r6By96Pm4loSiOnLbREpbdTHxIRRHaO2cF3yd8PAar6d1B9wyjnWeq7KcFbSC24CevqxDlB3ljMycFjJIKiMF/FHHRy24kdv8dBJ/WL7s65qUeEPXVJV8suwABStQJpjcAW2JFFREexnY24o/DcaCJZ4mV6i/DoNaCoCQpYahOtndBFu1YSte+CvCHUfu0ag6n1dT1Ap9J18eFVNavvuxrTOoJ0FzlEwuPceSOyEy500CJdr71CEUkLqZDbPrR+1IVQrKTAmq5DzDyWqdZovaonsgdLLn4Z+GOB/YynHV1QdIXBi95leEMOjGF0jDoJZB6xPKM+iwB1cJ7n+WsL/nZn+1N75hSySOUmv1Y6upFxC9Wguk178WguAYAQ=="
+          },
+          {
+            "type": "tool_use",
+            "id": "toolu_01E5wqQZTowvhKsEV7ZPqEBB",
+            "name": "get_flight_price",
+            "input": {
+              "city": "东京"
+            },
+            "caller": {
+              "type": "direct"
+            }
+          },
+          {
+            "type": "tool_use",
+            "id": "toolu_01JELfKtGvjEU9UjrmMgknFY",
+            "name": "get_hotel_price",
+            "input": {
+              "city": "东京"
+            },
+            "caller": {
+              "type": "direct"
+            }
+          },
+          {
+            "type": "tool_use",
+            "id": "toolu_01AkR9kgrqMFP8gXH5qiWes2",
+            "name": "get_meal_budget",
+            "input": {
+              "city": "东京"
+            },
+            "caller": {
+              "type": "direct"
+            }
+          },
+          {
+            "type": "tool_use",
+            "id": "toolu_01AdWSoTqzhjSed8HU8n1s1v",
+            "name": "get_exchange_rate",
+            "input": {
+              "currency": "JPY"
+            },
+            "caller": {
+              "type": "direct"
+            }
+          }
+        ],
+        "stop_reason": "tool_use",
+        "stop_sequence": null,
+        "stop_details": null,
+        "usage": {
+          "input_tokens": 1126,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "output_tokens": 382,
+          "output_tokens_details": {
+            "thinking_tokens": 207
+          },
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        }
+      }
+    },
+    {
+      "provider": "gemini",
+      "arm": "strip",
+      "request": {
+        "contents": [
+          {
+            "role": "user",
+            "parts": [
+              {
+                "text": "帮我算一下从北京去东京出差的总预算：往返机票、住宿和餐费都要算上，行程是 3 晚 4 天，住宿按 3 晚、餐费按 4 天计。最后用人民币给出一个总额。"
+              }
+            ]
+          },
+          {
+            "role": "model",
+            "parts": [
+              {
+                "functionCall": {
+                  "name": "get_flight_price",
+                  "args": {
+                    "city": "东京"
+                  }
+                }
+              },
+              {
+                "functionCall": {
+                  "name": "get_hotel_price",
+                  "args": {
+                    "city": "东京"
+                  }
+                }
+              },
+              {
+                "functionCall": {
+                  "name": "get_meal_budget",
+                  "args": {
+                    "city": "东京"
+                  }
+                }
+              },
+              {
+                "functionCall": {
+                  "name": "get_exchange_rate",
+                  "args": {
+                    "currency": "JPY"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "functionResponse": {
+                  "name": "get_flight_price",
+                  "response": {
+                    "result": "{\"city\":\"东京\",\"round_trip_cny\":3200}"
+                  }
+                }
+              },
+              {
+                "functionResponse": {
+                  "name": "get_hotel_price",
+                  "response": {
+                    "result": "{\"city\":\"东京\",\"per_night\":18000,\"currency\":\"JPY\"}"
+                  }
+                }
+              },
+              {
+                "functionResponse": {
+                  "name": "get_meal_budget",
+                  "response": {
+                    "result": "{\"city\":\"东京\",\"per_day\":6000,\"currency\":\"JPY\"}"
+                  }
+                }
+              },
+              {
+                "functionResponse": {
+                  "name": "get_exchange_rate",
+                  "response": {
+                    "result": "{\"currency\":\"JPY\",\"cny_per_unit\":0.048}"
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "tools": [
+          {
+            "functionDeclarations": [
+              {
+                "name": "get_flight_price",
+                "description": "查询往返机票价格（人民币）",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "city": {
+                      "type": "string",
+                      "description": "目的地城市"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ]
+                }
+              },
+              {
+                "name": "get_hotel_price",
+                "description": "查询每晚住宿价格及其币种",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ]
+                }
+              },
+              {
+                "name": "get_meal_budget",
+                "description": "查询每日餐费预算及其币种",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ]
+                }
+              },
+              {
+                "name": "get_exchange_rate",
+                "description": "查询该币种兑人民币的汇率",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "currency": {
+                      "type": "string",
+                      "description": "如 JPY"
+                    }
+                  },
+                  "required": [
+                    "currency"
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "generationConfig": {
+          "thinkingConfig": {
+            "includeThoughts": true
+          }
+        },
+        "_model": "gemini-3.5-flash",
+        "systemInstruction": {
+          "parts": [
+            {
+              "text": "你是一个差旅助理。需要数据时调用工具，不要凭印象编造价格或汇率。拿齐数据后给出人民币总额。"
+            }
+          ]
+        }
+      },
+      "status": 400,
+      "error_body": "{\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Function call is missing a thought_signature in functionCall parts. This is required for tools to work correctly, and missing thought_signature may lead to degraded model performance. Additional data, function call `default_api:get_flight_price` , position 2. Please refer to https://ai.google.dev/gemini-api/docs/thought-signatures for more details.\",\n    \"status\": \"INVALID_ARGUMENT\"\n  }\n}\n"
+    }
+  ],
+  "tool_calls_total": 4
+}

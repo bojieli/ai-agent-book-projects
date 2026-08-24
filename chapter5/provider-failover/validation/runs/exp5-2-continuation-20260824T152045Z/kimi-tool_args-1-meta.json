@@ -1,0 +1,107 @@
+{
+  "row": {
+    "provider": "kimi",
+    "break_point": "tool_args",
+    "repeat": 1,
+    "reproducible": true,
+    "strategy": "meta",
+    "cut": {
+      "reasoning_chars": 74,
+      "text_chars": 0,
+      "tool_name": "get_hotel_price",
+      "tool_args": "{\"city\":\"东",
+      "truncated": true,
+      "closed": false
+    },
+    "applicable": true,
+    "note": null,
+    "output_tokens": 263,
+    "recovered": true,
+    "json_valid": true,
+    "args_correct": true,
+    "duplicate_side_effects": 0
+  },
+  "partial": {
+    "reasoning": "Now hotel and meal budget for Tokyo. These are independent, call together.",
+    "text": "",
+    "tool_name": "get_hotel_price",
+    "tool_args": "{\"city\":\"东",
+    "tool_index": 0,
+    "tool_args_closed": false,
+    "truncated": true,
+    "finished": false
+  },
+  "result": {
+    "strategy": "meta",
+    "applicable": true,
+    "note": null,
+    "usage": {
+      "input": 527,
+      "output": 263
+    },
+    "raw": {
+      "id": "chatcmpl-6a8c628c3a0a8137a5d19d68",
+      "object": "chat.completion",
+      "created": 1787585169,
+      "model": "kimi-k3",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "",
+            "reasoning_content": "We need answer in Chinese. We have tool result flight price 3200 CNY. Need continue from breakpoint? User says previous reply truncated at '{\"city\":\"东'. Need not repeat already output parts. We need continue collecting data: hotel price, meal budget, exchange rate. Need be careful not to output partial JSON? We can call other tools. We have only flight data. Need get hotel price and meal budget for Tokyo. These are independent, can call parallel? Need use multi_tool? Since tools defined. We can call get_hotel_price and get_meal_budget in parallel. We can call functions.get_hotel_price and get_meal_budget. Then exchange rate based on currency. Hotel price returns nightly and currency; meal returns daily budget and currency. Need then exchange rates. Could maybe hotel/meal same currency JPY; but need know. Let's call both.",
+            "tool_calls": [
+              {
+                "index": 0,
+                "id": "get_hotel_price_1",
+                "type": "function",
+                "function": {
+                  "name": "get_hotel_price",
+                  "arguments": "{\"city\":\"东京\"}"
+                }
+              },
+              {
+                "index": 1,
+                "id": "get_meal_budget_2",
+                "type": "function",
+                "function": {
+                  "name": "get_meal_budget",
+                  "arguments": "{\"city\":\"东京\"}"
+                }
+              }
+            ]
+          },
+          "finish_reason": "tool_calls"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 527,
+        "completion_tokens": 263,
+        "total_tokens": 790,
+        "cached_tokens": 512,
+        "completion_tokens_details": {
+          "reasoning_tokens": 178
+        },
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        }
+      }
+    },
+    "text": "",
+    "tool_calls": [
+      {
+        "name": "get_hotel_price",
+        "arguments": {
+          "city": "东京"
+        }
+      },
+      {
+        "name": "get_meal_budget",
+        "arguments": {
+          "city": "东京"
+        }
+      }
+    ]
+  }
+}

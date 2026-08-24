@@ -1,0 +1,71 @@
+{
+  "row": {
+    "provider": "kimi",
+    "break_point": "text",
+    "repeat": 0,
+    "reproducible": true,
+    "strategy": "prefill",
+    "cut": {
+      "reasoning_chars": 212,
+      "text_chars": 30,
+      "tool_name": null,
+      "tool_args": "",
+      "truncated": true,
+      "closed": false
+    },
+    "applicable": true,
+    "note": null,
+    "output_tokens": 147,
+    "recovered": true,
+    "json_valid": null,
+    "args_correct": null,
+    "duplicate_side_effects": 0,
+    "answer_correct": true
+  },
+  "partial": {
+    "reasoning": "Now calculate:\n- Flight: 3200 CNY round trip\n- Hotel: 18000 JPY/night × 3 nights = 54000 JPY × 0.048 = 2592 CNY\n- Meals: 6000 JPY/day × 4 days = 24000 JPY × 0.048 = 1152 CNY\n- Total: 3200 + 2592 + 1152 = 6944 CNY",
+    "text": "根据查询到的数据，为您计算北京—东京 3 晚 4 天出差总预",
+    "tool_name": null,
+    "tool_args": "",
+    "tool_index": null,
+    "tool_args_closed": false,
+    "truncated": true,
+    "finished": false
+  },
+  "result": {
+    "strategy": "prefill",
+    "applicable": true,
+    "note": null,
+    "usage": {
+      "input": 847,
+      "output": 147
+    },
+    "raw": {
+      "id": "chatcmpl-6a8c61c1be571a989678468c",
+      "object": "chat.completion",
+      "created": 1787584962,
+      "model": "kimi-k3",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "如下：\n\n- **往返机票**：3200 元（人民币）\n- **住宿**：18000 日元/晚 × 3 晚 = 54000 日元\n- **餐费**：6000 日元/天 × 4 天 = 24000 日元\n- **日元兑人民币汇率**：1 JPY = 0.048 CNY\n\n日元部分合计：54000 + 24000 = 78000 日元\n折合人民币：78000 × 0.048 = **3744 元**\n\n**总预算：3200 + 3744 = 6944 元人民币**\n\n即本次出差总预算约为 **人民币 6944 元**。"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 847,
+        "completion_tokens": 147,
+        "total_tokens": 994,
+        "cached_tokens": 768,
+        "prompt_tokens_details": {
+          "cached_tokens": 768
+        }
+      }
+    },
+    "text": "如下：\n\n- **往返机票**：3200 元（人民币）\n- **住宿**：18000 日元/晚 × 3 晚 = 54000 日元\n- **餐费**：6000 日元/天 × 4 天 = 24000 日元\n- **日元兑人民币汇率**：1 JPY = 0.048 CNY\n\n日元部分合计：54000 + 24000 = 78000 日元\n折合人民币：78000 × 0.048 = **3744 元**\n\n**总预算：3200 + 3744 = 6944 元人民币**\n\n即本次出差总预算约为 **人民币 6944 元**。",
+    "tool_calls": []
+  }
+}

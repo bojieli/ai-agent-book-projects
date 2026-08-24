@@ -1,0 +1,107 @@
+{
+  "row": {
+    "provider": "kimi",
+    "break_point": "reasoning",
+    "repeat": 0,
+    "reproducible": true,
+    "strategy": "meta",
+    "cut": {
+      "reasoning_chars": 40,
+      "text_chars": 0,
+      "tool_name": null,
+      "tool_args": "",
+      "truncated": true,
+      "closed": false
+    },
+    "applicable": true,
+    "note": null,
+    "output_tokens": 499,
+    "recovered": true,
+    "json_valid": null,
+    "args_correct": null,
+    "duplicate_side_effects": 0
+  },
+  "partial": {
+    "reasoning": "Now I need hotel price and meal budget f",
+    "text": "",
+    "tool_name": null,
+    "tool_args": "",
+    "tool_index": null,
+    "tool_args_closed": false,
+    "truncated": true,
+    "finished": false
+  },
+  "result": {
+    "strategy": "meta",
+    "applicable": true,
+    "note": null,
+    "usage": {
+      "input": 532,
+      "output": 499
+    },
+    "raw": {
+      "id": "chatcmpl-6a8c6183db055f04e1a5d683",
+      "object": "chat.completion",
+      "created": 1787584907,
+      "model": "kimi-k3",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "",
+            "reasoning_content": "用户说上一次回复被截断，需要从断点继续，不要重复已经输出的部分。截断内容是：「Now I need hotel price and meal budget f」。\n\n需要思考：我们已经调用了 get_flight_price 并得到结果 round_trip_cny 3200。现在需要继续获取酒店价格和餐费预算。由于酒店和餐费都需要东京的数据，可以并行调用 get_hotel_price 和 get_meal_budget。但餐费预算返回币种，可能不是人民币，需要再查汇率。酒店也返回每晚价格及其币种。因此先并行调用 hotel 和 meal，拿到币种后再调用 exchange rate（如果需要）。\n\n需要注意：用户要求从断点继续，不要重复已经输出的部分。断点是英文 thought 的片段，可能上次在 thinking 里。我们在最终回复中不应该重复已经输出的内容？实际上对用户可见的是最终回复，thinking 通常不可见。但用户特别说“你上一次的回复在这里被截断了：「Now I need hotel price and meal budget f」。请从断点继续，不要重复已经输出的部分。”这暗示需要继续生成那段文本？但我们现在是在新的回合。系统说我们应当从断点继续，不要重复已经输出部分。然而我们已经在上一个 assistant 回合调用了工具，工具结果也在。用户现在请求继续。合理做法：继续完成任务，即调用剩余工具，然后给最终结果。因为最终答案尚未给出，不算重复。\n\n需要谨慎：如果用户要求“从断点继续”，可能是希望我们继续输出被截断的思考/文本。但我们不能直接输出 thinking。我们只需完成任务。\n\n现在调用 get_hotel_price 和 get_meal_budget，二者独立，可在同一个块中并行。然后等待结果。之后如果币种不是 CNY，则调用 get_exchange_rate。可能酒店币种 JPY，餐费币种 JPY，只需一次汇率。但工具可能返回不同币种，根据结果再决定。\n\n执行：functions.get_hotel_price city 东京；functions.get_meal_budget city 东京。",
+            "tool_calls": [
+              {
+                "index": 0,
+                "id": "get_hotel_price_1",
+                "type": "function",
+                "function": {
+                  "name": "get_hotel_price",
+                  "arguments": "{\"city\":\"东京\"}"
+                }
+              },
+              {
+                "index": 1,
+                "id": "get_meal_budget_2",
+                "type": "function",
+                "function": {
+                  "name": "get_meal_budget",
+                  "arguments": "{\"city\":\"东京\"}"
+                }
+              }
+            ]
+          },
+          "finish_reason": "tool_calls"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 532,
+        "completion_tokens": 499,
+        "total_tokens": 1031,
+        "cached_tokens": 256,
+        "completion_tokens_details": {
+          "reasoning_tokens": 414
+        },
+        "prompt_tokens_details": {
+          "cached_tokens": 256
+        }
+      }
+    },
+    "text": "",
+    "tool_calls": [
+      {
+        "name": "get_hotel_price",
+        "arguments": {
+          "city": "东京"
+        }
+      },
+      {
+        "name": "get_meal_budget",
+        "arguments": {
+          "city": "东京"
+        }
+      }
+    ]
+  }
+}

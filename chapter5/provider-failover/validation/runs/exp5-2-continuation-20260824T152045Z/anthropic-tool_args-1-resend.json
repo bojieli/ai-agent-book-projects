@@ -1,0 +1,120 @@
+{
+  "row": {
+    "provider": "anthropic",
+    "break_point": "tool_args",
+    "repeat": 1,
+    "reproducible": true,
+    "strategy": "resend",
+    "cut": {
+      "reasoning_chars": 0,
+      "text_chars": 17,
+      "tool_name": "get_hotel_price",
+      "tool_args": "{\"city\": \"",
+      "truncated": true,
+      "closed": false
+    },
+    "applicable": true,
+    "note": null,
+    "output_tokens": 134,
+    "recovered": true,
+    "json_valid": true,
+    "args_correct": true,
+    "duplicate_side_effects": 0
+  },
+  "partial": {
+    "reasoning": "",
+    "text": "现在让我获取东京的住宿和餐费信息：",
+    "tool_name": "get_hotel_price",
+    "tool_args": "{\"city\": \"",
+    "tool_index": 1,
+    "tool_args_closed": false,
+    "truncated": true,
+    "finished": false
+  },
+  "result": {
+    "strategy": "resend",
+    "applicable": true,
+    "note": null,
+    "usage": {
+      "input": 1180,
+      "output": 134
+    },
+    "raw": {
+      "model": "claude-haiku-4-5-20251001",
+      "id": "msg_011CeMovxuLJppmL5PEe1Nr2",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "toolu_01TaXBsQNhL7b743e4qXfgYF",
+          "name": "get_hotel_price",
+          "input": {
+            "city": "东京"
+          },
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "type": "tool_use",
+          "id": "toolu_01UBvn9BTKCTf398cXYDHqyu",
+          "name": "get_meal_budget",
+          "input": {
+            "city": "东京"
+          },
+          "caller": {
+            "type": "direct"
+          }
+        },
+        {
+          "type": "tool_use",
+          "id": "toolu_01Uy1nBgiQZ8z1nUb1YeiCP2",
+          "name": "get_exchange_rate",
+          "input": {
+            "currency": "JPY"
+          },
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "stop_reason": "tool_use",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 1180,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 134,
+        "service_tier": "standard",
+        "inference_geo": "not_available"
+      }
+    },
+    "text": "",
+    "tool_calls": [
+      {
+        "name": "get_hotel_price",
+        "arguments": {
+          "city": "东京"
+        }
+      },
+      {
+        "name": "get_meal_budget",
+        "arguments": {
+          "city": "东京"
+        }
+      },
+      {
+        "name": "get_exchange_rate",
+        "arguments": {
+          "currency": "JPY"
+        }
+      }
+    ]
+  }
+}

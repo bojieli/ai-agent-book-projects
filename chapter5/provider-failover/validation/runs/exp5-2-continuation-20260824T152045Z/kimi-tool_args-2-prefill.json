@@ -1,0 +1,71 @@
+{
+  "row": {
+    "provider": "kimi",
+    "break_point": "tool_args",
+    "repeat": 2,
+    "reproducible": true,
+    "strategy": "prefill",
+    "cut": {
+      "reasoning_chars": 0,
+      "text_chars": 0,
+      "tool_name": "get_hotel_price",
+      "tool_args": "{\"city\":\"东",
+      "truncated": true,
+      "closed": false
+    },
+    "applicable": true,
+    "note": null,
+    "output_tokens": 9,
+    "recovered": true,
+    "json_valid": true,
+    "args_correct": false,
+    "duplicate_side_effects": 0,
+    "spliced": "{\"city\":\"东\"}."
+  },
+  "partial": {
+    "reasoning": "",
+    "text": "",
+    "tool_name": "get_hotel_price",
+    "tool_args": "{\"city\":\"东",
+    "tool_index": 0,
+    "tool_args_closed": false,
+    "truncated": true,
+    "finished": false
+  },
+  "result": {
+    "strategy": "prefill",
+    "applicable": true,
+    "note": null,
+    "usage": {
+      "input": 543,
+      "output": 9
+    },
+    "raw": {
+      "id": "chatcmpl-6a8c62b6612ac2e686786cd9",
+      "object": "chat.completion",
+      "created": 1787585207,
+      "model": "kimi-k3",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "\"}."
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 543,
+        "completion_tokens": 9,
+        "total_tokens": 552,
+        "cached_tokens": 512,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        }
+      }
+    },
+    "text": "\"}.",
+    "tool_calls": []
+  }
+}

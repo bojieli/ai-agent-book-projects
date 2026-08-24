@@ -1,0 +1,462 @@
+{
+  "source": "kimi",
+  "target": "gemini",
+  "arm": "naive",
+  "models": {
+    "kimi": "kimi-k3",
+    "gemini": "gemini-3.5-flash"
+  },
+  "outage": {
+    "injected": true,
+    "statuses": [
+      429,
+      429,
+      503
+    ],
+    "note": "人为注入的连续过载，用来触发熔断；非厂商真实故障"
+  },
+  "handoff": {
+    "status": 400,
+    "error_body": "{\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Function call is missing a thought_signature in functionCall parts. This is required for tools to work correctly, and missing thought_signature may lead to degraded model performance. Additional data, function call `default_api:get_flight_price` , position 2. Please refer to https://ai.google.dev/gemini-api/docs/thought-signatures for more details.\",\n    \"status\": \"INVALID_ARGUMENT\"\n  }\n}\n"
+  },
+  "data_complete": false,
+  "answer_correct": false,
+  "repeated_calls": [],
+  "rounds_after_switch": 0,
+  "tokens_after_switch": 0,
+  "final_text": null,
+  "error": "400: {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Function call is missing a thought_signature in functionCall parts. This is required for tools to work correctly, and missing thought_signature may lead to degraded model performance. Additional data, function call `default_api:get_flight_price` , posi",
+  "trace": {
+    "steps": [
+      {
+        "role": "user",
+        "text": "帮我算一下从北京去东京出差的总预算：往返机票、住宿和餐费都要算上，行程是 3 晚 4 天，住宿按 3 晚、餐费按 4 天计。最后用人民币给出一个总额。",
+        "reasoning": null,
+        "tool_calls": [],
+        "tool_call_id": null,
+        "tool_name": null,
+        "issuer": null,
+        "native": null
+      },
+      {
+        "role": "assistant",
+        "text": "我来帮您计算北京到东京的差旅预算。先查询机票、住宿和餐费的数据。",
+        "reasoning": {
+          "text": "The user wants to calculate a business trip budget from Beijing to Tokyo:\n- Round-trip flight\n- Hotel for 3 nights\n- Meals for 4 days\n- Total in CNY\n\nI need to:\n1. Get flight price to Tokyo (in CNY)\n2. Get hotel price per night for Tokyo (and its currency)\n3. Get meal budget per day for Tokyo (and its currency)\n4. Get exchange rate for the currency (likely JPY) to CNY\n\nLet me make the independent calls first: flight price, hotel price, meal budget for Tokyo. These are independent so I can call them all at once.\n\nThen based on the currency returned, I'll need to get the exchange rate.",
+          "credential": null,
+          "issuer": "kimi",
+          "kind": "plaintext"
+        },
+        "tool_calls": [
+          {
+            "name": "get_flight_price",
+            "arguments": {
+              "city": "东京"
+            },
+            "call_id": "get_flight_price_0"
+          },
+          {
+            "name": "get_hotel_price",
+            "arguments": {
+              "city": "东京"
+            },
+            "call_id": "get_hotel_price_1"
+          },
+          {
+            "name": "get_meal_budget",
+            "arguments": {
+              "city": "东京"
+            },
+            "call_id": "get_meal_budget_2"
+          }
+        ],
+        "tool_call_id": null,
+        "tool_name": null,
+        "issuer": "kimi",
+        "native": {
+          "role": "assistant",
+          "content": "我来帮您计算北京到东京的差旅预算。先查询机票、住宿和餐费的数据。",
+          "reasoning_content": "The user wants to calculate a business trip budget from Beijing to Tokyo:\n- Round-trip flight\n- Hotel for 3 nights\n- Meals for 4 days\n- Total in CNY\n\nI need to:\n1. Get flight price to Tokyo (in CNY)\n2. Get hotel price per night for Tokyo (and its currency)\n3. Get meal budget per day for Tokyo (and its currency)\n4. Get exchange rate for the currency (likely JPY) to CNY\n\nLet me make the independent calls first: flight price, hotel price, meal budget for Tokyo. These are independent so I can call them all at once.\n\nThen based on the currency returned, I'll need to get the exchange rate.",
+          "tool_calls": [
+            {
+              "index": 0,
+              "id": "get_flight_price_0",
+              "type": "function",
+              "function": {
+                "name": "get_flight_price",
+                "arguments": "{\"city\":\"东京\"}"
+              }
+            },
+            {
+              "index": 1,
+              "id": "get_hotel_price_1",
+              "type": "function",
+              "function": {
+                "name": "get_hotel_price",
+                "arguments": "{\"city\":\"东京\"}"
+              }
+            },
+            {
+              "index": 2,
+              "id": "get_meal_budget_2",
+              "type": "function",
+              "function": {
+                "name": "get_meal_budget",
+                "arguments": "{\"city\":\"东京\"}"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "role": "tool",
+        "text": "{\"city\":\"东京\",\"round_trip_cny\":3200}",
+        "reasoning": null,
+        "tool_calls": [],
+        "tool_call_id": "get_flight_price_0",
+        "tool_name": "get_flight_price",
+        "issuer": null,
+        "native": null
+      },
+      {
+        "role": "tool",
+        "text": "{\"city\":\"东京\",\"per_night\":18000,\"currency\":\"JPY\"}",
+        "reasoning": null,
+        "tool_calls": [],
+        "tool_call_id": "get_hotel_price_1",
+        "tool_name": "get_hotel_price",
+        "issuer": null,
+        "native": null
+      },
+      {
+        "role": "tool",
+        "text": "{\"city\":\"东京\",\"per_day\":6000,\"currency\":\"JPY\"}",
+        "reasoning": null,
+        "tool_calls": [],
+        "tool_call_id": "get_meal_budget_2",
+        "tool_name": "get_meal_budget",
+        "issuer": null,
+        "native": null
+      }
+    ]
+  },
+  "exchanges": [
+    {
+      "provider": "kimi",
+      "arm": "naive",
+      "request": {
+        "model": "kimi-k3",
+        "messages": [
+          {
+            "role": "system",
+            "content": "你是一个差旅助理。需要数据时调用工具，不要凭印象编造价格或汇率。拿齐数据后给出人民币总额。"
+          },
+          {
+            "role": "user",
+            "content": "帮我算一下从北京去东京出差的总预算：往返机票、住宿和餐费都要算上，行程是 3 晚 4 天，住宿按 3 晚、餐费按 4 天计。最后用人民币给出一个总额。"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "get_flight_price",
+              "description": "查询往返机票价格（人民币）",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "city": {
+                    "type": "string",
+                    "description": "目的地城市"
+                  }
+                },
+                "required": [
+                  "city"
+                ]
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "get_hotel_price",
+              "description": "查询每晚住宿价格及其币种",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "city": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "city"
+                ]
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "get_meal_budget",
+              "description": "查询每日餐费预算及其币种",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "city": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "city"
+                ]
+              }
+            }
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "get_exchange_rate",
+              "description": "查询该币种兑人民币的汇率",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "currency": {
+                    "type": "string",
+                    "description": "如 JPY"
+                  }
+                },
+                "required": [
+                  "currency"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "status": 200,
+      "response": {
+        "id": "chatcmpl-6a8c5d58e4400ba25de319bc",
+        "object": "chat.completion",
+        "created": 1787583835,
+        "model": "kimi-k3",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "我来帮您计算北京到东京的差旅预算。先查询机票、住宿和餐费的数据。",
+              "reasoning_content": "The user wants to calculate a business trip budget from Beijing to Tokyo:\n- Round-trip flight\n- Hotel for 3 nights\n- Meals for 4 days\n- Total in CNY\n\nI need to:\n1. Get flight price to Tokyo (in CNY)\n2. Get hotel price per night for Tokyo (and its currency)\n3. Get meal budget per day for Tokyo (and its currency)\n4. Get exchange rate for the currency (likely JPY) to CNY\n\nLet me make the independent calls first: flight price, hotel price, meal budget for Tokyo. These are independent so I can call them all at once.\n\nThen based on the currency returned, I'll need to get the exchange rate.",
+              "tool_calls": [
+                {
+                  "index": 0,
+                  "id": "get_flight_price_0",
+                  "type": "function",
+                  "function": {
+                    "name": "get_flight_price",
+                    "arguments": "{\"city\":\"东京\"}"
+                  }
+                },
+                {
+                  "index": 1,
+                  "id": "get_hotel_price_1",
+                  "type": "function",
+                  "function": {
+                    "name": "get_hotel_price",
+                    "arguments": "{\"city\":\"东京\"}"
+                  }
+                },
+                {
+                  "index": 2,
+                  "id": "get_meal_budget_2",
+                  "type": "function",
+                  "function": {
+                    "name": "get_meal_budget",
+                    "arguments": "{\"city\":\"东京\"}"
+                  }
+                }
+              ]
+            },
+            "finish_reason": "tool_calls"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 392,
+          "completion_tokens": 284,
+          "total_tokens": 676,
+          "cached_tokens": 256,
+          "completion_tokens_details": {
+            "reasoning_tokens": 147
+          },
+          "prompt_tokens_details": {
+            "cached_tokens": 256
+          }
+        }
+      }
+    },
+    {
+      "provider": "gemini",
+      "arm": "naive",
+      "request": {
+        "contents": [
+          {
+            "role": "user",
+            "parts": [
+              {
+                "text": "帮我算一下从北京去东京出差的总预算：往返机票、住宿和餐费都要算上，行程是 3 晚 4 天，住宿按 3 晚、餐费按 4 天计。最后用人民币给出一个总额。"
+              }
+            ]
+          },
+          {
+            "role": "model",
+            "parts": [
+              {
+                "text": "The user wants to calculate a business trip budget from Beijing to Tokyo:\n- Round-trip flight\n- Hotel for 3 nights\n- Meals for 4 days\n- Total in CNY\n\nI need to:\n1. Get flight price to Tokyo (in CNY)\n2. Get hotel price per night for Tokyo (and its currency)\n3. Get meal budget per day for Tokyo (and its currency)\n4. Get exchange rate for the currency (likely JPY) to CNY\n\nLet me make the independent calls first: flight price, hotel price, meal budget for Tokyo. These are independent so I can call them all at once.\n\nThen based on the currency returned, I'll need to get the exchange rate.",
+                "thought": true
+              },
+              {
+                "text": "我来帮您计算北京到东京的差旅预算。先查询机票、住宿和餐费的数据。"
+              },
+              {
+                "functionCall": {
+                  "name": "get_flight_price",
+                  "args": {
+                    "city": "东京"
+                  }
+                }
+              },
+              {
+                "functionCall": {
+                  "name": "get_hotel_price",
+                  "args": {
+                    "city": "东京"
+                  }
+                }
+              },
+              {
+                "functionCall": {
+                  "name": "get_meal_budget",
+                  "args": {
+                    "city": "东京"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "functionResponse": {
+                  "name": "get_flight_price",
+                  "response": {
+                    "result": "{\"city\":\"东京\",\"round_trip_cny\":3200}"
+                  }
+                }
+              },
+              {
+                "functionResponse": {
+                  "name": "get_hotel_price",
+                  "response": {
+                    "result": "{\"city\":\"东京\",\"per_night\":18000,\"currency\":\"JPY\"}"
+                  }
+                }
+              },
+              {
+                "functionResponse": {
+                  "name": "get_meal_budget",
+                  "response": {
+                    "result": "{\"city\":\"东京\",\"per_day\":6000,\"currency\":\"JPY\"}"
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "tools": [
+          {
+            "functionDeclarations": [
+              {
+                "name": "get_flight_price",
+                "description": "查询往返机票价格（人民币）",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "city": {
+                      "type": "string",
+                      "description": "目的地城市"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ]
+                }
+              },
+              {
+                "name": "get_hotel_price",
+                "description": "查询每晚住宿价格及其币种",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ]
+                }
+              },
+              {
+                "name": "get_meal_budget",
+                "description": "查询每日餐费预算及其币种",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ]
+                }
+              },
+              {
+                "name": "get_exchange_rate",
+                "description": "查询该币种兑人民币的汇率",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "currency": {
+                      "type": "string",
+                      "description": "如 JPY"
+                    }
+                  },
+                  "required": [
+                    "currency"
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "generationConfig": {
+          "thinkingConfig": {
+            "includeThoughts": true
+          }
+        },
+        "_model": "gemini-3.5-flash",
+        "systemInstruction": {
+          "parts": [
+            {
+              "text": "你是一个差旅助理。需要数据时调用工具，不要凭印象编造价格或汇率。拿齐数据后给出人民币总额。"
+            }
+          ]
+        }
+      },
+      "status": 400,
+      "error_body": "{\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Function call is missing a thought_signature in functionCall parts. This is required for tools to work correctly, and missing thought_signature may lead to degraded model performance. Additional data, function call `default_api:get_flight_price` , position 2. Please refer to https://ai.google.dev/gemini-api/docs/thought-signatures for more details.\",\n    \"status\": \"INVALID_ARGUMENT\"\n  }\n}\n"
+    }
+  ],
+  "tool_calls_total": 3
+}

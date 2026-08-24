@@ -1,0 +1,76 @@
+{
+  "row": {
+    "provider": "gemini",
+    "break_point": "text",
+    "repeat": 0,
+    "reproducible": true,
+    "strategy": "prefill",
+    "cut": {
+      "reasoning_chars": 0,
+      "text_chars": 30,
+      "tool_name": null,
+      "tool_args": "",
+      "truncated": true,
+      "closed": false
+    },
+    "applicable": true,
+    "note": null,
+    "output_tokens": 197,
+    "recovered": true,
+    "json_valid": null,
+    "args_correct": null,
+    "duplicate_side_effects": 0,
+    "answer_correct": true
+  },
+  "partial": {
+    "reasoning": "",
+    "text": "根据您提供的数据，为您计算的北京往返东京出差（3晚4天）的总",
+    "tool_name": null,
+    "tool_args": "",
+    "tool_index": null,
+    "tool_args_closed": false,
+    "truncated": true,
+    "finished": false
+  },
+  "result": {
+    "strategy": "prefill",
+    "applicable": true,
+    "note": null,
+    "usage": {
+      "input": 537,
+      "output": 197
+    },
+    "raw": {
+      "candidates": [
+        {
+          "content": {
+            "parts": [
+              {
+                "text": "预算如下：\n\n1. **往返机票**：3,200元人民币\n2. **住宿费用**（3晚）：\n   - 价格：18,000日元/晚 × 3晚 = 54,000日元\n   - 折合人民币：54,000日元 × 0.048 = 2,592元人民币\n3. **餐费**（4天）：\n   - 价格：6,000日元/天 × 4天 = 24,000日元\n   - 折合人民币：24,000日元 × 0.048 = 1,152元人民币\n\n**总预算**：3,200 + 2,592 + 1,152 = **6,944元人民币**"
+              }
+            ],
+            "role": "model"
+          },
+          "finishReason": "STOP",
+          "index": 0
+        }
+      ],
+      "usageMetadata": {
+        "promptTokenCount": 537,
+        "candidatesTokenCount": 197,
+        "totalTokenCount": 734,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 537
+          }
+        ],
+        "serviceTier": "standard"
+      },
+      "modelVersion": "gemini-3.5-flash",
+      "responseId": "NWOMasvwCrihqtsPvvqo4As"
+    },
+    "text": "预算如下：\n\n1. **往返机票**：3,200元人民币\n2. **住宿费用**（3晚）：\n   - 价格：18,000日元/晚 × 3晚 = 54,000日元\n   - 折合人民币：54,000日元 × 0.048 = 2,592元人民币\n3. **餐费**（4天）：\n   - 价格：6,000日元/天 × 4天 = 24,000日元\n   - 折合人民币：24,000日元 × 0.048 = 1,152元人民币\n\n**总预算**：3,200 + 2,592 + 1,152 = **6,944元人民币**",
+    "tool_calls": []
+  }
+}

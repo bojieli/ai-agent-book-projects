@@ -1,0 +1,107 @@
+{
+  "row": {
+    "provider": "kimi",
+    "break_point": "tool_args",
+    "repeat": 2,
+    "reproducible": true,
+    "strategy": "meta",
+    "cut": {
+      "reasoning_chars": 0,
+      "text_chars": 0,
+      "tool_name": "get_hotel_price",
+      "tool_args": "{\"city\":\"东",
+      "truncated": true,
+      "closed": false
+    },
+    "applicable": true,
+    "note": null,
+    "output_tokens": 417,
+    "recovered": true,
+    "json_valid": true,
+    "args_correct": true,
+    "duplicate_side_effects": 0
+  },
+  "partial": {
+    "reasoning": "",
+    "text": "",
+    "tool_name": "get_hotel_price",
+    "tool_args": "{\"city\":\"东",
+    "tool_index": 0,
+    "tool_args_closed": false,
+    "truncated": true,
+    "finished": false
+  },
+  "result": {
+    "strategy": "meta",
+    "applicable": true,
+    "note": null,
+    "usage": {
+      "input": 527,
+      "output": 417
+    },
+    "raw": {
+      "id": "chatcmpl-6a8c62b9599f15db0ff34279",
+      "object": "chat.completion",
+      "created": 1787585210,
+      "model": "kimi-k3",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "",
+            "reasoning_content": "We need answer to user in Chinese. Need understand conversation. User initially asked calculate budget Beijing to Tokyo: round trip flight, hotel, meals; 3 nights 4 days; hotel 3 nights meals 4 days; final RMB total. We called get_flight_price with city 东京 and got result {\"city\":\"东京\",\"round_trip_cny\":3200}. Then user says previous reply truncated at 「{\"city\":\"东」 and asks continue from breakpoint, don't repeat already output part. We need be careful. They might be referring to assistant's previous reply (not tool result?) was truncated. But in this reconstructed conversation, after tool result we haven't produced final yet. User asks continue from break point. We should not literally continue JSON because that was tool output, and we have more tools to call: hotel, meal, exchange rate if needed. Need gather data. Need maybe note round-trip flight already known: ¥3200. Need call get_hotel_price Tokyo, get_meal_budget Tokyo. These are independent, can call parallel. Then depending currency, call exchange_rate. Need not fabricate. Let's call hotel and meal in parallel. Then exchange if currency not CNY. Need final total in RMB. Need maybe explain calculation.\n\nPotential issue: The user's current request says previous reply truncated and continue from breakpoint, not repeat already output part. We should avoid repeating {\"city\":\"东... We can proceed with remaining data collection and final. Since we need use tools, okay.\n\nLet's call get_hotel_price and get_meal_budget for 东京. Need maybe city parameter accepts Chinese city. Do parallel.",
+            "tool_calls": [
+              {
+                "index": 0,
+                "id": "get_hotel_price_1",
+                "type": "function",
+                "function": {
+                  "name": "get_hotel_price",
+                  "arguments": "{\"city\":\"东京\"}"
+                }
+              },
+              {
+                "index": 1,
+                "id": "get_meal_budget_2",
+                "type": "function",
+                "function": {
+                  "name": "get_meal_budget",
+                  "arguments": "{\"city\":\"东京\"}"
+                }
+              }
+            ]
+          },
+          "finish_reason": "tool_calls"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 527,
+        "completion_tokens": 417,
+        "total_tokens": 944,
+        "cached_tokens": 512,
+        "completion_tokens_details": {
+          "reasoning_tokens": 332
+        },
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        }
+      }
+    },
+    "text": "",
+    "tool_calls": [
+      {
+        "name": "get_hotel_price",
+        "arguments": {
+          "city": "东京"
+        }
+      },
+      {
+        "name": "get_meal_budget",
+        "arguments": {
+          "city": "东京"
+        }
+      }
+    ]
+  }
+}

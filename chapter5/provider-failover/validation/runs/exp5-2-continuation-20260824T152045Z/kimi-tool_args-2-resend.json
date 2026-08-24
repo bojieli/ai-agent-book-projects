@@ -1,0 +1,107 @@
+{
+  "row": {
+    "provider": "kimi",
+    "break_point": "tool_args",
+    "repeat": 2,
+    "reproducible": true,
+    "strategy": "resend",
+    "cut": {
+      "reasoning_chars": 0,
+      "text_chars": 0,
+      "tool_name": "get_hotel_price",
+      "tool_args": "{\"city\":\"东",
+      "truncated": true,
+      "closed": false
+    },
+    "applicable": true,
+    "note": null,
+    "output_tokens": 184,
+    "recovered": true,
+    "json_valid": true,
+    "args_correct": true,
+    "duplicate_side_effects": 0
+  },
+  "partial": {
+    "reasoning": "",
+    "text": "",
+    "tool_name": "get_hotel_price",
+    "tool_args": "{\"city\":\"东",
+    "tool_index": 0,
+    "tool_args_closed": false,
+    "truncated": true,
+    "finished": false
+  },
+  "result": {
+    "strategy": "resend",
+    "applicable": true,
+    "note": null,
+    "usage": {
+      "input": 489,
+      "output": 184
+    },
+    "raw": {
+      "id": "chatcmpl-6a8c62a6b7b80d1415b7a06b",
+      "object": "chat.completion",
+      "created": 1787585199,
+      "model": "kimi-k3",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "已拿到往返机票价格。接下来查询东京的住宿和餐费预算。",
+            "reasoning_content": "User wants total budget for Beijing to Tokyo business trip:\n- Round-trip flight: already got 3200 CNY\n- Hotel: 3 nights\n- Meals: 4 days\n\nNeed to call get_hotel_price and get_meal_budget for Tokyo. These are independent, so I can call them in parallel. But I've already made one call. Let me now call hotel and meal in parallel.",
+            "tool_calls": [
+              {
+                "index": 0,
+                "id": "get_hotel_price_1",
+                "type": "function",
+                "function": {
+                  "name": "get_hotel_price",
+                  "arguments": "{\"city\":\"东京\"}"
+                }
+              },
+              {
+                "index": 1,
+                "id": "get_meal_budget_2",
+                "type": "function",
+                "function": {
+                  "name": "get_meal_budget",
+                  "arguments": "{\"city\":\"东京\"}"
+                }
+              }
+            ]
+          },
+          "finish_reason": "tool_calls"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 489,
+        "completion_tokens": 184,
+        "total_tokens": 673,
+        "cached_tokens": 256,
+        "completion_tokens_details": {
+          "reasoning_tokens": 83
+        },
+        "prompt_tokens_details": {
+          "cached_tokens": 256
+        }
+      }
+    },
+    "text": "已拿到往返机票价格。接下来查询东京的住宿和餐费预算。",
+    "tool_calls": [
+      {
+        "name": "get_hotel_price",
+        "arguments": {
+          "city": "东京"
+        }
+      },
+      {
+        "name": "get_meal_budget",
+        "arguments": {
+          "city": "东京"
+        }
+      }
+    ]
+  }
+}

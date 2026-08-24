@@ -1,0 +1,281 @@
+{
+  "experiment": "5-2",
+  "run": "exp5-2-continuation-20260824T152045Z",
+  "cells": [
+    {
+      "provider": "anthropic",
+      "break_point": "text",
+      "strategy": "meta",
+      "n": 3,
+      "recovered": 3,
+      "json_valid": 0,
+      "args_correct": 0,
+      "duplicate_side_effects": 0,
+      "mean_output_tokens": 529.0
+    },
+    {
+      "provider": "anthropic",
+      "break_point": "text",
+      "strategy": "prefill",
+      "n": 3,
+      "recovered": 2,
+      "json_valid": 0,
+      "args_correct": 0,
+      "duplicate_side_effects": 0,
+      "mean_output_tokens": 218.5
+    },
+    {
+      "provider": "anthropic",
+      "break_point": "text",
+      "strategy": "resend",
+      "n": 3,
+      "recovered": 3,
+      "json_valid": 0,
+      "args_correct": 0,
+      "duplicate_side_effects": 0,
+      "mean_output_tokens": 257.3
+    },
+    {
+      "provider": "anthropic",
+      "break_point": "tool_args",
+      "strategy": "meta",
+      "n": 3,
+      "recovered": 3,
+      "json_valid": 3,
+      "args_correct": 3,
+      "duplicate_side_effects": 0,
+      "mean_output_tokens": 277.7
+    },
+    {
+      "provider": "anthropic",
+      "break_point": "tool_args",
+      "strategy": "prefill",
+      "n": 3,
+      "recovered": 3,
+      "json_valid": 3,
+      "args_correct": 3,
+      "duplicate_side_effects": 0,
+      "mean_output_tokens": 147.3
+    },
+    {
+      "provider": "anthropic",
+      "break_point": "tool_args",
+      "strategy": "resend",
+      "n": 3,
+      "recovered": 3,
+      "json_valid": 3,
+      "args_correct": 3,
+      "duplicate_side_effects": 0,
+      "mean_output_tokens": 135.7
+    },
+    {
+      "provider": "gemini",
+      "break_point": "text",
+      "strategy": "meta",
+      "n": 3,
+      "recovered": 3,
+      "json_valid": 0,
+      "args_correct": 0,
+      "duplicate_side_effects": 0,
+      "mean_output_tokens": 1465.0
+    },
+    {
+      "provider": "gemini",
+      "break_point": "text",
+      "strategy": "prefill",
+      "n": 3,
+      "recovered": 3,
+      "json_valid": 0,
+      "args_correct": 0,
+      "duplicate_side_effects": 0,
+      "mean_output_tokens": 211.3
+    },
+    {
+      "provider": "gemini",
+      "break_point": "text",
+      "strategy": "resend",
+      "n": 3,
+      "recovered": 3,
+      "json_valid": 0,
+      "args_correct": 0,
+      "duplicate_side_effects": 0,
+      "mean_output_tokens": 627.7
+    },
+    {
+      "provider": "kimi",
+      "break_point": "reasoning",
+      "strategy": "meta",
+      "n": 1,
+      "recovered": 1,
+      "json_valid": 0,
+      "args_correct": 0,
+      "duplicate_side_effects": 0,
+      "mean_output_tokens": 499.0
+    },
+    {
+      "provider": "kimi",
+      "break_point": "reasoning",
+      "strategy": "prefill",
+      "n": 1,
+      "recovered": 1,
+      "json_valid": 0,
+      "args_correct": 0,
+      "duplicate_side_effects": 0,
+      "mean_output_tokens": 104.0
+    },
+    {
+      "provider": "kimi",
+      "break_point": "reasoning",
+      "strategy": "resend",
+      "n": 1,
+      "recovered": 1,
+      "json_valid": 0,
+      "args_correct": 0,
+      "duplicate_side_effects": 0,
+      "mean_output_tokens": 113.0
+    },
+    {
+      "provider": "kimi",
+      "break_point": "text",
+      "strategy": "meta",
+      "n": 3,
+      "recovered": 3,
+      "json_valid": 0,
+      "args_correct": 0,
+      "duplicate_side_effects": 0,
+      "mean_output_tokens": 547.0
+    },
+    {
+      "provider": "kimi",
+      "break_point": "text",
+      "strategy": "prefill",
+      "n": 3,
+      "recovered": 3,
+      "json_valid": 0,
+      "args_correct": 0,
+      "duplicate_side_effects": 0,
+      "mean_output_tokens": 197.3
+    },
+    {
+      "provider": "kimi",
+      "break_point": "text",
+      "strategy": "resend",
+      "n": 3,
+      "recovered": 3,
+      "json_valid": 0,
+      "args_correct": 0,
+      "duplicate_side_effects": 0,
+      "mean_output_tokens": 347.0
+    },
+    {
+      "provider": "kimi",
+      "break_point": "tool_args",
+      "strategy": "meta",
+      "n": 3,
+      "recovered": 3,
+      "json_valid": 3,
+      "args_correct": 3,
+      "duplicate_side_effects": 0,
+      "mean_output_tokens": 300.0
+    },
+    {
+      "provider": "kimi",
+      "break_point": "tool_args",
+      "strategy": "prefill",
+      "n": 3,
+      "recovered": 2,
+      "json_valid": 2,
+      "args_correct": 0,
+      "duplicate_side_effects": 0,
+      "mean_output_tokens": 27.7
+    },
+    {
+      "provider": "kimi",
+      "break_point": "tool_args",
+      "strategy": "resend",
+      "n": 3,
+      "recovered": 3,
+      "json_valid": 3,
+      "args_correct": 3,
+      "duplicate_side_effects": 0,
+      "mean_output_tokens": 117.0
+    }
+  ],
+  "token_saving_vs_resend": {
+    "anthropic/text/meta": -1.056,
+    "anthropic/text/prefill": 0.151,
+    "anthropic/tool_args/meta": -1.046,
+    "anthropic/tool_args/prefill": -0.085,
+    "gemini/text/meta": -1.334,
+    "gemini/text/prefill": 0.663,
+    "kimi/reasoning/meta": -3.416,
+    "kimi/reasoning/prefill": 0.08,
+    "kimi/text/meta": -0.576,
+    "kimi/text/prefill": 0.431,
+    "kimi/tool_args/meta": -1.564,
+    "kimi/tool_args/prefill": 0.763
+  },
+  "not_reproducible": [
+    {
+      "provider": "kimi",
+      "break_point": "reasoning",
+      "note": "这一路流没有在该断点上给出半截内容"
+    },
+    {
+      "provider": "kimi",
+      "break_point": "reasoning",
+      "note": "这一路流没有在该断点上给出半截内容"
+    },
+    {
+      "provider": "anthropic",
+      "break_point": "reasoning",
+      "note": "这一路流没有在该断点上给出半截内容"
+    },
+    {
+      "provider": "anthropic",
+      "break_point": "reasoning",
+      "note": "这一路流没有在该断点上给出半截内容"
+    },
+    {
+      "provider": "anthropic",
+      "break_point": "reasoning",
+      "note": "这一路流没有在该断点上给出半截内容"
+    },
+    {
+      "provider": "gemini",
+      "break_point": "reasoning",
+      "note": "这一路流没有在该断点上给出半截内容"
+    },
+    {
+      "provider": "gemini",
+      "break_point": "reasoning",
+      "note": "这一路流没有在该断点上给出半截内容"
+    },
+    {
+      "provider": "gemini",
+      "break_point": "reasoning",
+      "note": "这一路流没有在该断点上给出半截内容"
+    },
+    {
+      "provider": "gemini",
+      "break_point": "tool_args",
+      "note": "这一路流没有在该断点上给出半截内容"
+    },
+    {
+      "provider": "gemini",
+      "break_point": "tool_args",
+      "note": "这一路流没有在该断点上给出半截内容"
+    },
+    {
+      "provider": "gemini",
+      "break_point": "tool_args",
+      "note": "这一路流没有在该断点上给出半截内容"
+    }
+  ],
+  "gates": {
+    "三类断点都真的切断过流": true,
+    "成功的单元都有原始响应留存": true,
+    "失败的单元都记下了原因": true
+  },
+  "summary_sha256": "c72b1fbc974f36354290242c6912aaf5d8ab1448b59786e347b8f181ac7718a8"
+}

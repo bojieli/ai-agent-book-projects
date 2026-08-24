@@ -1,0 +1,75 @@
+{
+  "row": {
+    "provider": "kimi",
+    "break_point": "text",
+    "repeat": 1,
+    "reproducible": true,
+    "strategy": "meta",
+    "cut": {
+      "reasoning_chars": 193,
+      "text_chars": 30,
+      "tool_name": null,
+      "tool_args": "",
+      "truncated": true,
+      "closed": false
+    },
+    "applicable": true,
+    "note": null,
+    "output_tokens": 593,
+    "recovered": true,
+    "json_valid": null,
+    "args_correct": null,
+    "duplicate_side_effects": 0,
+    "answer_correct": true
+  },
+  "partial": {
+    "reasoning": "Flight: 3200 CNY round trip.\nHotel: 18000 JPY/night × 3 nights = 54000 JPY × 0.048 = 2592 CNY.\nMeals: 6000 JPY/day × 4 days = 24000 JPY × 0.048 = 1152 CNY.\nTotal: 3200 + 2592 + 1152 = 6944 CNY.",
+    "text": "已查到东京差旅所需全部数据，计算如下：\n\n**费用明细（按 ",
+    "tool_name": null,
+    "tool_args": "",
+    "tool_index": null,
+    "tool_args_closed": false,
+    "truncated": true,
+    "finished": false
+  },
+  "result": {
+    "strategy": "meta",
+    "applicable": true,
+    "note": null,
+    "usage": {
+      "input": 836,
+      "output": 593
+    },
+    "raw": {
+      "id": "chatcmpl-6a8c6209aace5ccf50292c73",
+      "object": "chat.completion",
+      "created": 1787585035,
+      "model": "kimi-k3",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "3 晚 4 天计）：\n\n- **往返机票**：¥3,200（人民币，直接以人民币计价）\n- **住宿**：18,000 JPY/晚 × 3 晚 = 54,000 JPY\n- **餐费**：6,000 JPY/天 × 4 天 = 24,000 JPY\n\n**日元折算：**\n\n住宿与餐费合计 54,000 + 24,000 = 78,000 JPY，按汇率 1 JPY = 0.048 CNY 折算：\n\n78,000 × 0.048 = ¥3,744\n\n**总预算（人民币）：**\n\n3,200 + 3,744 = **¥6,944**\n\n即本次北京—东京 3 晚 4 天出差的总预算约为 **人民币 6,944 元**。",
+            "reasoning_content": "用户说我上一次的回复被截断了，需要从断点继续。之前的回复是「已查到东京差旅所需全部数据，计算如下：\n\n**费用明细（按 」\n\n我需要从这里继续，不要重复已经输出的部分。断点在「**费用明细（按 」之后。\n\n计算：\n- 往返机票：3200 CNY\n- 住宿：18000 JPY/晚 × 3 晚 = 54000 JPY\n- 餐费：6000 JPY/天 × 4 天 = 24000 JPY\n- JPY 合计：54000 + 24000 = 78000 JPY\n- 汇率：1 JPY = 0.048 CNY\n- 78000 × 0.048 = 3744 CNY\n- 总额：3200 + 3744 = 6944 CNY\n\n我需要从「按」后面继续。合理的续写是「3 晚 4 天计）」然后列出明细。\n\n让我组织续写内容，直接从断点处接着写：\n\n「3 晚 4 天计）：」\n- 往返机票：¥3,200（人民币）\n- 住宿：18,000 JPY/晚 × 3 晚 = 54,000 JPY\n- 餐费：6,000 JPY/天 × 4 天 = 24,000 JPY\n- 日元小计：78,000 JPY，按汇率 1 JPY = 0.048 CNY 折算为 78,000 × 0.048 = ¥3,744\n\n**总预算：3,200 + 3,744 = ¥6,944（人民币）**\n\n这样衔接自然。断点是「**费用明细（按 」，所以续写从「3 晚 4 天计）」开始是合理的。"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 836,
+        "completion_tokens": 593,
+        "total_tokens": 1429,
+        "cached_tokens": 768,
+        "completion_tokens_details": {
+          "reasoning_tokens": 396
+        },
+        "prompt_tokens_details": {
+          "cached_tokens": 768
+        }
+      }
+    },
+    "text": "3 晚 4 天计）：\n\n- **往返机票**：¥3,200（人民币，直接以人民币计价）\n- **住宿**：18,000 JPY/晚 × 3 晚 = 54,000 JPY\n- **餐费**：6,000 JPY/天 × 4 天 = 24,000 JPY\n\n**日元折算：**\n\n住宿与餐费合计 54,000 + 24,000 = 78,000 JPY，按汇率 1 JPY = 0.048 CNY 折算：\n\n78,000 × 0.048 = ¥3,744\n\n**总预算（人民币）：**\n\n3,200 + 3,744 = **¥6,944**\n\n即本次北京—东京 3 晚 4 天出差的总预算约为 **人民币 6,944 元**。",
+    "tool_calls": []
+  }
+}
