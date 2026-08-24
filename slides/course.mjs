@@ -1430,7 +1430,7 @@ export const lessons = [
     boundary: "A visual reviewer can catch layout defects but may still miss factual or pedagogical errors.",
     rule: "Verify generated media in the modality consumed by the user.",
     extensions: [
-      ["Experiment 5-5: narrated video pipeline", "chapter5/paper-to-video/"],
+      ["Experiment 5-7: narrated video pipeline", "chapter5/paper-to-video/"],
       ["Presentation rendering artifacts", "chapter5/paper-to-ppt/validation/"],
       ["Paper-to-video evidence", "chapter5/paper-to-video/validation/"],
       ["Video pipeline diagram", "book-en/images/fig5-6.svg"]
@@ -1513,9 +1513,9 @@ export const lessons = [
     boundary: "Self-modification is unsafe when the Agent can alter the validator that approves its own changes.",
     rule: "Promote generated code into capability only after independent security, functional, and reuse checks.",
     extensions: [
-      ["Experiment 5-8: log diagnosis", "chapter5/log-diagnosis/"],
-      ["Experiment 5-10: ERP SQL Agent", "chapter5/erp-agent/"],
-      ["Experiment 5-11: conversational UI", "chapter5/conversational-ui/"],
+      ["Experiment 5-11: log diagnosis", "chapter5/log-diagnosis/"],
+      ["Experiment 5-13: ERP SQL Agent", "chapter5/erp-agent/"],
+      ["Experiment 5-14: conversational UI", "chapter5/conversational-ui/"],
       ["Dynamic form architecture", "book-en/images/fig5-8.svg"],
       ["SQL artifact pattern", "book-en/images/fig5-9.svg"]
     ],

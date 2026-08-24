@@ -7,7 +7,7 @@
 
 > 📥 **[下载 PDF / EPUB](#-电子书)**（推荐）— 推荐使用 PDF / EPUB 离线阅读，排版最佳；也可[在线阅读](https://bojieli.github.io/ai-agent-book/)（支持多语言切换、章节折叠、全文搜索，每次推送自动更新）。
 
-**Agent = LLM + 上下文 + 工具**——本书围绕这个核心公式，用 10 章把 AI Agent 从原理讲到工程实战。全书正文、配图、**103 个配套实验**全部开源，欢迎亲手把实验跑一遍。
+**Agent = LLM + 上下文 + 工具**——本书围绕这个核心公式，用 10 章把 AI Agent 从原理讲到工程实战。全书正文、配图、**107 个配套实验**全部开源，欢迎亲手把实验跑一遍。
 
 > 📢 **2.0 版变更（相较 1.4 版）**：本仓库书稿版本已由 1.4 升级为 2.0。2.0 版将原第四章中的“异步交互”部分与原第九章中关于“多模态 Agent”的内容合并，重组为新的第六章“交互：观察与动作空间的扩展”。原第六章“Agent 的评估”、第七章“模型后训练”和第八章“Agent 的持续进化”依次后移一章，现分别为第七、八、九章。
 >
@@ -59,11 +59,11 @@
 
 | 章 | 主题 | 一句话核心 | 正文 | 实验 |
 | :--: | --- | --- | :--: | :--: |
-| 1 | 🚀 **AI Agent 入门** | **Agent = LLM + 上下文 + 工具**；Harness 工程才是竞争力 | [读](book/chapter1.md) | [3](chapter1/README.md) |
+| 1 | 🚀 **AI Agent 入门** | **Agent = LLM + 上下文 + 工具**；Harness 工程才是竞争力 | [读](book/chapter1.md) | [4](chapter1/README.md) |
 | 2 | 🎯 **上下文工程** | 上下文决定能力上限：KV Cache、提示工程、Agent Skills、上下文压缩 | [读](book/chapter2.md) | [10](chapter2/README.md) |
 | 3 | 📚 **用户记忆和知识库** | 跨会话记住用户、接入外部知识：用户记忆、RAG、结构化索引、知识图谱 | [读](book/chapter3.md) | [12](chapter3/README.md) |
 | 4 | 🛠️ **工具** | 工具是 Agent 的双手：MCP 协议、感知/执行/协作三类工具与主动工具发现 | [读](book/chapter4.md) | [5](chapter4/README.md) |
-| 5 | 💻 **Coding Agent 与通用 Agent** | 代码是「能创造新工具的工具」，生产级 Coding Agent 全景 | [读](book/chapter5.md) | [13](chapter5/README.md) |
+| 5 | 💻 **Coding Agent 与通用 Agent** | 代码是「能创造新工具的工具」，生产级 Coding Agent 全景 | [读](book/chapter5.md) | [16](chapter5/README.md) |
 | 6 | 🎙️ **交互：观察与动作空间的扩展** | 从模态与时序两个维度扩展 Agent 的观察与动作空间：异步与事件驱动、语音交互、Computer Use 和机器人操作 | [读](book/chapter6.md) | [13](chapter6/README.md) |
 | 7 | 🎯 **Agent 的评估** | 把表现变成可比较信号：评估环境、指标、统计显著性、评估驱动选型 | [读](book/chapter7.md) | [13](chapter7/README.md) |
 | 8 | 🧠 **模型后训练** | 预训练/SFT/RL 三阶段：何时选 SFT、何时选 RL，工具调用内化、样本效率 | [读](book/chapter8.md) | [19](chapter8/README.md) |

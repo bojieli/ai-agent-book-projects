@@ -178,7 +178,7 @@ $ uv run python chapter5/video-edit/demo.py --smoke
 
 <div class="grid grid-cols-2 gap-4 mt-6">
 <a class="course-link" href="../chapter5/paper-to-video/">
-<span class="course-link-title">Experiment 5-5: narrated video pipeline</span>
+<span class="course-link-title">Experiment 5-7: narrated video pipeline</span>
 <span class="course-link-path">chapter5/paper-to-video/</span>
 </a>
 <a class="course-link" href="../chapter5/paper-to-ppt/validation/">
