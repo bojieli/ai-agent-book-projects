@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ReAct 循环速查卡</title>
+  <link rel="stylesheet" href="../assets/teaching.css">
+</head>
+<body>
+  <main class="page">
+    <p class="eyebrow">Quick reference · ReAct</p>
+    <h1>一次循环，四个动作</h1>
+    <p class="lede">模型只决定下一步；Harness 维护循环、执行工具、保存轨迹并强制停止。</p>
+
+    <ol class="loop-strip" aria-label="ReAct 循环">
+      <li>读取上下文</li>
+      <li>决定下一步</li>
+      <li>执行工具</li>
+      <li>追加结果</li>
+    </ol>
+
+    <section>
+      <h2>最小骨架</h2>
+      <pre><code>messages = [规则, 用户任务]
+
+for round in range(MAX_ROUNDS):
+    decision = model(messages, tools)
+    messages.append(decision)
+
+    if decision requests tools:
+        for call in decision.tool_calls:
+            result = execute(validate(call))
+            messages.append(result)
+        continue
+
+    if verify(decision.answer):
+        return decision.answer
+
+    messages.append("验证失败，请补充证据")
+
+return "达到轮数上限，说明未完成原因"</code></pre>
+    </section>
+
+    <section>
+      <h2>三个退出口</h2>
+      <div class="formula">
+        <div><strong>成功</strong><span>答案通过明确验收标准</span></div>
+        <div><strong>失败</strong><span>工具错误不可恢复</span></div>
+        <div><strong>预算</strong><span>达到最大轮数或成本</span></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>调试时只检查四件事</h2>
+      <ol class="checklist">
+        <li>模型是否收到正确的系统规则和工具定义？</li>
+        <li>模型请求的工具名与参数是否通过校验？</li>
+        <li>工具结果是否追加回同一个消息历史？</li>
+        <li>成功、失败和预算退出是否都能触发？</li>
+      </ol>
+    </section>
+
+    <p class="source-note">依据：本书<a href="../book/chapter1.md">第 1 章“ReAct 循环”</a>和<a href="../book/chapter2.md">第 2 章“用代码实现 Agent 的核心循环”</a>。配套讲解见<a href="../lessons/0002-trace-a-react-loop.html">第 2 课</a>。</p>
+  </main>
+</body>
+</html>

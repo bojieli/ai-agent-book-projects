@@ -16,8 +16,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const correct = answer.dataset.correct === "true";
       feedback.textContent = correct
-        ? "正确。阅读的单位不是“章”，而是“能在项目里验证的机制”。"
-        : "再想想：哪种读法能让你马上得到环境反馈，并暴露理解偏差？";
+        ? quiz.dataset.correctFeedback || "回答正确。"
+        : quiz.dataset.retryFeedback || "再想一想，然后重试。";
       feedback.dataset.state = correct ? "correct" : "retry";
     });
   });

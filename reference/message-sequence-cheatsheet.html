@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>工具调用消息顺序速查卡</title>
+  <link rel="stylesheet" href="../assets/teaching.css">
+</head>
+<body>
+  <main class="page">
+    <p class="eyebrow">Quick reference · Messages</p>
+    <h1>四种角色，一条完整轨迹</h1>
+    <p class="lede">模型 API 本身无状态。每次调用时，程序都要把规则、任务、模型决定和工具结果按顺序重新发送。</p>
+
+    <section>
+      <h2>固定顺序</h2>
+      <div class="message-stack">
+        <div class="message" data-role="system"><p><strong>开发者规则</strong></p><p class="mini-code">允许哪些行为，答案应满足什么标准</p></div>
+        <div class="message" data-role="user"><p><strong>用户任务</strong></p><p class="mini-code">查清问题，并提供可靠来源</p></div>
+        <div class="message" data-role="assistant"><p><strong>模型请求调用工具</strong></p><p class="mini-code">tool_calls: [{ id: "call_7", name: "search_web", ... }]</p></div>
+        <div class="message" data-role="tool"><p><strong>程序写回工具结果</strong></p><p class="mini-code">tool_call_id: "call_7", content: "搜索结果..."</p></div>
+        <div class="message" data-role="assistant"><p><strong>模型继续调用工具，或给出最终答案</strong></p></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>谁负责什么</h2>
+      <table class="trace">
+        <thead><tr><th>字段</th><th>产生者</th><th>作用</th></tr></thead>
+        <tbody>
+          <tr><td><code>system</code></td><td>开发者</td><td>提供稳定规则</td></tr>
+          <tr><td><code>user</code></td><td>用户</td><td>描述本次任务</td></tr>
+          <tr><td><code>assistant.tool_calls</code></td><td>模型</td><td>请求工具名与参数</td></tr>
+          <tr><td><code>tool</code></td><td>Agent 程序</td><td>送回真实执行结果</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <aside class="principle">
+      <strong>配对规则：</strong><code>tool.tool_call_id</code> 必须等于相应 <code>assistant.tool_calls[].id</code>。一次请求多个工具时，模型靠它判断每份结果属于哪个调用。
+    </aside>
+
+    <p class="source-note">依据：本书<a href="../book/chapter2.md">第 2 章“带工具调用的多轮交互”</a>。配套讲解见<a href="../lessons/0003-read-the-message-transcript.html">第 3 课</a>。</p>
+  </main>
+</body>
+</html>

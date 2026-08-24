@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>第 3 课：读懂一次工具调用的消息记录</title>
+  <link rel="stylesheet" href="../assets/teaching.css">
+  <script src="../assets/lesson-quiz.js" defer></script>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <p class="eyebrow">Lesson 0003 · 约 10 分钟</p>
+      <h1>读懂一次工具调用的消息记录</h1>
+      <p class="lede">把上一课的“搜索 → 返回结果 → 再判断”翻译成模型 API 真正收到的消息列表。</p>
+      <ul class="meta">
+        <li>已掌握：工具结果必须回传</li>
+        <li>本课只学：四种消息角色</li>
+        <li>本课胜利：能补全缺失消息</li>
+      </ul>
+    </header>
+
+    <aside class="principle">
+      <strong>本课唯一结论：</strong><code>assistant.tool_calls</code> 是模型发出的“请调用工具”请求；<code>tool</code> 消息才是程序执行后的真实结果。
+    </aside>
+
+    <section id="roles">
+      <h2>先认识四种角色</h2>
+      <div class="message-stack">
+        <div class="message" data-role="system"><p><strong>开发者写规则</strong></p><p>“至少比较两个独立可靠来源；最多搜索三轮。”</p></div>
+        <div class="message" data-role="user"><p><strong>用户提出任务</strong></p><p>“查清楚咖啡是否影响睡眠，并给出来源。”</p></div>
+        <div class="message" data-role="assistant"><p><strong>模型决定下一步</strong></p><p>请求调用 <code>search_web</code>，参数是搜索关键词。</p></div>
+        <div class="message" data-role="tool"><p><strong>程序送回真实结果</strong></p><p>三条搜索结果：标题、链接、来源、日期和摘要。</p></div>
+      </div>
+      <p>下一次模型调用时，程序会把以上消息全部再次发送。模型 API 自己不会保留上一次调用的记忆。</p>
+    </section>
+
+    <section id="transcript">
+      <h2>看懂请求与结果如何配对</h2>
+      <pre><code>{
+  "role": "assistant",
+  "content": null,
+  "tool_calls": [{
+    "id": "call_search_7",
+    "function": {
+      "name": "search_web",
+      "arguments": "{\"query\": \"coffee sleep evidence\"}"
+    }
+  }]
+}
+
+{
+  "role": "tool",
+  "tool_call_id": "call_search_7",
+  "content": "[{\"title\": \"...\", \"url\": \"...\"}]"
+}</code></pre>
+      <p><code>tool_call_id</code> 与上面的 <code>id</code> 相同，表示“这份结果回答的是这次调用”。如果模型一次请求搜索和读取两个工具，就会产生两个不同的 ID，结果不能串错。</p>
+    </section>
+
+    <section id="ownership">
+      <h2>不要把模型当成执行器</h2>
+      <table class="trace">
+        <thead><tr><th>动作</th><th>负责人</th><th>原因</th></tr></thead>
+        <tbody>
+          <tr><td>选择工具和参数</td><td>模型</td><td>这是决策</td></tr>
+          <tr><td>校验参数和权限</td><td>Harness</td><td>不能盲信模型请求</td></tr>
+          <tr><td>访问真实网页</td><td>工具</td><td>这是外部行动</td></tr>
+          <tr><td>追加工具结果</td><td>Harness</td><td>为下一轮提供观察</td></tr>
+        </tbody>
+      </table>
+      <p><a href="../reference/message-sequence-cheatsheet.html">打开可打印的工具调用消息顺序速查卡 →</a></p>
+    </section>
+
+    <section class="quiz no-print" data-quiz
+      data-correct-feedback="正确。工具结果必须带上对应调用 ID，追加到历史后再请求模型。"
+      data-retry-feedback="再看一次角色顺序：assistant 只提出调用请求，接下来由程序执行并写回结果。">
+      <h3>30 秒检索练习</h3>
+      <p><code>assistant</code> 发出 <code>tool_calls</code> 后，消息列表接下来应该加入什么？</p>
+      <label><input type="radio" name="q1" data-correct="true"> 工具结果带对应调用编号</label>
+      <label><input type="radio" name="q1"> 最终答案并清空全部历史</label>
+      <label><input type="radio" name="q1"> 再次发送相同的用户问题</label>
+      <button type="button">检查答案</button>
+      <p class="feedback" data-feedback aria-live="polite"></p>
+    </section>
+
+    <section id="practice">
+      <h2>现在补全一条消息</h2>
+      <div class="card">
+        <p>模型请求了 <code>search_web</code>，调用编号是 <code>call_search_7</code>。程序已经执行完成，得到“三条搜索结果”。</p>
+        <p><strong>请回答：</strong>写回消息需要填写哪三个字段？直接写成“字段名 = 内容”的形式，不用写完整 JSON。</p>
+      </div>
+    </section>
+
+    <section id="sources">
+      <h2>本课主来源</h2>
+      <p>精读本书<a href="../book/chapter2.md">第 2 章“带工具调用的多轮交互：Agent 的核心循环”</a>，只看到“模型根据工具结果生成最终回复”为止。重点追踪消息顺序，暂时不要记忆所有 JSON 细节。</p>
+    </section>
+
+    <footer>
+      上一课：<a href="0002-trace-a-react-loop.html">亲手走一遍 ReAct 循环</a>。任何字段看不懂，都可以直接把字段名发给我；我们继续一次只解决一个问题。
+    </footer>
+  </main>
+</body>
+</html>

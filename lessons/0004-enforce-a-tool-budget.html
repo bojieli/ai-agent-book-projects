@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>第 4 课：用程序强制执行工具预算</title>
+  <link rel="stylesheet" href="../assets/teaching.css">
+  <script src="../assets/lesson-quiz.js" defer></script>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <p class="eyebrow">Lesson 0004 · 约 8 分钟</p>
+      <h1>用程序强制执行工具预算</h1>
+      <p class="lede">把“最多调用二十次”从一句提示词，变成模型无法绕过的 Python 规则。</p>
+      <ul class="meta">
+        <li>已掌握：工具消息必须配对</li>
+        <li>本课只学：执行前预算检查</li>
+        <li>本课胜利：能让循环安全收尾</li>
+      </ul>
+    </header>
+
+    <aside class="principle">
+      <strong>本课唯一结论：</strong>模型负责请求工具；Harness 必须在行动发生前决定“能不能执行”。
+    </aside>
+
+    <section id="boundary">
+      <h2>提示要求不等于硬约束</h2>
+      <p>系统提示可以告诉模型“最多调用二十次”，但模型仍可能发起第二十一次请求。真正的上限必须由程序计数。检查要发生在工具执行之前，因为网络请求、付款和文件修改都不能靠事后统计撤销。</p>
+      <ol class="loop-strip">
+        <li>模型请求工具</li>
+        <li>程序检查预算</li>
+        <li>执行或拒绝</li>
+        <li>回答并结束</li>
+      </ol>
+    </section>
+
+    <section id="code">
+      <h2>把规则放进最小循环</h2>
+      <pre><code>MAX_TOOL_CALLS = 20
+used_calls = 0
+
+while True:
+    reply = call_model(messages, allow_tools=True)
+    messages.append(reply)
+    calls = reply.tool_calls or []
+
+    if not calls:
+        return reply.content
+
+    # 一次并行请求也要按总数在执行前检查
+    if used_calls + len(calls) &gt; MAX_TOOL_CALLS:
+        for call in calls:
+            messages.append(tool_result(
+                tool_call_id=call.id,
+                content="未执行：工具预算已用尽",
+            ))
+
+        # 保留已有工具结果，但不再提供工具能力
+        final_reply = call_model(messages, allow_tools=False)
+        return final_reply.content
+
+    used_calls += len(calls)  # 失败的实际调用也占用预算
+    for call in calls:
+        result = execute_tool(call)
+        messages.append(tool_result(call.id, result))</code></pre>
+      <p>拒绝一批调用时，仍需为每个 <code>call.id</code> 写回一条结果。这样既保持消息顺序合法，也让模型知道工具没有执行。收尾调用保留历史证据，但关闭新的工具能力。</p>
+    </section>
+
+    <section id="trace">
+      <h2>只剩一次额度，却请求三个工具</h2>
+      <table class="trace">
+        <thead><tr><th>状态</th><th>Harness 的动作</th><th>不能做什么</th></tr></thead>
+        <tbody>
+          <tr><td><code>used = 19</code></td><td>读取本轮三个调用</td><td>还不执行任何工具</td></tr>
+          <tr><td><code>19 + 3 &gt; 20</code></td><td>拒绝整批调用</td><td>不能先执行再超额</td></tr>
+          <tr><td>三个调用已拒绝</td><td>写回三个对应结果</td><td>不能丢失调用编号</td></tr>
+          <tr><td>进入收尾模式</td><td>禁用工具并生成回答</td><td>不能继续拒绝—重试</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="quiz no-print" data-quiz
+      data-correct-feedback="正确。只有执行前的程序检查能够阻止真实行动超出预算。"
+      data-retry-feedback="想一想：谁真正执行工具，谁就必须在执行之前握有否决权？">
+      <h3>30 秒检索练习</h3>
+      <p>哪一项是真正的硬性工具上限？</p>
+      <label><input type="radio" name="q1" data-correct="true"> 执行前由程序检查调用预算</label>
+      <label><input type="radio" name="q1"> 执行后由模型总结调用数量</label>
+      <label><input type="radio" name="q1"> 请求前由模型估计剩余预算</label>
+      <button type="button">检查答案</button>
+      <p class="feedback" data-feedback aria-live="polite"></p>
+    </section>
+
+    <section id="practice">
+      <h2>下一步：把伪代码变成真实 Python</h2>
+      <div class="card">
+        <p>下一课会给这个循环接上两个真实工具：<code>search_web</code> 和 <code>read_page</code>。模型自主规划搜索路径，Harness 负责预算、消息配对和停止。</p>
+        <p><strong>开始前请回答：</strong>搜索工具返回链接和摘要，读取工具返回网页正文。为什么不能只保留搜索工具？</p>
+      </div>
+    </section>
+
+    <section id="sources">
+      <h2>本课主来源</h2>
+      <p>对照本书<a href="../book/chapter2.md">第 2 章的 Agent 核心循环</a>阅读：原始示例明确提醒生产代码需要 <code>max_iterations</code>。再看<a href="../book/chapter1.md">第 1 章“自主 Agent”</a>：达到最大迭代次数是 Harness 的停止条件之一。</p>
+      <p class="source-note">配对规则忘记时，回看<a href="../reference/message-sequence-cheatsheet.html">工具调用消息顺序速查卡</a>。</p>
+    </section>
+
+    <footer>
+      上一课：<a href="0003-read-the-message-transcript.html">读懂一次工具调用的消息记录</a>。遇到代码看不懂时，直接把那一行发给我，我们一次只拆一个动作。
+    </footer>
+  </main>
+</body>
+</html>
