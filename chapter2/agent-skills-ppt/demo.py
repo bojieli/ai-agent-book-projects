@@ -279,11 +279,15 @@ def run_agent(paper_path: Path, model: str, out_path: Path,
 
     final_result = None
     for turn in range(1, max_turns + 1):
+        # GPT-5.6 的 Chat Completions 端点在带 function tools 时只支持
+        # reasoning_effort="none"。这个示例保留 Chat Completions 的教学用
+        # message/tool_call 格式；若需要推理 + 工具调用，应迁移到 Responses API。
         resp = client.chat.completions.create(
             model=model,
             messages=messages,
             tools=TOOLS,
             temperature=0.2,
+            reasoning_effort="none",
         )
         msg = resp.choices[0].message
         messages.append(msg.model_dump(exclude_none=True))
