@@ -682,7 +682,7 @@ Tại sao nối vào cuối lại không phá vỡ bộ đệm? Đây chính là
 
 “Nối vào cuối” chỉ xảy ra ở vòng mà công cụ được phát hiện. Sau đó, khối lược đồ nằm cố định tại vị trí ban đầu trong trajectory; các thông báo mới được nối phía sau nó, chứ khối này không bị chuyển xuống cuối mới nhất ở mỗi vòng.
 
-Một ràng buộc khác của cơ chế này là năng lực của mô hình: mô hình phải từng thấy mẫu "định nghĩa công cụ xuất hiện giữa cuộc hội thoại" trong quá trình huấn luyện - đây cũng là lý do khả năng này hiện chỉ được các mô hình mới hơn (như GPT-5.4+, dòng Claude 4.5+) hỗ trợ, và các mô hình nguồn mở tự lưu trữ cần được huấn luyện chuyên biệt. Phần thảo luận đầy đủ về khám phá công cụ xem ở phần "Khám phá công cụ tích cực" của Chương 4.
+Một ràng buộc khác của cơ chế này là năng lực của mô hình: mô hình phải từng thấy mẫu "định nghĩa công cụ xuất hiện giữa cuộc hội thoại" trong quá trình huấn luyện - đây cũng là lý do khả năng này hiện chỉ được các mô hình mới hơn (như GPT-5.4+, dòng Claude 4.5+) hỗ trợ, và các mô hình nguồn mở tự lưu trữ cần được huấn luyện chuyên biệt. Phần thảo luận đầy đủ về khám phá công cụ xem ở phần "Phải làm gì khi có quá nhiều công cụ" của Chương 4.
 
 > **Thí nghiệm 2-4 ★★: Thí nghiệm cắt bỏ kỹ thuật nhanh chóng**
 >
