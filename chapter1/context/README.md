@@ -425,7 +425,7 @@ A complex financial analysis task requiring:
 - **no_tool_calls** — the `tools` parameter is omitted from the request, so the model has no tool definitions to call.
 - **no_tool_results** — every tool result is replaced with empty content, so the message the API requires is still there but carries no observation. `--hidden-result marker` swaps in the visible `[Tool result hidden due to context mode]` placeholder instead, which is a different experiment: it tells the model an observation is being withheld.
 - **no_reasoning** — `reasoning_content` is stripped from each assistant message before it is added back to the trajectory.
-- **no_history** — `_prepare_messages_for_api()` sends only a sliding window (system prompt + current task + the most recent ReAct step) to the model, so earlier steps are forgotten and the agent tends to repeat tool calls. Full mode always sends the complete trajectory.
+- **no_history** — `_prepare_messages_for_api()` sends only the system prompt and the current task to the model — no ReAct stepis retained. So all earlier steps are forgotten and the agent tends to repeat tool calls. Full mode always sends the complete trajectory.
 
 #### Running Tests
 
@@ -975,7 +975,7 @@ python run_experiment_1_1.py --provider kimi --modes no_tool_results --hidden-re
 - **no_tool_calls** — 请求中省略 `tools` 参数，模型没有可调用的工具定义。
 - **no_tool_results** — 每个工具结果的内容被置空：API 要求这条消息存在，但它不再携带任何观测。`--hidden-result marker` 则换成可见的 `[Tool result hidden due to context mode]` 占位符——那是另一个实验，因为它等于告诉模型「这里有观测被藏起来了」。
 - **no_reasoning** — 写回轨迹前，从每条 assistant 消息中剥离 `reasoning_content`。
-- **no_history** — `_prepare_messages_for_api()` 只发送滑动窗口（系统提示 + 当前任务 + 最近一步 ReAct），早期步骤被遗忘，易重复调工具。完整模式始终发送完整轨迹。
+- **no_history** — `_prepare_messages_for_api()` 仅向模型发送系统提示词和当前任务，不保留任何ReAct步骤。因此模型会遗忘此前所有操作步骤，易重复调用工具。完整模式始终发送完整轨迹。
 
 #### 运行测试
 
