@@ -126,7 +126,6 @@ The first is **tool description poisoning**: the tool's description enters the m
 
 Mitigation strategies follow traditional software supply chain security principles: **review tool descriptions** before integration—treat descriptions as untrusted input, not harmless metadata; **lock server versions**, reject silent updates, and re-review when upgrading; configure **least-privilege credentials** for each server. At the runtime level, the Sidecar mechanism discussed later in this chapter provides a last line of defense: an independent security review model only sees structured tool call data and is less susceptible to manipulation by persuasive text hidden in tool descriptions. Chapter 5 will systematically introduce Simon Willison's **Lethal Triad** (access to private data, exposure to untrusted content, ability to communicate externally)—when all three are present, an attack loop closes. The triad gives a systematic frame for judging the overall risk of an MCP tool combination: the more servers you integrate, the likelier all three elements coexist; and on top of the triad, persistent memory lets an attack's impact outlive the session, amplifying the risk further.
 
-
 Skills are more flexible than MCP: they carry not only the tool description but also the code that implements the tool, and some of that code may run on the user's own machine. **Skills are therefore far more dangerous than MCP.** Beyond tool-description poisoning, malicious code can be planted directly in a Skill, or a supply-chain attack can pull down malicious code at runtime. This is why most Skill Hubs run security scans—but scanning is not a cure-all, and even a scanned Skill may still hide malicious content. When using untrusted third-party Skills, run them carefully in an isolated environment and avoid letting them touch sensitive information.
 
 ## What to Do When There Are Too Many Tools: Hierarchical Organization and Proactive Tool Discovery
@@ -249,7 +248,6 @@ When the Agent's main model is not multimodal, **using multimodal analysis as a 
 Compared with native multimodal processing, tool-based analysis keeps only a short question and answer in the context, preventing images, video, and other multimodal data from consuming large numbers of tokens.
 
 > **Experiment 4-2 ★★: Perception Tool MCP Server**
->
 >
 > This experiment builds a set of perception tool MCP servers, covering the following five categories of perception scenarios:
 >

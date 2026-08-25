@@ -230,8 +230,6 @@ Las herramientas de percepción enfrentan a menudo el desafío de que la cantida
 
 > **Experimento 4-2 ★★: Servidor MCP de Herramientas de Percepción**
 >
->
->
 > Este experimento construye un conjunto de servidores MCP de herramientas de percepción, cubriendo los siguientes cinco escenarios de percepción:
 >
 > - **Búsqueda**: Búsqueda web, búsqueda en base de conocimientos local, descarga de archivos
