@@ -685,7 +685,7 @@ Mengapa menambahkan di akhir tidak merusak cache? Hal ini mengikuti secara langs
 
 “Ditambahkan ke bagian akhir” hanya terjadi pada giliran ketika tool ditemukan. Setelah itu, blok skema tetap berada di posisi aslinya dalam trajectory; pesan-pesan baru ditambahkan setelahnya, dan blok tersebut tidak dipindahkan lagi ke ujung terbaru pada setiap giliran.
 
-Batasan lain dari mekanisme ini adalah kapabilitas model: model harus telah dilatih tentang pola "definisi tool yang muncul di tengah percakapan"—yang merupakan alasan mengapa hanya model yang lebih baru (misal, GPT-5.4+, seri Claude 4.5+) yang saat ini mendukungnya, dan mengapa model open-source yang di-host sendiri memerlukan pelatihan khusus. Pembahasan penuh tentang penemuan tool (tool discovery) ada di bagian "Proactive Tool Discovery" di Bab 4.
+Batasan lain dari mekanisme ini adalah kapabilitas model: model harus telah dilatih tentang pola "definisi tool yang muncul di tengah percakapan"—yang merupakan alasan mengapa hanya model yang lebih baru (misal, GPT-5.4+, seri Claude 4.5+) yang saat ini mendukungnya, dan mengapa model open-source yang di-host sendiri memerlukan pelatihan khusus. Pembahasan penuh tentang penemuan tool (tool discovery) ada di bagian "Apa yang Harus Dilakukan Ketika Tool Terlalu Banyak" di Bab 4.
 
 > **Eksperimen 2-4 ★★: Studi Ablasi dalam Prompt Engineering**
 >
