@@ -1,0 +1,335 @@
+{
+  "experiment": "7-3",
+  "pass_number": 3,
+  "source_log": "chapter7/android-world/t3a_failed.md",
+  "source_log_sha256": "8762f6afa6b265db3f921a8f88504bcf184fed6fe190ec4406ba19896ee8de6e",
+  "episodes_in_log": 53,
+  "failed_episodes_in_log": 52,
+  "annotated": 10,
+  "silent_failures": 9,
+  "first_error_is_assistant_message": 7,
+  "revised_from_first_pass": 7,
+  "revised_tasks": [
+    "MarkorTranscribeReceipt",
+    "SimpleCalendarNextMeetingWithPerson",
+    "SportsTrackerActivitiesOnDate",
+    "SimpleCalendarEventsInNextWeek",
+    "SimpleSmsSend",
+    "SportsTrackerActivitiesCountForWeek",
+    "SimpleCalendarAddOneEvent"
+  ],
+  "records": [
+    {
+      "task": "MarkorTranscribeReceipt",
+      "goal": "Create a file in Markor, called receipt.md with the transactions from the receipt.png. Use Simple Gallery to view the receipt. Please enter transactions in csv format including the header",
+      "num_steps": 18,
+      "verdict": "failed",
+      "termination": "declared_done",
+      "silent_failure": true,
+      "first_error": {
+        "step": 4,
+        "kind": "assistant_message",
+        "action": "{\"action_type\": \"open_app\", \"app_name\": \"Markor\"}",
+        "quote": "I cannot actually read the specific transaction details from the receipt image"
+      },
+      "category": "信息缺失时继续推进",
+      "responsible_party": "Harness 观察通道缺失；模型缺少 “拿不到就停” 的动作",
+      "confidence": "high",
+      "primary_cause": "第 4 步：自述读不到收据内容，仍然离开图库去 Markor 继续任务",
+      "secondary_defects": [
+        {
+          "step": 3,
+          "defect": "Summary 谎称 “now I can see the receipt content”，与第 4 步自述矛盾"
+        },
+        {
+          "step": 11,
+          "defect": "一次真实的自我纠正（返回图库重看），但第 12 步以同样理由再次放弃"
+        },
+        {
+          "step": 17,
+          "defect": "捏造 CSV 数据落盘，并在 Reason 中明说是 sample data"
+        }
+      ],
+      "systemic_patterns": [
+        "acts_on_missing_information"
+      ],
+      "revised_from_first_pass_step": 17,
+      "revision_note": "第一版把首错记在第 17 步（捏造落盘处）。那是最响的一步，不是最早的一步：第 4 步已经知道信息没拿到。"
+    },
+    {
+      "task": "ExpenseAddMultipleFromGallery",
+      "goal": "Add the expenses from expenses.jpg in Simple Gallery Pro to pro expense.",
+      "num_steps": 32,
+      "verdict": "failed",
+      "termination": "declared_done",
+      "silent_failure": true,
+      "first_error": {
+        "step": 8,
+        "kind": "assistant_message",
+        "action": "{\"action_type\": \"navigate_home\"}",
+        "quote": "I cannot actually see the content/details of the expenses in the image"
+      },
+      "category": "信息缺失时继续推进",
+      "responsible_party": "Harness 观察通道缺失；模型缺少 “拿不到就停” 的动作",
+      "confidence": "high",
+      "primary_cause": "第 8 步：自述看不到图片内容，仍然离开图库去记账应用继续任务",
+      "secondary_defects": [
+        {
+          "step": 11,
+          "defect": "Summary 中凭空出现四条开销，捏造在此成形"
+        },
+        {
+          "step": 32,
+          "defect": "宣告完成"
+        }
+      ],
+      "systemic_patterns": [
+        "acts_on_missing_information"
+      ],
+      "revised_from_first_pass_step": null,
+      "revision_note": "第 7 步 Summary 措辞含混（“showing the expense data that needs to be extracted”），可读作陈述图片含有数据而非声称已读到，故不计为首错。"
+    },
+    {
+      "task": "SimpleCalendarNextMeetingWithPerson",
+      "goal": "When is my next meeting with Ava in Simple Calendar Pro? Express your answer in the format <month name> <day> <year> <hour in 24-hour format>:<minutes>.",
+      "num_steps": 4,
+      "verdict": "failed",
+      "termination": "declared_done",
+      "silent_failure": true,
+      "first_error": {
+        "step": 2,
+        "kind": "assistant_message",
+        "action": "{\"action_type\": \"input_text\", \"text\": \"Ava\", \"index\": 1}",
+        "quote": "which appears to be the next meeting with Ava"
+      },
+      "category": "未经证实的推断",
+      "responsible_party": "模型：把搜索首个命中当作 “下一次”；从未确定当前日期",
+      "confidence": "high",
+      "primary_cause": "第 2 步：在既未确定今天日期、也未枚举全部 Ava 事件的情况下断定这是 “下一次会面”",
+      "secondary_defects": [
+        {
+          "step": 3,
+          "defect": "answer 中年份写成 2024，与它自己读到的 “October 27 Friday” 矛盾：2023-10-27 是周五，2024-10-27 是周日"
+        }
+      ],
+      "systemic_patterns": [
+        "ungrounded_now"
+      ],
+      "revised_from_first_pass_step": 3,
+      "revision_note": "第一版把首错记在第 3 步的错误年份。年份是独立的第二个缺陷；最早的无依据推断在第 2 步。"
+    },
+    {
+      "task": "SportsTrackerActivitiesOnDate",
+      "goal": "What activities did I do October 01 in the OpenTracks app? Answer with the activity type only. If there are multiple types, format your answer in a comma separated list.",
+      "num_steps": 5,
+      "verdict": "failed",
+      "termination": "declared_done",
+      "silent_failure": true,
+      "first_error": {
+        "step": 3,
+        "kind": "assistant_message",
+        "action": "{\"action_type\": \"scroll\", \"direction\": \"down\", \"index\": 4}",
+        "quote": "confirming I have identified all activities from that date"
+      },
+      "category": "未经证实的推断",
+      "responsible_party": "模型：只向下滚动即宣称已穷尽",
+      "confidence": "high",
+      "primary_cause": "第 3 步：仅向下滚动两次即宣称已找全该日全部活动，未确认列表上下边界",
+      "secondary_defects": [
+        {
+          "step": 4,
+          "defect": "任务要求只答 activity type，却以条目标题作答，且从未打开任一活动读取类型字段"
+        }
+      ],
+      "systemic_patterns": [],
+      "revised_from_first_pass_step": 4,
+      "revision_note": "第一版把首错记在第 4 步的错误答案。完整性断言在第 3 步就已经无依据。"
+    },
+    {
+      "task": "SimpleCalendarEventsInNextWeek",
+      "goal": "What events do I have in the next week in Simple Calendar Pro? Assume the week starts from Monday. Answer with the titles only. If there are multiples titles, format your answer in a comma separated list.",
+      "num_steps": 6,
+      "verdict": "failed",
+      "termination": "declared_done",
+      "silent_failure": true,
+      "first_error": {
+        "step": 4,
+        "kind": "assistant_message",
+        "action": "{\"action_type\": \"scroll\", \"direction\": \"right\", \"index\": 8}",
+        "quote": "now I can see the events for the requested week starting from Monday Oct 23"
+      },
+      "category": "显式约束被丢弃",
+      "responsible_party": "模型：用视图分组替代任务定义的周边界；从未确定当前日期",
+      "confidence": "high",
+      "primary_cause": "第 4 步：同一句里既写明视图区间是 Oct 22–28（周日起始），又断言这就是 “以周一 Oct 23 起始的那一周”。Oct 22–28 是周日起始区间，不可能等于任何一个以周一为起点的自然周",
+      "secondary_defects": [
+        {
+          "step": 5,
+          "defect": "按 Oct 22–28 这一周日起始区间作答"
+        },
+        {
+          "step": 6,
+          "defect": "完成声明中重复 “The week starts from Monday as requested”"
+        }
+      ],
+      "systemic_patterns": [
+        "ungrounded_now"
+      ],
+      "revised_from_first_pass_step": 5,
+      "revision_note": "第一版把首错记在第 5 步的答案。虚假的边界调和发生在第 4 步的 Summary 里。",
+      "note": "第一版把首错记在第 5 步的答案；第二版改到第 4 步但把偏差写成 “错位一天”，这也是错的。本轮据本条轨迹自身的证据订正：第 4 步显示当前周为 Oct 15–21，故今天落在该区间内，以周一为起点的 “下一周” 只能是 Oct 16–22 或 Oct 23–29；作答区间 Oct 22–28 两者都不是。"
+    },
+    {
+      "task": "SimpleCalendarEventOnDateAtTime",
+      "goal": "What is on my schedule for October 27 2023 at 8:00pm in Simple Calendar Pro? Answer with the titles only. If there are multiples titles, format your answer in a comma separated list.",
+      "num_steps": 6,
+      "verdict": "failed",
+      "termination": "declared_done",
+      "silent_failure": true,
+      "first_error": {
+        "step": 5,
+        "kind": "assistant_message",
+        "action": "{\"action_type\": \"answer\", \"text\": \"There are no events scheduled at 8:00 PM on October 27, 2023 in Simple Calendar Pro.\"}",
+        "quote": "There are no events scheduled at 8:00 PM"
+      },
+      "category": "对用户的信息反馈错误",
+      "responsible_party": "模型：违反输出格式约定",
+      "confidence": "medium",
+      "primary_cause": "第 5 步：任务要求 “Answer with the titles only”，却回了一整句散文",
+      "secondary_defects": [
+        {
+          "step": 5,
+          "defect": "四个事件时间均从日视图列表读取，从未打开任一事件核对；这些时间是否准确，仅凭日志无法判定"
+        }
+      ],
+      "systemic_patterns": [],
+      "revised_from_first_pass_step": null,
+      "revision_note": "置信度由 high 降为 medium：格式违规可从日志核实，但无法确定内容是否也错，因而无法断言格式就是被拒的原因。"
+    },
+    {
+      "task": "SimpleCalendarDeleteEventsOnRelativeDay",
+      "goal": "In Simple Calendar Pro, delete all events scheduled for this Monday.",
+      "num_steps": 3,
+      "verdict": "failed",
+      "termination": "declared_done",
+      "silent_failure": true,
+      "first_error": {
+        "step": 2,
+        "kind": "tool_call",
+        "action": "{\"action_type\": \"click\", \"index\": 18}",
+        "quote": "expecting it to be a Monday"
+      },
+      "category": "相对时间未落地",
+      "responsible_party": "模型：未确定今天是哪天即选定日期格子",
+      "confidence": "medium",
+      "primary_cause": "第 2 步：任务是 “this Monday”，Agent 未确定当前日期就点了一个自认为是周一的格子，落到 October 2",
+      "secondary_defects": [
+        {
+          "step": 3,
+          "defect": "据一个空的日视图列表认定 “无事件可删” 并宣告完成"
+        }
+      ],
+      "systemic_patterns": [
+        "ungrounded_now"
+      ],
+      "revised_from_first_pass_step": null,
+      "revision_note": "",
+      "note": "本条轨迹自身没有暴露当前日期，因此无法判定 “this Monday” 应当是哪一天，也就无法证明 October 2 一定是错的。可证的是过程错误：Agent 自述 “expecting it to be a Monday” —— 未解析相对日期即猜测格子。置信度保持 medium。"
+    },
+    {
+      "task": "SimpleSmsSend",
+      "goal": "Send a text message using Simple SMS Messenger to +16597910719 with message: Beauty is in the eye of the beholder.",
+      "num_steps": 8,
+      "verdict": "failed",
+      "termination": "declared_done",
+      "silent_failure": false,
+      "first_error": {
+        "step": 5,
+        "kind": "tool_call",
+        "action": "{\"action_type\": \"input_text\", \"text\": \"Beauty is in the eye of the beholder.\", \"index\": 7}",
+        "quote": "Beauty is in the eye of the beholder."
+      },
+      "category": "在自述无效果后继续推进",
+      "responsible_party": "待定：收件人未确认与模拟器无短信服务两种假设，仅凭日志不可区分",
+      "confidence": "medium",
+      "primary_cause": "第 5 步：第 4 步的 Summary 已写明点击确认后 “the screen remained unchanged”，并自行诊断需先聚焦号码框；第 5 步未做任何修复即直接输入正文",
+      "secondary_defects": [
+        {
+          "step": 6,
+          "defect": "环境显示 “Not sent. Touch to retry.”"
+        },
+        {
+          "step": 8,
+          "defect": "在观察到未发送的情况下宣告完成，并把失败归为 “beyond my control”"
+        }
+      ],
+      "systemic_patterns": [
+        "proceeds_after_no_effect"
+      ],
+      "revised_from_first_pass_step": 8,
+      "revision_note": "第一版把第 6、7 步的发送失败断言为 “环境故障、非 Agent 错误”，并把首错记在第 8 步。该断言没有依据：第 4 步收件人是否真正提交从未被确认，发送失败可能正是它的后果。需重放环境才能区分。"
+    },
+    {
+      "task": "SportsTrackerActivitiesCountForWeek",
+      "goal": "How many running activities did I do this week in the OpenTracks app? Assume the week starts from Monday. Express your answer as a single integer.",
+      "num_steps": 10,
+      "verdict": "failed",
+      "termination": "max_steps",
+      "silent_failure": true,
+      "first_error": {
+        "step": 3,
+        "kind": "tool_call",
+        "action": "{\"action_type\": \"scroll\", \"direction\": \"down\", \"index\": 4}",
+        "quote": "especially to check for Monday activities"
+      },
+      "category": "相对时间未落地",
+      "responsible_party": "模型：无边界即开始扫描；Harness 未在观察中给出当前日期",
+      "confidence": "medium",
+      "primary_cause": "第 3 步：在从未确定今天是哪天、因而不知道本周从哪个 Monday 开始的情况下开始扫描列表，没有任何终止判据",
+      "secondary_defects": [
+        {
+          "step": 4,
+          "defect": "下滚后立即上滚，开始 6 步无新信息的往复，耗尽步数预算"
+        },
+        {
+          "step": 10,
+          "defect": "给出 answer 却从未发出 status:complete；本 harness 中 answer 不是完成信号"
+        }
+      ],
+      "systemic_patterns": [
+        "ungrounded_now"
+      ],
+      "revised_from_first_pass_step": 4,
+      "revision_note": "第一版把首错记在第 4 步的滚动往复。往复是症状：没有周边界就没有停止判据，所以它只能反复扫描。",
+      "note": "第一版把首错记在第 4 步的滚动往复。往复是症状：没有周边界就没有停止判据。本轮补充边界说明：该轨迹自身没有暴露当前日期，OpenTracks 列表只显示 Today/Yesterday/日期，因此 “本周” 的边界在这条轨迹里根本无法确定，需重放环境才能核对答案 2 是否正确。"
+    },
+    {
+      "task": "SimpleCalendarAddOneEvent",
+      "goal": "In Simple Calendar Pro, create a calendar event on 2023-10-29 at 13h with the title 'Call with the Team' and the description 'We will understand upcoming project milestones.'. The event should last for 60 mins.",
+      "num_steps": 14,
+      "verdict": "failed",
+      "termination": "declared_done",
+      "silent_failure": true,
+      "first_error": {
+        "step": 13,
+        "kind": "assistant_message",
+        "action": "{\"action_type\": \"click\", \"index\": 3}",
+        "quote": "the calendar event creation process was completed and the event should now be saved"
+      },
+      "category": "未验证即宣告完成",
+      "responsible_party": "未定：需重放环境才能确定被拒字段",
+      "confidence": "low",
+      "primary_cause": "第 13 步：保存被提醒对话框打断后，点掉对话框即推断 “event should now be saved”，全程没有任何回读验证",
+      "secondary_defects": [
+        {
+          "step": 8,
+          "defect": "表单里的 start time 13:00 是默认值，Agent 接受了它而没有主动设置或复核"
+        }
+      ],
+      "systemic_patterns": [],
+      "revised_from_first_pass_step": 14,
+      "revision_note": "仅凭日志无法确定验证器拒绝的是哪个字段，按低置信度保留。首错标注的是最早的未经验证的断言，不是失败字段本身。"
+    }
+  ],
+  "population_note": "日志共 53 个任务块，其中 1 块（SimpleSmsReplyMostRecent）是基准 harness 在 initialize_task 阶段崩溃后跳过的，不是 Agent 失败；真正的失败 episode 为 52 条。"
+}

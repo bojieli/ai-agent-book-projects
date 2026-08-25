@@ -24,18 +24,19 @@ Első olvasáskor átugorható a hitelesítő adatok betöltése, a megjelenít�
 | 7-2 | `SWE-bench/` | 📖 | Valós GitHub Issue-k tesztelhető javítással történő megoldását értékeli. |
 | 7-2 | `GAIA/` | 📖 | Többszintű feladatokon méri a keresést, eszközhasználatot és autonómiát. |
 | 7-2 | `OSWorld/` | 📖 | Teljes operációsrendszer-környezetben értékeli a fájl-, alkalmazás- és konfigurációkezelést. |
-| 7-2, 7-12 | `android_world/` | 📖 | Androidon méri az alkalmazásnavigációt és a felhasználói felület kezelését. |
+| 7-2, 7-13 | `android_world/` | 📖 | Androidon méri az alkalmazásnavigációt és a felhasználói felület kezelését. |
 | 7-3 | [user-memory-evaluation](../chapter3/user-memory-evaluation/) | ✅ | Többdimenziós memóriaértékelési rubrikát futtat, minden ítélethez bizonyítékkal. |
 | 7-4 | [user-memory-system-evaluation](user-memory-system-evaluation/) | ✅ | Azonos esetkészleten hasonlítja össze a JSON Cards, RAG és hibrid rendszereket. |
-| 7-5 | [user-memory-policy-eval](user-memory-policy-eval/) | ✅ | Tizenegy hibás trajektória-előtag esetet futtat JSON, Markdown és Python-szerű memóriareprezentációkon, valós OpenRouter-hívásokkal és determinisztikus szabályzat-ellenőrzésekkel. |
-| 7-6 | [tts-quality-eval](tts-quality-eval/) | ✅ | Rubrikaalapú multimodális LLM-bíróval hasonlít össze TTS-konfigurációkat. |
-| 7-7 | [elo-leaderboard](elo-leaderboard/) | ✅ | Páronkénti összehasonlítások és ELO-pontszám alapján készít ágensranglistát. |
-| 7-8 | [model-action-threshold](model-action-threshold/) | ✅ | Azonos, semleges Coding Harness alatt hasonlítja össze a GPT-5.6-sol és a Claude Sonnet 5 átmenetét a feltárástól az első szerkesztésig; mind a 18/18 cella API-hiba nélkül lefutott, a [manifest](model-action-threshold/results/exp7-8-action-threshold-20260731-v1/manifest.json) pedig ellenőrizhető hash-ekkel köti össze a nyomvonalakat és az összesítéseket. |
-| 7-9 | [agent-cost-analysis](agent-cost-analysis/) | ✅ | Felbontja a teljes költséget, és méri a cache-barát tervezés és tömörítés megtakarítását. |
-| 7-10 | [model-benchmark](model-benchmark/) | 🚧 | TTFT-t, késleltetést, áteresztőképességet, megbízhatóságot és költséget mér; a hosszú kampány még nem teljes. |
-| 7-11 | [user-memory-system-evaluation](user-memory-system-evaluation/) | ✅ | A teljes 4×3×2×60 mátrix 1 440/1 440 valós trajektóriát őriz meg hiba és árazatlan használat nélkül, teljes visszakeresési és feladatmetrikákkal, interakcióelemzéssel és sikeres független ellenőrzéssel. |
-| 7-12 | [android-world](android-world/) | 📖 | Repository-n belüli T3A-értékelési jelentés és AndroidWorld-hibaelemzés. |
-| 7-13 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | ✅ | Az egy GPU-s hivatalos futás karonként 256 epizódot teljesített: chunk 1 0/256, chunk 25 26/256; mind az 512 rollout hash-e megmaradt. |
+| 7-5 | [tts-quality-eval](tts-quality-eval/) | ✅ | Rubrikaalapú multimodális LLM-bíróval hasonlít össze TTS-konfigurációkat. |
+| 7-6 | [android-world/failure-attribution](android-world/failure-attribution/) | ✅ | Offline failure attribution over the retained T3A log. Population, recomputed from the raw log: 53 task blocks, 1 skipped by the benchmark's own `initialize_task` crash, 52 real failures; 24/52 ended with the Agent declaring completion; 9 failures have goals requiring the current date and only 2 ever obtain it (incidentally, from a form default showing `Sun, Oct 15`); the self-reported "no visible effect" family occurs 55 times across 18/52 episodes. Ten episodes annotated with build-verified step-level citations — 9 silent failures, 7 of 10 first errors on an assistant message, 5 high / 4 medium / 1 low confidence. Third pass: the second moved 7 of 10 first-error steps earlier, the third corrected two population statistics and one record's description, every change retained with its rationale. Includes 3 trajectory-prefix regression tasks and 3 corrections to `t3a_failed_analysis.md` |
+| 7-7 | [user-memory-policy-eval](user-memory-policy-eval/) | ✅ | Tizenegy hibás trajektória-előtag esetet futtat JSON, Markdown és Python-szerű memóriareprezentációkon, valós OpenRouter-hívásokkal és determinisztikus szabályzat-ellenőrzésekkel. |
+| 7-8 | [elo-leaderboard](elo-leaderboard/) | ✅ | Páronkénti összehasonlítások és ELO-pontszám alapján készít ágensranglistát. |
+| 7-9 | [model-action-threshold](model-action-threshold/) | ✅ | Azonos, semleges Coding Harness alatt hasonlítja össze a GPT-5.6-sol és a Claude Sonnet 5 átmenetét a feltárástól az első szerkesztésig; mind a 18/18 cella API-hiba nélkül lefutott, a [manifest](model-action-threshold/results/exp7-8-action-threshold-20260731-v1/manifest.json) pedig ellenőrizhető hash-ekkel köti össze a nyomvonalakat és az összesítéseket. |
+| 7-10 | [agent-cost-analysis](agent-cost-analysis/) | ✅ | Felbontja a teljes költséget, és méri a cache-barát tervezés és tömörítés megtakarítását. |
+| 7-11 | [model-benchmark](model-benchmark/) | 🚧 | TTFT-t, késleltetést, áteresztőképességet, megbízhatóságot és költséget mér; a hosszú kampány még nem teljes. |
+| 7-12 | [user-memory-system-evaluation](user-memory-system-evaluation/) | ✅ | A teljes 4×3×2×60 mátrix 1 440/1 440 valós trajektóriát őriz meg hiba és árazatlan használat nélkül, teljes visszakeresési és feladatmetrikákkal, interakcióelemzéssel és sikeres független ellenőrzéssel. |
+| 7-13 | [android-world](android-world/) | 📖 | Repository-n belüli T3A-értékelési jelentés és AndroidWorld-hibaelemzés. |
+| 7-14 | [openvla-robotwin2-eval](openvla-robotwin2-eval/) | ✅ | Az egy GPU-s hivatalos futás karonként 256 epizódot teljesített: chunk 1 0/256, chunk 25 26/256; mind az 512 rollout hash-e megmaradt. |
 | — | [public-health-reporting-eval](public-health-reporting-eval/) | ✅ | Közegészségügyi jelentések eszközhívásait, számításait, hivatkozásait és állításait értékeli. |
 
 > A kódformázással jelölt benchmarkokat külön kell klónozni. Az `android-world/` helyi elemzési jegyzet, nem az `android_world/` benchmark forrása.

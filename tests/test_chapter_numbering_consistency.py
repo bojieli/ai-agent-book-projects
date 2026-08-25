@@ -18,7 +18,7 @@ CHAPTERS = {
     4: ("工具", 5),
     5: ("Coding Agent 与通用 Agent", 16),
     6: ("交互：观察与动作空间的扩展", 13),
-    7: ("Agent 的评估", 13),
+    7: ("Agent 的评估", 14),
     8: ("模型后训练", 19),
     9: ("Agent 的持续进化", 9),
     10: ("多 Agent 协作", 6),
@@ -62,7 +62,7 @@ def test_public_chapter_indexes_use_the_2_0_structure():
 
     for document in (root_readme, zh_readme):
         assert "书稿版本已由 1.4 升级为 2.0" in document
-        assert "**107 个配套实验**" in document
+        assert "**108 个配套实验**" in document
         for number, (title, count) in CHAPTERS.items():
             assert f"| {number} |" in document
             assert f"**{title}**" in document
