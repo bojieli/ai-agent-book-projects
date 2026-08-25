@@ -54,26 +54,6 @@ DEFAULT_TEXT_MODEL = os.getenv("TEXT_MODEL", "gpt-5.6-luna")
 DEFAULT_TTS_MODEL = os.getenv("TTS_MODEL", "tts-1")
 DEFAULT_TTS_VOICE = os.getenv("TTS_VOICE", "alloy")
 
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
-
-
-def map_model_to_openrouter(model: str) -> str:
-    """把直连模型名映射为 OpenRouter 上的 id（非可映射 id 统一兜底到当前廉价旗舰）。"""
-    if not model or "/" in model:
-        return model or "openai/gpt-5.6-luna"
-    m = model.lower()
-    if m.startswith(("gpt-", "o1", "o3", "o4")):
-        return "openai/" + model
-    if m.startswith("claude"):
-        if "haiku" in m:
-            return "anthropic/claude-haiku-4.5"
-        if "sonnet" in m:
-            return "anthropic/claude-sonnet-4.6"
-        return "anthropic/claude-opus-4.8"
-    if m.startswith("gemini"):
-        return "google/" + model
-    return "openai/gpt-5.6-luna"
-
 # 离线占位音轨的中文语速估算（字/秒），用于把讲解词长度换算成展示时长。
 OFFLINE_CHARS_PER_SEC = 4.5
 
@@ -449,13 +429,16 @@ def main(cfg: Config) -> None:
                      "或用 --offline 在无 API 时验证合成流水线。")
         from openai import OpenAI  # 延迟导入：--offline 时无需安装/联网 openai
 
-        # 文本客户端：无直连 key，或默认 gpt-5.x（直连需组织实名认证）时改走 OpenRouter。
-        prefer_or = bool(orkey) and (cfg.text_model or "").lower().startswith("gpt-5")
-        if prefer_or or (not api_key and orkey):
-            client = OpenAI(api_key=orkey, base_url=OPENROUTER_BASE_URL, timeout=120.0, max_retries=3)
-            cfg.text_model = map_model_to_openrouter(cfg.text_model)
-        else:
-            client = OpenAI(base_url=base_url, timeout=120.0, max_retries=3)
+        # 文本客户端：端点、key 与模型名映射统一交给 agentbook 的 provider 注册表。
+        # chosen_by_reader=False 表示 "openai" 是本实验的默认值而非读者的显式选择：
+        # gpt-5.x 在有 OPENROUTER_API_KEY 时改走 OpenRouter（直连需组织实名认证）。
+        from agentbook.providers import resolve_backend
+
+        backend = resolve_backend("openai", model=cfg.text_model, chosen_by_reader=False)
+        cfg.text_model = backend.model
+        client = OpenAI(
+            api_key=backend.api_key, base_url=backend.base_url, timeout=120.0, max_retries=3
+        )
 
         # TTS 客户端：只能用直连 OPENAI_API_KEY；缺失则音频降级为离线静音占位
         #（讲解词仍由文本客户端真实生成）。

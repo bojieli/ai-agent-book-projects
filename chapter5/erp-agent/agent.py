@@ -13,47 +13,20 @@ from openai import OpenAI
 
 MODEL = os.environ.get("OPENAI_MODEL", "gpt-5.6-luna")
 
-# --- 通用 OpenRouter 兜底 ---
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
-
-
-def _map_to_openrouter_model(model: str) -> str:
-    """把直连模型名映射为 OpenRouter 上的 id（非可映射 id 统一兜底到当前廉价旗舰）。"""
-    if not model or "/" in model:
-        return model or "openai/gpt-5.6-luna"
-    m = model.lower()
-    if m.startswith(("gpt-", "o1", "o3", "o4")):
-        return "openai/" + model
-    if m.startswith("claude"):
-        if "haiku" in m:
-            return "anthropic/claude-haiku-4.5"
-        if "sonnet" in m:
-            return "anthropic/claude-sonnet-4.6"
-        return "anthropic/claude-opus-4.8"
-    if m.startswith("gemini"):
-        return "google/" + model
-    return "openai/gpt-5.6-luna"
-
 
 def _make_client_and_model(model: str):
-    """构造客户端并解析模型名，含通用 OpenRouter 兜底。返回 (client, resolved_model)。
+    """构造客户端并解析模型名。返回 (client, resolved_model)。
 
-    - 有 OPENAI_API_KEY：直连；但 model 为 gpt-5.x 且同时设置了 OPENROUTER_API_KEY
-      时优先走 OpenRouter（直连 gpt-5.6 需组织实名认证）。
-    - 无 OPENAI_API_KEY 但有 OPENROUTER_API_KEY：改走 OpenRouter（模型名自动映射）。
+    端点、key 与模型名映射统一由 agentbook 的 provider 注册表维护。
+    chosen_by_reader=False 表示 "openai" 是本实验的默认值而非读者的显式选择：
+    gpt-5.x 在有 OPENROUTER_API_KEY 时会自动改走 OpenRouter（直连需组织实名
+    认证），没有 OpenRouter key 时仍然直连。
     """
-    api_key = os.environ.get("OPENAI_API_KEY")
-    base_url = os.environ.get("OPENAI_BASE_URL")
-    orkey = os.environ.get("OPENROUTER_API_KEY")
-    prefer_or = bool(orkey) and (model or "").lower().startswith("gpt-5")
-    if prefer_or or (not api_key and orkey):
-        api_key, base_url, model = orkey, OPENROUTER_BASE_URL, _map_to_openrouter_model(model)
-    kw = {}
-    if api_key:
-        kw["api_key"] = api_key
-    if base_url:
-        kw["base_url"] = base_url
-    return OpenAI(**kw), model
+    from agentbook.providers import resolve_backend
+
+    backend = resolve_backend("openai", model=model, chosen_by_reader=False)
+    return OpenAI(api_key=backend.api_key, base_url=backend.base_url), backend.model
+
 
 SYSTEM_PROMPT = """你是一个「自然语言转 SQL」的 ERP 数据助手。
 用户给你一个中文问题，你只输出一条可直接执行的 **SQLite** SQL 查询，不要任何解释、不要 markdown 代码块。

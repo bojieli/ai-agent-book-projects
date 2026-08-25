@@ -59,7 +59,7 @@ cp env.example .env      # OPENAI_API_KEY
 python demo.py           # same as python demo.py run
 ```
 
-**OpenRouter fallback**: if `OPENAI_API_KEY` unset, set `OPENROUTER_API_KEY` (`gpt-*` → `openai/*`, else `openai/gpt-5.6-luna`). Default `gpt-5.6-luna` is gpt-5.x (org verification on direct OpenAI), so with `OPENROUTER_API_KEY` OpenRouter is preferred.
+**OpenRouter fallback**: if `OPENAI_API_KEY` unset, set `OPENROUTER_API_KEY` (`gpt-*` → `openai/*`, `kimi-*` → `moonshotai/*`, `gemini-*` → `google/*`, …; an unmapped id is sent as asked and rejected by name). Default `gpt-5.6-luna` is gpt-5.x (org verification on direct OpenAI), so with `OPENROUTER_API_KEY` OpenRouter is preferred.
 
 `demo.py` has 4 subcommands (no subcommand = `run`):
 
@@ -162,7 +162,8 @@ python demo.py           # 等价于 python demo.py run
 ```
 
 **通用 OpenRouter 兜底**：未配置 `OPENAI_API_KEY` 时，设置 `OPENROUTER_API_KEY` 即自动
-改走 OpenRouter（`gpt-*` → `openai/*`，其它 → `openai/gpt-5.6-luna`）。默认模型
+改走 OpenRouter（`gpt-*` → `openai/*`、`kimi-*` → `moonshotai/*`、`gemini-*` → `google/*` 等；
+映射不到的 id 按原名发出并由 OpenRouter 报错）。默认模型
 `gpt-5.6-luna` 属 gpt-5.x，直连 OpenAI 需组织实名认证，故设置了 `OPENROUTER_API_KEY`
 时会优先走 OpenRouter。
 

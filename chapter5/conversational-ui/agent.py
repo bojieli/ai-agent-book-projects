@@ -39,44 +39,29 @@ EDITABLE_FILES = [
 ]
 
 
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
-
-
-def map_model_to_openrouter(model: str) -> str:
-    """把直连模型名映射为 OpenRouter 上的 id（非可映射 id 统一兜底到当前廉价旗舰）。"""
-    if not model or "/" in model:
-        return model or "openai/gpt-5.6-luna"
-    m = model.lower()
-    if m.startswith(("gpt-", "o1", "o3", "o4")):
-        return "openai/" + model
-    if m.startswith("claude"):
-        if "haiku" in m:
-            return "anthropic/claude-haiku-4.5"
-        if "sonnet" in m:
-            return "anthropic/claude-sonnet-4.6"
-        return "anthropic/claude-opus-4.8"
-    if m.startswith("gemini"):
-        return "google/" + model
-    return "openai/gpt-5.6-luna"
-
-
 def build_client_and_model():
-    model = os.getenv("MODEL", "gpt-5.6-luna")
-    api_key = os.getenv("OPENAI_API_KEY")
-    base_url = os.getenv("OPENAI_BASE_URL")
-    orkey = os.getenv("OPENROUTER_API_KEY")
-    # 通用 OpenRouter 兜底：无直连 key，或默认 gpt-5.x（直连需组织实名认证）时改走 OpenRouter。
-    prefer_or = bool(orkey) and (model or "").lower().startswith("gpt-5")
-    if prefer_or or (not api_key and orkey):
-        api_key, base_url, model = orkey, OPENROUTER_BASE_URL, map_model_to_openrouter(model)
-    if not api_key:
-        raise SystemExit("未找到 OPENAI_API_KEY（或 OPENROUTER_API_KEY 兜底），请先在环境变量或 .env 中设置。")
+    """构造客户端与模型名。端点、key 与模型名映射统一由 agentbook 的 provider
+    注册表维护。
+
+    chosen_by_reader=False 表示 "openai" 是本实验的默认值而非读者的显式选择：
+    gpt-5.x 在有 OPENROUTER_API_KEY 时改走 OpenRouter（直连需组织实名认证，
+    且不允许 function tools 与推理并存，而本实验正是用 function calling 改前端）。
+    """
+    from agentbook.providers import resolve_backend
+
+    try:
+        backend = resolve_backend(
+            "openai", model=os.getenv("MODEL", "gpt-5.6-luna"), chosen_by_reader=False
+        )
+    except ValueError as exc:
+        raise SystemExit(
+            "未找到 OPENAI_API_KEY（或 OPENROUTER_API_KEY 兜底），请先在环境变量或 .env 中设置。"
+        ) from exc
     # timeout / max_retries：让偶发的网络/SSL 抖动自动重试，不至于整轮崩溃
-    client_kwargs = {"api_key": api_key, "timeout": 60.0, "max_retries": 3}
-    if base_url:
-        client_kwargs["base_url"] = base_url
-    client = OpenAI(**client_kwargs)
-    return client, model
+    client = OpenAI(
+        api_key=backend.api_key, base_url=backend.base_url, timeout=60.0, max_retries=3
+    )
+    return client, backend.model
 
 
 APPLY_EDITS_TOOL = {

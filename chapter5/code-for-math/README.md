@@ -119,7 +119,7 @@ Full flags: `python demo.py --help`. Common switches:
 
 Env vars: `OPENAI_API_KEY` (or `MOONSHOT_API_KEY` / `ARK_API_KEY`), `OPENAI_BASE_URL` (compatible endpoint), `MODEL` (default `gpt-5.6-luna`).
 
-**OpenRouter fallback**: if no direct key is set but `OPENROUTER_API_KEY` is, traffic goes through OpenRouter (model mapping: `gpt-*` → `openai/*`, others → `openai/gpt-5.6-luna`). Default `gpt-5.6-luna` is gpt-5.x and needs org verification on direct OpenAI, so with `OPENROUTER_API_KEY` set, OpenRouter is preferred (`openai/gpt-5.6-luna`).
+**OpenRouter fallback**: if no direct key is set but `OPENROUTER_API_KEY` is, traffic goes through OpenRouter (model mapping: `gpt-*` → `openai/*`, `kimi-*` → `moonshotai/*`, `gemini-*` → `google/*`, …; an id with no mapping is sent as asked and rejected by name rather than silently answered by another vendor's model). Default `gpt-5.6-luna` is gpt-5.x: direct OpenAI needs org verification for it and refuses function tools unless reasoning is off, and this experiment's `code` mode is function calling, so with `OPENROUTER_API_KEY` set OpenRouter is preferred (`openai/gpt-5.6-luna`).
 
 ### Sample results / takeaway
 
@@ -277,9 +277,12 @@ python demo.py --problems mine.json   # 换用自定义题库
 `OPENAI_BASE_URL`（切换兼容端点）、`MODEL`（默认 `gpt-5.6-luna`）。
 
 **通用 OpenRouter 兜底**：未配置任何直连 key 时，只要设置了 `OPENROUTER_API_KEY`
-即可自动改走 OpenRouter（模型名自动映射：`gpt-*` → `openai/*`，其它 → `openai/gpt-5.6-luna`）。
-另外默认模型 `gpt-5.6-luna` 属于 gpt-5.x，直连 OpenAI 调用它需要组织实名认证，
-因此只要设置了 `OPENROUTER_API_KEY` 就会优先走 OpenRouter（route `openai/gpt-5.6-luna`）。
+即可自动改走 OpenRouter（模型名自动映射：`gpt-*` → `openai/*`、`kimi-*` → `moonshotai/*`、
+`gemini-*` → `google/*` 等；映射不到的 id 按读者写的名字原样发出并由 OpenRouter 报错，
+而不是悄悄换成别家的模型作答）。另外默认模型 `gpt-5.6-luna` 属于 gpt-5.x，直连 OpenAI
+调用它既需要组织实名认证，也不允许 function tools 与推理并存（本实验的 code 模式正是
+function calling），因此只要设置了 `OPENROUTER_API_KEY` 就会优先走 OpenRouter
+（route `openai/gpt-5.6-luna`）。
 
 ### 预期输出示例 / 结论
 

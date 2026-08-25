@@ -27,7 +27,6 @@ TEXT_MODEL = os.environ.get("TEXT_MODEL", "gpt-5.6-luna")
 # 视觉审查用的模型（Reviewer / 单 Agent 的看图部分），必须支持图像
 VISION_MODEL = os.environ.get("VISION_MODEL", "gpt-5.6-luna")
 
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 PROVIDER = os.environ.get("PPT_PROVIDER", "auto")
 
 
@@ -35,23 +34,6 @@ def configure_provider(provider: str) -> None:
     global PROVIDER
     PROVIDER = provider
 
-
-def map_model_to_openrouter(model: str) -> str:
-    """把直连模型名映射为 OpenRouter 上的 id（非可映射 id 统一兜底到当前廉价旗舰）。"""
-    if not model or "/" in model:
-        return model or "openai/gpt-5.6-luna"
-    m = model.lower()
-    if m.startswith(("gpt-", "o1", "o3", "o4")):
-        return "openai/" + model
-    if m.startswith("claude"):
-        if "haiku" in m:
-            return "anthropic/claude-haiku-4.5"
-        if "sonnet" in m:
-            return "anthropic/claude-sonnet-4.6"
-        return "anthropic/claude-opus-4.8"
-    if m.startswith("gemini"):
-        return "google/" + model
-    return "openai/gpt-5.6-luna"
 
 # 发送给 Vision 前把截图缩放到该宽度，兼顾“看得清文字溢出”与“控制 token 成本”
 VISION_IMAGE_WIDTH = 1280
@@ -125,34 +107,39 @@ class TokenMeter:
 
 
 def _client() -> OpenAI:
-    # 通用 OpenRouter 兜底：无直连 key，或默认 gpt-5.x（直连需组织实名认证）时改走 OpenRouter。
+    """构造 OpenAI 客户端。端点、key 与模型名映射统一由 agentbook 的 provider
+    注册表维护。
+
+    PPT_PROVIDER / --provider 是读者的显式选择，注册表会原样尊重；auto 只是本
+    实验的默认策略，因此 chosen_by_reader=False，gpt-5.x 在有 OPENROUTER_API_KEY
+    时会自动改走 OpenRouter（直连需组织实名认证，且不允许 function tools 与推理
+    并存）。文本与视觉共用一个客户端，所以只要有一个模型是 gpt-5.x 就一起改道。
+    """
     global TEXT_MODEL, VISION_MODEL
-    if PROVIDER == "ark":
-        api_key = os.environ.get("ARK_API_KEY")
-        base_url = "https://ark.cn-beijing.volces.com/api/v3"
-    elif PROVIDER == "moonshot":
-        api_key = os.environ.get("MOONSHOT_API_KEY")
-        base_url = "https://api.moonshot.cn/v1"
-    elif PROVIDER == "openrouter":
-        api_key = os.environ.get("OPENROUTER_API_KEY")
-        base_url = OPENROUTER_BASE_URL
-    else:
-        api_key = os.environ.get("OPENAI_API_KEY")
-        base_url = os.environ.get("OPENAI_BASE_URL")
-    orkey = os.environ.get("OPENROUTER_API_KEY")
-    prefer_or = PROVIDER == "auto" and bool(orkey) and (
-        (TEXT_MODEL or "").lower().startswith("gpt-5") or (VISION_MODEL or "").lower().startswith("gpt-5")
+    from agentbook.providers import map_model_to_openrouter, resolve_backend
+
+    trigger = next(
+        (m for m in (TEXT_MODEL, VISION_MODEL) if (m or "").lower().startswith("gpt-5")),
+        TEXT_MODEL,
     )
-    if PROVIDER == "openrouter" or prefer_or or (PROVIDER == "auto" and not api_key and orkey):
-        api_key, base_url = orkey, OPENROUTER_BASE_URL
-        # 走 OpenRouter 时把模型名映射为其 id（幂等：已带前缀的 id 原样返回）。
-        TEXT_MODEL = map_model_to_openrouter(TEXT_MODEL)
-        VISION_MODEL = map_model_to_openrouter(VISION_MODEL)
-    if not api_key:
+    try:
+        backend = resolve_backend(
+            PROVIDER if PROVIDER != "auto" else "openai",
+            model=trigger,
+            chosen_by_reader=PROVIDER != "auto",
+        )
+    except ValueError as exc:
         raise SystemExit(
             "❌ 未检测到 OPENAI_API_KEY（或 OPENROUTER_API_KEY 兜底）。请先 `cp env.example .env` 并填入有效的 "
             "OpenAI API Key（或 `export OPENAI_API_KEY=your-openai-api-key` / `export OPENROUTER_API_KEY=...`）后再运行。"
-        )
+        ) from exc
+    if backend.using_openrouter:
+        # 与注册表同一条规则：读者显式选了聚合器时，无法映射的 id 换成可用的默认
+        # 模型；只是因为缺凭据被动改道时，保留读者点名的 id 让 OpenRouter 按名报错。
+        substitute = PROVIDER == "openrouter"
+        TEXT_MODEL = map_model_to_openrouter(TEXT_MODEL, substitute_unknown=substitute)
+        VISION_MODEL = map_model_to_openrouter(VISION_MODEL, substitute_unknown=substitute)
+    api_key, base_url = backend.api_key, backend.base_url
     # timeout + max_retries：单次网络抖动/SSL 中断会自动重试，而不是让整条流水线崩溃。
     return OpenAI(
         api_key=api_key,

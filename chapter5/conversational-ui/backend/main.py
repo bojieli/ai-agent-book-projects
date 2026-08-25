@@ -63,21 +63,23 @@ def _llm_reply(message: str, model: str) -> str:
     except Exception:
         return "（未安装 openai 依赖，无法启用 LLM 模式；已回退占位回复）"
 
-    api_key = os.getenv("OPENAI_API_KEY")
-    base_url = os.getenv("OPENAI_BASE_URL")
-    orkey = os.getenv("OPENROUTER_API_KEY")
-    # 通用 OpenRouter 兜底：无直连 key，或 gpt-5.x（直连需组织实名认证）时改走 OpenRouter。
-    prefer_or = bool(orkey) and (model or "").lower().startswith("gpt-5")
-    if prefer_or or (not api_key and orkey):
-        api_key, base_url = orkey, "https://openrouter.ai/api/v1"
-        if "/" not in model:
-            model = ("openai/" + model) if model.lower().startswith(("gpt-", "o1", "o3", "o4")) else "openai/gpt-5.6-luna"
-    if not api_key:
-        return "（未配置 OPENAI_API_KEY 或 OPENROUTER_API_KEY，无法启用 LLM 模式；已回退占位回复）"
+    # 端点、key 与模型名映射与 agent.py 一样交给 agentbook 的 provider 注册表：
+    # chosen_by_reader=False 表示 "openai" 是本实验的默认值而非读者的显式选择，
+    # 于是 gpt-5.x 在有 OPENROUTER_API_KEY 时改走 OpenRouter（直连需组织实名认证）。
+    from agentbook.providers import resolve_backend
 
-    client_kwargs = {"api_key": api_key, "timeout": 60.0, "max_retries": 2}
-    if base_url:
-        client_kwargs["base_url"] = base_url
+    try:
+        backend = resolve_backend("openai", model=model, chosen_by_reader=False)
+    except ValueError:
+        return "（未配置 OPENAI_API_KEY 或 OPENROUTER_API_KEY，无法启用 LLM 模式；已回退占位回复）"
+    model = backend.model
+
+    client_kwargs = {
+        "api_key": backend.api_key,
+        "base_url": backend.base_url,
+        "timeout": 60.0,
+        "max_retries": 2,
+    }
 
     try:
         client = OpenAI(**client_kwargs)

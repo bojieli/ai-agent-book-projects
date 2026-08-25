@@ -322,6 +322,13 @@ def test_fallback_key_is_not_reusable_as_a_provider_key(monkeypatch):
         ("gpt-4o", "openai/gpt-4o"),
         ("claude-sonnet-4", "anthropic/claude-sonnet-4.6"),
         ("deepseek-v4-flash", "deepseek/deepseek-v4-flash"),
+        # Vendors the chapter-local mappers knew and this one has to keep:
+        # a Gemini id sent unmapped is rejected by OpenRouter, and the o-series
+        # ships bare ids with no dash to anchor on.
+        ("gemini-3.5-flash", "google/gemini-3.5-flash"),
+        ("o3", "openai/o3"),
+        ("o4-mini", "openai/o4-mini"),
+        ("chatgpt-4o-latest", "openai/chatgpt-4o-latest"),
         # Already namespaced ids pass through untouched.
         ("google/gemma-4-26b-a4b-it:free", "google/gemma-4-26b-a4b-it:free"),
     ],
@@ -331,6 +338,17 @@ def test_direct_openrouter_maps_bare_model_ids(monkeypatch, override, expected):
     override is mapped the same way as on the fallback path."""
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter-direct-key")
     assert resolve_backend("openrouter", model=override).model == expected
+
+
+def test_gemini_fallback_is_namespaced_for_openrouter(monkeypatch):
+    """The reroute path maps too: an unmapped ``gemini-*`` id reaches OpenRouter
+    under a name it does not host and is rejected."""
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter-gemini-key")
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
+    backend = resolve_backend("gemini", model="gemini-3.5-flash")
+    assert backend.using_openrouter is True
+    assert backend.model == "google/gemini-3.5-flash"
 
 
 def test_keyless_provider_resolves_without_any_key():
