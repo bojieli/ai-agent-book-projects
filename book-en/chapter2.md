@@ -684,7 +684,7 @@ Why does appending at the end not break the cache? This follows directly from th
 
 One point is easy to misunderstand: a discovered schema is appended only once. It then remains at its original position in the trajectory, and later messages are added **after** it; the schema is not moved to the end again on every turn.
 
-The mechanism's other constraint is model capability: the model must have been trained on the pattern of "tool definitions appearing mid-conversation"—which is why only newer models (e.g., GPT-5.4+, the Claude 4.5+ series) currently support it, and why self-hosted open-source models need dedicated training. The full discussion of tool discovery is in Chapter 4's "Proactive Tool Discovery" section.
+The mechanism's other constraint is model capability: the model must have been trained on the pattern of "tool definitions appearing mid-conversation"—which is why only newer models (e.g., GPT-5.4+, the Claude 4.5+ series) currently support it, and why self-hosted open-source models need dedicated training. The full discussion of tool discovery is in Chapter 4's "What to Do When There Are Too Many Tools" section.
 
 > **Experiment 2-4 ★★: Ablation Study in Prompt Engineering**
 >
