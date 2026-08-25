@@ -8,6 +8,7 @@ import argparse
 import logging
 from agent import ContextAwareAgent, ContextMode
 from config import PROVIDERS, SUPPORTED_PROVIDERS, canonical_provider, resolve_backend
+from grounding import assess_groundedness, observation_quantities
 import json
 from pathlib import Path
 import subprocess
@@ -33,6 +34,30 @@ def _completed(result: Dict[str, Any]) -> bool:
     """Return terminal-response status with compatibility for old results."""
     return bool(result.get("completed", result.get("success", False)))
 
+
+def _outcome(result: Dict[str, Any]) -> str:
+    """Say what an arm did, not merely whether it stopped.
+
+    ``Completed`` is true for both ways an ablated arm can end without the
+    answer, and they are not the same event.  A model told to convert
+    currencies with no conversion tool may say it cannot, or may supply the
+    exchange rates from memory and present the arithmetic as if it had looked
+    them up.  The second reads as a clean success in every column this suite
+    used to print.
+
+    Args:
+        result: A single test result.
+
+    Returns:
+        ``no_terminal_response``, ``unsupported_numbers`` or ``completed``.
+    """
+    if not _completed(result):
+        return "no_terminal_response"
+    if result.get("grounding_verdict") == "ungrounded":
+        return "unsupported_numbers"
+    return "completed"
+
+
 # Load .env so API keys configured there are available via os.getenv.
 # (config.py calls load_dotenv() too, but main.py only imports agent, which
 #  does not import config, so we must trigger it here.)
@@ -41,6 +66,22 @@ try:
     load_dotenv()
 except ImportError:
     pass
+
+
+# How the groundedness verdict reads in a table cell.
+_GROUNDING_LABEL = {
+    "grounded": "from task",
+    "ungrounded": "UNSUPPORTED",
+    "not_assessable": "saw tools",
+    "no_quantities": "none",
+    "no_answer": "-",
+}
+
+_OUTCOME_MARK = {
+    "completed": "✓",
+    "unsupported_numbers": "⚠",
+    "no_terminal_response": "✗",
+}
 
 
 class AblationTestSuite:
@@ -132,6 +173,18 @@ Present a detailed financial analysis with all conversions and calculations."""
         execution_time = time.time() - start_time
         completed = _completed(result)
 
+        # Read the observations from the messages that were actually sent. In
+        # the no-tool-results arm the harness ran the tools but the model was
+        # shown a placeholder, so the numbers it saw are none.
+        sent = [
+            message
+            for turn in result["trajectory"].api_turns
+            for message in (turn.get("request") or {}).get("messages", [])
+        ]
+        grounding = assess_groundedness(
+            result.get("final_answer"), task, observation_quantities(sent)
+        )
+
         # Analyze the result
         test_result = {
             "test_name": test_name,
@@ -147,6 +200,11 @@ Present a detailed financial analysis with all conversions and calculations."""
             "success": completed,
             "task_success": None,
             "has_final_answer": result.get("final_answer") is not None,
+            # No task rubric here, so correctness stays unknown -- but whether
+            # the answer's figures had any source at all does not need one.
+            "grounding_verdict": grounding["verdict"],
+            "observation_count": grounding["observation_count"],
+            "unsupported_quantities": grounding["unsupported_quantities"],
             "error": result.get("error"),
             "reasoning_steps": len(result["trajectory"].reasoning_steps),
             "final_answer_preview": (result.get("final_answer", "")[:200] + "...") if result.get("final_answer") else None
@@ -155,6 +213,12 @@ Present a detailed financial analysis with all conversions and calculations."""
         # Log summary
         logger.info(f"Test completed in {test_result['execution_time']}s")
         logger.info(f"Terminal response completed: {test_result['completed']}")
+        if test_result["grounding_verdict"] == "ungrounded":
+            logger.warning(
+                "Answer states %d figure(s) with no observation behind them: %s",
+                len(test_result["unsupported_quantities"]),
+                test_result["unsupported_quantities"],
+            )
         logger.info(f"Tool calls made: {test_result['num_tool_calls']}")
         logger.info(f"Iterations: {test_result['iterations']}")
         
@@ -240,6 +304,19 @@ Present a detailed financial analysis with all conversions and calculations."""
             # Compatibility key for existing report consumers. It now counts
             # terminal responses, not verified task successes.
             "successful_tests": sum(1 for r in results if _completed(r)),
+            # Terminal responses whose figures no observation supports. This
+            # suite cannot say an answer is wrong without a rubric, but it can
+            # say the model had nothing to compute from.
+            "unsupported_number_tests": sum(
+                1 for r in results if r.get("grounding_verdict") == "ungrounded"
+            ),
+            "unsupported_number_modes": sorted(
+                {
+                    r["context_mode"]
+                    for r in results
+                    if r.get("grounding_verdict") == "ungrounded"
+                }
+            ),
             "context_mode_impact": {}
         }
         
@@ -252,6 +329,8 @@ Present a detailed financial analysis with all conversions and calculations."""
                     mode_analysis = {
                         "completion_maintained": _completed(result),
                         "success_maintained": _completed(result),
+                        "stated_unsupported_numbers": result.get("grounding_verdict")
+                        == "ungrounded",
                         "execution_time_delta": result.get("execution_time", 0) - baseline.get("execution_time", 0),
                         "iteration_delta": result.get("iterations", 0) - baseline.get("iterations", 0),
                         "tool_call_delta": result.get("num_tool_calls", 0) - baseline.get("num_tool_calls", 0),
@@ -259,7 +338,11 @@ Present a detailed financial analysis with all conversions and calculations."""
                     }
                     
                     # Identify failure reasons
-                    if not _completed(result):
+                    if result.get("grounding_verdict") == "ungrounded":
+                        mode_analysis["failure_reason"] = (
+                            "Answered with figures no tool observation supports"
+                        )
+                    elif not _completed(result):
                         if result["context_mode"] == "no_tool_calls":
                             mode_analysis["failure_reason"] = "Cannot execute tools without tool call capability"
                         elif result["context_mode"] == "no_tool_results":
@@ -287,6 +370,7 @@ Present a detailed financial analysis with all conversions and calculations."""
                 result.get("case_name", "default"),
                 result["context_mode"],
                 "✓" if _completed(result) else "✗",
+                _GROUNDING_LABEL.get(result.get("grounding_verdict"), "-"),
                 f"{result.get('execution_time', 0)}s",
                 result.get("iterations", 0),
                 result.get("num_tool_calls", 0),
@@ -294,7 +378,7 @@ Present a detailed financial analysis with all conversions and calculations."""
                 "Yes" if result.get("has_final_answer", False) else "No"
             ])
 
-        headers = ["Case", "Context Mode", "Completed", "Time", "Iterations", "Tool Calls", "Reasoning Steps", "Final Answer"]
+        headers = ["Case", "Context Mode", "Completed", "Figures", "Time", "Iterations", "Tool Calls", "Reasoning Steps", "Final Answer"]
 
         print("\n" + "="*80)
         print("ABLATION STUDY RESULTS")
@@ -331,15 +415,15 @@ Present a detailed financial analysis with all conversions and calculations."""
                 r = by_key.get((mode, case))
                 if r is None:
                     row.append("-")
-                elif _completed(r):
-                    row.append(f"✓ {r.get('iterations', 0)}it/{r.get('num_tool_calls', 0)}tc")
                 else:
-                    row.append(f"✗ {r.get('iterations', 0)}it/{r.get('num_tool_calls', 0)}tc")
+                    counts = f"{r.get('iterations', 0)}it/{r.get('num_tool_calls', 0)}tc"
+                    row.append(f"{_OUTCOME_MARK[_outcome(r)]} {counts}")
             table_data.append(row)
 
         headers = ["Context Mode"] + cases
         print("\n" + "="*80)
-        print("COMPARISON MATRIX (rows = context mode, cols = case; cell = completion it=iterations tc=tool calls)")
+        print("COMPARISON MATRIX (rows = context mode, cols = case; cell = outcome it=iterations tc=tool calls)")
+        print("  ✓ terminal response   ⚠ terminal response built on figures no observation supports   ✗ no terminal response")
         print("="*80)
         print(tabulate(table_data, headers=headers, tablefmt="grid"))
     
@@ -450,6 +534,7 @@ rubric.
 ## Statistical Summary
 - **Total Tests Run**: {total_tests}
 - **Terminal Responses**: {successful_tests}
+- **Answers Stating Unsupported Figures**: {unsupported_number_tests} {unsupported_number_modes}
 - **Average Execution Time (Full Context)**: {avg_exec_time}s
 - **Average Tool Calls (Full Context)**: {avg_tool_calls}
 
@@ -491,6 +576,8 @@ rubric used by `run_experiment_1_1.py`.
             no_tool_results_perf=get_perf_string("no_tool_results"),
             total_tests=analysis["total_tests"],
             successful_tests=analysis["successful_tests"],
+            unsupported_number_tests=analysis.get("unsupported_number_tests", 0),
+            unsupported_number_modes=analysis.get("unsupported_number_modes", []) or "",
             avg_exec_time=avg_exec_time,
             avg_tool_calls=avg_tool_calls
         )

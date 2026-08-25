@@ -268,52 +268,136 @@ Key flags:
 
 ### Ablation Studies
 
-#### Accepted real Kimi K3 execution (2026-07-29)
+#### Accepted real Kimi K3 execution (2026-08-25)
 
 `run_experiment_1_1.py` executes the exact five arms from the manuscript and
 persists every credential-free provider request/response, rather than only a
 summary table:
 
 ```bash
-python run_experiment_1_1.py --provider kimi --model kimi-k3 --max-iterations 5
+python run_experiment_1_1.py --provider kimi
 ```
 
-The same evidence runner can use a Bailian key directly:
+`--model` is optional and defaults to the provider's entry in the shared
+registry (`agentbook/providers`). Selecting one provider while naming another
+provider's model is what made all five arms fail in
+[#971](https://github.com/bojieli/ai-agent-book/issues/971), so `--provider`
+alone is now enough:
 
 ```bash
 export DASHSCOPE_API_KEY=your_key_here
-python run_experiment_1_1.py --provider dashscope --model qwen3.7-plus --max-iterations 5
+python run_experiment_1_1.py --provider dashscope     # runs qwen3.7-plus
 ```
 
-The accepted artifact is [validation/latest.json](validation/latest.json). All
-five request-shape contracts passed on the direct Moonshot API. The full arm
-produced the correct USD total and average; removing tool definitions produced
-zero tool actions; removing tool results and removing history both caused
-repeated actions. The no-reasoning arm still answered correctly in this run, so
-the manuscript's categorical contradiction claim was **not reproduced** and is
-reported separately from execution acceptance.
+The accepted artifact is [validation/latest.json](validation/latest.json). It
+is replaced only by a run that is both canonical — all five arms, guarded task,
+silent tool-result withholding — and accepted. Anything else writes its own
+timestamped directory and leaves the cited evidence alone.
+
+#### Reading an arm
+
+`completed` means the agent loop returned a terminal response. It does not mean
+the task was done. The legacy `success` field is an alias for `completed`, and
+`task_success` is the canonical numeric rubric. None of them distinguishes the
+two ways an ablated arm ends without the answer, so every arm also carries an
+`outcome`:
+
+| `outcome` | What happened |
+|---|---|
+| `correct` | Terminal answer matching the numeric rubric |
+| `no_unsupported_numbers` | Terminal answer claiming no figure the model was not given |
+| `unsupported_numbers` | Terminal answer stating revenue-scale figures found in neither the task nor any observation the model received |
+| `incorrect` | Terminal answer, wrong, but the model did have observations to work from |
+| `no_terminal_response` | Hit the iteration ceiling, or errored |
+
+`unsupported_numbers` is the case the `Completed` column can never show, and it
+is the one that matters in production: an answer built on remembered exchange
+rates is formatted exactly like an answer built on tool output. It is computed
+in [grounding.py](grounding.py) from the messages actually sent, so an arm whose
+observations were withheld has nothing to ground on regardless of what the
+harness computed locally. Groundedness is deliberately independent of
+correctness — a model with no observations that states the right total still did
+not read it anywhere. `no_unsupported_numbers` covers both a principled refusal
+and a turn that only narrated its plan before stopping; telling those apart is a
+judgment about intent the harness does not make.
 
 Observed results (these are not the expected-behavior labels below):
 
-| Arm | Iterations | Tool actions | Repeated action | Correct numerical answer |
+| Arm | Iterations | Tool actions | Repeated action | Outcome |
 |---|---:|---:|---|---|
-| full | 3 | 4 | no | yes |
-| no history | 5 (ceiling) | 15 | yes | no answer |
-| no reasoning | 3 | 4 | no | **yes — negative result for the manuscript claim** |
-| no tool definitions | 1 | 0 | no | no; the model explicitly declined to invent rates |
-| no tool results | 5 | 7 | yes | no; the model eventually reported that observations were hidden |
+| full | 3 | 4 | no | `correct` |
+| no history | 5 (ceiling) | 15 | yes | `no_terminal_response` |
+| no reasoning | 3 | 4 | no | `correct` — **no measurable degradation**; the manuscript no longer claims one |
+| no tool definitions | 1 | 0 | no | `no_unsupported_numbers` — reported that no conversion tool was reachable |
+| no tool results | 5 (ceiling) | 9 | yes | `no_terminal_response` — kept calling and never converged |
 
-In an individual raw arm, `completed` means that the API/agent loop returned a
-terminal response. It does not mean that the requested task was correct. The
-legacy `success` field is retained as an alias for `completed` so older result
-readers continue to work; new readers should use `completed` explicitly.
-`task_success` is the task-specific correctness result. For this experiment it
-is computed by the canonical numeric rubric, while the generic agent cannot
-infer correctness from arbitrary natural-language prompts. The canonical
-behavioral booleans are under `analysis.manuscript_behavior_claims`;
-`all_manuscript_behavior_claims_observed` is false. This separation prevents a
-graceful refusal or hallucinated tool markup in an ablated arm from being
-mislabeled as task success, without forcing any ablation outcome in advance.
+The last two arms are not stable across runs; see the table below for what
+repeated runs of the no-tool-results arm actually do.
+
+`analysis.manuscript_behavior_claims` holds the canonical booleans, and
+`all_manuscript_behavior_claims_observed` is false. A claim about an arm that
+never reached the provider is reported as `null` rather than `true`, because two
+of the four claims are phrased as absences that a failed request satisfies for
+free. `analysis.claim_qualifications` records that the no-tool-definitions claim
+is vacuous by construction: a request carrying no tool definitions cannot
+produce a tool call, so the only observable quantity is what the model does
+instead.
+
+#### Two conditions the arms are sensitive to
+
+Both default to the canonical setting. The alternates exist because they change
+the result, and that is worth seeing. Supporting runs are in
+[validation/probes_20260825T/](validation/probes_20260825T/), summarised in its
+`index.json`.
+
+**`--task guarded|unguarded`** controls one sentence of the prompt: *"Do not
+estimate exchange rates yourself; use the tool observations."* Under the guarded
+(canonical) task, Kimi K3's no-tool-definitions arm claims no figure it was not
+given. Drop that one sentence and the same model, same arm, answers
+`$9,587,333.33` — 0.16% from the tool's table, from rates it supplied itself,
+with a caveat about assumed rates that a reader skimming the total would miss.
+
+The constraint clearly matters, but it is a probability shift and not a switch:
+under the *guarded* task the same model still stated unsupported figures in 2 of
+13 arms. And nothing here isolates prompt from model — every provider except
+Moonshot was unreachable while these runs were made, so no two models were
+compared at a fixed prompt. Models differ substantially in hallucination
+tendency, and that is likely the larger factor; the prompt constraint lowers the
+odds without removing them. Rely on neither, which is what the groundedness
+check exists for.
+
+```bash
+python run_experiment_1_1.py --provider kimi --modes no_tool_calls --task unguarded
+```
+
+**`--hidden-result empty|marker`** controls how the no-tool-results arm
+withholds an observation. `empty` (canonical) sends a tool message with no
+content: the API requires the message to exist, so this is as close to "the
+result is gone" as the protocol allows. `marker` sends the visible redaction
+`[Tool result hidden due to context mode]`, which *adds* a signal the ablation
+was meant to remove — the model can see that an observation exists and is being
+withheld, and can stop and say so. Across repeated runs of this arm alone (Kimi
+K3, guarded task, ceiling of 5):
+
+| Withholding style | Runs | Ran to the ceiling with no answer | Stated unsupported figures | Claimed nothing it was not given |
+|---|---:|---:|---:|---:|
+| `empty` (canonical) | 7 | 6 | 1 | 0 |
+| `marker` | 4 | 1 | 1 | 2 |
+
+The arm is not deterministic under either style, so read these as tendencies at
+small n, not as laws. The tendency is clear enough: silent withholding sends the
+model to the ceiling 6 times in 7, repeating conversions and then probing the
+tool with test values such as 1 EUR→USD and 100 USD→EUR to work out why nothing
+was coming back — the manuscript's blind execution. The visible marker sends it
+there once in 4, and is the only style under which the model ever reported that
+it had been given nothing, which is the point: the redaction is a signal, and
+removing a signal is not the same ablation as removing the observation. Both
+styles also produce answers from remembered rates, so that failure belongs to
+neither design.
+
+```bash
+python run_experiment_1_1.py --provider kimi --modes no_tool_results --hidden-result marker
+```
 
 The ablation studies systematically remove context components to understand their importance.
 
@@ -333,13 +417,13 @@ A complex financial analysis task requiring:
 | **full** | none (baseline) | Complete successful execution | Baseline performance |
 | **no_history** | 历史消息 (history) | Redundant operations, inefficiency | May repeat tool calls |
 | **no_reasoning** | 思考过程 (reasoning) | Unstructured approach, potential errors | Lacks strategic planning |
-| **no_tool_calls** | 工具定义 (tool definitions) | Complete failure | Cannot interact with external world |
-| **no_tool_results** | 工具执行结果 (tool results) | Incorrect conclusions | Makes decisions without feedback |
+| **no_tool_calls** | 工具定义 (tool definitions) | No tool action — but a terminal answer either way, either an abstention or one built on remembered rates | Cannot interact with external world; the answer may still look complete |
+| **no_tool_results** | 工具执行结果 (tool results) | Repeated and probing tool calls, often to the iteration ceiling | Acts without feedback and cannot tell that it is |
 
 **How each ablation is applied** (see `agent.py`):
 
 - **no_tool_calls** — the `tools` parameter is omitted from the request, so the model has no tool definitions to call.
-- **no_tool_results** — every tool result is replaced with a `[Tool result hidden]` placeholder.
+- **no_tool_results** — every tool result is replaced with empty content, so the message the API requires is still there but carries no observation. `--hidden-result marker` swaps in the visible `[Tool result hidden due to context mode]` placeholder instead, which is a different experiment: it tells the model an observation is being withheld.
 - **no_reasoning** — `reasoning_content` is stripped from each assistant message before it is added back to the trajectory.
 - **no_history** — `_prepare_messages_for_api()` sends only a sliding window (system prompt + current task + the most recent ReAct step) to the model, so earlier steps are forgotten and the agent tends to repeat tool calls. Full mode always sends the complete trajectory.
 
@@ -759,26 +843,111 @@ python main.py --mode ablation --ablation-modes full no_history --output my_abla
 
 ### 消融实验
 
-#### 已验收的 Kimi K3 真实执行（2026-07-29）
+#### 已验收的 Kimi K3 真实执行（2026-08-25）
 
 `run_experiment_1_1.py` 会按正文运行五个精确实验组，并保存每轮真实 API 的无凭据
 请求与响应，而不只是汇总表：
 
 ```bash
-python run_experiment_1_1.py --provider kimi --model kimi-k3 --max-iterations 5
+python run_experiment_1_1.py --provider kimi
 ```
 
-同一证据运行器也支持直接使用百炼 Key：
+`--model` 可省略，缺省取共享注册表（`agentbook/providers`）中该提供商的默认模型。
+选定一个提供商却写另一个提供商的模型名，正是
+[#971](https://github.com/bojieli/ai-agent-book/issues/971) 中五组全部失败的原因；
+现在只传 `--provider` 就够了：
 
 ```bash
 export DASHSCOPE_API_KEY=your_key_here
-python run_experiment_1_1.py --provider dashscope --model qwen3.7-plus --max-iterations 5
+python run_experiment_1_1.py --provider dashscope     # 使用 qwen3.7-plus
 ```
 
-验收产物见 [validation/latest.json](validation/latest.json)。五组上下文契约全部通过；
-完整组算出了正确结果，移除工具定义后没有工具行动，移除工具结果或历史后都出现重复行动。
-但本次“移除思考过程”仍得到正确答案，因此正文关于必然出现矛盾决策的断言**没有复现**；
-产物把“实验执行通过”和“正文行为结论复现”分开记录。
+验收产物见 [validation/latest.json](validation/latest.json)。只有既是标准配置
+（五组齐全、带约束的任务、静默隐藏工具结果）又通过验收的运行才会覆盖它；其余运行
+只写自己的时间戳目录，不会动被引用的证据。
+
+#### 怎么读一组实验
+
+`completed` 表示 Agent 循环返回了终止响应，不代表任务做对了。旧字段 `success` 是
+`completed` 的别名，`task_success` 才是数值评分标准。三者都区分不出「消融组没给出
+答案」的两种情况，因此每组还带一个 `outcome`：
+
+| `outcome` | 含义 |
+|---|---|
+| `correct` | 终止回答且符合数值评分标准 |
+| `no_unsupported_numbers` | 终止回答中没有声称任何模型未被给予的数字 |
+| `unsupported_numbers` | 终止回答中出现了任务与观测里都没有的营收量级数字 |
+| `incorrect` | 有观测可依据，但回答仍然错误 |
+| `no_terminal_response` | 触到迭代上限，或报错 |
+
+`unsupported_numbers` 正是 `Completed` 那一列永远显示不出来的情况，也是生产中真正
+要命的一种：用记忆中的汇率拼出来的答案，排版和用工具结果算出来的答案一模一样。它由
+[grounding.py](grounding.py) 依据**实际发出的消息**计算，因此被隐藏了观测的实验组
+无论框架本地算出了什么，都无处可依。可依据性与正确性是两条独立的轴——没有观测却报出
+正确总数的模型，同样不是「读到」的。`no_unsupported_numbers` 同时涵盖「明确拒绝」和
+「只说了一句打算怎么做就停下」；区分这两者属于对意图的判断，本框架不做。
+
+实测结果（下方「预期行为」表是设计预期，不是实测）：
+
+| 实验组 | 迭代 | 工具行动 | 重复行动 | outcome |
+|---|---:|---:|---|---|
+| full | 3 | 4 | 否 | `correct` |
+| no history | 5（触顶） | 15 | 是 | `no_terminal_response` |
+| no reasoning | 3 | 4 | 否 | `correct` —— **测不出退化**；正文已不再作此断言 |
+| no tool definitions | 1 | 0 | 否 | `no_unsupported_numbers` —— 声明会话中没有可用的换汇工具 |
+| no tool results | 5（触顶） | 9 | 是 | `no_terminal_response` —— 一直重调工具，始终没有收敛 |
+
+后两组在多次运行之间并不稳定；「移除工具执行结果」组反复运行的实际表现见下表。
+
+`analysis.manuscript_behavior_claims` 保存正文行为结论的布尔值，
+`all_manuscript_behavior_claims_observed` 为 false。对于根本没有到达提供商的实验组，
+结论记为 `null` 而不是 `true`——四条结论里有两条是以「没有发生什么」表述的，一次失败
+的请求就能白白满足它们。`analysis.claim_qualifications` 则记下：「移除工具定义后没有
+工具行动」是构造性必然，请求里没有工具定义，模型本就发不出工具调用；唯一可观察的是
+它转而做了什么。
+
+#### 两个会改变结论的开关
+
+两者默认都是标准配置；提供另一个取值，是因为它确实会改变结果，而这值得看见。支撑数据
+见 [validation/probes_20260825T/](validation/probes_20260825T/)，汇总在其 `index.json`。
+
+**`--task guarded|unguarded`** 控制提示词里的一句话：*「不要自行估计汇率，请使用工具
+观测。」* 在带约束（标准）的任务下，Kimi K3 的「移除工具定义」组不会声称任何未被给予
+的数字；去掉这一句，同一个模型、同一组实验就给出了 `$9,587,333.33`——与工具汇率表相差
+0.16%，汇率是它自己补上的，附带的「基于所假设汇率」说明，只看总数的读者根本不会注意到。
+
+这条约束确实起作用，但它只是概率上的偏移，不是开关：在**带约束**的任务下，同一个模型
+仍有 2/13 组报出了无依据的数字。而且这里无法把提示词和模型分开——这批运行期间除
+Moonshot 外的提供商都不可用，没有在固定提示词下比较过两个模型。不同模型的幻觉率差异
+很大，那多半才是更主要的因素；提示词约束只能降低概率，不能消除。两者都不能依赖，这正是
+可依据性检查存在的意义。
+
+```bash
+python run_experiment_1_1.py --provider kimi --modes no_tool_calls --task unguarded
+```
+
+**`--hidden-result empty|marker`** 控制「移除工具执行结果」组如何隐藏观测。`empty`
+（标准）发送一条内容为空的 tool 消息——协议要求这条消息必须存在，所以这已是「结果消失
+了」最接近的实现。`marker` 发送可见的占位符
+`[Tool result hidden due to context mode]`，这等于**补上**了一个本该被消融掉的信号：
+模型能看出「这里有观测，但被藏了」，于是可以停下来说明情况。对这一组反复运行
+（Kimi K3、带约束任务、上限 5 轮）：
+
+| 隐藏方式 | 运行次数 | 触顶且无答案 | 报出无依据数字 | 未声称任何未被给予的数字 |
+|---|---:|---:|---:|---:|
+| `empty`（标准） | 7 | 6 | 1 | 0 |
+| `marker` | 4 | 1 | 1 | 2 |
+
+这一组在两种方式下都不是确定性的，样本量也小，因此上表只是倾向而非定律。倾向本身足够
+清楚：静默隐藏下 7 次里有 6 次跑到迭代上限——反复重做换汇，然后用测试值试探工具
+（1 EUR→USD、100 USD→EUR）以判断为什么什么都没回来——这正是正文所说的「盲目执行」；
+可见占位符下 4 次里只有 1 次如此，而且只有在这种方式下，模型才报告过「我什么都没拿到」。
+这正是关键：占位符本身是一个信号，拿走一个信号和拿走观测并不是同一个消融。两种方式也都
+出现过用记忆中的汇率作答，所以那一种失败不属于任何一种设计。
+
+```bash
+python run_experiment_1_1.py --provider kimi --modes no_tool_results --hidden-result marker
+```
 
 系统性地移除上下文组件，以理解其重要性。
 
@@ -798,13 +967,13 @@ python run_experiment_1_1.py --provider dashscope --model qwen3.7-plus --max-ite
 | **full** | 无（基线） | 完整成功执行 | 基线性能 |
 | **no_history** | 历史消息 (history) | 冗余操作、效率下降 | 可能重复调用工具 |
 | **no_reasoning** | 思考过程 (reasoning) | 方法无结构、易出错 | 缺少战略规划 |
-| **no_tool_calls** | 工具定义 (tool definitions) | 完全失败 | 无法与外部世界交互 |
-| **no_tool_results** | 工具执行结果 (tool results) | 错误结论 | 无反馈下做决策 |
+| **no_tool_calls** | 工具定义 (tool definitions) | 没有工具行动，但两种情况都会给出终止回答：要么拒绝，要么用记忆中的汇率作答 | 无法与外部世界交互；但回答看上去可能仍然完整 |
+| **no_tool_results** | 工具执行结果 (tool results) | 反复重调并试探工具，常常一直触到迭代上限 | 在没有反馈的情况下行动，且察觉不到这一点 |
 
 **各消融如何落地**（见 `agent.py`）：
 
 - **no_tool_calls** — 请求中省略 `tools` 参数，模型没有可调用的工具定义。
-- **no_tool_results** — 每个工具结果替换为 `[Tool result hidden]` 占位符。
+- **no_tool_results** — 每个工具结果的内容被置空：API 要求这条消息存在，但它不再携带任何观测。`--hidden-result marker` 则换成可见的 `[Tool result hidden due to context mode]` 占位符——那是另一个实验，因为它等于告诉模型「这里有观测被藏起来了」。
 - **no_reasoning** — 写回轨迹前，从每条 assistant 消息中剥离 `reasoning_content`。
 - **no_history** — `_prepare_messages_for_api()` 只发送滑动窗口（系统提示 + 当前任务 + 最近一步 ReAct），早期步骤被遗忘，易重复调工具。完整模式始终发送完整轨迹。
 

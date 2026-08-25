@@ -22,7 +22,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, List
 
-from agent import ContextAwareAgent, ContextMode
+from agent import HIDDEN_RESULT_STYLES, ContextAwareAgent, ContextMode
+from config import PROVIDERS, SUPPORTED_PROVIDERS, canonical_provider
+from grounding import assess_groundedness, observation_quantities
 
 
 EXPERIMENT_ID = "1-1"
@@ -39,17 +41,17 @@ Report both values rounded to two decimal places. Do not estimate exchange
 rates yourself; use the tool observations."""
 
 EXPECTED_NUMBERS = ("9602895.73", "2400723.93")
-KEY_ENV = {
-    "dashscope": ("DASHSCOPE_API_KEY",),
-    "qwen": ("DASHSCOPE_API_KEY",),
-    "bailian": ("DASHSCOPE_API_KEY",),
-    "kimi": ("MOONSHOT_API_KEY", "KIMI_API_KEY"),
-    "moonshot": ("MOONSHOT_API_KEY", "KIMI_API_KEY"),
-    "doubao": ("ARK_API_KEY",),
-    "siliconflow": ("SILICONFLOW_API_KEY",),
-    "deepseek": ("DEEPSEEK_API_KEY",),
-    "openrouter": ("OPENROUTER_API_KEY",),
-}
+
+# The sentence above that forbids self-estimated rates is a guard, and whether
+# it is present changes what the no-tool-definitions arm does: with it, a model
+# that cannot convert says so; without it, some models state rates from memory
+# instead.  Both are worth running, so the guard is a flag rather than an
+# assumption baked into the task.  Only the guarded task is canonical, because
+# it is the one the manuscript describes.
+ESTIMATION_GUARD = """Do not estimate exchange
+rates yourself; use the tool observations."""
+UNGUARDED_TASK = CANONICAL_TASK.replace(ESTIMATION_GUARD, "").rstrip()
+TASK_VARIANTS = {"guarded": CANONICAL_TASK, "unguarded": UNGUARDED_TASK}
 
 
 def utc_now() -> str:
@@ -74,14 +76,51 @@ def package_version(distribution: str) -> str | None:
         return None
 
 
+def provider_spec(provider: str):
+    """Look the provider up in the shared registry.
+
+    Args:
+        provider: A provider name or alias accepted by
+            :mod:`agentbook.providers`.
+
+    Returns:
+        The registered provider specification.
+
+    Raises:
+        RuntimeError: If the name resolves to no registry entry.
+    """
+    try:
+        return PROVIDERS[canonical_provider(provider)]
+    except KeyError:
+        raise RuntimeError(f"Unknown provider: {provider!r}") from None
+
+
 def resolve_key(provider: str) -> tuple[str, str]:
-    names = KEY_ENV.get(provider, ())
-    for name in names:
+    """Find this provider's own credential, refusing to fall back.
+
+    The registry's :func:`resolve_backend` would happily reroute through
+    OpenRouter when a provider's key is missing.  That is right for a reader
+    running the demo and wrong here: the evidence file claims direct-API
+    provenance, so a missing key must stop the run rather than quietly change
+    which endpoint answered.
+
+    Args:
+        provider: A provider name or alias.
+
+    Returns:
+        The key and the environment variable it came from.
+
+    Raises:
+        RuntimeError: If none of the provider's key variables are set.
+    """
+    spec = provider_spec(provider)
+    for name in spec.key_vars:
         value = os.getenv(name)
         if value:
             return value, name
     raise RuntimeError(
-        f"No direct credential for {provider}; expected one of {', '.join(names)}"
+        f"No direct credential for {provider}; expected one of "
+        f"{', '.join(spec.key_vars) or '(none)'}"
     )
 
 
@@ -113,8 +152,26 @@ def request_roles(turn: Dict[str, Any]) -> List[str]:
     return [message.get("role") for message in turn.get("request", {}).get("messages", [])]
 
 
-def evaluate_context_contract(mode: str, turns: List[Dict[str, Any]]) -> Dict[str, Any]:
-    """Verify the actual provider request, not the requested CLI mode."""
+def evaluate_context_contract(
+    mode: str,
+    turns: List[Dict[str, Any]],
+    hidden_result_content: str = HIDDEN_RESULT_STYLES["empty"],
+) -> Dict[str, Any]:
+    """Verify the actual provider request, not the requested CLI mode.
+
+    Args:
+        mode: The ablation arm being checked.
+        turns: The arm's recorded API turns.
+        hidden_result_content: What the no-tool-results arm was configured to
+            put in place of an observation. Checked exactly, so a real result
+            leaking through still fails the contract.
+
+    Returns:
+        The per-check details plus a ``passed`` verdict.
+
+    Raises:
+        ValueError: If ``mode`` names no known arm.
+    """
     requests = [turn.get("request", {}) for turn in turns if turn.get("request")]
     real_responses = [turn for turn in turns if turn.get("response", {}).get("id")]
     details: Dict[str, Any] = {
@@ -172,8 +229,7 @@ def evaluate_context_contract(mode: str, turns: List[Dict[str, Any]]) -> Dict[st
                 ),
                 "tool_results_hidden": bool(tool_messages)
                 and all(
-                    m.get("content") == "[Tool result hidden due to context mode]"
-                    for m in tool_messages
+                    m.get("content") == hidden_result_content for m in tool_messages
                 ),
             }
         )
@@ -248,7 +304,64 @@ def canonical_answer_correct(final_answer: str | None) -> bool:
     return bool(final_answer) and all(number in normalized for number in EXPECTED_NUMBERS)
 
 
-def summarize_arm(mode: ContextMode, result: Dict[str, Any], elapsed: float) -> Dict[str, Any]:
+def arm_outcome(completed: bool, correct: bool, verdict: str) -> str:
+    """Collapse an arm into the one word the ablation table should show.
+
+    ``Completed`` cannot distinguish the two ways an ablated arm ends without
+    the right answer, and they are not equally bad: a model that claims no
+    figure it was never given has failed safely, while one that supplies the
+    exchange rates from memory has produced a wrong number that reads exactly
+    like a right one.
+
+    The labels describe what was measured and nothing more.
+    ``no_unsupported_numbers`` covers a principled refusal and a turn that
+    merely announced what it was about to do and stopped -- telling those two
+    apart is a judgment about intent that this harness has no way to make.
+
+    Args:
+        completed: Whether the model returned a terminal response at all.
+        correct: Whether that response satisfies the task's answer rubric.
+        verdict: The groundedness verdict from
+            :func:`grounding.assess_groundedness`.
+
+    Returns:
+        One of ``no_terminal_response``, ``correct``, ``unsupported_numbers``,
+        ``no_unsupported_numbers`` or ``incorrect``.
+    """
+    if not completed:
+        return "no_terminal_response"
+    if correct:
+        return "correct"
+    if verdict == "ungrounded":
+        return "unsupported_numbers"
+    if verdict in ("grounded", "no_quantities"):
+        return "no_unsupported_numbers"
+    return "incorrect"
+
+
+def sent_messages(turns: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Flatten every message that actually went out on the wire.
+
+    Args:
+        turns: The arm's recorded API turns.
+
+    Returns:
+        The concatenated request message lists, in turn order.
+    """
+    return [
+        message
+        for turn in turns
+        for message in (turn.get("request") or {}).get("messages", [])
+    ]
+
+
+def summarize_arm(
+    mode: ContextMode,
+    result: Dict[str, Any],
+    elapsed: float,
+    task_text: str = CANONICAL_TASK,
+    hidden_result_content: str = HIDDEN_RESULT_STYLES["empty"],
+) -> Dict[str, Any]:
     trajectory = result["trajectory"]
     tool_calls = [tool_call_dict(call) for call in trajectory.tool_calls]
     signatures = call_signatures(tool_calls)
@@ -256,6 +369,12 @@ def summarize_arm(mode: ContextMode, result: Dict[str, Any], elapsed: float) -> 
     final_answer = result.get("final_answer")
     completed = bool(result.get("completed", result.get("success", False)))
     task_success = canonical_answer_correct(final_answer)
+    # Groundedness is read from the messages the model received, not from the
+    # tool results the harness computed.  In the no-tool-results arm those two
+    # differ by design, and only the former is what the model had to reason
+    # from.
+    observations = observation_quantities(sent_messages(trajectory.api_turns))
+    groundedness = assess_groundedness(final_answer, task_text, observations)
     arm = {
         "mode": mode.value,
         "provider": result.get("provider"),
@@ -278,12 +397,17 @@ def summarize_arm(mode: ContextMode, result: Dict[str, Any], elapsed: float) -> 
         "reasoning_steps": trajectory.reasoning_steps,
         "api_turns": trajectory.api_turns,
     }
-    arm["context_contract"] = evaluate_context_contract(mode.value, trajectory.api_turns)
+    arm["context_contract"] = evaluate_context_contract(
+        mode.value, trajectory.api_turns, hidden_result_content
+    )
+    arm["groundedness"] = groundedness
+    arm["outcome"] = arm_outcome(completed, task_success, groundedness["verdict"])
     arm["behavior"] = {
         "tool_action_count": len(tool_calls),
         "has_repeated_tool_action": repeats > 0,
         "hit_iteration_ceiling": result.get("iterations") >= 5 and not completed,
         "canonical_answer_correct": task_success,
+        "stated_unsupported_numbers": groundedness["verdict"] == "ungrounded",
     }
     return arm
 
@@ -314,40 +438,101 @@ def token_usage(arms: List[Dict[str, Any]]) -> Dict[str, int]:
     }
 
 
+def arm_produced_inference(arm: Dict[str, Any] | None) -> bool:
+    """Report whether this arm actually got answers from the provider.
+
+    Two of the manuscript's four behaviour claims are phrased as absences --
+    no tool action, no correct answer -- and an arm that never reached the
+    provider satisfies both.  Without this check a run whose every request
+    returned 402 would report three of the four claims as "observed", which is
+    the one thing an evidence file must never do.
+
+    Args:
+        arm: A summarised arm, or ``None`` when the mode was not run.
+
+    Returns:
+        ``True`` if every recorded turn carries a provider response id and the
+        arm recorded no transport error.
+    """
+    if not arm or arm.get("error") or not arm.get("api_turns"):
+        return False
+    return all(turn.get("response", {}).get("id") for turn in arm["api_turns"])
+
+
+CLAIM_QUALIFICATIONS = {
+    "without_tool_definitions_no_tool_action": (
+        "Vacuous by construction: the request carries no tool definitions, so "
+        "the provider cannot emit a tool call. What varies between models is "
+        "what they do instead -- see arm_outcomes.no_tool_calls, which "
+        "separates claiming no figure the model was not given from an "
+        "answer built on exchange rates it supplied itself."
+    ),
+    "without_reasoning_degraded": (
+        "Inferred from loss of canonical correctness, and note what this arm "
+        "removes: retained reasoning is stripped from the history, while the "
+        "model still reasons afresh on every turn. It therefore tests whether "
+        "carrying prior reasoning forward matters, which it need not when each "
+        "step is already determined by the previous observation. A stronger "
+        "claim -- that the ablation produces contradictory decisions -- is not "
+        "something the harness can force, and has not been observed."
+    ),
+}
+
+
+def claim(value: bool, evaluable: bool) -> bool | None:
+    """Return an observation, or ``None`` when there was nothing to observe.
+
+    Args:
+        value: The claim's value as computed from the arm.
+        evaluable: Whether the arm produced a real inference.
+
+    Returns:
+        ``value`` when the arm is evaluable, otherwise ``None``.
+    """
+    return value if evaluable else None
+
+
 def analyze(arms: List[Dict[str, Any]]) -> Dict[str, Any]:
     by_mode = {arm["mode"]: arm for arm in arms}
     exact_five_arms = set(by_mode) == {mode.value for mode in MODES}
     contracts_pass = exact_five_arms and all(
         arm["context_contract"]["passed"] for arm in arms
     )
-    direct_real_api = all(
-        not arm["using_openrouter"]
-        and arm["api_turns"]
-        and all(turn.get("response", {}).get("id") for turn in arm["api_turns"])
-        for arm in arms
+    direct_real_api = bool(arms) and all(
+        not arm["using_openrouter"] and arm_produced_inference(arm) for arm in arms
     )
+    live = {mode: arm_produced_inference(by_mode.get(mode)) for mode in by_mode}
+
+    def behavior_of(mode: str, key: str, default: Any = False) -> Any:
+        return by_mode.get(mode, {}).get("behavior", {}).get(key, default)
+
     behavior = {
-        "full_baseline_correct": by_mode.get("full", {}).get("behavior", {}).get(
-            "canonical_answer_correct", by_mode.get("full", {}).get("task_success", False)
+        "full_baseline_correct": claim(
+            bool(behavior_of("full", "canonical_answer_correct")), live.get("full", False)
         ),
-        "without_tool_definitions_no_tool_action": by_mode.get(
-            "no_tool_calls", {}
-        ).get("behavior", {}).get("tool_action_count")
-        == 0,
-        "without_tool_results_repeated_action": by_mode.get(
-            "no_tool_results", {}
-        ).get("behavior", {}).get("has_repeated_tool_action", False),
-        "without_history_repeated_action": by_mode.get("no_history", {}).get(
-            "behavior", {}
-        ).get("has_repeated_tool_action", False),
+        "without_tool_definitions_no_tool_action": claim(
+            behavior_of("no_tool_calls", "tool_action_count", None) == 0,
+            live.get("no_tool_calls", False),
+        ),
+        "without_tool_results_repeated_action": claim(
+            bool(behavior_of("no_tool_results", "has_repeated_tool_action")),
+            live.get("no_tool_results", False),
+        ),
+        "without_history_repeated_action": claim(
+            bool(behavior_of("no_history", "has_repeated_tool_action")),
+            live.get("no_history", False),
+        ),
         # Contradiction is an empirical outcome, not something the harness can
         # legitimately force.  We report whether the no-reasoning answer lost
         # canonical correctness and keep this separate from execution validity.
-        "without_reasoning_degraded": not by_mode.get("no_reasoning", {}).get(
-            "behavior", {}
-        ).get("canonical_answer_correct", False),
+        "without_reasoning_degraded": claim(
+            not behavior_of("no_reasoning", "canonical_answer_correct"),
+            live.get("no_reasoning", False),
+        ),
     }
-    behavior["all_manuscript_behavior_claims_observed"] = all(behavior.values())
+    behavior["all_manuscript_behavior_claims_observed"] = all(
+        value is True for value in behavior.values()
+    )
     return {
         "exact_five_arms_present": exact_five_arms,
         "all_context_contracts_passed": contracts_pass,
@@ -359,6 +544,14 @@ def analyze(arms: List[Dict[str, Any]]) -> Dict[str, Any]:
             and behavior["full_baseline_correct"]
         ),
         "manuscript_behavior_claims": behavior,
+        "claim_qualifications": CLAIM_QUALIFICATIONS,
+        # What each arm actually did, which is the part ``Completed`` hides:
+        # an abstention and an answer assembled from remembered exchange rates
+        # are both terminal responses.
+        "arm_outcomes": {arm["mode"]: arm["outcome"] for arm in arms},
+        "arms_stating_unsupported_numbers": [
+            arm["mode"] for arm in arms if arm["groundedness"]["verdict"] == "ungrounded"
+        ],
         "usage": token_usage(arms),
     }
 
@@ -370,13 +563,62 @@ def write_json(path: Path, payload: Dict[str, Any]) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--provider", default="kimi", choices=sorted(KEY_ENV))
-    parser.add_argument("--model", default="kimi-k3")
+    parser.add_argument(
+        "--provider",
+        default="kimi",
+        choices=SUPPORTED_PROVIDERS,
+        help="Provider to run every arm against (default: kimi).",
+    )
+    parser.add_argument(
+        "--model",
+        default=None,
+        help="Model id. Defaults to the chosen provider's registry default, so "
+             "--provider alone is enough; naming a model from another provider "
+             "is what makes every arm fail with a 400.",
+    )
+    parser.add_argument(
+        "--modes",
+        nargs="+",
+        choices=[mode.value for mode in MODES],
+        help="Arms to run (default: all five). A subset is a probe, not a "
+             "canonical run, and is never promoted to validation/latest.json.",
+    )
+    parser.add_argument(
+        "--task",
+        default="guarded",
+        choices=sorted(TASK_VARIANTS),
+        help="guarded (default, canonical) forbids self-estimated exchange "
+             "rates; unguarded drops that sentence to see what a model does "
+             "when nothing tells it not to guess.",
+    )
+    parser.add_argument(
+        "--hidden-result",
+        default="empty",
+        choices=sorted(HIDDEN_RESULT_STYLES),
+        help="How the no-tool-results arm withholds an observation. empty "
+             "(default, canonical) withholds silently, which is what removing "
+             "the tool results means; marker leaves a visible redaction, which "
+             "adds a signal the ablation was supposed to take away and lets "
+             "the model notice and stop.",
+    )
     parser.add_argument("--max-iterations", type=int, default=5)
     parser.add_argument("--output-dir", type=Path)
     args = parser.parse_args()
     if args.max_iterations < 2:
         parser.error("--max-iterations must be at least 2")
+
+    # An unset --model means "whatever this provider's default is", resolved
+    # from the shared registry rather than from a constant that happens to name
+    # one provider's model.
+    model = args.model or provider_spec(args.provider).default_model
+    modes = [ContextMode(name) for name in args.modes] if args.modes else list(MODES)
+    task = TASK_VARIANTS[args.task]
+    hidden_result_content = HIDDEN_RESULT_STYLES[args.hidden_result]
+    canonical_run = (
+        args.task == "guarded"
+        and args.hidden_result == "empty"
+        and set(modes) == set(MODES)
+    )
 
     key, key_env = resolve_key(args.provider)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
@@ -387,7 +629,13 @@ def main() -> int:
         "--provider",
         args.provider,
         "--model",
-        args.model,
+        model,
+        "--task",
+        args.task,
+        "--hidden-result",
+        args.hidden_result,
+        "--modes",
+        *[mode.value for mode in modes],
         "--max-iterations",
         str(args.max_iterations),
         "--output-dir",
@@ -395,18 +643,25 @@ def main() -> int:
     ]
 
     arms = []
-    for mode in MODES:
+    for mode in modes:
         started = utc_now()
         agent = ContextAwareAgent(
             key,
             context_mode=mode,
             provider=args.provider,
-            model=args.model,
+            model=model,
             verbose=False,
+            hidden_result_content=hidden_result_content,
         )
         begin = time.monotonic()
-        result = agent.execute_task(CANONICAL_TASK, max_iterations=args.max_iterations)
-        arm = summarize_arm(mode, result, time.monotonic() - begin)
+        result = agent.execute_task(task, max_iterations=args.max_iterations)
+        arm = summarize_arm(
+            mode,
+            result,
+            time.monotonic() - begin,
+            task_text=task,
+            hidden_result_content=hidden_result_content,
+        )
         arm["started_at"] = started
         # Recompute the configured ceiling rather than retaining the default in
         # the pure summarizer (which is also exercised by unit tests).
@@ -416,12 +671,15 @@ def main() -> int:
         arms.append(arm)
 
     evidence: Dict[str, Any] = {
-        "schema_version": "1.0",
+        "schema_version": "1.1",
         "experiment_id": EXPERIMENT_ID,
         "evidence_mode": "real_api",
         "created_at": utc_now(),
         "canonical_source": "book/chapter1.md#实验-1-1-上下文的关键作用",
-        "task": CANONICAL_TASK,
+        "task": task,
+        "task_variant": args.task,
+        "hidden_result_style": args.hidden_result,
+        "canonical_run": canonical_run,
         "expected_numbers": list(EXPECTED_NUMBERS),
         "command": command,
         "credential_source_env": key_env,
@@ -449,13 +707,26 @@ def main() -> int:
     (output_dir / "evidence.sha256").write_text(
         f"{digest}  evidence.json\n", encoding="utf-8"
     )
-    latest = Path("validation/latest.json")
-    latest.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copyfile(evidence_path, latest)
+    # validation/latest.json is what the ledger cites, so only a run that is
+    # both canonical and accepted may replace it.  A probe -- a subset of arms,
+    # the unguarded task, or a run whose requests never landed -- keeps its own
+    # timestamped directory and leaves the cited evidence alone.
+    promoted = canonical_run and evidence["analysis"]["experiment_execution_accepted"]
+    if promoted:
+        latest = Path("validation/latest.json")
+        latest.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(evidence_path, latest)
 
     print(json.dumps(evidence["analysis"], ensure_ascii=False, indent=2))
     print(f"Evidence: {evidence_path}")
     print(f"SHA-256: {digest}")
+    print(
+        "Promoted to validation/latest.json"
+        if promoted
+        else "Not promoted to validation/latest.json "
+             f"(canonical_run={canonical_run}, "
+             f"accepted={evidence['analysis']['experiment_execution_accepted']})"
+    )
     return 0 if evidence["analysis"]["experiment_execution_accepted"] else 1
 
 
