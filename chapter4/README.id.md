@@ -18,11 +18,11 @@ Pada pembacaan pertama, lewati kredensial, presentasi, dan kompatibilitas provid
 
 | Eksperimen | Proyek | Jenis | Deskripsi |
 | :--: | --- | :--: | --- |
-| 4-1 | [perception-tools](perception-tools/) | ✅ | Menyediakan tool pencarian web, multimodal, sistem file, dan data publik. |
-| 4-2 | [multimodal-agent](multimodal-agent/) | ✅ | Multimodal processing: compare native multimodal, extract-to-text, and tool-based analysis. |
-| 4-3 | [execution-tools](execution-tools/) | ✅ | Mengimplementasikan operasi file, interpreter kode, terminal virtual, dan pengamanan eksekusi. |
-| 4-4 | [collaboration-tools](collaboration-tools/) | ✅ | Menyediakan browser automation, Human-in-the-Loop, notifikasi, dan timer. |
-| 4-5 | [active-tool-discovery](active-tool-discovery/) | ✅ | Membandingkan injeksi seluruh schema tool dengan penemuan tool sesuai kebutuhan. |
+| 4-1 | [active-tool-discovery](active-tool-discovery/) | ✅ | Membandingkan injeksi seluruh schema tool dengan penemuan tool sesuai kebutuhan. |
+| 4-2 | [perception-tools](perception-tools/) | ✅ | Menyediakan tool pencarian web, multimodal, sistem file, dan data publik. |
+| 4-3 | [multimodal-agent](multimodal-agent/) | ✅ | Multimodal processing: compare native multimodal, extract-to-text, and tool-based analysis. |
+| 4-4 | [execution-tools](execution-tools/) | ✅ | Mengimplementasikan operasi file, interpreter kode, terminal virtual, dan pengamanan eksekusi. |
+| 4-5 | [collaboration-tools](collaboration-tools/) | ✅ | Menyediakan browser automation, Human-in-the-Loop, notifikasi, dan timer. |
 | — | [active-tool-selection](active-tool-selection/) | ✅ | Memilih kombinasi tool yang paling sesuai berdasarkan kebutuhan tugas. |
 
 > `chapter4/docker-compose.yml` dan `chapter4/DOCKER_DEPLOYMENT.md` menyediakan referensi deployment container untuk server MCP.
