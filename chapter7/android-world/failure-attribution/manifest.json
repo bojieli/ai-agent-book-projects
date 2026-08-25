@@ -1,0 +1,41 @@
+{
+  "experiment": "7-3",
+  "pass_number": 3,
+  "scope": "Offline attribution annotation over the retained T3A run; no new AndroidWorld campaign, no success-rate claim.",
+  "inputs": {
+    "chapter7/android-world/t3a_failed.md": "8762f6afa6b265db3f921a8f88504bcf184fed6fe190ec4406ba19896ee8de6e",
+    "chapter7/android-world/t3a.md": "9fc48d04b7088273635361c6a0939477b031bb8063fcc5d1aad5489e67df43f2"
+  },
+  "population": {
+    "task_blocks": 53,
+    "skipped_by_benchmark_harness": 1,
+    "failed_episodes": 52,
+    "declared_done": 24,
+    "max_steps": 28,
+    "emitted_answer": 6,
+    "answered_without_completion_signal": 1,
+    "goals_requiring_current_date": 9,
+    "of_those_that_obtained_it": 2,
+    "no_effect_observations": 55,
+    "episodes_with_no_effect_observations": 18,
+    "no_effect_next_step_retried_same_control": 18,
+    "no_effect_next_step_other_control": 33,
+    "no_effect_next_step_ended": 4
+  },
+  "sample": {
+    "annotated": 10,
+    "silent_failures": 9,
+    "first_error_is_assistant_message": 7,
+    "confidence_high": 5,
+    "confidence_medium": 4,
+    "confidence_low": 1,
+    "revised_from_first_pass": 7
+  },
+  "artifacts": {
+    "extract_trajectories.py": "126838eca13b35097d3d88125a3c69b4ea1cf5dc7ab5cde66c4aa21cf4c56207",
+    "trajectories.json": "66c9f68001c92abbe0b153c8c1cba8b1866c95d59fb1f25c2a4b51f53b1f2e95",
+    "attribution_records.json": "7d07f5d853b6dc0804461643c41b0e0720627f05820a5dd21c4a880b5c5dc1f5",
+    "regression_prefixes.json": "419f20ec5a5f5e712dd060ec799fcd8ca0612b197327799a81b1db929dbe6f00",
+    "README.md": "deac09bb503ab2eea2c2612eb11fdb73e232f30658f57d57228914435197fd81"
+  }
+}

@@ -86,36 +86,13 @@ Con $p=0.6$ y $k=5$, Pass@5 es aproximadamente 99,0 %, mientras que Pass consecu
 
 ### Del proceso de caja negra a caja blanca
 
-No basta el resultado final. La tasa de acciones válidas y autorizadas, la corrección semántica de las llamadas a herramientas, la eficiencia de la ruta (pasos, acciones redundantes y retrocesos), la cobertura de recuperación y el coste/latencia revelan dónde falla el Agent.
-
-### Seguridad, robustez y cobertura doble
-
-Las operaciones sensibles, la fuga de datos y el contenido prohibido siguen un principio de **tolerancia cero**: una infracción grave invalida la evaluación. La robustez cubre sensibilidad a semillas, cambios de interfaz, fallos temporales de API e interferencia de memoria obsoleta. Hay que evaluar tanto la **trayectoria** (lo que el Agent dijo e hizo) como el **resultado final** (el estado real del sistema); afirmar «reserva completada» no prueba que exista una reserva.
-
-### Muestreo humano y revisión adversarial
-
-Hay que revisar periódicamente éxitos, fallos y puntuaciones límite. Antes de usar jueces LLM a escala, calibra su acuerdo con un conjunto dorado humano de 100–200 casos (por ejemplo, kappa de Cohen > 0,7) y recalibra al cambiar el juez o la Rubric. El red teaming debe buscar errores ocultos, respuestas que hacen trampa con palabras clave y ataques contra los sesgos del juez; los desacuerdos graves entre varios jueces pasan a revisión humana.
-
-
-Una vez determinado "en qué tareas evaluar", es necesario responder a "qué dimensiones se deben medir". Esta sección sintetiza las métricas comunes en la evaluación de Agentes en un "diccionario de métricas" de consulta, cubriendo del proceso al resultado, y de la calidad a la seguridad, ofreciendo definiciones y escenarios de aplicación para cada una. Las métricas mencionadas anteriormente (como Pass@k y Pass^k en τ-bench) reciben aquí su definición precisa.
-
-**Métricas de proceso: de caja negra a caja blanca.**
-
 No basta con fijarse únicamente en el resultado final; el proceso mediante el cual el Agente alcanza el resultado es igualmente relevante. La **tasa de validez de acciones** mide la proporción de operaciones válidas y legítimas dentro de las ejecutadas: las operaciones inválidas incluyen llamar a herramientas inexistentes o pasar tipos de parámetros incorrectos; las operaciones no autorizadas se refieren a comportamientos que exceden los límites de permisos. Una alta tasa de validez indica que el Agente comprende con claridad el ecosistema de herramientas. La **tasa de corrección en llamadas a herramientas** requiere además que los parámetros sean semánticamente razonables: las palabras de búsqueda deben expresar la necesidad con precisión y las rutas de operación sobre archivos deben apuntar a los objetivos correctos.
 
 La **eficiencia de la ruta** mide la economía para completar la tarea: número de pasos (ciclos de pensamiento-acción-observación), acciones redundantes (buscar repetidamente las mismas palabras clave, leer el mismo archivo múltiples veces) y frecuencia de retrocesos (frecuencia con la que se detectan errores y se corrigen: los retrocesos ocasionales son normales, pero los retrocesos frecuentes denotan falta de planificación prospectiva). Es necesario establecer líneas base mediante expertos humanos o algoritmos heurísticos para definir el "número de pasos razonable".
 
 La **cobertura de recuperación** se orienta a tareas de recolección de información: ¿exploró el Agente el espacio de información de forma suficiente? ¿Concluyó apresuradamente tras mirar solo la primera página de resultados? El **costo y latencia** se centran en el número de solicitudes, el gasto de tokens (distinguiendo entre costos de entrada y salida, y considerando la reutilización de KV Cache) y el tiempo de reloj (incluyendo inferencia del modelo + ejecución de herramientas + latencia de red), requiriendo rastrear la distribución temporal para localizar cuellos de botella.
 
-**Métricas de resultado y calidad.**
-
-La **tasa de éxito en la tarea** es la métrica directa más dura, pudiendo diseñarse estándares jerárquicos (el objetivo principal debe cumplirse obligatoriamente, mientras que los objetivos secundarios afectan la puntuación de calidad). En los métodos estadísticos es necesario distinguir dos métricas habitualmente confundidas:
-
-- **Pass@k**: La probabilidad de tener **al menos un éxito** en k intentos, respondiendo a "¿puede el Agente lograrlo?".
-- **Pass^k**: La probabilidad de tener **éxito en la totalidad** de los k intentos, respondiendo a "¿es el Agente estable y confiable?".
-- **Best@k**: La mejor puntuación alcanzada entre k intentos (en lugar de si tuvo éxito o no), midiendo el "límite superior de calidad dadas suficientes oportunidades", usada con frecuencia en tareas abiertas con puntuación continua.
-
-Visualicemos la diferencia con cifras concretas: suponiendo que la tasa de éxito de un Agente en un solo intento sea del 60% (es decir, Pass@1 = 0,6), al realizar 5 ejecuciones las dos métricas resultan: Pass@5 = 1 - 0,4^5 ≈ 99% (casi seguro que tendrá éxito al menos una vez), mientras que Pass^5 = 0,6^5 ≈ 7,8% (la probabilidad de que todas tengan éxito es muy baja). La primera evalúa el techo de capacidad y la segunda evalúa la estabilidad; confundirlas conducirá a diagnósticos erróneos.
+### Seguridad, robustez y cobertura doble
 
 
 Las **métricas de seguridad y cumplimiento** son vitales en el despliegue en producción: activar operaciones sensibles (eliminar datos / modificar permisos / enviar comunicaciones externas), fugas de datos (imprimir contraseñas en logs / enviar documentos privados a APIs externas) o contenidos inapropiados deben seguir un **principio de tolerancia cero**, aplicando la misma lógica que los ítems de veto en alucinaciones (véase más adelante "Los Cuatro Principios de la Rúbrica"): una sola violación grave de seguridad invalida la evaluación global, sin exención por un rendimiento excelente en otras dimensiones.
@@ -124,7 +101,7 @@ La **robustez** mide la estabilidad ante la incertidumbre: sensibilidad a semill
 
 **Cobertura dual de la trayectoria de ejecución y el resultado final.** Un aspecto fácil de descuidar en la evaluación es la diferencia entre "lo que el Agente dijo e hizo durante la ejecución" (la trayectoria, trajectory, definida en el Capítulo 1) y "cómo quedó finalmente el sistema" (el resultado final, outcome). Que el Agente diga "reserva completada" es información a nivel de trayectoria, mientras que la generación real de un registro de pedido en la base de datos es la verificación a nivel de resultado. Mirar únicamente la trayectoria omitirá casos de "prometió pero no lo hizo", mientras que mirar solo el resultado impedirá detectar desviaciones en los pasos intermedios. Anthropic citó un ejemplo ilustrativo: un Agente de reserva de billetes descubrió una brecha en la política de la aerolínea durante la ejecución, encontrando una opción más económica para el usuario; si se puntuara solo según la ruta de ejecución predefinida, esta carrera se habría considerado un fallo, pero desde el punto de vista del resultado final, el usuario obtuvo una solución mejor. Por lo tanto, ambos tipos de evaluación deben cubrirse para evitar puntos ciegos sistemáticos.
 
-**Muestreo manual y revisión adversarial.**
+### Muestreo humano y revisión adversarial
 
 Aunque la evaluación automatizada sea confiable en la mayoría de los casos, requiere muestreos manuales periódicos: cubriendo diferentes tipos de tareas, casos de éxito/fracaso y casos ambiguos cerca de los límites de puntuación, verificando no solo los resultados sino la razonabilidad de los argumentos de puntuación. El muestreo manual se puede sistematizar como **calibración del evaluador**: antes de usar masivamente la evaluación por LLM, se construye un conjunto dorado (golden set) anotado por humanos (por ejemplo, 100-200 casos que cubran distintos tipos de tareas y dificultades), sobre el cual se mide la tasa de coincidencia entre el modelo evaluador —es decir, el uso de LLM como juez, cuyo mecanismo se detalla en la siguiente sección) y las anotaciones humanas (tasa de coincidencia simple o coeficientes de consistencia como Cohen's kappa, eliminando este último la proporción de acierto por azar). Una vez alcanzado un umbral predefinido (como un kappa superior a 0,7), se aplica el modelo evaluador a la evaluación a gran escala; posteriormente, cada vez que se actualicen el modelo evaluador o la Rúbrica, se debe recalibrar sobre el conjunto dorado. Sin este paso, las puntuaciones del LLM evaluador son simplemente "la opinión de otro modelo" en lugar de un sustituto confiable del juicio humano. La **revisión adversarial** utiliza Red Teaming para construir casos desafiantes de forma proactiva: respuestas en apariencia perfectas pero con errores ocultos, respuestas que intentan aprobar acumulando palabras clave, o respuestas que aprovechan sesgos conocidos del modelo evaluador para obtener puntuaciones altas inmerecidas. El **mecanismo de múltiples jueces** utiliza varios evaluadores independientes para puntuar por separado, determinando el resultado final mediante promedios ponderados o verificaciones de consistencia: cuando surgen discrepancias graves entre evaluadores, el caso se marca para revisión manual.
 
@@ -291,8 +268,6 @@ SWE-Bench Verified es un modelo de control de calidad. OpenAI seleccionó aleato
 
 OSWorld-Verified representa un ejemplo de iteración continua. Tras su publicación en abril de 2024, OSWorld se convirtió rápidamente en un benchmark relevante para la evaluación de Agentes multimodales; sin embargo, a lo largo de 15 meses de uso amplio, expuso más de 300 problemas. Estos problemas se dividieron en cuatro categorías: problemas del entorno (anti-crawling en sitios web / CAPTCHA / cambios de contenido dinámico), problemas en la descripción de tareas (expresiones ambiguas), problemas en la lógica de verificación (demasiado estricta o permisiva) y problemas en el estado inicial (configuración incompleta). El equipo de la Universidad de Hong Kong formó un grupo de unas 10 personas que colaboró durante dos meses con MoonShot AI, OpenAI, ByteDance Seed TARS, Anthropic y Simular para realizar reparaciones sistemáticas. Se formularon estrategias para cada categoría: los problemas de entorno se resolvieron congelando versiones y creando copias de respaldo offline; las descripciones ambiguas se eliminaron reescribiendo los enunciados; la lógica de verificación se equilibró ajustando condiciones y creando líneas base correctas manualmente; y el estado inicial se reforzó añadiendo validaciones de integridad.
 
-La infraestructura de evaluación también migró de VMs locales a plataformas cloud en AWS, logrando una aceleración paralela de 50 veces (reduciendo el tiempo de más de 10 horas a unos pocos minutos), aumentando la tasa de éxito de inicialización en tareas de Google Drive del 50% a más del 95%. Todas las trayectorias de evaluación oficiales están publicadas abiertamente en HuggingFace, permitiendo a la comunidad auditar cada detalle, reproducir resultados y descubrir problemas, formando un bucle virtuoso de mejora continua.
-
 Vale la pena señalar que los entornos de evaluación y de post-entrenamiento suelen compartir el mismo origen: un entorno de evaluación bien diseñado se puede transformar en un entorno de entrenamiento con ligeras modificaciones (SWE-Gym es un ejemplo representativo de construcción de tareas de entrenamiento basadas en SWE-bench, mientras que las plantillas parametrizadas de τ²-bench y AndroidWorld pueden generar instancias de entrenamiento masivas). No obstante, se debe trazar una línea roja: lo que se puede reutilizar es el **mecanismo de construcción del entorno**, mientras que los ejercicios específicos del conjunto de evaluación deben mantenerse estrictamente aislados de los datos de entrenamiento (si una pregunta de evaluación entra en el conjunto de entrenamiento, se estará midiendo la memoria en lugar de la capacidad, como se detalla en el Capítulo 8).
 
 ## Métodos de Evaluación Automatizada
@@ -420,11 +395,32 @@ La evaluación multimodal extiende el concepto de LLM-as-a-Judge a los dominios 
 - **Evaluación de UI**: Adoptar un mecanismo de **proponente-revisor (Proposer-Reviewer)** para detectar desbordamientos de texto, contraste de color, ubicación de botones, etc. Aquí el esquema proponente-revisor se utiliza como **método de evaluación**, difiriendo de su uso como **componente del sistema de generación** en el Capítulo 5, aunque el mecanismo central sea idéntico: un modelo genera y otro revisa de forma independiente.
 - **Evaluación de edición de vídeo**: Verificar mediante fotogramas clave si los puntos de inicio y fin de corte y la aplicación de efectos especiales son correctos.
 
+> **Experimento 7-5 ★★: Construcción de una Tubería de Evaluación Automatizada de Calidad TTS**
+>
+> Este experimento exige diseñar e implementar desde cero un sistema completo de evaluación de calidad TTS basado en LLM-as-a-Judge multimodal.
+>
+> Diseñar una Rúbrica multidimensional para TTS: la dimensión de precisión verifica la lectura correcta de todo el texto (sin omisiones, errores de lectura ni adiciones); la dimensión de naturalidad evalúa la fluidez de la voz (ausencia de tono robótico, pausas no naturales y si la prosodia cumple los hábitos humanos); la dimensión de expresión emocional comprueba si el tono se ajusta al matiz emocional del texto (entonación ascendente en preguntas, énfasis en exclamaciones, velocidad lenta y tono bajo en contenidos tristes); la dimensión de consistencia tímbrica evalúa la similitud con el hablante cuando se dispone de un audio de referencia (el modelo multimodal recibe simultáneamente el audio de referencia y el sintetizado para compararlos).
+>
+> Construir un corpus variado en longitud, género, emoción y dificultades especiales como números, nombres propios, palabras de pronunciación ambigua o voces dialectales. El módulo TTS puede conectarse a OpenAI, ElevenLabs, Fish Audio, Minimax o Doubao; un juez multimodal capaz de recibir audio evalúa conjuntamente la voz sintetizada, el texto original, el audio de referencia y la rúbrica. Además de analizar las puntuaciones por dimensión, hay que guardar el modelo evaluador y los hashes del audio de referencia y de cada candidato para que la ejecución sea auditable.
+
+El repositorio conserva una prueba piloto de escucha directa. OpenAI y Fish Audio generaron cuatro muestras cada uno —números, pronunciación ambigua, una frase larga y un tono entusiasta— y Voxtral evaluó los ocho audios en las cuatro dimensiones anteriores. Ambos obtuvieron 5,00 en precisión y 4,00 en naturalidad. Fish Audio alcanzó 4,00 en expresión emocional y 3,00 en consistencia de voz; OpenAI, 3,75 y 2,75. Separar las dimensiones permite ver diferencias de tono y voz incluso cuando la lectura del texto es igual de correcta.
+
+Pero ocho muestras no bastan para decidir qué proveedor es mejor. Hay cuatro por sistema y, sobre todo, el audio de referencia fijo procede de Fish S1, lo que favorece de antemano a Fish Audio en la comparación de voz. Para comparar TTS de propósito general habría que excluir del total la semejanza con esa voz. Para comparar clonación, todos los sistemas deberían imitar al mismo hablante y las notas del modelo deberían calibrarse con una escucha humana a ciegas. **Elegir la respuesta, imagen o voz de referencia forma parte del diseño de la evaluación; no es un trámite neutro previo al experimento.**
+
+Las rúbricas escritas a mano permiten crear rápido estas dimensiones diagnósticas. A mayor escala también se pueden entrenar **modelos de recompensa generativos** para automatizar la evaluación; el Capítulo 8 presenta sus métodos de entrenamiento.
+
 ### Atribución de fallos: localización del primer error en la trayectoria
 
 Una evaluación extremo a extremo suele decir solo «aprobado» o «fallido». Para convertir el resultado en una reparación, cada trayectoria fallida debe registrar la categoría, el primer paso inaceptable, la llamada a herramienta o salida asociada y evidencia auditable. Las señales habituales son una corrección explícita del usuario, un voto negativo o una comprobación posterior que detecta una acción indebida. El LLM puede ayudar, pero la lectura humana sigue siendo necesaria porque el fallo suele revelar un problema de producto.
 
 Para un Coding Agent, clasifica la falta de proceso, los errores de herramientas/formato, la terminación anómala del modelo y los problemas de lógica o completitud. Guarda la atribución en JSON/YAML con número de paso, herramienta, observación, causa raíz frente a consecuencia, recuperabilidad y confianza, junto con el estado y las versiones del experimento.
+
+
+Esa lista solo cubre los fallos que se anuncian solos. Hay que añadir las categorías que no dejan ningún error: comprensión de requisitos y manejo de ambigüedad, cuando el Agente construye lo que él mismo reformuló en lugar de lo pedido, o elige en silencio una lectura de una petición ambigua; hackeo del entorno de verificación, cuando edita una aserción, añade un `skip`, sustituye por mocks la lógica bajo prueba o afirma que pasó una prueba que nunca ejecutó; modificación incompleta, cuando actualiza tres puntos de llamada y omite el cuarto —una llamada dinámica, un binding en otro lenguaje, un schema— y aun así compila; información errónea comunicada al usuario, cuando cada llamada a herramienta y el estado final son correctos pero el importe, el estado o la fecha de la respuesta no lo son; y regresiones no funcionales, cuando cambia una API pública o un schema sin migración, o borra una validación para que pase una comprobación. En todas ellas el primer error no es un retorno de herramienta sino un **assistant message**: un juicio, una suposición, o una pregunta que debió hacerse y no se hizo.
+
+«Hizo bien y contó mal» es la categoría que la tasa global de éxito oculta con más facilidad, porque la mayoría de las evaluaciones solo comprueban el estado del entorno. τ²-bench la puntúa por separado: de las 704 ejecuciones de referencia publicadas cuya tarea lleva un requisito de comunicación, 240 fallaron, 162 de ellas suspendieron la comprobación de comunicación, y 80 —un tercio de todos los fallos— tenían el estado del entorno correcto y el informe equivocado.
+
+El repositorio complementario guarda un caso equivalente. Ante la tarea de introducir los gastos de `expenses.jpg` en una aplicación de contabilidad, el Agente empleó 32 pasos en conceder permisos, buscar, abrir la imagen, rellenar cada fila y guardar, **sin que ningún paso devolviera un error**, y declaró la tarea completada; el validador informó de que la fila que debía haber escrito —`Dress`, 436,35 ¥— no estaba, y no guarda relación con las cuatro que introdujo. En el paso 8 su propio razonamiento dice *«I cannot actually see the content/details of the expenses in the image»*: ya sabía que le faltaban los datos, no se detuvo ni lo informó, y en el paso 11 aparecieron cuatro gastos inventados en sus notas, que cada entrada posterior ejecutó fielmente. El primer error es el paso 8, y ese paso ni lanzó un error ni fue una llamada a herramienta. Su causa raíz también se archiva mal con facilidad: T3A es un Agente de solo texto cuyo espacio de observación contiene únicamente el árbol de elementos y ningún píxel de imagen, así que la causa no es «el modelo no sabe hacer OCR» sino un canal de observación ausente más la falta de una salida legítima de «información no disponible». Archivarlo como problema de capacidad del modelo lleva a cambiar de modelo o entrenar OCR; el arreglo real es añadir el canal y la salida.
 
 #### Errores de formato del documento sensibles al ámbito
 
@@ -453,27 +449,28 @@ bytes originales → respuesta de la herramienta → serialización del Harness 
 
 Un conjunto mínimo de sondas de evaluación cubre la repetición directa, la extracción desde un contexto largo, la colocación en argumentos de herramienta, la selección entre cadenas similares, y espacios, saltos de línea, barras invertidas, caracteres combinantes Unicode y tokens de baja frecuencia. Las métricas son byte-exact match, code-point-exact match, token-exact match, la posición de la primera divergencia y la tasa real de éxito de la herramienta. Si el modelo acierta en la sonda directa pero la llamada a la herramienta falla, hay que arreglar el tokenizador, la serialización, el Harness o el protocolo de la herramienta; solo cuando la primera divergencia aparece en la salida del propio modelo debe convertirse el caso en datos de entrenamiento de copia del capítulo 8.
 
+> **Experimento 7-6 ★★: Atribución de fallos sobre trazas de AndroidWorld**
+>
+> Este experimento practica el método de atribución de esta sección con trazas reales, sin emulador y sin API de modelo. El material es la ejecución T3A guardada en `chapter7/android-world`: `t3a.md` contiene el `Action`/`Reason`/`Summary` paso a paso de todas las tareas y `t3a_failed.md` reúne más de cincuenta trazas fallidas, cada una terminada con el veredicto objetivo del validador.
+>
+> Paso 1: Muestreo estratificado. Extraiga diez trazas fallidas de `t3a_failed.md`, de las cuales al menos tres deben ser fallos silenciosos sin ningún error de herramienta: el criterio es que ninguna llamada devolvió error, que el Agente declaró la tarea completada o agotó los pasos, y que solo el veredicto final del validador marca el fallo.
+>
+> Paso 2: Localizar el primer error. Para cada traza, registre el número de paso del primer error e indique si ese paso es una llamada a herramienta o un assistant message. Los fallos silenciosos requieren dos técnicas: la comparación con anclas factuales, que contrasta las afirmaciones del Agente con los valores devueltos por las herramientas y toma la primera divergencia; y la bisección del prefijo de trayectoria, que corta la trayectoria en el paso k y la cede — si aún es recuperable, el error está después de k. Buscar palabras clave de error no sustituye a ninguna de las dos.
+>
+> Paso 3: Escribir registros estructurados. Produzca un registro JSON o YAML por traza con el nombre de la tarea, el paso del primer error, la categoría del error, el responsable de la causa raíz, las citas de apoyo y la separación entre causa principal y consecuencia.
+>
+> Paso 4: Contrastar con las notas existentes. Compare sus resultados con `t3a_failed_analysis.md` y registre cada discrepancia. Preste especial atención a la atribución de la causa raíz: esas notas registraban el fallo de transcripción de imágenes como «el modelo de visión carece de OCR», pero el espacio de observación de T3A no contiene ningún píxel de imagen, así que la causa raíz real es un canal de observación ausente. Una nota de atribución existente no es una solución oficial.
+>
+> Paso 5: Convertir en tareas de regresión. Tome tres trazas cuyo primer error sea un assistant message, corte el prefijo justo antes de ese error y escriba el conjunto de acciones aceptables y las acciones prohibidas para formar tareas de regresión de prefijo de trayectoria.
+>
+
 ### Tareas de regresión extremo a extremo y de prefijo de trayectoria
 
 Una **regresión extremo a extremo** ejecuta todo el flujo. Una **regresión de prefijo de trayectoria** congela el contexto, las conversaciones, las respuestas de herramientas y el estado justo antes del primer error, y comprueba solo la siguiente acción. La respuesta debe ser un conjunto de acciones aceptables (leer las reglas, preguntar o rechazar una operación peligrosa), no una única cadena canónica. Los casos de prefijo son especialmente valiosos para Agents de producción de alta fiabilidad y deben permanecer separados de los datos de entrenamiento.
 
-> **Experimento 7-5 ★★: Evaluación de límites de prefijos con varias codificaciones**
+> **Experimento 7-7 ★★: Evaluación de límites de prefijos con varias codificaciones**
 >
 > Se proporcionan al modelo memoria conocida, instrucción actual, prefijo de trayectoria, respuestas de herramientas y estado del entorno; debe devolver solo la siguiente acción observable. Se prueban conflictos de alcance, preferencias obsoletas, inferencias de baja confianza, confirmación antes de borrar y previsualización antes de publicar. Los mismos 11 casos se codifican como JSON Cards, Markdown y Python-like, con comprobaciones deterministas de acciones permitidas, seguridad, evidencia y acciones prohibidas. Las 33 celdas se completaron sin errores de API y cada codificación aprobó 6/11; cambiar la representación por sí solo no arregla la política de la aplicación.
-
-> **Experimento 7-6 ★★: Construcción de una Tubería de Evaluación Automatizada de Calidad TTS**
->
-> Este experimento exige diseñar e implementar desde cero un sistema completo de evaluación de calidad TTS basado en LLM-as-a-Judge multimodal.
->
-> Diseñar una Rúbrica multidimensional para TTS: la dimensión de precisión verifica la lectura correcta de todo el texto (sin omisiones, errores de lectura ni adiciones); la dimensión de naturalidad evalúa la fluidez de la voz (ausencia de tono robótico, pausas no naturales y si la prosodia cumple los hábitos humanos); la dimensión de expresión emocional comprueba si el tono se ajusta al matiz emocional del texto (entonación ascendente en preguntas, énfasis en exclamaciones, velocidad lenta y tono bajo en contenidos tristes); la dimensión de consistencia tímbrica evalúa la similitud con el hablante cuando se dispone de un audio de referencia (el modelo multimodal recibe simultáneamente el audio de referencia y el sintetizado para compararlos).
->
-> Construir un corpus variado en longitud, género, emoción y dificultades especiales como números, nombres propios, palabras de pronunciación ambigua o voces dialectales. El módulo TTS puede conectarse a OpenAI, ElevenLabs, Fish Audio, Minimax o Doubao; un juez multimodal capaz de recibir audio evalúa conjuntamente la voz sintetizada, el texto original, el audio de referencia y la rúbrica. Además de analizar las puntuaciones por dimensión, hay que guardar el modelo evaluador y los hashes del audio de referencia y de cada candidato para que la ejecución sea auditable.
-
-El repositorio conserva una prueba piloto de escucha directa. OpenAI y Fish Audio generaron cuatro muestras cada uno —números, pronunciación ambigua, una frase larga y un tono entusiasta— y Voxtral evaluó los ocho audios en las cuatro dimensiones anteriores. Ambos obtuvieron 5,00 en precisión y 4,00 en naturalidad. Fish Audio alcanzó 4,00 en expresión emocional y 3,00 en consistencia de voz; OpenAI, 3,75 y 2,75. Separar las dimensiones permite ver diferencias de tono y voz incluso cuando la lectura del texto es igual de correcta.
-
-Pero ocho muestras no bastan para decidir qué proveedor es mejor. Hay cuatro por sistema y, sobre todo, el audio de referencia fijo procede de Fish S1, lo que favorece de antemano a Fish Audio en la comparación de voz. Para comparar TTS de propósito general habría que excluir del total la semejanza con esa voz. Para comparar clonación, todos los sistemas deberían imitar al mismo hablante y las notas del modelo deberían calibrarse con una escucha humana a ciegas. **Elegir la respuesta, imagen o voz de referencia forma parte del diseño de la evaluación; no es un trámite neutro previo al experimento.**
-
-Las rúbricas escritas a mano permiten crear rápido estas dimensiones diagnósticas. A mayor escala también se pueden entrenar **modelos de recompensa generativos** para automatizar la evaluación; el Capítulo 8 presenta sus métodos de entrenamiento.
 
 En la selección práctica de modelos, la pregunta habitual es: "¿cuál es mejor, A o B?". La comparación por pares ofrece una forma de evaluación que no depende de puntuaciones absolutas.
 
@@ -489,7 +486,7 @@ Cuando la evaluación por pares se realiza mediante un LLM en lugar de votos hum
 
 **De la evaluación al entrenamiento: transferencia de señales de comparación por pares**. La comparación por pares no es solo un medio de evaluación, sino una fuente clave de señales para el post-entrenamiento. El algoritmo **GRPO** (Group Relative Policy Optimization, optimización de política relativa de grupo) que se presentará en el Capítulo 8 introduce precisamente este enfoque de "comparar cuál es mejor" en el entrenamiento del modelo: su idea central consiste en muestrear múltiples respuestas candidatas para una misma pregunta, utilizando su ventaja relativa (en lugar de la puntuación absoluta) para estimar la ganancia, ahorrando la molestia de entrenar una red de valor adicional (critic, usada para estimar la línea base) como en PPO. Cabe destacar que GRPO ahorra la red de valor, no la señal de recompensa en sí, ya que sigue dependiendo de un modelo de recompensa o de reglas de recompensa verificables para juzgar la calidad de cada candidato. Esto sienta una base cuyos desarrollos matemáticos, comparaciones con PPO/DPO y detalles de aplicación en Agentes se desplegarán por completo en el Capítulo 8.
 
-> **Experimento 7-7 ★★: Construcción de una Tabla de Clasificación de Modelos a partir de Datos de Comparación por Pares**
+> **Experimento 7-8 ★★: Construcción de una Tabla de Clasificación de Modelos a partir de Datos de Comparación por Pares**
 >
 > Este experimento permite comprender en profundidad cómo el modelo Bradley-Terry extrae puntuaciones de capacidad relativa a partir de comparaciones por pares mediante la implementación desde cero de un sistema de cálculo de Elo rating. Se utiliza el dataset de votación real publicado por Chatbot Arena (que contiene millones de votos a ciegas de usuarios).
 >
@@ -530,7 +527,7 @@ Cuando una tendencia sigue al modelo al cambiar de Harness y cambia al sustituir
 
 El experimento asociado compara `openai/gpt-5.6-sol` y `anthropic/claude-sonnet-5` en un **Harness neutral y fijo**. Ambos modelos usan el mismo endpoint de OpenRouter y reciben el mismo prompt del sistema, tarea, repositorio, nombres de herramientas, JSON Schemas y resultados. El Harness no exige explorar ni editar pronto. Tres repositorios pequeños cubren un bug localizado, una normalización de identidad entre módulos y una corrección de caché sensible a un contrato público. Cada modelo ejecuta cada tarea tres veces de forma independiente, produciendo 18 trayectorias. GPT-5.6-sol realizó en promedio 6,89 llamadas a herramientas y leyó 4,67 archivos antes de su primera edición; Claude Sonnet 5 promedió 4,56 llamadas y 3,56 archivos. La diferencia fue mayor en las tareas localizadas y casi desapareció en la tarea explícitamente transversal (7,00 frente a 6,67 archivos). Ambos modelos lograron un 100 % de éxito tanto en el primer parche probado como en las pruebas finales. Por ello, este pequeño experimento respalda que «la política de acción cambia con el modelo», no que «leer más» o «editar antes» sea siempre mejor. El tiempo hasta la primera edición también fue casi idéntico (15,01 frente a 14,48 segundos), lo que recuerda que hay que separar pasos de herramienta, llamadas paralelas y latencia del modelo.
 
-> **Experimento 7-8 ★★: Medir los umbrales de acción de los modelos en un Coding Harness fijo**
+> **Experimento 7-9 ★★: Medir los umbrales de acción de los modelos en un Coding Harness fijo**
 >
 > **Objetivo**: aislar el factor modelo, cuantificar cómo distintos modelos de programación equilibran seguir recopilando información frente a empezar a editar y evaluar conjuntamente la eficiencia de la trayectoria y la calidad final.
 >
@@ -581,7 +578,7 @@ El **procesamiento por lotes asincrónico (Async Batching)** acumula tareas no e
 
 En producción se debe establecer un sistema de monitoreo de costos en tiempo real: rastreando el consumo de tokens y gastos de API por tipo de tarea, modelo y usuario. Asimismo, se deben fijar límites superiores de costo por tarea, terminando automáticamente la ejecución si el Agente entra en bucles o exploraciones excesivas para evitar cobros anormalmente elevados en una sola ejecución.
 
-> **Experimento 7-9 ★: Análisis de Costos de Extremo a Extremo en Tareas de Agentes**
+> **Experimento 7-10 ★: Análisis de Costos de Extremo a Extremo en Tareas de Agentes**
 >
 > **Objetivo**: Reproducir el desglose de la tarea de ocho turnos y validar las optimizaciones con cargas de trabajo propias.
 >
@@ -597,7 +594,7 @@ Supongamos que tu sistema de Agentes está construido actualmente sobre Claude, 
 
 Un equipo con un sistema de evaluación maduro puede obtener la respuesta en pocas horas: ejecutando el nuevo modelo sobre su propio dataset de evaluación y comparando la tasa de éxito en tareas, corrección en llamadas a herramientas, latencia y costo. Es posible descubrir que el nuevo modelo es superior y más económico en tareas simples, pero que en escenarios centrales con orquestaciones multiturno complejas la tasa de éxito cae un 5%. Tras confirmar que esta diferencia supera el ancho de banda del ruido (véase a continuación "Significatividad Estadística de los Resultados de Evaluación"), la decisión pasa a ser una estrategia diferenciada: "migrar tareas simples al nuevo modelo para reducir costos y mantener el modelo original en tareas complejas para garantizar la calidad", en lugar de una migración ciega y total. Esta toma de decisiones precisa e impulsada por datos solo es posible contando previamente con un sistema de evaluación construido.
 
-> **Experimento 7-10 ★★: Benchmarking Multidimensional de Rendimiento de Modelos**
+> **Experimento 7-11 ★★: Benchmarking Multidimensional de Rendimiento de Modelos**
 >
 > Realizar benchmarking exhaustivo sobre LLMs principales y diversos proveedores de API para construir una base de datos de decisiones de selección de modelos multidimensional.
 >
@@ -607,7 +604,7 @@ Un equipo con un sistema de evaluación maduro puede obtener la respuesta en poc
 >
 > Evaluar la disponibilidad y estabilidad de las APIs: realizar sondeos cada hora durante una semana, registrando la tasa de éxito, tipos de error y duración de fallos. Calcular la tasa de fallos, MTTR (tiempo medio de recuperación) y el tiempo máximo de disponibilidad continua. Probar los umbrales reales de límite de tasa incrementando gradualmente la concurrencia hasta hallar el punto de restricción, registrando los límites de RPM/TPM. Calcular el costo consolidado: recopilar precios (unidad de token de entrada/salida/caché), considerando el impacto de KV Cache para calcular el costo promedio en tareas multiturno típicas de Agentes.
 
-> **Experimento 7-11 ★★: Evaluación de Selección de Extremo a Extremo para Sistemas de Memoria de Usuario**
+> **Experimento 7-12 ★★: Evaluación de Selección de Extremo a Extremo para Sistemas de Memoria de Usuario**
 >
 > **Prerrequisito**: Haber completado los experimentos de recuperación contextual o RAG con Agentes del Capítulo 3.
 >
@@ -659,15 +656,6 @@ La plataforma admite además pruebas A/B (enrutando parte del tráfico de usuari
 
 El destino más valioso de los datos de observabilidad es su **realimentación como activos de evaluación**. Un bucle cerrado práctico consiste en: filtrar casos de fallo y sospechosos de las trayectorias de producción → desensibilizar datos (eliminando privacidad de usuarios, claves y campos sensibles) → consolidar como nuevos casos de prueba y pruebas de regresión en el dataset de evaluación. De este modo, el conjunto de datos de evaluación deja de ser una colección estática construida una sola vez y se convierte en un activo vivo que evoluciona con el producto y se ajusta continuamente a la distribución de usuarios reales: los patrones de fallo expuestos hoy en producción se convierten mañana en casos de regresión para defender esa línea base. Este es el punto de contacto entre la observabilidad y la línea principal de evaluación de este capítulo: la observabilidad se encarga de "ver" lo que sucede en el mundo real y la evaluación se encarga de consolidar esas observaciones en criterios verificables repetidamente.
 
-La observabilidad se enfrenta a diversos desafíos:
-
-- **Sopesado entre volumen de datos y privacidad**: Los sistemas de alto tráfico generan diariamente terabytes de datos de rastreo, debiendo cumplir estrictamente las normativas de protección de datos.
-- **Complejidad de la atribución causal**: Identificar automáticamente la causa raíz a partir de las trayectorias sigue requiriendo algoritmos de análisis más inteligentes; las investigaciones de vanguardia intentan aplicar inferencia causal y análisis contrafactual, aunque no han alcanzado la madurez.
-- **Desafíos de rastreo en sistemas multi-agente**: El rastreo de flujos de ejecución a través de múltiples Agentes resulta más complejo y semántico que las llamadas API entre microservicios.
-- **Equilibrio entre protección en tiempo real y análisis a posteriori**: Los escenarios de alto riesgo requieren protección activa, lo que introduce latencia adicional y falsos positivos.
-
-A medida que la tecnología de ML se integre profundamente en la cadena de herramientas, las futuras plataformas de observabilidad podrán identificar anomalías y localizar causas raíz de forma automática.
-
 Contando con un sistema de evaluación completo y conjuntos de datos, la clave radica en transformar los resultados de evaluación en mejoras efectivas del sistema.
 
 ## De Reportes de Benchmark a Mejoras del Sistema
@@ -714,7 +702,7 @@ Superar las cuatro tareas con H5C solo autoriza la siguiente prueba; no autoriza
 
 Esa es la disciplina de la iteración: cada evidencia solo justifica el paso siguiente que su escala permite. H1 descartó seguir acumulando prompts; H5 encontró la dirección correcta, pero descubrió un problema de costo; H5C resolvió ese costo y obtuvo el derecho a una prueba mayor. Un buen informe de benchmark no solo da una puntuación: delimita dónde vale la conclusión, qué barreras no se han superado y qué debe comprobar la ronda siguiente.
 
-> **Experimento 7-12 ★★★: Evaluación y Mejora en AndroidWorld**
+> **Experimento 7-13 ★★★: Evaluación y Mejora en AndroidWorld**
 >
 > Este experimento practica el recorrido desde el reporte hasta la mejora del sistema. Partir de los reportes históricos y las tres comparaciones guardadas en `chapter6/android-world`.
 >
@@ -788,7 +776,7 @@ En los **entornos digitales**, el framework AWorld construyó un sandbox de serv
 
 En los **entornos encarnados**, RoboTwin2 construye tareas de manipulación con doble brazo sobre motores físicos, aleatorizando la posición, orientación y apariencia de los objetos en el entorno para elevar la capacidad de generalización. El espacio de observación incluye visión multicámara y estados articulares, logrando control en tiempo real mediante **chunking de acciones (Action Chunking)**, donde el modelo planifica múltiples acciones continuas de una sola vez (detallado en el Capítulo 6). OSWorld logra la capacidad de restablecimiento mediante instantáneas de máquinas virtuales, y AndroidWorld se enfoca en la automatización de aplicaciones móviles. Ya sean entornos digitales o encarnados, los entornos de simulación requieren de igual modo los mecanismos de aislamiento y virtualización de identidad analizados en el Capítulo 4 (aislamiento por VM/contenedor, proxies residenciales, autenticación Human-in-the-Loop, sistemas de archivos compartidos), los cuales no se repetirán aquí.
 
-> **Experimento 7-13 ★★: Configuración del Entorno de Inteligencia Encarnada para OpenVLA y RoboTwin2**
+> **Experimento 7-14 ★★: Configuración del Entorno de Inteligencia Encarnada para OpenVLA y RoboTwin2**
 >
 > Configurar un entorno de simulación para manipulación robótica. Leer `ch7/SimpleVLA-RL` y la documentación de OpenVLA para comprender la arquitectura de modelos de visión-lenguaje-acción (integración de extremo a extremo de codificador visual + modelo de lenguaje + decodificador de acciones, proyectando imágenes y texto a un espacio semántico compartido). Configurar el entorno RoboTwin2, comprendiendo el espacio de observación (RGB de tres perspectivas + estado articular de 14 dimensiones) y el espacio de acciones (vector de control de 14 dimensiones). Estudiar el mecanismo de aleatorización del entorno y la lógica de restricciones espaciales en move_can_pot. Ejecutar la evaluación de modelos preentrenados, registrando la tasa de éxito, tiempo de finalización y patrones de fallo, prestando especial atención al impacto del mecanismo de chunking de acciones.
 >
