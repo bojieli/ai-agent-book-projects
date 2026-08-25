@@ -90,6 +90,13 @@ jobs:
       - name: Install log-sanitization extras
         run: python -m pip install "ollama>=0.3.0" "pyyaml>=6.0"
 
+      # Same rule for chapter 5: both are in the experiments' requirements.txt
+      # and both are needed at *collection* time, not at call time --
+      # paper-to-ppt's paper_source.py imports fitz and code-for-math's
+      # build_aime_2024.py imports pyarrow, each from a module a test imports.
+      - name: Install chapter5 extras
+        run: python -m pip install "PyMuPDF>=1.25.0" "pyarrow>=20.0.0"
+
       # Empty rather than unset: a resolver bug that reads a key from the
       # runner environment must fail here, not silently pass.
       - name: Run offline tests
