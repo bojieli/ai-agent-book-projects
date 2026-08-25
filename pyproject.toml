@@ -225,7 +225,9 @@ providers = [
     "anthropic>=0.40.0",
     "google-genai>=0.3",
     "mistralai>=1.2.0",
-    "litellm>=1.41.0",
+    # LiteLLM 1.92.0-1.93.0 shipped no Windows wheels, so uv fell back to a
+    # Rust/MSVC source build. 1.94.1 restores prebuilt wheels for Python 3.11-3.13.
+    "litellm>=1.94.1",
     "ollama>=0.5.1",
 ]
 
