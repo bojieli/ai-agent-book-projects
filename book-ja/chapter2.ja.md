@@ -751,9 +751,10 @@ Agent Skills の核となる思想は、Agent の能力を独立した、オン�
 
 メタデータの `description` はルーティングに重要です。常時存在する token を抑えるため短くしつつ、機能紹介ではなくルーティング条件として書きます。「いつ使うか」「いつ使わないか」の境界と代表的な **反例** を示すと、広すぎる一致による誤起動を減らせます。これはルーティング記述の助言であり、追加の必須フィールドではありません。「help with backend」のような説明はほぼすべてのバックエンド作業で起動し得ます。有効な説明は、何ができるかだけでなく、いつ使うべきかを示します。
 
-**第二層（核となるフロー）**：Agent が特定の Skill を必要と判断した時点で、ランタイムが完全な `SKILL.md` を読み込みます。Claude Code は呼び出し位置で Skill の指示を user message として追加します。ほかのランタイムはファイル読み取りや専用ツールを使い、内容を tool result として返すこともできます。PPTX Skill[^ch2-4] には、markitdown によるテキスト抽出、PPTX の展開による生の XML 構造へのアクセス、主要ファイルのパス規約など、PowerPoint 処理の核となるフローが含まれます。
+**第二層（核となるフロー）**：Agent が特定の Skill を必要と判断した時点で、ランタイムが完全な `SKILL.md` を読み込みます。読み込みのきっかけは二通りあります。ユーザーが `/pptx` のようなスラッシュコマンドを明示的に入力した場合は、クライアントがローカルで受け止めて展開するため、モデルが先にツールを呼び出す必要はありません。モデルがメタデータの目録を読んで自分で Skill が必要だと判断した場合は、専用の Skill ツールを呼び出すので、ReAct の往復が一回分増えます。着地点はどちらも同じで、Claude Code は呼び出し位置で Skill 本文を user message として会話に加えます。モデルが起動した場合に返る tool result は「Skill を起動します」と伝えるだけのプレースホルダで、本文は載っていません[^ch2-cc-skill-inject]。専用の起動ツールを持たないランタイムでは、モデルが汎用のファイル読み取りツールで `SKILL.md` を読むため、本文は tool result としてコンテキストに入ります。PPTX Skill[^ch2-4] には、markitdown によるテキスト抽出、PPTX の展開による生の XML 構造へのアクセス、主要ファイルのパス規約など、PowerPoint 処理の核となるフローが含まれます。
 
 [^ch2-4]: Anthropic, "PPTX Skill" , 2025. https://github.com/anthropics/skills/
+[^ch2-cc-skill-inject]: Claude Code Docs, [“How Claude Code uses prompt caching”](https://code.claude.com/docs/en/prompt-caching), “Invoking skills and commands”：“Skills and commands inject their instructions as user messages at the point of invocation.” 明示的な起動とモデル主導の起動の役割分担については Agent Skills, [“How to add skills support to your agent”](https://agentskills.io/client-implementation/adding-skills-support), “User-explicit activation” を参照。スラッシュコマンドは Harness が受け止めて注入するため、モデル自身が起動操作をする必要はありません。
 
 [^ch2-codex-skills]: OpenAI「Build skills」Codex ドキュメント。https://developers.openai.com/codex/skills/
 
@@ -785,7 +786,7 @@ Skills の価値は優雅なコンテキスト管理にあるだけでなく、�
 Skills のコンテキストコストを考えるときは、メタデータカタログと完全な Skill 指示を分ける必要があります。
 
 - **標準レベルの原則**：標準が定めるのは読み込み順序であり、メッセージロールではありません。カタログは本文より先に発見可能で、本文は Skill 選択後にオンデマンドで読み込まれます。ロール、ラッパー、ターンごとのカタログ再構築は Agent Harness の選択です。
-- **Claude Code の概念的な実装**：小さなカタログをランタイムコンテキストとして提示し、完全な指示を Skill の呼び出し位置に追加します。「system prompt」は論理上の安定した指示層を表せますが、すべてのクライアントが API の `system` ロールを使うという意味ではありません。
+- **Claude Code の概念的な実装**：小さなカタログをランタイムコンテキストとして提示し、完全な指示を Skill の呼び出し位置に追加します。「system prompt」は論理上の安定した指示層を表せますが、すべてのクライアントが API の `system` ロールを使うという意味ではありません。図2-12 はモデルが自分で起動した場合を描いており、軌跡には往復が丸ごと残ります。`Skill(skill: "pptx")` の tool_use、プレースホルダの tool_result、そのあとに本文が独立した user メッセージとして追加されます。ユーザーが `/pptx` と直接入力した場合はクライアントがローカルで展開するため、このツール呼び出しの対は現れず、最後の user メッセージだけが残ります。
 - **Codex の概念的な実装**：各ターンのコンテキスト構築時に Skills カタログを `developer` コンテキストとして描画し、明示的に選択した Skill を `<skill>` で印を付けた `user` コンテキストとして注入します。ほかの出所の Skill はツール経由でオンデマンドに読み込めます。[^ch2-codex-skills]
 
 Agent Harness は急速に変化するため、具体的な表現は変わり得ます。安定した原則は **小さなカタログを発見可能に保ち、完全な本文をオンデマンドで読み込むこと** です。以下の 2 枚の図は、Skills の軌跡上の位置と KV Cache の変化を示します。
