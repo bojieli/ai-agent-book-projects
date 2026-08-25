@@ -201,6 +201,28 @@ Los errores a nivel de herramientas siguen una ruta distinta: **no terminan la s
 
 El principio nuclear de esta sección es: **el límite del tratamiento de errores no es una sola petición, sino todo el bucle de recuperación**. Antes de confirmar que la recuperación es imposible, los errores intermedios no deben exponerse al consumidor (ya sea el usuario o los sistemas receptores de eventos en la cadena inferior): durante la recuperación se retienen los mensajes de error; si la recuperación tiene éxito, el consumidor no percibe nada; si todo falla, se liberan conjuntamente. Esta es la concreción de ingeniería del principio de corrección del Capítulo 1: "no exponer estados intermedios antes de confirmar que no hay recuperación posible".
 
+**Traspaso: entregar a otro modelo una traza sin terminar.** Cuando el modelo principal sigue sin estar disponible, otro proveedor tiene que terminar la traza. El obstáculo real no es que la dirección del endpoint sea distinta, sino que una parte de la traza pertenece solo al proveedor original. Las llamadas a herramientas y sus resultados tienen estructuras distintas en cada proveedor pero el mismo significado, así que basta con volver a renderizarlos; lo difícil es el razonamiento del modelo. El razonamiento suele constar de dos partes: un texto legible y una credencial que el proveedor le adjunta para demostrar que ese razonamiento salió realmente de él. El texto sigue siendo legible para otro modelo; la credencial deja de valer en cuanto cambia de proveedor: **un traspaso entre proveedores puede llevarse el texto, pero no la credencial**.
+
+Los proveedores no coinciden en lo que exigen de una credencial. El extremo permisivo no valida nada; el extremo estricto rechaza toda credencial que no haya emitido él mismo. Además, la credencial no está necesariamente adjunta al razonamiento: puede estarlo a la llamada a herramienta. Por eso la política aparentemente prudente de «basta con borrar todo el razonamiento» es justamente la que no pasa en algunos proveedores. El traspaso solo puede diseñarse para el extremo más estricto, con una salida para los casos que no cumplen el requisito: reescribir las llamadas históricas como texto narrado, con lo cual el modelo deja de tratarlas como herramientas realmente invocadas, pero al menos puede seguir adelante.
+
+De ahí se obtiene un principio de diseño: la traza no debe almacenarse en el formato de interfaz de ningún proveedor concreto, sino guardarse en un formato neutral. Cada segmento de razonamiento se divide en texto portable y credencial no portable; la llamada a herramienta registra solo su nombre y sus argumentos, y los identificadores se regeneran para el proveedor de destino al renderizar la petición concreta. Al conmutar, la credencial se descarta siempre y el texto se incorpora como contenido ordinario, en lugar de devolverlo al lugar donde el proveedor de destino guarda el razonamiento. El resumen de razonamiento que devuelve el proveedor es precisamente la copia portable pensada para esta situación: basta con conservarlo, sin necesidad de llamar otra vez a un modelo para comprimirlo. El valor de una traza neutral tampoco se limita a la conmutación por fallo: la repetición de evaluaciones del capítulo 7, la construcción de muestras de entrenamiento del capítulo 8 y la extracción de experiencia del capítulo 9 dependen del mismo artefacto.
+
+> **Experimento 5-1 ★★★: Traspaso de trazas entre proveedores**
+>
+> **Objetivo del experimento**: Verificar si un formato de traza neutral permite que otro modelo termine una traza de Agente dejada a medias, y cuantificar el coste de «pasar los mensajes tal cual» y el de «quitarlo todo de un tajo».
+>
+> **Solución técnica**: Una tarea que requiera varias rondas de llamadas a herramientas; a mitad de camino, inyectar respuestas consecutivas de limitación de tasa y sobrecarga para el proveedor en curso y, tras saltar el cortacircuitos, conmutar a otro proveedor y continuar. La traza se guarda en formato neutral, con el razonamiento separado en texto portable y credencial no portable, y con la llamada registrando solo nombre y argumentos. Se contrastan tres enfoques: **pase directo**, que traslada tal cual los mensajes del proveedor original a la estructura del nuevo; **eliminación**, que borra todo el razonamiento y las credenciales; y **neutral**, que descarta la credencial e incorpora el texto —o el resumen de razonamiento devuelto por el proveedor— como contenido ordinario, regenera los identificadores para el destino y reescribe las llamadas históricas como texto cuando el receptor exige credencial. Elegir tres proveedores con formatos de interfaz distintos y conmutar entre cada par.
+>
+> **Criterios de aceptación**: Conservar la respuesta original de la primera petición posterior a cada conmutación; el fallo del pase directo debe ser el error real devuelto por el proveedor, nunca un error simulado. Exigir que el enfoque neutral no produzca ningún error de interfaz en ninguna combinación de proveedores, y registrar fielmente en qué combinaciones fallan los otros dos y con qué error. Comparar los tres en tasa de finalización de la tarea, en el número de veces que se vuelve a llamar a la misma herramienta tras la conmutación (con huella «nombre de herramienta + argumentos») y en las rondas y tokens adicionales necesarios para terminar. Si el enfoque neutral no supera a la eliminación en llamadas repetidas, registrarlo con la misma fidelidad.
+
+> **Experimento 5-2 ★★: Continuar después de que la salida se corte a medias**
+>
+> **Objetivo del experimento**: Comparar «reenviar la ronda entera» con «continuar tomando como prefijo la salida a medias» en coste, corrección y efectos secundarios.
+>
+> **Solución técnica**: Cortar la conexión en tres puntos de una respuesta en streaming: a mitad del razonamiento, a mitad del texto y a mitad de los argumentos de una llamada a herramienta. Tres vías de recuperación: descartar el fragmento y reenviar la ronda completa; añadir el fragmento como mensaje assistant final y pedir al modelo que siga escribiendo (algunos proveedores lo admiten de forma nativa, otros exigen marcar explícitamente que ese mensaje está pendiente de continuación, y los que no tienen esa interfaz retroceden a la vía siguiente); añadir una metainstrucción que indique continuar desde el punto de corte. Una llamada a herramienta a medias no puede devolverse en su estructura nativa, así que hay que convertirla primero en texto para que el modelo la complete y volver a analizarla y validarla tras el empalme. Si en el fragmento ya se ejecutó alguna herramienta por adelantado durante el streaming, deduplicar por huella de llamada antes de continuar para evitar repetir el efecto secundario.
+>
+> **Criterios de aceptación**: Repetir varias veces cada uno de los tres puntos de corte y reportar, por vía, la tasa de recuperación, los tokens de salida ahorrados frente al reenvío completo, la validez y la corrección semántica de los argumentos completados (el empalme añade con facilidad espacios sobrantes o caracteres duplicados, y válido no equivale a correcto) y el número de efectos secundarios repetidos. Registrar además qué puntos de corte no son reproducibles en qué proveedores y si la vía de repliegue funciona.
+
 **Terminación: Toda ruta de recuperación debe tener un límite superior.** Los propios mecanismos de recuperación pueden fallar, por lo que toda ruta de recuperación debe contar con un límite máximo de disyunción (circuit breaker): si la compresión de contexto falla consecutivamente un número determinado de veces, se abandona la compresión; si la clasificación de permisos falla consecutivamente, se recurre a la consulta manual; y la continuación de salida se intenta como máximo un número fijo de rondas. ¿De dónde proceden los umbrales? La respuesta es de los datos de la línea de producción y no de suposiciones arbitrarias. Tomando como ejemplo el límite de disyunción por compresión en Claude Code, el umbral de "3 veces consecutivas" proviene de estadísticas en sesiones reales: existió una sesión que falló consecutivamente más de tres mil veces en esta ruta de recuperación, donde solo este tipo de reintentos inútiles desperdiciaba alrededor de 250.000 llamadas API diarias a nivel global, y más de mil sesiones registraron más de 50 fallos consecutivos. El número 3 representa precisamente el punto de inflexión empírico entre "la inmensa mayoría de los fallos se recuperan antes de este punto" y "continuar reintentando es prácticamente inútil".
 
 Más sutil que la disyunción en un solo punto es la **espiral de la muerte**: la lógica activada en la ruta de error vuelve a invocar al LLM, falla nuevamente y desencadena una reacción en cadena. Una forma en cadena real: el Agente se detiene por desbordamiento de contexto, lo que activa el gancho de parada (stop hook: lógica de limpieza que ejecuta automáticamente el Agente al finalizar) para "realizar un commit automático del código"; el gancho invoca al LLM para generar el mensaje de commit, lo que vuelve a provocar un desbordamiento de contexto y vuelve a activar el gancho. La protección se apoya en dos medidas: desactivar en la ruta de error cualquier lógica de efectos secundarios que vuelva a llamar al modelo (prefiriendo perder una función auxiliar, como la extracción automática de memoria), y utilizar un contador de profundidad de recursión para detectar e interrumpir las reacciones en cadena residuales. Finalmente, por encima de todos los mecanismos automatizados se requieren condiciones globales de terminación y escalación: número máximo de rondas de iteración, presupuesto máximo de la sesión, y escalación a intervención humana cuando los fallos consecutivos superen el umbral.
@@ -377,7 +399,7 @@ Permitir que el LLM se encargue de comprender el problema y escribir el código,
 
 Stephen Wolfram, fundador de Mathematica, aportó una visión profunda sobre este tema. Antes de la llegada de los LLM, ya existían sistemas capaces de realizar cálculos matemáticos precisos mediante **cálculo simbólico** (Symbolic Computation), es decir, procesando expresiones con símbolos matemáticos en lugar de valores numéricos aproximados. Por ejemplo, una calculadora común evalúa $\sqrt{2}$ como 1.414, mientras que un sistema de cálculo simbólico conserva la forma exacta $\sqrt{2}$ y solo la convierte a decimal cuando es necesario. Wolfram Alpha, creado por Wolfram, es un sistema de este tipo: el usuario ingresa un problema matemático y devuelve una respuesta exacta. Sin embargo, su comprensión del lenguaje natural es frágil y su cobertura estrecha: depende de un parseo sintáctico interno con formas de consulta limitadas, fallando ante pequeñas variaciones en la formulación y siendo incapaz de gestionar razonamientos de múltiples pasos en dominios abiertos. Los LLM compensan precisamente esta deficiencia: destacan en comprender diversas expresiones en lenguaje natural, pero no en el cálculo preciso. El nuevo modo de colaboración consiste en: permitir que el LLM comprenda el problema en lenguaje natural del usuario, identifique su estructura matemática o lógica y la traduzca a un lenguaje formal (como el lenguaje Mathematica o la biblioteca SymPy de Python); para luego entregarla a un motor de cálculo simbólico o solver de restricciones que ejecute y obtenga el resultado exacto.
 
-> **Experimento 5-1 ★★: Uso de herramientas de generación de código para mejorar el razonamiento matemático**
+> **Experimento 5-3 ★★: Uso de herramientas de generación de código para mejorar el razonamiento matemático**
 >
 > **Objetivo del experimento**: Verificar la mejora en la precisión del razonamiento matemático del Agente al apoyarse en un Code Interpreter.
 >
@@ -385,7 +407,7 @@ Stephen Wolfram, fundador de Mathematica, aportó una visión profunda sobre est
 >
 > **Criterios de aceptación**: Evaluar utilizando problemas de estilo AIME (alineados con la Competencia de Matemáticas de Invitación de EE. UU.). Comparar la precisión entre el pensamiento puro por Cadena de Pensamiento (CoT) y el pensamiento asistido por código, exigiendo que el modo asistido por código sea significativamente superior. Verificar que el código utilice correctamente las bibliotecas matemáticas y que el proceso de resolución presente una lógica clara.
 
-> **Experimento 5-2 ★★: Uso de herramientas de generación de código para mejorar el razonamiento lógico**
+> **Experimento 5-4 ★★: Uso de herramientas de generación de código para mejorar el razonamiento lógico**
 >
 > **Objetivo del experimento**: Evaluar la capacidad del Agente para asistir al razonamiento lógico mediante código de resolución de restricciones.
 >
@@ -482,7 +504,7 @@ El valor de este diseño debe analizarse en dos niveles:
 
 La triple protección se completa así: (1) Las reglas en lenguaje natural del prompt del sistema ayudan a comprender y explicar; (2) La descripción de la herramienta y el diseño de parámetros sirven como checklist para guiar al modelo a verificar las condiciones explícitamente antes de llamar; (3) La validación en código basada en los datos reales de la base de datos del servidor actúa como el guardián final. Las dos primeras reducen la ocurrencia de errores, y la tercera garantiza que los errores no se conviertan en pérdidas irreversibles.
 
-> **Experimento 5-3 ★★: Modelos pequeños mejoran la precisión de ejecución de reglas mediante conocimiento basado en código**
+> **Experimento 5-5 ★★: Modelos pequeños mejoran la precisión de ejecución de reglas mediante conocimiento basado en código**
 >
 > **Objetivo del experimento**: Verificar que un modelo de menor escala (Qwen3-4B) mejora significativamente la precisión y consistencia en la ejecución de políticas complejas mediante reglas de negocio codificadas.
 >
@@ -509,7 +531,7 @@ El Proposer recibe la retroalimentación, comprende la intención y modifica el 
 
 El bucle iterativo de Proponente-Revisor de este capítulo comparte el mismo origen que la **aprobación previa** del Capítulo 4 (ambos son instancias del paradigma Proponente-Revisor: separación de generación y revisión, y evaluación independiente mediante dos modelos; expresado en el lenguaje de la Ingeniería de Ciclos, subagentes separados para el "creador" y el "verificador"). La diferencia radica en el objetivo y la forma: el Capítulo 4 lo utiliza para la revisión de seguridad de operaciones irreversibles, donde el revisor aprueba o rechaza una sola operación; mientras que este capítulo lo utiliza para la mejora iterativa de la calidad de contenido (múltiples rondas de bucle, donde el revisor accede a nueva información que el proponente no ve: los resultados del renderizado). Los principios de diseño fundamentales son idénticos (compartir restricciones de objetivos, usar diferentes familias de modelos para reducir la probabilidad de errores similares, e incorporar la retroalimentación como eventos especiales en la trayectoria del Proposer). Adoptar la división en dos Agentes en lugar de un bucle de un solo Agente aporta una **ventaja central en la gestión de contexto**: el Reviewer solo procesa las imágenes renderizadas de la versión más reciente en cada ocasión, sin interferencia de versiones anteriores; mientras que el Proposer solo acumula retroalimentación de texto estructurado, consumiendo pocos tokens y facilitando el razonamiento. La solución de un solo Agente requeriría acumular imágenes renderizadas de docenas de páginas a lo largo de múltiples rondas dentro del mismo contexto, desbordándolo rápidamente. Este mecanismo se reutilizará en los experimentos posteriores de edición de video y visualización de registros; el Capítulo 10 explorará más a fondo otros patrones de colaboración multiagente más allá de Proponente-Revisor.
 
-> **Experimento 5-4 ★★: Generación automática de PPT a partir de artículos académicos**
+> **Experimento 5-6 ★★: Generación automática de PPT a partir de artículos académicos**
 >
 > **Objetivo del experimento**: Generar presentaciones de alta calidad automáticamente a partir de artículos académicos en PDF, verificando la efectividad del mecanismo Proponente-Revisor en el control de calidad de creación de contenido.
 >
@@ -517,11 +539,11 @@ El bucle iterativo de Proponente-Revisor de este capítulo comparte el mismo ori
 >
 > **Criterios de aceptación**: Generar de 10 a 20 páginas de PPT cubriendo las contribuciones principales del artículo. Incluir al menos 3 gráficos originales del artículo que coincidan con la explicación en texto. Renderizado sin desbordamientos de texto y con maquetación adecuada. Comparar las diferencias en consumo de contexto y calidad entre la autorevisión de un solo Agente frente a la división Proponente-Revisor.
 
-> **Experimento 5-5 ★★: Generación automática de videos explicativos de artículos**
+> **Experimento 5-7 ★★: Generación automática de videos explicativos de artículos**
 >
 > **Objetivo del experimento**: Extender la capacidad de generación de PPT combinando canales visuales y auditivos para lograr la generación automática de videos explicativos.
 >
-> **Solución técnica**: Apoyándose en el flujo de generación de PPT del Experimento 5-4, el Agente genera simultáneamente el texto explicativo conversacional para cada página (narrativa orientada y no mera lectura literal), invoca un servicio TTS (texto a voz) para sintetizar el audio, y utiliza `ffmpeg` para sincronizar y sintetizar las capturas del PPT con el audio en un video.
+> **Solución técnica**: Apoyándose en el flujo de generación de PPT del Experimento 5-6, el Agente genera simultáneamente el texto explicativo conversacional para cada página (narrativa orientada y no mera lectura literal), invoca un servicio TTS (texto a voz) para sintetizar el audio, y utiliza `ffmpeg` para sincronizar y sintetizar las capturas del PPT con el audio en un video.
 >
 > **Criterios de aceptación**: Video de 5 a 15 minutos, donde el tiempo de visualización de cada página coincida con la duración del audio, y el contenido explicado se enlace con los elementos visuales.
 
@@ -533,7 +555,7 @@ Utilizar el control de computadoras (Computer Use) general para la edición de v
 
 Reestructurar la edición de video como un problema de llamadas API y generación de código reduce drásticamente la complejidad. Muchos programas profesionales (como Blender, la herramienta de creación 3D y composición de video de código abierto compatible con scripts en Python; y FFmpeg, la navaja suiza en línea de comandos para el procesamiento de audio y video) proporcionan interfaces API programáticas que exponen funcionalidades centrales de forma estructurada y combinable. Por ejemplo, la API de Python de Blender permite controlar mediante código la importación, recorte, ordenación, efectos de transición y mezcla de audio de los fragmentos de video, donde cada operación corresponde a una llamada a función clara. Para un Agente, traducir necesidades en lenguaje natural a llamadas API es mucho más sencillo que comprender interfaces GUI y simular clics de mouse. De manera similar a la generación de PPT, la edición de video adopta el mecanismo Proponente-Revisor: el Proposer Agent genera scripts para Blender, y el Reviewer Agent renderiza fotogramas clave y los inspecciona con un Vision LLM para retroalimentar sugerencias de modificación.
 
-> **Experimento 5-6 ★★: Edición inteligente de video basada en API**
+> **Experimento 5-8 ★★: Edición inteligente de video basada en API**
 >
 > **Objetivo del experimento**: Verificar la capacidad del Agente para editar video mediante la generación de código para la API de Python de Blender, evaluando el papel del mecanismo Proponente-Revisor basado en retroalimentación visual en el procesamiento de contenido multimedia.
 >
@@ -561,7 +583,7 @@ Los dos caminos difieren además en algo más práctico: la **forma de represent
 
 Por tanto, elegir el camino es en sí mismo una decisión que el Agente debe tomar: sopesar la complejidad intrínseca del producto y sus requisitos de precisión, y asignar la tarea a la generación de código o al modelo de generación 3D. En los sistemas reales ambos caminos pueden combinarse—la geometría se genera de forma paramétrica con código y la textura de superficie se confía al modelo generativo, aprovechando lo mejor de cada uno.
 
-> **Experimento 5-7 ★★: Dos rutas de generación para una misma pieza—código frente a modelo generativo**
+> **Experimento 5-9 ★★: Dos rutas de generación para una misma pieza—código frente a modelo generativo**
 >
 > **Objetivo del experimento**: Tomar una misma pieza mecánica con especificación dimensional y comparar las rutas de generación por código y por modelo de generación 3D en cuanto a precisión dimensional, editabilidad y aptitud para la fabricación, verificando el marco de decisión de «elegir la ruta según la complejidad intrínseca y los requisitos de precisión».
 >
@@ -587,7 +609,7 @@ La observabilidad de los sistemas de Agentes depende de la visualización de sus
 
 La generación de código ofrece una solución elegante: establecer un bucle de retroalimentación de autorreparación. Cuando el frontend encuentra un formato de registro que no puede parsear, en lugar de mostrar un error, reporta automáticamente la información de falla (muestra del registro original, error detallado) al Agente. El Agente analiza la estructura de los datos de muestra y genera código de frontend capaz de parsearlos correctamente. El código se prueba automáticamente en un navegador virtual (verificando la corrección del parseo y revisando el efecto visual con un Vision LLM), y tras aprobar se despliega mediante actualización en caliente en el sistema frontend.
 
-> **Experimento 5-8 ★★★: Sistema adaptativo de parseo de logs**
+> **Experimento 5-10 ★★★: Sistema adaptativo de parseo de logs**
 >
 > **Objetivo del experimento**: Construir un sistema de visualización de registros de Agentes capaz de autoevolucionar.
 >
@@ -601,7 +623,7 @@ Los Agentes en entornos de producción generan un gran volumen de registros de t
 
 La generación de código ofrece una ruta automatizada para el diagnóstico. El Agente puede leer registros de producción y combinarlos con documentos de arquitectura y PRD (documentos de requisitos de producto) para juzgar automáticamente si el flujo de ejecución cumple con lo esperado, localizando los módulos y eslabones con problemas. Basándose en los resultados del análisis, genera informes de problemas estructurados (prioridad, módulo, descripción, sugerencias de mejora) y casos de prueba de regresión (los casos de prueba referencian el ID de trayectoria y los turnos de interacción clave, y el marco de pruebas los reproduce automáticamente para verificar si el sistema corregido produce el comportamiento adecuado ante la misma entrada). Finalmente, el Agente se conecta con GitHub a través de MCP para crear incidencias (Issues) y asignarlas a los desarrolladores correspondientes, completando la automatización integral desde el descubrimiento del problema hasta la asignación de la tarea.
 
-> **Experimento 5-9 ★★★: Sistema de diagnóstico inteligente para logs de producción**
+> **Experimento 5-11 ★★★: Sistema de diagnóstico inteligente para logs de producción**
 >
 > **Objetivo del experimento**: Descubrir problemas automáticamente a partir de trayectorias de producción, generar casos de prueba y crear elementos de trabajo.
 >
@@ -637,7 +659,7 @@ Mediante la generación de código, el Agente puede crear interfaces de interacc
 
 ![Figura 5-8: Proceso de generación de formularios dinámicos](images/fig5-8.svg)
 
-> **Experimento 5-10 ★★: Sistema de clarificación de intención con formularios dinámicos**
+> **Experimento 5-12 ★★: Sistema de clarificación de intención con formularios dinámicos**
 >
 > **Objetivo del experimento**: Verificar la capacidad del Agente para clarificar la intención del usuario generando dinámicamente formularios HTML.
 >
@@ -657,7 +679,7 @@ El SQL y el código de visualización generados no deben ejecutarse directamente
 
 Más aún, el Agente puede generar dos Artifacts formando una canalización: consulta SQL + código de visualización (como un gráfico de barras). El frontend entrega los resultados de SQL directamente al código de visualización, mientras el LLM solo se encarga de generar el código sin intervenir en la transferencia de datos, lo que representa la esencia del código como interfaz.
 
-> **Experimento 5-11 ★★: Agente ERP con interacción en lenguaje natural**
+> **Experimento 5-13 ★★: Agente ERP con interacción en lenguaje natural**
 >
 > El software ERP (Planificación de Recursos Empresariales) es un sistema crítico en las empresas que actualmente suele utilizar interfaces GUI con múltiples clics de mouse. Un Agente de IA puede traducir consultas en lenguaje natural del usuario a sentencias SQL para lograr consultas automatizadas.
 >
@@ -680,7 +702,7 @@ La aplicación extrema de la capacidad de generación de código consiste en per
 
 Sin embargo, este modo completamente dinámico presenta costos y latencias elevados, siendo más adecuado como un experimento para mostrar límites de capacidad. Una dirección más práctica es la **personalización basada en marcos existentes**. Este modo de "semipersonalización" conserva la estabilidad del software base al tiempo que abre el control al usuario en dimensiones específicas: el usuario indica "cambia el botón a azul", "añade un menú rápido en la barra lateral" o "modifica la fuente a un estilo más legible", el Agente comprende la necesidad y modifica el código frontend, y el reemplazo térmico de módulos (HMR, Hot Module Replacement: reemplazo local en caliente que conserva el estado de la aplicación sin refrescar la página completa) surte efecto de inmediato. Esto transforma productos estandarizados "talle único" en experiencias personalizadas únicas para cada usuario.
 
-> **Experimento 5-12 ★★: Sistema de personalización conversacional de interfaces**
+> **Experimento 5-14 ★★: Sistema de personalización conversacional de interfaces**
 >
 > **Objetivo del experimento**: Lograr que el usuario personalice instantáneamente la interfaz del software mediante diálogo en lenguaje natural, verificando la efectividad de la generación de código respaldada por mecanismos de reemplazo térmico para ofrecer experiencias de usuario personalizadas.
 >
@@ -694,7 +716,7 @@ Una arquitectura más robusta **desplaza el límite de confianza hacia la capa d
 
 Desplazar la autorización hacia abajo no significa colocar toda la lógica de negocio en la base de datos. La capa de aplicación puede seguir realizando comprobaciones previas para ofrecer una respuesta rápida, pero la capa de datos debe conservar la autoridad de decisión final. La misma regla puede mejorar la experiencia arriba y proporcionar una garantía abajo. Para ello, todas las rutas de acceso a datos deben pasar por la capa de datos confiable; el código generado no debe poder conectarse directamente para rodearla. Así, la capa superior puede cambiar continuamente mientras las restricciones de permisos no negociables permanecen en una capa que no se regenera con cada solicitud. Esta es la capa de datos del esqueleto de tres capas del capítulo 1: la más difícil de esquivar.
 
-> **Experimento 5-13 ★★★: Objetos de datos con permisos integrados para software dinámico**
+> **Experimento 5-15 ★★★: Objetos de datos con permisos integrados para software dinámico**
 >
 > **Objetivo del experimento**: Construir un almacén de objetos que permita generar o reescribir dinámicamente el código de la aplicación y que, aun así, aplique autorización e integridad de datos en la capa de datos. Verificar que el código generado no pueda atravesar el límite estable omitiendo una transición de estado, escribiendo un valor fuera de rango o leyendo datos de otros inquilinos.
 >
@@ -737,7 +759,7 @@ La "generación basada en plantillas" presenta ventajas claras: el código de la
 
 Al recibir la tarea de desarrollar un nuevo Agente, el Agente debe copiar primero su propio código (u otra implementación de alta calidad verificada) y luego realizar modificaciones orientadas: ajustando los prompts del sistema para coincidir con el nuevo rol, reemplazando o añadiendo/eliminando herramientas para adaptarse a las nuevas funciones, y modificando la lógica de negocio mientras conserva el marco de arquitectura. Esta modalidad de "autorreplicación y modificación adaptativa" garantiza que el nuevo Agente herede las ventajas técnicas nucleares al tiempo que permite la diferenciación en dimensiones específicas, de forma análoga a la replicación genética con variación en biología.
 
-> **Experimento 5-14 ★★★: Desarrollar un Agente capaz de crear Agentes**
+> **Experimento 5-16 ★★★: Desarrollar un Agente capaz de crear Agentes**
 >
 > **Objetivo del experimento**: Construir un Coding Agent con capacidad de metaprogramación (Metaprogramming: escribir programas capaces de generar o modificar otros programas), capaz de crear nuevos sistemas de Agentes de forma automática según las necesidades del usuario, garantizando el cumplimiento de las mejores prácticas.
 >
@@ -753,7 +775,7 @@ El autoinicio del Agente representa la aplicación extrema de la capacidad de ge
 
 El núcleo abordado en este capítulo ha sido siempre el mismo: el código no es solo una herramienta para escribir programas, sino el lenguaje para el pensamiento formalizado y la expresión precisa del Agente.
 
-La conclusión central de la sección de Ingeniería de Harness es que la alta madurez del Coding Agent no se debe a que los modelos de generación de código sean especialmente potentes, sino a que las décadas de infraestructura acumuladas en la ingeniería de software (suites de pruebas, sistemas de tipos, control de versiones) constituyen de forma natural un Harness potente. Esta conclusión merece extenderse a otros escenarios de Agentes. La sección de recuperación de fallos y errores presentó la otra cara del mismo tema: la confiabilidad de un Agente no depende de si el modelo comete errores o no, sino de si cada clase de fallo cuenta con sus correspondientes rutas de detección, recuperación y terminación.
+La conclusión central de la sección de Ingeniería de Harness es que la alta madurez del Coding Agent no se debe a que los modelos de generación de código sean especialmente potentes, sino a que las décadas de infraestructura acumuladas en la ingeniería de software (suites de pruebas, sistemas de tipos, control de versiones) constituyen de forma natural un Harness potente. Esta conclusión merece extenderse a otros escenarios de Agentes. La sección de recuperación de fallos y errores presentó la otra cara del mismo tema: la confiabilidad de un Agente no depende de si el modelo comete errores o no, sino de si cada clase de fallo cuenta con sus correspondientes rutas de detección, recuperación, traspaso y terminación.
 
 La segunda parte mostró el amplio valor de la generación de código más allá de la programación, correspondiendo a las seis dimensiones del texto principal:
 
