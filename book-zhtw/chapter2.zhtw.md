@@ -757,9 +757,10 @@ Agent Skills 的核心思想是將 Agent 的能力模組化為獨立的、可按
 
 後設資料中的 `description` 欄位是路由決策的關鍵——它應當足夠短（控制常駐的 token 量），但寫法要像路由條件而非功能介紹。可以明確寫出「何時使用」和「何時不使用」的邊界，並給出幾條典型**反例**，以減少寬泛匹配帶來的誤觸發；這是路由提示的寫作建議，不是額外的格式欄位。描述太寬泛（如 「help with backend」）等於任何後端相關的工作都能觸發，路由就會失準；真正有效的描述是路由條件——「何時該用我」比「我能做什麼」重要得多。
 
-**第二層（核心流程）**：當 Agent 判斷某個任務需要特定的 Skill 時，執行環境才載入完整的 `SKILL.md`。Claude Code 會在呼叫位置把 Skill 指令作為 user message 加入會話；採用檔案讀取或專用啟用工具的其他執行環境，也可以把內容作為 tool result 返回。以 PPTX Skill[^ch2-4] 為例，其中包含處理 PowerPoint 檔案的核心流程：如何透過 markitdown（Microsoft 開源的文件轉 Markdown 工具）提取文字，如何解壓 PPTX 檔案存取原始的 XML 結構，以及關鍵檔案的路徑約定。
+**第二層（核心流程）**：當 Agent 判斷某個任務需要特定的 Skill 時，執行環境才載入完整的 `SKILL.md`。觸發載入的方式有兩種：使用者顯式輸入斜線命令（如 `/pptx`）時，由客戶端在本地攔截並展開，模型不必先發起一次工具呼叫；模型讀過後設資料目錄後自己判斷需要某個 Skill 時，則呼叫專用的 Skill 工具，比前者多一次 ReAct 往返。兩條路徑的落點相同——Claude Code 都在呼叫位置把 Skill 正文作為 user message 加入會話，模型自主觸發時返回的那條 tool result 只是一句「正在啟動 Skill」的佔位符，並不承載正文[^ch2-cc-skill-inject]。沒有專用啟用工具的執行環境則用通用檔案讀取工具去讀 `SKILL.md`，正文以 tool result 的形式進入上下文。以 PPTX Skill[^ch2-4] 為例，其中包含處理 PowerPoint 檔案的核心流程：如何透過 markitdown（Microsoft 開源的文件轉 Markdown 工具）提取文字，如何解壓 PPTX 檔案存取原始的 XML 結構，以及關鍵檔案的路徑約定。
 
 [^ch2-4]: Anthropic, "PPTX Skill" , 2025. https://github.com/anthropics/skills/
+[^ch2-cc-skill-inject]: Claude Code Docs, [「How Claude Code uses prompt caching」](https://code.claude.com/docs/en/prompt-caching), 「Invoking skills and commands」：「Skills and commands inject their instructions as user messages at the point of invocation.」兩種觸發方式的分工見 Agent Skills, [「How to add skills support to your agent」](https://agentskills.io/client-implementation/adding-skills-support), 「User-explicit activation」：斜線命令由 Harness 攔截並注入，模型無需自己發起啟用動作。
 
 [^ch2-codex-skills]: OpenAI，《Build skills》，Codex 文件。 https://developers.openai.com/codex/skills/
 
@@ -791,7 +792,7 @@ Skills 的價值不僅在於優雅的上下文管理，更在於為領域知識�
 理解 Skills 的上下文成本時，必須把「後設資料目錄」和「完整 Skill 指令」分開：
 
 - **標準層**。規範規定的是載入時序，而不是訊息角色：目錄必須先於正文可發現，正文在 Skill 被選中後按需載入；具體訊息角色、包裝方式以及目錄是否在每輪重建，都由 Agent Harness 決定。
-- **Claude Code 的實作**。Claude Code 採用漸進式目錄與呼叫時追加正文的方式：目錄作為執行時上下文訊息提供，完整指令則在 Skill 被呼叫的位置作為 user message 注入。這裡的「system prompt」可以用來描述邏輯上的穩定指令層，但不應被理解為所有客戶端都使用 API 的 `role: "system"`。
+- **Claude Code 的實作**。Claude Code 採用漸進式目錄與呼叫時追加正文的方式：目錄作為執行時上下文訊息提供，完整指令則在 Skill 被呼叫的位置作為 user message 注入。這裡的「system prompt」可以用來描述邏輯上的穩定指令層，但不應被理解為所有客戶端都使用 API 的 `role: "system"`。圖2-12 畫的是模型自主觸發的情形，軌跡裡能看到完整的一次往返：`Skill(skill: "pptx")` 的 tool_use、一條佔位符 tool_result，正文隨後作為獨立的 user 訊息追加；如果使用者直接輸入 `/pptx`，客戶端在本地完成展開，軌跡裡就沒有這一對工具呼叫，只剩下最後那條 user 訊息。
 - **OpenAI Codex 的實作**。Codex 在每輪上下文建構階段重新渲染 Skills catalog，並將其作為 `developer` 上下文片段提供；明確選中的 Skill 正文則以帶 `<skill>` 標記的 `user` 片段注入。其他來源的 Skill 也可以透過專用工具按需讀取[^ch2-codex-skills]。
 
 目前 Agent Harness 演進非常快，讀者看到本書時它們的實作可能已經改變。儘管具體方式不同，但都遵循**「少量目錄常駐、完整正文按需載入」**的設計原則。這是 Skills 兼顧動態載入能力與上下文開銷的關鍵。下面兩張圖分別從兩個視角追蹤 Skills 在軌跡中的位置和 KV Cache 的演化。

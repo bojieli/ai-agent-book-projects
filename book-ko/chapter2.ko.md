@@ -753,9 +753,10 @@ Claude Code의 도구 정의를 보면 각 설명이 사용 경계(“NEVER invo
 
 메타데이터의 `description`은 라우팅에 중요합니다. 상시 존재하는 토큰 수를 줄일 만큼 간결하되, 기능 요약이 아니라 라우팅 조건으로 작성해야 합니다. “언제 사용 / 언제 사용하지 않음”의 경계와 대표적인 **부정 예시**를 제시하면 넓은 일치로 인한 오작동을 줄일 수 있습니다. 이는 라우팅 프롬프트의 작성 조언이지 추가 필수 필드는 아닙니다. “help with backend”처럼 넓은 설명은 거의 모든 백엔드 작업에서 활성화될 수 있습니다. 좋은 설명은 무엇을 할 수 있는지만이 아니라 언제 사용해야 하는지를 말합니다.
 
-**2계층(핵심 작업 흐름)**: 특정 작업에 스킬이 필요하다고 판단한 시점에 런타임이 `SKILL.md` 전체를 불러옵니다. Claude Code는 호출 지점에 스킬 지시를 user message로 추가합니다. 다른 런타임은 파일 읽기나 전용 도구를 사용하고 내용을 tool result로 반환할 수도 있습니다. PPTX 스킬[^ch2-4]에는 markitdown으로 텍스트를 추출하는 방법, PPTX 압축을 풀어 원시 XML 구조에 접근하는 방법, 핵심 파일 경로 규칙 등 PowerPoint 처리의 핵심 작업 흐름이 들어 있습니다.
+**2계층(핵심 작업 흐름)**: 특정 작업에 스킬이 필요하다고 판단한 시점에 런타임이 `SKILL.md` 전체를 불러옵니다. 로딩을 촉발하는 경로는 두 가지입니다. 사용자가 `/pptx` 같은 슬래시 명령을 직접 입력하면 클라이언트가 로컬에서 가로채 펼치므로 모델이 먼저 도구를 호출할 필요가 없습니다. 모델이 메타데이터 카탈로그를 보고 스스로 스킬이 필요하다고 판단하면 전용 Skill 도구를 호출하므로 ReAct 왕복이 한 번 늘어납니다. 두 경로가 도착하는 지점은 같습니다. Claude Code는 호출 지점에 스킬 본문을 user message로 추가하며, 모델이 촉발한 경로에서 돌아오는 tool result는 스킬을 시작한다고 알리는 자리표시자일 뿐 본문을 담지 않습니다[^ch2-cc-skill-inject]. 전용 활성화 도구가 없는 런타임에서는 모델이 범용 파일 읽기 도구로 `SKILL.md`를 읽으므로, 본문이 tool result로 컨텍스트에 들어옵니다. PPTX 스킬[^ch2-4]에는 markitdown으로 텍스트를 추출하는 방법, PPTX 압축을 풀어 원시 XML 구조에 접근하는 방법, 핵심 파일 경로 규칙 등 PowerPoint 처리의 핵심 작업 흐름이 들어 있습니다.
 
 [^ch2-4]: Anthropic, "PPTX Skill", 2025. https://github.com/anthropics/skills/
+[^ch2-cc-skill-inject]: Claude Code Docs, [“How Claude Code uses prompt caching”](https://code.claude.com/docs/en/prompt-caching), “Invoking skills and commands”: “Skills and commands inject their instructions as user messages at the point of invocation.” 명시적 촉발과 모델 주도 촉발의 구분은 Agent Skills, [“How to add skills support to your agent”](https://agentskills.io/client-implementation/adding-skills-support), “User-explicit activation” 참조. 슬래시 명령은 Harness가 가로채 내용을 주입하므로 모델이 직접 활성화 동작을 할 필요가 없습니다.
 
 [^ch2-codex-skills]: OpenAI, 「Build skills」, Codex 문서. https://developers.openai.com/codex/skills/
 
@@ -787,7 +788,7 @@ Claude Code의 도구 정의를 보면 각 설명이 사용 경계(“NEVER invo
 스킬의 컨텍스트 비용을 이해할 때는 메타데이터 카탈로그와 전체 스킬 지시를 구분해야 합니다.
 
 - **표준 수준의 원칙**: 메커니즘이 정하는 것은 로드 순서이지 메시지 역할이 아닙니다. 카탈로그는 본문보다 먼저 발견 가능해야 하며, 본문은 스킬을 선택한 뒤 필요할 때 로드합니다. 메시지 역할, 래퍼, 매 턴 카탈로그 재구성 여부는 에이전트 하네스의 선택입니다.
-- **Claude Code의 개념적 구현**: 작은 카탈로그를 런타임 컨텍스트로 제공하고, 스킬이 호출되는 위치에 전체 지시를 덧붙입니다. “시스템 프롬프트”는 논리적으로 안정된 지시 계층을 가리킬 수 있지만 모든 클라이언트가 API `system` 역할을 사용한다는 뜻은 아닙니다.
+- **Claude Code의 개념적 구현**: 작은 카탈로그를 런타임 컨텍스트로 제공하고, 스킬이 호출되는 위치에 전체 지시를 덧붙입니다. “시스템 프롬프트”는 논리적으로 안정된 지시 계층을 가리킬 수 있지만 모든 클라이언트가 API `system` 역할을 사용한다는 뜻은 아닙니다. 그림 2-12는 모델이 스스로 촉발한 경우를 그린 것으로, 궤적에 왕복 전체가 남습니다. `Skill(skill: "pptx")` tool_use, 자리표시자 tool_result, 그리고 본문이 별도의 user 메시지로 덧붙습니다. 사용자가 `/pptx`를 직접 입력하면 클라이언트가 로컬에서 펼치므로 이 도구 호출 쌍은 나타나지 않고 마지막 user 메시지만 남습니다.
 - **Codex의 개념적 구현**: 매 턴 컨텍스트를 구성할 때 Skills 카탈로그를 `developer` 컨텍스트로 렌더링하고, 명시적으로 선택된 스킬은 `<skill>` 표시가 있는 `user` 컨텍스트로 주입합니다. 다른 출처의 스킬은 도구를 통해 필요할 때 읽을 수 있습니다.[^ch2-codex-skills]
 
 에이전트 하네스는 빠르게 진화하므로 구체적인 표현은 달라질 수 있습니다. 안정적인 원칙은 **작은 카탈로그를 발견 가능하게 유지하고 전체 본문을 필요할 때 로드하는 것**입니다. 다음 두 그림은 스킬이 궤적에서 놓이는 위치와 KV Cache의 변화를 보여 줍니다.
