@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run Experiment 4-4 through the collaboration MCP stdio server."""
+"""Run Experiment 4-5 through the collaboration MCP stdio server."""
 
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ from mcp.client.stdio import stdio_client
 
 HERE = Path(__file__).resolve().parent
 SERVER = HERE / "src" / "main.py"
-VALIDATION = HERE / "validation" / "experiment_4_4"
+VALIDATION = HERE / "validation" / "experiment_4_5"
 CREDENTIAL = re.compile(r"\b(?:sk|gh[opusr])-[A-Za-z0-9_-]{12,}\b")
 SENSITIVE_ENV_NAMES = {
     "ANTHROPIC_API_KEY",
@@ -328,7 +328,7 @@ async def run(
             # through the admin-facing MCP primitive. The default path retains
             # the historical automated validation operator. --interactive-human
             # instead blocks on one live APPROVE/REJECT line from stdin.
-            approval_message = "Approve publishing the Experiment 4-4 result?"
+            approval_message = "Approve publishing the Experiment 4-5 result?"
             approval_context = {
                 "risk": "low",
                 "artifact": "validation-only",
@@ -408,10 +408,10 @@ async def run(
 
             email = await call("email_notification_preflight", "mcp_send_email", {
                 "to_email": env.get("HITL_ADMIN_EMAIL") if real_notifications else "nobody@example.invalid",
-                "subject": "Experiment 4-4",
-                "body": "Real Experiment 4-4 notification" if real_notifications else "Credential preflight only"})
+                "subject": "Experiment 4-5",
+                "body": "Real Experiment 4-5 notification" if real_notifications else "Credential preflight only"})
             telegram_arguments = {
-                "message": "Real Experiment 4-4 notification" if real_notifications else "Experiment 4-4 credential preflight",
+                "message": "Real Experiment 4-5 notification" if real_notifications else "Experiment 4-5 credential preflight",
                 "parse_mode": "HTML",
             }
             if not real_notifications:
@@ -419,7 +419,7 @@ async def run(
             telegram = await call("im_notification_preflight", "mcp_send_telegram_message",
                                   telegram_arguments)
             slack = await call("slack_notification_preflight", "mcp_send_slack_message", {
-                "message": "Real Experiment 4-4 notification" if real_notifications else "Experiment 4-4 credential preflight"})
+                "message": "Real Experiment 4-5 notification" if real_notifications else "Experiment 4-5 credential preflight"})
 
     llm_path = run_dir / "llm_receipts.checkpoint.json"
     llm_receipts = json.loads(llm_path.read_text(encoding="utf-8")) if llm_path.is_file() else []
@@ -461,7 +461,7 @@ async def run(
         "real_slack_notification": slack["payload"].get("success") is True,
     }
     status = classify_status(gates, interactive_human=interactive_human)
-    summary = {"experiment": "4-4", "campaign_id": campaign_id,
+    summary = {"experiment": "4-5", "campaign_id": campaign_id,
                "generated_at": datetime.now(timezone.utc).isoformat(),
                "status": status, "official_complete": status == "passed", "gates": gates,
                "blockers": [name for name, value in gates.items() if not value],
@@ -476,9 +476,9 @@ async def run(
     write_json(run_dir / "summary.json", summary)
     files = [{"path": str(path.relative_to(run_dir)), "bytes": path.stat().st_size, "sha256": sha(path)}
              for path in sorted(run_dir.rglob("*")) if path.is_file() and path.name != "manifest.json"]
-    write_json(run_dir / "manifest.json", {"experiment": "4-4", "campaign_id": campaign_id,
+    write_json(run_dir / "manifest.json", {"experiment": "4-5", "campaign_id": campaign_id,
                "status": status, "official_complete": status == "passed", "files": files})
-    write_json(VALIDATION / "latest.json", {"experiment": "4-4", "campaign_id": campaign_id,
+    write_json(VALIDATION / "latest.json", {"experiment": "4-5", "campaign_id": campaign_id,
                "status": status, "official_complete": status == "passed",
                "manifest": str((run_dir / "manifest.json").relative_to(HERE)),
                "manifest_sha256": sha(run_dir / "manifest.json")})

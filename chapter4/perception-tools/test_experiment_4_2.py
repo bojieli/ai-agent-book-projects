@@ -1,4 +1,4 @@
-"""Offline acceptance checks for the exact Experiment 4-1 campaign."""
+"""Offline acceptance checks for the exact Experiment 4-2 campaign."""
 
 from __future__ import annotations
 
@@ -8,8 +8,8 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-RUNNER = HERE / "run_experiment_4_1.py"
-SPEC = importlib.util.spec_from_file_location("experiment_4_1_runner", RUNNER)
+RUNNER = HERE / "run_experiment_4_2.py"
+SPEC = importlib.util.spec_from_file_location("experiment_4_2_runner", RUNNER)
 runner = importlib.util.module_from_spec(SPEC)
 assert SPEC.loader is not None
 sys.modules[SPEC.name] = runner

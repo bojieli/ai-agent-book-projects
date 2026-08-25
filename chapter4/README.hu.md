@@ -18,11 +18,11 @@ Első olvasáskor átugorható a hitelesítő adatok betöltése, a megjelenít�
 
 | Kísérlet | Projekt | Típus | Leírás |
 | :--: | --- | :--: | --- |
-| 4-1 | [perception-tools](perception-tools/) | ✅ | Webes keresési, multimodális, fájlrendszer- és nyilvánosadat-eszközöket biztosít. |
-| 4-2 | [multimodal-agent](multimodal-agent/) | ✅ | Multimodal processing: compare native multimodal, extract-to-text, and tool-based analysis. |
-| 4-3 | [execution-tools](execution-tools/) | ✅ | Fájlműveleteket, kódértelmezőt, virtuális terminált és biztonságos végrehajtási mechanizmusokat valósít meg. |
-| 4-4 | [collaboration-tools](collaboration-tools/) | ✅ | Böngésző-automatizálást, emberi közreműködést, értesítéseket és időzítőket kínál. |
-| 4-5 | [active-tool-discovery](active-tool-discovery/) | ✅ | Az összes eszközséma betöltését hasonlítja össze az igény szerinti aktív eszközfelderítéssel. |
+| 4-1 | [active-tool-discovery](active-tool-discovery/) | ✅ | Az összes eszközséma betöltését hasonlítja össze az igény szerinti aktív eszközfelderítéssel. |
+| 4-2 | [perception-tools](perception-tools/) | ✅ | Webes keresési, multimodális, fájlrendszer- és nyilvánosadat-eszközöket biztosít. |
+| 4-3 | [multimodal-agent](multimodal-agent/) | ✅ | Multimodal processing: compare native multimodal, extract-to-text, and tool-based analysis. |
+| 4-4 | [execution-tools](execution-tools/) | ✅ | Fájlműveleteket, kódértelmezőt, virtuális terminált és biztonságos végrehajtási mechanizmusokat valósít meg. |
+| 4-5 | [collaboration-tools](collaboration-tools/) | ✅ | Böngésző-automatizálást, emberi közreműködést, értesítéseket és időzítőket kínál. |
 | — | [active-tool-selection](active-tool-selection/) | ✅ | A feladat követelményei alapján kiválasztja a legmegfelelőbb eszközkombinációt. |
 
 > A `chapter4/docker-compose.yml` és `chapter4/DOCKER_DEPLOYMENT.md` konténeres telepítési referenciát biztosít az MCP-szerverekhez.

@@ -1,7 +1,7 @@
 """
 离线样例生成器 (Offline sample generator)
 
-生成一个"含图表的报告"作为多模态样例，用于实验 4-2 对比三种提取范式。
+生成一个"含图表的报告"作为多模态样例，用于实验 4-3 对比三种提取范式。
 产物同时包含：
   - test_files/sample_chart.png   仅图表（图像模态）
   - test_files/sample_report.pdf  图表 + 文字说明（文档模态，书中的"含图表的 PDF 报告"）
@@ -100,7 +100,7 @@ def create_report_pdf(chart_path: Path, output_path: Path) -> Path:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="离线生成含图表的多模态样例（图像 + PDF 报告），供实验 4-2 使用。无需 API Key。"
+        description="离线生成含图表的多模态样例（图像 + PDF 报告），供实验 4-3 使用。无需 API Key。"
     )
     parser.add_argument(
         "--output-dir",

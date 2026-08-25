@@ -1,4 +1,4 @@
-"""Validate the durable real-MCP evidence for Experiment 4-1."""
+"""Validate the durable real-MCP evidence for Experiment 4-2."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ import os
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-CAMPAIGN = HERE / "validation" / "experiment_4_1" / "real_mcp_20260729T214721Z"
+CAMPAIGN = HERE / "validation" / "experiment_4_2" / "real_mcp_20260729T214721Z"
 
 
 def _json(path: Path) -> dict:

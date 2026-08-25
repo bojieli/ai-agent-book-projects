@@ -1,4 +1,4 @@
-"""Contract tests for the exact Experiment 4-7 runner (no model/API calls)."""
+"""Contract tests for the exact Experiment 4-1 runner (no model/API calls)."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ import pytest
 
 HERE = Path(__file__).resolve().parent
 RUNNER_PATH = HERE / "run_exact_experiment.py"
-SPEC = importlib.util.spec_from_file_location("experiment_4_7_runner", RUNNER_PATH)
+SPEC = importlib.util.spec_from_file_location("experiment_4_1_runner", RUNNER_PATH)
 runner = importlib.util.module_from_spec(SPEC)
 assert SPEC.loader is not None
 sys.modules[SPEC.name] = runner

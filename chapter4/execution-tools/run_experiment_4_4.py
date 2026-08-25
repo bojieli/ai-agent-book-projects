@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the manuscript-scope Experiment 4-3 campaign over real MCP stdio."""
+"""Run the manuscript-scope Experiment 4-4 campaign over real MCP stdio."""
 
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ from mcp.client.stdio import stdio_client
 HERE = Path(__file__).resolve().parent
 PROTOCOL = HERE / "experiment_protocol.json"
 SERVER = HERE / "server.py"
-VALIDATION = HERE / "validation" / "experiment_4_3"
+VALIDATION = HERE / "validation" / "experiment_4_4"
 CREDENTIAL = re.compile(r"\b(?:sk|gh[opusr])-[A-Za-z0-9_-]{12,}\b")
 
 
@@ -147,16 +147,16 @@ async def run(
                     {"item": "Storage", "quantity": 3, "unit_price": 7.0}]})
             await call("real_webhook", "webhook_post", {
                 "url": "https://postman-echo.com/post",
-                "payload": {"experiment": "4-3", "marker": "REAL-WEBHOOK-RECEIPT"}})
+                "payload": {"experiment": "4-4", "marker": "REAL-WEBHOOK-RECEIPT"}})
             await call("real_browser", "browser_navigate", {
                 "url": "https://example.com", "screenshot_path": "browser-example.png"})
             await call("calendar_preflight", "google_calendar_add", {
-                "summary": "Experiment 4-3", "start_time": "2026-08-01T10:00:00+00:00",
+                "summary": "Experiment 4-4", "start_time": "2026-08-01T10:00:00+00:00",
                 "end_time": "2026-08-01T10:30:00+00:00"})
             await call("github_pr_preflight", "github_create_pr", {
                 "repo_name": "bojieli/ai-agent-book",
-                "title": "feat(ch4): build Experiment 4-3 GUI environments",
-                "body": "Experiment 4-3 evidence: real Android and X11 Computer Use execution.",
+                "title": "feat(ch4): build Experiment 4-4 GUI environments",
+                "body": "Experiment 4-4 evidence: real Android and X11 Computer Use execution.",
                 "head_branch": github_head_branch, "base_branch": github_base_branch})
             await call("real_virtual_desktop", "virtual_desktop_execute", {
                 "url": "https://example.com", "screenshot_path": "computer-use-example.png",
@@ -234,7 +234,7 @@ async def run(
     status = "passed" if all(gates.values()) else (
         "blocked" if all(gates[name] for name in core_names) else "failed")
     summary = {
-        "experiment": "4-3", "campaign_id": campaign_id,
+        "experiment": "4-4", "campaign_id": campaign_id,
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "status": status, "official_complete": status == "passed",
         "gates": gates, "long_output_full_file": long_evidence,
@@ -247,11 +247,11 @@ async def run(
         if path.is_file() and path.name != "manifest.json":
             files.append({"path": str(path.relative_to(run_dir)), "bytes": path.stat().st_size,
                           "sha256": sha(path)})
-    manifest = {"experiment": "4-3", "campaign_id": campaign_id,
+    manifest = {"experiment": "4-4", "campaign_id": campaign_id,
                 "status": status, "official_complete": status == "passed", "files": files}
     write_json(run_dir / "manifest.json", manifest)
     write_json(VALIDATION / "latest.json", {
-        "experiment": "4-3", "campaign_id": campaign_id, "status": status,
+        "experiment": "4-4", "campaign_id": campaign_id, "status": status,
         "official_complete": status == "passed",
         "manifest": str((run_dir / "manifest.json").relative_to(HERE)),
         "manifest_sha256": sha(run_dir / "manifest.json")})
@@ -261,8 +261,8 @@ async def run(
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--campaign-id", default=datetime.now(timezone.utc).strftime("real_mcp_%Y%m%dT%H%M%SZ"))
-    parser.add_argument("--android-container", default=os.getenv("ANDROID_WORLD_CONTAINER", "exp4-3-android"))
-    parser.add_argument("--github-head-branch", default="nonexistent-exp4-3")
+    parser.add_argument("--android-container", default=os.getenv("ANDROID_WORLD_CONTAINER", "exp4-4-android"))
+    parser.add_argument("--github-head-branch", default="nonexistent-exp4-4")
     parser.add_argument("--github-base-branch", default="main")
     args = parser.parse_args()
     path = asyncio.run(run(

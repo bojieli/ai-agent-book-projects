@@ -1,7 +1,7 @@
 # Perception Tools MCP Server / 感知工具 MCP 服务器
 
-> Companion code for *AI Agents in Depth*, Chapter 4 — **Experiment 4-1 ★★**. MCP perception tools: search, multimodal, filesystem, public/private data. Most free APIs need no key.  
-> 配套《深入理解 AI Agent》第 4 章 **实验 4-1 ★★**。感知 MCP 工具：搜索、多模态、文件系统、公开/私有数据。多数免费 API 无需 Key。
+> Companion code for *AI Agents in Depth*, Chapter 4 — **Experiment 4-2 ★★**. MCP perception tools: search, multimodal, filesystem, public/private data. Most free APIs need no key.  
+> 配套《深入理解 AI Agent》第 4 章 **实验 4-2 ★★**。感知 MCP 工具：搜索、多模态、文件系统、公开/私有数据。多数免费 API 无需 Key。
 
 ← [Chapter 4 index / 返回第 4 章目录](../README.md)
 
@@ -53,7 +53,7 @@ A comprehensive MCP (Model Context Protocol) server providing various perception
 
 ### Installation
 
-1. Create a clean environment for Experiment 4-1 and install its MCP v2 dependencies:
+1. Create a clean environment for Experiment 4-2 and install its MCP v2 dependencies:
 
 ```bash
 cd chapter4/perception-tools
@@ -68,7 +68,7 @@ python -m pip install -r requirements.txt
 python smoke_test_mcp_v2.py
 ```
 
-`requirements.txt` deliberately pins `mcp>=2,<3`. Experiment 4-1 uses the
+`requirements.txt` deliberately pins `mcp>=2,<3`. Experiment 4-2 uses the
 SDK v2 `MCPServer`/`Client` API and negotiates the stateless MCP
 `2026-07-28` protocol. A shared environment that still contains MCP 1.x is
 not compatible with this experiment.
@@ -142,15 +142,15 @@ Mutation arguments remain relative to that root. The server records pre/post
 SHA-256 fingerprints, rejects `..`, absolute paths, and symlinks, and moves
 deleted/replaced data into `.perception-trash` so the operation is reversible.
 
-### Exact Experiment 4-1 campaign
+### Exact Experiment 4-2 campaign
 
 Run the five-category campaign through the real MCP stdio transport:
 
 ```bash
-python run_experiment_4_1.py
+python run_experiment_4_2.py
 python -m pip install pytest pytest-asyncio
-python -m pytest -q test_experiment_4_1.py test_filesystem_mutations.py \
-  test_real_experiment_4_1_evidence.py test_expanded_catalog.py
+python -m pytest -q test_experiment_4_2.py test_filesystem_mutations.py \
+  test_real_experiment_4_2_evidence.py test_expanded_catalog.py
 ```
 
 The retained July 30, 2026 receipt is **legacy evidence**: it predates SDK v2
@@ -518,7 +518,7 @@ This project is part of the AI Agent training camp materials.
 
 ### 安装
 
-1. 为实验 4-1 创建干净环境并安装 MCP v2 依赖：
+1. 为实验 4-2 创建干净环境并安装 MCP v2 依赖：
 
 ```bash
 cd chapter4/perception-tools
@@ -533,7 +533,7 @@ python -m pip install -r requirements.txt
 python smoke_test_mcp_v2.py
 ```
 
-`requirements.txt` 明确限定 `mcp>=2,<3`。实验 4-1 使用 SDK v2 的
+`requirements.txt` 明确限定 `mcp>=2,<3`。实验 4-2 使用 SDK v2 的
 `MCPServer`/`Client` API，并协商无状态的 MCP `2026-07-28` 协议；仍安装
 MCP 1.x 的共享环境与本实验不兼容。
 
@@ -591,15 +591,15 @@ Xquik 是独立第三方服务，与 X Corp. 无隶属或认可关系。
 
 如需启用该可选集成，请另行安装 `notion-client`；基础依赖保持其可选性。
 
-### 精确实验 4-1 campaign
+### 精确实验 4-2 campaign
 
 通过真实 MCP stdio 传输运行五类场景：
 
 ```bash
-python run_experiment_4_1.py
+python run_experiment_4_2.py
 python -m pip install pytest pytest-asyncio
-python -m pytest -q test_experiment_4_1.py test_filesystem_mutations.py \
-  test_real_experiment_4_1_evidence.py test_expanded_catalog.py
+python -m pytest -q test_experiment_4_2.py test_filesystem_mutations.py \
+  test_real_experiment_4_2_evidence.py test_expanded_catalog.py
 ```
 
 保留的 2026 年 7 月 30 日收据属于旧版证据：它早于 SDK v2，且没有记录
