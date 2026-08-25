@@ -343,7 +343,6 @@ messages = [
 ```
 
 **第 1 次调用后（模型返回工具调用）：**
-
 ```text
 messages = [
   { role: "system",    content: "..." },
@@ -355,7 +354,6 @@ messages = [
 ```
 
 **第 2 次调用后（模型返回最终回复，循环结束）：**
-
 ```text
 messages = [
   { role: "system",    content: "..." },
