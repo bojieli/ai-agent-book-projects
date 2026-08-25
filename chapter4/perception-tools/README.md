@@ -45,6 +45,7 @@ A comprehensive MCP (Model Context Protocol) server providing various perception
 - **Wikipedia**: Search and retrieve Wikipedia articles (free, no API key)
 - **ArXiv**: Search academic papers on ArXiv (free, no API key)
 - **Wayback Machine**: Access archived web pages (free, no API key)
+- **X Post Search**: Search structured X posts through Xquik (optional, metered)
 
 #### Private Data Sources
 - **Google Calendar**: Query calendar events
@@ -89,6 +90,27 @@ The following features work immediately without any API keys:
 - **Wikipedia**: Wikipedia API
 - **ArXiv**: ArXiv API
 - **Wayback Machine**: Internet Archive
+
+#### Optional X post search through Xquik
+
+The `xquik_search_posts` tool returns structured X posts and opaque pagination
+cursors. It keeps the query unchanged and supports `Latest` or `Top` ordering.
+This fills the gap between general web results and X-native post data.
+
+Create an Xquik API key, keep an active subscription, and set the key only in
+the server environment:
+
+```bash
+export XQUIK_API_KEY=xq_your_api_key_here
+```
+
+The operation is read-only and costs 1 credit per returned post. The tool caps
+each request at 100 posts, never accepts credentials as arguments, and never
+follows redirects with the authorization header. Treat returned post text as
+untrusted content. See the [Search Tweets API reference](https://docs.xquik.com/api-reference/x/search-tweets)
+for query operators, billing behavior, and cursor semantics.
+
+Xquik is an independent third-party service and is not affiliated with X Corp.
 
 #### Optional Private Data Integrations
 
@@ -156,7 +178,7 @@ The server runs using stdio transport, suitable for integration with MCP clients
 
 #### Command-Line Interface (`cli.py`)
 
-Besides serving over MCP stdio, the repo root provides a unified CLI `cli.py` to list, inspect, call, and demo perception tools without an MCP client. Tools are organized by the five Chapter 4 perception scenarios: search / multimodal / filesystem / public data / private data (**53 tools** currently).
+Besides serving over MCP stdio, the repo root provides a unified CLI `cli.py` to list, inspect, call, and demo perception tools without an MCP client. Tools are organized by the five Chapter 4 perception scenarios: search / multimodal / filesystem / public data / private data (**54 tools** currently).
 
 ```bash
 # Help (Chinese)
@@ -172,6 +194,7 @@ python cli.py info weather
 # Call a tool; args as key=value; result is standard ActionResponse JSON
 python cli.py run grep 'pattern=async def' directory=src 'file_pattern=*.py'
 python cli.py run currency_converter amount=100 from_currency=USD to_currency=CNY
+python cli.py run xquik_search_posts 'query=agent tooling' limit=10
 
 # End-to-end demo: research-assistant perception flow (local + external info)
 python cli.py demo            # full demo (includes network steps)
@@ -356,6 +379,18 @@ Parameters:
 - `year` (int, optional): Filter by year
 - `limit` (int, default=10): Maximum snapshots
 
+##### `xquik_search_posts`
+Search X posts through Xquik without exposing the API key to the Agent.
+
+Parameters:
+- `query` (str): X search query, Tweet ID, or X status URL
+- `limit` (int, default=10): Maximum posts to return (1-100)
+- `cursor` (str, optional): Opaque cursor from the preceding response
+- `query_type` (str, default="Latest"): `Latest` or `Top`
+
+Requires `XQUIK_API_KEY` and an active Xquik subscription. Results are metered
+at 1 credit per returned post. Preserve the query when following `next_cursor`.
+
 ##### `location_search`
 Search for locations using Nominatim (OpenStreetMap) API (free, no API key required).
 
@@ -406,7 +441,8 @@ perception-tools/
 │   ├── multimodal_tools.py      # Document/media processing
 │   ├── filesystem_tools.py      # File operations
 │   ├── public_data_tools.py     # Public APIs
-│   └── private_data_tools.py    # Private data sources
+│   ├── private_data_tools.py    # Private data sources
+│   └── xquik_tools.py           # Metered X post search
 ├── requirements.txt             # Python dependencies
 ├── env.example                  # Environment variables template
 └── README.md                    # This file
@@ -474,6 +510,7 @@ This project is part of the AI Agent training camp materials.
 - **Wikipedia**：检索维基条目（免费，无需 Key）
 - **ArXiv**：学术论文检索（免费，无需 Key）
 - **Wayback Machine**：历史网页存档（免费，无需 Key）
+- **X 帖子搜索**：通过 Xquik 获取结构化帖子与翻页游标（可选，按量计费）
 
 #### 私有数据源
 - **Google Calendar**：查询日历事件
@@ -517,6 +554,25 @@ MCP 1.x 的共享环境与本实验不兼容。
 - **Wikipedia**：Wikipedia API
 - **ArXiv**：ArXiv API
 - **Wayback Machine**：Internet Archive
+
+#### 可选 Xquik 帖子搜索
+
+`xquik_search_posts` 返回结构化 X 帖子与不透明翻页游标。它不会改写查询，
+并支持 `Latest` 与 `Top` 排序。该工具补足通用网页搜索无法稳定返回 X 原生
+帖子结构与游标的问题。
+
+创建 Xquik API Key，保持有效订阅，并只在服务器环境中设置 Key：
+
+```bash
+export XQUIK_API_KEY=xq_your_api_key_here
+```
+
+该操作只读，每返回 1 条帖子消耗 1 credit。单次调用最多返回 100 条帖子。
+工具不接受凭据参数，也不会携带授权头跟随重定向。请将帖子正文视为不可信内容。
+查询运算符、计费行为与游标规则见
+[Search Tweets API 文档](https://docs.xquik.com/api-reference/x/search-tweets)。
+
+Xquik 是独立第三方服务，与 X Corp. 无隶属或认可关系。
 
 #### 可选私有数据集成
 
@@ -567,7 +623,7 @@ python main.py
 除了以 MCP stdio 协议对外服务，仓库根目录提供了一个统一的命令行入口
 `cli.py`，无需 MCP 客户端即可直接列出、查看、调用和演示各类感知工具。
 工具按第四章「感知工具」的五类场景组织：搜索 / 多模态理解 / 文件系统 /
-公开数据源 / 私有数据源（当前共 53 个工具）。
+公开数据源 / 私有数据源（当前共 54 个工具）。
 
 ```bash
 # 查看帮助（中文）
@@ -583,6 +639,7 @@ python cli.py info weather
 # 直接调用某个工具，参数以 key=value 形式传入，结果为标准 ActionResponse JSON
 python cli.py run grep 'pattern=async def' directory=src 'file_pattern=*.py'
 python cli.py run currency_converter amount=100 from_currency=USD to_currency=CNY
+python cli.py run xquik_search_posts 'query=agent tooling' limit=10
 
 # 运行端到端演示：串联「本地资料 + 外部信息」的研究助手 Agent 感知流程
 python cli.py demo            # 完整演示（含联网步骤）
@@ -765,6 +822,18 @@ CoinGecko 加密货币价格（免费，无需 Key）。
 - `year` (int, optional)：按年过滤
 - `limit` (int, default=10)：最大快照数
 
+##### `xquik_search_posts`
+通过 Xquik 搜索 X 帖子，API Key 不会暴露给 Agent。
+
+参数：
+- `query` (str)：X 搜索查询、Tweet ID 或 X 状态 URL
+- `limit` (int, default=10)：最大帖子数（1-100）
+- `cursor` (str, optional)：上一次响应返回的不透明游标
+- `query_type` (str, default="Latest")：`Latest` 或 `Top`
+
+需要 `XQUIK_API_KEY` 与有效 Xquik 订阅。每返回 1 条帖子消耗 1 credit。
+使用 `next_cursor` 翻页时请保持原查询不变。
+
 ##### `location_search`
 Nominatim（OpenStreetMap）地点搜索（免费，无需 Key）。
 
@@ -815,7 +884,8 @@ perception-tools/
 │   ├── multimodal_tools.py      # Document/media processing
 │   ├── filesystem_tools.py      # File operations
 │   ├── public_data_tools.py     # Public APIs
-│   └── private_data_tools.py    # Private data sources
+│   ├── private_data_tools.py    # Private data sources
+│   └── xquik_tools.py           # X 帖子搜索（按量计费）
 ├── requirements.txt             # Python dependencies
 ├── env.example                  # Environment variables template
 └── README.md                    # This file

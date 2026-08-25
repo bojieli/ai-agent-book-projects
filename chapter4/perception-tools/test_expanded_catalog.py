@@ -1,4 +1,4 @@
-"""Offline contract checks for the real-backed 126-tool perception catalog."""
+"""Offline contract checks for the real-backed 127-tool perception catalog."""
 
 from __future__ import annotations
 
@@ -27,13 +27,14 @@ def test_catalog_has_126_unique_complete_schemas_over_50k_tokens():
     names = {schema["name"] for schema in schemas}
     rendered = "\n".join(json.dumps(schema, ensure_ascii=False, indent=2)
                          for schema in schemas)
-    assert len(schemas) == len(names) == 126
+    assert len(schemas) == len(names) == 127
     assert len(expanded_catalog.EXPANDED_SPECS) == 70
-    assert len(expanded_catalog.EXISTING_TOOL_CONTRACTS) == 56
+    assert len(expanded_catalog.EXISTING_TOOL_CONTRACTS) == 57
     assert len(tiktoken.get_encoding("o200k_base").encode(rendered)) > 50_000
     assert {
         "web_search", "code_interpreter", "yfinance_quote", "search_news",
         "arxiv_search", "arxiv_download", "github_list_contributors",
+        "xquik_search_posts",
     } <= names
     assert all("success" in schema["description"].lower()
                and "failure" in schema["description"].lower()
@@ -46,6 +47,17 @@ def test_expanded_parameter_descriptions_are_tool_specific():
         properties = schemas[spec.name]["inputSchema"]["properties"]
         assert spec.name in properties["query"]["description"]
         assert spec.name in properties["options_json"]["description"]
+
+
+def test_xquik_schema_keeps_credentials_out_of_agent_arguments():
+    schema = {schema["name"]: schema for schema in _schemas()}["xquik_search_posts"]
+    properties = schema["inputSchema"]["properties"]
+
+    assert set(properties) == {"query", "limit", "cursor", "query_type"}
+    assert properties["limit"]["minimum"] == 1
+    assert properties["limit"]["maximum"] == 100
+    assert properties["query_type"]["enum"] == ["Latest", "Top"]
+    assert "XQUIK_API_KEY" not in json.dumps(properties)
 
 
 def test_code_interpreter_nonzero_exit_fails_closed():
