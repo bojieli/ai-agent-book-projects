@@ -20,7 +20,7 @@ PROTOCOL_VERSION = "2026-07-28"
 async def smoke_test() -> None:
     sdk_version = version("mcp")
     if sdk_version.split(".", 1)[0] != "2":
-        raise RuntimeError(f"Experiment 4-1 requires mcp>=2,<3; found {sdk_version}")
+        raise RuntimeError(f"Experiment 4-2 requires mcp>=2,<3; found {sdk_version}")
 
     parameters = StdioServerParameters(
         command=sys.executable,

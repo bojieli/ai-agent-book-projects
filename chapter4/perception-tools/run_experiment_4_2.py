@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run Experiment 4-1 through the real perception MCP stdio transport.
+"""Run Experiment 4-2 through the real perception MCP stdio transport.
 
 The campaign exercises every sub-capability explicitly named by the manuscript.
 It creates small local documents/media as deterministic inputs, uses live public
@@ -33,7 +33,7 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parent.parent
 PROTOCOL_PATH = HERE / "experiment_protocol.json"
 SERVER_PATH = HERE / "src" / "main.py"
-VALIDATION_ROOT = HERE / "validation" / "experiment_4_1"
+VALIDATION_ROOT = HERE / "validation" / "experiment_4_2"
 
 CASE_TO_TOOL = {
     "web_search": "web_search",
@@ -143,7 +143,7 @@ def prepare_fixtures(campaign_dir: Path) -> dict[str, Any]:
 
     note = knowledge / "mcp-notes.md"
     note.write_text(
-        f"# Experiment 4-1\n\n{MARKER}\nThe Model Context Protocol connects agents to perception tools.\n",
+        f"# Experiment 4-2\n\n{MARKER}\nThe Model Context Protocol connects agents to perception tools.\n",
         encoding="utf-8",
     )
     (mutation / "seed.txt").write_text(f"{MARKER}\n", encoding="utf-8")
@@ -157,14 +157,14 @@ def prepare_fixtures(campaign_dir: Path) -> dict[str, Any]:
 
     pdf = documents / "sample.pdf"
     report = canvas.Canvas(str(pdf))
-    report.drawString(72, 760, f"Experiment 4-1 PDF {MARKER}")
+    report.drawString(72, 760, f"Experiment 4-2 PDF {MARKER}")
     report.save()
 
     from docx import Document
 
     docx = documents / "sample.docx"
     document = Document()
-    document.add_heading("Experiment 4-1 DOCX", level=1)
+    document.add_heading("Experiment 4-2 DOCX", level=1)
     document.add_paragraph(MARKER)
     document.save(docx)
 
@@ -173,7 +173,7 @@ def prepare_fixtures(campaign_dir: Path) -> dict[str, Any]:
     pptx = documents / "sample.pptx"
     presentation = Presentation()
     slide = presentation.slides.add_slide(presentation.slide_layouts[1])
-    slide.shapes.title.text = "Experiment 4-1 PPTX"
+    slide.shapes.title.text = "Experiment 4-2 PPTX"
     slide.placeholders[1].text = MARKER
     presentation.save(pptx)
 
@@ -567,7 +567,7 @@ def build_manifest(campaign_dir: Path, summary: dict[str, Any]) -> dict[str, Any
             "sha256": sha256_bytes(data),
         })
     return {
-        "experiment": "4-1",
+        "experiment": "4-2",
         "campaign_id": summary.get("campaign_id"),
         "status": summary.get("status"),
         "official_complete": summary.get("status") == "passed",
@@ -652,7 +652,7 @@ async def run(campaign_id: str | None = None) -> Path:
             ("wikipedia_search", {"query": "Model Context Protocol", "language": "en", "sentences": 3}),
             ("arxiv_search", {"query": "agentic artificial intelligence", "max_results": 2, "sort_by": "relevance"}),
             ("calendar_events", {"calendar_id": "primary", "max_results": 5}),
-            ("notion_search", {"query": "Experiment 4-1", "page_size": 5}),
+            ("notion_search", {"query": "Experiment 4-2", "page_size": 5}),
         ]
         for case, arguments in calls:
             receipt = await call_case(client, case, arguments, paths)
@@ -668,7 +668,7 @@ async def run(campaign_id: str | None = None) -> Path:
         outside_witness_unchanged=outside_unchanged,
     )
     summary = {
-        "experiment": "4-1",
+        "experiment": "4-2",
         "campaign_id": campaign_id,
         "status": acceptance["status"],
         "official_complete": acceptance["status"] == "passed",
@@ -683,7 +683,7 @@ async def run(campaign_id: str | None = None) -> Path:
     write_json(campaign_dir / "summary.json", summary)
     write_json(campaign_dir / "manifest.json", build_manifest(campaign_dir, summary))
     write_json(VALIDATION_ROOT / "latest.json", {
-        "experiment": "4-1", "campaign_id": campaign_id,
+        "experiment": "4-2", "campaign_id": campaign_id,
         "status": summary["status"], "official_complete": summary["official_complete"],
         "manifest": str((campaign_dir / "manifest.json").relative_to(HERE)),
         "manifest_sha256": sha256_bytes((campaign_dir / "manifest.json").read_bytes()),

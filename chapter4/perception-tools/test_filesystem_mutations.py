@@ -1,4 +1,4 @@
-"""Safety and receipt checks for Experiment 4-1 filesystem mutations."""
+"""Safety and receipt checks for Experiment 4-2 filesystem mutations."""
 
 from __future__ import annotations
 

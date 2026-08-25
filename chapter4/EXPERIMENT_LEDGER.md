@@ -4,61 +4,28 @@ This ledger separates execution coverage from the manuscript hypothesis and from
 
 | Experiment | Canonical run | Status | `official_complete` | Manifest SHA-256 |
 | --- | --- | --- | --- | --- |
-| 4-1 | `perception-tools/validation/experiment_4_1/real_mcp_dashscope_intl_20260730T070000Z` | blocked | false | `f93ee0ad9bd1121ed9e7c9d730bbaf85847d03e89c9024487cfdf9f62b8557ab` |
-| 4-2 | `multimodal-agent/validation/runs/20260729T185433Z-4_2-e028c9db` | passed | true | `1a9cc7bfd48717e73a03ebbde7fd786c7da2811a15267715a3794c0f1220362e` |
-| 4-3 | `execution-tools/validation/experiment_4_3/real_mcp_gui_20260802T093657Z` | blocked | false | `fde8976b91b149a61b7d468f4c825c1bdfdc9da3062cbfa66aaa1fd0f3d1966f` |
-| 4-4 | `collaboration-tools/validation/experiment_4_4/real_mcp_human_20260803_v2` | blocked | false | `9fae8eadec1f9583ba03e21df5c8bc660cc8bec2ba328cf304bcaa0039bd97a3` |
-| 4-5 | `agent-with-event-trigger/validation/experiment_4_5/credential_probe_20260730T064500Z` | blocked | false | `3f689dfee915503f61ca30e9b590e24c8950496ca90fbf365def83805e877d0a` |
-| 4-6 | `async-agent/validation/experiment_4_6/real_subprocess_20260730T052500Z` | passed | true | `fff6b43a2e3a0b706fdd68bca289119f726d3f827f3f4d837e97321f7d48a825` |
-| 4-7 | `active-tool-discovery/validation/experiment_4_7/qwen3_4b_exact_v2_20260730T130600Z` | passed | true | `ce9d6eda2237938e9ed7bf63a950d1b261526897c0597f2908b705e6d6430d0e` |
+| 4-1 | `active-tool-discovery/validation/experiment_4_1/qwen3_4b_exact_v2_20260730T130600Z` | passed | true | `ce9d6eda2237938e9ed7bf63a950d1b261526897c0597f2908b705e6d6430d0e` |
+| 4-2 | `perception-tools/validation/experiment_4_2/real_mcp_dashscope_intl_20260730T070000Z` | blocked | false | `f93ee0ad9bd1121ed9e7c9d730bbaf85847d03e89c9024487cfdf9f62b8557ab` |
+| 4-3 | `multimodal-agent/validation/runs/20260729T185433Z-4_2-e028c9db` | passed | true | `1a9cc7bfd48717e73a03ebbde7fd786c7da2811a15267715a3794c0f1220362e` |
+| 4-4 | `execution-tools/validation/experiment_4_4/real_mcp_gui_20260802T093657Z` | blocked | false | `fde8976b91b149a61b7d468f4c825c1bdfdc9da3062cbfa66aaa1fd0f3d1966f` |
+| 4-5 | `collaboration-tools/validation/experiment_4_5/real_mcp_human_20260803_v2` | blocked | false | `9fae8eadec1f9583ba03e21df5c8bc660cc8bec2ba328cf304bcaa0039bd97a3` |
 
-## Experiment 4-1 — perception MCP
+> **Numbering.** Chapter 4 renumbered its experiments when the “too many tools” section moved ahead of the
+> three tool categories: active tool discovery 4-5 → 4-1, perception 4-1 → 4-2, multimodal 4-2 → 4-3,
+> execution 4-3 → 4-4, collaboration 4-4 → 4-5. Run directories under `validation/` were renamed to match,
+> but the sealed manifests and receipts inside them were left byte-identical, so every hash below still
+> verifies against the file it was computed from. Receipts written before the renumber therefore still
+> quote the old `experiment_4_N` paths and the old experiment label; that is a record of the run as it
+> happened and is deliberately not rewritten.
 
-Manuscript gates: a real MCP catalog covering search, multimodal understanding, filesystem operations, public data, and authorized private data.
+> **Two recorded hashes no longer verify, both predating this renumber — they need a re-run or a
+> documented recomputation, and are intentionally left as-is rather than silently replaced:**
+> the 4-1 (active tool discovery) manifest hash `ce9d6eda…` matches no file in its canonical run
+> directory; and the mailbox experiment that became 6-1 has a manifest that now hashes to `5b8befd0…`
+> after its `experiment` field was relabelled 4-5 → 6-1 during the chapter-6 split, while both this
+> ledger and `chapter6/.../latest.json` still record the pre-relabel `3f689dfe…`.
 
-- Passed: real MCP `tools/list`; web and local-knowledge search; HTTPS download and webpage reading; PDF/DOCX/PPTX extraction; OCR; local Whisper transcription; video parsing; DashScope international `qwen-vl-max` image and video analysis with response IDs, token usage, and latency; confined file read/search/list/copy/move/delete; three escape probes; Open-Meteo, Yahoo Finance, exchange-rate, Wikipedia, and arXiv calls.
-- Blocked: Google Calendar and Notion. No usable OAuth token or Notion integration credential exists in the environment. The failed calls and credential-free preflight are retained.
-- Failed provenance retained: the first DashScope attempt used the mainland endpoint with an international-region key and received 401; the corrected run uses `dashscope-intl.aliyuncs.com`.
-
-## Experiment 4-2 — multimodal processing
-
-Manuscript gates: run the same nontrivial image/PDF and questions through native multimodal, extract-to-text, and tool-on-demand paradigms, retaining real vision calls, tool-use traces, exact-answer quality, latency, usage, and an external judge for free-form output. The canonical run is retained under `multimodal-agent/validation/runs/20260729T185433Z-4_2-e028c9db/`.
-
-## Experiment 4-3 — execution MCP
-
-Manuscript gates: verified file write/edit, terminal timeout and dangerous-command review, sandboxed Python, long-output persistence, Excel operations, external system mutations, and browser/desktop/mobile execution.
-
-- Passed: deterministic Python compiler and Node `--check` linter; structured invalid-code responses; workspace escape rejection; timeout; OpenRouter GPT-4.1-mini dangerous-command rejection with raw usage/latency receipts; Docker Python sandbox (`--network none`, read-only root, memory/CPU/PID limits); immutable full long-output retention; XLSX formulas rendered through LibreOffice and PyMuPDF; real HTTPS webhook; real headless Chromium navigation and screenshot; PR #605 created through the GitHub execution tool and then safely reused through query-before-mutation idempotency; headful Chromium on Xvfb driven through OS keyboard events with a hashed framebuffer; and a KVM-backed AndroidWorld API-33 emulator that opened Wi-Fi Settings, verified focus, captured pixels, and returned home through ADB input.
-- Blocked: no Google Calendar or real email-provider credentials. Android, Computer Use, and GitHub are no longer blockers. The canonical run passes 13/15 gates while retaining `official_complete: false` for the two absent external mutations.
-- Failed provenance retained: `real_mcp_gui_20260802T093348Z` established the GitHub/desktop/mobile gates but failed the spreadsheet gate because LibreOffice and the Chapter 4 PyMuPDF dependency were missing. The corrected canonical run installs/declares both and passes the spreadsheet gate; it reuses the already-open PR instead of creating a duplicate.
-
-## Experiment 4-4 — collaboration MCP
-
-Manuscript gates: sync/async sub-agent lifecycle, messages, cancellation/status, two context-passing strategies, HITL requests with timeout/default behavior, and real multi-channel notification.
-
-- Passed: the canonical v2 run retains six unique Kimi K3 response/usage/latency receipts; real minimal and LLM-generated handoffs; privacy filtering; synchronous and asynchronous completion/status; follow-up messages; cancellation; a conservative timeout; and a live repository-user approval delivered to the same pending MCP request in 1,423.272 seconds within its four-hour response window. The independent validator checks the human/MCP IDs and decision, 55 tool receipts, all 61 manifest hashes, and credential absence.
-- Blocked only on delivery: no real SMTP/SendGrid, Telegram, or Slack configuration exists. Credential-free preflights fail explicitly, so `official_complete` remains false even though the human-decision gate is now closed.
-- Failed provenance retained: `real_mcp_human_20260803_v1` used a 30-minute live window; the response arrived just after timeout and exposed that an expired request could still be mutated. The failed run preserves the timeout and late-response receipts. The production HITL primitive now rejects late or duplicate responses to terminal requests, with focused regression tests. The earlier `real_mcp_kimi_20260730T063500Z` run also preserves the original too-short async polling failure.
-
-## Experiment 4-5 — event-driven mailbox agent
-
-Manuscript gates: three real inbound test-mailbox events processed FIFO: meeting/calendar conflict plus draft, complaint extraction plus high-priority notification, and marketing archive plus provider verification.
-
-- The campaign fetched and hashed all eight official Unipile Email/Calendar schema documents and made credential-redacted live API probes.
-- Blocked before mailbox mutation: the configured Unipile credential returns 401 with both documented `X-API-KEY` and diagnostic Bearer authentication. Therefore zero local/synthetic mail objects were substituted and no three-email success is claimed.
-
-## Experiment 4-6 — interruptible asynchronous agent
-
-All four exact manuscript scenarios passed with real OS subprocesses: a 3–5
-second command remained non-blocking while the time question was answered;
-queued instructions were appended once and produced a Japanese HTML artifact;
-an interrupt terminated the real child process and the runtime recovered; and
-the 3%/2%/1% parallel jobs triggered exactly one status query after the fast
-job, preserved the >50% job, cancelled only the <=50% job, and produced a
-hashed integrated report. The canonical summary is
-`async-agent/validation/experiment_4_6/real_subprocess_20260730T052500Z/summary.json`.
-
-## Experiment 4-7 — active tool discovery
+## Experiment 4-1 — active tool discovery
 
 The canonical campaign uses local Ollama `qwen3:4b`, 126 complete schemas
 listed by the real perception MCP server, a 50,120-token schema catalog, a
@@ -94,3 +61,31 @@ attempt. With the arXiv client page bounded to the requested three results,
 the official endpoint succeeded on its first call and all three PDFs were
 downloaded, signature-checked and hashed. No cached result or mock substituted
 for either failed attempt.
+
+## Experiment 4-2 — perception MCP
+
+Manuscript gates: a real MCP catalog covering search, multimodal understanding, filesystem operations, public data, and authorized private data.
+
+- Passed: real MCP `tools/list`; web and local-knowledge search; HTTPS download and webpage reading; PDF/DOCX/PPTX extraction; OCR; local Whisper transcription; video parsing; DashScope international `qwen-vl-max` image and video analysis with response IDs, token usage, and latency; confined file read/search/list/copy/move/delete; three escape probes; Open-Meteo, Yahoo Finance, exchange-rate, Wikipedia, and arXiv calls.
+- Blocked: Google Calendar and Notion. No usable OAuth token or Notion integration credential exists in the environment. The failed calls and credential-free preflight are retained.
+- Failed provenance retained: the first DashScope attempt used the mainland endpoint with an international-region key and received 401; the corrected run uses `dashscope-intl.aliyuncs.com`.
+
+## Experiment 4-3 — multimodal processing
+
+Manuscript gates: run the same nontrivial image/PDF and questions through native multimodal, extract-to-text, and tool-on-demand paradigms, retaining real vision calls, tool-use traces, exact-answer quality, latency, usage, and an external judge for free-form output. The canonical run is retained under `multimodal-agent/validation/runs/20260729T185433Z-4_2-e028c9db/`.
+
+## Experiment 4-4 — execution MCP
+
+Manuscript gates: verified file write/edit, terminal timeout and dangerous-command review, sandboxed Python, long-output persistence, Excel operations, external system mutations, and browser/desktop/mobile execution.
+
+- Passed: deterministic Python compiler and Node `--check` linter; structured invalid-code responses; workspace escape rejection; timeout; OpenRouter GPT-4.1-mini dangerous-command rejection with raw usage/latency receipts; Docker Python sandbox (`--network none`, read-only root, memory/CPU/PID limits); immutable full long-output retention; XLSX formulas rendered through LibreOffice and PyMuPDF; real HTTPS webhook; real headless Chromium navigation and screenshot; PR #605 created through the GitHub execution tool and then safely reused through query-before-mutation idempotency; headful Chromium on Xvfb driven through OS keyboard events with a hashed framebuffer; and a KVM-backed AndroidWorld API-33 emulator that opened Wi-Fi Settings, verified focus, captured pixels, and returned home through ADB input.
+- Blocked: no Google Calendar or real email-provider credentials. Android, Computer Use, and GitHub are no longer blockers. The canonical run passes 13/15 gates while retaining `official_complete: false` for the two absent external mutations.
+- Failed provenance retained: `real_mcp_gui_20260802T093348Z` established the GitHub/desktop/mobile gates but failed the spreadsheet gate because LibreOffice and the Chapter 4 PyMuPDF dependency were missing. The corrected canonical run installs/declares both and passes the spreadsheet gate; it reuses the already-open PR instead of creating a duplicate.
+
+## Experiment 4-5 — collaboration MCP
+
+Manuscript gates: sync/async sub-agent lifecycle, messages, cancellation/status, two context-passing strategies, HITL requests with timeout/default behavior, and real multi-channel notification.
+
+- Passed: the canonical v2 run retains six unique Kimi K3 response/usage/latency receipts; real minimal and LLM-generated handoffs; privacy filtering; synchronous and asynchronous completion/status; follow-up messages; cancellation; a conservative timeout; and a live repository-user approval delivered to the same pending MCP request in 1,423.272 seconds within its four-hour response window. The independent validator checks the human/MCP IDs and decision, 55 tool receipts, all 61 manifest hashes, and credential absence.
+- Blocked only on delivery: no real SMTP/SendGrid, Telegram, or Slack configuration exists. Credential-free preflights fail explicitly, so `official_complete` remains false even though the human-decision gate is now closed.
+- Failed provenance retained: `real_mcp_human_20260803_v1` used a 30-minute live window; the response arrived just after timeout and exposed that an expired request could still be mutated. The failed run preserves the timeout and late-response receipts. The production HITL primitive now rejects late or duplicate responses to terminal requests, with focused regression tests. The earlier `real_mcp_kimi_20260730T063500Z` run also preserves the original too-short async polling failure.

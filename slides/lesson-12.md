@@ -177,7 +177,7 @@ $ uv run python chapter3/structured-index/main.py demo
 
 <div class="grid grid-cols-2 gap-4 mt-6">
 <a class="course-link" href="../chapter4/multimodal-agent/">
-<span class="course-link-title">Experiment 4-2: multimodal strategies</span>
+<span class="course-link-title">Experiment 4-3: multimodal strategies</span>
 <span class="course-link-path">chapter4/multimodal-agent/</span>
 </a>
 <a class="course-link" href="../book-en/images/fig3-10.svg">

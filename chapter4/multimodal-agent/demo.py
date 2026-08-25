@@ -232,10 +232,10 @@ async def demo_conversation_with_tools():
 
 
 def build_parser() -> argparse.ArgumentParser:
-    """构建实验 4-2 的命令行接口。"""
+    """构建实验 4-3 的命令行接口。"""
     parser = argparse.ArgumentParser(
         description=(
-            "实验 4-2：多模态信息提取的三种技术范式对比（原生多模态 / 提取为文本 / 带工具）。\n"
+            "实验 4-3：多模态信息提取的三种技术范式对比（原生多模态 / 提取为文本 / 带工具）。\n"
             "将同一多模态文件和同一问题分别交给三种模式处理，观察表现差异。"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,

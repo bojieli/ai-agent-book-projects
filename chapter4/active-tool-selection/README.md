@@ -1098,7 +1098,7 @@ MIT License - 详见 LICENSE 文件
 
 ## Notes / 说明
 
-- Related experiment: [active-tool-discovery](../active-tool-discovery/) (Experiment 4-7, embedding-based `discover_tools`).  
-- 相关实验：[active-tool-discovery](../active-tool-discovery/)（实验 4-7，基于嵌入的 `discover_tools`）。  
+- Related experiment: [active-tool-discovery](../active-tool-discovery/) (Experiment 4-1, embedding-based `discover_tools`).  
+- 相关实验：[active-tool-discovery](../active-tool-discovery/)（实验 4-1，基于嵌入的 `discover_tools`）。  
 - Offline path is fully deterministic without API keys.  
 - 离线路径完全确定性，无需 API Key。

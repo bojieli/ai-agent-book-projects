@@ -1,4 +1,4 @@
-"""Focused tests for the Experiment 4-4 campaign controls."""
+"""Focused tests for the Experiment 4-5 campaign controls."""
 
 import json
 import os
@@ -13,7 +13,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
 import hitl_tools
 import subagent_tools
 
-from run_experiment_4_4 import (
+from run_experiment_4_5 import (
     SENSITIVE_ENV_NAMES,
     classify_status,
     human_decision_accepted,
@@ -148,7 +148,7 @@ class CampaignControlTests(unittest.TestCase):
         )
 
     def test_retained_publication_authorization_matches_accepted_mcp_result(self) -> None:
-        validation = Path(__file__).resolve().parent / "validation" / "experiment_4_4"
+        validation = Path(__file__).resolve().parent / "validation" / "experiment_4_5"
         expected = {
             "real_mcp_human_20260803_v1": False,
             "real_mcp_human_20260803_v2": True,

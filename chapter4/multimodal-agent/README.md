@@ -1,7 +1,7 @@
 # Multimodal Agent — Three Extraction Paradigms / 多模态 Agent——三种抽取范式对比
 
-> Companion material for *AI Agents in Depth*, Chapter 4 — **Experiment 4-2**: native multimodal vs extract-to-text vs tool-based analysis.  
-> 配套《深入理解 AI Agent》第 4 章 **实验 4-2**：原生多模态 vs 先抽文本 vs 工具化分析。
+> Companion material for *AI Agents in Depth*, Chapter 4 — **Experiment 4-3**: native multimodal vs extract-to-text vs tool-based analysis.  
+> 配套《深入理解 AI Agent》第 4 章 **实验 4-3**：原生多模态 vs 先抽文本 vs 工具化分析。
 
 ← [Chapter 4 index / 返回第 4 章目录](../README.md)
 
@@ -60,7 +60,7 @@ export $(cat .env | xargs)   # optional on Unix
 
 ### Quick offline start (no API key)
 
-Generate a chart-bearing sample so Experiment 4-2 is measurable—**exact quarterly figures live only in the chart bars**, not surrounding text:
+Generate a chart-bearing sample so Experiment 4-3 is measurable—**exact quarterly figures live only in the chart bars**, not surrounding text:
 
 ```bash
 python create_sample.py           # or: python demo.py --generate-sample

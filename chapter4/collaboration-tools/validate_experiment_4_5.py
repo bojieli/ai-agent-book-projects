@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Independently validate a retained Experiment 4-4 interactive campaign."""
+"""Independently validate a retained Experiment 4-5 interactive campaign."""
 
 from __future__ import annotations
 
@@ -65,7 +65,7 @@ def main() -> int:
     }
 
     gates = {
-        "campaign_identity": summary.get("experiment") == "4-4"
+        "campaign_identity": summary.get("experiment") == "4-5"
         and summary.get("campaign_id") == run_dir.name,
         "blocked_only_on_real_delivery": summary.get("status") == "blocked"
         and summary.get("official_complete") is False
@@ -123,7 +123,7 @@ def main() -> int:
         ),
     }
     result = {
-        "experiment": "4-4",
+        "experiment": "4-5",
         "campaign_id": run_dir.name,
         "passed": all(gates.values()),
         "gates": gates,
