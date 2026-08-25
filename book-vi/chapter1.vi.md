@@ -172,8 +172,6 @@ Hãy cùng tìm hiểu trajectory của Agent thông qua một ví dụ cụ th�
 
 Bản phác thảo theo phong cách Python dưới đây là pseudocode mang tính giải thích, không phải mã SDK có thể chạy; marker `python` chỉ dùng để tô sáng cú pháp.
 
-**Vòng lặp điều khiển ReAct:**
-
 ```python
 trajectory = [user_request]
 
@@ -234,9 +232,6 @@ Lưu ý rằng các system prompt và định nghĩa công cụ không được 
 Trong các thí nghiệm của chúng tôi, chu trình này được thể hiện rõ ràng. Ở vòng đầu tiên, Agent gọi song song ba công cụ chuyển đổi tiền tệ sau khi phân tích nhiệm vụ; ở vòng thứ hai, nó gọi trình thông dịch mã để thực hiện các phép tính phức tạp dựa trên kết quả chuyển đổi; ở vòng thứ ba, nó xác nhận rằng tất cả các phép tính đã hoàn thành và đưa ra câu trả lời cuối cùng. Toàn bộ quá trình chỉ mất 3 lần lặp lại và 4 lần gọi công cụ để hoàn thành nhiệm vụ phức tạp gồm nhiều bước.
 
 Trong thiết kế cơ bản nhất này, ngữ cảnh mà LLM nhìn thấy liên tục được nối thêm thông tin mới. Mỗi cuộc gọi LLM có thể thấy trajectory hoàn chỉnh, cho phép nó hiểu được nhiệm vụ hiện đang ở giai đoạn nào, những gì đã thử trước đó và kết quả thu được là gì. Cũng giống như con người liên tục xem xét và tóm tắt khi giải quyết vấn đề, Agent duy trì sự hiểu biết toàn diện về toàn bộ nhiệm vụ thông qua các trajectory. Đồng thời, bản chất có cấu trúc của trajectory cũng làm cho hệ thống có khả năng diễn giải và sửa lỗi cao: thông báo của người dùng, phản hồi của mô hình (quy trình tư duy + gọi công cụ) và kết quả thực thi công cụ đều được phân biệt rõ ràng.
-
-Trajectory không chỉ là bản ghi thực hiện mà còn phản ánh khả năng của Agent. Bằng cách phân tích một số lượng lớn trajectory, chúng tôi có thể khám phá kiểu hành vi của Agent, tối ưu hóa đường dẫn quyết định và cải thiện thiết kế công cụ. Dữ liệu trajectory thậm chí có thể được tóm tắt thành cơ sở kiến thức hoặc mô hình Agent tốt hơn có thể được đào tạo thông qua học tăng cường để đạt được tối ưu hóa vòng kín học hỏi từ kinh nghiệm.
-
 
 Sau khi hiểu được vòng lặp đang chạy của Agent, chúng ta hãy sử dụng hai thử nghiệm để cảm nhận xem các mô hình khác nhau điều khiển vòng lặp này như thế nào.
 
@@ -371,7 +366,6 @@ Mô hình này là cơ sở thông minh của Agent. Việc chọn đúng mô h�
 **Hầu hết Agent đều yêu cầu các mô hình hỗ trợ suy luận.** Agent yêu cầu các quyết định phức tạp như tư duy nhiều bước và lựa chọn công cụ. Những mô hình không có khả năng tư duy thường thực hiện kém những nhiệm vụ này. Chỉ với một vài ngoại lệ - chẳng hạn như tác vụ một bước đơn giản hoặc thao tác GUI đơn giản chỉ yêu cầu nhấp chuột vào một vị trí cố định - một mô hình không cần suy nghĩ cũng có thể thực hiện được công việc. Nhưng bất cứ khi nào cần đến tư duy nhiều bước hoặc ra quyết định năng động, bạn phải chọn một mô hình hỗ trợ tư duy.
 
 **Tập trung vào tốc độ đầu ra và khả năng đa phương thức.** Ngoài chi phí, còn có hai khía cạnh dễ bị bỏ qua. Đầu tiên là tốc độ của mã thông báo đầu ra: Agent thường yêu cầu nhiều vòng suy luận và mỗi vòng phải đợi đầu ra mô hình hoàn thành trước khi thực hiện bước tiếp theo. Do đó, tốc độ đầu ra xác định trực tiếp độ trễ phản hồi từ đầu đến cuối - nếu tác vụ Agent yêu cầu 20 vòng suy luận thì độ trễ 2 giây mỗi vòng có nghĩa là tổng cộng phải chờ thêm 40 giây. Thứ hai là **Hỗ trợ đa phương thức**: Nếu Agent của bạn cần hiểu hình ảnh, âm thanh hoặc video thì khả năng đa phương thức là một yêu cầu khó khăn và các mô hình khác nhau sẽ khác nhau rất nhiều về mặt này.
-
 
 ### Chế độ điều phối: Quy trình làm việc và quyền tự chủ
 

@@ -170,8 +170,6 @@ Pertimbangkan contoh konkret—mengagregasi pendapatan lintas berbagai mata uang
 
 Sketsa bergaya Python berikut adalah pseudocode penjelas, bukan kode SDK yang dapat dijalankan; penanda `python` hanya digunakan untuk penyorotan sintaks.
 
-**Loop kontrol ReAct:**
-
 ```python
 trajectory = [user_request]
 
@@ -232,8 +230,6 @@ Perhatikan bahwa system prompt dan tool definitions tidak ditampilkan dalam traj
 Dalam eksperimen kami, loop ini terlihat jelas. Pada putaran pertama, Agent menganalisis tugas dan memanggil tiga tool konversi mata uang secara paralel; pada putaran kedua, ia memasukkan hasil konversi ke interpreter kode (code interpreter) untuk penghitungan yang lebih intensif secara komputasi; pada putaran ketiga, setelah mengonfirmasi bahwa semua penghitungan telah selesai, ia menghasilkan jawaban akhir. Tugas multilangkah yang kompleks diselesaikan dalam 3 iterasi dan 4 tool calls.
 
 Dalam desain paling dasar ini, context yang dilihat LLM terus ditambahkan. Setiap panggilan LLM menerima trajectory lengkap, sehingga model mengetahui tahap mana dari tugas yang sedang dijalankannya, apa yang telah dicoba sebelumnya, dan apa hasilnya. Sama seperti orang yang terus meninjau dan merangkum saat memecahkan masalah, Agent mempertahankan pandangan global dari tugas tersebut melalui trajectory-nya. Dan karena trajectory terstruktur—user messages, assistant messages (reasoning + tool calls), dan tool results semuanya terpisah dengan rapi—sistem ini sangat dapat diinterpretasikan (interpretable) dan dapat di-debug (debuggable).
-
-Trajectory lebih dari sekadar catatan eksekusi; ini adalah bukti kapabilitas Agent. Menganalisis trajectory dalam skala besar akan mengungkap pola perilaku, jalur keputusan yang lebih baik, dan desain tool yang lebih baik. Data trajectory bahkan dapat disuling menjadi basis pengetahuan (knowledge base), atau digunakan untuk melatih model Agent yang lebih kuat via reinforcement learning—menutup loop pembelajaran dari pengalaman.
 
 Sekarang setelah kita memahami loop operasi Agent, kita akan memeriksa dua eksperimen untuk melihat bagaimana berbagai model menggerakkannya.
 
