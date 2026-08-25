@@ -84,8 +84,9 @@ def map_model_to_openrouter(model: str, *, substitute_unknown: bool = False) -> 
     Mapping rules, applied in order:
 
     * ids already containing ``/`` are returned unchanged (already OpenRouter form)
-    * ``gpt-*`` / ``o1-*`` / ``o3-*`` / ``o4-*`` become ``openai/<id>``
+    * ``gpt-*`` / ``o1*`` / ``o3*`` / ``o4*`` / ``chatgpt*`` become ``openai/<id>``
     * ``claude-*`` becomes the matching Anthropic id
+    * ``gemini*`` becomes ``google/<id>``
     * ``kimi-*`` becomes ``moonshotai/kimi-k2.6`` (kimi-k3 is not hosted)
     * ``deepseek-*`` becomes ``deepseek/<id>``
     * ``qwen-*`` / ``qwen2*`` / ``qwen3*`` becomes ``qwen/<id>``
@@ -113,7 +114,9 @@ def map_model_to_openrouter(model: str, *, substitute_unknown: bool = False) -> 
     if "/" in m:
         return m
     ml = m.lower()
-    if ml.startswith(("gpt-", "o1-", "o3-", "o4-")):
+    # The o-series ships bare ids too ("o3", "o4-mini"), so the prefixes are
+    # matched without the dash the other families need.
+    if ml.startswith(("gpt-", "o1", "o3", "o4", "chatgpt")):
         return "openai/" + m
     if ml.startswith("claude-"):
         if "sonnet" in ml:
@@ -121,6 +124,8 @@ def map_model_to_openrouter(model: str, *, substitute_unknown: bool = False) -> 
         if "haiku" in ml:
             return "anthropic/claude-haiku-4.5"
         return "anthropic/claude-opus-4.8"
+    if ml.startswith("gemini"):
+        return "google/" + m
     if ml.startswith("kimi"):
         return "moonshotai/kimi-k2.6"
     if ml.startswith("deepseek"):

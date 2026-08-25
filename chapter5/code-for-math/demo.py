@@ -35,43 +35,22 @@ from sandbox import run_python
 # 配置：兼容多种可用的 OpenAI 协议 key（含通用 OpenRouter 兜底）
 # ---------------------------------------------------------------------------
 
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+# 每个 provider 的默认模型。端点、key 与模型名映射由 agentbook 的 provider
+# 注册表统一维护，实验这里只保留「默认用哪个模型」这一个自己的决定。
+DEFAULT_MODELS = {
+    "openai": "gpt-5.6-luna",
+    "openrouter": "openai/gpt-5.6-luna",
+    "moonshot": "kimi-k3",
+    "ark": "doubao-seed-1-6-250615",
+}
 
-
-def map_model_to_openrouter(model: str) -> str:
-    """把直连模型名映射为 OpenRouter 上的 id（非可映射 id 统一兜底到当前廉价旗舰）。"""
-    if not model or "/" in model:
-        return model or "openai/gpt-5.6-luna"
-    m = model.lower()
-    if m.startswith(("gpt-", "o1", "o3", "o4")):
-        return "openai/" + model
-    if m.startswith("claude"):
-        if "haiku" in m:
-            return "anthropic/claude-haiku-4.5"
-        if "sonnet" in m:
-            return "anthropic/claude-sonnet-4.6"
-        return "anthropic/claude-opus-4.8"
-    if m.startswith("gemini"):
-        return "google/" + model
-    # kimi / doubao / 其它非 OpenRouter 原生 id -> 统一兜底
-    return "openai/gpt-5.6-luna"
-
-
-def resolve_llm(api_key, base_url, model):
-    """通用 OpenRouter 兜底 + gpt-5.x 优先路由，返回 (api_key, base_url, model)。
-
-    - gpt-5.x / gpt-5.6* 且设置了 OPENROUTER_API_KEY 时优先走 OpenRouter
-      （直连 OpenAI 调用 gpt-5.6 需要组织实名认证）。
-    - 否则有直连 key 就保持直连不变。
-    - 否则有 OPENROUTER_API_KEY 就整体改走 OpenRouter。
-    - 都没有则原样返回，由调用方给出缺 key 的报错。
-    """
-    orkey = os.getenv("OPENROUTER_API_KEY")
-    m = (model or "").lower()
-    prefer_or = bool(orkey) and m.startswith("gpt-5")
-    if prefer_or or (not api_key and orkey):
-        return orkey, OPENROUTER_BASE_URL, map_model_to_openrouter(model)
-    return api_key, base_url, model
+# auto 模式下按此顺序挑第一个配了 key 的 provider。
+AUTO_KEY_VARS = {
+    "openai": "OPENAI_API_KEY",
+    "openrouter": "OPENROUTER_API_KEY",
+    "moonshot": "MOONSHOT_API_KEY",
+    "ark": "ARK_API_KEY",
+}
 
 
 def build_client_and_model(model_override=None, provider="auto"):
@@ -84,47 +63,40 @@ def build_client_and_model(model_override=None, provider="auto"):
     # 延迟导入：离线自检（--selfcheck）不需要 openai，也不需要 API key。
     from openai import OpenAI
 
+    from agentbook.providers import resolve_backend
+
     requested_model = model_override or os.getenv("MODEL")
-    choices = {
-        "openai": (
-            os.getenv("OPENAI_API_KEY"), os.getenv("OPENAI_BASE_URL"),
-            requested_model or "gpt-5.6-luna",
-        ),
-        "openrouter": (
-            os.getenv("OPENROUTER_API_KEY"), OPENROUTER_BASE_URL,
-            map_model_to_openrouter(requested_model or "gpt-5.6-luna"),
-        ),
-        "moonshot": (
-            os.getenv("MOONSHOT_API_KEY"), "https://api.moonshot.cn/v1",
-            requested_model or "kimi-k3",
-        ),
-        "ark": (
-            os.getenv("ARK_API_KEY"), "https://ark.cn-beijing.volces.com/api/v3",
-            requested_model or "doubao-seed-1-6-250615",
-        ),
-    }
+    # --provider 是读者的显式选择；auto 只是本实验的默认策略，所以后者允许注册表
+    # 把 gpt-5.x 改道到 OpenRouter（直连需组织实名认证，且不允许 function tools
+    # 与推理并存——本实验的 code 模式正是靠 function calling 跑沙箱）。
+    chosen_by_reader = provider != "auto"
     if provider == "auto":
         provider = next(
             (name for name in ("openai", "openrouter", "moonshot", "ark")
-             if choices[name][0]),
+             if os.getenv(AUTO_KEY_VARS[name])),
             "openai",
         )
-    if provider not in choices:
+    if provider not in DEFAULT_MODELS:
         raise ValueError(f"unsupported provider: {provider}")
-    api_key, base_url, model = choices[provider]
 
-    if not api_key:
+    try:
+        backend = resolve_backend(
+            provider,
+            model=requested_model or DEFAULT_MODELS[provider],
+            chosen_by_reader=chosen_by_reader,
+        )
+    except ValueError as exc:
         raise SystemExit(
             "未找到 API key，请设置 OPENAI_API_KEY（或 MOONSHOT_API_KEY / ARK_API_KEY / OPENROUTER_API_KEY）。\n"
             "若只想验证沙箱与题库而不调用大模型，可运行：python demo.py --selfcheck"
-        )
+        ) from exc
 
     # 加上超时与重试：避免个别 API 调用长时间挂起导致整个评测卡死。
-    _kw = {"api_key": api_key, "timeout": 180.0, "max_retries": 5}
-    if base_url:
-        _kw["base_url"] = base_url
-    client = OpenAI(**_kw)
-    return client, model, provider
+    client = OpenAI(
+        api_key=backend.api_key, base_url=backend.base_url, timeout=180.0, max_retries=5
+    )
+    # 记录进 evidence 的必须是实际走的通道，而不是最初挑中的那个名字。
+    return client, backend.model, "openrouter" if backend.using_openrouter else provider
 
 
 # ---------------------------------------------------------------------------

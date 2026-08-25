@@ -13,25 +13,17 @@ load_dotenv()
 
 def _openrouter_model_id(model) -> str:
     """Map a provider-native model name to an OpenRouter model id, used by the
-    universal OpenRouter fallback. An explicit OPENROUTER_MODEL env var wins.
-    Vision-capable default (gpt-5.6-luna) so image analysis still works."""
+    universal OpenRouter fallback. An explicit OPENROUTER_MODEL env var wins
+    here even for a mappable id, which env.example documents as the way to force
+    one model. The vendor prefixes themselves come from agentbook's registry, so
+    this chapter cannot drift from the others; an id it cannot map becomes a
+    vision-capable default (gpt-5.6-luna) so image analysis still works."""
+    from agentbook.providers import map_model_to_openrouter
+
     override = os.getenv("OPENROUTER_MODEL")
     if override:
         return override
-    m = (model or "").strip()
-    if not m:
-        return "openai/gpt-5.6-luna"
-    if "/" in m:
-        return m
-    ml = m.lower()
-    if ml.startswith(("gpt-", "o1", "o3", "o4", "chatgpt")):
-        return "openai/" + m
-    if ml.startswith("claude-"):
-        return "anthropic/claude-opus-4.8"
-    if ml.startswith("gemini"):
-        return "google/" + m  # e.g. gemini-3.5-flash -> google/gemini-3.5-flash
-    # Provider-native ids (doubao-*/qwen/...) -> a widely-available vision model.
-    return "openai/gpt-5.6-luna"
+    return map_model_to_openrouter(model, substitute_unknown=True)
 
 
 class ExtractionMode(Enum):
@@ -45,7 +37,15 @@ class Provider(Enum):
     GEMINI = "gemini"
     OPENAI = "openai"
     DOUBAO = "doubao"
-    
+
+
+# This chapter's enum, in the names agentbook's provider registry knows.
+_REGISTRY_PROVIDER = {
+    Provider.GEMINI: "gemini",
+    Provider.OPENAI: "openai",
+    Provider.DOUBAO: "doubao",
+}
+
 
 @dataclass
 class ModelConfig:
@@ -151,17 +151,36 @@ class Config:
         return (not self.has_provider_key(provider)) and bool(self.openrouter_api_key)
 
     def openai_client_args(self, model_config: 'ModelConfig'):
-        """Return (client_kwargs, model_name) for an OpenAI-compatible call,
-        applying the universal OpenRouter fallback when needed."""
-        provider = model_config.provider
-        _m = (model_config.model_name or "").lower()
-        _prefer_or = bool(self.openrouter_api_key) and _m.startswith("gpt-5")  # 直连 gpt-5.6 需组织实名，优先 OpenRouter
-        if _prefer_or or self.use_openrouter(provider):
-            return (
-                {"api_key": self.openrouter_api_key, "base_url": self.openrouter_base_url},
-                _openrouter_model_id(model_config.model_name),
+        """Return (client_kwargs, model_name) for an OpenAI-compatible call.
+
+        Which endpoint and whose key comes from agentbook's provider registry,
+        so the reroute rules are stated once for the whole book. The reader
+        picks a *model* here rather than an endpoint, hence
+        chosen_by_reader=False: gpt-5.x is rerouted through OpenRouter when its
+        key is available, because the direct API needs org verification for
+        those ids and refuses function tools alongside reasoning.
+        """
+        from agentbook.providers import resolve_backend
+
+        try:
+            backend = resolve_backend(
+                _REGISTRY_PROVIDER[model_config.provider],
+                model=model_config.model_name,
+                # "" rather than None: a missing key must leave the OpenRouter
+                # fallback intact instead of being read back from the environment.
+                api_key=model_config.api_key or "",
+                chosen_by_reader=False,
             )
-        if provider == Provider.DOUBAO:
-            return {"api_key": self.doubao_api_key, "base_url": model_config.base_url}, model_config.model_name
-        # OPENAI (and any GEMINI forced through the OpenAI-compatible path)
-        return {"api_key": self.openai_api_key}, model_config.model_name
+        except ValueError:
+            # Nothing configured anywhere. Keep the previous shape and let the
+            # API call report the missing credential, so a caller that handles
+            # request errors gracefully still gets to do so.
+            return (
+                {"api_key": model_config.api_key or "", "base_url": model_config.base_url},
+                model_config.model_name,
+            )
+        client_kwargs = {"api_key": backend.api_key, "base_url": backend.base_url}
+        if backend.using_openrouter:
+            # OPENROUTER_MODEL still wins here; see _openrouter_model_id.
+            return client_kwargs, _openrouter_model_id(model_config.model_name)
+        return client_kwargs, backend.model
