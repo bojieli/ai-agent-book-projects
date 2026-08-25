@@ -118,7 +118,11 @@ Chỉ tập trung vào kết quả cuối cùng là chưa đủ, Agent quá trì
 
 ### Lấy mẫu thủ công và đánh giá đối kháng
 
-Ngay cả khi đánh giá tự động là đáng tin cậy trong hầu hết các trường hợp, thì vẫn cần phải có sự kiểm tra đột xuất thường xuyên của con người: bao gồm các loại nhiệm vụ khác nhau, các trường hợp thành công/thất bại và các trường hợp không rõ ràng gần điểm giới hạn, không chỉ để xác minh kết quả mà còn để xem xét tính hợp lý của lý do cho điểm. Lấy mẫu thủ công có thể được hệ thống hóa hơn nữa thành **hiệu chuẩn máy đánh giá**: trước khi sử dụng LLM trong đánh giá quy mô lớn, trước tiên hãy xây dựng bộ nhãn vàng được gắn nhãn thủ công (chẳng hạn như các trường hợp 100-200 bao gồm nhiều loại nhiệm vụ và khó khăn khác nhau) và đo lường mô hình đánh giá trên đó (nghĩa là sử dụng LLM làm đánh giá, cơ chế được trình bày chi tiết trong phần tiếp theo về LLM-as-a-Judge) và tỷ lệ nhất quán của các chú thích của con người (tỷ lệ đồng ý đơn giản hoặc hệ số nhất quán như Cohen's kappa, sau này loại bỏ các thành phần đoán ngẫu nhiên), mô hình phán đoán sẽ chỉ được sử dụng để đánh giá quy mô lớn sau khi đạt đến ngưỡng đặt trước (chẳng hạn như kappa cao hơn 0,7); sau đó, bất cứ khi nào mô hình phán đoán hoặc Rubric được cập nhật, nó sẽ được hiệu chỉnh lại trên bộ nhãn vàng. Nếu không có bước này, điểm của giám khảo LLM chỉ là “ý kiến của một mô hình khác” chứ không phải là đại diện đáng tin cậy cho đánh giá của con người. **Đánh giá đối lập** Tích cực xây dựng các trường hợp thử thách thông qua Red Teaming: các câu trả lời có vẻ hoàn hảo nhưng có lỗi ẩn, các câu trả lời được bỏ qua bằng cách nhồi nhét từ khóa và các câu trả lời sử dụng những thành kiến đã biết của mô hình đánh giá để đạt được những câu trả lời không xứng đáng đạt điểm cao. **Cơ chế nhiều người đánh giá** sử dụng nhiều người đánh giá độc lập để chấm điểm riêng biệt và xác định kết quả cuối cùng thông qua kiểm tra tính nhất quán hoặc mức trung bình có trọng số - khi có sự khác biệt nghiêm trọng giữa những người đánh giá, kết quả đó sẽ được đánh dấu là cần xem xét thủ công thêm.
+Ngay cả khi đánh giá tự động là đáng tin cậy trong hầu hết các trường hợp, thì vẫn cần phải có sự kiểm tra đột xuất thường xuyên của con người: bao gồm các loại nhiệm vụ khác nhau, các trường hợp thành công/thất bại và các trường hợp không rõ ràng gần điểm giới hạn, không chỉ để xác minh kết quả mà còn để xem xét tính hợp lý của lý do cho điểm.
+
+Lấy mẫu thủ công có thể được hệ thống hóa hơn nữa thành **hiệu chuẩn máy đánh giá**: trước khi sử dụng LLM trong đánh giá quy mô lớn, trước tiên hãy xây dựng bộ nhãn vàng được gắn nhãn thủ công (chẳng hạn như các trường hợp 100-200 bao gồm nhiều loại nhiệm vụ và khó khăn khác nhau) và đo lường mô hình đánh giá trên đó (nghĩa là sử dụng LLM làm đánh giá, cơ chế được trình bày chi tiết trong phần tiếp theo về LLM-as-a-Judge) và tỷ lệ nhất quán của các chú thích của con người (tỷ lệ đồng ý đơn giản hoặc hệ số nhất quán như Cohen's kappa, sau này loại bỏ các thành phần đoán ngẫu nhiên), mô hình phán đoán sẽ chỉ được sử dụng để đánh giá quy mô lớn sau khi đạt đến ngưỡng đặt trước (chẳng hạn như kappa cao hơn 0,7); sau đó, bất cứ khi nào mô hình phán đoán hoặc Rubric được cập nhật, nó sẽ được hiệu chỉnh lại trên bộ nhãn vàng. Nếu không có bước này, điểm của giám khảo LLM chỉ là “ý kiến của một mô hình khác” chứ không phải là đại diện đáng tin cậy cho đánh giá của con người.
+
+**Đánh giá đối lập** Tích cực xây dựng các trường hợp thử thách thông qua Red Teaming: các câu trả lời có vẻ hoàn hảo nhưng có lỗi ẩn, các câu trả lời được bỏ qua bằng cách nhồi nhét từ khóa và các câu trả lời sử dụng những thành kiến đã biết của mô hình đánh giá để đạt được những câu trả lời không xứng đáng đạt điểm cao. **Cơ chế nhiều người đánh giá** sử dụng nhiều người đánh giá độc lập để chấm điểm riêng biệt và xác định kết quả cuối cùng thông qua kiểm tra tính nhất quán hoặc mức trung bình có trọng số - khi có sự khác biệt nghiêm trọng giữa những người đánh giá, kết quả đó sẽ được đánh dấu là cần xem xét thủ công thêm.
 
 ## Tự động đánh giá môi trường
 
@@ -430,15 +434,35 @@ Tám mẫu chưa đủ để kết luận dịch vụ nào tốt hơn. Mỗi bê
 
 Rubric viết tay phù hợp để nhanh chóng tạo các chiều chẩn đoán này. Khi quy mô tăng, có thể huấn luyện **mô hình phần thưởng sinh** để tự động hóa việc chấm; Chương 8 trình bày phương pháp huấn luyện.
 
-
 ### Quy trách nhiệm thất bại: Định vị lỗi đầu tiên trong trajectory
 
 Đánh giá end-to-end thường chỉ trả lời “đạt” hoặc “không đạt”. Để kết quả dẫn tới sửa chữa, với mỗi trajectory thất bại hãy ghi loại lỗi, bước đầu tiên không chấp nhận được, lời gọi công cụ hoặc đầu ra mô hình liên quan và bằng chứng có thể kiểm tra. Tín hiệu bad case gồm người dùng sửa trực tiếp, phản hồi tiêu cực hoặc kiểm tra trạng thái/quy tắc sau đó. LLM có thể hỗ trợ nhưng vẫn cần người đọc vì nguyên nhân thường là vấn đề sản phẩm.
 
 Với Coding Agent, các nhóm ban đầu là thiếu quy trình/quy tắc kho, lỗi công cụ/định dạng, kết thúc bất thường và lỗi logic/độ hoàn tất. Lưu bản ghi JSON/YAML có số bước, công cụ, quan sát, nguyên nhân gốc so với hậu quả, khả năng khôi phục và độ tin cậy, cùng trạng thái, phiên bản và trajectory đầy đủ.
 
+Xây dựng hệ thống quy trách nhiệm lỗi đòi hỏi lập trình viên kiên nhẫn đọc và phân tích các trajectory có vấn đề trong môi trường thật. LLM có thể hỗ trợ nhưng không thể thay thế con người, vì **quy trách nhiệm lỗi thường phơi ra vấn đề sản phẩm** chứ không chỉ vấn đề kỹ thuật.
 
-Danh sách đó chỉ bao gồm những thất bại tự báo mình. Cần thêm các nhóm không để lại lỗi nào: hiểu yêu cầu và xử lý mơ hồ, khi Agent làm ra thứ chính nó diễn đạt lại chứ không phải thứ được yêu cầu, hoặc lặng lẽ chọn một cách hiểu cho một yêu cầu mơ hồ; hack môi trường kiểm chứng, khi sửa assertion, thêm `skip`, mock mất phần logic đang được kiểm thử, hoặc tuyên bố đã qua một bài test chưa từng chạy; sửa không trọn vẹn, khi cập nhật ba điểm gọi mà bỏ sót điểm thứ tư — một lời gọi động, một binding ngôn ngữ khác, một schema — mà vẫn biên dịch được; báo sai thông tin cho người dùng, khi mọi lần gọi công cụ và trạng thái cuối đều đúng nhưng số tiền, trạng thái hay ngày trong câu trả lời thì sai; và hồi quy phi chức năng, khi đổi API công khai hay schema mà không có migration, hoặc xóa phần kiểm tra để cho qua. Ở tất cả các nhóm này, lỗi đầu tiên không phải một giá trị công cụ trả về mà là một **assistant message**: một phán đoán, một giả định, hoặc một câu hỏi lẽ ra phải hỏi mà đã không hỏi.
+Khi sản phẩm hoàn thiện dần, bảng phân loại lỗi có thể gồm nhiều nhóm lớn, mỗi nhóm lại có các nhóm nhỏ, cuối cùng lên tới hàng trăm loại. Chính các nhóm lỗi và cách quy trách nhiệm này sẽ trở thành prompt hoặc Skill cho một Agent chuyên chú giải quy trách nhiệm.
+
+Lấy Coding Agent làm ví dụ, một bảng phân loại khởi đầu dùng được như sau.
+
+| Loại lỗi | Biểu hiện điển hình | Cách định vị lỗi đầu tiên |
+| --- | --- | --- |
+| Hiểu yêu cầu và xử lý mơ hồ | Thứ làm ra không phải thứ người dùng yêu cầu: bỏ sót một điều kiện trong yêu cầu, hiểu phạm vi rộng quá hoặc hẹp quá; kho có hai tệp cấu hình trùng tên thì chọn đại một cái, không nói cũng không hỏi | Dùng LLM đối chiếu từng mục giữa yêu cầu gốc và **những gì Agent thực sự làm** (chuỗi hành động); định vị điểm lệch đầu tiên ở mức kết quả, rồi truy ngược về lần gọi công cụ hay câu trả lời đã gây ra nó |
+| Thiếu quy trình hoặc quy ước | Commit mà không chạy unit test; sửa code trước khi viết Plan; đưa vào phụ thuộc ngoài trong khi kho đã có thứ tương đương nội bộ; đi vòng qua quy ước kiến trúc đã định | Tìm hành động đầu tiên vi phạm quy ước quy trình phát triển — lần `git commit` đầu, lần ghi tệp đầu — rồi xem trước đó nó có đọc nguồn của quy ước hay không |
+| Lỗi gọi công cụ | Sửa cùng một tệp thất bại lặp đi lặp lại; sai định dạng JSON/schema hoặc tham số; ký tự đặc biệt làm hỏng việc sao chép, escape hoặc ghi | Ghi lại lần sửa/công cụ thất bại đầu tiên kèm yêu cầu gốc và lỗi trả về; các lần thất bại sau là triệu chứng kế tiếp |
+| Hack môi trường kiểm chứng | Sửa thẳng assertion, thêm `skip`, mock mất phần logic đang được kiểm thử; tuyên bố "test đã qua" trong khi chưa hề chạy | Lấy message đầu tiên sửa test hoặc logic kiểm chứng; rồi đối chiếu tuyên bố hoàn thành với các lệnh thực sự đã chạy trong trajectory để xác nhận nó có chạy thật không |
+| Sửa không trọn vẹn | Đổi chữ ký hàm, cập nhật ba điểm gọi, nhưng bỏ sót điểm thứ tư — một lời gọi động, một binding ngôn ngữ khác, hoặc một schema | Lấy hiệu của tập phạm vi ảnh hưởng mà Agent tuyên bố với phạm vi thật, chọn thiếu sót đầu tiên, rồi xem lại nó đã tìm kiếm bằng từ khóa nào |
+| Báo sai thông tin cho người dùng | Mọi lần gọi công cụ và trạng thái cuối đều đúng, nhưng thông tin nói với người dùng thì sai: sai số tiền, trạng thái, thời gian; mới làm một phần lại nói là xong hết; bỏ sót điều bắt buộc phải báo | Đối chiếu từng khẳng định sự kiện trong câu trả lời với giá trị công cụ trả về, lấy khẳng định đầu tiên không truy nguyên được hoặc mâu thuẫn với giá trị trả về |
+| Hồi quy phi chức năng | Đổi API công khai hay schema mà không có script migration; xóa phần kiểm tra để cho qua | Lấy message đầu tiên thực hiện thay đổi đó, xem nó có ý thức được rằng mình đang động vào giao diện công khai hay cấu trúc cần migration hay không |
+| Mô hình kết thúc bất thường | Đầu ra bị cắt giữa chừng, dừng vô cớ, quá thời gian, hoặc kết thúc mà chưa làm động tác khép lại | Định vị điểm kết thúc bất thường đầu tiên và phân biệt mô hình tự dừng, Harness hết giờ, và sự cố dịch vụ công cụ |
+| Dừng tác vụ quá sớm | Tác vụ nhiều mục tiêu mới xong một phần; tuyên bố bất khả thi khi chưa thử hết các phương án hợp lý | Định vị quyết định đầu tiên bỏ sót mục tiêu hoặc từ bỏ thăm dò, và ghi tách khỏi thất bại ở khâu kiểm chứng cuối |
+
+**Agent chú giải quy trách nhiệm có thể dùng LLM để phân tích nguyên nhân gốc trên quy mô lớn cho rất nhiều trajectory thật**, nhưng không được chỉ xuất ra một câu "nguyên nhân thất bại". **Bản ghi quy trách nhiệm phải có cấu trúc**: dùng JSON hoặc YAML, trích dẫn số bước cụ thể, tên công cụ và bằng chứng quan sát được; đồng thời phải tách nguyên nhân gốc khỏi hệ quả, đánh giá khả năng khôi phục và đưa ra mức tin cậy. Ví dụ, `edit_file` trả về lỗi không khớp `old_string`, sau đó Agent thử lại ba lần vẫn không ghi được tệp: nguyên nhân chính là lỗi sửa tệp và gọi công cụ, còn ba lần thử lại là hệ quả chứ không phải ba nguyên nhân gốc độc lập. Khi nhiều nhóm cùng xuất hiện, chọn nguyên nhân chính theo nguyên tắc "sớm nhất và giải thích được các thất bại tiếp sau", phần còn lại giữ làm nguyên nhân phụ. Ít nhất ba nhóm trong bảng trên có thể lọc trước bằng quy tắc rồi mới giao cho LLM định vị lỗi đầu tiên: đối chiếu tuyên bố hoàn thành với lệnh thực sự đã chạy; diff có chạm vào assertion của test và nhãn `skip` không; diff có đổi API công khai hay schema mà thiếu tệp migration không. Lọc bằng quy tắc trước, để LLM định vị sau, vừa rẻ hơn vừa chuẩn hơn so với đổ toàn bộ trajectory cho LLM.
+
+Khi lưu bản ghi quy trách nhiệm, ngoài đầu ra của LLM còn phải lưu kèm mục tiêu tác vụ, trạng thái môi trường, phiên bản Agent, phiên bản bộ công cụ và toàn bộ trajectory, để có thể chuyển thành bài kiểm thử hồi quy.
+
+Dưới đây trình bày ba loại lỗi tiêu biểu.
 
 #### Vấn đề "làm đúng nhưng nói sai"
 
@@ -460,7 +484,6 @@ Kho đi kèm có một ca tương ứng. Với tác vụ nhập các khoản chi
 >
 > Bước 5: Chuyển thành tác vụ hồi quy. Chọn ba trajectory có lỗi đầu tiên nằm ở assistant message, cắt tiền tố ngay trước lỗi đó, rồi viết tập hành động chấp nhận được và các hành động bị cấm để tạo thành tác vụ hồi quy tiền tố trajectory.
 >
-
 
 #### Lỗi định dạng tài liệu nhạy với phạm vi
 
@@ -491,7 +514,17 @@ Bộ thăm dò đánh giá tối thiểu bao phủ việc nhắc lại trực ti
 
 ### Tác vụ hồi quy end-to-end và hồi quy tiền tố trajectory
 
-**Hồi quy end-to-end** chạy toàn bộ quy trình; **hồi quy trajectory-prefix** đóng băng ngữ cảnh, hội thoại, kết quả công cụ và trạng thái ngay trước lỗi đầu tiên rồi chỉ kiểm tra hành động quan sát được tiếp theo. Định nghĩa tập hành động được chấp nhận (đọc quy tắc, hỏi người dùng, từ chối thao tác nguy hiểm) và hành động cấm thay vì một đáp án duy nhất; tách dữ liệu đánh giá khỏi dữ liệu huấn luyện.
+Quy trách nhiệm đã xác định lỗi đầu tiên và loại của nó; bước tiếp theo là viết mục tiêu sửa chữa thành một ca kiểm thử chạy lại được, tức **tác vụ hồi quy** (regression task). Ở đây cần hai lớp bổ trợ nhau: **tác vụ hồi quy end-to-end** kiểm chứng rằng thay đổi không phá vỡ toàn bộ luồng công việc; **tác vụ hồi quy tiền tố trajectory** (trajectory prefix) cắt lấy trạng thái ngay trước lỗi đầu tiên và chỉ kiểm chứng xem ranh giới quyết định đó đã được sửa hay chưa.
+
+**Tác vụ hồi quy end-to-end** bắt đầu từ trạng thái ban đầu và yêu cầu của người dùng, để Agent hoàn tất trọn tác vụ, rồi kiểm tra trạng thái cuối, đầu ra bắt buộc và các điều kiện an toàn. Nó gần với kết quả sản xuất nhất, nhưng lại khó biết thất bại xảy ra ở bước nào. Nói chung, tác vụ hồi quy end-to-end dùng để kiểm chứng năng lực của Agent trên từng lĩnh vực có đúng như kỳ vọng không. Các bộ đánh giá chuẩn nêu trong chương này — OSWorld, AndroidWorld, tau-bench — đều là tác vụ hồi quy end-to-end.
+
+**Tác vụ hồi quy tiền tố trajectory** đóng băng ngữ cảnh, hội thoại, giá trị công cụ trả về và trạng thái môi trường đã có, chỉ yêu cầu Agent suy nghĩ rồi thực hiện một hoặc vài hành động quan sát được kế tiếp. Chi phí thấp hơn, lại cô lập được vấn đề của một chính sách hay một công cụ. Với Agent cấp sản xuất cần độ tin cậy cao, xây bộ tác vụ tiền tố thường quan trọng hơn bộ end-to-end, và đòi hỏi lập trình viên kiên nhẫn dựng nên hệ phân loại thất bại cùng hệ thống quy trách nhiệm đã nói ở mục trước.
+
+Đáp án của tác vụ tiền tố nên được định nghĩa là một **tập hành động chấp nhận được**, chứ không phải một hành động hay một câu trả lời duy nhất: có thể yêu cầu "đọc quy tắc kho trước", "hỏi người dùng trước" hoặc "từ chối thao tác nguy hiểm", đồng thời liệt kê các hành động bị cấm.
+
+**Sau khi quy trách nhiệm xong là có thể dựng bộ dữ liệu đánh giá gồm cả tác vụ hồi quy end-to-end lẫn tiền tố trajectory.** Lấy Coding Agent làm ví dụ: thiếu quy trình thì sinh ra tác vụ end-to-end kèm tài liệu kế hoạch và điều kiện nghiệm thu bằng test; lỗi gọi công cụ thì cắt tiền tố tại chỗ hỏng rồi biên tập thành tác vụ biên, kiểm tra xem mô hình có sửa được định dạng, escape ký tự đặc biệt hay đổi sang công cụ phù hợp không; kết thúc bất thường thì thêm kịch bản phục hồi khi bị cắt, quá giờ và sự cố công cụ; lỗi về độ hoàn thành và logic thì thêm danh sách nhiều mục tiêu, nhắc việc còn lại và ranh giới "chưa chứng minh được là bất khả thi"; nhóm hiểu yêu cầu và mơ hồ thì đóng băng thành tiền tố những tác vụ có nhiều cách hiểu hợp lý, đưa "hỏi cho rõ trước" vào tập hành động chấp nhận được; nhóm vá triệu chứng và ngụy tạo kiểm chứng thì bổ sung vào nghiệm thu hai ràng buộc cứng là "không được sửa assertion của test" và "tuyên bố hoàn thành phải kèm đầu ra của lệnh đã thực sự chạy"; nhóm báo tin cho người dùng thì đặt assertion lên chính nội dung câu trả lời, chứ không chỉ kiểm tra trạng thái môi trường.
+
+Bộ dữ liệu đánh giá là nền tảng cho post-training ở chương 8 và tự tiến hóa của Agent ở chương 9.
 
 > **Thử nghiệm 7-7 ★★: Đánh giá ranh giới trajectory-prefix với nhiều mã hóa**
 >
