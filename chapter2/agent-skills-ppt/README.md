@@ -118,7 +118,7 @@ The original book experiment ran on **Claude Code + Anthropic’s official PPTX 
 
 The mechanism maps one-to-one; the built-in Skill loader is replaced by explicit read/execute tools so progressive disclosure still works without Anthropic access.
 
-> **OpenRouter fallback:** Primary path is OpenAI (default model `gpt-5.6-luna`). If `OPENAI_API_KEY` is unset but `OPENROUTER_API_KEY` is set, requests go through OpenRouter (`gpt-*` → `openai/…`). With `OPENAI_API_KEY` set, behavior is unchanged.
+> **Routing:** Default model is `gpt-5.6-luna`. When `OPENROUTER_API_KEY` is set, `gpt-5*` requests go through OpenRouter (`gpt-*` → `openai/…`) even if `OPENAI_API_KEY` is also set: OpenAI's direct `/v1/chat/completions` needs org verification for these ids and refuses function tools unless reasoning is switched off, which would defeat the point of this experiment. With only `OPENAI_API_KEY`, the run stays on the direct endpoint and drops to `reasoning_effort="none"` the first time it is refused, printing a note when it does.
 
 ### Three-layer progressive disclosure
 
@@ -271,7 +271,7 @@ Replace `papers/sample_paper.md` or pass `python demo.py --paper your_paper.md`.
 
 机制一一对应，只是把「Claude 内置的 Skill 加载器」换成了几个显式的读取/执行工具，从而在没有 Anthropic 访问权限时，依然能真实演示渐进式披露的三层加载过程。
 
-> 说明：本项目主用 OpenAI（默认模型 gpt-5.6-luna）。**通用回退**：未设置 `OPENAI_API_KEY` 时，只要配置了 `OPENROUTER_API_KEY`，会自动改走 OpenRouter（`gpt-*` 映射为 `openai/…`）。设置了 `OPENAI_API_KEY` 时行为完全不变。
+> 说明：默认模型 gpt-5.6-luna。**路由**：只要配置了 `OPENROUTER_API_KEY`，`gpt-5*` 一律改走 OpenRouter（`gpt-*` 映射为 `openai/…`），即使同时设置了 `OPENAI_API_KEY` —— OpenAI 直连的 `/v1/chat/completions` 对这些模型既要组织实名认证，又不允许 function tools 与推理并存，而后者正是本实验要展示的能力。只有 `OPENAI_API_KEY` 时仍走直连，首次被拒后自动降级为 `reasoning_effort="none"` 并打印提示。
 
 ### 渐进式披露的三层结构
 

@@ -18,6 +18,8 @@ try:
 except ImportError:
     openai_stub = ModuleType("openai")
     openai_stub.OpenAI = object
+    # demo.py imports this by name for its reasoning-vs-tools degrade path.
+    openai_stub.BadRequestError = type("BadRequestError", (Exception,), {})
     sys.modules["openai"] = openai_stub
 
 try:

@@ -177,6 +177,33 @@ def test_explicit_openai_provider_is_not_hijacked_for_gpt5(monkeypatch):
     assert backend.base_url == "https://api.openai.com/v1"
 
 
+def test_default_openai_provider_is_rerouted_for_gpt5(monkeypatch):
+    # An experiment that merely defaults to OpenAI is not the reader choosing
+    # it: gpt-5.x on the direct chat completions endpoint refuses function
+    # tools unless reasoning is off, so the reroute has to apply here.
+    monkeypatch.setenv("OPENAI_API_KEY", "test-openai-key")
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter-key-3b")
+    backend = resolve_backend("openai", model="gpt-5.6-luna", chosen_by_reader=False)
+    assert backend.using_openrouter is True
+    assert backend.model == "openai/gpt-5.6-luna"
+
+
+def test_default_openai_provider_stays_direct_without_openrouter_key(monkeypatch):
+    monkeypatch.setenv("OPENAI_API_KEY", "test-openai-key")
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+    backend = resolve_backend("openai", model="gpt-5.6-luna", chosen_by_reader=False)
+    assert backend.using_openrouter is False
+    assert backend.base_url == "https://api.openai.com/v1"
+
+
+def test_default_provider_flag_does_not_reroute_non_gpt5(monkeypatch):
+    monkeypatch.setenv("OPENAI_API_KEY", "test-openai-key")
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter-key-3c")
+    backend = resolve_backend("openai", model="gpt-4o", chosen_by_reader=False)
+    assert backend.using_openrouter is False
+    assert backend.model == "gpt-4o"
+
+
 def test_ollama_needs_no_key():
     backend = resolve_backend("ollama")
     assert backend.base_url == "http://localhost:11434/v1"
