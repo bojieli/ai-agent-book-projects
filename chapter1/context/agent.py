@@ -30,6 +30,17 @@ def _reasoning_safe_temperature(model, requested=1.0):
     return 1 if ("kimi-k3" in m or "gpt-5" in m) else requested
 
 
+# Two ways to take the tool results away, which are not the same experiment.
+# MARKER leaves a visible redaction: the model can see that an observation
+# exists and is being withheld, and can decide to stop and say so. EMPTY
+# withholds silently -- the message is there, as the API requires, but it
+# carries nothing, which is what "the tool results are missing" looks like to a
+# model that has no way to tell redaction from an unhelpful tool.
+HIDDEN_RESULT_MARKER = "[Tool result hidden due to context mode]"
+HIDDEN_RESULT_EMPTY = ""
+HIDDEN_RESULT_STYLES = {"marker": HIDDEN_RESULT_MARKER, "empty": HIDDEN_RESULT_EMPTY}
+
+
 class ContextMode(Enum):
     """Different context modes for ablation studies"""
     FULL = "full"  # Complete context with all components
@@ -372,7 +383,8 @@ class ContextAwareAgent:
     
     def __init__(self, api_key: str, context_mode: ContextMode = ContextMode.FULL, 
                  provider: str = "siliconflow", model: Optional[str] = None, 
-                 verbose: bool = True):
+                 verbose: bool = True,
+                 hidden_result_content: str = HIDDEN_RESULT_EMPTY):
         """
         Initialize the agent
         
@@ -384,9 +396,15 @@ class ContextAwareAgent:
                 ``kimi``, ``deepseek``, or ``openrouter``)
             model: Optional model override
             verbose: If True, log full HTTP requests and responses (default: True)
+            hidden_result_content: What replaces a tool result in the
+                NO_TOOL_RESULTS ablation. Defaults to withholding silently,
+                which is what removing the results means; pass
+                :data:`HIDDEN_RESULT_MARKER` to leave a visible redaction
+                instead. See :data:`HIDDEN_RESULT_STYLES`.
         """
         self.provider = provider.lower()
         self.verbose = verbose
+        self.hidden_result_content = hidden_result_content
 
         # Base URLs, default models and key lookup all live in the shared
         # registry (agentbook/providers.py), so adding a provider there makes it
@@ -872,7 +890,7 @@ Important: When you have gathered all necessary information and computed the fin
                         tool_msg = {
                             "role": "tool",
                             "tool_call_id": tool_call.id,
-                            "content": "[Tool result hidden due to context mode]"
+                            "content": self.hidden_result_content
                         }
                     messages.append(tool_msg)
 
@@ -895,6 +913,7 @@ Important: When you have gathered all necessary information and computed the fin
                     "completed": False,
                     "task_success": False,
                     "success": False,
+                    **self._backend_identity(),
                 }
             except Exception as e:
                 logger.error(f"Error during task execution: {str(e)}")
@@ -915,6 +934,7 @@ Important: When you have gathered all necessary information and computed the fin
                         "completed": False,
                         "task_success": False,
                         "success": False,
+                        **self._backend_identity(),
                     }
                 return {
                     "error": str(e),
@@ -923,6 +943,7 @@ Important: When you have gathered all necessary information and computed the fin
                     "completed": False,
                     "task_success": False,
                     "success": False,
+                    **self._backend_identity(),
                 }
         completed = bool(final_answer and str(final_answer).strip())
         return {
@@ -934,12 +955,27 @@ Important: When you have gathered all necessary information and computed the fin
             # Backwards-compatible alias. This is terminal-response status,
             # not a correctness judgment.
             "success": completed,
+            **self._backend_identity(),
+        }
+    
+    def _backend_identity(self) -> Dict[str, Any]:
+        """Name the endpoint that answered -- or failed to.
+
+        A failed arm is still evidence, and evidence that does not say which
+        model was asked cannot be audited. The success path reports this
+        inline; the error paths return it through here, so a 404 on the wrong
+        model id stays legible in the record instead of showing up as a null.
+
+        Returns:
+            The provider, resolved model, base URL and OpenRouter flag.
+        """
+        return {
             "provider": self.provider,
             "model": self.model,
             "base_url": self.base_url,
             "using_openrouter": bool(getattr(self, "using_openrouter", False)),
         }
-    
+
     def reset(self):
         """Reset the agent's trajectory and conversation history"""
         self.trajectory = AgentTrajectory(context_mode=self.context_mode)
