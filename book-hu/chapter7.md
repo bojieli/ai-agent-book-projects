@@ -72,18 +72,32 @@ A környezet és az adathalmaz megépítése előtt tisztázni kell, mit jelent 
 
 ### Technikai csoda: a képességplafon Pass@k-val
 
-Sok modell és Ügynök a **technikai csoda** szakaszában van: sok próbálkozás, hosszú időkeret és emberi kiválasztás után egy áttörő pálya bizonyítja, hogy a feladat elvben megoldható. A **Pass@k** ugyanazon feladat $k$ futtatásából akkor ad sikert, ha legalább egy átmegy; folyamatos pontszámnál a legjobbat, **Best@k**-t tartjuk meg. A hosszú ideig futó Anthropic-ügynökök, Manus és OpenClaw példái ezt a képességplafont mutatják, amely kutatási felfedezésnél, hibakeresésnél és nyílt végű alkotásnál értékes.
+A mai modellek és Agentek jó része még abban a szakaszban van, amit **„technikai csodának”** nevezhetünk. A csoda itt azt a képességplafont jelenti, amely sok próbálkozás, bőséges időkeret és emberi válogatás mellett mutatkozik meg: elég, ha egyetlen futás sikerül, máris igazolható, hogy a dolog elvben megcsinálható. Pontosan ez a **Pass@k** logikája: ugyanazt a feladatot $k$ alkalommal futtatjuk, és teljesítettnek számít, ha legalább egy futás átmegy; ha a kimenet folytonos pontszám, a legjobb futást vesszük, és ezt **Best@k**-nak hívjuk.
+
+Az Anthropic hosszan futó Agentekről szóló fejtegetése jól szemlélteti ezt a plafont: hagyjuk az Agentet egy héten át önállóan dolgozni, és írjon meg nulláról egy C fordítót; kutasson addig, amíg ellenpéldát nem talál egy fontos matematikai sejtésre; vagy vizsgáljon át újra meg újra nyílt forráskódú szoftvereket, míg elő nem kerül egy évtizedek óta ott lapuló súlyos biztonsági rés.
+
+Az ilyen mérnöki és tudományos feltárásban jellemzően nem az kerül bemutatásra, hogy „mindig eltalálja”, hanem az az egyetlen áttörő pálya, amely végül megjelenik, ha elég hosszúra nyújtjuk a felfedezési keretet. Tudományos felfedezésnél, sebezhetőség-vadászatnál és nyitott végű alkotásnál ez a plafon önmagában is értékes: az ember kiválaszthatja a $k$ jelölt pálya közül a legjobbat.
+
+Az alapmodell-laborokon túl sok alkalmazásfejlesztő cég is a „technikai csoda” stratégiáját követi. A Manus azért keltett széles körű figyelmet, mert virtuális számítógépet adott az emberek kezébe: azok, akiknek addig semmilyen szemléletes elképzelésük nem volt az Agentekről, láthatták, hogy az MI ugyanúgy kezeli a gépet, mint egy ember — fél órán, akár egy órán át dolgozik, és lépésről lépésre végigvisz egy összetett feladatot.
+
+Az OpenClaw sokaknak adta meg először azt az érzést, hogy egy Agent „élő valaki”. A felhasználó úgy oszt ki rá munkát azonnali üzenetküldőn keresztül, mintha valódi embernek adná; a gép minden fájljához és az online szolgáltatásokhoz hozzáfér, egy bizonyos pontnál magától visszajelez vagy új információt kér, sőt saját magát is fel tudja ébreszteni, hogy lekérdezze és feldolgozza a leveleket.
+
+A korai Manus és OpenClaw sikerességi aránya összetett feladatokon nem volt magas, a tokenköltség pedig nagyon nagy. Mivel azonban ezek az Agent-keretrendszerek általános célúak, a legerősebb modellekkel párosítva az összetett feladatok gyakran érnek el magas Pass@k-t, ami magas technikai plafont jelent. Az, hogy ezeket a „technikai csodákat” tömegesen osztották meg a közösségi hálókon, kulcsa volt e termékek sikerének.
 
 ### Üzleti megbízhatóság: Pass^k
 
-Az üzleti rendszerek inkább azt követelik, hogy ismételt futások során egyszer se legyen hiba. A **Pass^k** (»Pass consecutive k«) azt jelenti, hogy $k$ egymást követő futás mind sikeres, és egyik sem vált ki biztonsági, megfelelési vagy hallucinációs vétót. Egy futás $p$ sikerességi valószínűsége mellett
+A valódi üzletet rendszerint az ellenkezője érdekli: több próbálkozás alatt egyetlen hibát sem szabad véteni. Ezt a célt nevezzük **Pass^k**-nak (kiejtve **Pass consecutive k**): ugyanazt a feladatot $k$ alkalommal futtatjuk egymás után, minden futásnak át kell mennie, és egyszer sem szabad kiváltania biztonsági, megfelelőségi vagy hallucinációs vétópontot. Arra válaszol, hogy „képes-e az Agent stabilan és megbízhatóan szállítani”, nem arra, hogy „tud-e néha csodát tenni”.
+
+Ha a futások függetlenek és egyetlen futás sikervalószínűsége $p$, a két mutató kapcsolata szemléletes:
 
 $$
 \mathrm{Pass@k}=1-(1-p)^k,\qquad
 \mathrm{Pass}^{k}=p^k.
 $$
 
-$p=0{,}6$, $k=5$ esetén Pass@5 körülbelül 99,0%, a Pass consecutive@5 viszont 7,8%. Az első a felfedezési képességplafont, a második a fizetésekhez, visszatérítésekhez és éles telepítéshez szükséges stabilitást méri. A jelentésben meg kell adni, mit jelent $k$; mellékhatásos műveleteket sandboxban vagy visszagörgethető környezetben kell mintázni, minden hibát beszámítva.
+Például $p=0.6$ és $k=5$ esetén Pass@5 $=1-0.4^5\approx99.0\%$, mintha a „legalább egyszer sikerül” szinte mindig teljesülne; a Pass consecutive@5 viszont $=0.6^5\approx7.8\%$, vagyis ötször egymás után hibátlanul teljesíteni továbbra is nehéz. Az első szám a felfedezés közbeni képességplafon mérésére alkalmas; a fizetések, visszatérítések, jogosultságmódosítások és éles telepítések megbízhatósági elvárásához csak a második áll közel.
+
+A kiértékelési jelentésben egyértelműen le kell írni, mit jelent a $k$ próbálkozás: ugyanannak a feladatnak $k$ független mintavétele, vagy egy éles futószalag $k$ egymást követő feladata. Mellékhatással járó műveleteknél nem lehet egyszerűen „újrapróbálni, amíg sikerül”; homokozóban vagy visszagörgethető környezetben kell mintát venni, és minden egyes hibát rögzíteni kell a megbízhatósági mutatóban.
 
 ### Folyamatmetrikák: A fekete doboztól a fehér dobozig
 
@@ -417,6 +431,7 @@ Ezek a pontok nem neveznek meg győztes szolgáltatót. Szolgáltatónként csak
 
 A kézzel írt Rubricák gyorsan kialakítják ezeket a diagnosztikai dimenziókat. Nagyobb léptékben speciális „generatív jutalommodellek” automatizálhatják a bíráskodást; képzésüket a 8. fejezet tárgyalja.
 
+
 ### Hibaattribúció: Az első hiba behatárolása a pályán
 
 Az end-to-end kiértékelés gyakran csak „siker” vagy „kudarc” eredményt ad. A javításhoz minden hibás pályán rögzíteni kell a kategóriát, az első elfogadhatatlan lépést, az eszközhívást vagy modellkimenetet, valamint az auditálható bizonyítékot. A rossz esetek felhasználói korrekcióból, negatív visszajelzésből vagy későbbi állapotellenőrzésből származhatnak. Az LLM segíthet, de az emberi olvasás szükséges, mert a gyökér gyakran termékprobléma.
@@ -426,9 +441,27 @@ Egy Coding Agent kezdeti kategóriái: hiányzó folyamat vagy szabály, eszköz
 
 Ez a felsorolás csak azokat a hibákat fedi le, amelyek maguktól jelentkeznek. Hozzá kell venni azokat a kategóriákat is, amelyek semmilyen hibát nem hagynak maguk után: követelményértés és többértelműség-kezelés, amikor az Agent azt építi meg, amit ő maga fogalmazott újra, nem amit kértek, vagy némán kiválasztja egy kétértelmű kérés egyik olvasatát; a verifikációs környezet meghackelése, amikor átírja az assertiont, `skip`-et tesz bele, mockkal helyettesíti a vizsgált logikát, vagy le nem futtatott tesztre mondja, hogy átment; hiányos módosítás, amikor három hívási pontot frissít, a negyediket — egy dinamikus hívást, egy másik nyelvi bindinget, egy schemát — kihagyja, és mégis lefordul; hibás információ a felhasználó felé, amikor minden eszközhívás és a végállapot helyes, de a válaszban az összeg, az állapot vagy a dátum nem; és nem funkcionális regressziók, amikor publikus API vagy schema változik migráció nélkül, vagy egy ellenőrzés kiesik azért, hogy egy vizsgálat átmenjen. Mindegyikben az első hiba nem egy eszköz visszatérési értéke, hanem egy **assistant message**: egy ítélet, egy feltevés, vagy egy kérdés, amelyet fel kellett volna tenni, és nem tettek fel.
 
+#### A „jól csinálta, rosszul jelentette” probléma
+
 A „jól csinálta, rosszul jelentette" az a kategória, amelyet az összesített sikerarány a legkönnyebben elrejt, mert a legtöbb kiértékelés csak a környezet állapotát vizsgálja. A τ²-bench külön pontozza: a közzétett alapfutások közül abban a 704-ben, amelynek feladata információátadási követelményt hordoz, 240 bukott el; ebből 162 az információátadási ellenőrzésen, és 80 — az összes bukás harmada — helyes környezeti állapot mellett adott téves jelentést.
 
 A kísérő repóban van egy megfelelő eset. Az `expenses.jpg` kiadásainak könyvelőalkalmazásba vitele során az Agent 32 lépésben adott engedélyt, keresett, megnyitotta a képet, kitöltötte a sorokat és mentett, **úgy, hogy egyetlen lépés sem tért vissza hibával**, majd késznek nyilvánította a feladatot; a validátor viszont azt jelentette, hogy a beírandó sor — `Dress`, ¥436,35 — hiányzik, és semmi köze a beírt négyhez. A 8. lépés saját gondolatmenete így szól: *„I cannot actually see the content/details of the expenses in the image"*. Már tudta, hogy nincs meg az adat, mégsem állt meg és nem jelentette, a 11. lépésre pedig négy kitalált kiadás jelent meg a feljegyzéseiben, amelyeket minden későbbi bevitel hűségesen végrehajtott. Az első hiba a 8. lépés, és az a lépés sem hibát nem dobott, sem eszközhívás nem volt. A gyökérokát is könnyű rossz helyre sorolni: a T3A csak szöveges Agent, amelynek megfigyelési terében kizárólag az elemfa van, képpont nincs, így az ok nem az, hogy „a modell nem tud OCR-t", hanem egy hiányzó megfigyelési csatorna, plusz a „nem szerezhető meg az információ" legitim kilépés hiánya. Modellképesség-problémaként iktatva a következő lépés a modellcsere vagy az OCR-tanítás lesz; a valódi javítás a csatorna és a kilépés pótlása.
+
+> **7-6. kísérlet ★★: Hibaattribúció AndroidWorld-nyomvonalakon**
+>
+> Ez a kísérlet a fejezet attribúciós módszerét gyakoroltatja valódi nyomvonalakon, emulátor és modell-API nélkül. Az anyag a `chapter7/android-world` mentett T3A-futása: a `t3a.md` az összes feladat lépésenkénti `Action`/`Reason`/`Summary` bejegyzéseit tartalmazza, a `t3a_failed.md` pedig több mint ötven sikertelen nyomvonalat gyűjt össze, mindegyik végén a validátor objektív ítéletével.
+>
+> 1. lépés: Mintavétel. Válasszon ki a `t3a_failed.md` fájlból legalább tíz néma hibát, azaz olyan nyomvonalat, amelyben egyetlen eszközhiba sincs. Egyetlen eszközhívás sem térhetett vissza hibával, az Agent vagy késznek nyilvánította a feladatot, vagy elfogytak a lépései, és csak a záró validátori ítélet jelzi a bukást.
+>
+> 2. lépés: Az első hiba lokalizálása. Minden nyomvonalnál jegyezze fel az első hiba lépésszámát, és jelölje, hogy az a lépés eszközhívás vagy assistant message. A néma hibákhoz két technika kell: a ténykohorgony-összevetés az Agent állításait veti össze az eszközök visszatérési értékeivel, és az első eltérést veszi; a pályaelőtag-felezés a k. lépésnél elvágja a pályát és átadja — ha még megmenthető, a hiba k után van. A hibakulcsszavak keresése egyiket sem pótolja.
+>
+> 3. lépés: Strukturált feljegyzés. Nyomvonalanként állítson elő egy JSON vagy YAML rekordot a feladat nevével, az első hiba lépésével, a hiba kategóriájával, a gyökérok felelősével és az alátámasztó idézetekkel, elkülönítve a fő okot a következménytől.
+>
+> 4. lépés: Összevetés a meglévő jegyzettel. Vesse össze eredményeit a `t3a_failed_analysis.md` tartalmával, és rögzítsen minden eltérést. Különösen figyeljen a gyökérok hozzárendelésére: a jegyzet eredetileg úgy rögzítette a képátírási hibát, hogy „a látómodellből hiányzik az OCR”, holott a T3A megfigyelési tere egyetlen képpontot sem tartalmaz, tehát a valódi gyökérok a hiányzó megfigyelési csatorna. Egy meglévő attribúciós jegyzet nem megoldókulcs.
+>
+> 5. lépés: Átalakítás regressziós feladattá. Válasszon ki három olyan nyomvonalat, ahol az első hiba assistant message, vágja el az előtagot közvetlenül a hiba előtt, majd írja meg az elfogadható műveletek halmazát és a tiltott műveleteket, így pálya-előtag regressziós feladatokat kap.
+>
+
 
 #### Hatókör-érzékeny dokumentumformázási hibák
 
@@ -457,21 +490,6 @@ original file bytes → tool return → Harness serialization → model context
 
 A minimális értékelési szondakészlet lefedi a közvetlen visszamondást, a hosszú kontextusból való kinyerést, az eszközargumentumba helyezést, a hasonló karakterláncok közötti választást, valamint a szóközöket, sortöréseket, visszaperjeleket, Unicode kombináló karaktereket és a ritka tokeneket. A metrikák: byte-exact match, code-point-exact match, token-exact match, az első eltérés pozíciója és a valós eszközsiker-arány. Ha a modell a közvetlen szondán helyes, de az eszközhívás mégis elbukik, a tokenizert, a szerializálást, a Harness-t vagy az eszközprotokollt kell javítani; és csak akkor szabad az esetet a 8. fejezet másolási tréningadatává alakítani, ha az első eltérés magának a modellnek a kimenetében jelenik meg.
 
-> **7-6. kísérlet ★★: Hibaattribúció AndroidWorld-nyomvonalakon**
->
-> Ez a kísérlet a fejezet attribúciós módszerét gyakoroltatja valódi nyomvonalakon, emulátor és modell-API nélkül. Az anyag a `chapter7/android-world` mentett T3A-futása: a `t3a.md` az összes feladat lépésenkénti `Action`/`Reason`/`Summary` bejegyzéseit tartalmazza, a `t3a_failed.md` pedig több mint ötven sikertelen nyomvonalat gyűjt össze, mindegyik végén a validátor objektív ítéletével.
->
-> 1. lépés: Rétegzett mintavétel. Válasszon ki tíz sikertelen nyomvonalat a `t3a_failed.md` fájlból, amelyek közül legalább három néma hiba legyen, egyetlen eszközhiba nélkül — az ismérv az, hogy egyetlen eszközhívás sem tért vissza hibával, az Agent vagy késznek nyilvánította a feladatot, vagy elfogytak a lépései, és csak a záró validátori ítélet jelzi a bukást.
->
-> 2. lépés: Az első hiba lokalizálása. Minden nyomvonalnál jegyezze fel az első hiba lépésszámát, és jelölje, hogy az a lépés eszközhívás vagy assistant message. A néma hibákhoz két technika kell: a ténykohorgony-összevetés az Agent állításait veti össze az eszközök visszatérési értékeivel, és az első eltérést veszi; a pályaelőtag-felezés a k. lépésnél elvágja a pályát és átadja — ha még megmenthető, a hiba k után van. A hibakulcsszavak keresése egyiket sem pótolja.
->
-> 3. lépés: Strukturált feljegyzés. Nyomvonalanként állítson elő egy JSON vagy YAML rekordot a feladat nevével, az első hiba lépésével, a hiba kategóriájával, a gyökérok felelősével és az alátámasztó idézetekkel, elkülönítve a fő okot a következménytől.
->
-> 4. lépés: Összevetés a meglévő jegyzettel. Vesse össze eredményeit a `t3a_failed_analysis.md` tartalmával, és rögzítsen minden eltérést. Különösen figyeljen a gyökérok hozzárendelésére: a jegyzet eredetileg úgy rögzítette a képátírási hibát, hogy „a látómodellből hiányzik az OCR”, holott a T3A megfigyelési tere egyetlen képpontot sem tartalmaz, tehát a valódi gyökérok a hiányzó megfigyelési csatorna. Egy meglévő attribúciós jegyzet nem megoldókulcs.
->
-> 5. lépés: Átalakítás regressziós feladattá. Válasszon ki három olyan nyomvonalat, ahol az első hiba assistant message, vágja el az előtagot közvetlenül a hiba előtt, majd írja meg az elfogadható műveletek halmazát és a tiltott műveleteket, így pálya-előtag regressziós feladatokat kap.
->
-
 ### End-to-end regressziós feladatok és pálya-előtag regressziós feladatok
 
 Az **end-to-end regresszió** a teljes munkafolyamatot futtatja; a **pálya-előtag regresszió** a kontextust, beszélgetést, eszközválaszokat és állapotot az első hiba előtt rögzíti, majd csak a következő műveletet teszteli. Elfogadható műveletek halmazát kell megadni (szabályolvasás, kérdezés vagy veszélyes művelet elutasítása), nem egyetlen kanonikus választ. Az értékelési és tanítási adatokat el kell különíteni.
@@ -492,9 +510,13 @@ A Chatbot Arena névtelen véletlenszerű mérkőzéseket használ — a felhasz
 
 Amikor a páronkénti bíráskodást LLM végzi emberi szavazás helyett, ügyelni kell a "Pozíciós Torzításra" is — a bírómodell szisztematikusan előnyben részesítheti az egy bizonyos pozícióban (általában az elsőben) megjelenő jelöltet, és az ítélet változatlan maradhat, ha a két jelölt tartalmát teljesen felcseréljük. A szokásos mérséklési módszer "mindegyik pár kiértékelése kétszer, felcserélt sorrendben": egyszer A-val először, egyszer B-vel először, és a két eredmény átlaga; egy szigorúbb megközelítés csak azokat az eseteket veszi figyelembe, ahol a két ítélet konzisztens, és az inkonzisztenciákat döntetlenként kezeli vagy emberi felülvizsgálatra küldi. A Chatbot Arena megközelítése lényegében ugyanez — a két válasz megjelenítési pozíciójának véletlenszerűsítése, így a pozíciós torzítás kioltódik nagy mintán.
 
-> **7-8. kísérlet ★: Globális Modell Ranglista Felállítása és Karbantartása**
+> **7-8. kísérlet ★★: Modellranglista építése páronkénti összehasonlítási adatokból**
 >
-> Hozz létre és tarts karban egy folyamatosan frissülő globális modell ranglistát. Válassz ki 5-10 reprezentatív tesztesetet minden feladattípushoz (kódolás, eszközhívás, multimodális, keresés, hosszú szöveges Q&A, egyszerű utasításkövetés). Futtasd ezt a készletet az összes elérhető modellen (beleértve ugyanazon modell különböző API-szolgáltatóktól származó verzióit), és rendszeresen (pl. hetente) ismételd meg. Jegyezd fel a pontszámok történeti trendjeit — amikor egy modell pontszáma hirtelen csökken (pl. Claude Sonnet 4.5 pontszáma egyik hétről a másikra 92%-ról 80%-ra esik), először ellenőrizd az API változási naplóját; ha nincs bejelentett változás, valószínűleg külső ok van (időzítési torzítás, nagy terhelés, driftsújtotta szerververzió). Rendszeres időközönként frissítsd a ranglistát, törölve az elavult modelleket és hozzáadva újakat.
+> Ez a kísérlet nulláról valósít meg egy Elo-pontszámító rendszert, hogy alaposan megértsük, miként von ki a Bradley–Terry-modell relatív képességpontszámokat nagyszámú páronkénti összehasonlításból. A kísérlet a Chatbot Arena nyílt, valódi szavazási adathalmazát használja (több millió vak felhasználói szavazattal).
+>
+> Valósítsd meg az Elo-pontszám iteratív frissítését: kezdetben minden modell 1000 pontot kap, a szavazatokat pedig időrendben dolgozod fel. Minden párharcnál a két modell aktuális pontkülönbségéből számítsd ki a várt győzelmi esélyt, vesd össze a tényleges eredménnyel, és igazíts rögzített tanulási rátával — a győztes kap, a vesztes veszít, az igazítás mértéke pedig arányos a várttól való eltéréssel (a meglepetésvereség nagyobb pontmozgást okoz). Rendezd a modelleket a végső pontszám szerint csökkenő sorrendbe, számold ki a páronkénti győzelmiarány-mátrixot, és vesd össze a hivatalos ranglistával — elég, ha a sorrend nagyjából egyezik. Ne várd el a pontról pontra egyezést: a Chatbot Arena hivatalosan Bradley–Terry maximum likelihood illesztést használ (az összes mérkőzést egyszerre oldja meg, a szavazatok sorrendjétől függetlenül), itt viszont online, inkrementálisan frissülő Elo készül (amelyet befolyásol a K tanulási tényező és a feldolgozási sorrend). A két algoritmusnak az összesített rangsorban egyeznie kell, a konkrét pontértékeknek viszont nem.
+>
+> A kísérlet második része a ranglista történeti alakulását animálja: szeleteld a szavazási adatokat idő szerint (hetente vagy havonta), és minden időpontra számolj Elo-pillanatképet. D3.js-sel készíts oszlopdiagram-versenyt (a vízszintes oszlop hossza a pontszám, a függőleges pozíció a helyezés, és mindkettő simán változik az időben). Az animációt figyelve azonosítsd a technológiai áttörések pillanatait (amikor egy modell pontszáma hirtelen megugrik), a versenyhelyzet átrendeződését és a modellek életciklusát.
 >
 
 ## Értékelés-vezérelt modellválasztás

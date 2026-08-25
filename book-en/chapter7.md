@@ -72,24 +72,32 @@ Before building an environment or dataset, define what "success" means: is one w
 
 ### Technical Wonders: Capability Ceilings with Pass@k
 
-Many current models and Agents operate in a **technical-wonder** phase: after many attempts, a long time budget, and human selection, one breakthrough trajectory is enough to show that a task is possible in principle. That is the logic of **Pass@k**—run the same task $k$ times and count it as passed if at least one attempt passes; for continuous scores, keep the best attempt as **Best@k**.
+Many current models and Agents are still in what can be called the **technical wonder** phase. The wonder is a capability ceiling demonstrated under many attempts, a generous time budget, and human selection: one success is enough to prove that the thing is possible in principle. That is exactly the logic of **Pass@k** — run the same task $k$ times and count it as passed if at least one run passes; when the output is a continuous score, take the best run and call it **Best@k**.
 
-Anthropic's long-running-Agent examples—writing a C compiler over a week, searching for a counterexample to an important conjecture, or repeatedly auditing open-source software until a decades-old vulnerability is found—illustrate this capability ceiling. Research discovery, vulnerability hunting, and open-ended creation can all benefit from selecting the best of $k$ candidate trajectories.
+Anthropic's discussion of long-running Agents illustrates this kind of ceiling: letting an Agent work autonomously for a week and write a C compiler from scratch; having it explore until it finds a counterexample to an important mathematical conjecture; or having it review open-source software over and over until it surfaces a serious security hole that has been sitting there for decades.
 
-Manus made this ceiling visible by giving people a virtual computer on which an Agent could work for half an hour or an hour. OpenClaw made the experience feel more like a person who can be assigned work through messaging, access files and online services, report progress, ask for information, and wake itself to process mail. Early versions were expensive and unreliable on any single attempt, but their generality made high Pass@k possible—and the resulting technical wonders spread widely on social networks.
+For engineering and research exploration of this kind, what gets demonstrated is usually not "right every time" but a single breakthrough trajectory that finally appears once the exploration budget is stretched far enough. For scientific discovery, vulnerability hunting, and open-ended creative work, that ceiling is valuable in itself: a human can pick the best of $k$ candidate trajectories.
+
+Beyond the foundation-model labs, many application companies use the technical-wonder strategy too. Manus drew wide attention because it handed people a virtual computer, letting an audience with no intuition for Agents discover that AI can operate a computer the way a person does — working for half an hour or an hour and completing a complex task step by step.
+
+OpenClaw gave many people their first sense that an Agent could feel like a live colleague. Users assign it work through an instant-messaging app much as they would a real person; it can reach every file on the computer and every online service, it reports back or asks for more information when it reaches a certain point, and it can even wake itself up to check and handle email.
+
+Early Manus and OpenClaw did not have high success rates on complex tasks, and their token costs were steep. But because these Agent frameworks are general-purpose, complex tasks tend to have a high Pass@k when paired with the strongest models, which is a high technical ceiling. Those technical wonders were shared widely on social networks, and that was the key to these products' success.
 
 ### Business Reliability: Focus on Pass^k
 
-Business systems usually care about the opposite: no mistake across repeated attempts. We call this **Pass^k** (read "Pass consecutive k"): run a task consecutively $k$ times, require every run to pass, and veto any safety, compliance, or hallucination violation. It asks whether an Agent can deliver reliably, not whether it can occasionally create a miracle.
+Real businesses usually care about the opposite: not a single mistake across repeated attempts. We call this target **Pass^k** (read as **Pass consecutive k**): run the same task $k$ times in a row, require every run to pass, and allow no veto — no safety, compliance, or hallucination violation. It answers "can the Agent deliver reliably" rather than "can it occasionally work a miracle".
 
-If runs are independent and the single-run success rate is $p$,
+If the runs are independent and the single-run success rate is $p$, the relationship between the two metrics is straightforward:
 
 $$
 \mathrm{Pass@k}=1-(1-p)^k,\qquad
 \mathrm{Pass}^{k}=p^k.
 $$
 
-At $p=0.6$ and $k=5$, Pass@5 is about 99.0%, while Pass consecutive@5 is about 7.8%. The first is useful for capability exploration; the second is closer to the reliability required for payments, refunds, permission changes, and production deployment. Reports must state whether $k$ means independent samples of one task or consecutive production tasks. Side-effecting actions must be sampled in a sandbox or rollback-capable environment, with every failure counted.
+At $p=0.6$ and $k=5$, for instance, Pass@5 $=1-0.4^5\approx99.0\%$ — it looks as though at least one run almost always succeeds. But Pass consecutive@5 $=0.6^5\approx7.8\%$, which says that getting five in a row without a slip is still hard. The first number is the right way to measure a capability ceiling during exploration; only the second comes close to the reliability that payments, refunds, permission changes, and production deployments demand.
+
+An evaluation report must state exactly what the $k$ attempts are: $k$ independent samples of the same task, or $k$ consecutive tasks on a production pipeline. For operations with side effects you cannot simply "retry until it works"; sample in a sandbox or a rollback-capable environment instead, and record every failure in the reliability metric.
 
 ### Process Metrics: From Black Box to White Box
 
@@ -423,6 +431,7 @@ Those scores do not establish a provider winner. There were only four clips per 
 
 Handwritten Rubrics are a fast way to establish diagnostic dimensions like these. At larger scale, a specialized **generative reward model** can automate the judging; Chapter 8 covers how such reward models are trained.
 
+
 ### Failure Attribution: Locate the First Error in a Trajectory
 
 End-to-end evaluation often says only "pass" or "fail". To make results drive fixes, perform **failure attribution** for every failed trajectory: record the main error class, the first step at which unacceptable behavior appeared, the relevant tool call or model output, and evidence that can be audited. Attribute the first error that sent the task off course; later errors are often just the chain reaction.
@@ -434,9 +443,27 @@ An initial Coding-Agent taxonomy can include missing process or repository rules
 
 That list only covers failures that announce themselves. Add the categories that leave no error behind: requirement and ambiguity handling, where the Agent builds what it restated rather than what was asked, or silently picks one reading of an ambiguous request; hacking the verification environment, where an assertion is edited, a `skip` is added, the logic under test is mocked out, or completion is claimed for a test that was never run; incomplete edits, where three call sites are updated and the fourth—a dynamic call, a binding in another language, a schema—is missed and still compiles; wrong information reported to the user, where every tool call and the final state are correct but the amount, status or date in the reply is not; and non-functional regressions, where a public API or schema changes without a migration, or a validation is deleted to make a check pass. In all of these the first error is not a tool return but an **assistant message**—a judgement, an assumption, or a question that should have been asked and was not.
 
+#### The "Right Actions, Wrong Report" Problem
+
 "Right actions, wrong report" is the category most often hidden by an overall pass rate, because most evaluations assert only on environment state. τ²-bench scores it separately: of the 704 published baseline runs whose task carries a communication requirement, 240 failed, 162 of those failed the communication check, and 80—a third of all failures—had correct environment state and a wrong report.
 
 The companion repository holds a matching case. Asked to enter the expenses from `expenses.jpg` into a bookkeeping app, the Agent spent 32 steps granting permissions, searching, opening the image, filling in each row and saving, **with no step returning an error**, then declared the task complete; the validator reported that the row it should have written—`Dress`, ¥436.35—was absent, bearing no relation to the four it entered. Step 8 of its own reasoning reads *"I cannot actually see the content/details of the expenses in the image"*: it already knew the data was missing, neither stopped nor reported it, and by step 11 four invented expenses had appeared in its notes, which every later input faithfully entered. The first error is step 8, and that step neither raised an error nor was a tool call. Its root cause is also easy to misfile: T3A is a text-only Agent whose observation space holds only the element tree and no image pixels, so the cause is not "the model cannot do OCR" but a missing observation channel plus the absence of a legal "information unavailable" exit. File it as a model-capability problem and the next move is to swap models or train OCR; the real fix is to add the channel and the exit.
+
+> **Experiment 7-6 ★★: Failure Attribution on AndroidWorld Traces**
+>
+> This experiment practices the attribution method of this section on real traces, with no emulator and no model API required. The material is the saved T3A run in `chapter7/android-world`: `t3a.md` holds the step-by-step `Action`/`Reason`/`Summary` for every task, and `t3a_failed.md` collects more than fifty failed traces, each ending with the validator's objective verdict.
+>
+> Step 1: Sampling. Draw at least ten silent failures from `t3a_failed.md` — traces with no tool error anywhere. No tool return may have failed; the Agent either declared completion or ran out of steps; and only the closing validator verdict marks the task failed.
+>
+> Step 2: Locate the first error. For each trace, record the step number of the first error and whether that step is a tool call or an assistant message. Silent failures need two techniques: fact-anchor comparison, which walks the Agent's statements against the tool return values and takes the first divergence; and trajectory-prefix bisection, which cuts the trajectory at step k and hands it over — if it is still recoverable, the error lies after k. Searching for error keywords is no substitute.
+>
+> Step 3: Write structured records. Emit one JSON or YAML record per trace with the task name, first-error step, error category, responsible party, supporting quotations, and a separation of primary cause from consequence.
+>
+> Step 4: Compare with the existing notes. Check your results against `t3a_failed_analysis.md` and record every disagreement. Pay particular attention to root-cause assignment: those notes originally recorded the image-transcription failure as "the vision model lacks OCR," yet T3A's observation space contains no image pixels at all, so the real root cause is a missing observation channel. An existing attribution note is not an answer key.
+>
+> Step 5: Convert to regression tasks. Take three traces whose first error is an assistant message, cut each trajectory prefix just before that error, and write the acceptable-action set and the forbidden actions to form trajectory-prefix regression tasks.
+>
+
 
 #### Scope-Sensitive Document Formatting Errors
 
@@ -464,21 +491,6 @@ original file bytes → tool return → Harness serialization → model context
 ```
 
 A minimal set of evaluation probes covers direct restatement, extraction from a long context, placement into tool arguments, selection among similar strings, and spaces, newlines, backslashes, Unicode combining characters and low-frequency tokens. The metrics are byte-exact match, code-point-exact match, token-exact match, the position of the first divergence, and the real tool success rate. If the model is correct on the direct probe but the tool call still fails, fix the tokenizer, the serialization, the Harness or the tool protocol; only when the first divergence appears in the model's own output should the case be turned into the copying training data of Chapter 8.
-
-> **Experiment 7-6 ★★: Failure Attribution on AndroidWorld Traces**
->
-> This experiment practices the attribution method of this section on real traces, with no emulator and no model API required. The material is the saved T3A run in `chapter7/android-world`: `t3a.md` holds the step-by-step `Action`/`Reason`/`Summary` for every task, and `t3a_failed.md` collects more than fifty failed traces, each ending with the validator's objective verdict.
->
-> Step 1: Stratified sampling. Draw ten failed traces from `t3a_failed.md`, at least three of which must be silent failures with no tool error anywhere — the test is that no tool return failed, the Agent either declared completion or ran out of steps, and only the closing validator verdict marks the task failed.
->
-> Step 2: Locate the first error. For each trace, record the step number of the first error and whether that step is a tool call or an assistant message. Silent failures need two techniques: fact-anchor comparison, which walks the Agent's statements against the tool return values and takes the first divergence; and trajectory-prefix bisection, which cuts the trajectory at step k and hands it over — if it is still recoverable, the error lies after k. Searching for error keywords is no substitute.
->
-> Step 3: Write structured records. Emit one JSON or YAML record per trace with the task name, first-error step, error category, responsible party, supporting quotations, and a separation of primary cause from consequence.
->
-> Step 4: Compare with the existing notes. Check your results against `t3a_failed_analysis.md` and record every disagreement. Pay particular attention to root-cause assignment: those notes originally recorded the image-transcription failure as "the vision model lacks OCR," yet T3A's observation space contains no image pixels at all, so the real root cause is a missing observation channel. An existing attribution note is not an answer key.
->
-> Step 5: Convert to regression tasks. Take three traces whose first error is an assistant message, cut each trajectory prefix just before that error, and write the acceptable-action set and the forbidden actions to form trajectory-prefix regression tasks.
->
 
 ### End-to-End and Trajectory-Prefix Regression Tasks
 

@@ -72,18 +72,32 @@ Ortamı veya veri kümesini kurmadan önce “başarı”nın ne olduğunu belir
 
 ### Teknik harika: Pass@k ile yetenek tavanı
 
-Birçok model ve Agent hâlâ **teknik harika** aşamasındadır: çok sayıda deneme, uzun süre ve insan seçimi sonunda tek bir çığır açan trajectory, görevin ilke olarak yapılabildiğini gösterir. **Pass@k**, aynı görevi $k$ kez çalıştırıp en az biri başarılıysa geçer; sürekli puanlarda en iyi sonuç **Best@k** olur. Anthropic'in uzun süreli Agent örnekleri, Manus ve OpenClaw; bilimsel keşif, güvenlik açığı arama ve açık uçlu üretimde yararlı olan bu yetenek tavanını gösterir.
+Bugünkü modellerin ve Agent'ların çoğu hâlâ **"teknik harika"** diyebileceğimiz bir aşamada. Buradaki harika, çok sayıda deneme, bol zaman bütçesi ve insan eliyle ayıklama altında sergilenen yetenek tavanıdır: içlerinden biri tutarsa "bu iş ilkesel olarak yapılabiliyor" demeye yeter. **Pass@k** mantığı tam olarak budur — aynı görev $k$ kez çalıştırılır, en az biri geçerse görev geçmiş sayılır; çıktı sürekli bir puansa en iyi koşu alınır ve buna **Best@k** denir.
+
+Anthropic'in uzun süre çalışan Agent'lar üzerine tartışması bu tavanı iyi örnekler: Agent'a bir hafta boyunca kendi başına çalıştırıp sıfırdan bir C derleyicisi yazdırmak; önemli bir matematiksel sanıya karşı örnek bulana dek aramaya devam ettirmek; ya da açık kaynak yazılımı tekrar tekrar tarayıp onlarca yıldır orada duran ciddi bir güvenlik açığını ortaya çıkarmak.
+
+Bu tür mühendislik ve araştırma keşiflerinde gösterilen şey genellikle "her seferinde doğru yapmak" değil, keşif bütçesi yeterince uzatıldığında nihayet beliren tek bir çığır açıcı yörüngedir. Bilimsel keşif, açık avcılığı ve açık uçlu üretim gibi görevlerde bu tavanın kendisi değerlidir: insan, $k$ aday yörünge arasından en iyisini seçebilir.
+
+Temel model laboratuvarlarının dışında birçok uygulama şirketi de "teknik harika" stratejisini kullanıyor. Manus'un geniş ilgi görmesinin nedeni, insanların eline sanal bir bilgisayar vermesiydi: Agent kavramına dair sezgisi olmayan kitle, yapay zekânın da tıpkı bir insan gibi bilgisayar kullanabildiğini, yarım saat hatta bir saat boyunca çalışıp karmaşık bir görevi adım adım tamamladığını gördü.
+
+OpenClaw ise pek çok kişiye bir Agent'ın "canlı biri" gibi hissettirdiği ilk deneyimi yaşattı. Kullanıcı, gerçek bir kişiye iş verir gibi anlık mesajlaşma uygulaması üzerinden ona görev atayabiliyor; bilgisayardaki tüm dosyalara ve çevrimiçi servislere erişebiliyor, belli bir aşamaya gelince kendiliğinden geri bildirim veriyor ya da yeni bilgi istiyor, hatta e-postayı kontrol edip işlemek için kendi kendini uyandırabiliyor.
+
+İlk dönem Manus ve OpenClaw karmaşık görevlerde yüksek başarı oranına sahip değildi, token maliyetleri de çok yüksekti. Ama bu Agent çerçeveleri genel amaçlı olduğundan, en güçlü modellerle birlikte karmaşık görevlerde Pass@k genellikle yüksek çıkıyor ve yüksek bir teknik tavan ortaya koyuyor. Bu "teknik harikalar"ın sosyal ağlarda yoğun biçimde paylaşılması, bu ürünlerin başarısının anahtarı oldu.
 
 ### İş güvenilirliği: Pass^k
 
-İş sistemleri genellikle tersini ister: ardışık denemelerde tek hata bile olmaması. **Pass^k** (“Pass consecutive k”), $k$ çalıştırmanın hepsinin başarılı olmasını ve güvenlik, uyum ya da halüsinasyon vetosu doğurmamasını ister. Tek çalıştırma başarısı $p$ ise,
+Gerçek iş dünyası genellikle bunun tersini önemser: birden çok denemede tek bir hata bile olmaması. Bu hedefe **Pass^k** diyoruz (**Pass consecutive k** diye okunur): aynı görev art arda $k$ kez çalıştırılır, her seferinde geçmesi ve güvenlik, uyumluluk ya da halüsinasyon gibi bir veto maddesini hiç tetiklememesi istenir. "Agent istikrarlı ve güvenilir biçimde teslim edebiliyor mu" sorusuna yanıt verir, "arada bir mucize yaratabiliyor mu" sorusuna değil.
+
+Koşular birbirinden bağımsızsa ve tek koşunun başarı oranı $p$ ise, iki ölçütün ilişkisi sezgiseldir:
 
 $$
 \mathrm{Pass@k}=1-(1-p)^k,\qquad
 \mathrm{Pass}^{k}=p^k.
 $$
 
-$p=0.6$, $k=5$ için Pass@5 yaklaşık %99,0 iken Pass consecutive@5 yalnızca %7,8'dir. İlki keşif tavanını, ikincisi ödeme, iade, yetki değişikliği ve üretim dağıtımı için gereken istikrarı ölçer. Rapor $k$'nın bağımsız örnekler mi yoksa ardışık üretim görevleri mi olduğunu açıklamalı; yan etkili işlemler sandbox ya da geri alınabilir ortamda, bütün başarısızlıklar sayılarak test edilmelidir.
+Örneğin $p=0.6$ ve $k=5$ için: Pass@5 $=1-0.4^5\approx99.0\%$; "en az bir kez başarmak" neredeyse hep mümkün görünür. Oysa Pass consecutive@5 $=0.6^5\approx7.8\%$, yani beş kez üst üste hatasız geçmek hâlâ zordur. İlk sayı keşif sırasındaki yetenek tavanını ölçmeye uygundur; ödeme, iade, yetki değişikliği ve üretim dağıtımı gibi senaryoların güvenilirlik beklentisine yaklaşan ise ikinci sayıdır.
+
+Değerlendirme raporu $k$ denemenin ne olduğunu açıkça yazmalıdır: aynı görevin $k$ bağımsız örneklemi mi, yoksa üretim hattındaki ardışık $k$ görev mi. Yan etkisi olan işlemlerde "başarana kadar yeniden dene" denemez; örnekleme bir kum havuzunda ya da geri alınabilir bir ortamda yapılmalı ve her başarısızlık güvenilirlik ölçütüne işlenmelidir.
 
 ### Süreç metrikleri: Siyah kutudan beyaz kutuya
 
@@ -416,6 +430,7 @@ Bu puanlar bir sağlayıcı kazananı belirlemez. Her sağlayıcıdan yalnızca 
 
 Elle yazılmış Rubric'ler bu tür teşhis boyutlarını hızla kurmayı sağlar. Ölçek büyüdüğünde değerlendirmeyi otomatikleştirmek için özel **üretken ödül modelleri** eğitilebilir; eğitim yöntemi Bölüm 8'de ele alınacaktır.
 
+
 ### Hata atfı: Trajectory'deki ilk hatanın yerini belirleme
 
 Uçtan uca değerlendirme çoğu zaman yalnızca “başarılı/başarısız” der. Sonucu düzeltmeye dönüştürmek için her başarısız trajectory'de kategori, kabul edilemez davranışın ilk adımı, ilgili araç çağrısı veya model çıktısı ve denetlenebilir kanıt kaydedilmelidir. Bad case'ler kullanıcı düzeltmesi, olumsuz geri bildirim veya sonradan yapılan durum/kural kontrolünden gelebilir. LLM yardımcı olur, ancak kök neden genellikle ürün sorunu da olabileceğinden insan analizi gereklidir.
@@ -425,9 +440,27 @@ Coding Agent için başlangıç sınıfları süreç/depo kuralı eksikliği, ar
 
 Bu liste yalnızca kendini duyuran başarısızlıkları kapsar. Hiç hata bırakmayan sınıfları da eklemek gerekir: gereksinim anlama ve belirsizlik yönetimi — Agent istenen şeyi değil kendi yeniden ifade ettiği şeyi yapar ya da belirsiz bir isteğin bir okumasını sessizce seçer; doğrulama ortamını hackleme — bir assertion'ı düzenler, `skip` ekler, test edilen mantığı mock'lar veya hiç çalıştırmadığı bir test için "geçti" der; eksik değişiklik — üç çağrı noktasını günceller, dördüncüsünü (dinamik bir çağrı, başka bir dildeki binding, bir schema) atlar ve yine de derlenir; kullanıcıya yanlış bilgi bildirme — her araç çağrısı ve son durum doğruyken yanıttaki tutar, durum veya tarih yanlıştır; ve işlevsel olmayan gerilemeler — genel bir API veya schema migration olmadan değişir ya da bir kontrol geçsin diye doğrulama silinir. Bunların hepsinde ilk hata bir araç dönüşü değil, bir **assistant message**'dır: bir yargı, bir varsayım ya da sorulması gerekirken sorulmamış bir soru.
 
+#### "Doğru yaptı, yanlış bildirdi" sorunu
+
 "Doğru yaptı, yanlış bildirdi" genel başarı oranının en kolay sakladığı sınıftır, çünkü çoğu değerlendirme yalnızca ortam durumunu denetler. τ²-bench bunu ayrı puanlar: yayımlanan temel koşulardan görevi bir bilgilendirme gereksinimi taşıyan 704 koşuda 240 başarısızlık yaşandı; bunların 162'si bilgilendirme kontrolünden kaldı ve 80'i — tüm başarısızlıkların üçte biri — ortam durumu doğruyken bildirimi yanlıştı.
 
 Eşlik eden depoda buna karşılık gelen bir vaka var. `expenses.jpg` içindeki harcamaları bir muhasebe uygulamasına girme görevinde Agent, izin verme, arama, görseli açma, her satırı doldurma ve kaydetme işlerini 32 adımda yaptı; **hiçbir adım hata döndürmedi** ve sonunda görevi tamamlandı ilan etti. Oysa doğrulayıcı, yazılması gereken satırın — `Dress`, ¥436,35 — bulunmadığını bildirdi; bu satırın girilen dördüyle hiçbir ilgisi yok. 8. adımda kendi akıl yürütmesi şöyle diyor: *"I cannot actually see the content/details of the expenses in the image"*. Veriyi alamadığını kendisi biliyordu, ne durdu ne bildirdi; 11. adımda notlarına uydurma dört harcama girdi ve sonraki her girdi bu uydurma veriyi sadakatle uyguladı. İlk hata 8. adımdır ve o adım ne hata verdi ne de bir araç çağrısıydı. Kök nedeni de kolayca yanlış dosyalanır: T3A, gözlem uzayında yalnızca öğe ağacı bulunan, görüntü pikseli hiç olmayan salt metin bir Agent'tır; dolayısıyla neden "model OCR yapamıyor" değil, eksik bir gözlem kanalı ve "bilgi elde edilemiyor" diyebilecek meşru bir çıkış eyleminin yokluğudur. Bunu model yeteneği sorunu diye kaydederseniz sıradaki hamle model değiştirmek veya OCR eğitmek olur; gerçek çözüm kanalı ve çıkışı eklemektir.
+
+> **Deney 7-6 ★★: AndroidWorld yörüngelerinde hata atfı**
+>
+> Bu deney, bu bölümdeki atıf yöntemini gerçek yörüngeler üzerinde çalıştırır; emülatör de model API'si de gerekmez. Malzeme `chapter7/android-world` içinde saklanan T3A çalıştırmasıdır: `t3a.md` tüm görevlerin adım adım `Action`/`Reason`/`Summary` kayıtlarını, `t3a_failed.md` ise sonunda doğrulayıcının nesnel kararını taşıyan elliden fazla başarısız yörüngeyi içerir.
+>
+> Adım 1: Örnekleme. `t3a_failed.md` içinden hiçbir araç hatası içermeyen en az on sessiz başarısızlık seçin. Hiçbir araç çağrısı hata döndürmemiş olmalı, Agent ya tamamlandı demeli ya da adım sınırını tüketmeli, ve başarısızlığı yalnızca kapanıştaki doğrulayıcı kararı işaretlemelidir.
+>
+> Adım 2: İlk hatayı bulun. Her yörünge için ilk hatanın adım numarasını kaydedin ve bu adımın bir araç çağrısı mı yoksa bir assistant message mı olduğunu belirtin. Sessiz başarısızlıklar iki teknik ister: olgu çıpası karşılaştırması, Agent'ın ifadelerini araç dönüş değerleriyle karşılaştırıp ilk sapmayı alır; yörünge öneki ikili araması, yörüngeyi k adımında kesip devreder — hâlâ kurtarılabiliyorsa hata k'den sonradır. Hata anahtar sözcüğü aramak ikisinin de yerine geçmez.
+>
+> Adım 3: Yapılandırılmış kayıt yazın. Her yörünge için görev adı, ilk hata adımı, hata kategorisi, kök neden sorumlusu ve destekleyici alıntıları içeren, ana nedeni sonuçtan ayıran bir JSON ya da YAML kaydı üretin.
+>
+> Adım 4: Mevcut notlarla karşılaştırın. Sonuçlarınızı `t3a_failed_analysis.md` ile madde madde karşılaştırın ve her uyuşmazlığı kaydedin. Kök neden atfına özellikle dikkat edin: bu notlar görüntü çevirimi başarısızlığını "görme modelinde OCR yok" diye kaydetmişti, oysa T3A'nın gözlem uzayında hiç görüntü pikseli yoktur; gerçek kök neden eksik bir gözlem kanalıdır. Hazır bir atıf notu cevap anahtarı değildir.
+>
+> Adım 5: Regresyon görevine dönüştürün. İlk hatası bir assistant message olan üç yörünge seçin, öneki tam o hatadan önce kesin ve kabul edilebilir eylem kümesiyle yasak eylemleri yazarak yörünge öneki regresyon görevleri oluşturun.
+>
+
 
 #### Kapsama duyarlı belge biçimi hataları
 
@@ -455,21 +488,6 @@ original file bytes → tool return → Harness serialization → model context
 ```
 
 Asgari değerlendirme probları; doğrudan yineleme, uzun bağlamdan çıkarma, tool argümanına yerleştirme, benzer dizeler arasından seçim ile boşluk, satır sonu, ters bölü, Unicode birleştirici karakterler ve düşük frekanslı token'ları kapsar. Metrikler byte-exact match, code-point-exact match, token-exact match, ilk farkın konumu ve gerçek tool başarı oranıdır. Model doğrudan probda doğruyken tool çağrısı yine de başarısız oluyorsa tokenizer'ı, serileştirmeyi, Harness'ı veya tool protokolünü düzeltin; ilk fark yalnızca modelin kendi çıktısında belirdiğinde bu vaka 7. Bölüm'ün kopyalama eğitim verisine dönüştürülmelidir.
-
-> **Deney 7-6 ★★: AndroidWorld yörüngelerinde hata atfı**
->
-> Bu deney, bu bölümdeki atıf yöntemini gerçek yörüngeler üzerinde çalıştırır; emülatör de model API'si de gerekmez. Malzeme `chapter7/android-world` içinde saklanan T3A çalıştırmasıdır: `t3a.md` tüm görevlerin adım adım `Action`/`Reason`/`Summary` kayıtlarını, `t3a_failed.md` ise sonunda doğrulayıcının nesnel kararını taşıyan elliden fazla başarısız yörüngeyi içerir.
->
-> Adım 1: Katmanlı örnekleme. `t3a_failed.md` içinden on başarısız yörünge seçin; bunların en az üçü hiçbir araç hatası içermeyen sessiz başarısızlık olmalıdır — ölçüt, hiçbir araç çağrısının hata döndürmemesi, Agent'ın ya tamamlandı demesi ya da adım sınırını tüketmesi ve yalnızca kapanıştaki doğrulayıcı kararının başarısızlığı işaretlemesidir.
->
-> Adım 2: İlk hatayı bulun. Her yörünge için ilk hatanın adım numarasını kaydedin ve bu adımın bir araç çağrısı mı yoksa bir assistant message mı olduğunu belirtin. Sessiz başarısızlıklar iki teknik ister: olgu çıpası karşılaştırması, Agent'ın ifadelerini araç dönüş değerleriyle karşılaştırıp ilk sapmayı alır; yörünge öneki ikili araması, yörüngeyi k adımında kesip devreder — hâlâ kurtarılabiliyorsa hata k'den sonradır. Hata anahtar sözcüğü aramak ikisinin de yerine geçmez.
->
-> Adım 3: Yapılandırılmış kayıt yazın. Her yörünge için görev adı, ilk hata adımı, hata kategorisi, kök neden sorumlusu ve destekleyici alıntıları içeren, ana nedeni sonuçtan ayıran bir JSON ya da YAML kaydı üretin.
->
-> Adım 4: Mevcut notlarla karşılaştırın. Sonuçlarınızı `t3a_failed_analysis.md` ile madde madde karşılaştırın ve her uyuşmazlığı kaydedin. Kök neden atfına özellikle dikkat edin: bu notlar görüntü çevirimi başarısızlığını "görme modelinde OCR yok" diye kaydetmişti, oysa T3A'nın gözlem uzayında hiç görüntü pikseli yoktur; gerçek kök neden eksik bir gözlem kanalıdır. Hazır bir atıf notu cevap anahtarı değildir.
->
-> Adım 5: Regresyon görevine dönüştürün. İlk hatası bir assistant message olan üç yörünge seçin, öneki tam o hatadan önce kesin ve kabul edilebilir eylem kümesiyle yasak eylemleri yazarak yörünge öneki regresyon görevleri oluşturun.
->
 
 ### Uçtan uca regresyon görevleri ve trajectory-prefix regresyon görevleri
 

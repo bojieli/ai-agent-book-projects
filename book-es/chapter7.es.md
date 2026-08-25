@@ -71,18 +71,32 @@ Antes de construir el entorno o el dataset hay que definir qué significa «éxi
 
 ### Maravilla técnica: el techo de capacidad con Pass@k
 
-Muchos modelos y Agents se encuentran en una fase de **maravilla técnica**: tras muchos intentos, tiempo suficiente y selección humana, una sola trayectoria excepcional demuestra que la tarea es posible. Esa es la lógica de **Pass@k**: ejecutar la misma tarea $k$ veces y aprobar si al menos una ejecución pasa; con puntuaciones continuas se conserva la mejor como **Best@k**. Los ejemplos de Agents de larga duración de Anthropic, Manus y OpenClaw ilustran este techo de capacidad: descubrimiento científico, búsqueda de vulnerabilidades y creación abierta pueden beneficiarse de escoger la mejor de $k$ trayectorias.
+Muchos modelos y Agentes actuales siguen en una etapa que podríamos llamar de **«prodigio técnico»**. El prodigio es el techo de capacidad que se exhibe tras muchos intentos, un presupuesto de tiempo generoso y una criba humana: basta con que una sola ejecución acierte para demostrar que la cosa es posible en principio. Esa es justamente la lógica de **Pass@k**: se ejecuta la misma tarea $k$ veces y se da por superada si al menos una pasa; cuando la salida es una puntuación continua, se toma la mejor ejecución y se la denomina **Best@k**.
+
+La discusión de Anthropic sobre Agentes de ejecución prolongada ilustra bien este techo: dejar que un Agente trabaje solo durante una semana y escriba un compilador de C desde cero; que explore hasta encontrar un contraejemplo de una conjetura matemática importante; o que revise una y otra vez software de código abierto hasta destapar una vulnerabilidad grave que llevaba décadas ahí.
+
+En esta clase de exploración técnica y científica, lo que se demuestra no suele ser «acertar siempre», sino esa única trayectoria rompedora que aparece cuando se estira lo suficiente el presupuesto de exploración. Para el descubrimiento científico, la caza de vulnerabilidades o la creación abierta, ese techo vale por sí mismo: una persona puede quedarse con la mejor de $k$ trayectorias candidatas.
+
+Más allá de los laboratorios de modelos base, muchas empresas de aplicación emplean también la estrategia del prodigio técnico. Manus llamó tanto la atención porque puso un ordenador virtual en manos del público: gente que no tenía ninguna intuición sobre los Agentes descubrió que una IA podía manejar un ordenador como lo haría una persona, trabajando media hora o una hora seguidas y completando paso a paso una tarea compleja.
+
+OpenClaw hizo que mucha gente percibiera por primera vez que un Agente puede resultar «alguien vivo». El usuario le asigna trabajo por mensajería instantánea igual que se lo asignaría a una persona; el Agente accede a todos los archivos del ordenador y a los servicios en línea, informa por iniciativa propia o pide más datos al llegar a cierto punto, e incluso puede despertarse solo para consultar y gestionar el correo.
+
+Las primeras versiones de Manus y OpenClaw no tenían tasas de éxito altas en tareas complejas y su coste en tokens era elevadísimo. Pero, como estos marcos de Agente son de propósito general, con los modelos más potentes las tareas complejas suelen alcanzar un Pass@k alto, lo que revela un techo técnico elevado. Que esos prodigios técnicos se compartieran masivamente en las redes sociales fue la clave del éxito de estos productos.
 
 ### Fiabilidad empresarial: Pass^k
 
-Los sistemas de negocio suelen exigir lo contrario: ningún error durante intentos repetidos. **Pass^k** (léase «Pass consecutive k») exige que las $k$ ejecuciones consecutivas pasen y que ninguna active un veto de seguridad, cumplimiento o alucinación. Si la tasa de éxito de una ejecución es $p$, entonces
+Al negocio real suele preocuparle lo contrario: no cometer ni un solo error a lo largo de varios intentos. A ese objetivo lo llamamos **Pass^k** (léase **Pass consecutive k**): ejecutar la misma tarea $k$ veces seguidas exigiendo que todas pasen y que ninguna active un veto de seguridad, cumplimiento o alucinación. Responde a «¿entrega el Agente de forma fiable?», no a «¿es capaz de obrar un milagro de vez en cuando?».
+
+Si las ejecuciones son independientes y la tasa de éxito de una sola es $p$, la relación entre ambas métricas es inmediata:
 
 $$
 \mathrm{Pass@k}=1-(1-p)^k,\qquad
 \mathrm{Pass}^{k}=p^k.
 $$
 
-Con $p=0.6$ y $k=5$, Pass@5 es aproximadamente 99,0 %, mientras que Pass consecutive@5 es 7,8 %. El primer valor mide el techo exploratorio y el segundo se acerca a la fiabilidad necesaria para pagos, reembolsos, cambios de permisos y despliegues. El informe debe aclarar si $k$ son muestras independientes o tareas consecutivas de producción; las acciones con efectos secundarios deben probarse en un sandbox o entorno reversible y cada fallo cuenta.
+Por ejemplo, con $p=0.6$ y $k=5$: Pass@5 $=1-0.4^5\approx99.0\%$, y parece que casi siempre se logra «acertar al menos una vez»; pero Pass consecutive@5 $=0.6^5\approx7.8\%$, lo que indica que encadenar cinco sin fallo sigue siendo difícil. La primera cifra sirve para medir el techo de capacidad durante la exploración; solo la segunda se acerca a la fiabilidad que exigen los pagos, las devoluciones, los cambios de permisos o los despliegues en producción.
+
+El informe de evaluación debe dejar claro qué son los $k$ intentos: $k$ muestreos independientes de la misma tarea o $k$ tareas consecutivas en una tubería de producción. En operaciones con efectos secundarios no vale «reintentar hasta que salga»; hay que muestrear en un entorno aislado o reversible y anotar cada fallo en la métrica de fiabilidad.
 
 ### Del proceso de caja negra a caja blanca
 
@@ -409,6 +423,7 @@ Pero ocho muestras no bastan para decidir qué proveedor es mejor. Hay cuatro po
 
 Las rúbricas escritas a mano permiten crear rápido estas dimensiones diagnósticas. A mayor escala también se pueden entrenar **modelos de recompensa generativos** para automatizar la evaluación; el Capítulo 8 presenta sus métodos de entrenamiento.
 
+
 ### Atribución de fallos: localización del primer error en la trayectoria
 
 Una evaluación extremo a extremo suele decir solo «aprobado» o «fallido». Para convertir el resultado en una reparación, cada trayectoria fallida debe registrar la categoría, el primer paso inaceptable, la llamada a herramienta o salida asociada y evidencia auditable. Las señales habituales son una corrección explícita del usuario, un voto negativo o una comprobación posterior que detecta una acción indebida. El LLM puede ayudar, pero la lectura humana sigue siendo necesaria porque el fallo suele revelar un problema de producto.
@@ -418,9 +433,27 @@ Para un Coding Agent, clasifica la falta de proceso, los errores de herramientas
 
 Esa lista solo cubre los fallos que se anuncian solos. Hay que añadir las categorías que no dejan ningún error: comprensión de requisitos y manejo de ambigüedad, cuando el Agente construye lo que él mismo reformuló en lugar de lo pedido, o elige en silencio una lectura de una petición ambigua; hackeo del entorno de verificación, cuando edita una aserción, añade un `skip`, sustituye por mocks la lógica bajo prueba o afirma que pasó una prueba que nunca ejecutó; modificación incompleta, cuando actualiza tres puntos de llamada y omite el cuarto —una llamada dinámica, un binding en otro lenguaje, un schema— y aun así compila; información errónea comunicada al usuario, cuando cada llamada a herramienta y el estado final son correctos pero el importe, el estado o la fecha de la respuesta no lo son; y regresiones no funcionales, cuando cambia una API pública o un schema sin migración, o borra una validación para que pase una comprobación. En todas ellas el primer error no es un retorno de herramienta sino un **assistant message**: un juicio, una suposición, o una pregunta que debió hacerse y no se hizo.
 
+#### El problema de «hizo bien y contó mal»
+
 «Hizo bien y contó mal» es la categoría que la tasa global de éxito oculta con más facilidad, porque la mayoría de las evaluaciones solo comprueban el estado del entorno. τ²-bench la puntúa por separado: de las 704 ejecuciones de referencia publicadas cuya tarea lleva un requisito de comunicación, 240 fallaron, 162 de ellas suspendieron la comprobación de comunicación, y 80 —un tercio de todos los fallos— tenían el estado del entorno correcto y el informe equivocado.
 
 El repositorio complementario guarda un caso equivalente. Ante la tarea de introducir los gastos de `expenses.jpg` en una aplicación de contabilidad, el Agente empleó 32 pasos en conceder permisos, buscar, abrir la imagen, rellenar cada fila y guardar, **sin que ningún paso devolviera un error**, y declaró la tarea completada; el validador informó de que la fila que debía haber escrito —`Dress`, 436,35 ¥— no estaba, y no guarda relación con las cuatro que introdujo. En el paso 8 su propio razonamiento dice *«I cannot actually see the content/details of the expenses in the image»*: ya sabía que le faltaban los datos, no se detuvo ni lo informó, y en el paso 11 aparecieron cuatro gastos inventados en sus notas, que cada entrada posterior ejecutó fielmente. El primer error es el paso 8, y ese paso ni lanzó un error ni fue una llamada a herramienta. Su causa raíz también se archiva mal con facilidad: T3A es un Agente de solo texto cuyo espacio de observación contiene únicamente el árbol de elementos y ningún píxel de imagen, así que la causa no es «el modelo no sabe hacer OCR» sino un canal de observación ausente más la falta de una salida legítima de «información no disponible». Archivarlo como problema de capacidad del modelo lleva a cambiar de modelo o entrenar OCR; el arreglo real es añadir el canal y la salida.
+
+> **Experimento 7-6 ★★: Atribución de fallos sobre trazas de AndroidWorld**
+>
+> Este experimento practica el método de atribución de esta sección con trazas reales, sin emulador y sin API de modelo. El material es la ejecución T3A guardada en `chapter7/android-world`: `t3a.md` contiene el `Action`/`Reason`/`Summary` paso a paso de todas las tareas y `t3a_failed.md` reúne más de cincuenta trazas fallidas, cada una terminada con el veredicto objetivo del validador.
+>
+> Paso 1: Muestreo. Extraiga al menos diez fallos silenciosos de `t3a_failed.md`, es decir, trazas sin ningún error de herramienta. Ninguna llamada puede haber devuelto error; el Agente declaró la tarea completada o agotó los pasos; y solo el veredicto final del validador marca el fallo.
+>
+> Paso 2: Localizar el primer error. Para cada traza, registre el número de paso del primer error e indique si ese paso es una llamada a herramienta o un assistant message. Los fallos silenciosos requieren dos técnicas: la comparación con anclas factuales, que contrasta las afirmaciones del Agente con los valores devueltos por las herramientas y toma la primera divergencia; y la bisección del prefijo de trayectoria, que corta la trayectoria en el paso k y la cede — si aún es recuperable, el error está después de k. Buscar palabras clave de error no sustituye a ninguna de las dos.
+>
+> Paso 3: Escribir registros estructurados. Produzca un registro JSON o YAML por traza con el nombre de la tarea, el paso del primer error, la categoría del error, el responsable de la causa raíz, las citas de apoyo y la separación entre causa principal y consecuencia.
+>
+> Paso 4: Contrastar con las notas existentes. Compare sus resultados con `t3a_failed_analysis.md` y registre cada discrepancia. Preste especial atención a la atribución de la causa raíz: esas notas registraban el fallo de transcripción de imágenes como «el modelo de visión carece de OCR», pero el espacio de observación de T3A no contiene ningún píxel de imagen, así que la causa raíz real es un canal de observación ausente. Una nota de atribución existente no es una solución oficial.
+>
+> Paso 5: Convertir en tareas de regresión. Tome tres trazas cuyo primer error sea un assistant message, corte el prefijo justo antes de ese error y escriba el conjunto de acciones aceptables y las acciones prohibidas para formar tareas de regresión de prefijo de trayectoria.
+>
+
 
 #### Errores de formato del documento sensibles al ámbito
 
@@ -448,21 +481,6 @@ bytes originales → respuesta de la herramienta → serialización del Harness 
 ```
 
 Un conjunto mínimo de sondas de evaluación cubre la repetición directa, la extracción desde un contexto largo, la colocación en argumentos de herramienta, la selección entre cadenas similares, y espacios, saltos de línea, barras invertidas, caracteres combinantes Unicode y tokens de baja frecuencia. Las métricas son byte-exact match, code-point-exact match, token-exact match, la posición de la primera divergencia y la tasa real de éxito de la herramienta. Si el modelo acierta en la sonda directa pero la llamada a la herramienta falla, hay que arreglar el tokenizador, la serialización, el Harness o el protocolo de la herramienta; solo cuando la primera divergencia aparece en la salida del propio modelo debe convertirse el caso en datos de entrenamiento de copia del capítulo 8.
-
-> **Experimento 7-6 ★★: Atribución de fallos sobre trazas de AndroidWorld**
->
-> Este experimento practica el método de atribución de esta sección con trazas reales, sin emulador y sin API de modelo. El material es la ejecución T3A guardada en `chapter7/android-world`: `t3a.md` contiene el `Action`/`Reason`/`Summary` paso a paso de todas las tareas y `t3a_failed.md` reúne más de cincuenta trazas fallidas, cada una terminada con el veredicto objetivo del validador.
->
-> Paso 1: Muestreo estratificado. Extraiga diez trazas fallidas de `t3a_failed.md`, de las cuales al menos tres deben ser fallos silenciosos sin ningún error de herramienta: el criterio es que ninguna llamada devolvió error, que el Agente declaró la tarea completada o agotó los pasos, y que solo el veredicto final del validador marca el fallo.
->
-> Paso 2: Localizar el primer error. Para cada traza, registre el número de paso del primer error e indique si ese paso es una llamada a herramienta o un assistant message. Los fallos silenciosos requieren dos técnicas: la comparación con anclas factuales, que contrasta las afirmaciones del Agente con los valores devueltos por las herramientas y toma la primera divergencia; y la bisección del prefijo de trayectoria, que corta la trayectoria en el paso k y la cede — si aún es recuperable, el error está después de k. Buscar palabras clave de error no sustituye a ninguna de las dos.
->
-> Paso 3: Escribir registros estructurados. Produzca un registro JSON o YAML por traza con el nombre de la tarea, el paso del primer error, la categoría del error, el responsable de la causa raíz, las citas de apoyo y la separación entre causa principal y consecuencia.
->
-> Paso 4: Contrastar con las notas existentes. Compare sus resultados con `t3a_failed_analysis.md` y registre cada discrepancia. Preste especial atención a la atribución de la causa raíz: esas notas registraban el fallo de transcripción de imágenes como «el modelo de visión carece de OCR», pero el espacio de observación de T3A no contiene ningún píxel de imagen, así que la causa raíz real es un canal de observación ausente. Una nota de atribución existente no es una solución oficial.
->
-> Paso 5: Convertir en tareas de regresión. Tome tres trazas cuyo primer error sea un assistant message, corte el prefijo justo antes de ese error y escriba el conjunto de acciones aceptables y las acciones prohibidas para formar tareas de regresión de prefijo de trayectoria.
->
 
 ### Tareas de regresión extremo a extremo y de prefijo de trayectoria
 
