@@ -72,18 +72,32 @@ Trước khi xây dựng môi trường hay tập dữ liệu, cần định ngh
 
 ### Kỳ quan kỹ thuật: trần năng lực với Pass@k
 
-Nhiều mô hình và Agent vẫn ở giai đoạn **kỳ quan kỹ thuật**: sau nhiều lần thử, ngân sách thời gian lớn và chọn lọc của con người, một trajectory đột phá chứng minh nhiệm vụ có thể làm được về nguyên tắc. Đó là logic của **Pass@k**: chạy cùng nhiệm vụ $k$ lần và đạt nếu ít nhất một lần thành công; với điểm liên tục, giữ lần tốt nhất là **Best@k**. Các Agent chạy dài của Anthropic, Manus và OpenClaw minh họa trần năng lực này, hữu ích cho khám phá khoa học, tìm lỗ hổng và sáng tạo mở.
+Nhiều mô hình và Agent hiện nay vẫn ở giai đoạn có thể gọi là **"kỳ quan kỹ thuật"**. Kỳ quan ở đây là trần năng lực bộc lộ ra sau rất nhiều lần thử, một ngân sách thời gian rộng rãi và sự sàng lọc của con người: chỉ cần một lần thành công là đủ chứng minh "việc này về nguyên tắc làm được". Đó chính là logic của **Pass@k** — chạy cùng một tác vụ $k$ lần, chỉ cần ít nhất một lần vượt qua thì tính là đạt; nếu đầu ra là điểm liên tục thì lấy lần tốt nhất, gọi là **Best@k**.
+
+Những thảo luận của Anthropic về Agent chạy dài thể hiện rõ loại trần năng lực này: cho Agent tự làm việc suốt một tuần để viết một trình biên dịch C từ đầu; cho nó dò tìm cho tới khi ra được một phản ví dụ cho một giả thuyết toán học quan trọng; hoặc rà đi rà lại phần mềm mã nguồn mở cho tới khi lộ ra một lỗ hổng bảo mật nghiêm trọng đã nằm đó hàng chục năm.
+
+Với loại thăm dò kỹ thuật và khoa học này, thứ được phô diễn thường không phải "lần nào cũng đúng", mà là một quỹ đạo đột phá duy nhất rốt cuộc xuất hiện khi ngân sách thăm dò được kéo đủ dài. Với khám phá khoa học, săn lỗ hổng hay sáng tạo mở, bản thân cái trần đó đã có giá trị: con người có thể chọn ra quỹ đạo tốt nhất trong $k$ ứng viên.
+
+Ngoài các phòng thí nghiệm mô hình nền, nhiều công ty ứng dụng cũng dùng chiến lược "kỳ quan kỹ thuật". Manus gây chú ý rộng rãi vì nó đưa cho người dùng một chiếc máy tính ảo: những người trước đó chưa có hình dung trực quan nào về Agent đã thấy AI có thể thao tác máy tính như người, làm việc liên tục nửa tiếng thậm chí một tiếng và hoàn tất từng bước một tác vụ phức tạp.
+
+OpenClaw thì khiến nhiều người lần đầu cảm nhận được "chất người" của một Agent. Người dùng giao việc cho nó qua ứng dụng nhắn tin y như giao cho một người thật; nó truy cập được mọi tệp trên máy và các dịch vụ trực tuyến, đến một giai đoạn nhất định sẽ chủ động báo lại hoặc hỏi thêm thông tin, thậm chí có thể tự đánh thức mình dậy để kiểm tra và xử lý email.
+
+Manus và OpenClaw thời kỳ đầu không có tỉ lệ thành công cao trên các tác vụ phức tạp, chi phí token cũng rất lớn. Nhưng vì các framework Agent này mang tính đa dụng, khi dùng với mô hình mạnh nhất thì tác vụ phức tạp thường đạt Pass@k cao, cho thấy trần kỹ thuật cao. Việc những "kỳ quan kỹ thuật" đó được chia sẻ ồ ạt trên mạng xã hội chính là chìa khóa thành công của các sản phẩm này.
 
 ### Độ tin cậy nghiệp vụ: Pass^k
 
-Hệ thống nghiệp vụ thường yêu cầu điều ngược lại: không mắc lỗi trong các lần chạy liên tiếp. **Pass^k** (“Pass consecutive k”) yêu cầu cả $k$ lần liên tiếp đều đạt và không kích hoạt veto về an toàn, tuân thủ hay ảo giác. Nếu xác suất thành công một lần là $p$ thì
+Nghiệp vụ thực tế thường quan tâm điều ngược lại: qua nhiều lần thử không được sai một lần nào. Chúng tôi gọi mục tiêu này là **Pass^k** (đọc là **Pass consecutive k**): chạy cùng một tác vụ $k$ lần liên tiếp, đòi hỏi lần nào cũng vượt qua và không được kích hoạt bất kỳ mục phủ quyết nào về an toàn, tuân thủ hay ảo giác. Nó trả lời câu hỏi "Agent có giao được kết quả ổn định và đáng tin cậy không", chứ không phải "thỉnh thoảng có tạo được kỳ tích không".
+
+Nếu các lần chạy độc lập với nhau và tỉ lệ thành công một lần là $p$, quan hệ giữa hai chỉ số rất trực quan:
 
 $$
 \mathrm{Pass@k}=1-(1-p)^k,\qquad
 \mathrm{Pass}^{k}=p^k.
 $$
 
-Với $p=0.6$, $k=5$, Pass@5 khoảng 99,0% nhưng Pass consecutive@5 chỉ 7,8%. Chỉ số đầu đo trần khám phá; chỉ số sau gần với độ tin cậy cần cho thanh toán, hoàn tiền, đổi quyền và triển khai sản xuất. Báo cáo phải nói rõ $k$ là mẫu độc lập hay tác vụ sản xuất liên tiếp; thao tác có tác dụng phụ phải thử trong sandbox hoặc môi trường có thể hoàn tác và tính mọi thất bại.
+Ví dụ khi tỉ lệ thành công một lần $p=0.6$ và $k=5$: Pass@5 $=1-0.4^5\approx99.0\%$, trông như hầu như luôn "thành công ít nhất một lần"; nhưng Pass consecutive@5 $=0.6^5\approx7.8\%$, cho thấy năm lần liên tiếp không sai vẫn rất khó. Con số đầu hợp để đo trần năng lực khi thăm dò, con số sau mới gần với yêu cầu độ tin cậy của thanh toán, hoàn tiền, đổi quyền hay triển khai production.
+
+Báo cáo đánh giá bắt buộc phải nói rõ $k$ lần thử được hiểu thế nào: là $k$ lần lấy mẫu độc lập của cùng một tác vụ, hay $k$ tác vụ liên tiếp trên dây chuyền production. Với các thao tác có tác dụng phụ, không thể đơn giản "thử lại đến khi thành công", mà phải lấy mẫu trong sandbox hoặc môi trường có thể rollback, và ghi từng lần thất bại vào chỉ số độ tin cậy.
 
 ### Chỉ số quy trình: Từ hộp đen đến hộp trắng
 
@@ -200,7 +214,7 @@ Môi trường đánh giá là "giai đoạn" và tập dữ liệu là "tập l
 
 Danh sách này không đầy đủ về ngữ cảnh đánh giá Agent. Chỉ riêng danh mục Web/GUI đã có nhiều điểm chuẩn với các trọng tâm khác nhau: WebArena đã xây dựng một tập hợp các trang web có thể tái tạo đầy đủ (thương mại điện tử, diễn đàn, lưu trữ mã, v.v.) để đưa tính chất không thể kiểm soát của "các trang web thực" vào hộp cát; Mind2Web đi theo hướng ngược lại và trực tiếp kiểm tra khả năng khái quát trên hàng trăm website thực; [ClawBench](https://claw-bench.com/) ([bài báo](https://arxiv.org/abs/2604.08523), [mã nguồn](https://github.com/TIGER-AI-Lab/ClawBench)) cho phép Agent trong các bộ chứa cô lập thực hiện các tác vụ hằng ngày đầu cuối trên website thực. V1 bao phủ 153 nhiệm vụ trên 144 website, V2 bổ sung thêm 130 nhiệm vụ, đồng thời ghi lại năm lớp bằng chứng: bản phát lại phiên, ảnh chụp màn hình từng hành động, lưu lượng HTTP, thao tác trình duyệt và thông điệp của Agent. Nó bổ sung cho các điểm chuẩn hộp cát, giúp phân tích sự biến động của website thực và các lỗi đuôi dài; đổi lại, khả năng tái tạo chịu ảnh hưởng từ những thay đổi ở các website bên thứ ba; DuyệtComp chuyên về truy xuất chuyên sâu - câu trả lời được ẩn sâu và yêu cầu duyệt nhiều bước và xác thực chéo để tìm. Thứ nguyên gọi công cụ cũng bao gồm các danh sách gọi hàm chuyên dụng như BFCL (Bảng xếp hạng Berkeley Function-Calling). Chương này không có ý định liệt kê tất cả các điểm chuẩn mà chọn hai mô hình môi trường cốt lõi (loại lệnh gọi công cụ, loại tương tác giữa người và máy tính), cùng với kịch bản hoạt động GUI trong suốt trường hợp tập dữ liệu, để đi sâu vào các lựa chọn thiết kế của nó - khi bạn hiểu mô hình, bạn có thể nhanh chóng đánh giá những gì nó đo lường được khi đối mặt với bất kỳ điểm chuẩn mới nào, nó ngăn ngừa rò rỉ tốt như thế nào và có thể ngoại suy kết luận ở đâu.
 
-> **Thí nghiệm 7-2 ★: Nhiệm vụ chuẩn thực thi thủ côngi**
+> **Thí nghiệm 7-2 ★: Thực thi thủ công các nhiệm vụ benchmark**
 >
 > Chọn các nhiệm vụ từ GAIA, AndroidWorld, SWE-Bench Verified, τ²-bench, Terminal-Bench, OSWorld-Verified để tự mình hoàn thành. Nên hoàn thành một cấp độ dễ, trung bình và khó cho mỗi bộ dữ liệu - cấp độ “khó” cũng là một thử thách đối với con người. So sánh kết quả thực hiện với các câu trả lời tiêu chuẩn và phân tích nguồn gốc của sự khác biệt. Hiểu thông qua trải nghiệm cá nhân: mô tả nhiệm vụ cần cân bằng giữa sự rõ ràng và cởi mở, các tiêu chuẩn xác minh phải khách quan và có thể thực thi được, và hệ thống phân cấp độ khó của nhiệm vụ phải có khả năng phân biệt được các cấp độ khả năng khác nhau.
 >
@@ -416,6 +430,7 @@ Tám mẫu chưa đủ để kết luận dịch vụ nào tốt hơn. Mỗi bê
 
 Rubric viết tay phù hợp để nhanh chóng tạo các chiều chẩn đoán này. Khi quy mô tăng, có thể huấn luyện **mô hình phần thưởng sinh** để tự động hóa việc chấm; Chương 8 trình bày phương pháp huấn luyện.
 
+
 ### Quy trách nhiệm thất bại: Định vị lỗi đầu tiên trong trajectory
 
 Đánh giá end-to-end thường chỉ trả lời “đạt” hoặc “không đạt”. Để kết quả dẫn tới sửa chữa, với mỗi trajectory thất bại hãy ghi loại lỗi, bước đầu tiên không chấp nhận được, lời gọi công cụ hoặc đầu ra mô hình liên quan và bằng chứng có thể kiểm tra. Tín hiệu bad case gồm người dùng sửa trực tiếp, phản hồi tiêu cực hoặc kiểm tra trạng thái/quy tắc sau đó. LLM có thể hỗ trợ nhưng vẫn cần người đọc vì nguyên nhân thường là vấn đề sản phẩm.
@@ -425,9 +440,27 @@ Với Coding Agent, các nhóm ban đầu là thiếu quy trình/quy tắc kho, 
 
 Danh sách đó chỉ bao gồm những thất bại tự báo mình. Cần thêm các nhóm không để lại lỗi nào: hiểu yêu cầu và xử lý mơ hồ, khi Agent làm ra thứ chính nó diễn đạt lại chứ không phải thứ được yêu cầu, hoặc lặng lẽ chọn một cách hiểu cho một yêu cầu mơ hồ; hack môi trường kiểm chứng, khi sửa assertion, thêm `skip`, mock mất phần logic đang được kiểm thử, hoặc tuyên bố đã qua một bài test chưa từng chạy; sửa không trọn vẹn, khi cập nhật ba điểm gọi mà bỏ sót điểm thứ tư — một lời gọi động, một binding ngôn ngữ khác, một schema — mà vẫn biên dịch được; báo sai thông tin cho người dùng, khi mọi lần gọi công cụ và trạng thái cuối đều đúng nhưng số tiền, trạng thái hay ngày trong câu trả lời thì sai; và hồi quy phi chức năng, khi đổi API công khai hay schema mà không có migration, hoặc xóa phần kiểm tra để cho qua. Ở tất cả các nhóm này, lỗi đầu tiên không phải một giá trị công cụ trả về mà là một **assistant message**: một phán đoán, một giả định, hoặc một câu hỏi lẽ ra phải hỏi mà đã không hỏi.
 
+#### Vấn đề "làm đúng nhưng nói sai"
+
 "Làm đúng nhưng nói sai" là nhóm dễ bị tỉ lệ thành công tổng thể che khuất nhất, vì phần lớn đánh giá chỉ kiểm tra trạng thái môi trường. τ²-bench chấm nhóm này riêng: trong 704 lượt chạy baseline đã công bố mà tác vụ có yêu cầu truyền đạt thông tin, 240 lượt thất bại, 162 trong số đó trượt ở khâu truyền đạt, và 80 lượt — một phần ba tổng số thất bại — có trạng thái môi trường đúng nhưng thông tin báo lại sai.
 
 Kho đi kèm có một ca tương ứng. Với tác vụ nhập các khoản chi từ `expenses.jpg` vào ứng dụng sổ chi tiêu, Agent dùng 32 bước để cấp quyền, tìm kiếm, mở ảnh, điền từng dòng và lưu, **không bước nào trả về lỗi**, rồi tự tuyên bố hoàn thành; bộ kiểm tra báo rằng dòng lẽ ra phải được ghi — `Dress`, ¥436,35 — không tồn tại, và chẳng liên quan gì tới bốn dòng nó đã nhập. Ở bước 8, chính phần suy luận của nó ghi *"I cannot actually see the content/details of the expenses in the image"*: nó đã biết mình không lấy được dữ liệu, nhưng không dừng cũng không báo, và tới bước 11 bốn khoản chi bịa ra xuất hiện trong ghi chép, để rồi mọi lần nhập sau đó thực thi trung thành đúng những dữ liệu bịa ấy. Lỗi đầu tiên nằm ở bước 8, và bước đó không hề báo lỗi, cũng không phải một lần gọi công cụ. Nguyên nhân gốc của nó cũng dễ bị xếp nhầm: T3A là Agent thuần văn bản, không gian quan sát chỉ có cây phần tử và không có pixel ảnh, nên nguyên nhân không phải "mô hình không biết OCR" mà là thiếu kênh quan sát, cộng với việc không có một hành động thoát hợp lệ kiểu "không lấy được thông tin". Xếp nó thành vấn đề năng lực mô hình thì bước tiếp theo sẽ là đổi mô hình hoặc huấn luyện OCR; cách sửa thật sự là bổ sung kênh quan sát và hành động thoát.
+
+> **Thử nghiệm 7-6 ★★: Quy trách nhiệm lỗi trên các trajectory của AndroidWorld**
+>
+> Thử nghiệm này luyện tập phương pháp quy trách nhiệm của mục này trên trajectory thật, không cần trình giả lập cũng không cần API mô hình. Tư liệu là bản ghi chạy T3A đã lưu trong `chapter7/android-world`: `t3a.md` chứa `Action`/`Reason`/`Summary` từng bước của mọi tác vụ, còn `t3a_failed.md` gom hơn năm mươi trajectory thất bại, mỗi trajectory kết thúc bằng phán quyết khách quan của bộ kiểm tra.
+>
+> Bước 1: Lấy mẫu. Rút ít nhất mười thất bại im lặng từ `t3a_failed.md` — những trajectory không hề có lỗi công cụ nào. Không lần gọi công cụ nào trả về lỗi, Agent tự tuyên bố hoàn thành hoặc cạn số bước, và chỉ phán quyết cuối của bộ kiểm tra mới đánh dấu thất bại.
+>
+> Bước 2: Định vị lỗi đầu tiên. Với mỗi trajectory, ghi số bước của lỗi đầu tiên và nêu rõ bước đó là một lần gọi công cụ hay một assistant message. Thất bại im lặng cần hai kỹ thuật: đối chiếu neo dữ kiện, rà các phát biểu của Agent với giá trị công cụ trả về và lấy điểm lệch đầu tiên; và chia đôi tiền tố trajectory, cắt trajectory tại bước k rồi bàn giao — nếu vẫn cứu được thì lỗi nằm sau k. Tìm từ khóa báo lỗi không thay thế được.
+>
+> Bước 3: Viết bản ghi có cấu trúc. Mỗi trajectory tạo ra một bản ghi JSON hoặc YAML gồm tên tác vụ, bước lỗi đầu tiên, loại lỗi, bên chịu trách nhiệm cho nguyên nhân gốc, trích dẫn làm bằng chứng, và tách nguyên nhân chính khỏi hệ quả.
+>
+> Bước 4: Đối chiếu với ghi chú có sẵn. So sánh kết quả với `t3a_failed_analysis.md` theo từng mục và ghi lại mọi bất đồng. Đặc biệt chú ý việc quy nguyên nhân gốc: ghi chú đó từng ghi thất bại chép ảnh là "mô hình thị giác thiếu OCR", nhưng không gian quan sát của T3A hoàn toàn không có pixel ảnh, nên nguyên nhân gốc thật sự là thiếu kênh quan sát. Một ghi chú quy trách nhiệm có sẵn không phải là đáp án chuẩn.
+>
+> Bước 5: Chuyển thành tác vụ hồi quy. Chọn ba trajectory có lỗi đầu tiên nằm ở assistant message, cắt tiền tố ngay trước lỗi đó, rồi viết tập hành động chấp nhận được và các hành động bị cấm để tạo thành tác vụ hồi quy tiền tố trajectory.
+>
+
 
 #### Lỗi định dạng tài liệu nhạy với phạm vi
 
@@ -455,21 +488,6 @@ byte file gốc → tool trả về → serialization của Harness → context 
 ```
 
 Bộ thăm dò đánh giá tối thiểu bao phủ việc nhắc lại trực tiếp, trích xuất từ ngữ cảnh dài, đặt vào đối số của tool, chọn giữa các chuỗi tương tự, cùng với khoảng trắng, xuống dòng, dấu gạch chéo ngược, ký tự tổ hợp Unicode và token tần suất thấp. Các chỉ số gồm byte-exact match, code-point-exact match, token-exact match, vị trí khác biệt đầu tiên và tỷ lệ thành công thực tế của tool. Nếu mô hình đúng ở thăm dò trực tiếp nhưng lời gọi tool vẫn thất bại, hãy sửa tokenizer, serialization, Harness hoặc giao thức tool; chỉ khi khác biệt đầu tiên xuất hiện ở chính đầu ra của mô hình thì mới chuyển trường hợp đó thành dữ liệu huấn luyện sao chép ở Chương 8.
-
-> **Thử nghiệm 7-6 ★★: Quy trách nhiệm lỗi trên các trajectory của AndroidWorld**
->
-> Thử nghiệm này luyện tập phương pháp quy trách nhiệm của mục này trên trajectory thật, không cần trình giả lập cũng không cần API mô hình. Tư liệu là bản ghi chạy T3A đã lưu trong `chapter7/android-world`: `t3a.md` chứa `Action`/`Reason`/`Summary` từng bước của mọi tác vụ, còn `t3a_failed.md` gom hơn năm mươi trajectory thất bại, mỗi trajectory kết thúc bằng phán quyết khách quan của bộ kiểm tra.
->
-> Bước 1: Lấy mẫu phân tầng. Rút mười trajectory thất bại từ `t3a_failed.md`, trong đó ít nhất ba trajectory phải là thất bại im lặng, không hề có lỗi công cụ nào — tiêu chí là không lần gọi công cụ nào trả về lỗi, Agent tự tuyên bố hoàn thành hoặc cạn số bước, và chỉ phán quyết cuối của bộ kiểm tra mới đánh dấu thất bại.
->
-> Bước 2: Định vị lỗi đầu tiên. Với mỗi trajectory, ghi số bước của lỗi đầu tiên và nêu rõ bước đó là một lần gọi công cụ hay một assistant message. Thất bại im lặng cần hai kỹ thuật: đối chiếu neo dữ kiện, rà các phát biểu của Agent với giá trị công cụ trả về và lấy điểm lệch đầu tiên; và chia đôi tiền tố trajectory, cắt trajectory tại bước k rồi bàn giao — nếu vẫn cứu được thì lỗi nằm sau k. Tìm từ khóa báo lỗi không thay thế được.
->
-> Bước 3: Viết bản ghi có cấu trúc. Mỗi trajectory tạo ra một bản ghi JSON hoặc YAML gồm tên tác vụ, bước lỗi đầu tiên, loại lỗi, bên chịu trách nhiệm cho nguyên nhân gốc, trích dẫn làm bằng chứng, và tách nguyên nhân chính khỏi hệ quả.
->
-> Bước 4: Đối chiếu với ghi chú có sẵn. So sánh kết quả với `t3a_failed_analysis.md` theo từng mục và ghi lại mọi bất đồng. Đặc biệt chú ý việc quy nguyên nhân gốc: ghi chú đó từng ghi thất bại chép ảnh là "mô hình thị giác thiếu OCR", nhưng không gian quan sát của T3A hoàn toàn không có pixel ảnh, nên nguyên nhân gốc thật sự là thiếu kênh quan sát. Một ghi chú quy trách nhiệm có sẵn không phải là đáp án chuẩn.
->
-> Bước 5: Chuyển thành tác vụ hồi quy. Chọn ba trajectory có lỗi đầu tiên nằm ở assistant message, cắt tiền tố ngay trước lỗi đó, rồi viết tập hành động chấp nhận được và các hành động bị cấm để tạo thành tác vụ hồi quy tiền tố trajectory.
->
 
 ### Tác vụ hồi quy end-to-end và hồi quy tiền tố trajectory
 

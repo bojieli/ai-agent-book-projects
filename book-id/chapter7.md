@@ -72,18 +72,32 @@ Sebelum membangun lingkungan atau dataset, tentukan arti “berhasil”: apakah 
 
 ### Keajaiban teknis: batas kemampuan dengan Pass@k
 
-Banyak model dan Agent masih berada pada fase **keajaiban teknis**: setelah banyak percobaan, waktu yang panjang, dan seleksi manusia, satu trajectory terobosan cukup membuktikan bahwa tugas dapat dilakukan. Itulah logika **Pass@k**—jalankan tugas $k$ kali dan lulus jika setidaknya satu berhasil; untuk skor kontinu, ambil yang terbaik sebagai **Best@k**. Contoh Agent jangka panjang Anthropic, Manus, dan OpenClaw menunjukkan batas kemampuan ini, yang berguna untuk penemuan ilmiah, pencarian kerentanan, dan kreasi terbuka.
+Banyak model dan Agent saat ini masih berada pada tahap yang bisa disebut **"keajaiban teknis"**. Keajaiban di sini berarti batas atas kemampuan yang diperlihatkan setelah banyak percobaan, anggaran waktu yang longgar, dan penyaringan oleh manusia: cukup satu kali berhasil untuk membuktikan bahwa hal itu pada prinsipnya bisa dilakukan. Itulah persis logika **Pass@k** — tugas yang sama dijalankan $k$ kali, dan dianggap lulus asalkan setidaknya satu kali lolos; bila keluarannya berupa skor kontinu, diambil yang terbaik dan disebut **Best@k**.
+
+Pembahasan Anthropic tentang Agent yang berjalan lama menggambarkan batas atas semacam ini: membiarkan Agent bekerja mandiri selama seminggu untuk menulis kompiler C dari nol; menyuruhnya terus menjelajah sampai menemukan contoh tandingan bagi sebuah konjektur matematis penting; atau memeriksa perangkat lunak sumber terbuka berulang-ulang sampai tersingkap celah keamanan serius yang sudah bertahun-tahun ada di sana.
+
+Dalam penjelajahan teknis dan ilmiah semacam ini, yang dipertontonkan biasanya bukan "selalu benar setiap kali", melainkan satu lintasan terobosan yang akhirnya muncul setelah anggaran penjelajahan direntangkan cukup jauh. Untuk penemuan ilmiah, perburuan celah, dan penciptaan terbuka, batas atas itu sendiri sudah berharga: manusia dapat memilih satu lintasan terbaik dari $k$ kandidat.
+
+Selain lab model dasar, banyak perusahaan aplikasi juga memakai strategi "keajaiban teknis". Manus menarik perhatian luas karena menyodorkan sebuah komputer virtual: orang-orang yang sebelumnya tak punya gambaran konkret tentang Agent menyaksikan bahwa AI bisa mengoperasikan komputer layaknya manusia, bekerja setengah jam bahkan sejam penuh, dan menuntaskan tugas rumit selangkah demi selangkah.
+
+OpenClaw membuat banyak orang untuk pertama kalinya merasakan "kesan hidup" dari sebuah Agent. Pengguna menugaskan pekerjaan lewat aplikasi pesan instan persis seperti kepada orang sungguhan; ia dapat mengakses seluruh berkas di komputer serta layanan daring, pada tahap tertentu berinisiatif melapor atau meminta informasi tambahan, bahkan bisa membangunkan dirinya sendiri untuk memeriksa dan menangani surel.
+
+Manus dan OpenClaw awal tidak punya tingkat keberhasilan tinggi pada tugas rumit, dan biaya token-nya pun sangat besar. Namun karena kerangka Agent ini bersifat serbaguna, ketika dipasangkan dengan model terkuat, tugas rumit kerap memperoleh Pass@k yang tinggi sehingga memperlihatkan batas atas teknis yang tinggi. Tersebarnya "keajaiban teknis" itu secara masif di media sosial menjadi kunci keberhasilan produk-produk ini.
 
 ### Keandalan bisnis: Pass^k
 
-Sistem bisnis biasanya menuntut kebalikannya: tidak ada kesalahan dalam percobaan berulang. **Pass^k** (“Pass consecutive k”) mengharuskan seluruh $k$ eksekusi berturut-turut lulus tanpa veto keamanan, kepatuhan, atau halusinasi. Jika keberhasilan satu eksekusi adalah $p$,
+Bisnis nyata biasanya lebih peduli pada hal sebaliknya: tidak boleh salah satu kali pun dalam sekian percobaan. Sasaran ini kami sebut **Pass^k** (dibaca **Pass consecutive k**): tugas yang sama dijalankan $k$ kali berturut-turut, setiap kali harus lolos, dan tidak boleh memicu butir veto apa pun soal keamanan, kepatuhan, atau halusinasi. Ia menjawab "apakah Agent sanggup mengantar hasil secara stabil dan andal", bukan "apakah ia sesekali bisa membuat keajaiban".
+
+Bila tiap kali jalan saling bebas dan tingkat keberhasilan sekali jalan adalah $p$, hubungan kedua metrik itu gamblang:
 
 $$
 \mathrm{Pass@k}=1-(1-p)^k,\qquad
 \mathrm{Pass}^{k}=p^k.
 $$
 
-Untuk $p=0.6$ dan $k=5$, Pass@5 sekitar 99,0%, sedangkan Pass consecutive@5 hanya 7,8%. Yang pertama mengukur batas eksplorasi; yang kedua mendekati keandalan pembayaran, refund, perubahan izin, dan deployment produksi. Laporan harus menjelaskan arti $k$; tindakan yang memiliki efek samping diuji di sandbox atau lingkungan yang dapat di-rollback, dan setiap kegagalan dihitung.
+Misalnya pada $p=0.6$ dan $k=5$: Pass@5 $=1-0.4^5\approx99.0\%$, seolah-olah "berhasil setidaknya sekali" hampir selalu tercapai; tetapi Pass consecutive@5 $=0.6^5\approx7.8\%$, yang menunjukkan lima kali beruntun tanpa cela masih sulit. Angka pertama cocok untuk mengukur langit-langit kemampuan saat penjelajahan; hanya angka kedua yang mendekati tuntutan keandalan pada pembayaran, pengembalian dana, perubahan hak akses, dan penggelaran produksi.
+
+Laporan evaluasi wajib menuliskan dengan jelas apa arti $k$ percobaan itu: $k$ pengambilan sampel independen atas tugas yang sama, atau $k$ tugas berurutan pada jalur produksi. Untuk operasi yang menimbulkan efek samping, tidak boleh sekadar "ulangi sampai berhasil"; ambil sampel di sandbox atau lingkungan yang bisa di-rollback, dan catat setiap kegagalan ke dalam metrik keandalan.
 
 ### Metrik proses: Dari kotak hitam ke kotak putih
 
@@ -414,6 +428,7 @@ Delapan sampel belum cukup untuk menentukan layanan yang lebih baik. Selain hany
 
 Rubric buatan manusia cocok untuk membangun dimensi diagnostik ini dengan cepat. Pada skala lebih besar, **model hadiah generatif** dapat dilatih untuk mengotomatisasi penilaian; Bab 8 membahas metode pelatihannya.
 
+
 ### Atribusi kegagalan: Melacak kesalahan pertama dalam trajectory
 
 Evaluasi end-to-end sering hanya memberi “lulus” atau “gagal”. Agar hasilnya memandu perbaikan, catat kategori, langkah pertama yang tidak dapat diterima, tool call atau output model terkait, dan bukti yang dapat diaudit untuk setiap trajectory gagal. Bad case biasanya datang dari koreksi eksplisit pengguna, feedback negatif, atau pemeriksaan status/aturan setelah kejadian. LLM dapat membantu, tetapi pembacaan manusia tetap penting karena akar masalah sering berada pada produk, bukan sekadar bug teknis.
@@ -423,9 +438,27 @@ Untuk Coding Agent, taksonomi awal mencakup proses atau aturan yang terlewat, ke
 
 Daftar itu hanya mencakup kegagalan yang mengumumkan dirinya sendiri. Perlu ditambahkan kategori yang tidak meninggalkan galat apa pun: pemahaman kebutuhan dan penanganan ambiguitas, ketika Agent membangun apa yang ia parafrasekan sendiri alih-alih yang diminta, atau diam-diam memilih satu tafsir atas permintaan yang ambigu; meretas lingkungan verifikasi, ketika ia menyunting assertion, menambah `skip`, menge-mock logika yang sedang diuji, atau menyatakan lulus untuk tes yang tidak pernah dijalankan; perubahan tidak tuntas, ketika tiga titik pemanggilan diperbarui dan yang keempat — panggilan dinamis, binding di bahasa lain, schema — terlewat namun tetap lolos kompilasi; informasi salah yang dilaporkan ke pengguna, ketika setiap pemanggilan tool dan keadaan akhir benar tetapi nominal, status, atau tanggal dalam jawaban salah; dan regresi non-fungsional, ketika API publik atau schema berubah tanpa migrasi, atau validasi dihapus supaya pemeriksaan lolos. Pada semuanya, kesalahan pertama bukan nilai balik tool melainkan sebuah **assistant message** — sebuah penilaian, sebuah asumsi, atau pertanyaan yang seharusnya diajukan tetapi tidak.
 
+#### Masalah "tindakannya benar, laporannya salah"
+
 "Tindakannya benar, laporannya salah" adalah kategori yang paling mudah tertutup oleh tingkat keberhasilan agregat, karena kebanyakan evaluasi hanya memeriksa keadaan lingkungan. τ²-bench menilainya terpisah: dari 704 run baseline terpublikasi yang tugasnya memuat syarat penyampaian informasi, 240 gagal, 162 di antaranya jatuh pada pemeriksaan penyampaian, dan 80 — sepertiga dari seluruh kegagalan — memiliki keadaan lingkungan yang benar tetapi laporan yang salah.
 
 Repositori pendamping menyimpan kasus yang sepadan. Ditugasi memasukkan pengeluaran dari `expenses.jpg` ke aplikasi pembukuan, Agent menghabiskan 32 langkah untuk memberi izin, mencari, membuka gambar, mengisi tiap baris, dan menyimpan, **tanpa satu langkah pun mengembalikan galat**, lalu menyatakan tugas selesai; validator melaporkan bahwa baris yang seharusnya ditulis — `Dress`, ¥436,35 — tidak ada, dan tak berkaitan dengan empat baris yang ia masukkan. Pada langkah 8 penalarannya sendiri berbunyi *"I cannot actually see the content/details of the expenses in the image"*: ia sudah tahu datanya tidak diperoleh, tidak berhenti dan tidak melapor, dan pada langkah 11 empat pengeluaran rekaan muncul dalam catatannya, yang kemudian dieksekusi dengan setia oleh setiap masukan berikutnya. Kesalahan pertama ada di langkah 8, dan langkah itu tidak memunculkan galat maupun berupa pemanggilan tool. Akar masalahnya juga mudah salah arsip: T3A adalah Agent teks-saja yang ruang observasinya hanya berisi pohon elemen dan tanpa piksel gambar, sehingga penyebabnya bukan "model tidak bisa OCR" melainkan kanal observasi yang hilang ditambah tiadanya aksi keluar yang sah berupa "informasi tidak tersedia". Mengarsipkannya sebagai masalah kapabilitas model membawa langkah berikutnya ke penggantian model atau pelatihan OCR; perbaikan sebenarnya adalah menambah kanal dan aksi keluar itu.
+
+> **Eksperimen 7-6 ★★: Atribusi kegagalan pada trace AndroidWorld**
+>
+> Eksperimen ini melatih metode atribusi pada bagian ini dengan trace nyata, tanpa emulator dan tanpa API model. Materinya adalah rekaman jalannya T3A yang tersimpan di `chapter7/android-world`: `t3a.md` memuat `Action`/`Reason`/`Summary` langkah demi langkah untuk semua tugas, sedangkan `t3a_failed.md` mengumpulkan lebih dari lima puluh trace gagal yang masing-masing diakhiri putusan objektif dari validator.
+>
+> Langkah 1: Pengambilan sampel. Ambil sedikitnya sepuluh kegagalan senyap dari `t3a_failed.md`, yaitu trace tanpa satu pun galat tool. Tidak boleh ada pemanggilan tool yang gagal, Agent menyatakan selesai sendiri atau kehabisan langkah, dan hanya putusan validator di akhir yang menandai kegagalan.
+>
+> Langkah 2: Temukan kesalahan pertama. Untuk tiap trace, catat nomor langkah kesalahan pertama dan tegaskan apakah langkah itu berupa pemanggilan tool atau sebuah assistant message. Kegagalan senyap butuh dua teknik: pembandingan jangkar fakta, yang menyandingkan pernyataan Agent dengan nilai balik tool lalu mengambil titik simpang pertama; dan biseksi trajectory prefix, yang memotong trajectory di langkah k lalu menyerahkannya — bila masih tertolong, galat ada setelah k. Mencari kata kunci galat tidak menggantikan keduanya.
+>
+> Langkah 3: Tulis catatan terstruktur. Hasilkan satu catatan JSON atau YAML per trace berisi nama tugas, langkah kesalahan pertama, kategori kesalahan, pihak penanggung jawab akar masalah, kutipan bukti, serta pemisahan sebab utama dari akibat.
+>
+> Langkah 4: Bandingkan dengan catatan yang ada. Bandingkan hasil Anda dengan `t3a_failed_analysis.md` butir demi butir dan catat setiap perbedaan. Perhatikan khusus atribusi akar masalah: catatan itu semula menulis kegagalan transkripsi gambar sebagai "model visi tidak punya OCR", padahal ruang observasi T3A sama sekali tidak memuat piksel gambar, sehingga akar masalah sebenarnya adalah kanal observasi yang hilang. Catatan atribusi yang sudah ada bukan kunci jawaban.
+>
+> Langkah 5: Ubah menjadi tugas regresi. Pilih tiga trace yang kesalahan pertamanya berupa assistant message, potong prefix tepat sebelum kesalahan itu, lalu tulis himpunan aksi yang dapat diterima dan aksi terlarang untuk membentuk tugas regresi trajectory prefix.
+>
+
 
 #### Kesalahan format dokumen yang peka terhadap cakupan
 
@@ -453,21 +486,6 @@ byte file asli → balasan tool → serialisasi Harness → konteks model
 ```
 
 Serangkaian probe evaluasi minimal mencakup pengulangan langsung, ekstraksi dari konteks panjang, penempatan ke argumen tool, pemilihan di antara string serupa, serta spasi, baris baru, backslash, karakter penggabung Unicode, dan token berfrekuensi rendah. Metriknya adalah byte-exact match, code-point-exact match, token-exact match, posisi perbedaan pertama, dan tingkat keberhasilan tool yang sebenarnya. Jika model benar pada probe langsung tetapi panggilan tool tetap gagal, perbaikilah tokenizer, serialisasi, Harness, atau protokol tool; hanya ketika perbedaan pertama muncul pada keluaran model itu sendiri, kasus tersebut diubah menjadi data latih penyalinan pada Bab 8.
-
-> **Eksperimen 7-6 ★★: Atribusi kegagalan pada trace AndroidWorld**
->
-> Eksperimen ini melatih metode atribusi pada bagian ini dengan trace nyata, tanpa emulator dan tanpa API model. Materinya adalah rekaman jalannya T3A yang tersimpan di `chapter7/android-world`: `t3a.md` memuat `Action`/`Reason`/`Summary` langkah demi langkah untuk semua tugas, sedangkan `t3a_failed.md` mengumpulkan lebih dari lima puluh trace gagal yang masing-masing diakhiri putusan objektif dari validator.
->
-> Langkah 1: Pengambilan sampel berlapis. Ambil sepuluh trace gagal dari `t3a_failed.md`, sedikitnya tiga di antaranya harus berupa kegagalan senyap tanpa satu pun galat tool — kriterianya: tidak ada pemanggilan tool yang gagal, Agent menyatakan selesai sendiri atau kehabisan langkah, dan hanya putusan validator di akhir yang menandai kegagalan.
->
-> Langkah 2: Temukan kesalahan pertama. Untuk tiap trace, catat nomor langkah kesalahan pertama dan tegaskan apakah langkah itu berupa pemanggilan tool atau sebuah assistant message. Kegagalan senyap butuh dua teknik: pembandingan jangkar fakta, yang menyandingkan pernyataan Agent dengan nilai balik tool lalu mengambil titik simpang pertama; dan biseksi trajectory prefix, yang memotong trajectory di langkah k lalu menyerahkannya — bila masih tertolong, galat ada setelah k. Mencari kata kunci galat tidak menggantikan keduanya.
->
-> Langkah 3: Tulis catatan terstruktur. Hasilkan satu catatan JSON atau YAML per trace berisi nama tugas, langkah kesalahan pertama, kategori kesalahan, pihak penanggung jawab akar masalah, kutipan bukti, serta pemisahan sebab utama dari akibat.
->
-> Langkah 4: Bandingkan dengan catatan yang ada. Bandingkan hasil Anda dengan `t3a_failed_analysis.md` butir demi butir dan catat setiap perbedaan. Perhatikan khusus atribusi akar masalah: catatan itu semula menulis kegagalan transkripsi gambar sebagai "model visi tidak punya OCR", padahal ruang observasi T3A sama sekali tidak memuat piksel gambar, sehingga akar masalah sebenarnya adalah kanal observasi yang hilang. Catatan atribusi yang sudah ada bukan kunci jawaban.
->
-> Langkah 5: Ubah menjadi tugas regresi. Pilih tiga trace yang kesalahan pertamanya berupa assistant message, potong prefix tepat sebelum kesalahan itu, lalu tulis himpunan aksi yang dapat diterima dan aksi terlarang untuk membentuk tugas regresi trajectory prefix.
->
 
 ### Tugas regresi end-to-end dan regresi trajectory prefix
 
