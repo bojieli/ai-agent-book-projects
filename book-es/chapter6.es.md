@@ -21,8 +21,6 @@ Los capítulos anteriores ampliaron el **contenido** de esos dos espacios; este 
 | **Modalidad** (este capítulo) | Voz, pantalla, sensores físicos | Hablar, hacer clic, mover articulaciones |
 | **Momento** (este capítulo) | El mundo empuja, flujos continuos | A través de turnos, interrumpible, desalojable |
 
-La tesis central del capítulo cabe en una frase: **el turno es un supuesto que deja el entrenamiento, no una propiedad del entorno.**
-
 El corpus de entrenamiento de un modelo es casi por completo basado en turnos: una pregunta seguida de una respuesta, una llamada a una herramienta seguida de su resultado, una persona termina antes de que la otra empiece. Por eso la política que aprende el modelo da por hecho que el mundo lo esperará. El entorno real no espera a que el modelo reaccione: llega correo mientras está pensando, el usuario interrumpe a mitad de frase, la página ya ha cambiado entre dos capturas, y la taza se vuelca mientras el brazo va a alcanzarla.
 
 | Escala | Escenario | Cambio del lado de la observación | Cambio del lado de la acción |
@@ -31,10 +29,6 @@ El corpus de entrenamiento de un modelo es casi por completo basado en turnos: u
 | 10 ms — 1 s | Voz | Escuchar mientras se habla, sin esperar a que termine la frase | Pensar mientras se habla, interrumpible y rectificable a mitad |
 | Subsegundo — segundos | Computer Use | La pantalla cambia continuamente entre fotogramas | Tras actuar hay que reconfirmar que la realidad sigue ajustándose al plan |
 | Milisegundos | Robótica | Los sensores fluyen de vuelta sin pausa | Acción por bloques: se planifica un tramo corto cada vez, desalojable |
-
-Las cuatro secciones comparten un mismo conjunto de primitivas —**despertar, punto seguro, cancelación, desalojo y separación rápido/lento**— y solo difieren en los parámetros y en la forma de fallar. «Comprobar la señal de cancelación en un punto seguro», en la asincronía orientada a eventos, y «al detectar una anomalía, descartar las acciones restantes y volver a observar», en la acción por bloques robótica, son el mismo mecanismo implementado dos veces con cinco órdenes de magnitud de diferencia temporal. Ver esa isomorfía importa más que memorizar el detalle técnico de cualquier escenario aislado.
-
-**Hay una decisión deliberada en el orden de lectura: este capítulo dedica a la voz bastante más espacio que a los dos escenarios siguientes.** En la línea evolutiva de la interacción en tiempo real, la voz es la que ha llegado más lejos y la que mejor sirve de sistema de referencia: parte del problema «la tubería en serie tiene demasiada latencia», atraviesa el extremo a extremo, el dúplex completo y el pensar mientras se habla, y llega hasta un final relativamente asentado; el recorrido completo problema → solución → final ya está hecho. Por eso lo contamos a fondo, y Computer Use y robótica pueden leerse contra esa línea: hasta dónde ha llegado cada uno y dónde se ha atascado.
 
 ## Asincronía y orientación a eventos: cuando el mundo viene a buscarte
 
@@ -108,10 +102,6 @@ Las herramientas de comunicación con el usuario resuelven "cómo contactar al u
 
 ### Identidad virtual y entorno de ejecución aislado
 
-Un ordenador virtual puede funcionar 24/7, aislar los archivos locales del usuario y limitar los daños a la máquina virtual si el Agente se equivoca. El intercambio usa un sistema de archivos compartido y rutas, no copias completas de contenido.
-
-Es necesario aclarar primero la posición de esta sección: la identidad virtual y el entorno de ejecución aislado constituyen esencialmente una infraestructura de entorno de ejecución alineada con los sandboxes discutidos en la sección de herramientas de ejecución; la razón por la que se desarrollan en esta sección de arquitectura asíncrona es porque solo un Agente capaz de ejecutarse de forma independiente, permanente y de actuar en nombre del usuario en cualquier momento los requiere con máxima urgencia.
-
 El capítulo 4 se abre con Samantha en *Her* como ejemplo, ilustrando cómo un Agente utiliza herramientas para interactuar con el mundo digital real. Para construir un asistente general semejante, nos enfrentamos primero a una elección arquitectónica clave: ¿debe el Agente gestionar directamente las cuentas personales del usuario, o debe poseer su propia identidad virtual? La gestión directa parece conveniente, pero si el Agente comete un error o es vulnerado, toda la identidad digital del usuario quedará expuesta. El esquema más seguro consiste en otorgar al Agente un conjunto independiente de identidades virtuales, del mismo modo que una secretaria posee su propio teléfono de oficina y correo electrónico. Esta identidad virtual incluye cuentas de comunicación exclusivas, espacio de almacenamiento y entorno de cómputo, permitiendo que el Agente trabaje en nombre del usuario con una identidad transparente. La claridad de la identidad no solo no debilita la confianza, sino que refuerza la autenticidad de la comunicación.
 
 La identidad virtual necesita asentarse en un entorno de ejecución aislado. Las **computadoras virtuales** (VM/contenedores) y los **teléfonos virtuales** (emuladores de Android) proporcionan al Agente aislamiento a nivel de sistema operativo y capacidades completas de operación móvil/escritorio: el Agente posee en su interior sus propias cuentas de usuario, directorio personal y credenciales de inicio de sesión, haciendo que todas las operaciones sean rastreables y auditables; incluso si ejecuta una operación errónea, no afectará al sistema host ni a los dispositivos reales del usuario. Esta es una extensión de la idea de sandbox discutida en las herramientas de ejecución hacia la dimensión de la "identidad digital": el sandbox aísla la ejecución de código, mientras que las computadoras y teléfonos virtuales aíslan toda la identidad digital.
@@ -127,6 +117,10 @@ Las herramientas disparadas por eventos permiten que el mundo despierte al Agent
 Una instancia de Agente puede enfrentarse simultáneamente a múltiples eventos: nuevos mensajes del usuario, resultados devueltos por herramientas, vencimiento de temporizadores o peticiones de colaboración de otro Agente. Cómo procesar estos eventos de forma eficiente y correcta impacta directamente en el rendimiento y la experiencia del usuario.
 
 El esqueleto de este mecanismo es el **bucle de eventos (event loop)** de la programación concurrente. Se puede considerar a un Agente asíncrono como un bucle de ejecución continua: en cada ronda toma varios eventos de la cola de entrada, los añade a la trayectoria, invoca al LLM una vez, ejecuta las herramientas decididas por este y regresa al inicio del bucle a esperar el siguiente lote de eventos, coincidiendo con la estructura en la que una goroutine de Go lee mensajes de un channel y los procesa ronda a ronda en un `for { select { ... } }`. Este modelo posee una propiedad crucial: **los eventos solo se consumen en los límites de cada ronda del bucle**. Mientras el LLM está razonando o las herramientas se están ejecutando, los nuevos eventos que llegan no se introducen espontáneamente interrumpiendo el paso actual, sino que se acumulan en la cola, procesándose de forma unificada cuando esta ronda alcanza un **punto seguro** (finalización de un fragmento de razonamiento o devolución de una herramienta). La cancelación sigue exactamente la misma disciplina: no se interrumpe por la fuerza en cualquier instante, sino que se comprueba en el punto seguro si "se ha solicitado la parada", rol que desempeña precisamente `ctx.Done()` en Go (el Capítulo 10 utilizará esta misma idea de contexto para analizar la cancelación en cascada de Agentes padre a hijos). Comprendido esto, la diferencia entre las tres estrategias de procesamiento siguientes radica únicamente en el modo de tratar los puntos seguros: esperar al siguiente punto seguro al que se llegue de forma natural (en cola), crear activamente un punto seguro por adelantado (cancelación) o iniciar un bucle paralelo sin necesidad de esperar al punto seguro del bucle principal (paralelo).
+
+Este modelo tiene una propiedad clave: **los eventos solo se consumen en las fronteras de cada vuelta del bucle**. Mientras el LLM razona o una herramienta se ejecuta, un evento recién llegado no se cuela de la nada ni altera el paso en curso, sino que espera en la cola hasta que la vuelta alcanza un **punto seguro** (el final de un tramo de razonamiento, el retorno de una herramienta), momento en el que todos se procesan juntos. La cancelación obedece a la misma disciplina: no corta el trabajo por la fuerza en cualquier instante, sino que comprueba en el punto seguro si «se ha pedido detenerse»; exactamente el papel que desempeña `ctx.Done()` en Go.
+
+Entendido esto, las tres estrategias de procesamiento que siguen solo se diferencian en cómo tratan el punto seguro: dejar que el evento espere al siguiente punto seguro que aparezca de forma natural (en cola), fabricar por adelantado un punto seguro (cancelación) o, sencillamente, abrir otro bucle y no esperar al punto seguro del bucle principal (paralelo).
 
 **Modelado estructurado de eventos.**
 
@@ -150,6 +144,8 @@ Tomando como ejemplo un correo electrónico de solicitud de reembolso de un clie
 
 Solo cuando estas dimensiones se modelan claramente como eventos estructurados puede el Agente mantener una percepción clara en comunicaciones multiparte, evitando confundir las entradas del usuario con resultados de herramientas, o tomar resultados de herramientas con instrucciones ocultas por instrucciones del usuario provocando inyecciones de prompts. La complejidad de la gestión de contextos multihilo exige además que el Agente comprenda la vinculación entre múltiples hilos de conversación: cómo los mensajes de terceros afectan las emociones del usuario, las transiciones de rol del usuario en distintas conversaciones y cuándo se requiere sintetizar información de diferentes hilos para ofrecer consejos. En el ecosistema de disparadores de plataformas de flujo de trabajo como n8n se observa que Webhooks, temporizadores, correos, cambios en bases de datos y monitores de archivos son cada uno un "sentido" con el que el Agente percibe el mundo. Cuando estos eventos heterogéneos se modelan de forma unificada en un formato estructurado, el Agente puede procesar los estímulos de distintos orígenes de manera coherente, sustentando los juicios de urgencia y las estrategias de procesamiento que se detallan a continuación.
 
+El ecosistema de disparadores de plataformas de flujos de trabajo como n8n lo ilustra bien: webhooks, temporizadores, correo, cambios en la base de datos, vigilancia de ficheros; cada disparador es uno de los «sentidos» con los que el Agente percibe el mundo. Una vez que estos eventos heterogéneos se modelan de forma unificada en un formato estructurado, el Agente puede tratar de manera coherente los estímulos que llegan de fuentes distintas, y tanto la determinación de urgencia como las estrategias de procesamiento que se exponen a continuación se apoyan en ese modelado unificado.
+
 **Estrategias de procesamiento dinámico basadas en la urgencia.**
 
 Al gestionar múltiples tareas, las personas adoptan distintas estrategias según el nivel de urgencia. Ante emergencias imprevistas, pausan de inmediato el trabajo en curso; ante asuntos pendientes de rutina, los añaden a la lista de tareas para procesarlos más tarde. El procesamiento de eventos del Agente debe reflejar esta misma inteligencia.
@@ -169,6 +165,8 @@ Eventos urgentes: Interrupción del usuario (`user.interrupt`), instrucciones de
 Eventos no urgentes: Entradas de usuario de rutina (`user.input`), entradas de Agentes (`agent.input`), resultados de herramientas (`tool.result`), disparos de temporizadores (`timer.trigger`), disparadores externos de rutina.
 
 Las reglas rígidas codificadas tienen sus limitaciones, ya que la semántica del evento determina su forma de procesamiento: "detente inmediatamente" usa cancelación, "¿qué tiempo hace hoy?" usa paralelo y "el informe debe enviarse en español" usa cola. **Se recomienda utilizar un LLM clasificador ligero como enrutador de eventos**, juzgando rápidamente al llegar el evento qué estrategia se debe adoptar.
+
+El punto de cancelación debe ser una posición en la que la herramienta o el razonamiento puedan cerrarse con seguridad; un resultado de herramienta sin terminar se representa con un marcador de posición explícito y nunca debe fingirse como un éxito.
 
 A continuación, mediante un experimento de Agente de procesamiento de correo orientado a eventos, aterrizaremos las estrategias de procesamiento anteriores en una implementación ejecutable.
 
@@ -361,7 +359,15 @@ Para resolverlo, y sin renunciar al reparto modular, una vía de optimización e
 
 Un ASR realmente en streaming necesita soporte del propio modelo. Aunque la decodificación de Whisper es autorregresiva, su codificador necesita el segmento de audio completo, así que no equivale a un modelo en streaming. Un modelo auditivo en streaming basado en LLM puede emitir texto y eventos semánticos a partir de audio continuo, y así reúne el «reconocimiento» y parte de la «comprensión» dentro de un mismo modelo. Conserva el contexto desde el inicio de la conversación hasta el instante actual y puede aprovechar su conocimiento del mundo para tratar marcas, nombres de persona y nombres propios. Los marcadores speak_start/end, interrupt, emotion, laugh, sigh y noise conservan señales que no caben en texto.
 
-Si el único objetivo es decidir si el usuario ha terminado de hablar, el juicio de fin de turno puede integrarse directamente en el reconocedor streaming. Las etiquetas de entrenamiento solo deben usar información visible en el momento de la decisión; de lo contrario, la retrospectiva producirá un juicio imposible de reproducir en línea.
+Si el único objetivo es decidir si el usuario ha terminado de hablar, el juicio de fin de turno puede integrarse directamente en el reconocedor streaming: el modelo combina semántica y silencio para juzgar si el enunciado está completo. Las etiquetas de entrenamiento solo deben usar información visible en el momento de la decisión; de lo contrario, la retrospectiva producirá un juicio imposible de reproducir en línea.
+
+El modelo no solo emite texto: también puede emitir marcadores de eventos acústicos:
+
+- **speak_start/end, interrupt**: límites del habla e intención de interrumpir;
+- **emotion**: emoción, vacilación y estados similares;
+- **laugh, sigh, noise**: sonido paralingüístico y ambiental.
+
+Junto con los tokens de texto, estos marcadores forman un único flujo de eventos: el Agente puede reconocer vacilaciones, interrupciones y cambios del entorno sin tener que comprimir todo el sonido en texto plano.
 
 > **Experimento 6-4 ★: Simular percepción de voz en streaming con Qwen2-Audio**
 >
@@ -385,7 +391,13 @@ Los modelos Omni siguen suponiendo que se habla por turnos y normalmente depende
 
 Omni separa «habla el usuario» y «habla el modelo», pero la interpretación simultánea exige solapamiento. Un modelo de dúplex completo escucha y habla continuamente y decide seguir, pausar, interrumpir o llamar a una herramienta. Moshi de Kyutai fue un ejemplo temprano; Thinking Machines Lab llama a esta ruta Interaction Model[^ch6-14] y la integra en el modelo en lugar de montarla alrededor de VAD. GPT-Live la lleva a escala de producción y delega el trabajo complejo a un modelo de fondo mientras mantiene la conversación.
 
+El precedente en la investigación es **Moshi**, de Kyutai (2024). Modela en paralelo el flujo de audio del usuario y el del modelo, de modo que hablar en solapamiento e interrumpir pasan a ser conductas naturales del modelo.
+
+Thinking Machines Lab llama a esta línea **modelo de interacción (Interaction Model)**[^ch6-14]: la interactividad deja de armarse con un harness externo de VAD y queda incorporada en el propio modelo. Su mecanismo de microturnos avanza de forma continua en bloques cortos de audio, con lo que silencios, solapamientos e interrupciones se conservan como contexto continuo. El modelo de interacción puede además delegar la conversación completa a un modelo de razonamiento en segundo plano mientras él mismo mantiene el hilo; cuando el resultado vuelve, el primer plano lo incorpora en el momento oportuno.
+
 [^ch6-14]: Thinking Machines Lab, “Interaction Models: A Scalable Approach to Human-AI Collaboration,” 2026-05. https://thinkingmachines.ai/blog/interaction-models/
+
+GPT-Live, de OpenAI, lleva la vía dúplex completo a escala de producción: el modelo procesa entrada y genera salida de forma continua, sabe esperar al usuario, asentir y ser interrumpido, y maneja traducción en tiempo real. Igual que el modelo de interacción, delega las tareas complejas a un modelo en segundo plano mientras el primer plano sostiene la conversación.
 
 ### Tiempo cognitivo: interacción en tiempo real y pensamiento profundo
 

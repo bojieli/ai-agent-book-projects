@@ -21,8 +21,6 @@ A korábbi fejezetek e két tér **tartalmát** terjesztették ki; ez a fejezet 
 | **Modalitás** (ez a fejezet) | Hang, képernyő, fizikai érzékelők | Beszéd, kattintás, ízületmozgás |
 | **Időzítés** (ez a fejezet) | A világ tol, folytonos folyamok | Köröket átívelő, megszakítható, kiszorítható |
 
-A fejezet magállítása egyetlen mondatba sűríthető: **a körökre osztottság a tréning által hagyott feltevés, nem a környezet tulajdonsága.**
-
 A modell betanítási korpusza szinte teljes egészében körökre osztott: egy kérdést válasz követ, egy eszközhívást eszközeredmény, az egyik beszélő befejezi, mielőtt a másik elkezdené. Ezért a modell által tanult policy eleve azt feltételezi, hogy a világ megvárja. A valós környezet viszont nem vár arra, hogy a modell reagáljon: a levél közben érkezik meg, a felhasználó a mondat közepén közbevág, a két képernyőkép között az oldal már megváltozott, és a csészét feldöntik, miközben a kar éppen felé nyúl.
 
 | Skála | Forgatókönyv | Változás a megfigyelés oldalán | Változás a cselekvés oldalán |
@@ -31,10 +29,6 @@ A modell betanítási korpusza szinte teljes egészében körökre osztott: egy 
 | 10 ms — 1 s | Hang | Beszéd közben hallgatni, nem várva a mondat végét | Beszéd közben gondolkodni; megszakítható, útközben javítható |
 | Másodperc alatt — másodperc | Computer Use | A képernyő két képkocka között is folyton változik | Cselekvés után újra meg kell erősíteni, hogy a valóság még illik-e a tervhez |
 | Ezredmásodperc | Robotika | Az érzékelők folyamatosan visszacsatolnak | A cselekvés darabolt: egyszerre kis szakaszt tervez, kiszorítható |
-
-A négy szakasz ugyanazt az alapelem-készletet osztja meg — **ébresztés, biztonságos pont, megszakítás, kiszorítás és gyors/lassú szétválasztás** —, csak a paraméterek és a hibaformák térnek el. Az eseményvezérelt aszinkron „biztonságos ponton ellenőrizd a megszakítási jelet" és a robot darabolt cselekvésének „ha rendellenességet látsz, dobd el a maradék mozdulatot és figyelj újra" ugyanannak a mechanizmusnak két megvalósítása, öt nagyságrendnyi időskála-különbséggel. Ezt az izomorfiát meglátni fontosabb, mint bármely egyedi forgatókönyv technikai részletét megjegyezni.
-
-**Az olvasási sorrendben van egy szándékos elrendezés: ez a fejezet a hangnak érezhetően több teret szentel, mint az utána következő két forgatókönyvnek.** A valós idejű interakció fejlődési vonalán a hang jutott a legmesszebb, és ez a legérdemesebb vonatkoztatási rendszer: a „soros csővezeték késleltetése túl nagy" problémától indulva, a végponttól végpontig tartó modelleken, a teljes duplexen és a beszéd közbeni gondolkodáson át egészen a mai, viszonylag kiforrott végállapotig — a probléma → megoldás → végállapot út egésze már bejárt. Ezért ezt tárgyaljuk ki alaposan, a későbbi Computer Use és robotika pedig ehhez a vonalhoz mérve olvasható: melyik hol tart rajta, és hol akadt el.
 
 ## Aszinkron és eseményvezérelt: amikor a világ kopogtat be
 
@@ -108,10 +102,6 @@ A felhasználói kommunikációs eszközök megoldják "hogyan érjük el a felh
 
 ### Virtuális Identitás és Izolált Végrehajtási Környezet
 
-A virtuális számítógép éjjel-nappal futhat, nem fér hozzá szabadon a helyi fájlokhoz, és egy hiba legfeljebb a virtuális környezetet érinti. Az adatcsere megosztott fájlrendszeren és útvonalakon történik.
-
-Egy megjegyzés e szakasz elhelyezéséről: a virtuális identitás és az izolált végrehajtási környezet alapvetően végrehajtási környezet infrastruktúra, összhangban a végrehajtó eszközöknél tárgyalt sandboxokkal. Azért jelennek meg itt, az aszinkron architektúra szakaszban, mert az Agentek, amelyeknek a legégetőbben szükségük van rájuk, azok, amelyek függetlenül futnak, állandóan jelen vannak és bármikor cselekszenek a felhasználó nevében.
-
 A negyedik fejezet Samantha-t hozza példaként a *Her*-ből, bemutatva, hogyan használ egy Agent eszközöket a valós digitális világgal való interakcióhoz. Egy ilyen általános célú asszisztens elérése egy kulcsfontosságú architekturális választást kényszerít ki: az Agent közvetlenül kezelje a felhasználó személyes fiókjait, vagy saját virtuális identitással rendelkezzen? A közvetlen kezelés kényelmesnek tűnik, de egy Agent hiba vagy kompromittálódás kitenné a felhasználó teljes digitális identitását. A biztonságosabb megközelítés, ha az Agent kap egy független virtuális identitást – ahogy egy titkárnak saját irodai telefonja és postafiókja van –, amely dedikált kommunikációs fiókokból, tároló- és számítási környezetekből áll, így az Agent átlátható, egyértelműen deklarált identitás alatt dolgozhat a felhasználó nevében. Ez az átláthatóság nem gyengíti a bizalmat; hitelesebbé teheti a kommunikációt.
 
 A virtuális identitásokat izolált végrehajtási környezetekben kell megalapozni. A "virtuális számítógépek" (VM-ek/konténerek) és "virtuális telefonok" (Android emulátorok) operációs rendszer szintű elszigetelést és teljes asztali/mobil működési képességeket biztosítanak az Agent számára: az Agent saját felhasználói fiókkal, home könyvtárral és bejelentkezési hitelesítő adatokkal rendelkezik bennük, így minden művelet nyomon követhető és auditálható; még ha hibás műveletek is történnek, a gazdarendszer és a felhasználó valódi eszköze érintetlen marad. Ez a végrehajtó eszközöknél tárgyalt sandbox koncepció kiterjesztése a "digitális identitás" dimenzióra – a sandboxok elszigetelik a kódvégrehajtást, míg a virtuális számítógépek és telefonok a teljes digitális identitást szigetelik el.
@@ -127,6 +117,10 @@ Az eseményindított eszközök lehetővé teszik, hogy a világ felébressze az
 Egyetlen Agent példány több eseménnyel szembesülhet egyidejűleg: új üzenet a felhasználótól, eredmény egy eszköztől, időzítő lejárta, együttműködési kérés egy másik Agenttől. Az események hatékony és helyes kezelése közvetlenül befolyásolja a teljesítményt és a felhasználói élményt.
 
 Ennek a mechanizmusnak a váza a konkurens programozásból ismert "eseményhurok (event loop)". Gondoljunk egy aszinkron Agentre mint egy hosszan futó hurokra: minden körben kivesz egy köteg eseményt a bemeneti sorból, hozzáfűzi a trajektóriához, egyszer meghívja az LLM-et, végrehajtja az általa meghívni kívánt eszközöket, majd visszatér a hurok elejére, hogy várjon a következő eseménykötegre – ugyanaz a struktúra, mint egy Go goroutine, amely üzeneteket olvas egy csatornából, és körönként dolgozza fel őket egy `for { select { ... } }` belsejében. Ennek a modellnek van egy döntő tulajdonsága: **az események csak az egyes hurokiterációk határainál kerülnek feldolgozásra**. Amíg az LLM gondolkodik vagy egy eszköz végrehajtódik, egy újonnan érkezett esemény nem furakodhat be a semmiből és nem zavarhatja meg az aktuális lépést; a sorban várakozik, amíg a kör elér egy "biztonságos ponthoz" (safe point) (egy gondolkodási szakasz vége, egy eszköz visszatérése), majd kötegelve kerül feldolgozásra. A megszakítás ugyanezt a fegyelmet követi: ahelyett, hogy erőszakosan megszakítana egy tetszőleges pillanatban, az Agent egy biztonságos pontnál ellenőrzi, hogy "kértek-e megállítást" – ami pontosan az a szerep, amelyet a `ctx.Done()` játszik a Go-ban (a 10. fejezet ugyanezt a kontextus idiómát használja egy szülő Agent al-Agentjeinek kaszkádolt megszakításának tárgyalásakor). Ha ezt megértettük, a három feldolgozási stratégia alább csak abban különbözik, hogyan kezelik a biztonságos pontot: hagyják, hogy az esemény megvárja a következő természetesen előforduló biztonságos pontot (sorba állítás), proaktívan kényszerítenek egy korai biztonságos pontot (megszakítás), vagy egyszerűen elindítanak egy külön hurkot, és nem várnak a fő hurok biztonságos pontjára (párhuzamos).
+
+Ennek a modellnek van egy kulcsfontosságú tulajdonsága: **az eseményeket csak az egyes körök határán fogyasztja el a rendszer**. Miközben az LLM következtet vagy egy eszköz éppen fut, a frissen érkező esemény nem furakodik be a semmiből, és nem zavarja meg az aktuális lépést, hanem a sorban várakozik, amíg a kör el nem ér egy **biztonságos pontot** (egy következtetési szakasz vége, egy eszközhívás visszatérése), és ekkor kerül sor az együttes feldolgozásra. A megszakítás ugyanezt a fegyelmet követi: nem tetszőleges pillanatban vágja el erőszakkal a munkát, hanem a biztonságos ponton ellenőrzi, hogy „kaptam-e leállítási utasítást” – pontosan ezt a szerepet tölti be a Go `ctx.Done()` hívása.
+
+Ha ezt megértettük, az alábbi három feldolgozási stratégia már csak abban különbözik, hogyan bánik a biztonságos ponttal: hagyja, hogy az esemény megvárja a következő, természetes módon adódó biztonságos pontot (sorba állítás), előre, szándékosan gyárt egy biztonságos pontot (megszakítás), vagy egyszerűen új hurkot indít, és meg sem várja a fő hurok biztonságos pontját (párhuzamos).
 
 **Strukturált Eseménymodellezés.**
 
@@ -150,6 +144,8 @@ Például egy ügyfél visszatérítési kérelmet tartalmazó e-mail strukturá
 
 Csak amikor ezek a dimenziók egyértelműen modellezve vannak strukturált eseményként, tudja az Agent fenntartani a világos megértést a több fél közötti kommunikációban, elkerülve, hogy a felhasználói bemenetet összetévessze egy eszközeredménnyel, vagy egy rejtett utasításokat tartalmazó eszközeredményt felhasználói parancsnak nézzen (prompt injection). A többszálú kontextuskezelés összetettsége azt is megköveteli, hogy az Agent megértse a több beszélgetési szál közötti kapcsolatokat – hogy egy harmadik féltől származó üzenet hogyan befolyásolja a felhasználó hangulatát, a felhasználó szerepváltásait a különböző beszélgetések során, és hogy mikor kell szintetizálni a különböző szálakból származó információkat tanácsadás céljából. Az olyan munkafolyamat-platformok triggerökoszisztémája, mint az n8n – webhookok, időzítők, e-mailek, adatbázis-változások, fájlfigyelők – ugyanezt az elvet illusztrálja: minden trigger egy "érzékszerv", amelyen keresztül az Agent érzékeli a világot. Miután ezeket a heterogén eseményeket egyetlen strukturált formátumba modelleztük, az Agent bármely forrásból származó ingereket következetesen fel tud dolgozni. Az alábbi sürgősség-meghatározás és feldolgozási stratégiák mind erre az egységes modellezésre épülnek.
 
+Az olyan munkafolyamat-platformok trigger-ökoszisztémája, mint az n8n, jól mutatja ezt: webhookok, időzítők, e-mail, adatbázis-változások, fájlfigyelés – minden trigger az Agent egy-egy „érzékszerve”, amellyel a világot érzékeli. Amint ezeket a heterogén eseményeket egységesen, strukturált formátumban modellezzük, az Agent egységes módon tudja kezelni a különböző forrásokból érkező ingereket; az alább tárgyalt sürgősségi besorolás és feldolgozási stratégiák egyaránt erre az egységes modellezésre épülnek.
+
 **Dinamikus Feldolgozási Stratégia a Sürgősség Alapján.**
 
 Az emberek, akik több feladatot egyensúlyoznak, a sürgősséghez igazítják stratégiájukat: egy vészhelyzet esetén elengednek mindent, amit csinálnak; egy rutin teendő későbbre kerül a listára. Az Agent eseménykezelésének ugyanezt az intelligenciát kell mutatnia.
@@ -169,6 +165,8 @@ Sürgős események: Felhasználói megszakítás (`user.interrupt`), felügyel�
 Nem sürgős események: Normál felhasználói bemenet (`user.input`), Agent bemenet (`agent.input`), eszköz eredmények (`tool.result`), időzítő triggerek (`timer.trigger`), normál külső triggerek.
 
 A keménykódolt szabályoknak korlátai vannak; az esemény szemantikája diktálja a kezelési módot – "Azonnal állj le!" megszakítás-alapú feldolgozást használ, "Milyen idő lesz ma?" párhuzamos feldolgozást, "Küldd el a jelentést kínaiul" sorbaállítás-alapú feldolgozást. **Egy könnyűsúlyú osztályozó LLM használata javasolt esemény-útválasztóként**, amely gyorsan meghatározza, melyik stratégiát alkalmazza, amikor egy esemény érkezik.
+
+A megszakítási pontnak olyan helynek kell lennie, ahol az eszköz vagy a következtetés biztonságosan le tud zárulni; a befejezetlen eszközeredményt kifejezett helyőrzővel jelöljük, és soha nem szabad sikernek hazudni.
 
 A következő kísérlet, egy eseményvezérelt e-mail feldolgozó Agent, a fent tárgyalt eseménykezelési stratégiákat valósítja meg futtatható implementációként.
 
@@ -359,7 +357,15 @@ A moduláris munkamegosztás megtartása mellett erre a **streaming észlelés**
 
 A valódi streaming ASR-hez a modellnek is támogatnia kell ezt a működést. A Whisper dekódolása ugyan autoregresszív, de a kódolója teljes hangszegmenst vár, ezért nem tekinthető streaming modellnek. Az LLM-alapú streaming hallási modell folyamatos hangból ad ki szöveget és szemantikai eseményeket, vagyis a „felismerést” és a „megértés” egy részét ugyanabba a modellbe helyezi. Megőrzi a beszélgetés kezdetétől az aktuális pillanatig tartó kontextust, és világtudását felhasználva kezeli a márkaneveket, személyneveket és tulajdonneveket.
 
-A végpont eldöntése beépíthető a streaming felismerőbe, de a címkék csak a döntéskor látható információt használhatják. A speak_start/end, interrupt, emotion, laugh, sigh és noise jelölők megőrzik a nem szöveges jeleket.
+Ha csak azt kell eldönteni, hogy a felhasználó befejezte-e a mondandóját, a végpont eldöntése beépíthető magába a streaming felismerőbe: a modell a szemantikát és a csendet együtt mérlegelve dönti el, hogy egy megnyilatkozás teljes-e. A tanítócímkék csak a döntés pillanatában látható információt használhatják, különben az utólagos rálátás olyan ítéletet eredményez, amely élesben nem reprodukálható.
+
+A modell nem csupán szöveget adhat ki, hanem akusztikai eseményjelöléseket is:
+
+- **speak_start/end, interrupt**: a beszéd határai és a félbeszakítás szándéka;
+- **emotion**: érzelem, tétovázás és hasonló állapotok;
+- **laugh, sigh, noise**: paralingvisztikai és környezeti hang.
+
+Ezek a jelölések a szöveges tokenekkel együtt egyetlen eseményfolyamot alkotnak: az Agent ez alapján ismeri fel a tétovázást, a félbeszakítást és a környezet változásait anélkül, hogy minden hangot puszta szöveggé kellene sűrítenie.
 
 > **6-4. kísérlet ★: Streaming hangészlelés szimulációja Qwen2-Audio-val**
 >
@@ -383,7 +389,13 @@ Az Omni modell továbbra is a felváltva beszélést feltételezi, és a szóló
 
 Az Omni a „felhasználó beszél” és a „modell beszél” időszakára osztja a párbeszédet, de a szinkrontolmácsolás átfedést igényel. A teljes duplex folyamatosan hallgat és beszél, és eldönti, folytatja-e, szünetel-e, megszakít-e vagy eszközt hív. A Kyutai Moshi korai példa; a Thinking Machines Lab Interaction Modelnek[^ch6-14] nevezi a modellbe épített interakciót. A GPT-Live ezt termelési méretre viszi.
 
+A kutatási előfutár a Kyutai **Moshi** modellje (2024). Párhuzamosan modellezi a felhasználó és a modell hangfolyamát, így az egymásra beszélés és a félbeszakítás a modell természetes viselkedésévé válik.
+
+A Thinking Machines Lab ezt az irányt **interakciós modellnek (Interaction Model)** nevezi[^ch6-14]: az interaktivitást többé nem külső, VAD-alapú harness rakja össze, hanem magába a modellbe épül. A mikrofordulós mechanizmus rövid hangblokkokkal halad folyamatosan előre, így a csend, az átfedés és a félbeszakítás mind folytonos kontextusként őrződik meg. Az interakciós modell a teljes beszélgetést át is adhatja egy háttérben futó gondolkodó modellnek, miközben ő maga tartja a szó fonalát; amikor a háttéreredmény megérkezik, az előtér a megfelelő pillanatban beemeli.
+
 [^ch6-14]: Thinking Machines Lab, “Interaction Models: A Scalable Approach to Human-AI Collaboration,” 2026-05. https://thinkingmachines.ai/blog/interaction-models/
+
+Az OpenAI GPT-Live modellje a teljes duplex utat éles léptékre viszi: a modell folyamatosan dolgozza fel a bemenetet és állítja elő a kimenetet, tud várni a felhasználóra, hümmögve helyeselni és félbeszakíttatni magát, és elbír a valós idejű fordítással is. Az interakciós modellhez hasonlóan az összetett feladatokat háttérmodellre bízza, míg az előtér viszi tovább a beszélgetést.
 
 ### Kognitív időzítés: valós idejű interakció és mély gondolkodás
 

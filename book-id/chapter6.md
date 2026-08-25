@@ -21,8 +21,6 @@ Bab-bab sebelumnya memperluas **isi** kedua ruang tersebut; bab ini memperluas *
 | **Modalitas** (bab ini) | Suara, layar, sensor fisik | Berbicara, mengklik, gerak sendi |
 | **Waktu** (bab ini) | Dunia mendorong, aliran kontinu | Lintas giliran, dapat disela, dapat didahului |
 
-Proposisi inti bab ini dapat dipadatkan menjadi satu kalimat: **sistem giliran adalah asumsi yang ditinggalkan pelatihan, bukan sifat lingkungan.**
-
 Korpus pelatihan model hampir seluruhnya berbasis giliran—pertanyaan diikuti jawaban, panggilan tool diikuti hasil tool, satu pembicara selesai lebih dulu sebelum yang lain mulai. Jadi kebijakan yang dipelajari model mengasumsikan dunia akan menunggunya. Lingkungan nyata tidak menunggu model untuk bereaksi: surel datang saat ia sedang berpikir, pengguna menyela di tengah kalimat, halaman sudah berubah di antara dua tangkapan layar, dan cangkir tersenggol saat lengan sedang menjangkaunya.
 
 | Skala | Skenario | Perubahan di sisi observasi | Perubahan di sisi aksi |
@@ -31,10 +29,6 @@ Korpus pelatihan model hampir seluruhnya berbasis giliran—pertanyaan diikuti j
 | 10 ms — 1 dtk | Suara | Mendengar sambil berbicara, tanpa menunggu satu kalimat selesai | Berpikir sambil berbicara, bisa disela dan diralat di tengah |
 | Subdetik — detik | Computer Use | Layar terus berubah di antara dua bingkai | Setelah bertindak, kenyataan harus dikonfirmasi ulang terhadap rencana |
 | Milidetik | Robot | Sensor mengalir balik terus-menerus | Aksi dipotong per blok: sekali rencana sepotong, dapat didahului |
-
-Keempat subbab berbagi satu set primitif yang sama—**membangunkan, titik aman, pembatalan, pendahuluan, dan pemisahan cepat/lambat**—hanya berbeda parameter dan bentuk kegagalannya. "Memeriksa sinyal pembatalan di titik aman" pada asinkron berbasis peristiwa dan "begitu menemukan anomali, buang sisa aksi lalu amati ulang" pada pemotongan aksi robot adalah mekanisme yang sama, diimplementasikan dua kali pada skala waktu yang berselisih lima orde besaran. Melihat isomorfisme ini lebih penting daripada menghafal detail teknis skenario mana pun.
-
-**Ada satu penataan yang disengaja dalam urutan baca: bab ini memberi porsi jauh lebih besar kepada suara ketimbang dua skenario sesudahnya.** Pada garis evolusi interaksi real-time, suara adalah yang melangkah paling jauh dan paling layak dijadikan kerangka acuan: berangkat dari masalah "pipeline serial terlalu tinggi latensinya", melewati rangkaian solusi end-to-end, full duplex, dan berpikir sambil berbicara, hingga sampai pada babak akhir yang relatif mapan—perjalanan masalah → solusi → babak akhir sudah dilalui seluruhnya. Karena itu kita bahas tuntas, sehingga Computer Use dan robot di belakang dapat dibaca dengan membandingkan garis ini—masing-masing sudah sampai di titik mana dan tersendat di mana.
 
 ## Asinkron dan Berbasis Peristiwa: Ketika Dunia Datang Menghampiri
 
@@ -108,10 +102,6 @@ Untuk tugas yang berjalan lama, Agent perlu secara proaktif memberi tahu penggun
 
 ### Identitas Virtual dan Lingkungan Eksekusi Terisolasi
 
-Komputer virtual dapat berjalan 24/7, membatasi akses Agent ke berkas lokal, dan memastikan kesalahan paling jauh hanya merusak lingkungan virtual. Pertukaran data memakai sistem berkas bersama dan referensi path.
-
-Sedikit tentang penempatan bagian ini: identitas virtual dan lingkungan eksekusi yang terisolasi pada dasarnya adalah infrastruktur lingkungan eksekusi, satu kesatuan dengan *sandbox* yang didiskusikan pada bagian alat eksekusi. Bagian-bagian ini muncul di sini, pada bagian arsitektur asinkron, karena Agent yang paling membutuhkan hal tersebut adalah mereka yang berjalan secara mandiri, tetap menetap, dan bertindak atas nama pengguna setiap saat.
-
 Bab 4 dibuka dengan Samantha dalam *Her* sebagai contoh, yang menunjukkan bagaimana Agent menggunakan alat untuk berinteraksi dengan dunia digital nyata. Untuk mencapai asisten multiguna seperti itu memaksa adanya pilihan arsitektur utama: perlukah Agent mengelola akun pribadi pengguna secara langsung, atau Agent memiliki identitas virtualnya sendiri? Manajemen secara langsung terlihat nyaman, tetapi jika ada satu saja kesalahan dari Agent atau terjadinya kompromi keamanan, seluruh identitas digital pengguna akan terancam. Pendekatan yang lebih aman adalah dengan memberikan identitas virtual yang independen kepada Agent—seperti layaknya sekretaris yang memiliki nomor telepon kantor dan kotak suratnya sendiri—yang terdiri dari akun komunikasi, penyimpanan, dan lingkungan komputasi yang berdedikasi tinggi, dengan demikian Agent dapat bekerja atas nama pengguna menggunakan identitas yang dideklarasikan secara jelas dan transparan. Transparansi ini tidak melemahkan kepercayaan; melainkan dapat menjadikan komunikasi menjadi lebih autentik.
 
 Identitas virtual (Virtual identities) perlu didasarkan pada lingkungan eksekusi yang terisolasi. **Virtual computers** (VMs/containers) dan **virtual phones** (Android emulators) memberikan Agent isolasi tingkat sistem operasi dan kemampuan operasi desktop/mobile secara penuh: Agent memiliki akun pengguna, direktori home, dan kredensial login sendiri di dalamnya, membuat semua operasi dapat dilacak dan diaudit; bahkan jika operasi yang salah dilakukan, sistem host dan perangkat nyata pengguna tetap tidak terpengaruh. Ini adalah perluasan dari konsep sandbox yang dibahas di bagian execution tools ke dalam dimensi "identitas digital"—sandbox mengisolasi eksekusi kode, sementara virtual computers dan phones mengisolasi seluruh identitas digital.
@@ -127,6 +117,10 @@ Event-triggered tools memungkinkan dunia untuk membangunkan Agent, user communic
 Satu instance Agent mungkin menghadapi beberapa event secara bersamaan: pesan baru dari pengguna, hasil dari suatu tool, waktu timer habis, permintaan kolaborasi dari Agent lain. Bagaimana event-event ini ditangani secara efisien dan benar berdampak langsung pada performa dan pengalaman pengguna.
 
 Kerangka dari mekanisme ini adalah **event loop** dari pemrograman konkuren (concurrent programming). Pikirkan asynchronous Agent sebagai loop yang berjalan panjang: setiap putaran mengambil sekumpulan event dari antrean input (input queue), menambahkannya ke trajectory, memanggil LLM sekali, mengeksekusi tool yang diputuskan untuk dipanggil, lalu kembali ke bagian atas loop untuk menunggu sekumpulan event berikutnya—struktur yang sama dengan goroutine pada Go yang membaca pesan dari channel dan memprosesnya putaran demi putaran di dalam `for { select { ... } }`. Model ini memiliki satu sifat penting: **event hanya dikonsumsi pada batasan (boundaries) dari setiap iterasi loop**. Saat LLM sedang melakukan reasoning atau tool sedang dieksekusi, event yang baru tiba tidak dapat menyusup dari mana pun dan mengganggu langkah saat ini; event tersebut menunggu di antrean hingga putaran mencapai titik aman (**safe point**) (akhir dari proses reasoning, tool mengembalikan hasil) dan kemudian ditangani secara batch. Pembatalan (cancellation) mengikuti disiplin yang sama: alih-alih memotong paksa pada momen yang sewenang-wenang, Agent memeriksa "apakah saya diminta untuk berhenti?" pada sebuah safe point—yang persis seperti peran yang dimainkan oleh `ctx.Done()` di Go (Bab 10 menggunakan idiom context yang sama untuk membahas cascading cancellation oleh parent Agent terhadap sub-agent-nya). Setelah ini dipahami, tiga strategi pemrosesan di bawah ini hanya berbeda dalam cara mereka memperlakukan safe point: membiarkan event menunggu safe point berikutnya yang terjadi secara alami (queued), secara proaktif memaksa safe point lebih awal (cancellation), atau sekadar memutar loop terpisah dan tidak menunggu safe point dari loop utama sama sekali (parallel).
+
+Model ini punya satu properti kunci: **event hanya dikonsumsi di batas setiap putaran loop**. Saat LLM sedang melakukan reasoning atau tool sedang berjalan, event yang baru tiba tidak menyelinap masuk begitu saja dan mengacaukan langkah yang sedang berjalan, melainkan menunggu di antrian sampai putaran ini mencapai sebuah **safe point** (akhir satu tahap reasoning, satu tool yang mengembalikan hasil), baru kemudian semuanya diproses bersama. Pembatalan mengikuti disiplin yang sama: ia tidak memutus pekerjaan secara paksa di sembarang saat, melainkan memeriksa di safe point apakah "ada perintah berhenti"—persis peran yang dimainkan `ctx.Done()` di Go.
+
+Dengan memahami hal ini, ketiga strategi penanganan di bawah hanya berbeda dalam cara memperlakukan safe point: membiarkan event menunggu safe point berikutnya yang muncul secara alami (queued), secara proaktif menciptakan safe point lebih awal (cancellation-based), atau langsung membuka loop lain sehingga tidak perlu menunggu safe point dari loop utama (parallel).
 
 **Structured Event Modeling.**
 
@@ -150,6 +144,8 @@ Mengambil contoh email permintaan pengembalian dana dari pelanggan, structured e
 
 Hanya ketika dimensi-dimensi ini dimodelkan secara jelas sebagai structured events, Agent dapat mempertahankan pemahaman yang jelas dalam komunikasi multi-party, menghindari kesalahan mengira input pengguna sebagai hasil tool (tool result), atau kesalahan mengira tool result yang berisi instruksi tersembunyi sebagai perintah pengguna (Prompt Injection). Kompleksitas manajemen context pada multi-threaded juga mengharuskan Agent untuk memahami hubungan antara banyak thread percakapan—bagaimana pesan dari pihak ketiga memengaruhi suasana hati pengguna, transisi peran pengguna di berbagai percakapan, dan kapan harus mensintesis informasi dari thread yang berbeda untuk memberikan saran. Ekosistem trigger dari platform workflow seperti n8n—webhooks, timers, emails, database changes, file watchers—menggambarkan prinsip yang sama: setiap trigger adalah "organ indra" yang melaluinya Agent mempersepsikan dunia. Setelah event-event heterogen ini dimodelkan ke dalam satu format terstruktur, Agent dapat memproses stimulus dari sumber manapun secara konsisten. Penentuan urgensi dan strategi pemrosesan di bawah ini semuanya dibangun di atas pemodelan terpadu ini.
 
+Ekosistem trigger pada platform workflow seperti n8n memperlihatkannya dengan jelas: webhook, timer, email, perubahan database, pemantauan file—setiap trigger adalah satu "indra" Agent untuk mengindra dunia. Begitu event-event heterogen ini dimodelkan secara seragam ke dalam format terstruktur, Agent dapat menangani rangsangan dari berbagai sumber dengan cara yang konsisten; penentuan tingkat urgensi dan strategi penanganan yang dibahas di bawah juga bertumpu pada pemodelan terpadu ini.
+
 **Strategi Pemrosesan Dinamis Berdasarkan Urgensi.**
 
 Manusia yang menangani berbagai task secara bersamaan mengadaptasi strategi mereka terhadap urgensi: keadaan darurat membuat mereka menghentikan apa yang sedang mereka lakukan; tugas rutin (routine to-do) dimasukkan ke dalam daftar untuk dikerjakan nanti. Event handling pada Agent juga harus menunjukkan kecerdasan yang sama.
@@ -169,6 +165,8 @@ Event darurat (Urgent events): Interupsi pengguna (`user.interrupt`), instruksi 
 Event tidak darurat (Non-urgent events): Input pengguna biasa (`user.input`), input Agent (`agent.input`), hasil tool (`tool.result`), timer triggers (`timer.trigger`), external triggers biasa.
 
 Hardcoded rules memiliki keterbatasan; semantik event menentukan metode penanganan—"Berhenti sekarang!" menggunakan cancellation-based processing, "Bagaimana cuaca hari ini?" menggunakan parallel processing, "Kirimkan laporannya dalam bahasa Mandarin" menggunakan queued processing. **Sangat disarankan untuk menggunakan classification LLM yang ringan sebagai event router**, dengan cepat menentukan strategi mana yang akan diadopsi ketika sebuah event tiba.
+
+Titik pembatalan harus berada di posisi yang memungkinkan tool atau reasoning menutup pekerjaannya dengan aman; hasil tool yang belum selesai diwakili oleh placeholder eksplisit dan tidak boleh dipalsukan sebagai keberhasilan.
 
 Eksperimen berikut, yakni event-driven Agent pemroses email, mengimplementasikan strategi event handling yang dibahas di atas menjadi implementasi yang dapat dijalankan.
 
@@ -394,7 +392,13 @@ Model Omni tetap mengasumsikan orang berbicara bergantian dan umumnya mengandalk
 
 Omni memisahkan “pengguna berbicara” dan “model berbicara”, tetapi penerjemahan simultan memerlukan tumpang tindih. Full-duplex terus mendengar dan berbicara sambil memutuskan lanjut, berhenti, menyela, atau memanggil alat. Moshi dari Kyutai adalah contoh awal; Thinking Machines Lab menyebut jalur ini Interaction Model[^ch6-14] dan membangun interaksi di dalam model, bukan di sekitar VAD. GPT-Live membawanya ke skala produksi.
 
+Pendahulunya di sisi riset adalah **Moshi** dari Kyutai (2024). Ia memodelkan aliran audio pengguna dan model secara paralel, sehingga berbicara bertindihan dan menyela menjadi perilaku alami model.
+
+Thinking Machines Lab menyebut jalur ini **model interaksi (Interaction Model)**[^ch6-14]: interaktivitas tak lagi dirakit oleh harness eksternal berbasis VAD, melainkan tertanam di dalam model itu sendiri. Mekanisme mikro-gilirannya bergerak maju terus-menerus dalam blok audio pendek, sehingga keheningan, tumpang tindih, dan sela semuanya tersimpan sebagai konteks yang bersinambung. Model interaksi juga dapat mendelegasikan percakapan utuh kepada model penalaran di latar sementara ia sendiri tetap memegang alur bicara; ketika hasil dari latar kembali, sisi depan menyisipkannya pada saat yang tepat.
+
 [^ch6-14]: Thinking Machines Lab, “Interaction Models: A Scalable Approach to Human-AI Collaboration,” 2026-05. https://thinkingmachines.ai/blog/interaction-models/
+
+GPT-Live dari OpenAI membawa jalur full-duplex ke skala produksi: model terus memproses masukan dan menghasilkan keluaran, bisa menunggu pengguna, menimpali, disela, dan menangani penerjemahan waktu nyata. Sebagaimana model interaksi, ia mendelegasikan tugas rumit ke model latar sementara sisi depan meneruskan percakapan.
 
 ### Waktu kognitif: interaksi real-time dan pemikiran mendalam
 
@@ -552,6 +556,15 @@ Pada Juli 2026, **Photon-1** yang diumumkan Induction Labs memperlihatkan satu p
 [^ch6-20]: David Li and Jonathan Li, Induction Labs, “Scaling Video Pretraining with Imagination Models,” 2026-07-23. https://www.inductionlabs.com/news/scaling-video-pretraining. Parameter, skala data, tolok ukur internal, dan perbandingan biaya Photon-1 yang disebut dalam teks semuanya merupakan hasil yang diungkap perusahaan itu sendiri.
 
 ### Seluler: Hambatan Ekosistem Lebih Sulit Daripada Teknologi
+
+Computer Use juga merambah ke perangkat seluler. Antara seluler dan desktop memang ada perbedaan teknis: ruang aksi umumnya bukan lagi "koordinat tetikus + papan ketik", melainkan lewat API layanan aksesibilitas sistem (seperti AccessibilityService di Android) untuk membaca elemen antarmuka serta mengirim ketukan dan masukan teks; cara berinteraksi pun beralih dari penunjuk tetikus ke gestur sentuh, sehingga makna koordinat ikut berubah — titik (x, y) yang sama perlu jenis gestur tambahan untuk menentukan apakah itu ketukan tunggal, tekan lama, atau titik awal sebuah usapan. Tolok ukur seluler seperti AndroidWorld yang dibahas pada Bab 7 justru mengukur kemampuan Agent menuntaskan tugas nyata di dalam aplikasi pada ruang aksi semacam ini.
+
+Namun yang benar-benar mengganjal di seluler kerap bukan perbedaan teknis itu, melainkan hambatan ekosistem. Seorang produsen ponsel pernah mencoba menanamkan asisten AI pada ponsel konsumen agar mengoperasikan sendiri aplikasi sehari-hari seperti WeChat, Taobao, dan Alipay, tetapi cepat berbenturan dengan pembatasan platform.
+
+Ini menyingkap tantangan khas yang dihadapi Computer Use: **hambatan ekosistem**. Akar penyebab pemblokiran itu adalah benturan model bisnis. Logika monetisasi aplikasi internet tradisional bertumpu pada **trafik dan perhatian**: pengguna melihat iklan saat menggulir umpan, mengikuti arahan algoritma rekomendasi saat mencari barang, dan berbelanja impulsif saat menjelajah halaman. Ketika Agent menggantikan pengguna dalam mengoperasikan aplikasi, rantai monetisasi itu dilewati sepenuhnya: AI tidak menonton iklan dan tidak berbelanja impulsif, ia langsung menuju sasaran lalu pergi. Bagi platform yang hidup dari iklan dan trafik, setiap operasi Agent menggerogoti fondasi model bisnisnya.
+
+Artinya, yang dihadapi Computer Use bukan sekadar perlawanan teknis seperti CAPTCHA (kode verifikasi), melainkan **konflik kepentingan yang struktural**. Pertentangan ini sulit didamaikan dalam jangka pendek, dan membuat penerapan Computer Use pada skenario konsumen menghadapi tantangan yang lebih pelik daripada persoalan teknis murni.
+
 ## Robot Manipulation: Merapikan Meja dengan XLeRobot
 
 > **Cara membaca bagian ini**: dari awal sampai akhir kita memakai satu tugas saja——"masukkan cangkir merah ke nampan, buang kertas kuning ke tempat sampah, lalu amati sekali lagi untuk memastikan keadaan meja". Eksperimen 6-9 dan 9-9 dijalankan pada XLeRobot fisik dan memerlukan lengan robot, kalibrasi, tombol henti darurat, serta pengawas di tempat. Eksperimen 6-10, 9-10, dan 9-11 adalah padanannya di GPU lokal. Hasil fisik dan hasil simulasi dilaporkan terpisah, tetapi tujuan tugas, makna aksi, dan syarat keberhasilannya dijaga tetap sama.

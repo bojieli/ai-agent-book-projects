@@ -21,8 +21,6 @@ Các chương trước mở rộng **nội dung** của hai không gian này, c�
 | **Phương thức** (chương này) | Giọng nói, màn hình, cảm biến vật lý | Nói, nhấp chuột, chuyển động khớp |
 | **Thời điểm** (chương này) | Thế giới chủ động đẩy, luồng liên tục | Vượt lượt, có thể ngắt, có thể bị giành quyền |
 
-Mệnh đề cốt lõi của chương này có thể nén thành một câu: **lượt phiên là giả định do huấn luyện để lại, không phải tính chất của môi trường.**
-
 Ngữ liệu huấn luyện của một mô hình gần như hoàn toàn theo lượt — một câu hỏi rồi đến một câu trả lời, một lệnh gọi công cụ rồi đến một kết quả công cụ, một người nói xong rồi người kia mới bắt đầu. Vì thế, chính sách mà mô hình học được mặc định rằng thế giới sẽ chờ nó. Môi trường thực tế thì không chờ mô hình phản ứng: thư đến trong lúc nó đang suy nghĩ, người dùng ngắt lời giữa chừng, trang đã đổi giữa hai ảnh chụp màn hình, và cái cốc bị làm đổ trong lúc cánh tay đang với tới nó.
 
 | Thang | Bối cảnh | Thay đổi ở phía quan sát | Thay đổi ở phía hành động |
@@ -31,10 +29,6 @@ Ngữ liệu huấn luyện của một mô hình gần như hoàn toàn theo l�
 | 10 ms — 1 s | Giọng nói | Vừa nói vừa nghe, không đợi hết một câu | Vừa nghĩ vừa nói, có thể bị ngắt, có thể đổi lời giữa chừng |
 | Dưới giây — giây | Computer Use | Màn hình biến đổi liên tục giữa hai khung hình | Sau khi hành động phải xác nhận lại thực tế còn khớp kế hoạch không |
 | Mili giây | Robot | Cảm biến hồi tiếp liên tục | Chia khối hành động: mỗi lần chỉ hoạch định một đoạn ngắn, có thể bị giành quyền |
-
-Bốn mục dùng chung một bộ nguyên thuỷ — **đánh thức, điểm an toàn, huỷ, giành quyền, tách nhanh/chậm** — chỉ khác nhau ở tham số và dạng thất bại. "Kiểm tra tín hiệu huỷ tại điểm an toàn" trong không đồng bộ hướng sự kiện, và "phát hiện bất thường thì bỏ phần hành động còn lại, quan sát lại" trong chia khối hành động của robot, là cùng một cơ chế được hiện thực hai lần trên hai thang thời gian cách nhau năm bậc độ lớn. Nhìn ra tầng đồng cấu này quan trọng hơn việc nhớ chi tiết kỹ thuật của bất kỳ bối cảnh đơn lẻ nào.
-
-**Về thứ tự đọc có một sắp đặt cố ý: chương này dành cho giọng nói dung lượng nhiều hơn hẳn hai bối cảnh sau.** Trên đường tiến hoá của tương tác thời gian thực, giọng nói là nhánh đi trọn vẹn nhất và đáng lấy làm hệ quy chiếu nhất: xuất phát từ vấn đề "đường ống tuần tự có độ trễ quá cao", đi qua một loạt giải pháp end-to-end, song công toàn phần, vừa nghĩ vừa nói, cho tới cục diện tương đối định hình hôm nay — toàn bộ hành trình vấn đề → giải pháp → cục diện đều đã được đi hết. Vì vậy chúng ta nói cho thấu, để Computer Use và robot ở phía sau đều có thể đối chiếu với mạch này — mỗi bên đã đi tới đoạn nào của đường tiến hoá ấy và đang mắc ở đâu.
 
 ## Không đồng bộ và hướng sự kiện: khi thế giới chủ động tìm đến
 
@@ -108,10 +102,6 @@ Công cụ giao tiếp với người dùng giải quyết vấn đề “làm t
 
 ### Nhận dạng ảo và môi trường thực thi biệt lập
 
-Máy tính ảo có thể chạy 24/7, hạn chế Agent truy cập tự do vào tệp cục bộ và cô lập lỗi trong môi trường ảo. Dữ liệu được trao đổi bằng đường dẫn trong hệ thống tệp dùng chung.
-
-Trước tiên, cần phải giải thích vị trí của phần này: danh tính ảo và môi trường thực thi biệt lập về cơ bản là cơ sở hạ tầng môi trường thực thi, giống như hộp cát đã thảo luận trong phần trước về các công cụ thực thi; Lý do tại sao nó được mở rộng sang phần kiến trúc không đồng bộ là vì chỉ Agent, có thể chạy độc lập, thường trú và hoạt động thay mặt người dùng bất cứ lúc nào, cần nó nhất.
-
 Chương 4 mở đầu bằng Samantha trong *Her* như một ví dụ, minh họa cách Agent sử dụng công cụ để tương tác với thế giới số thực. Để triển khai một trợ lý phổ quát như vậy, trước tiên chúng ta phải đối mặt với một lựa chọn kiến trúc quan trọng: Agent nên trực tiếp quản lý tài khoản cá nhân của người dùng hay có danh tính ảo riêng? Quản lý trực tiếp có vẻ thuận tiện nhưng một khi Agent gặp lỗi hoặc bị xâm phạm, toàn bộ danh tính kỹ thuật số của người dùng sẽ bị lộ. Một giải pháp an toàn hơn là cung cấp cho Agent một danh tính ảo độc lập - giống như một thư ký có số điện thoại văn phòng và địa chỉ email riêng. Danh tính ảo này bao gồm một tài khoản liên lạc chuyên dụng, không gian lưu trữ và môi trường điện toán, cho phép Agent hoạt động thay mặt người dùng với danh tính minh bạch. Không hề làm xói mòn lòng tin, sự rõ ràng về danh tính còn nâng cao tính xác thực của giao tiếp.
 
 Danh tính ảo cần được triển khai trong môi trường thực thi biệt lập. **Máy tính ảo**(VM/container) và **Điện thoại ảo**(trình mô phỏng Android) cung cấp khả năng cách ly cấp hệ điều hành và khả năng vận hành hoàn chỉnh trên máy tính để bàn/thiết bị di động cho Agent: Agent có tài khoản người dùng, thư mục chính và thông tin đăng nhập riêng, đồng thời tất cả các hoạt động đều có thể theo dõi và kiểm tra được; ngay cả khi thực hiện thao tác không chính xác, nó sẽ không ảnh hưởng đến hệ thống máy chủ và thiết bị thực của người dùng. Đây là phần mở rộng của ý tưởng hộp cát được thảo luận trong phần trước về các công cụ thực thi trong khía cạnh "nhận dạng kỹ thuật số" - hộp cát cô lập việc thực thi mã, trong khi máy tính ảo và điện thoại di động ảo cô lập toàn bộ danh tính kỹ thuật số.
@@ -127,6 +117,10 @@ Các công cụ kích hoạt sự kiện cho phép thế giới đánh thức Ag
 Phiên bản Agent có thể gặp phải nhiều sự kiện cùng lúc: tin nhắn mới từ người dùng, kết quả được công cụ trả về, hết hạn hẹn giờ và yêu cầu cộng tác từ một Agent khác. Cách xử lý những sự kiện này một cách hiệu quả và chính xác sẽ ảnh hưởng trực tiếp đến hiệu suất và trải nghiệm người dùng.
 
 Bộ khung của cơ chế này chính là **vòng lặp sự kiện** (event loop) trong lập trình đồng thời. Có thể xem Agent không đồng bộ như một vòng lặp chạy dài hạn: mỗi vòng lấy ra một số sự kiện từ hàng đợi đầu vào, nối vào trajectory, gọi LLM một lần, thực thi các công cụ mà nó quyết định, rồi quay về đầu vòng lặp để chờ lô sự kiện tiếp theo—đây là cùng một cấu trúc với việc goroutine của Go đọc tin nhắn từ channel và xử lý từng vòng trong `for { select { ... } }`. Mô hình này có một tính chất then chốt: **sự kiện chỉ được tiêu thụ tại ranh giới của mỗi vòng lặp**. Khi LLM đang suy luận, khi công cụ đang thực thi, sự kiện mới đến sẽ không tự nhiên chen vào giữa và làm rối bước hiện tại, mà trước hết chờ trong hàng đợi, đợi vòng này đạt đến một **điểm an toàn** (một đoạn suy luận kết thúc, một lần công cụ trả về) rồi mới xử lý thống nhất. Việc hủy cũng tuân theo cùng một kỷ luật: không cưỡng bức cắt ngang tại bất kỳ thời điểm nào, mà kiểm tra "có bị yêu cầu dừng hay không" tại điểm an toàn—đây chính là vai trò mà `ctx.Done()` trong Go đảm nhiệm (Chương 10 sẽ dùng cùng một tư duy context để thảo luận việc Agent cha hủy Agent con theo kiểu tầng). Hiểu được điều này thì sự khác biệt giữa ba chiến lược xử lý dưới đây chỉ nằm ở cách đối xử với điểm an toàn: để sự kiện chờ đến điểm an toàn tự nhiên tiếp theo (kiểu xếp hàng), chủ động tạo sớm một điểm an toàn (kiểu hủy), hay đơn giản là mở một vòng lặp khác, khỏi phải chờ điểm an toàn của vòng lặp chính (kiểu song song).
+
+Mô hình này có một tính chất then chốt: **sự kiện chỉ được tiêu thụ tại ranh giới của mỗi vòng lặp**. Khi LLM đang suy luận hay công cụ đang chạy, sự kiện vừa đến sẽ không chen ngang làm rối bước hiện tại, mà trước hết chờ trong hàng đợi, đến khi vòng lặp này đạt tới một **điểm an toàn** (kết thúc một đoạn suy luận, một lần công cụ trả về) thì mới được xử lý gộp. Việc hủy cũng tuân theo đúng kỷ luật ấy: không cắt ngang cưỡng bức vào bất kỳ thời điểm nào, mà kiểm tra tại điểm an toàn xem "đã có yêu cầu dừng chưa"—đây chính là vai trò mà `ctx.Done()` đảm nhiệm trong Go.
+
+Hiểu được điều này thì ba chiến lược xử lý dưới đây chỉ khác nhau ở cách đối xử với điểm an toàn: để sự kiện chờ tới điểm an toàn kế tiếp xuất hiện một cách tự nhiên (xếp hàng), chủ động tạo sớm một điểm an toàn (hủy), hay đơn giản là mở một vòng lặp khác và không cần chờ điểm an toàn của vòng lặp chính (song song).
 
 **Mô hình hóa có cấu trúc của các sự kiện.**
 
@@ -150,6 +144,8 @@ Lấy email yêu cầu hoàn tiền của khách hàng làm ví dụ, hình th�
 
 Chỉ khi các thứ nguyên này được mô hình hóa rõ ràng dưới dạng sự kiện có cấu trúc, Agent mới có thể duy trì nhận thức rõ ràng trong giao tiếp nhiều bên và tránh nhầm thông tin đầu vào của người dùng với kết quả công cụ hoặc nhầm kết quả công cụ với hướng dẫn ẩn cho hướng dẫn người dùng, dẫn đến việc tiêm nhanh. Sự phức tạp của quản lý ngữ cảnh đa luồng cũng yêu cầu Agent hiểu được mối tương quan giữa nhiều chuỗi hội thoại - cách tin nhắn từ bên thứ ba ảnh hưởng đến cảm xúc của người dùng, sự chuyển đổi vai trò của người dùng trong nhiều cuộc hội thoại và khi thông tin từ các chuỗi khác nhau cần được kết hợp để đưa ra đề xuất. Từ hệ sinh thái kích hoạt của các nền tảng quy trình làm việc như n8n, chúng ta có thể thấy rằng Webhooks, bộ hẹn giờ, email, thay đổi cơ sở dữ liệu và giám sát tệp - mỗi trình kích hoạt là một "giác quan" để Agent nhận thức thế giới. Khi các sự kiện không đồng nhất này được mô hình hóa thống nhất thành định dạng có cấu trúc, Agent có thể xử lý các kích thích từ các nguồn khác nhau một cách nhất quán. Các chiến lược xử lý và xác định mức độ khẩn cấp dưới đây cũng dựa trên mô hình thống nhất này.
 
+Nhìn vào hệ sinh thái trigger của các nền tảng workflow như n8n có thể thấy: Webhook, bộ hẹn giờ, email, thay đổi cơ sở dữ liệu, theo dõi tệp—mỗi trigger đều là một "giác quan" để Agent cảm nhận thế giới. Chỉ khi những sự kiện dị biệt này được mô hình hóa thống nhất thành định dạng có cấu trúc, Agent mới có thể xử lý các kích thích đến từ những nguồn khác nhau theo một cách nhất quán; việc xác định mức độ khẩn cấp và các chiến lược xử lý bàn ở phần sau cũng đều dựng trên nền mô hình hóa thống nhất này.
+
 **Policy xử lý động dựa trên mức độ khẩn cấp.**
 
 Khi con người xử lý nhiều nhiệm vụ, họ áp dụng các chiến lược khác nhau tùy thuộc vào mức độ khẩn cấp. Khi gặp tình huống khẩn cấp bất ngờ, bạn sẽ ngay lập tức dừng việc mình đang làm; khi đối mặt với các mục việc cần làm thường ngày, bạn sẽ thêm chúng vào danh sách nhiệm vụ để giải quyết sau. Quá trình xử lý sự kiện của Agent cũng sẽ phản ánh thông tin này.
@@ -169,6 +165,8 @@ Sự kiện khẩn cấp: gián đoạn người dùng (`user.interrupt`), hư�
 Sự kiện không khẩn cấp: Đầu vào chung của người dùng (`user.input`), đầu vào Agent (`agent.input`), kết quả công cụ (`tool.result`), bộ kích hoạt hẹn giờ (`timer.trigger`), bộ kích hoạt chung bên ngoài.
 
 Các quy tắc được mã hóa cứng có những hạn chế và ngữ nghĩa của sự kiện xác định phương pháp xử lý - "Dừng ngay" sử dụng phương thức hủy, "Thời tiết hôm nay thế nào" sử dụng phương pháp song song và "Báo cáo cần được gửi cho tôi bằng tiếng Trung" sử dụng phương thức xếp hàng. **Nên sử dụng phân loại nhẹ LLM làm bộ định tuyến sự kiện** để nhanh chóng xác định chiến lược nào sẽ được sử dụng khi sự kiện diễn ra.
+
+Điểm hủy phải là vị trí mà công cụ hoặc quá trình suy luận có thể kết thúc an toàn; kết quả công cụ chưa hoàn tất được biểu diễn bằng một placeholder tường minh, không được ngụy tạo thành thành công.
 
 Sau đây là thử nghiệm Agent xử lý email theo hướng sự kiện để triển khai chiến lược xử lý sự kiện trên thành một triển khai có thể chạy được.
 
@@ -362,9 +360,15 @@ Hình 6-7 mô tả trường hợp hoàn toàn tuần tự: VAD, ASR, LLM và TT
 
 Một mô hình streaming thực sự cần được hỗ trợ ở cấp mô hình. Bộ giải mã của Whisper tuy tự hồi quy, nhưng bộ mã hóa của nó cần trọn vẹn một đoạn âm thanh nên không thể coi ngang hàng với mô hình streaming. Mô hình âm thanh dựa trên LLM có thể phát ra văn bản và sự kiện ngữ nghĩa từ âm thanh liên tục, gộp "nhận dạng" và một phần "hiểu" vào cùng một mô hình. Nó giữ được ngữ cảnh từ đầu cuộc hội thoại đến thời điểm hiện tại, và cũng có thể tận dụng tri thức thế giới để xử lý thương hiệu, tên riêng và danh từ riêng.
 
-Ngoài token văn bản, luồng có thể phát \`speak_start/end\`, \`interrupt\` (ranh giới lời nói và ý định ngắt), \`emotion\` (cảm xúc và do dự), \`laugh\`, \`sigh\`, \`noise\` (âm thanh cận ngôn ngữ và môi trường). Nhờ vậy Agent không phải nén mọi sự kiện âm thanh thành văn bản thường.
+Nếu chỉ cần giải quyết chuyện “người dùng đã nói xong hay chưa”, có thể tích hợp thẳng phán đoán lượt vào bộ nhận dạng streaming: mô hình kết hợp ngữ nghĩa và khoảng lặng để phán đoán một câu đã được diễn đạt trọn vẹn hay chưa. Nhãn huấn luyện cho phán đoán điểm kết thúc chỉ được dùng thông tin nhìn thấy tại thời điểm ra quyết định; nếu không, “góc nhìn thượng đế” sẽ tạo ra phán đoán không thể tái hiện khi chạy trực tuyến.
 
-Nếu mục tiêu chỉ là xác định người dùng đã nói xong hay chưa, quyết định kết thúc lượt có thể được tích hợp trực tiếp vào bộ nhận dạng streaming. Nhãn huấn luyện chỉ được dùng thông tin nhìn thấy tại thời điểm ra quyết định; nếu không, thông tin nhìn lại sẽ tạo ra phán đoán không thể tái hiện trực tuyến.
+Mô hình không chỉ xuất ra văn bản mà còn có thể kèm theo các dấu hiệu sự kiện âm học:
+
+- **speak_start/end, interrupt**: ranh giới lời nói và ý định ngắt lời;
+- **emotion**: cảm xúc, do dự và những trạng thái tương tự;
+- **laugh, sigh, noise**: âm thanh cận ngôn ngữ và môi trường.
+
+Những dấu hiệu này cùng với token văn bản tạo thành một luồng sự kiện thống nhất; dựa vào đó Agent nhận ra sự do dự, việc ngắt lời và thay đổi của môi trường, mà không phải nén mọi âm thanh thành văn bản thuần túy.
 
 > **Thử nghiệm 6-4 ★: Mô phỏng nhận biết giọng nói streaming bằng Qwen2-Audio**
 >
@@ -388,7 +392,13 @@ Mô hình Omni vẫn giả định chia lượt và thường dùng VAD để x�
 
 Omni vẫn tách “người dùng nói” và “mô hình nói”, nhưng phiên dịch đồng thời cần chồng lấp. Full-duplex lắng nghe và nói liên tục, liên tiếp quyết định có tiếp tục, dừng, ngắt hay gọi công cụ. Moshi của Kyutai là một ví dụ nghiên cứu sớm. Thinking Machines Lab gọi đây là **Interaction Model**[^ch6-14]: tương tác được xây trong mô hình thay vì lắp quanh VAD. GPT-Live đưa hướng này lên quy mô sản xuất và ủy thác việc phức tạp cho mô hình suy luận nền trong khi mô hình tiền cảnh giữ cuộc trò chuyện.
 
+Tiền thân về mặt nghiên cứu là **Moshi** của Kyutai (2024). Nó mô hình hóa song song luồng âm thanh của người dùng và của mô hình, nhờ vậy việc nói chồng lấn và ngắt lời trở thành hành vi tự nhiên của mô hình.
+
+Thinking Machines Lab gọi hướng này là **mô hình tương tác (Interaction Model)**[^ch6-14]: tính tương tác không còn được lắp ghép bằng harness bên ngoài dựa trên VAD, mà được xây thẳng vào trong mô hình. Cơ chế vi-lượt của nó tiến liên tục theo các khối âm thanh ngắn, nhờ đó khoảng lặng, chồng lấn và ngắt lời đều được giữ lại như ngữ cảnh liên tục. Mô hình tương tác còn có thể ủy thác trọn cuộc hội thoại cho một mô hình suy luận chạy nền trong khi tự mình vẫn giữ mạch nói; khi kết quả nền trả về, phía trước sẽ chèn vào đúng thời điểm.
+
 [^ch6-14]: Thinking Machines Lab, “Interaction Models: A Scalable Approach to Human-AI Collaboration”, 2026-05. https://thinkingmachines.ai/blog/interaction-models/
+
+GPT-Live của OpenAI đưa hướng song công toàn phần lên quy mô sản xuất: mô hình liên tục xử lý đầu vào và sinh đầu ra, biết chờ người dùng, đế lời, bị ngắt lời, và xử lý được dịch thời gian thực. Giống mô hình tương tác, nó ủy thác các tác vụ phức tạp cho mô hình chạy nền còn phía trước tiếp tục duy trì cuộc hội thoại.
 
 ### Thời gian nhận thức: tương tác thời gian thực và suy nghĩ sâu
 
