@@ -25,7 +25,7 @@ import os
 import sys
 from pathlib import Path
 
-from openai import OpenAI
+from openai import BadRequestError, OpenAI
 from pptx import Presentation
 
 # 从同目录 .env 读取 OPENAI_API_KEY（若安装了 python-dotenv）
@@ -229,12 +229,47 @@ def dispatch(catalog: dict, name: str, args: dict, out_path: Path) -> str:
 
 
 # ---------------------------------------------------------------------------
+# 一轮带工具的模型调用。参数不写死，撞上端点限制再降级，并如实告诉读者。
+# ---------------------------------------------------------------------------
+def chat_with_tools(client, model: str, messages: list, no_reasoning: bool):
+    """发起一轮带 function tools 的 chat completions，必要时降级重试一次。
+
+    只配了 OPENAI_API_KEY 的读者会直连 OpenAI，而直连的 chat completions 端点
+    对 gpt-5.x 只允许 reasoning_effort="none" 与 function tools 并存。OpenRouter
+    没有这个限制，所以这里不无条件写死该参数——那会连带关掉本实验最关键的多步
+    推理能力——而是撞上了再降级，并说明如何恢复推理。
+
+    Args:
+        client: 已配置好 base_url 与 key 的 OpenAI 客户端。
+        model: 在该端点上有效的模型 id。
+        messages: 当前对话历史。
+        no_reasoning: 之前是否已降级过；为 True 时直接带上 reasoning_effort。
+
+    Returns:
+        ``(response, no_reasoning)``，后者供调用方记住降级状态，避免每轮都白撞一次。
+    """
+    kwargs = {"model": model, "messages": messages, "tools": TOOLS, "temperature": 0.2}
+    if no_reasoning:
+        kwargs["reasoning_effort"] = "none"
+    try:
+        return client.chat.completions.create(**kwargs), no_reasoning
+    except BadRequestError as exc:
+        if no_reasoning or "reasoning_effort" not in str(exc):
+            raise
+        log('\n[提示] 当前端点不支持「推理 + function tools」并存，本轮起降级为 '
+            'reasoning_effort="none"。')
+        log("       配置 OPENROUTER_API_KEY 可改走 OpenRouter，保留模型的推理能力。")
+        kwargs["reasoning_effort"] = "none"
+        return client.chat.completions.create(**kwargs), True
+
+
+# ---------------------------------------------------------------------------
 # 主流程：agentic loop
 # ---------------------------------------------------------------------------
 def run_agent(paper_path: Path, model: str, out_path: Path,
               max_turns: int = 8) -> Path | None:
-    # OPENAI_API_KEY 存在则官方直连；否则回退 OPENROUTER_API_KEY
-    # （gpt-* 模型名会被映射为 openai/…）。两者皆无则给出清晰错误。
+    # 有 OPENROUTER_API_KEY 时 gpt-5.x 优先走 OpenRouter，否则 OPENAI_API_KEY
+    # 官方直连（gpt-* 模型名会被映射为 openai/…）。两者皆无则给出清晰错误。
     from agentbook.providers import resolve_backend
 
     if not os.environ.get("OPENAI_API_KEY") and not os.environ.get("OPENROUTER_API_KEY"):
@@ -244,8 +279,10 @@ def run_agent(paper_path: Path, model: str, out_path: Path,
         sys.exit(1)
 
     # 端点与 key 的对应关系由 agentbook 的 provider 注册表统一维护，
-    # OPENAI_BASE_URL 覆盖也在其中处理。
-    backend = resolve_backend("openai", model=model)
+    # OPENAI_BASE_URL 覆盖也在其中处理。chosen_by_reader=False 表示 "openai"
+    # 是本实验的默认值而非读者的显式选择：gpt-5.x 直连 chat completions 不允许
+    # function tools 与推理并存，注册表因此会在有 OpenRouter key 时改道。
+    backend = resolve_backend("openai", model=model, chosen_by_reader=False)
     model = backend.model
     # timeout + 自动重试：单次网络/SSL 抖动不至于让整个 agentic loop 崩溃
     client = OpenAI(
@@ -278,13 +315,9 @@ def run_agent(paper_path: Path, model: str, out_path: Path,
     log("\n【任务下发】要求 Agent 从论文生成演示文稿。观察它如何按需渐进式披露：\n")
 
     final_result = None
+    no_reasoning = False
     for turn in range(1, max_turns + 1):
-        resp = client.chat.completions.create(
-            model=model,
-            messages=messages,
-            tools=TOOLS,
-            temperature=0.2,
-        )
+        resp, no_reasoning = chat_with_tools(client, model, messages, no_reasoning)
         msg = resp.choices[0].message
         messages.append(msg.model_dump(exclude_none=True))
 

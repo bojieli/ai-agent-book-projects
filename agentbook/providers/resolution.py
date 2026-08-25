@@ -75,22 +75,36 @@ def build_openrouter_backend(
     )
 
 
-def _needs_openrouter_for_gpt5(spec: Provider, model: str) -> bool:
+def _needs_openrouter_for_gpt5(
+    spec: Provider, model: str, chosen_by_reader: bool
+) -> bool:
     """Report whether a gpt-5 request must be rerouted through OpenRouter.
 
-    The direct OpenAI API requires organisation verification for gpt-5.x, which
-    most readers will not have. Routing via OpenRouter avoids that -- except
-    when the reader explicitly selected the ``openai`` provider, in which case
-    honouring their choice matters more.
+    Two independent things make the direct OpenAI API a poor default for
+    gpt-5.x. It requires organisation verification, which most readers will not
+    have. And its ``/v1/chat/completions`` endpoint refuses function tools
+    unless reasoning is switched off entirely -- it accepts the two together
+    only with ``reasoning_effort="none"``, which is the one thing an agent
+    experiment cannot give up. OpenRouter has neither restriction.
+
+    The exception is a reader who named ``openai`` themselves: sending their
+    prompts and their spend to a third party against an explicit instruction is
+    worse than the failure it avoids. A caller whose provider name is its own
+    built-in default rather than the reader's choice passes
+    ``chosen_by_reader=False`` and is rerouted like any other provider.
 
     Args:
         spec: The provider that was requested.
         model: The resolved model id.
+        chosen_by_reader: Whether the provider name came from the reader rather
+            than from the calling experiment's default.
 
     Returns:
         ``True`` if the request should be rerouted.
     """
-    return model.lower().startswith("gpt-5") and spec.name != "openai"
+    if not model.lower().startswith("gpt-5"):
+        return False
+    return not (spec.name == "openai" and chosen_by_reader)
 
 
 def _missing_key_error(spec: Provider) -> ValueError:
@@ -114,13 +128,17 @@ def resolve_backend(
     provider: str,
     model: str | None = None,
     api_key: str | None = None,
+    *,
+    chosen_by_reader: bool = True,
 ) -> Backend:
     """Resolve a provider name into a usable backend.
 
     Resolution order:
 
     1. ``gpt-5*`` ids route through OpenRouter when a key is available, because
-       the direct OpenAI API requires org verification for them.
+       the direct OpenAI API requires org verification for them and refuses
+       function tools alongside reasoning. A reader who named ``openai``
+       themselves is honoured instead; see :func:`_needs_openrouter_for_gpt5`.
     2. If the provider's own key is set (or the provider needs none, e.g.
        Ollama), use the provider directly.
     3. Otherwise fall back to OpenRouter, mapping the model id.
@@ -133,6 +151,10 @@ def resolve_backend(
             provider this is treated as an OpenRouter key; for any other
             provider it belongs to that provider and is never forwarded to
             OpenRouter.
+        chosen_by_reader: Whether ``provider`` is the reader's own selection --
+            a ``--provider`` flag or an equivalent setting. Pass ``False`` when
+            it is a caller's hardcoded default, which lets step 1 reroute a
+            gpt-5 request that would otherwise fail on the direct API.
 
     Returns:
         A ready-to-use :class:`~agentbook.providers.models.Backend`.
@@ -162,8 +184,11 @@ def resolve_backend(
     explicit_openrouter_key = key if spec.name == _OPENROUTER else ""
     available_openrouter_key = explicit_openrouter_key or openrouter_key()
 
-    # 1. gpt-5.x needs OpenAI org verification on the direct API.
-    if available_openrouter_key and _needs_openrouter_for_gpt5(spec, resolved_model):
+    # 1. gpt-5.x needs OpenAI org verification on the direct API, which also
+    #    refuses function tools unless reasoning is off.
+    if available_openrouter_key and _needs_openrouter_for_gpt5(
+        spec, resolved_model, chosen_by_reader
+    ):
         return build_openrouter_backend(resolved_model, available_openrouter_key, spec.name)
 
     # 2. The provider's own credential, or a provider that needs none.
