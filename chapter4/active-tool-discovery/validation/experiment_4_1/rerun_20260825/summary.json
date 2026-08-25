@@ -1,0 +1,81 @@
+{
+  "experiment": "4-1",
+  "campaign_id": "rerun_20260825",
+  "generated_at": "2026-08-25T06:21:12.900966+00:00",
+  "model": "qwen3:4b",
+  "catalog": {
+    "transport": "mcp-stdio",
+    "server": "/Users/boj/book/ai-agent-book-pr/chapter4/perception-tools/src/main.py",
+    "tools_list_received": true,
+    "server_name": "perception-tools",
+    "server_version": "",
+    "tool_count": 127,
+    "unique_tool_count": 127,
+    "schema_tokens_o200k": 50597,
+    "schema_bytes": 208614,
+    "schema_sha256": "5a196f257c5e9987cd41fd7e13bd353412645b0907286afed400235f434b7201",
+    "required_tools_present": {
+      "web_search": true,
+      "code_interpreter": true,
+      "yfinance_quote": true,
+      "search_news": true,
+      "arxiv_search": true,
+      "arxiv_download": true,
+      "github_list_contributors": true
+    },
+    "catalog_gzip_bytes": 21565,
+    "catalog_gzip_sha256": "efa0ddf8a25f6342934fb59df89ea962e5ff02cb6d359321bc06270d26c8423f",
+    "catalog_gzip_content_sha256": "5a196f257c5e9987cd41fd7e13bd353412645b0907286afed400235f434b7201"
+  },
+  "embedding": {
+    "model": "sentence-transformers/all-MiniLM-L6-v2",
+    "backend": "local-transformers-mean-pooling",
+    "device": "cpu",
+    "local_files_only": true,
+    "catalog_text_count": 127,
+    "texts_sha256": "f2d5d8db4024874c1de2d1a134d70f9da2b24b695453c22c441edc34c7e9e3f3",
+    "cache_path": "/Users/boj/book/ai-agent-book-pr/chapter4/active-tool-discovery/validation/experiment_4_1/rerun_20260825/index/embeddings-all-MiniLM-L6-v2-f2d5d8db4024874c1de2.json",
+    "cache_sha256": "f00a335893a8a0fabf90d3729ce6684f11c07a0d131f51437b17e9ceda1351a3",
+    "vector_count": 127,
+    "vector_dimensions": 384
+  },
+  "comparison": {
+    "control": {
+      "tasks": 3,
+      "mean_tool_selection_accuracy": 1.0,
+      "tasks_with_all_required_capabilities": 3,
+      "tasks_completed": 3,
+      "elapsed_seconds": 3056.294
+    },
+    "treatment": {
+      "tasks": 3,
+      "mean_tool_selection_accuracy": 1.0,
+      "tasks_with_all_required_capabilities": 3,
+      "tasks_completed": 3,
+      "elapsed_seconds": 783.442
+    }
+  },
+  "dynamic_schema_injection_tokens": {
+    "apple_stock_news": 3939,
+    "transformer_arxiv_download": 1853,
+    "github_contributors_visualization": 2632
+  },
+  "acceptance": {
+    "status": "passed",
+    "gates": {
+      "exact_model_with_qwen_response_receipts": true,
+      "catalog_from_mcp_and_hash_matches": true,
+      "tool_count_at_least_120": true,
+      "control_over_50k_complete_schema_tokens": true,
+      "three_tasks_each_group": true,
+      "real_mcp_execution_only": true,
+      "all_tasks_completed_with_required_artifacts": true,
+      "treatment_discovery_history_and_status_verified": true,
+      "identical_tasks_model_runtime_and_catalog": true,
+      "local_embedding_index_receipted": true,
+      "dynamic_schema_injection_tokens_recorded": true,
+      "comparison_metrics_present_for_both_arms": true
+    }
+  },
+  "status": "passed"
+}

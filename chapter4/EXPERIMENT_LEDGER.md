@@ -4,7 +4,7 @@ This ledger separates execution coverage from the manuscript hypothesis and from
 
 | Experiment | Canonical run | Status | `official_complete` | Manifest SHA-256 |
 | --- | --- | --- | --- | --- |
-| 4-1 | `active-tool-discovery/validation/experiment_4_1/qwen3_4b_exact_v2_20260730T130600Z` | passed | true | `ce9d6eda2237938e9ed7bf63a950d1b261526897c0597f2908b705e6d6430d0e` |
+| 4-1 | `active-tool-discovery/validation/experiment_4_1/rerun_20260825` | passed | true | `e5a70588804b8bc1a5ba38c18fe7f4537e8284e62f745d8a6e03401833046dae` |
 | 4-2 | `perception-tools/validation/experiment_4_2/real_mcp_dashscope_intl_20260730T070000Z` | blocked | false | `f93ee0ad9bd1121ed9e7c9d730bbaf85847d03e89c9024487cfdf9f62b8557ab` |
 | 4-3 | `multimodal-agent/validation/runs/20260729T185433Z-4_2-e028c9db` | passed | true | `1a9cc7bfd48717e73a03ebbde7fd786c7da2811a15267715a3794c0f1220362e` |
 | 4-4 | `execution-tools/validation/experiment_4_4/real_mcp_gui_20260802T093657Z` | blocked | false | `fde8976b91b149a61b7d468f4c825c1bdfdc9da3062cbfa66aaa1fd0f3d1966f` |
@@ -18,26 +18,40 @@ This ledger separates execution coverage from the manuscript hypothesis and from
 > quote the old `experiment_4_N` paths and the old experiment label; that is a record of the run as it
 > happened and is deliberately not rewritten.
 
-> **Two recorded hashes no longer verify, both predating this renumber — they need a re-run or a
-> documented recomputation, and are intentionally left as-is rather than silently replaced:**
-> the 4-1 (active tool discovery) manifest hash `ce9d6eda…` matches no file in its canonical run
-> directory; and the mailbox experiment that became 6-1 has a manifest that now hashes to `5b8befd0…`
-> after its `experiment` field was relabelled 4-5 → 6-1 during the chapter-6 split, while both this
-> ledger and `chapter6/.../latest.json` still record the pre-relabel `3f689dfe…`.
+> **One recorded hash still does not verify, predating this renumber and left as-is rather than
+> silently replaced:** the mailbox experiment that became 6-1 has a manifest that now hashes to
+> `5b8befd0…` after its `experiment` field was relabelled 4-5 → 6-1 during the chapter-6 split,
+> while both `chapter6/EXPERIMENT_LEDGER.md` and `chapter6/.../latest.json` still record the
+> pre-relabel `3f689dfe…`. Its Unipile credential still returns 401, so a re-run cannot lift the
+> block; only the hash can be corrected, and that is left to a deliberate, documented recomputation.
+> The 4-1 hash that previously matched no file has been resolved by the re-run recorded below.
 
 ## Experiment 4-1 — active tool discovery
 
-The canonical campaign uses local Ollama `qwen3:4b`, 126 complete schemas
-listed by the real perception MCP server, a 50,120-token schema catalog, a
-local `all-MiniLM-L6-v2` index, five-schema user-history injection with a
-cumulative status bar, and the three exact manuscript tasks in both arms. All
-twelve formal gates are true. Both groups selected every required capability
-and completed 3/3 tasks, so the manuscript's expected accuracy/completion
-improvement was **not observed**: both arms scored 100%. Active discovery was
-faster in this run (808.926 versus 2,590.820 seconds, 3.20×) and exposed much
-less schema text (1,251 initial system tokens per treatment task plus 12,838
-dynamic tokens across the group, versus 50,352 system tokens per control
-task).
+The canonical campaign `rerun_20260825` uses local Ollama `qwen3:4b`, 127
+complete schemas listed by the real perception MCP server, a 50,597-token
+schema catalog, a local `all-MiniLM-L6-v2` index, five-schema user-history
+injection with a cumulative status bar, and the three exact manuscript tasks in
+both arms. All twelve formal gates are true. Both groups selected every
+required capability and completed 3/3 tasks, so the manuscript's expected
+accuracy/completion improvement was **not observed**: both arms scored 100%.
+Active discovery was faster in this run (783.442 versus 3,056.294 seconds,
+3.90×) and exposed much less schema text (1,251 initial system tokens per
+treatment task plus 8,424 dynamic tokens across the group, versus 50,829 system
+tokens per control task).
+
+This campaign replaces `qwen3_4b_exact_v2_20260730T130600Z` as the canonical
+run. That earlier run was made with MCP SDK v1 (`server_version` 1.26.0) and its
+recorded manifest hash `ce9d6eda…` matched no file left in the directory, so it
+could no longer be verified. The runner had also stopped working entirely: the
+v2 migration in #630 covered only the perception experiment, leaving this runner
+on the v1 `serverInfo` attribute that v2 renamed to `server_info`. Both are fixed
+here, and the re-run reproduces the earlier campaign's qualitative finding —
+no accuracy uplift, a large speed and schema-exposure advantage. Note that the
+run requires `OLLAMA_FLASH_ATTENTION=0`: with flash attention enabled, ollama
+0.20.7 crashes its llama runner on Metal when the control arm's ~50K-token
+prompt is prefilled. That is a runtime workaround only; no experiment parameter
+was changed.
 
 The successful aggregate must not be read as clean treatment behavior. On the
 Apple task, Qwen first issued a vague discovery, malformed JSON, an irrelevant

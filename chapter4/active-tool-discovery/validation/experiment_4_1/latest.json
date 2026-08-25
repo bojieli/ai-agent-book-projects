@@ -1,0 +1,8 @@
+{
+  "experiment": "4-1",
+  "campaign_id": "rerun_20260825",
+  "status": "passed",
+  "official_complete": true,
+  "manifest": "validation/experiment_4_1/rerun_20260825/manifest.json",
+  "manifest_sha256": "e5a70588804b8bc1a5ba38c18fe7f4537e8284e62f745d8a6e03401833046dae"
+}
