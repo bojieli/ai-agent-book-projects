@@ -612,6 +612,29 @@ A modern nagy nyelvi modellek érzékenyek a strukturált bemenetre, részben az
 
 A Markdown könnyű szerkezetet biztosít az olvashatóság megőrzése mellett, így különösen alkalmas hierarchikus utasítások és információk rendszerezésére. Az XML és a Markdown kétrétegű struktúrát hoz létre: az XML pontos, gépileg értelmezhető szemantikát biztosít, míg a Markdown az emberi és gépi olvasók számára szervezi a tartalmat.
 
+Például egy rendszerprompt, amely mindkettőt egyszerre használja:
+
+```text
+# Eszközhasználati szabályok
+
+## Fájlműveletek
+<file_operation>
+- Fájl olvasása előtt ellenőrizni kell, hogy létezik-e az útvonal
+- Fájl írása előtt biztonsági másolatot kell készíteni
+</file_operation>
+
+## Hálózati kérések
+<network_request>
+- Az időtúllépés legyen 30 másodperc
+- Hiba után legfeljebb 3 újrapróbálkozás
+</network_request>
+```
+
+- **A Markdown szerepe**: a `#` és `##` címsorok révén az ember egyetlen pillantással átlátja a hierarchiát, így a prompt jól olvasható marad.
+- **Az XML szerepe**: a `<file_operation>` és a `<network_request>` címkék közlik a modellel, hogy „ez a blokk a fájlműveletekről szól”, illetve „ez a blokk a hálózati kérésekről szól”; a szemantika pontos, ezért a modell is pontosabban dolgozza fel.
+
+A kettő együtt olyan promptot ad, amely az embernek áttekinthető, a modellnek pedig egyértelmű.
+
 ### Folyamatvezérelt vs. Szabályhalmozás: A rendszerprompt "szervezése".
 
 Az emberek kognitív terhelését csökkentő módszerek egyformán hatékonyak a nagy nyelvi modelleknél is – mivel a modell a képzés során megtanulta az emberi nyelvet és az érvelési mintákat. Képzeld el, hogy adsz egy új csapattagnak egy kézikönyvet szétszórt szabályok százaival, folyamatábrák és prioritási utasítások nélkül – még egy nagy képességű személy is összezavarodna: ha több szabály érvényes egyszerre, melyiket kell választani? És mi a helyzet azokkal a helyzetekkel, amelyekre nem vonatkoznak a szabályok?
