@@ -64,15 +64,21 @@ SFT'nin özü tek cümlede: **son derece yüksek bir örneklem verimliliğiyle, 
 
 ### SFT/RL'den Önce Temel Ne Zaman Onarılmalı
 
-RL, modelin **kendi ürettiği** yanıtları ödülle değerlendirir; dolayısıyla çıktı doğrulanabilir olmalı ve mevcut politika ara sıra değerli bir davranış keşfedebilmelidir. Biçim kararsızsa JSON veya tool call'u ayrıştırılabilir kılmak için SFT kullanılır. Fakat makul sıcaklık ve örnek sayısında `pass@k` hâlâ sıfıra yakınsa doğru çözüm modelin etkili desteğinin dışındadır. Tamamı başarısız rollout'lar eksik bilgi veya akıl yürütme adımını neredeyse hiç söylemez; GRPO'da grup içi advantage da kaybolur. Önce Mid-training ile bilgi ve atomik yetenek ekleyin ya da gösterim/damıtmayla uygulanabilir yolları desteğe sokun, sonra RL yapın.
+RL politikası referans yanıtın token'larını doğrudan taklit etmez; modelin **kendi ürettiği** yanıtları ödülle değerlendirir, ödül hesabında referans yanıtlar ya da tercih verisi hâlâ kullanılabilir. Bu sinyalden öğrenebilmek için en az iki ön koşul gerekir: çıktının doğrulanabilir olması ve mevcut politikanın ara sıra değerli bir davranışı keşfedebilmesi.
 
-Ancak bundan sonra şu soru anlamlıdır: **SFT hangi koşullarda RL'den önce gelmeli?**
+İlk ön koşul **biçim desteğidir**. Görev JSON ya da araç çağrısı istiyorsa ve model ayrıştırılamayan metin döküyorsa, ödül fonksiyonu "başarı mı başarısızlık mı" sorusunu bile yanıtlayamaz. Burada SFT önce "derdini düzgün anlatmayı öğretme" rolünü üstlenebilir: az sayıda gösterimle biçim ve temel akış oturur, ödül hesaplanabilir hâle gelir, ardından RL politikayı iyileştirir. Bu, bilinen "önce SFT, sonra RL" düzenidir.
 
-Yanıt, RL'in çalışma biçiminde saklıdır. RL standart cevaba bakmaz; yanıtı modelin **kendisinin üretmesini** ister, sonra yanıtın iyi ya da kötü olmasına göre ödül veya ceza verir. Ama iyi mi kötü mü olduğuna karar verebilmek için önce modelin çıktısını **ayrıştırabilmek** gerekir: görev bir JSON parçası ya da bir tool call üretmeyi gerektiriyorsa ve modelin kustuğu şey formatı darmadağın bir metin yığınıysa, ödül fonksiyonunun hesaplayacak hiçbir şeyi kalmaz ("başarılı mı, başarısız mı" bile ayırt edilemez), dolayısıyla RL'in de öğreneceği bir şey olmaz.
+İkinci ön koşul daha temeldir: **yetenek desteği**. Önce ayrılmış görevlerde eğitime yakın bir sıcaklıkla örnekleme yapıp `pass@1` ve `pass@k` ölçün. Tek denemede başarı olasılığı $p$ ise, yaklaşık bağımsız $k$ örneklemede en az bir kez başarma olasılığı
 
-Bu yüzden burada SFT'ye düşen rol "**önce derdini düzgün anlatmayı öğretmektir**": az sayıda gösterimle çıktı formatını kararlı ve güvenilir biçimde ayrıştırılabilir hale getirir; ancak o zaman RL'in puanlayabileceği bir başlangıç noktası doğar. Sektörün en sağlam iki aşamalı paradigması olan **"önce SFT, sonra RL"** işte budur. Tersi, yani önce RL sonra SFT, işe yaramaz — kararlı bir çıktı yoksa ödül sinyali baştan sona gürültüdür. Çin resminden ödünç alınmış bir ifadeyle: SFT önce "**biçimi**" (formatı, yapıyı) ayağa kaldırır, RL ise ardından "**ruhun**" (stratejinin, genelleştirmenin) peşine düşer; yani **önce biçim, sonra ruh**.
+$$
+\operatorname{pass@}k = 1-(1-p)^k.
+$$
 
-Önemli bir sınır koşulu: "önce SFT şart" ilkesi "**küçük ölçekli bir temel model + katı yapılandırılmış çıktı**" kurgusunda geçerlidir (Deney 8-11'de göreceğiz: Llama-3.2-Vision-11B ölçeğindeki bir model SFT'den geçmeden doğrudan RL'e sokulduğunda tamamen başarısız oluyor). Ama temel model yeterince güçlüyse daha ilk andan geçer not alacak çıktılar üretebilir ve SFT atlanabilir — DeepSeek-R1-Zero, güçlü bir temel modelin doğrudan RL ile başarıya ulaşabileceğini, kendiliğinden reflection (kendini değerlendirme) ve uzun zincirli düşünme sergileyebileceğini kanıtladı. Bedeli, çıktının okunabilirliğinin düşük olması ve Çince ile İngilizcenin birbirine karışmasıdır; bu yüzden DeepSeek sonunda R1'de "cold start SFT"i geri ekleyip "biçimi" yeniden sağlama aldı. R1'in Zero'dan cold start'a gidip gelişi, "önce biçim, sonra ruh" ilkesinin en iyi dipnotudur.
+`pass@1` düşükken `pass@k`, $k$ ile belirgin biçimde yükseliyorsa doğru strateji zaten modelin dağılımı içindedir, yalnızca olasılık kütlesi çok küçüktür; RL de, reddetme örneklemesi de, damıtma da yükseltecek bir şey bulur. Buna karşılık makul bir $k$, uygun bir örnekleme sıcaklığı ve yeterli görev kapsamı altında ölçülen `pass@k` hâlâ sıfıra yakınsa, temel model başarılı bir yörünge neredeyse hiç üretemiyor demektir. Yalnızca uçta 0/1 ödül verildiğinde GRPO'nun bir rollout grubu büyük olasılıkla tümüyle sıfır çıkar ve grup içi avantaj doğrudan yok olur; PPO da "hangi yöne gidilmeli" diyecek olumlu bir örnek göremez. Örnek sayısını artırmayı sürdürmek, kabaca $1/p$ hızında rastlantısal bir başarıyı beklemekten ibarettir ve verimlilik hızla pratik anlamını yitirir.
+
+Bu noktada önce neyin eksik olduğu sorulmalıdır. Alan dili, olgular, kod kalıpları ya da uzun bağlam temel yeteneği eksikse önce Mid-training ile zemini tamamlayın. Yetenek var ama arayüzün istediği biçimde ifade edilemiyorsa önce SFT kullanın. Model kısmen ilerleyip sona ulaşamıyorsa doğrulanabilir kısmi ödüller ya da müfredat öğrenmesi ekleyebilirsiniz. RL'in güçlü yanı **var olan ama olasılığı düşük** başarılı davranışı yukarı çekmektir; baştan sona sıfır ödülden, modelin hiç öğrenmediği bilgi ve yetenekleri yoktan var etmek değil.
+
+Önemli bir sınır: "önce mutlaka SFT" ilkesi yalnızca çıktı biçimi ya da temel davranış henüz oturmamışken geçerlidir. Deney 8-11'de görüleceği gibi Llama-3.2-Vision-11B, katı yapılandırılmış çıktı gereksinimi altında SFT'siz doğrudan RL ile başarısız olur; buna karşılık yeterince güçlü ve halihazırda sıfırdan farklı bir başarı oranına sahip bir temel model SFT'yi atlayabilir — DeepSeek-R1-Zero tam olarak bu durumdur. Sonradan eklenen soğuk başlangıç SFT'si esas olarak okunabilirliği ve dil tutarlılığını iyileştirmek içindi, RL'e görev bilgisi enjekte etmek için değil. Mid-training/SFT/RL seçimine ilişkin daha eksiksiz akış, ileride bağımsız bir karar bölümünde verilmiştir.
 
 ### SFT ile RL Arasındaki Temel Fark (Bu Bölümün En Önemli Tablosu)
 
@@ -260,11 +266,7 @@ Dil modeli eğitimi "tokenization — pre-training — post-training" biçiminde
 >
 > Bu deney, çok modlu model eğitiminin temel paradigmasını ortaya koyuyor: tek modlu pre-training kazanımlarını yeniden kullanıp hafif bir projeksiyon katmanı eğiterek modaliteler arası hizalamayı sağlamak — verimli ve ölçeklenebilir bir yol, ama projeksiyon katmanının ifade gücü sınırlı olduğundan modaliteler arası derin kavrayışta darboğaza dönüşebilir. Aynı "görme kodlayıcısı + projeksiyon katmanı + LLM" iskeleti bir adım daha ileri götürülüp modelin eylem üretmesi sağlandığında, Bölüm 6'da tanıtılan VLA (görme-dil-eylem) modeli ortaya çıkar.
 
-> **Deney 8-5 ★★: Pre-training'e Devam Ederek Yeni Bir Dil Öğrenmek**
->
-> Mistral 7B v0.3 temel alındı (ağırlıklı olarak İngilizce ile pre-training'den geçmiştir, Korece anlama yeteneği neredeyse yoktur) ve Korece Vikipedi üzerinden pre-training'e devam edilerek Korece yeteneği enjekte edildi — yani pre-training'i tamamlanmış bir modelin üzerinde yeni dilin verisiyle denetimsiz eğitimi sürdürmek. Model genel dil modelleme yeteneğine zaten sahip olduğu için yalnızca yeni veri dağılımına uyum sağlaması yeter ve maliyet sıfırdan eğitimin çok altında kalır. Kilit mühendislik noktası, catastrophic forgetting'i hafifletmek için karma veri kullanmaktır (yaklaşık %80 Korece + %20 İngilizce): hedef dilin payı fazla yüksek olursa özgün dil geriler, fazla düşük olursa öğrenme verimi yetersiz kalır. Son olarak Korece talimat verisiyle SFT yapılarak kullanışlı bir Korece diyalog yeteneği elde edildi. Bu deneyin sonucu, bölümün sonundaki eksiksiz manzarada bir kez daha kullanılacak: modele büyük miktarda yeni alan bilgisi ezberletmenin yolu SFT değil, pre-training'e devam etmektir.
-
-Üç pre-training deneyi ortak bir kuralı ortaya koyuyor: bütçe kısıtlıyken algoritma iyileştirmesi ve mimari yenilik, salt ölçek büyütmekten daha çok fiyat/performans getirir. Daha da önemlisi, pre-training'in modele kazandırdığı şey betimleyici bilgi ve dil modelleme yeteneğidir; yapılandırılmış talimat takibi ve göreve yönelik davranış eksiktir — SFT'nin doldurması gereken boşluk tam olarak budur.
+İki ön eğitim deneyi birlikte bir düzenliliği ortaya koyar: bütçe kısıtlıyken algoritma iyileştirmeleri ve mimari yenilikler, ölçeği büyütmekten daha iyi bir maliyet-fayda oranı sunar. Daha da önemlisi, ön eğitim modele betimleyici bilgi ve dil modelleme yeteneği kazandırır; yapılandırılmış talimat takibi ve göreve yönelik davranış kazandırmaz. Üstelik genel ön eğitim hedef dili ya da alanı hiç kapsamamışsa, doğrudan SFT/RL'e geçmek de bu boşluğu atlayamaz; Mid-training'in çözmeyi amaçladığı sorun tam olarak budur.
 
 Pre-training'in temel yetenekleri elde edildikten sonraki adım, post-training yoluyla genel amaçlı modeli kullanışlı bir Agent'a dönüştürmektir. Post-training'in ilk aşaması denetimli ince ayardır (SFT).
 
@@ -272,44 +274,39 @@ Pre-training'in temel yetenekleri elde edildikten sonraki adım, post-training y
 
 Bu bölümde **Mid-training**, var olan bir temel modelden başlayıp hedef veri dağılımında ek bir dil modeli eğitimi yapmaktır. Genellikle pre-training ile aynı next-token hedefini kullanır ve belge, kod veya türetimin tüm token'larında loss hesaplar. DAPT/TAPT çalışmaları, alan ya da görevle ilgili etiketsiz külliyatta ikinci pre-training aşamasının aşağı akış başarımını artırabildiğini gösterir[^ch8-30].
 
-Bu aşama dil, terim, iç belge veya codebase eksiklerinden doğan **bilgi boşluklarını** ve uzun bağlam, kod, matematik ya da çok kipli temsil gibi çok örneklemede bile çözüme ulaşmayan **temel yetenek boşluklarını** kapatır. SFT az sayıda olguyu ezberletebilir; fakat birkaç QA çifti yalnızca sınırlı erişim yollarını güçlendirir ve büyük, ilişkili bilgi kütlesi için uygun değildir. Sağlam sıra: Mid-training ile bilgi/yetenek → küçük SFT ile çıktı protokolü → başarı oranı sıfırdan büyük olduğunda RL[^ch8-31].
+Mid-training başlıca iki tür boşluğu kapatır:
 
-### Veri Karışımı ve Uzun Bağlam Müfredatı
+- **Bilgi boşluğu**: genel ön eğitim hedef dili, finans/tıp/hukuk alanını, kurum içi belgeleri ya da belirli bir kod tabanını yeterince kapsamamıştır; model kavramları ve terimleri bile anlamaz.
+- **Temel yetenek boşluğu**: hedef görev, temel modelin henüz oluşturmadığı uzun bağlam, kod kalıpları, matematiksel türetme ya da kiplerarası temsiller ister. Burada sorun yalnızca yanıt biçimi değildir: yeterince çok örnekleme yapılsa bile model neredeyse hiç doğru çözüme ulaşamaz.
 
-Uzunluk aşaması $i$ için karışım:
+Bu aynı zamanda SFT'nin neden başlıca bilgi enjeksiyon aracı sayılmaması gerektiğini de açıklar. SFT elbette az sayıda olguyu ezberleyebilir ve sıklıkla Mid-training'in ardına konarak modele alan sorularının nasıl yanıtlanacağını öğretir; ne var ki az sayıda soru-yanıt çifti yalnızca sınırlı sayıda soruluş biçimini kapsar ve SFT, büyük ve birbiriyle bağlantılı ham bilgiyi taşımaktan çok "nasıl erişilir ve nasıl ifade edilir" konusunu eğitmekte iyidir. Tersi de geçerlidir: Mid-training'in alan metinlerinde dil modeli kaybını düşürmesi, modelin kullanıcının sorusuna karşılık bilgiyi kendiliğinden çıkaracağını garanti etmez. Araştırmalar, sürdürülen ön eğitim ile talimat eğitiminin sırasının ve verinin düzenlenişinin, bilginin soru-yanıt biçiminde erişilebilir olup olmadığını belirgin biçimde etkilediğini göstermiştir[^ch8-31]. Sağlam reçete genellikle şudur: Mid-training bilgiyi ve yeteneği soğurur → küçük ölçekli SFT çıktı biçimini kurar → başarı oranı sıfırdan farklı hâle geldikten sonra RL başarıyı ve genellemeyi yükseltir.
 
-$$
-D_i=\alpha_iD_{\text{long}}+\beta_iD_{\text{atomic}}+\gamma_iD_{\text{agent}}+\delta_iD_{\text{replay}},
-\qquad \alpha_i+\beta_i+\gamma_i+\delta_i=1.
-$$
+### Mid-training verisi nasıl kurgulanır
 
-Oranları belge sayısıyla değil **token** sayısıyla hesaplayın. $D_{\text{long}}$ kitap, uzun belge ve kod depolarıdır; $D_{\text{atomic}}$ erişim, çok adımlı akıl yürütme, talimat takibi, toplama ve istatistiği; $D_{\text{agent}}$ planlama, araç seçimi/çağrısı, uzun durum takibi ve hata toparlamayı kapsar. $D_{\text{replay}}$ hem genel/kısa veriyi hem de bilinen kısa görevlerin kanıt konumu ve çeldiricileri değiştirilerek mevcut uzunluğa “yükseltilmiş” sürümlerini tutar. Tekilleştirme, kalite süzme ve değerlendirme sızıntısı denetimi gerekir.
+1. **Veriyi başarısızlık dağılımından geriye doğru çıkarın.** Önce değerlendirmeyi konu, dil, belge türü, kod kalıbı ve bağlam uzunluğuna göre bölün ve düşük `pass@k`'nın hangi tür temel boşluktan geldiğini saptayın; veriyi yalnızca bilgi ve yetenek boşlukları için ekleyin ki çıktı biçimi hatası bilgi eksikliği diye yanlış teşhis edilmesin.
+2. **Yüksek yoğunluklu hedef külliyat kurun.** Ham belgeler terim ve olgu bağlantıları kurmaya, kod depoları yapı ve bağımlılıkları öğrenmeye, ders kitabı tarzı türetmeler, sentetik yeniden ifadeler ve belgeler arası ilişki örnekleri ise örtük ilişkileri daha açık yazmaya elverişlidir. Veride yinelenenlerin ayıklanması, kalite süzmesi ve değerlendirme kümesi bulaşması denetimi yapılmalıdır.
+3. **Veri oranlarını yeteneklere göre belirleyin.** Veri; kitaplar, uzun belgeler ve kod depoları gibi doğal uzun metinleri; uzun metin araması, çok sıçramalı akıl yürütme, talimat takibi, bilgi toplama ve istatistik gibi uzun metin atomik yeteneklerini yansıtan düşünce zinciri verisini; planlama, araç seçimi ve çağrısı, uzun menzilli durum takibi ve hatadan kurtulma gibi Agent için zorunlu yetenekleri yansıtan Agent yürütme yörüngelerini içermelidir. Düşünce zinciri ve Agent yörüngesi verileri daha güçlü bir açık kaynak modelden damıtılabileceği gibi mevcut veri kümelerinden de alınabilir.
+4. **Her aşamada "çifte tekrar oynatma" yapın.** Birincisi, dili, bilgiyi ve kısa bağlam yeteneğini korumak için özgün kısa metin ve genel veridir. İkincisi "uzunluğu yükseltilmiş eski görevlerdir": modelin zaten yapabildiği kısa görevleri güncel uzunluktaki bağlama yerleştirin, ilgili bilgiyi ve çeldiricileri farklı konumlara koyun ve aynı yeteneğin daha uzun pencerede de geçerli kalıp kalmadığını sınayın. Genel veriyi tercihen temel modelin özgün ön eğitim kümesinden alın; erişilemiyorsa FineWeb-2 gibi açık bir ön eğitim külliyatı yerine geçebilir.
+5. **Ne zaman duracağınıza çok boyutlu kapılarla karar verin.** Eğitim loss'unun yanı sıra ayrılmış alan görevlerinin, genel yeteneklerin, mevcut talimat takibinin ve hedef görevin `pass@1`/`pass@k` değerlerini birlikte izleyin. Alan ölçütleri yükselirken genel koruma kümesi düşüyorsa karışım ya da öğrenme oranı fazla agresiftir; loss düşerken `pass@k` kımıldamıyorsa, verinin gereken yeteneği gerçekten kapsayıp kapsamadığını ve ardından bilgiye erişimi sağlayacak bir SFT'nin eksik olup olmadığını gözden geçirin.
 
-Mid-training ayrıca nominal pencereyi **etkili hedef uzunluğa** güvenle taşırken uzun metin akıl yürütmesi, planlama ve araç kullanımı kazandırmalıdır. `max_position_embeddings` değerini 32K'dan 128K'ya çıkarmak yalnızca girdinin kabul edildiğini kanıtlar. Başlangıç modeli, hedef ve bütçeye göre 8K → 16K → 32K → 64K → 128K gibi bir müfredat kullanın[^ch8-36]. Her genişletmeden önce mevcut uzunlukta NIAH, erişim, çok adımlı akıl yürütme, toplama/istatistik, temel planlama ve araç seçimini tamamlayın.
+Mid-training'in ardından LongBench v2, IFEval ve 7. bölümde anlatılan uçtan uca Agent değerlendirme kümeleriyle, modelin **farklı bağlam uzunluklarındaki uzun bağlam temel yeteneğinin** yitmediğini doğrulamak gerekir. Uzun bağlam yeteneği, uzun düşünce zinciri ve talimat takibi yeteneklerinin temelidir; onlar da araç çağrısı gibi pek çok üst düzey Agent yeteneğinin temelidir.
 
-$M(\theta,c,L)$, $\theta$ modelinin $c$ yeteneğinde $L$ uzunluğundaki puanıysa üç kapı kullanılır:
+- **Konum ve erişim**: tek iğne, çok iğne ve farklı konumlardan kilit bilgi çıkarımı;
+- **İlişki ve akıl yürütme**: paragraflar arası, belgeler arası ve çok sıçramalı ilişki takibi, çelişki çözümü ve kanıt birleştirme;
+- **Toplama ve istatistik**: uzun tablolardan ya da uzun günlüklerden bilgi derleme — sayma, gruplama, sıralama, karşılaştırma, eğilim çıkarma;
+- **Talimat takibi**: karmaşık talimatlara uyma yeteneği; çoklu talimat takibi, çelişki çözümü, öngörülen düşünme akışına uyma ve çıktı biçimine uyma dahil;
+- **Uzun zincirli düşünme**: karmaşık matematik, mantıksal akıl yürütme ve kod üretme problemlerini çözme;
+- **Agent atomik yetenekleri**: görev ayrıştırma, plan üretme, araç seçimi, argüman kurma, durum belleği ve başarısızlık sonrası toparlanma.
 
-$$
-\begin{aligned}
-M(\theta_i,c,L_i)&\geq\tau_{c,i},\\
-M(\theta_i,c,L_i)&\geq M(\theta_i,c,L_{i-1})-\epsilon_{\text{len}},\\
-M(\theta_i,c,L_{i-1})&\geq M(\theta_{i-1},c,L_{i-1})-\epsilon_{\text{retain}}.
-\end{aligned}
-$$
+Olguların sık güncellenmesi ya da birincil kaynağın verilmesi gerekiyorsa, bilgiyi ağırlıklara yazmak yerine RAG hâlâ daha iyidir; Mid-training ise kararlı, hacimli ve içsel temsil oluşturması gereken alan bilgisi ve yetenekleri için daha uygundur. Büyük bir modele tam parametreli Mid-training uygulamak, küçük ölçekli SFT'ye kıyasla hem hesaplama hem unutma riski bakımından belirgin biçimde daha ağırdır; bu yüzden önce küçük ölçekli bir deneyle veri oranlarını doğrulayın, sonra eğitim bütçesini büyütün.
 
-Bunlar sırasıyla mevcut uzunlukta yeterlilik, uzatınca aynı yeteneğin anlamlı biçimde düşmemesi ve yeni aşamanın eski yeteneği unutmamasıdır. İkinci karşılaştırmada zorluğu eşlenmiş, yalnızca uzunluğu yükseltilmiş görevler kullanın; $\epsilon$ değerlerini yinelenen değerlendirmenin güven aralıklarından belirleyin. Bir yetenek geçemezse nominal pencereyi artırmak yerine ilgili atomik, mevcut-uzunluk veya replay verisini artırıp yeniden eğitin.
+> **Deney 8-5 ★★: Yeni Bir Dili Öğrenmek İçin Ön Eğitime Devam Etmek**
+>
+> Temel olarak Mistral 7B v0.3 alınır (ağırlıklı olarak İngilizceyle ön eğitilmiştir, Korece'yi neredeyse hiç anlamaz) ve Korece Vikipedi üzerinde ön eğitime devam edilerek Korece yeteneği kazandırılır: ön eğitimini tamamlamış bir model üzerinde yeni dil verisiyle dil modeli eğitimi sürdürülür. Model zaten genel temsillere sahiptir ve yalnızca yeni veri dağılımına uyum sağlaması gerekir; bu da sıfırdan eğitmekten çok daha ucuzdur. Deney, felaket unutmayı hafifletmek için yaklaşık %80 Korece + %20 İngilizce bir veri karışımı kullanır; bu, bu deneyin tercihidir, evrensel bir varsayılan değil. Son olarak Korece talimat verisiyle SFT yapılarak kullanışlı bir Korece sohbet yeteneği elde edilir. İki sorumluluk burada açıkça ayrılır: Mid-training önce Korece bilgi ve dil yeteneğini tamamlar, SFT ise modele Korece talimat almayı ve yanıtı düzenlemeyi öğretir.
+>
+> Deney, ön eğitime devam etmenin getirebileceği felaket unutmayı da gösterir: son aşamada Korece için kör değerlendirme puanları iyileşirken İngilizce yeteneği geriler. Ön eğitime devam etmek hedef dağılımı parametrelere yazabilir, ama koruma kümelerini, olgusal değerlendirmeyi ve veri kalitesi denetimini gereksiz kılmaz.
 
-| Yetenek | Benchmark | Ana tanı |
-| --- | --- | --- |
-| Konum, erişim, izleme, toplama | NIAH, RULER | Needle konumu/sayısı, çok adım, toplama ve uzunluğa göre bozulma; NIAH yalnızca smoke test |
-| Gerçekçi uzun belge akıl yürütmesi | LongBench, LongBench v2 | Tek/çok belgeli QA, uzun diyalog, bağlam içi öğrenme, yapılandırılmış veri; kategori ve uzunluk dilimleri |
-| Uzun kod anlama | LongBench v2 repository görevleri, LongCodeU | Kod birimleri, dosyalar arası ilişkiler, depo bütünü |
-| Planlama ve araç öğrenimi | PlanningArena ve önceki araç benchmark'ları | Ayrıştırma, seçim, bellek, argüman, durum doğruluğu |
-| Uçtan uca Agent | SWE-bench Verified, $\tau^2$-bench, Terminal-Bench | Gerçek uzun yörüngede plan, araç, toparlanma, tamamlama |
-
-RULER, NIAH'ı çoklu needle, çok adımlı izleme ve toplamaya genişletir[^ch8-37]; LongBench v2 gerçekçi belge, diyalog, repository ve yapılandırılmış veriyi kapsar[^ch8-38]; LongCodeU ve PlanningArena uzun kod ilişkileri ile planlama/araç öğrenimini tanılar[^ch8-39][^ch8-40]. Resmî test kümelerini yalnızca değerlendirmede kullanın; benzer yapılı ama çakışmayan örneklerle eğitin ve uzunluk, yetenek, hata türü bazında raporlayın. Tek NIAH veya leaderboard başarısı uzun bağlam muhakemesini kanıtlamaz.
-
-Güncellenmesi, kaynak gösterilmesi, erişimi denetlenmesi veya silinmesi gereken olgular RAG'da kalmalıdır. Büyük tam-parametre Mid-training'den önce karışımı küçük deneyle doğrulayın.
+Yeterli bilgi ve temel yetenek edinildikten sonradır ki aşağıdaki SFT, RL gibi eğitim sonrası yöntemlerle kullanışlı bir Agent kurulabilir.
 
 ## SFT (Denetimli İnce Ayar)
 
@@ -511,9 +508,16 @@ Güncel on-policy rollout'ta güncelleme öncesi $\rho_t=1$ olur; böylece günc
 
 #### Sayısal Uyuşmazlık Görünürdeki On-Policy'yi Bozar
 
-vLLM/SGLang sampler ile FSDP/Megatron trainer aynı ağırlıklarda bile hassasiyet, reduction sırası, tensor parallel, batch size, KV cache ve fused kernel nedeniyle farklı log probability hesaplayabilir. Güncellemeden önce $\rho_t\ne1$ olur ve nominal on-policy sayısal olarak off-policy'ye dönüşür; küçük token farkları bile eğitimi çökertebilir[^ch8-33]. Büyütme zinciri: log-probability hatası → üstel oran → uzun prefix'te birikim → clipping/advantage değişimi → gradyan ve etkili örnek sayısının değişimi. 4.000 token'da aynı yönlü $10^{-3}$ sapma $e^4\approx54.6$ oranına ulaşabilir; batch değişimi batch invariance'ı da bozabilir[^ch8-34].
+Büyük ölçekli LLM RL'de rollout'lar genellikle vLLM/SGLang gibi bir çıkarım motoruyla üretilir, log probability ve gradyanlar ise FSDP/Megatron gibi bir eğitim motoruyla yeniden hesaplanır. İki taraf aynı ağırlıkları yüklese bile kayan nokta hassasiyeti, reduction sırası, tensor parallel düzeni, batch boyutu, KV cache ve fused kernel farkları aynı token'ın log probability değerini biraz kaydırabilir. Böylece güncellemeden önce 1 olması gereken $\rho_t$ zaten 1'den sapar: sistem ağırlıkları adı üstünde senkronlamıştır, ama sayısal olarak on-policy eğitimi off-policy'ye çevirmiştir. Kontrollü deneyler, tek başına duran minik bir token düzeyi eğitim–çıkarım farkının bile eğitimi çökertebildiğini göstermiştir[^ch8-33].
 
-Her güncellemeden önce sampler/trainer token log probability'lerini karşılaştırın; $\rho_t$ ortalama, quantile ve maksimumunu, yaklaşık KL'yi, clipping oranını izleyin. LoRA, tokenizer, chat template, revision ve konum ayarlarını da eşitleyin; üretim anındaki behavior log probability'yi saklayın. Sayısal yollar eşleşemiyorsa açıkça off-policy kabul edip önem düzeltmesi yapın, staleness ve batch başına güncelleme sayısını sınırlayın.
+Bu duyarlılık bir büyütme zincirinden doğar: **küçük log probability hatası → üstel alınmış olasılık oranındaki sapma → uzun prefix boyunca birikim → clipping ve avantaj ağırlıklandırmasının değişmesi → gradyan yönünün ve etkili örnek sayısının değişmesi**. Örneğin 4.000 token'ın log ratio değeri aynı yönde $10^{-3}$ kadar saparsa, yörünge düzeyindeki oran $e^4\approx54.6$'ya kadar birikir; gerçek hatalar aynı işaretli olmak zorunda değildir, ama bu örnek uzun dizilerin "token başına çok küçük görünen" hatayı neden büyüttüğünü gösterir. Erken token'lardaki minicik olasılık farkı, üstelik gerçekten örneklenen token'ı değiştirip sonraki tüm durum yörüngesini çatallandırabilir. Sonuç yalnızca "aynı istem bazen farklı yanıt üretiyor" değildir: önem oranı sivrilmeleri, çok sayıda token'ın kırpılması, gradyanda ya da yanıt uzunluğunda ani sıçramalar ve ardından ödülle entropinin birlikte çökmesi de görülebilir. Batch boyutunun değişmesinin reduction biçimini değiştirip sayısal batch invariance'ı bozduğu ve böylece on-policy olması gereken RL'i örtük biçimde off-policy'ye çevirdiği de doğrudan gözlemlenmiştir; eşleştirilmiş örnekleme–eğitim sayısallığı da açık off-policy düzeltmesi de kararlılığı iyileştirir[^ch8-34].
+
+Mühendislikte bunu sıradan bir kayan nokta gürültüsü değil, çekirdek bir sorun saymak gerekir:
+
+- **Herhangi bir parametre güncellemesinden önce**, aynı yörünge kümesi üzerinde sampler ile trainer'ın token log probability değerlerini karşılaştırın; $\rho_t$'nin ortalamasını, quantile'larını, maksimumunu, yaklaşık KL'yi ve kırpılan token oranını izleyin. Bu, en doğrudan on-policy birim testidir.
+- Senkronlanması gereken yalnızca ağırlıklar değildir: LoRA adaptörleri, tokenizer, chat template, model revizyonu ve konum kodlaması yapılandırması da buna dahildir; rollout, üretim anındaki behavior log probability değerini saklamalı, sonradan güncel modeli onun yerine koymamalıdır.
+- Örnekleme ile eğitimin hassasiyetini, paralellik yerleşimini ve kritik hesap çekirdeklerini olabildiğince hizalayın; bu mümkün değilse farkı açıkça off-policy sayın, önem düzeltmesi uygulayın ve etkili örnek sayısını izleyin — PPO clipping'in her şeyi kendiliğinden toparlayacağını varsaymayın.
+- Rollout'ları taze tutun; her veri kümesi üzerinde yapılan güncelleme turlarını ve asenkron staleness'ı sınırlayın. Eski veriyi yeniden kullanmak verimi artırır, ama bu ölçülmüş bir yanlılık–verimlilik ödünleşmesi olarak ele alınmalı, bedava bir hızlanma gibi görülmemelidir.
 
 ## RL Ortamları: Değerlendirmeden Simülasyona
 
@@ -847,12 +851,6 @@ Bu bölüm, model parametrelerini güncelleyerek Agent'ın sürekli evrimini nas
 [^ch8-32]: Zheng, Chujie et al., “Stabilizing Reinforcement Learning with LLMs”, 2025. https://arxiv.org/abs/2512.01374
 [^ch8-33]: Zhong, Tianle et al., “Diagnosing Training Inference Mismatch in LLM Reinforcement Learning”, 2026. https://arxiv.org/abs/2605.14220
 [^ch8-34]: He, Horace and Thinking Machines Lab, “Defeating Nondeterminism in LLM Inference”, 2025. https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/
-[^ch8-35]: Gao, Tianyu et al., “How to Train Long-Context Language Models (Effectively)”, ACL, 2025. https://aclanthology.org/2025.acl-long.366/
-[^ch8-36]: Xiong, Wenhan et al., “Effective Long-Context Scaling of Foundation Models”, NAACL, 2024. https://aclanthology.org/2024.naacl-long.260/
-[^ch8-37]: Hsieh, Cheng-Ping et al., “RULER”, COLM, 2024. https://arxiv.org/abs/2404.06654
-[^ch8-38]: Bai, Yushi et al., “LongBench” and “LongBench v2”, ACL, 2024/2025. https://aclanthology.org/2025.acl-long.183/
-[^ch8-39]: Li, Jia et al., “Benchmarking Long-Context Language Models on Long Code Understanding”, ACL, 2025. https://aclanthology.org/2025.acl-long.1324/
-[^ch8-40]: Zheng, Zihan et al., “PlanningArena”, ACL, 2025. https://aclanthology.org/2025.acl-long.1499/
 
 ## Düşünce Soruları
 

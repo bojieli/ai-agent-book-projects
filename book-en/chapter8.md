@@ -284,55 +284,18 @@ This also explains why SFT should not be treated as the main vehicle for knowled
 
 ### Constructing Mid-training Data
 
-The key is not to dump every domain file into training. The **target distribution, retention distribution, and evaluation distribution** must form a closed loop:
-
 1. **Infer data needs from the failure distribution.** Slice evaluations by topic, language, document type, code pattern, and context length. Determine which low-`pass@k` cases come from a base-model gap, and add data only for knowledge and capability gaps rather than misdiagnosing output-format errors as missing knowledge.
 2. **Build high-density target corpora.** Raw documents establish terminology and factual associations; repositories teach structure and dependencies; textbook-style derivations, synthetic explanations, and cross-document association samples make implicit relationships explicit. Deduplicate, filter for quality, and check for evaluation-set contamination.
 3. **Mix by capability bucket, not only by corpus source.** The data for context stage $i$ can be written as
 
-   $$
-   \mathcal{D}_i=\alpha_i\mathcal{D}_{\text{long}}+\beta_i\mathcal{D}_{\text{atomic}}+\gamma_i\mathcal{D}_{\text{agent}}+\delta_i\mathcal{D}_{\text{replay}},\qquad
-   \alpha_i+\beta_i+\gamma_i+\delta_i=1
-   $$
-
-   Here, $\mathcal{D}_{\text{long}}$ contains natural long texts near the current target length, such as books, long documents, and code repositories; $\mathcal{D}_{\text{atomic}}$ covers primitives such as long-text retrieval, multi-hop reasoning, information aggregation, and statistics; $\mathcal{D}_{\text{agent}}$ injects Agent essentials such as planning, tool selection and calling, long-horizon state tracking, and error recovery; and $\mathcal{D}_{\text{replay}}$ retains general pre-training data and data from earlier length stages. Tool documentation, code, plans, state transitions, and execution traces can be organized as complete sequences and trained with language-model loss over every token to form basic representations; exact dialogue templates and tool-call schemas remain the job of later SFT. There is no universal ratio across models. Adjust it from each bucket's learning and forgetting curves, and report the effective mixture **by token**, not merely by sample count, because long examples naturally consume more tokens.
-4. **Use two forms of replay at every stage.** The first is original short text and general data, preserving language, knowledge, and short-context ability. The second is "length-lifted replay": place an old short task that the model already solves into the current context length, with relevant information and distractors at different positions, and verify that the same capability survives in a longer window. Ideally, general data comes from the base model's original pre-training set; when unavailable, open corpora such as FineWeb-2 can substitute. Long-context research also finds that high-quality short-context data remains an important part of a good mixture alongside natural long text[^ch8-35].
-5. **Stop by multidimensional gates.** In addition to training loss, track held-out domain tasks, general capabilities, prior instruction following, and target-task `pass@1`/`pass@k`. If domain metrics rise while the general retention set falls, the mixture or learning rate is too aggressive. If loss falls but `pass@k` does not move, check whether the data truly covers the required capability and whether a later SFT step is needed to make knowledge accessible.
-
-### Expanding the Context Window with Curriculum Learning
-
-For an Agent, Mid-training has another important responsibility: extend the **effective context window** reliably to the target length while developing long-text reasoning, planning, and tool-use capabilities during the expansion. Merely changing positional encoding or setting `max_position_embeddings` from 32K to 128K proves only that the model accepts such input, not that it can retrieve, aggregate, and act across the full window. A more robust approach uses a length curriculum—for example, 8K → 16K → 32K → 64K → 128K. The exact ladder depends on the starting model, target length, and compute budget and need not double mechanically. Existing work on long-context continued pre-training likewise treats data mixtures and sequence-length curricula as key design variables[^ch8-36].
-
-Before moving to a longer window, solve these foundational capabilities at the current length:
+After Mid-training, evaluation sets such as LongBench v2, IFEval, and the end-to-end Agent benchmarks described in Chapter 7 are needed to verify that the model's **foundational long-context capability across different context lengths** has not been lost. Long-context capability underpins long chain-of-thought and instruction following, and those in turn underpin higher-order Agent capabilities such as tool calling.
 
 - **Position and retrieval**: single-needle and multi-needle extraction, key information at different positions, and retrieval under distractors;
 - **Relations and reasoning**: cross-paragraph, cross-document, and multi-hop relation tracking, contradiction resolution, and evidence composition;
 - **Aggregation and statistics**: counting, grouping, sorting, comparison, trend summaries, and aggregation over long tables or logs;
+- **Instruction following**: following complex instructions, including multiple instructions at once, contradiction resolution, adherence to a prescribed thinking procedure, and output-format compliance;
+- **Long-chain thinking**: solving hard mathematics, logical-reasoning, and code-generation problems;
 - **Agent primitives**: basic task decomposition, planning, tool selection, argument construction, state memory, and recovery from failure.
-
-Let checkpoint $\theta_i$ be produced at stage $i$, let the current window be $L_i$, and let $M(\theta_i,c,L)$ be the score of capability bucket $c$ at effective length $L$. Before entering $L_{i+1}$, check at least three gates:
-
-$$
-\begin{aligned}
-M(\theta_i,c,L_i) &\geq \tau_c &&\text{(current-length capability reaches its threshold)},\\
-M(\theta_i,c,L_i) &\geq M(\theta_i,c,L_{i-1})-\epsilon_{\text{len}} &&\text{(capability does not materially decay with length)},\\
-M(\theta_i,c,L_{i-1}) &\geq M(\theta_{i-1},c,L_{i-1})-\epsilon_{\text{retain}} &&\text{(the new stage has not forgotten old capability)}.
-\end{aligned}
-$$
-
-The second condition must use **difficulty-matched, length-lifted tasks**; otherwise questions at different lengths may differ in inherent difficulty and their scores are not directly comparable. The ideal is for current-length performance not to fall below shorter-window performance. In practice, set $\epsilon_{\text{len}}$ and $\epsilon_{\text{retain}}$ from confidence intervals over repeated evaluations rather than arbitrarily forcing them to zero. If any critical capability bucket fails a gate, increase the corresponding atomic-capability data, current-length data, or replay share, continue training, and retest instead of increasing only the nominal context length.
-
-There is no need to invent these gates from scratch. Existing long-context benchmarks cover most primitives and realistic tasks and can form a **capability × length** acceptance matrix:
-
-| Acceptance layer | Available benchmarks | Main observations |
-| --- | --- | --- |
-| Position, retrieval, tracking, and aggregation | NIAH, RULER | Degradation curves by needle position, needle count, multi-hop tracking, aggregation task, and length; NIAH is only a basic smoke test |
-| Realistic long-document reasoning | LongBench, LongBench v2 | Single- and multi-document QA, long dialogue, long-context learning, and structured-data understanding; inspect each category and length slice, not only the aggregate score |
-| Long-code understanding | LongBench v2 repository tasks, LongCodeU | Code-unit perception, cross-file and cross-unit relations, and repository-level understanding |
-| Planning and tool learning | PlanningArena and the tool-use benchmarks introduced earlier in this book | Task decomposition, tool selection, context memory, arguments, and state correctness |
-| End-to-end Agents | SWE-bench Verified, $\tau^2$-bench, Terminal-Bench, and others | Final success, valid-trajectory rate, and `pass@k`, confirming that primitives combine into usable behavior |
-
-RULER extends single NIAH to multi-needle retrieval, multi-hop tracing, and aggregation, making it suitable for controlled-length foundational gates[^ch8-37]. LongBench v2 covers realistic multi-document, long-dialogue, repository, and long-structured-data tasks[^ch8-38]. LongCodeU and PlanningArena respectively add diagnosis for long-code relations and planning/tool learning[^ch8-39][^ch8-40]. Keep each benchmark's official test set exclusively for evaluation, construct training data from structurally similar but non-overlapping examples, and report every length, capability bucket, and failure type. Passing a single code or Agent leaderboard is strong aggregate evidence but can still hide local regressions; passing NIAH alone does not establish long-context reasoning.
 
 If facts change frequently or must be cited to primary sources, RAG is still preferable to writing them into weights. Mid-training is better suited to stable, large-scale domain knowledge and capabilities that need internal representations. Full-parameter Mid-training on a large model costs more and risks more forgetting than small-scale SFT, so validate the mixture in a small pilot before scaling the training budget.
 
@@ -548,13 +511,7 @@ $$
 =\exp\left(\log\pi_\theta(a_t\mid s_t)-\log\mu(a_t\mid s_t)\right).
 $$
 
-On-policy data is usually preferable not because off-policy learning is impossible, but because it removes or reduces this correction:
-
-- **Lower variance.** When $\mu$ assigns very little probability to an action that $\pi_\theta$ considers likely, or vice versa, $\rho_t$ becomes extreme. A small number of tokens can dominate the gradient, and clipping then discards much of the data.
-- **Better state relevance.** The errors a current LLM makes determine the prefixes and tool states it will visit next. Old or teacher trajectories cover a different state distribution and therefore teach less about how the current student should recover from its own mistakes.
-- **More truthful group comparisons.** GRPO assumes that rollouts for the same prompt are comparable samples from the current policy. Mixing policies turns a relative advantage into a mixture of policy age, sampling configuration, and trajectory quality.
-
-Off-policy data can still be useful—especially for expensive environments, replay, demonstrations, and rare successful trajectories—but it requires deliberate importance weighting, staleness limits, replay design, or an offline objective. The practical rule is therefore not "off-policy never works," but **use fresh on-policy rollouts by default; introduce reuse only when its savings exceed the bias and variance it creates**[^ch8-32].
+Genuinely fresh on-policy rollouts satisfy $\pi_\theta=\mu$ **before any parameter update**, so $\rho_t=1$. This focuses training on "the states the current model actually enters" and avoids paying a high-variance correction for distribution mismatch. Off-policy data has its own advantages—old data can be reused, sampling and training can run asynchronously, and throughput is higher—but the staler the policy, the heavier the tail of the $\rho_t$ distribution. For long autoregressive sequences, a strict prefix or trajectory correction also multiplies many per-token ratios together, so a small bias can accumulate into an enormous or vanishing weight. PPO's clipping limits outlier updates but cannot losslessly restore lost distribution coverage: clip too much and gradients are discarded, clip too little and a handful of samples dominate. "On-policy is better" is therefore not a universal theorem; in today's LLM policy gradients it usually means **lower distribution bias and more stable optimization**. Empirical work on stabilizing large-model RL likewise finds that reducing policy staleness and training–inference discrepancy is an important condition for the surrogate objective to remain valid[^ch8-32].
 
 #### Why Training Is Sensitive to Sampler/Trainer Numerical Mismatch
 
@@ -908,12 +865,6 @@ This chapter answers how updating parameters can enable continuous Agent evoluti
 [^ch8-32]: Zheng, Chujie et al., “Stabilizing Reinforcement Learning with LLMs: Formulation and Practices”, 2025. arXiv:2512.01374. https://arxiv.org/abs/2512.01374
 [^ch8-33]: Zhong, Tianle et al., “Diagnosing Training Inference Mismatch in LLM Reinforcement Learning”, 2026. arXiv:2605.14220. https://arxiv.org/abs/2605.14220
 [^ch8-34]: He, Horace and Thinking Machines Lab, “Defeating Nondeterminism in LLM Inference”, 2025. https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/
-[^ch8-35]: Gao, Tianyu et al., “How to Train Long-Context Language Models (Effectively)”, ACL, 2025. https://aclanthology.org/2025.acl-long.366/
-[^ch8-36]: Xiong, Wenhan et al., “Effective Long-Context Scaling of Foundation Models”, NAACL, 2024. https://aclanthology.org/2024.naacl-long.260/
-[^ch8-37]: Hsieh, Cheng-Ping et al., “RULER: What’s the Real Context Size of Your Long-Context Language Models?”, COLM, 2024. https://arxiv.org/abs/2404.06654
-[^ch8-38]: Bai, Yushi et al., “LongBench: A Bilingual, Multitask Benchmark for Long Context Understanding”, ACL, 2024. https://aclanthology.org/2024.acl-long.172/; Bai, Yushi et al., “LongBench v2: Towards Deeper Understanding and Reasoning on Realistic Long-context Multitasks”, ACL, 2025. https://aclanthology.org/2025.acl-long.183/
-[^ch8-39]: Li, Jia et al., “Benchmarking Long-Context Language Models on Long Code Understanding”, ACL, 2025. https://aclanthology.org/2025.acl-long.1324/
-[^ch8-40]: Zheng, Zihan et al., “PlanningArena: A Modular Benchmark for Multidimensional Evaluation of Planning and Tool Learning”, ACL, 2025. https://aclanthology.org/2025.acl-long.1499/
 
 ## Thought Questions
 
