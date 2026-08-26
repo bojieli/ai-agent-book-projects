@@ -15,6 +15,10 @@ hooks:
   # `_web/` is an ignored staging tree, so map each staged page back to its
   # tracked source before the revision-date plugin asks Git for timestamps.
   - scripts/git_revision_dates.py
+  # `_web/` promotes book/chapterN.md to book/chapterN/index.md, a path that
+  # does not exist in the repository. Retarget the "edit this page" / "view
+  # source" buttons at the tracked source so they don't 404 (issue #1019).
+  - scripts/site_edit_urls.py
   # Validates every configured language and generates the browser-side
   # translation catalog from Material's locales + our book navigation labels.
   - scripts/site_i18n.py

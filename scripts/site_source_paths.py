@@ -31,6 +31,22 @@ def source_path_for_page(src_uri: str, root: Path = REPO_ROOT) -> Path:
     return root.joinpath(*parts)
 
 
+def repo_relative_source(src_uri: str, root: Path = REPO_ROOT) -> str | None:
+    """Return the repository path backing an assembled page, or ``None``.
+
+    ``None`` means the page has no counterpart in the repository, so links
+    that point at the source (the "edit this page" / "view source" buttons)
+    would 404 and are better left out entirely.
+    """
+    source = source_path_for_page(src_uri, root)
+    if not source.is_file():
+        return None
+    try:
+        return source.resolve().relative_to(root.resolve()).as_posix()
+    except ValueError:
+        return None
+
+
 def original_source_map(files: Iterable[Any], root: Path = REPO_ROOT) -> dict[str, str]:
     """Map staged absolute paths to existing source files in the repository."""
     sources: dict[str, str] = {}
