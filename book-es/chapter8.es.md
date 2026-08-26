@@ -281,8 +281,14 @@ SFT puede memorizar algunos hechos y enseñar a formular respuestas de dominio, 
 ### Cómo construir los datos de Mid-training
 
 1. **Derivar los datos de la distribución de fallos.** Segmenta por tema, idioma, tipo de documento, patrón de código y longitud; distingue una carencia de base de un simple error de formato.
+
 2. **Crear corpus objetivo densos.** Documentos para términos y hechos, repositorios para estructura y dependencias, y derivaciones, explicaciones sintéticas y relaciones entre documentos para hacer explícitas las conexiones. Deduplica, filtra calidad y evita contaminación del conjunto de evaluación.
-3. **Mezclar por capacidad.** En la etapa $i$:
+
+3. **Repartir los datos por capacidad.** La mezcla necesita texto largo natural —libros, documentos extensos, repositorios de código—; datos de cadena de pensamiento que encarnen las capacidades atómicas sobre texto largo (búsqueda en texto largo, razonamiento multi-salto, seguimiento de instrucciones, agregación de información y estadística); y trayectorias de ejecución de Agente que encarnen las capacidades imprescindibles de un Agente (planificación, selección e invocación de herramientas, seguimiento de estado a largo alcance y recuperación tras un error). Los datos de cadena de pensamiento y de trayectorias pueden destilarse de un modelo abierto más potente o tomarse de conjuntos ya existentes.
+
+4. **Hacer «doble reproducción» en cada etapa.** La primera es el texto corto original y los datos generales, que conservan la lengua, el conocimiento y la capacidad de contexto corto. La segunda son «tareas antiguas elevadas de longitud»: coloca en un contexto de la longitud actual tareas cortas que el modelo ya resuelve, repartiendo la información relevante y los distractores por posiciones distintas, y comprueba si la misma capacidad se sostiene en la ventana más amplia. Lo ideal es que los datos generales procedan del conjunto de preentrenamiento original del modelo base; si no está disponible, sirve un corpus abierto como FineWeb-2.
+
+5. **Decidir cuándo parar con puertas multidimensionales.** Además de la pérdida de entrenamiento, sigue el `pass@1`/`pass@k` en tareas de dominio reservadas, capacidades generales, el seguimiento de instrucciones previo y la tarea objetivo. Si las métricas de dominio suben mientras cae el conjunto de retención general, la mezcla o la tasa de aprendizaje son demasiado agresivas; si la pérdida baja y el `pass@k` no se mueve, revisa si los datos cubren realmente la capacidad necesaria y si falta después un SFT que dé acceso al conocimiento.
 
 Tras el Mid-training hay que usar conjuntos de evaluación como LongBench v2, IFEval y los Agentes de extremo a extremo descritos en el capítulo 7 para verificar que no se ha perdido la **capacidad básica de contexto largo a distintas longitudes de contexto**. La capacidad de contexto largo es la base de la cadena de pensamiento larga y del seguimiento de instrucciones, y estas a su vez sostienen capacidades de orden superior del Agente, como la llamada a herramientas.
 
