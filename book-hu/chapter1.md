@@ -10,7 +10,7 @@ Ez a fejezet gyakorlati példákkal indul, majd visszavezet az AI-ügynökök al
 
 ## Modern ügynök = LLM + Kontextus + Eszközök
 
-Egy modern ügynökrendszer lényege egy tömör képletbe foglalható: **Ügynök = LLM (Nagy nyelvi modell) + Kontextus + Eszközök**. A képlet egyszerű és gyakorlatias – feltéve, hogy minden tagot tágan értelmezünk:
+Egy modern Agent minimális mérnöki megvalósítása egyetlen tömör képlettel kifejezhető: **Agent = LLM (nagy nyelvi modell, Large Language Model) + kontextus + eszközök**. A pluszjelek itt mérnöki komponensek összekapcsolását jelölik, nem a megerősítéses tanulás formális definícióját; és ami még fontosabb, a képlet csak az Agent határán belüli megvalósítást írja le, és **nem tartalmazza az Environmentet (környezetet), amellyel az Agent kölcsönhatásba lép**. Minden szavát tágan, de világos határral kell érteni:
 
 - **Az LLM az ügynök érvelőmotorja**: Több, mint paraméterek halmaza; ez az ügynök döntéshozó központja, amely a szándék megértéséért, az érvelésért, a tervezésért és az ítéletalkotásért felelős. Az LLM képességei az "előtanítás" (pre-training) során megszerzett világismeretből és nyelvi készségekből, valamint az "utótanítás" (post-training) során kódolt döntéshozatali stratégiákból származnak (az olyan technikák, mint a felügyelt finomhangolás és a megerősítéses tanulás a 8. fejezetben kerülnek kifejtésre).
 - **A kontextus az ügynök aktuális információhalmaza**: Nem csupán a modellbe táplált szöveg, hanem az ügynök számára az egyes döntési pontokon elérhető információhalmaz – a környezet, a felhasználó memóriája, a tartományi tudás, a saját állapota és a feladat előrehaladása. Ahogy egy döntést hozó embernek is fel kell mérnie a helyzetet, emlékeznie kell a releváns tapasztalatokra és konzultálnia kell a forrásokkal, az ügynök kontextusablaka (context window) is az adott pillanatban felhasználható információkat tartalmazza.
@@ -146,7 +146,7 @@ A kontextus az ügynök számára az egyes döntési pontokon elérhető inform�
 
 Az első két elem (system prompt + eszközdefiníciók) alkotja a statikus előtagot; az utolsó három (felhasználói üzenetek + asszisztens üzenetek + eszközeredmények) alkotja a dinamikus üzenetelőzményt, amely minden interakcióval növekszik. Ez az öt rész együtt teszi ki az egyes LLM-következtetések kontextusát.
 
-Valóban minden összetevő nélkülözhetetlen? A legközvetlenebb módja ennek kiderítésére egy "ablációs vizsgálat" (ablation study) – a diagnosztikai módszer, amely egyszerre csak egy okot zár ki: távolítsuk el az A összetevőt, és nézzük meg, hogy a rendszer még mindig működik-e, majd a B összetevőt, és így tovább, amíg az egyes összetevők hozzájárulása világossá nem válik. Az 1-1. kísérlet pontosan ezt a módszert alkalmazza a fenti öt összetevőre. Az eredmények közvetlenek: eszközdefiníciók nélkül az ügynök teljesen cselekvésképtelen; eszközeredmények nélkül nem kap visszajelzést az előző lépésről, ezért ugyanazt az eszközt hívja újra és újra, végtelen ciklusba ragadva; az asszisztens üzenetek érvelés nélkül az egymást követő döntések ellentmondani kezdenek egymásnak; üzenetelőzmény nélkül az ügynök elveszíti a feladat folytonosságát, és a legelejéről kezdi újra az egész feladatot, megismételve a már elvégzett lépéseket.
+Annak ellenőrzésére, hogy minden komponens valóban nélkülözhetetlen-e, a legközvetlenebb módszer az **ablációs vizsgálat** (Ablation Study): ahogy az orvos a diagnózis során egyenként zárja ki az okokat — először elvesszük az A komponenst, és megnézzük, működik-e még a rendszer, aztán a B komponenst, és így tovább, hogy megítélhessük az egyes komponensek hozzájárulását. Az 1-1. kísérlet pontosan ezt a gondolatmenetet követve tesztelte rendszeresen a fenti öt komponenst.
 
 > **1-1. kísérlet ★★: A kontextus kritikus szerepe**
 >
@@ -168,7 +168,7 @@ Vegyünk egy konkrét példát – a bevételek összesítését több devizába
 
 ![1-4. ábra: Ügynök trajektória – ReAct ciklus egy többdevizás összesítési feladathoz](images/fig1-4.svg)
 
-Az alábbi Python-stílusú vázlat magyarázó pszeudokód, nem futtatható SDK-kód; a `python` jelölő csak szintaxiskiemelésre szolgál.
+Nézzük először a minimális futtatási vázat. Azt mutatja meg, **hogyan működik a mechanizmus**: a Model csak a következő lépésről dönt, a Harness összeállítja a kontextust, ellenőrzi és végrehajtja az eszközöket, az Environment pedig előállítja a valódi állapotváltozásokat és megfigyeléseket. A könyv további részében is Python-stílusú álkódot használunk; az álkód nem futtatható közvetlenül, és nem felel meg egyetlen konkrét SDK-nak sem. A konkrét, futtatható kód a könyv kísérő kódtárában található.
 
 ```python
 trajectory = [user_request]
@@ -242,7 +242,7 @@ Most, hogy megértettük az ügynök működési ciklusát, két kísérletet vi
 > [^ch1-2]: Köszönet az asdlem olvasónak, amiért a GitHub Issue #30-on keresztül rámutatott és tisztázta, hogy az RL által interiorizált dolog az eszközhívási döntési politika, nem az eszköz-végrehajtási mechanizmus. Lásd: https://github.com/bojieli/ai-agent-book/issues/30
 >
 > A Kimi K3 figyelemre méltó előnye az ügynökfeladatokban "a hosszú láncú eszközhívások stabilitása" – 200–300 egymást követő eszközhívást képes fenntartani koherens érveléssel, messze meghaladva azt a néhány tucat hívást, amelynél a legtöbb modell romlani kezd. A K3-at hosszú távú programozási és ügynök-munkaterhelésekre optimalizálták, és két változatban jelent meg: K3 Max (dialógus- és ügynökfeladatokhoz) és K3 Swarm Max (nagyméretű párhuzamos feldolgozáshoz). Nyílt forráskódú modellként felülmúlja a legjobb zárt forráskódú rendszereket szoftvermérnöki és ügynökmérési feladatokon – bizonyítva, hogy a megerősítéses tanulás natív ügynökképességgel ruházhat fel egy modellt.
-
+>
 > **1-3. kísérlet ★: GPT-5.6 natív Deep Research képesség**
 >
 > A második kísérlet az "OpenAI GPT-5.6"-ot használja annak bemutatására, hogy egy fejlett modell, API-szintű beépített eszközökkel támogatva, hogyan zárja le a "keresés → olvasás → elemzés" összehangolási ciklust szerveroldalon a Deep Research számára. A GPT-5.6 egyik kényelmes funkciója a "Freeform Tool Calling". Hagyományosan a modellnek minden paramétert szigorú JSON-ba (strukturált adatformátum) kellett szerializálnia egy eszköz hívásakor, hasonlóan egy merev formázási szabályokkal rendelkező űrlap kitöltéséhez. A Freeform tool calling (amelyet az API-ban egy `type: "custom"` típusú eszközön keresztül deklarálnak) lehetővé teszi a modell számára, hogy nyers szöveget küldjön közvetlenül az eszköznek (egy Python kódrészletet, egy SQL lekérdezést), teljesen elkerülve a JSON escape-elést. Érdemes hangsúlyozni, hogy ez az API paraméterformátumának fejlődése, nem pedig modellarchitektúra-innováció – a kliens eszközhívási ciklusa (`tool_calls` észlelése → végrehajtás → eredmény visszaadása) ugyanaz marad; csak az argumentumok változnak JSON stringről nyers szövegre.
@@ -452,8 +452,6 @@ Az ügynök-keretrendszerek gyorsan változnak. Mire ezt a könyvet olvasod, né
 Az összehangolási minták megoldják a kontextus és eszközök szervezését a Harness-en belül – hogyan kapcsolódnak össze az LLM-hívások, eszközök és adatfolyamok. De a feladat elvégzése nem elég; a feladatokat helyesen és biztonságosan is el kell végezni. Ezért rátérünk a korlátozás, ellenőrzés és javítás gyakorlati megvalósításának fő módjára: a védőkorlátokra (guardrails).
 
 ### Védőkorlátok és biztonság
-
-Ez a rész magas szintű áttekintést ad a védőkorlátokról a nagy kép felvázolásához. A megvalósítási részletek és gyakorlat a 2. fejezetben (kontextusréteg: prompt injection elleni védelem), a 4. fejezetben (végrehajtási réteg: eszköz-engedélyezés) és az 5. fejezetben (végrehajtási és adatréteg: kódvégrehajtás biztonsága és a bizalmi határ lejjebb vitele) következnek; az első olvasóknak nem kell minden részletet követniük.
 
 A védőkorlátok (guardrails) jelentik a Harness "korlátozás, ellenőrzés és javítás" rétegének elsődleges megvalósítását – egy rétegzett védelmet, amely az ügynök viselkedését biztonságosan és ellenőrizhetően tartja. A jól megtervezett "védőkorlátok" segítenek kezelni az adatvédelmi kockázatokat (például a system prompt kiszivárgásának megakadályozását) és a hírnévkockázatokat (például a modell viselkedésének a márkával való összhangban tartását). Kezdd azokkal a védőkorlátokkal, amelyeket a már azonosított kockázatokhoz terveztél, majd adj hozzá újakat, ahogy új sérülékenységek kerülnek felszínre.
 
