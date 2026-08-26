@@ -266,11 +266,7 @@ Dil modeli eğitimi "tokenization — pre-training — post-training" biçiminde
 >
 > Bu deney, çok modlu model eğitiminin temel paradigmasını ortaya koyuyor: tek modlu pre-training kazanımlarını yeniden kullanıp hafif bir projeksiyon katmanı eğiterek modaliteler arası hizalamayı sağlamak — verimli ve ölçeklenebilir bir yol, ama projeksiyon katmanının ifade gücü sınırlı olduğundan modaliteler arası derin kavrayışta darboğaza dönüşebilir. Aynı "görme kodlayıcısı + projeksiyon katmanı + LLM" iskeleti bir adım daha ileri götürülüp modelin eylem üretmesi sağlandığında, Bölüm 6'da tanıtılan VLA (görme-dil-eylem) modeli ortaya çıkar.
 
-> **Deney 8-5 ★★: Pre-training'e Devam Ederek Yeni Bir Dil Öğrenmek**
->
-> Mistral 7B v0.3 temel alındı (ağırlıklı olarak İngilizce ile pre-training'den geçmiştir, Korece anlama yeteneği neredeyse yoktur) ve Korece Vikipedi üzerinden pre-training'e devam edilerek Korece yeteneği enjekte edildi — yani pre-training'i tamamlanmış bir modelin üzerinde yeni dilin verisiyle denetimsiz eğitimi sürdürmek. Model genel dil modelleme yeteneğine zaten sahip olduğu için yalnızca yeni veri dağılımına uyum sağlaması yeter ve maliyet sıfırdan eğitimin çok altında kalır. Kilit mühendislik noktası, catastrophic forgetting'i hafifletmek için karma veri kullanmaktır (yaklaşık %80 Korece + %20 İngilizce): hedef dilin payı fazla yüksek olursa özgün dil geriler, fazla düşük olursa öğrenme verimi yetersiz kalır. Son olarak Korece talimat verisiyle SFT yapılarak kullanışlı bir Korece diyalog yeteneği elde edildi. Bu deneyin sonucu, bölümün sonundaki eksiksiz manzarada bir kez daha kullanılacak: modele büyük miktarda yeni alan bilgisi ezberletmenin yolu SFT değil, pre-training'e devam etmektir.
-
-Üç pre-training deneyi ortak bir kuralı ortaya koyuyor: bütçe kısıtlıyken algoritma iyileştirmesi ve mimari yenilik, salt ölçek büyütmekten daha çok fiyat/performans getirir. Daha da önemlisi, pre-training'in modele kazandırdığı şey betimleyici bilgi ve dil modelleme yeteneğidir; yapılandırılmış talimat takibi ve göreve yönelik davranış eksiktir — SFT'nin doldurması gereken boşluk tam olarak budur.
+İki ön eğitim deneyi birlikte bir düzenliliği ortaya koyar: bütçe kısıtlıyken algoritma iyileştirmeleri ve mimari yenilikler, ölçeği büyütmekten daha iyi bir maliyet-fayda oranı sunar. Daha da önemlisi, ön eğitim modele betimleyici bilgi ve dil modelleme yeteneği kazandırır; yapılandırılmış talimat takibi ve göreve yönelik davranış kazandırmaz. Üstelik genel ön eğitim hedef dili ya da alanı hiç kapsamamışsa, doğrudan SFT/RL'e geçmek de bu boşluğu atlayamaz; Mid-training'in çözmeyi amaçladığı sorun tam olarak budur.
 
 Pre-training'in temel yetenekleri elde edildikten sonraki adım, post-training yoluyla genel amaçlı modeli kullanışlı bir Agent'a dönüştürmektir. Post-training'in ilk aşaması denetimli ince ayardır (SFT).
 
@@ -285,42 +281,32 @@ Mid-training başlıca iki tür boşluğu kapatır:
 
 Bu aynı zamanda SFT'nin neden başlıca bilgi enjeksiyon aracı sayılmaması gerektiğini de açıklar. SFT elbette az sayıda olguyu ezberleyebilir ve sıklıkla Mid-training'in ardına konarak modele alan sorularının nasıl yanıtlanacağını öğretir; ne var ki az sayıda soru-yanıt çifti yalnızca sınırlı sayıda soruluş biçimini kapsar ve SFT, büyük ve birbiriyle bağlantılı ham bilgiyi taşımaktan çok "nasıl erişilir ve nasıl ifade edilir" konusunu eğitmekte iyidir. Tersi de geçerlidir: Mid-training'in alan metinlerinde dil modeli kaybını düşürmesi, modelin kullanıcının sorusuna karşılık bilgiyi kendiliğinden çıkaracağını garanti etmez. Araştırmalar, sürdürülen ön eğitim ile talimat eğitiminin sırasının ve verinin düzenlenişinin, bilginin soru-yanıt biçiminde erişilebilir olup olmadığını belirgin biçimde etkilediğini göstermiştir[^ch8-31]. Sağlam reçete genellikle şudur: Mid-training bilgiyi ve yeteneği soğurur → küçük ölçekli SFT çıktı biçimini kurar → başarı oranı sıfırdan farklı hâle geldikten sonra RL başarıyı ve genellemeyi yükseltir.
 
-### Veri Karışımı ve Uzun Bağlam Müfredatı
+### Mid-training verisi nasıl kurgulanır
 
-Uzunluk aşaması $i$ için karışım:
+1. **Veriyi başarısızlık dağılımından geriye doğru çıkarın.** Önce değerlendirmeyi konu, dil, belge türü, kod kalıbı ve bağlam uzunluğuna göre bölün ve düşük `pass@k`'nın hangi tür temel boşluktan geldiğini saptayın; veriyi yalnızca bilgi ve yetenek boşlukları için ekleyin ki çıktı biçimi hatası bilgi eksikliği diye yanlış teşhis edilmesin.
+2. **Yüksek yoğunluklu hedef külliyat kurun.** Ham belgeler terim ve olgu bağlantıları kurmaya, kod depoları yapı ve bağımlılıkları öğrenmeye, ders kitabı tarzı türetmeler, sentetik yeniden ifadeler ve belgeler arası ilişki örnekleri ise örtük ilişkileri daha açık yazmaya elverişlidir. Veride yinelenenlerin ayıklanması, kalite süzmesi ve değerlendirme kümesi bulaşması denetimi yapılmalıdır.
+3. **Veri oranlarını yeteneklere göre belirleyin.** Veri; kitaplar, uzun belgeler ve kod depoları gibi doğal uzun metinleri; uzun metin araması, çok sıçramalı akıl yürütme, talimat takibi, bilgi toplama ve istatistik gibi uzun metin atomik yeteneklerini yansıtan düşünce zinciri verisini; planlama, araç seçimi ve çağrısı, uzun menzilli durum takibi ve hatadan kurtulma gibi Agent için zorunlu yetenekleri yansıtan Agent yürütme yörüngelerini içermelidir. Düşünce zinciri ve Agent yörüngesi verileri daha güçlü bir açık kaynak modelden damıtılabileceği gibi mevcut veri kümelerinden de alınabilir.
+4. **Her aşamada "çifte tekrar oynatma" yapın.** Birincisi, dili, bilgiyi ve kısa bağlam yeteneğini korumak için özgün kısa metin ve genel veridir. İkincisi "uzunluğu yükseltilmiş eski görevlerdir": modelin zaten yapabildiği kısa görevleri güncel uzunluktaki bağlama yerleştirin, ilgili bilgiyi ve çeldiricileri farklı konumlara koyun ve aynı yeteneğin daha uzun pencerede de geçerli kalıp kalmadığını sınayın. Genel veriyi tercihen temel modelin özgün ön eğitim kümesinden alın; erişilemiyorsa FineWeb-2 gibi açık bir ön eğitim külliyatı yerine geçebilir.
+5. **Ne zaman duracağınıza çok boyutlu kapılarla karar verin.** Eğitim loss'unun yanı sıra ayrılmış alan görevlerinin, genel yeteneklerin, mevcut talimat takibinin ve hedef görevin `pass@1`/`pass@k` değerlerini birlikte izleyin. Alan ölçütleri yükselirken genel koruma kümesi düşüyorsa karışım ya da öğrenme oranı fazla agresiftir; loss düşerken `pass@k` kımıldamıyorsa, verinin gereken yeteneği gerçekten kapsayıp kapsamadığını ve ardından bilgiye erişimi sağlayacak bir SFT'nin eksik olup olmadığını gözden geçirin.
 
-$$
-D_i=\alpha_iD_{\text{long}}+\beta_iD_{\text{atomic}}+\gamma_iD_{\text{agent}}+\delta_iD_{\text{replay}},
-\qquad \alpha_i+\beta_i+\gamma_i+\delta_i=1.
-$$
+Mid-training'in ardından LongBench v2, IFEval ve 7. bölümde anlatılan uçtan uca Agent değerlendirme kümeleriyle, modelin **farklı bağlam uzunluklarındaki uzun bağlam temel yeteneğinin** yitmediğini doğrulamak gerekir. Uzun bağlam yeteneği, uzun düşünce zinciri ve talimat takibi yeteneklerinin temelidir; onlar da araç çağrısı gibi pek çok üst düzey Agent yeteneğinin temelidir.
 
-Oranları belge sayısıyla değil **token** sayısıyla hesaplayın. $D_{\text{long}}$ kitap, uzun belge ve kod depolarıdır; $D_{\text{atomic}}$ erişim, çok adımlı akıl yürütme, talimat takibi, toplama ve istatistiği; $D_{\text{agent}}$ planlama, araç seçimi/çağrısı, uzun durum takibi ve hata toparlamayı kapsar. $D_{\text{replay}}$ hem genel/kısa veriyi hem de bilinen kısa görevlerin kanıt konumu ve çeldiricileri değiştirilerek mevcut uzunluğa “yükseltilmiş” sürümlerini tutar. Tekilleştirme, kalite süzme ve değerlendirme sızıntısı denetimi gerekir.
+- **Konum ve erişim**: tek iğne, çok iğne ve farklı konumlardan kilit bilgi çıkarımı;
+- **İlişki ve akıl yürütme**: paragraflar arası, belgeler arası ve çok sıçramalı ilişki takibi, çelişki çözümü ve kanıt birleştirme;
+- **Toplama ve istatistik**: uzun tablolardan ya da uzun günlüklerden bilgi derleme — sayma, gruplama, sıralama, karşılaştırma, eğilim çıkarma;
+- **Talimat takibi**: karmaşık talimatlara uyma yeteneği; çoklu talimat takibi, çelişki çözümü, öngörülen düşünme akışına uyma ve çıktı biçimine uyma dahil;
+- **Uzun zincirli düşünme**: karmaşık matematik, mantıksal akıl yürütme ve kod üretme problemlerini çözme;
+- **Agent atomik yetenekleri**: görev ayrıştırma, plan üretme, araç seçimi, argüman kurma, durum belleği ve başarısızlık sonrası toparlanma.
 
-Mid-training ayrıca nominal pencereyi **etkili hedef uzunluğa** güvenle taşırken uzun metin akıl yürütmesi, planlama ve araç kullanımı kazandırmalıdır. `max_position_embeddings` değerini 32K'dan 128K'ya çıkarmak yalnızca girdinin kabul edildiğini kanıtlar. Başlangıç modeli, hedef ve bütçeye göre 8K → 16K → 32K → 64K → 128K gibi bir müfredat kullanın[^ch8-36]. Her genişletmeden önce mevcut uzunlukta NIAH, erişim, çok adımlı akıl yürütme, toplama/istatistik, temel planlama ve araç seçimini tamamlayın.
+Olguların sık güncellenmesi ya da birincil kaynağın verilmesi gerekiyorsa, bilgiyi ağırlıklara yazmak yerine RAG hâlâ daha iyidir; Mid-training ise kararlı, hacimli ve içsel temsil oluşturması gereken alan bilgisi ve yetenekleri için daha uygundur. Büyük bir modele tam parametreli Mid-training uygulamak, küçük ölçekli SFT'ye kıyasla hem hesaplama hem unutma riski bakımından belirgin biçimde daha ağırdır; bu yüzden önce küçük ölçekli bir deneyle veri oranlarını doğrulayın, sonra eğitim bütçesini büyütün.
 
-$M(\theta,c,L)$, $\theta$ modelinin $c$ yeteneğinde $L$ uzunluğundaki puanıysa üç kapı kullanılır:
+> **Deney 8-5 ★★: Yeni Bir Dili Öğrenmek İçin Ön Eğitime Devam Etmek**
+>
+> Temel olarak Mistral 7B v0.3 alınır (ağırlıklı olarak İngilizceyle ön eğitilmiştir, Korece'yi neredeyse hiç anlamaz) ve Korece Vikipedi üzerinde ön eğitime devam edilerek Korece yeteneği kazandırılır: ön eğitimini tamamlamış bir model üzerinde yeni dil verisiyle dil modeli eğitimi sürdürülür. Model zaten genel temsillere sahiptir ve yalnızca yeni veri dağılımına uyum sağlaması gerekir; bu da sıfırdan eğitmekten çok daha ucuzdur. Deney, felaket unutmayı hafifletmek için yaklaşık %80 Korece + %20 İngilizce bir veri karışımı kullanır; bu, bu deneyin tercihidir, evrensel bir varsayılan değil. Son olarak Korece talimat verisiyle SFT yapılarak kullanışlı bir Korece sohbet yeteneği elde edilir. İki sorumluluk burada açıkça ayrılır: Mid-training önce Korece bilgi ve dil yeteneğini tamamlar, SFT ise modele Korece talimat almayı ve yanıtı düzenlemeyi öğretir.
+>
+> Deney, ön eğitime devam etmenin getirebileceği felaket unutmayı da gösterir: son aşamada Korece için kör değerlendirme puanları iyileşirken İngilizce yeteneği geriler. Ön eğitime devam etmek hedef dağılımı parametrelere yazabilir, ama koruma kümelerini, olgusal değerlendirmeyi ve veri kalitesi denetimini gereksiz kılmaz.
 
-$$
-\begin{aligned}
-M(\theta_i,c,L_i)&\geq\tau_{c,i},\\
-M(\theta_i,c,L_i)&\geq M(\theta_i,c,L_{i-1})-\epsilon_{\text{len}},\\
-M(\theta_i,c,L_{i-1})&\geq M(\theta_{i-1},c,L_{i-1})-\epsilon_{\text{retain}}.
-\end{aligned}
-$$
-
-Bunlar sırasıyla mevcut uzunlukta yeterlilik, uzatınca aynı yeteneğin anlamlı biçimde düşmemesi ve yeni aşamanın eski yeteneği unutmamasıdır. İkinci karşılaştırmada zorluğu eşlenmiş, yalnızca uzunluğu yükseltilmiş görevler kullanın; $\epsilon$ değerlerini yinelenen değerlendirmenin güven aralıklarından belirleyin. Bir yetenek geçemezse nominal pencereyi artırmak yerine ilgili atomik, mevcut-uzunluk veya replay verisini artırıp yeniden eğitin.
-
-| Yetenek | Benchmark | Ana tanı |
-| --- | --- | --- |
-| Konum, erişim, izleme, toplama | NIAH, RULER | Needle konumu/sayısı, çok adım, toplama ve uzunluğa göre bozulma; NIAH yalnızca smoke test |
-| Gerçekçi uzun belge akıl yürütmesi | LongBench, LongBench v2 | Tek/çok belgeli QA, uzun diyalog, bağlam içi öğrenme, yapılandırılmış veri; kategori ve uzunluk dilimleri |
-| Uzun kod anlama | LongBench v2 repository görevleri, LongCodeU | Kod birimleri, dosyalar arası ilişkiler, depo bütünü |
-| Planlama ve araç öğrenimi | PlanningArena ve önceki araç benchmark'ları | Ayrıştırma, seçim, bellek, argüman, durum doğruluğu |
-| Uçtan uca Agent | SWE-bench Verified, $\tau^2$-bench, Terminal-Bench | Gerçek uzun yörüngede plan, araç, toparlanma, tamamlama |
-
-RULER, NIAH'ı çoklu needle, çok adımlı izleme ve toplamaya genişletir[^ch8-37]; LongBench v2 gerçekçi belge, diyalog, repository ve yapılandırılmış veriyi kapsar[^ch8-38]; LongCodeU ve PlanningArena uzun kod ilişkileri ile planlama/araç öğrenimini tanılar[^ch8-39][^ch8-40]. Resmî test kümelerini yalnızca değerlendirmede kullanın; benzer yapılı ama çakışmayan örneklerle eğitin ve uzunluk, yetenek, hata türü bazında raporlayın. Tek NIAH veya leaderboard başarısı uzun bağlam muhakemesini kanıtlamaz.
-
-Güncellenmesi, kaynak gösterilmesi, erişimi denetlenmesi veya silinmesi gereken olgular RAG'da kalmalıdır. Büyük tam-parametre Mid-training'den önce karışımı küçük deneyle doğrulayın.
+Yeterli bilgi ve temel yetenek edinildikten sonradır ki aşağıdaki SFT, RL gibi eğitim sonrası yöntemlerle kullanışlı bir Agent kurulabilir.
 
 ## SFT (Denetimli İnce Ayar)
 
@@ -865,12 +851,6 @@ Bu bölüm, model parametrelerini güncelleyerek Agent'ın sürekli evrimini nas
 [^ch8-32]: Zheng, Chujie et al., “Stabilizing Reinforcement Learning with LLMs”, 2025. https://arxiv.org/abs/2512.01374
 [^ch8-33]: Zhong, Tianle et al., “Diagnosing Training Inference Mismatch in LLM Reinforcement Learning”, 2026. https://arxiv.org/abs/2605.14220
 [^ch8-34]: He, Horace and Thinking Machines Lab, “Defeating Nondeterminism in LLM Inference”, 2025. https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/
-[^ch8-35]: Gao, Tianyu et al., “How to Train Long-Context Language Models (Effectively)”, ACL, 2025. https://aclanthology.org/2025.acl-long.366/
-[^ch8-36]: Xiong, Wenhan et al., “Effective Long-Context Scaling of Foundation Models”, NAACL, 2024. https://aclanthology.org/2024.naacl-long.260/
-[^ch8-37]: Hsieh, Cheng-Ping et al., “RULER”, COLM, 2024. https://arxiv.org/abs/2404.06654
-[^ch8-38]: Bai, Yushi et al., “LongBench” and “LongBench v2”, ACL, 2024/2025. https://aclanthology.org/2025.acl-long.183/
-[^ch8-39]: Li, Jia et al., “Benchmarking Long-Context Language Models on Long Code Understanding”, ACL, 2025. https://aclanthology.org/2025.acl-long.1324/
-[^ch8-40]: Zheng, Zihan et al., “PlanningArena”, ACL, 2025. https://aclanthology.org/2025.acl-long.1499/
 
 ## Düşünce Soruları
 

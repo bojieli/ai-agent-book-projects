@@ -266,11 +266,7 @@ Pelatihan model bahasa mengikuti pipeline tiga langkah: "tokenization — pre-tr
 >
 > Eksperimen ini mengungkap paradigma dasar untuk pelatihan model multimodal: menggunakan kembali hasil pre-training unimodal dan mencapai cross-modal alignment dengan melatih projection layer yang ringan—efisien dan terukur, tetapi ekspresivitas terbatas dari projection layer dapat menjadi leher botol bagi pemahaman cross-modal yang mendalam. Memperluas arsitektur "vision encoder + projection layer + LLM" yang sama selangkah lebih jauh dengan membuat model menghasilkan actions akan menghasilkan model VLA (Vision-Language-Action) yang dirinci di Bab 6.
 
-> **Eksperimen 8-5 ★★: Continued Pre-training untuk Mempelajari Bahasa Baru**
->
-> Menggunakan Mistral 7B v0.3 sebagai model dasar—yang utamanya di-pre-train dalam bahasa Inggris dan hampir tidak memiliki pemahaman bahasa Korea—eksperimen ini memperkenalkan kemampuan bahasa Korea melalui continued pre-training pada Wikipedia Korea. Ini melakukan pelatihan tak terawasi pada data bahasa baru menggunakan model yang telah menyelesaikan pre-training. Model tersebut sudah memiliki kemampuan language modeling umum dan hanya perlu beradaptasi dengan distribusi data yang baru, menjadikan biayanya jauh lebih rendah daripada melatih dari awal. Poin engineering utamanya adalah menggunakan campuran data (~80% Korea + 20% Inggris) untuk memitigasi catastrophic forgetting: proporsi bahasa target yang terlalu tinggi menyebabkan degradasi pada bahasa aslinya, sementara proporsi yang terlalu rendah menghasilkan efisiensi pembelajaran yang tidak memadai. Terakhir, SFT dilakukan dengan data instruksi bahasa Korea untuk mendapatkan kemampuan percakapan bahasa Korea yang praktis. Kesimpulan dari eksperimen ini akan digunakan kembali dalam "The Complete Post-Training Landscape and Practical Tips" di akhir bab ini: untuk membuat model mengingat sejumlah besar pengetahuan domain baru, andalkan continued pre-training, bukan SFT.
-
-Ketiga eksperimen pre-training tersebut secara kolektif mengungkap sebuah pola: ketika anggaran terbatas, perbaikan algoritma dan inovasi arsitektur menawarkan nilai yang lebih baik daripada sekadar meningkatkan ukuran skala. Lebih penting lagi, pre-training membekali model dengan pengetahuan deskriptif dan kemampuan language modeling, tetapi kurang dalam instruction following yang terstruktur dan perilaku berorientasi tugas—inilah celah yang tepat yang perlu diisi oleh SFT.
+Dua eksperimen pra-pelatihan itu bersama-sama menyingkap satu pola: ketika anggaran terbatas, perbaikan algoritma dan inovasi arsitektur lebih hemat biaya daripada sekadar memperbesar skala. Yang lebih penting, pra-pelatihan memberi model pengetahuan deskriptif dan kemampuan pemodelan bahasa, tetapi tidak memberi kepatuhan instruksi yang terstruktur maupun perilaku berorientasi tugas. Dan jika pra-pelatihan umum memang tidak pernah mencakup bahasa atau domain target, langsung masuk ke SFT/RL pun tidak dapat memintas celah itu; justru inilah yang hendak diselesaikan Mid-training.
 
 Dengan kemampuan dasar dari pre-training, langkah selanjutnya adalah mengubah model tujuan umum menjadi sebuah Agent praktis melalui post-training. Tahap pertama dari post-training adalah Supervised Fine-Tuning (SFT).
 
@@ -285,42 +281,32 @@ Mid-training terutama menutup dua jenis celah:
 
 Ini sekaligus menjelaskan mengapa SFT tidak boleh dijadikan sarana utama untuk menyuntikkan pengetahuan. SFT tentu bisa menghafal sedikit fakta dan sering diletakkan sesudah Mid-training untuk mengajari model cara menjawab pertanyaan domain; tetapi sejumlah kecil pasangan QA hanya mencakup ragam pertanyaan yang terbatas, dan SFT lebih unggul melatih "cara mengakses dan mengungkapkan" ketimbang memikul pengetahuan mentah yang besar dan saling berkaitan. Sebaliknya, turunnya loss language model pada teks domain berkat Mid-training juga tidak menjamin model akan otomatis mengeluarkan pengetahuan itu saat ditanya pengguna. Penelitian menunjukkan bahwa urutan continued pre-training dan instruction tuning serta cara data disusun sangat memengaruhi apakah pengetahuan dapat diakses dalam bentuk QA[^ch8-31]. Resep yang tangguh umumnya: Mid-training menyerap pengetahuan dan kapabilitas → SFT skala kecil membangun format output → setelah tingkat keberhasilan bukan nol, RL meningkatkan keberhasilan dan generalisasi.
 
-### Campuran Data dan Kurikulum Konteks Panjang
+### Bagaimana menyusun data Mid-training
 
-Campuran pada tahap panjang $i$ dapat ditulis:
+1. **Turunkan kebutuhan data dari distribusi kegagalan.** Pertama, pilah evaluasi menurut topik, bahasa, jenis dokumen, pola kode, dan panjang konteks untuk memastikan `pass@k` yang rendah berasal dari celah fondasi yang mana; tambahkan data hanya untuk celah pengetahuan dan kapabilitas, agar kesalahan format output tidak salah didiagnosis sebagai kekurangan pengetahuan.
+2. **Susun korpus target berdensitas tinggi.** Dokumen asli cocok untuk membangun kaitan istilah dan fakta, repositori kode cocok untuk mempelajari struktur dan dependensi, sedangkan penurunan bergaya buku ajar, parafrasa sintetis, dan sampel keterkaitan lintas dokumen cocok untuk menuliskan hubungan implisit secara lebih eksplisit. Data perlu dideduplikasi, disaring mutunya, dan diperiksa kontaminasinya terhadap set evaluasi.
+3. **Atur bauran data menurut kapabilitas.** Data perlu mencakup teks panjang alami seperti buku, dokumen panjang, dan repositori kode; data rantai pemikiran yang mewujudkan kapabilitas atomik teks panjang seperti pencarian pada teks panjang, penalaran multi-hop, kepatuhan instruksi, agregasi informasi dan statistik; serta trajektori eksekusi Agent yang mewujudkan kapabilitas wajib Agent seperti perencanaan, pemilihan dan pemanggilan tool, pelacakan status jarak jauh, dan pemulihan dari kesalahan. Data rantai pemikiran dan trajektori Agent dapat didistilasi dari model open source yang lebih kuat, atau memakai dataset yang sudah ada.
+4. **Lakukan "replay ganda" di setiap tahap.** Yang pertama adalah teks pendek asli dan data umum, untuk mempertahankan bahasa, pengetahuan, dan kemampuan konteks pendek. Yang kedua adalah "tugas lama yang dinaikkan panjangnya": tugas pendek yang sudah dikuasai model ditaruh ke dalam konteks sepanjang saat ini, dengan informasi relevan dan distraktor disebar di berbagai posisi, untuk menguji apakah kapabilitas yang sama masih berlaku pada jendela yang lebih panjang. Data umum sebaiknya berasal dari set pra-pelatihan asli base model; bila tidak tersedia, korpus pra-pelatihan terbuka seperti FineWeb-2 dapat menjadi pengganti.
+5. **Tentukan kapan berhenti dengan gerbang multidimensi.** Selain loss pelatihan, pantau juga `pass@1`/`pass@k` pada tugas domain hold-out, kapabilitas umum, kepatuhan instruksi yang sudah ada, dan tugas target. Bila metrik domain naik tetapi set retensi umum turun, berarti bauran atau learning rate terlalu agresif; bila loss turun tetapi `pass@k` tak bergerak, periksa apakah data benar-benar mencakup kapabilitas yang dibutuhkan dan apakah sesudahnya kurang SFT untuk mengakses pengetahuan.
 
-$$
-D_i=\alpha_iD_{\text{long}}+\beta_iD_{\text{atomic}}+\gamma_iD_{\text{agent}}+\delta_iD_{\text{replay}},
-\qquad \alpha_i+\beta_i+\gamma_i+\delta_i=1.
-$$
+Setelah Mid-training, perlu digunakan set evaluasi seperti LongBench v2, IFEval, dan Agent ujung-ke-ujung yang dibahas di Bab 7 untuk memverifikasi bahwa **kapabilitas dasar konteks panjang pada berbagai panjang konteks** tidak hilang. Kapabilitas konteks panjang adalah fondasi bagi rantai pemikiran panjang dan kepatuhan instruksi, dan keduanya menjadi fondasi bagi banyak kapabilitas Agent tingkat lebih tinggi seperti pemanggilan tool.
 
-Hitung rasio berdasarkan **token**, bukan jumlah dokumen. $D_{\text{long}}$ berisi buku, dokumen panjang, dan repository kode; $D_{\text{atomic}}$ melatih retrieval, penalaran multi-hop, instruction following, agregasi, dan statistik; $D_{\text{agent}}$ memuat planning, pemilihan/pemanggilan tool, pelacakan state jangka panjang, dan pemulihan error. $D_{\text{replay}}$ harus menyimpan data umum/pendek serta tugas lama yang sudah dikuasai tetapi “diangkat” ke panjang saat ini dengan posisi bukti dan distraktor yang bervariasi. Lakukan deduplikasi, filter mutu, dan pemeriksaan kontaminasi evaluasi.
+- **Posisi dan pencarian**: ekstraksi informasi kunci satu jarum, banyak jarum, dan pada posisi berbeda;
+- **Relasi dan penalaran**: pelacakan relasi lintas paragraf, lintas dokumen, dan multi-hop, penyelesaian kontradiksi, serta perangkaian bukti;
+- **Agregasi dan statistik**: merangkum informasi dari tabel atau log panjang, seperti menghitung, mengelompokkan, mengurutkan, membandingkan, dan menyimpulkan tren;
+- **Kepatuhan instruksi**: kemampuan mengikuti instruksi kompleks, termasuk banyak instruksi sekaligus, penyelesaian kontradiksi, kepatuhan pada alur berpikir, dan kepatuhan format output;
+- **Berpikir rantai panjang**: menyelesaikan soal matematika, penalaran logika, dan pembuatan kode yang rumit;
+- **Kapabilitas atomik Agent**: dekomposisi tugas, penyusunan rencana, pemilihan tool, penyusunan argumen, memori status, dan pemulihan setelah gagal.
 
-Mid-training juga harus mengubah context window nominal menjadi **window efektif** sambil memasukkan penalaran panjang, planning, dan tool use. Mengubah `max_position_embeddings` dari 32K ke 128K hanya membuktikan input diterima. Gunakan kurikulum seperti 8K → 16K → 32K → 64K → 128K, disesuaikan dengan model, target, dan anggaran[^ch8-36]. Sebelum memperpanjang, selesaikan retrieval, NIAH, multi-hop, agregasi/statistik, planning dasar, dan pemilihan tool pada panjang saat ini.
+Jika fakta perlu sering diperbarui atau harus disertai sumber aslinya, RAG tetap lebih baik daripada menuliskan pengetahuan ke bobot; Mid-training lebih cocok untuk pengetahuan dan kapabilitas domain yang stabil, berskala besar, dan perlu membentuk representasi internal. Mid-training penuh parameter pada model besar jelas lebih mahal secara komputasi dan lebih berisiko melupakan dibanding SFT skala kecil, sehingga bauran data sebaiknya diverifikasi lebih dulu lewat eksperimen kecil sebelum anggaran pelatihan diperbesar.
 
-Jika $M(\theta,c,L)$ adalah skor model $\theta$ untuk kapabilitas $c$ pada panjang $L$, gunakan tiga gerbang:
+> **Eksperimen 8-5 ★★: Continued Pre-training untuk Mempelajari Bahasa Baru**
+>
+> Dengan Mistral 7B v0.3 sebagai basis (terutama dipra-latih dengan bahasa Inggris dan nyaris tidak memahami bahasa Korea), kemampuan bahasa Korea disuntikkan melalui continued pre-training pada Wikipedia bahasa Korea—melanjutkan pelatihan language model dengan data bahasa baru di atas model yang sudah dipra-latih. Model sudah memiliki representasi umum dan hanya perlu menyesuaikan diri dengan distribusi data baru, sehingga biayanya jauh lebih rendah daripada melatih dari nol. Eksperimen ini memakai bauran sekitar 80% bahasa Korea + 20% bahasa Inggris untuk meredam catastrophic forgetting; itu pilihan eksperimen ini, bukan nilai baku universal. Terakhir, SFT dengan data instruksi bahasa Korea menghasilkan kemampuan percakapan Korea yang praktis. Pembagian perannya jelas: Mid-training lebih dulu melengkapi pengetahuan dan kemampuan bahasa Korea, lalu SFT mengajarkan cara menerima instruksi dan menyusun jawaban dalam bahasa Korea.
+>
+> Eksperimen ini sekaligus memperlihatkan catastrophic forgetting yang bisa ditimbulkan continued pre-training: pada tahap akhir penilaian buta untuk bahasa Korea membaik, sementara kemampuan bahasa Inggris menurun. Continued pre-training dapat menuliskan distribusi target ke dalam parameter, tetapi tidak membebaskan kita dari set retensi, evaluasi faktual, dan audit mutu data.
 
-$$
-\begin{aligned}
-M(\theta_i,c,L_i)&\geq\tau_{c,i},\\
-M(\theta_i,c,L_i)&\geq M(\theta_i,c,L_{i-1})-\epsilon_{\text{len}},\\
-M(\theta_i,c,L_{i-1})&\geq M(\theta_{i-1},c,L_{i-1})-\epsilon_{\text{retain}}.
-\end{aligned}
-$$
-
-Artinya: lolos pada panjang sekarang, kapabilitas yang sama tidak turun secara material ketika konteks memanjang, dan tahap baru tidak melupakan kapabilitas lama. Bandingkan tugas yang tingkat kesulitannya sama dan hanya dinaikkan panjangnya; tentukan $\epsilon$ dari confidence interval evaluasi berulang. Bila satu bucket gagal, tambah data atomik, data panjang saat ini, atau replay sebelum memperpanjang window nominal.
-
-| Kapabilitas | Benchmark | Diagnosis utama |
-| --- | --- | --- |
-| Posisi, retrieval, tracking, agregasi | NIAH, RULER | Degradasi menurut posisi/jumlah needle, multi-hop, agregasi, dan panjang; NIAH hanya smoke test |
-| Penalaran dokumen realistis | LongBench, LongBench v2 | QA satu/banyak dokumen, dialog panjang, in-context learning, data terstruktur per kategori dan panjang |
-| Pemahaman kode panjang | Tugas repository LongBench v2, LongCodeU | Unit kode, relasi antar-file, pemahaman repository |
-| Planning dan tool learning | PlanningArena dan benchmark tool sebelumnya | Dekomposisi, pilihan, memori, argumen, dan state |
-| Agent end-to-end | SWE-bench Verified, $\tau^2$-bench, Terminal-Bench | Planning, tool, recovery, dan penyelesaian pada trajektori nyata |
-
-RULER memperluas NIAH ke multi-needle, multi-hop, dan agregasi[^ch8-37]; LongBench v2 mencakup dokumen, dialog, repository, dan data terstruktur realistis[^ch8-38]; LongCodeU dan PlanningArena mendiagnosis kode panjang serta planning/tool learning[^ch8-39][^ch8-40]. Simpan test set resmi hanya untuk evaluasi, latih dengan contoh serupa tetapi tidak bertumpang tindih, dan laporkan per panjang, kapabilitas, dan jenis kegagalan. Lulus NIAH atau satu leaderboard tidak membuktikan penalaran konteks panjang.
-
-Fakta yang perlu diperbarui, dikutip, dikontrol aksesnya, atau dihapus tetap lebih tepat di RAG. Validasi campuran lewat eksperimen kecil sebelum full-parameter Mid-training berskala besar.
+Setelah pengetahuan dan kapabilitas dasarnya memadai, barulah metode pasca-pelatihan seperti SFT dan RL di bawah ini dapat dipakai untuk membangun Agent yang praktis.
 
 ## SFT (Supervised Fine-Tuning)
 
@@ -863,12 +849,6 @@ Bab ini menjawab pertanyaan bagaimana mewujudkan evolusi berkelanjutan Agent lew
 [^ch8-32]: Zheng, Chujie et al., “Stabilizing Reinforcement Learning with LLMs”, 2025. https://arxiv.org/abs/2512.01374
 [^ch8-33]: Zhong, Tianle et al., “Diagnosing Training Inference Mismatch in LLM Reinforcement Learning”, 2026. https://arxiv.org/abs/2605.14220
 [^ch8-34]: He, Horace and Thinking Machines Lab, “Defeating Nondeterminism in LLM Inference”, 2025. https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/
-[^ch8-35]: Gao, Tianyu et al., “How to Train Long-Context Language Models (Effectively)”, ACL, 2025. https://aclanthology.org/2025.acl-long.366/
-[^ch8-36]: Xiong, Wenhan et al., “Effective Long-Context Scaling of Foundation Models”, NAACL, 2024. https://aclanthology.org/2024.naacl-long.260/
-[^ch8-37]: Hsieh, Cheng-Ping et al., “RULER”, COLM, 2024. https://arxiv.org/abs/2404.06654
-[^ch8-38]: Bai, Yushi et al., “LongBench” and “LongBench v2”, ACL, 2024/2025. https://aclanthology.org/2025.acl-long.183/
-[^ch8-39]: Li, Jia et al., “Benchmarking Long-Context Language Models on Long Code Understanding”, ACL, 2025. https://aclanthology.org/2025.acl-long.1324/
-[^ch8-40]: Zheng, Zihan et al., “PlanningArena”, ACL, 2025. https://aclanthology.org/2025.acl-long.1499/
 
 ## Pertanyaan Pemikiran
 

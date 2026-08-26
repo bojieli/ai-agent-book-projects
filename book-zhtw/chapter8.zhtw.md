@@ -271,12 +271,7 @@ RL 後訓練再用外部獎勵教會 LLM 在特定任務中更有效地利用這
 >
 > 本實驗揭示了多模態模型訓練的基本範式：複用單模態預訓練成果，透過訓練一個輕量投影層實現跨模態對齊——高效且可擴展，但投影層的表達能力有限，可能成為跨模態深層理解的瓶頸。同樣的「視覺編碼器 + 投影層 + LLM」骨架再向前延伸一步、讓模型輸出動作，就是第六章介紹的 VLA（視覺-語言-動作）模型。
 
-> **實驗 8-5 ★★：繼續預訓練學習新語言**
->
-> 以 Mistral 7B v0.3 為基礎（主要用英語預訓練，對韓語幾乎沒有理解能力），透過韓語維基百科繼續預訓練來注入韓語能力——在已完成預訓練的模型上用新語言資料繼續做無監督訓練，模型已具備通用語言建模能力，只需適應新的資料分佈，成本遠低於從頭訓練。關鍵工程點是用混合資料（約 80% 韓語 + 20% 英語）緩解災難性遺忘：目標語言佔比過高會導致原語言退化，佔比過低則學習效率不足。最後用韓語指令資料做 SFT，獲得實用的韓語對話能力。本實驗的結論會在本章末尾的完整圖景中再次用到：要讓模型記住大量新領域知識，靠的是繼續預訓練而非 SFT。
->
-
-三個預訓練實驗共同揭示了一個規律：預算受限時，演算法改進與架構創新比單純擴大規模更具價效比。預訓練提供描述性知識與語言建模能力，卻缺少結構化指令遵循和任務導向行為；如果通用預訓練本身沒有覆蓋目標語言或領域，直接進入 SFT/RL 也繞不過這個缺口，這正是 Mid-training 要解決的問題。
+兩個預訓練實驗共同揭示了一個規律：在預算受限時，演算法改進與架構創新比單純擴大規模更具性價比。更重要的是，預訓練賦予模型的是描述性知識與語言建模能力，缺乏結構化的指令遵循和任務導向行為。可是，如果通用預訓練本身沒有覆蓋目標語言或領域，直接進入 SFT/RL 也無法繞過這個缺口；這正是 Mid-training 要解決的問題。
 
 ## Mid-training：補知識與基礎能力
 
@@ -289,42 +284,32 @@ RL 後訓練再用外部獎勵教會 LLM 在特定任務中更有效地利用這
 
 SFT 可記住少量事實，也適合在 Mid-training 後教模型如何回答領域問題，但少量 QA 只涵蓋有限問法，擅長的是「如何存取與表達」，不適合承載大量互相關聯的原始知識。穩健配方通常是 Mid-training 吸收知識與能力 → 小規模 SFT 建立輸出協定 → 成功率非零後再用 RL 提高成功率與泛化[^ch8-31]。
 
-### Mid-training 資料與長上下文課程
+### Mid-training 資料如何構造
 
-每個長度階段 $i$ 的資料混合可寫成：
+1. **從失敗分布反推資料。** 先按主題、語言、文件型別、程式碼模式與上下文長度切分評估，確認低 `pass@k` 來自哪類底座缺口；只針對知識和能力缺口補資料，避免把輸出格式錯誤誤診成知識不足。
+2. **構造高密度目標語料。** 原始文件適合建立術語和事實關聯，程式碼倉庫適合學習結構與依賴，教材式推導、合成釋義和跨文件關聯樣本適合把隱含關係寫得更明確。資料要做去重、品質過濾和評估集汙染檢查。
+3. **按能力進行資料配比。** 資料需要包括書籍、長文件和程式碼倉庫等自然長文本；體現長文本檢索、多跳推理、指令遵循、資訊聚合與統計等長文本原子能力的思維鏈資料；體現規劃、工具選擇與呼叫、長程狀態追蹤和錯誤恢復等 Agent 必需能力的 Agent 執行軌跡。其中思維鏈和 Agent 執行軌跡資料可以從較強的開源模型蒸餾，也可以使用現有資料集。
+4. **在每個階段做「雙重回放」。** 一類是原始短文本和通用資料，用來保留語言、知識與短上下文能力；另一類是「長度提升後的舊任務」：把模型已經會做的短任務放進當前長度的上下文，在不同位置加入相關資訊和干擾項，檢驗同一能力在更長視窗中是否仍然成立。通用資料最好來自基模的原始預訓練集；無法取得時，可以用 FineWeb-2 等開源預訓練語料替代。
+5. **用多維門禁決定何時停止。** 除訓練 loss 外，同時追蹤留出領域任務、通用能力、原有指令遵循和目標任務的 `pass@1`/`pass@k`。領域指標上升但通用保留集下降，說明混合或學習率過激；loss 下降而 `pass@k` 不動，則要檢查資料是否真正覆蓋所需能力，以及後續是否缺少存取知識的 SFT。
 
-$$
-D_i=\alpha_iD_{\text{long}}+\beta_iD_{\text{atomic}}+\gamma_iD_{\text{agent}}+\delta_iD_{\text{replay}},
-\qquad \alpha_i+\beta_i+\gamma_i+\delta_i=1.
-$$
+在 Mid-training 後，需要使用 LongBench v2、IFEval、第七章所述的端到端 Agent 等評估資料集，驗證模型在**不同上下文長度下的長上下文基礎能力**沒有丟失。長上下文能力是長思維鏈能力和指令遵循能力的基礎，而這些能力又是 Agent 工具呼叫等多項高階能力的基礎。
 
-比例應按 **token** 而非文件數計算，否則少量超長文件會悄悄主宰更新。$D_{\text{long}}$ 是書籍、長文件與程式碼庫等自然長文本；$D_{\text{atomic}}$ 訓練檢索、多跳推理、指令遵循、資訊聚合與統計等原子能力；$D_{\text{agent}}$ 包含規劃、工具選擇與呼叫、長程狀態追蹤及錯誤恢復軌跡；$D_{\text{replay}}$ 則同時回放兩類舊資料：原始短文本／通用資料，以及把既會的短任務「抬升」到當前長度、加入不同位置線索與干擾項的舊任務。所有語料都要去重、過濾品質並檢查評估集污染。
+- **位置與檢索**：單針、多針、不同位置的關鍵資訊提取；
+- **關係與推理**：跨段落、多文件、多跳關係追蹤，矛盾消解和證據組合；
+- **聚合與統計**：從長表格或長日誌中彙總資訊，如計數、分組、排序、比較、趨勢歸納；
+- **指令遵循**：複雜指令的遵循能力，包括多指令遵循、矛盾消解、思考流程遵循、輸出格式遵循等；
+- **長鏈思考**：解決複雜的數學、邏輯推理、程式碼生成問題；
+- **Agent 原子能力**：任務分解、計劃生成、工具選擇、參數構造、狀態記憶和失敗後的恢復。
 
-Mid-training 對 Agent 還有一項重要責任：把上下文視窗**穩定地擴到有效目標長度**，並在過程中注入長文本推理、規劃與工具使用能力。只調位置編碼或把 `max_position_embeddings` 從 32K 改成 128K，只證明模型能接收輸入，不代表能在整個視窗內檢索、聚合與行動。較穩健的方法是長度課程，例如 8K → 16K → 32K → 64K → 128K；實際階梯應依起始模型、目標長度與算力調整，不必機械式翻倍[^ch8-36]。
+如果事實需要頻繁更新或必須給出原始出處，RAG 仍優於把知識寫進權重；Mid-training 更適合穩定、規模較大、需要形成內部表徵的領域知識與能力。對大模型做全參數 Mid-training 的計算和遺忘風險都明顯高於小規模 SFT，因此要先用小規模實驗驗證資料配比，再擴大訓練預算。
 
-每次擴窗前，都先在當前長度完成長文本檢索、NIAH、跨段推理、聚合統計、基礎規劃與工具選擇等原子能力；每一階段都保留短資料與前序長度的 replay。令 $M(\theta,c,L)$ 表示模型 $\theta$ 在能力 $c$、長度 $L$ 上的分數，擴到 $L_i$ 前可使用三重門檻：
+> **實驗 8-5 ★★：繼續預訓練學習新語言**
+>
+> 以 Mistral 7B v0.3 為基礎（主要用英語預訓練，對韓語幾乎沒有理解能力），透過韓語維基百科繼續預訓練來注入韓語能力——在已完成預訓練的模型上用新語言資料繼續做語言模型訓練，模型已具備通用表徵，只需適應新的資料分佈，成本遠低於從頭訓練。該實驗使用約 80% 韓語 + 20% 英語的資料配比來緩解災難性遺忘；這只是該實驗的選擇，不是通用預設值。最後用韓語指令資料做 SFT，獲得實用的韓語對話能力。它把兩種職責分得很清楚：Mid-training 先補韓語知識與語言能力，SFT 再教模型如何用韓語接受指令和組織回答。
+>
+> 本實驗也說明繼續預訓練可能帶來的災難性遺忘問題：韓語最終階段的盲評分改善，英語能力卻有下降。繼續預訓練可以把目標分佈寫進參數，但不能免除保留集、事實評估和資料品質稽核。
 
-$$
-\begin{aligned}
-M(\theta_i,c,L_i)&\geq\tau_{c,i} &&\text{（當前長度達標）},\\
-M(\theta_i,c,L_i)&\geq M(\theta_i,c,L_{i-1})-\epsilon_{\text{len}} &&\text{（加長後能力不顯著衰退）},\\
-M(\theta_i,c,L_{i-1})&\geq M(\theta_{i-1},c,L_{i-1})-\epsilon_{\text{retain}} &&\text{（新階段未遺忘舊能力）}.
-\end{aligned}
-$$
-
-第二個條件必須使用**難度匹配、長度抬升**的任務，否則不同長度的題目難度不同，分數無法直接比較。$epsilon_{\text{len}}$ 與 $epsilon_{\text{retain}}$ 應由重複評估的信賴區間決定，而非武斷設為零。任一關鍵能力未過門檻，就增加相應原子能力、當前長度或 replay 資料後繼續訓練，不要只增加標稱視窗。
-
-| 能力面向 | 可用 benchmark | 主要診斷 |
-| --- | --- | --- |
-| 位置、檢索、追蹤與聚合 | NIAH、RULER | 按針的位置與數量、多跳追蹤、聚合任務及長度看退化；NIAH 只是基礎煙霧測試 |
-| 真實長文件推理 | LongBench、LongBench v2 | 單／多文件問答、長對話、上下文學習與結構化資料；按類別和長度切片 |
-| 長程式碼理解 | LongBench v2 repository 任務、LongCodeU | 程式碼單元感知、跨檔案／跨單元關係與 repository 級理解 |
-| 規劃與工具學習 | PlanningArena 與本書前述工具 benchmark | 任務分解、工具選擇、上下文記憶、參數與狀態正確性 |
-| 端到端 Agent | SWE-bench Verified、$\tau^2$-bench、Terminal-Bench 等 | 在真實長軌跡中驗證規劃、工具、恢復與完成度 |
-
-RULER 把單針 NIAH 擴充到多針檢索、多跳追蹤與聚合[^ch8-37]；LongBench v2 涵蓋真實多文件、長對話、程式碼庫和長結構資料任務[^ch8-38]；LongCodeU 與 PlanningArena 分別補充長程式碼關係和規劃／工具學習診斷[^ch8-39][^ch8-40]。官方測試集只能用於評估，訓練應使用結構相似但不重疊的樣本，並按長度、能力桶與失敗類型報告結果。通過單一程式碼或 Agent 榜單仍可能掩蓋局部退化；只通過 NIAH 更不代表具備長上下文推理。
-
-若事實需要頻繁更新、引用、權限控制或刪除，RAG 仍優於寫進權重。全參 Mid-training 的算力與遺忘風險也高於小規模 SFT，因此應先以小實驗驗證資料配比，再擴大預算。有了足夠知識與基礎能力，才進入下面的 SFT 與 RL。
+具備足夠的知識與基礎能力後，才能使用下面的 SFT、RL 等後訓練方法構建實用的 Agent。
 
 ## SFT（監督微調）
 
@@ -870,12 +855,6 @@ Mid-training、SFT 與 RL 不是同一種「微調」的不同強度，而分別
 [^ch8-32]: Zheng, Chujie et al., “Stabilizing Reinforcement Learning with LLMs: Formulation and Practices”, 2025. arXiv:2512.01374. https://arxiv.org/abs/2512.01374
 [^ch8-33]: Zhong, Tianle et al., “Diagnosing Training Inference Mismatch in LLM Reinforcement Learning”, 2026. arXiv:2605.14220. https://arxiv.org/abs/2605.14220
 [^ch8-34]: He, Horace and Thinking Machines Lab, “Defeating Nondeterminism in LLM Inference”, 2025. https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/
-[^ch8-35]: Gao, Tianyu et al., “How to Train Long-Context Language Models (Effectively)”, ACL, 2025. https://aclanthology.org/2025.acl-long.366/
-[^ch8-36]: Xiong, Wenhan et al., “Effective Long-Context Scaling of Foundation Models”, NAACL, 2024. https://aclanthology.org/2024.naacl-long.260/
-[^ch8-37]: Hsieh, Cheng-Ping et al., “RULER: What’s the Real Context Size of Your Long-Context Language Models?”, COLM, 2024. https://arxiv.org/abs/2404.06654
-[^ch8-38]: Bai, Yushi et al., “LongBench: A Bilingual, Multitask Benchmark for Long Context Understanding”, ACL, 2024. https://aclanthology.org/2024.acl-long.172/; Bai, Yushi et al., “LongBench v2: Towards Deeper Understanding and Reasoning on Realistic Long-context Multitasks”, ACL, 2025. https://aclanthology.org/2025.acl-long.183/
-[^ch8-39]: Li, Jia et al., “Benchmarking Long-Context Language Models on Long Code Understanding”, ACL, 2025. https://aclanthology.org/2025.acl-long.1324/
-[^ch8-40]: Zheng, Zihan et al., “PlanningArena: A Modular Benchmark for Multidimensional Evaluation of Planning and Tool Learning”, ACL, 2025. https://aclanthology.org/2025.acl-long.1499/
 
 ## 思考題
 

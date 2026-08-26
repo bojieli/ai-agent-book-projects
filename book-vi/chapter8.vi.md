@@ -266,11 +266,7 @@ Về vị trí và sức mạnh tổng hợp tương ứng của ba mô hình In
 >
 > Thử nghiệm này cho thấy mô hình cơ bản của đào tạo mô hình đa phương thức: sử dụng lại kết quả đào tạo trước một phương thức và đạt được sự liên kết giữa các phương thức bằng cách đào tạo lớp chiếu nhẹ - hiệu quả và có thể mở rộng, nhưng lớp chiếu có khả năng biểu đạt hạn chế và có thể trở thành nút thắt cổ chai cho sự hiểu biết sâu sắc về đa phương thức. Bộ khung "bộ mã hóa hình ảnh + lớp chiếu + LLM" tương tự được mở rộng thêm một bước nữa để cho phép mô hình đưa ra các hành động, đó là mô hình VLA (Ngôn ngữ hình ảnh-Hành động) đã được giới thiệu trong Chương 6.
 
-> **Thử nghiệm 8-5 ★★: Tiếp tục đào tạo trước để học ngôn ngữ mới**
->
-> Dựa trên Mistral 7B v0.3 (chủ yếu được đào tạo trước bằng tiếng Anh, hầu như không hiểu tiếng Hàn), tiếp tục đào tạo trước qua Wikipedia tiếng Hàn để bổ sung năng lực tiếng Hàn - tiếp tục đào tạo không giám sát với dữ liệu ngôn ngữ mới trên mô hình được đào tạo trước. Mô hình đã có khả năng lập mô hình ngôn ngữ chung và chỉ cần thích ứng với việc phân phối dữ liệu mới. Chi phí thấp hơn nhiều so với đào tạo từ đầu. Điểm kỹ thuật quan trọng là sử dụng dữ liệu hỗn hợp (khoảng 80% tiếng Hàn + 20% tiếng Anh) để giảm bớt tình trạng quên thảm họa: tỷ lệ ngôn ngữ mục tiêu quá cao sẽ dẫn đến sự xuống cấp của ngôn ngữ gốc và tỷ lệ quá thấp sẽ dẫn đến hiệu quả học tập không đủ. Cuối cùng, sử dụng dữ liệu lệnh tiếng Hàn để làm SFT để có được kỹ năng đàm thoại tiếng Hàn thực tế. Kết luận của thí nghiệm này sẽ được sử dụng lại trong bức tranh hoàn chỉnh ở cuối chương này: để mô hình ghi nhớ được nhiều kiến thức miền mới, điều đó phụ thuộc vào việc tiếp tục đào tạo trước chứ không phải SFT.
-
-Ba thử nghiệm trước khi đào tạo cùng nhau cho thấy một mô hình: khi ngân sách có hạn, việc cải tiến thuật toán và đổi mới kiến trúc sẽ tiết kiệm chi phí hơn là chỉ đơn giản mở rộng quy mô. Quan trọng hơn, đào tạo trước cung cấp cho mô hình kiến thức mô tả và khả năng mô hình hóa ngôn ngữ, thiếu hướng dẫn có cấu trúc và hành vi định hướng nhiệm vụ - đây là khoảng trống mà SFT cần lấp đầy.
+Hai thử nghiệm tiền huấn luyện cùng hé lộ một quy luật: khi ngân sách hạn chế, cải tiến thuật toán và đổi mới kiến trúc có tính hiệu quả chi phí cao hơn việc chỉ mở rộng quy mô. Quan trọng hơn, tiền huấn luyện trao cho mô hình tri thức mô tả và năng lực mô hình hóa ngôn ngữ, chứ không trao khả năng tuân thủ chỉ dẫn có cấu trúc hay hành vi hướng nhiệm vụ. Mà nếu tiền huấn luyện tổng quát vốn không phủ ngôn ngữ hay lĩnh vực đích, thì đi thẳng vào SFT/RL cũng không vòng qua được khoảng trống ấy; đó chính là vấn đề Mid-training phải giải quyết.
 
 Với các khả năng cơ bản của đào tạo trước, bước tiếp theo là biến mô hình chung thành Agent thực tế thông qua post-training. Giai đoạn đầu tiên của quá trình post-training là tinh chỉnh có giám sát (SFT).
 
@@ -285,42 +281,32 @@ Mid-training chủ yếu lấp hai loại khoảng trống:
 
 Điều này cũng cho thấy vì sao không nên xem SFT là công cụ chính để nạp kiến thức. SFT dĩ nhiên ghi nhớ được một ít sự kiện và thường được đặt sau Mid-training để dạy mô hình cách trả lời câu hỏi chuyên ngành; nhưng một lượng nhỏ cặp hỏi–đáp chỉ phủ được số cách hỏi hữu hạn, và SFT giỏi huấn luyện "cách truy xuất và cách diễn đạt" hơn là gánh vác khối kiến thức gốc đồ sộ và liên kết chằng chịt. Ngược lại, việc Mid-training kéo giảm loss mô hình ngôn ngữ trên văn bản chuyên ngành cũng không bảo đảm mô hình sẽ tự động lấy kiến thức ra theo câu hỏi của người dùng. Nghiên cứu đã cho thấy thứ tự giữa tiền huấn luyện tiếp nối và huấn luyện theo chỉ dẫn, cùng cách tổ chức dữ liệu, ảnh hưởng đáng kể đến việc kiến thức có truy cập được dưới dạng hỏi–đáp hay không[^ch8-31]. Công thức bền vững thường là: Mid-training hấp thụ kiến thức và năng lực → SFT quy mô nhỏ dựng định dạng đầu ra → khi tỉ lệ thành công đã khác 0 thì dùng RL nâng tỉ lệ thành công và khả năng khái quát.
 
-### Phối trộn dữ liệu và chương trình học ngữ cảnh dài
+### Xây dựng dữ liệu Mid-training như thế nào
 
-Hỗn hợp ở giai đoạn độ dài $i$:
+1. **Suy ngược dữ liệu từ phân bố thất bại.** Trước hết hãy chia đánh giá theo chủ đề, ngôn ngữ, loại tài liệu, mẫu hình mã nguồn và độ dài ngữ cảnh để xác định `pass@k` thấp đến từ loại khoảng trống nền nào; chỉ bổ sung dữ liệu cho khoảng trống kiến thức và năng lực, tránh chẩn đoán nhầm lỗi định dạng đầu ra thành thiếu kiến thức.
+2. **Dựng khối ngữ liệu đích mật độ cao.** Tài liệu gốc phù hợp để thiết lập liên kết thuật ngữ và sự kiện, kho mã nguồn phù hợp để học cấu trúc và phụ thuộc, còn các suy dẫn kiểu giáo trình, diễn giải tổng hợp và mẫu liên kết xuyên tài liệu thì phù hợp để viết rõ hơn những quan hệ hàm ẩn. Dữ liệu cần khử trùng lặp, lọc chất lượng và kiểm tra ô nhiễm tập đánh giá.
+3. **Phân bổ tỉ lệ dữ liệu theo năng lực.** Dữ liệu cần gồm văn bản dài tự nhiên như sách, tài liệu dài và kho mã nguồn; dữ liệu chuỗi suy nghĩ thể hiện các năng lực nguyên tử trên văn bản dài như tìm kiếm trong văn bản dài, suy luận đa bước, tuân thủ chỉ dẫn, tổng hợp thông tin và thống kê; cùng các quỹ đạo thực thi Agent thể hiện những năng lực bắt buộc của Agent như lập kế hoạch, chọn và gọi công cụ, theo dõi trạng thái đường dài và phục hồi sau lỗi. Dữ liệu chuỗi suy nghĩ và quỹ đạo Agent có thể chưng cất từ mô hình mã nguồn mở mạnh hơn, hoặc dùng các bộ dữ liệu sẵn có.
+4. **Thực hiện "phát lại kép" ở mỗi giai đoạn.** Loại thứ nhất là văn bản ngắn gốc và dữ liệu tổng quát, dùng để giữ lại ngôn ngữ, kiến thức và năng lực ngữ cảnh ngắn. Loại thứ hai là "nhiệm vụ cũ được nâng độ dài": đặt những nhiệm vụ ngắn mà mô hình đã làm được vào ngữ cảnh dài như hiện tại, rải thông tin liên quan và các mục gây nhiễu ở những vị trí khác nhau, để kiểm tra xem cùng một năng lực có còn đứng vững trong cửa sổ dài hơn hay không. Dữ liệu tổng quát tốt nhất nên lấy từ chính tập tiền huấn luyện gốc của mô hình nền; nếu không có, có thể thay bằng ngữ liệu tiền huấn luyện mở như FineWeb-2.
+5. **Dùng cổng kiểm đa chiều để quyết định khi nào dừng.** Ngoài loss huấn luyện, hãy theo dõi đồng thời `pass@1`/`pass@k` trên nhiệm vụ chuyên ngành giữ lại, năng lực tổng quát, khả năng tuân thủ chỉ dẫn vốn có và nhiệm vụ đích. Nếu chỉ số chuyên ngành tăng mà tập giữ lại tổng quát giảm, tức là tỉ lệ trộn hoặc tốc độ học quá quyết liệt; nếu loss giảm mà `pass@k` không nhúc nhích, phải kiểm tra xem dữ liệu có thật sự phủ được năng lực cần thiết không, và phía sau có thiếu bước SFT để truy cập kiến thức hay không.
 
-$$
-D_i=\alpha_iD_{\text{long}}+\beta_iD_{\text{atomic}}+\gamma_iD_{\text{agent}}+\delta_iD_{\text{replay}},
-\qquad \alpha_i+\beta_i+\gamma_i+\delta_i=1.
-$$
+Sau Mid-training, cần dùng các bộ đánh giá như LongBench v2, IFEval và các Agent đầu-cuối trình bày ở chương 7 để xác nhận **năng lực nền về ngữ cảnh dài ở những độ dài ngữ cảnh khác nhau** không bị mất. Năng lực ngữ cảnh dài là nền tảng của năng lực chuỗi suy nghĩ dài và năng lực tuân thủ chỉ dẫn, mà hai năng lực này lại là nền tảng cho nhiều năng lực bậc cao của Agent như gọi công cụ.
 
-Tính tỷ lệ theo **token**, không theo số tài liệu. $D_{\text{long}}$ gồm sách, tài liệu dài, repository mã; $D_{\text{atomic}}$ rèn truy xuất, suy luận nhiều bước, tuân thủ chỉ dẫn, tổng hợp và thống kê; $D_{\text{agent}}$ gồm lập kế hoạch, chọn/gọi công cụ, theo dõi trạng thái dài hạn và phục hồi lỗi. $D_{\text{replay}}$ giữ cả dữ liệu tổng quát/ngắn lẫn nhiệm vụ cũ đã biết được “nâng độ dài” bằng cách đổi vị trí bằng chứng và thêm nhiễu. Cần khử trùng lặp, lọc chất lượng và kiểm tra nhiễm tập đánh giá.
+- **Vị trí và truy hồi**: trích xuất thông tin then chốt kiểu một kim, nhiều kim, ở các vị trí khác nhau;
+- **Quan hệ và suy luận**: theo dõi quan hệ xuyên đoạn, đa tài liệu, đa bước, hóa giải mâu thuẫn và kết hợp bằng chứng;
+- **Tổng hợp và thống kê**: tổng kết thông tin từ bảng dài hay log dài, như đếm, nhóm, sắp xếp, so sánh, quy nạp xu hướng;
+- **Tuân thủ chỉ dẫn**: khả năng tuân theo chỉ dẫn phức tạp, gồm tuân thủ nhiều chỉ dẫn cùng lúc, hóa giải mâu thuẫn, tuân thủ quy trình suy nghĩ và tuân thủ định dạng đầu ra;
+- **Suy nghĩ chuỗi dài**: giải các bài toán, bài suy luận logic và sinh mã phức tạp;
+- **Năng lực nguyên tử của Agent**: phân rã nhiệm vụ, sinh kế hoạch, chọn công cụ, dựng tham số, ghi nhớ trạng thái và phục hồi sau thất bại.
 
-Mid-training còn phải biến cửa sổ danh nghĩa thành **cửa sổ hữu hiệu** đồng thời đưa vào suy luận dài, lập kế hoạch và dùng công cụ. Đổi `max_position_embeddings` từ 32K lên 128K chỉ chứng minh mô hình nhận được đầu vào. Dùng curriculum như 8K → 16K → 32K → 64K → 128K, tùy mô hình, mục tiêu và ngân sách[^ch8-36]. Trước mỗi lần tăng, phải đạt truy xuất, NIAH, suy luận nhiều bước, tổng hợp/thống kê, lập kế hoạch cơ bản và chọn công cụ ở độ dài hiện tại.
+Nếu sự kiện cần cập nhật thường xuyên hoặc bắt buộc dẫn nguồn gốc, RAG vẫn hơn việc viết kiến thức vào trọng số; Mid-training phù hợp hơn với kiến thức và năng lực chuyên ngành ổn định, quy mô lớn, cần hình thành biểu diễn nội tại. Mid-training toàn tham số trên mô hình lớn có chi phí tính toán và rủi ro quên rõ rệt cao hơn SFT quy mô nhỏ, nên hãy dùng thí nghiệm nhỏ để kiểm chứng tỉ lệ dữ liệu trước, rồi mới mở rộng ngân sách huấn luyện.
 
-Nếu $M(\theta,c,L)$ là điểm của mô hình $\theta$ trên năng lực $c$ ở độ dài $L$, dùng ba cửa kiểm soát:
+> **Thử nghiệm 8-5 ★★: Tiếp tục tiền huấn luyện để học ngôn ngữ mới**
+>
+> Lấy Mistral 7B v0.3 làm nền (chủ yếu tiền huấn luyện bằng tiếng Anh, gần như không hiểu tiếng Hàn), năng lực tiếng Hàn được nạp vào bằng cách tiếp tục tiền huấn luyện trên Wikipedia tiếng Hàn — tiếp tục huấn luyện mô hình ngôn ngữ bằng dữ liệu ngôn ngữ mới trên một mô hình đã tiền huấn luyện xong. Mô hình đã có sẵn biểu diễn tổng quát, chỉ cần thích nghi với phân phối dữ liệu mới, nên chi phí thấp hơn nhiều so với huấn luyện từ đầu. Thử nghiệm dùng tỉ lệ dữ liệu khoảng 80% tiếng Hàn + 20% tiếng Anh để giảm nhẹ quên thảm khốc; đó là lựa chọn của riêng thử nghiệm này, không phải giá trị mặc định phổ quát. Cuối cùng, SFT bằng dữ liệu chỉ dẫn tiếng Hàn cho ra năng lực đối thoại tiếng Hàn dùng được. Hai vai trò được phân định rõ: Mid-training bồi kiến thức và năng lực ngôn ngữ tiếng Hàn trước, rồi SFT dạy mô hình cách nhận chỉ dẫn và tổ chức câu trả lời bằng tiếng Hàn.
+>
+> Thử nghiệm này cũng cho thấy vấn đề quên thảm khốc mà tiếp tục tiền huấn luyện có thể gây ra: ở giai đoạn cuối, điểm chấm mù cho tiếng Hàn cải thiện, còn năng lực tiếng Anh lại giảm. Tiếp tục tiền huấn luyện có thể viết phân phối đích vào tham số, nhưng không miễn trừ cho ta tập giữ lại, đánh giá tính đúng sự kiện và kiểm toán chất lượng dữ liệu.
 
-$$
-\begin{aligned}
-M(\theta_i,c,L_i)&\geq\tau_{c,i},\\
-M(\theta_i,c,L_i)&\geq M(\theta_i,c,L_{i-1})-\epsilon_{\text{len}},\\
-M(\theta_i,c,L_{i-1})&\geq M(\theta_{i-1},c,L_{i-1})-\epsilon_{\text{retain}}.
-\end{aligned}
-$$
-
-Ba điều kiện lần lượt đòi hỏi đạt chuẩn ở độ dài hiện tại, cùng năng lực không suy giảm đáng kể khi kéo dài, và giai đoạn mới không quên năng lực cũ. So sánh các nhiệm vụ cùng độ khó chỉ khác độ dài; đặt $\epsilon$ từ khoảng tin cậy của đánh giá lặp lại. Nếu một bucket thất bại, tăng dữ liệu năng lực nguyên tử, độ dài hiện tại hoặc replay trước khi tăng cửa sổ danh nghĩa.
-
-| Năng lực | Benchmark | Chẩn đoán chính |
-| --- | --- | --- |
-| Vị trí, truy xuất, theo dõi, tổng hợp | NIAH, RULER | Suy giảm theo vị trí/số needle, multi-hop, tổng hợp và độ dài; NIAH chỉ là smoke test |
-| Suy luận tài liệu thực tế | LongBench, LongBench v2 | QA một/nhiều tài liệu, hội thoại dài, học trong ngữ cảnh, dữ liệu có cấu trúc theo loại và độ dài |
-| Hiểu mã dài | Bài repository của LongBench v2, LongCodeU | Đơn vị mã, quan hệ giữa tệp, hiểu toàn repository |
-| Lập kế hoạch và công cụ | PlanningArena và benchmark công cụ trước đó | Phân rã, lựa chọn, bộ nhớ, tham số và trạng thái |
-| Agent đầu-cuối | SWE-bench Verified, $\tau^2$-bench, Terminal-Bench | Kế hoạch, công cụ, phục hồi và hoàn tất trong quỹ đạo thật |
-
-RULER mở rộng NIAH sang nhiều needle, multi-hop và tổng hợp[^ch8-37]; LongBench v2 bao phủ tài liệu, đối thoại, repository và dữ liệu cấu trúc thực tế[^ch8-38]; LongCodeU và PlanningArena chẩn đoán mã dài cùng lập kế hoạch/công cụ[^ch8-39][^ch8-40]. Chỉ dùng test set chính thức để đánh giá, huấn luyện bằng ví dụ tương tự nhưng không trùng, và báo cáo theo độ dài, năng lực, loại lỗi. Vượt NIAH hay một leaderboard không chứng minh suy luận ngữ cảnh dài.
-
-Sự kiện cần cập nhật, trích dẫn, kiểm soát truy cập hay xóa vẫn nên nằm trong RAG. Hãy kiểm tra tỷ lệ trộn ở quy mô nhỏ trước full-parameter Mid-training lớn.
+Chỉ khi đã có đủ kiến thức và năng lực nền, ta mới dùng được các phương pháp hậu huấn luyện như SFT, RL dưới đây để xây dựng một Agent thực dụng.
 
 ## SFT (tinh chỉnh giám sát)
 
@@ -865,12 +851,6 @@ Chương này đã trả lời câu hỏi làm sao thực hiện tiến hóa li�
 [^ch8-32]: Zheng, Chujie et al., “Stabilizing Reinforcement Learning with LLMs”, 2025. https://arxiv.org/abs/2512.01374
 [^ch8-33]: Zhong, Tianle et al., “Diagnosing Training Inference Mismatch in LLM Reinforcement Learning”, 2026. https://arxiv.org/abs/2605.14220
 [^ch8-34]: He, Horace and Thinking Machines Lab, “Defeating Nondeterminism in LLM Inference”, 2025. https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/
-[^ch8-35]: Gao, Tianyu et al., “How to Train Long-Context Language Models (Effectively)”, ACL, 2025. https://aclanthology.org/2025.acl-long.366/
-[^ch8-36]: Xiong, Wenhan et al., “Effective Long-Context Scaling of Foundation Models”, NAACL, 2024. https://aclanthology.org/2024.naacl-long.260/
-[^ch8-37]: Hsieh, Cheng-Ping et al., “RULER”, COLM, 2024. https://arxiv.org/abs/2404.06654
-[^ch8-38]: Bai, Yushi et al., “LongBench” and “LongBench v2”, ACL, 2024/2025. https://aclanthology.org/2025.acl-long.183/
-[^ch8-39]: Li, Jia et al., “Benchmarking Long-Context Language Models on Long Code Understanding”, ACL, 2025. https://aclanthology.org/2025.acl-long.1324/
-[^ch8-40]: Zheng, Zihan et al., “PlanningArena”, ACL, 2025. https://aclanthology.org/2025.acl-long.1499/
 
 ## Câu hỏi tư duy
 
