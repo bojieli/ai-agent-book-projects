@@ -17,58 +17,117 @@ Değerlendirme, bu kararlara bilimsel bir dayanak sağlar: sistematik karşıla�
 Bölüm 1'de tanıtılan Harness engineering perspektifinden bakıldığında, değerlendirme Harness içinde "doğrulama" işlevinin merkezi rolünü üstlenir. Kilit kavrayış şudur: **değerlendirmenin nesnesi yalnızca model değil, modelle Harness'in bileşimi olmalıdır**. Aynı model farklı Harness'lerde çarpıcı biçimde farklı sonuçlar verebilir — bazı ekipler yalnızca Harness'i iyileştirerek aynı modelin terminal türü görevlerdeki performansını belirgin biçimde yükseltti (ayrıntılar için bkz. Bölüm 5). Bu şu anlama gelir: Agent değerlendirmede kötü performans gösterdiğinde iyileştirme yönü modeli değiştirmek değil, Harness'in bir bileşenini (prompt'lar, araç tasarımı, geri bildirim döngüleri) iyileştirmek olabilir. Sağlam bir değerlendirme sistemi, "model yeteneğinin yetersizliği" ile "Harness tasarım kusuru" gibi özünde farklı iki sorunu birbirinden ayırabilmelidir. **Bu iki sorunu ayırmanın yaygın yolu model değiştirme deneyidir (model swap)**: Harness sabit tutulur, yalnızca daha güçlü ya da daha zayıf bir model takılır ve puanın ne kadar oynadığına bakılır. Daha güçlü modelle puan yükselmiyorsa darboğaz Harness'tedir. Daha zayıf modelle puan sert biçimde düşüyor ve sonuçlar model yeteneğiyle birlikte büyük dalgalanmalar gösteriyorsa, en doğrudan okuma darboğazın modelin kendi yeteneğinde olduğu ve mevcut performansı esas olarak modelin belirlediğidir (bunun görevin doğası gereği zor olmasından mı, yoksa Harness'in modelin ön bilgisine aşırı yaslanmasından mı kaynaklandığı ayrıca incelenmelidir). Bunun, yukarıda anılan "ablation deneyi"nden farklı bir yöntem olduğuna dikkat edin: ablation **Harness'in bir bileşenini kapatıp** genel performansın nasıl değiştiğine bakar, model değiştirme ise **Harness'i sabit tutup yalnızca modeli değiştirir** — ilki Harness'in içinde hangi parçanın önemli olduğunu bulur, ikincisi darboğazın modelde mi Harness'te mi olduğunu ayırt eder.
 
 Bir değerlendirme sisteminin değeri, modellerin hızla evrildiği bir çağda daha da belirginleşir. Model yetenekleri hızla ilerlemeye devam ediyor, ama yeni bir modelin kamuya açık benchmark'larda daha iyi sonuç vermesi, sizin özel göreviniz üzerinde de daha iyi olacağı anlamına gelmez — tam tersine performans gerilemesi (regression, yani yeni sürümün bazı yönlerden eskisinin gerisinde kalması) ortaya çıkabilir. Yalnızca kendi değerlendirme veri kümenizde yapılan eksiksiz bir test, veriye dayalı bir yükseltme kararı vermenizi sağlar. Dahası, sağlam bir değerlendirme sistemi "gelecekteki modeller için ürün geliştirmeyi" uygulanabilir bir stratejiye dönüştürür: mevcut model ticari kullanımı taşıyacak güçte olmasa bile, ürün geliştirmesini şimdiden tamamlayıp değerlendirme kümesini kurabilir, yeni modellerin performansını sürekli izleyebilir ve eşiği aşan ilk modelle hemen yayına çıkabilirsiniz.
+Bir değerlendirme sistemi dört halkaya ayrılabilir: neyin başarı sayıldığı, görevlerin nereden geldiği, kimin doğruladığı ve puanın nasıl karara dönüştüğü. Şekil 7-1'de gösterilmiştir.
 
-> **Bölüm Rehberi**
->
-> Bu bölüm eksiksiz bir değerlendirme sistemini üç katmanda kurar. Birinci katman **değerlendirme ortamıdır** ("nerede test edilir"): otomatik ve tekrarlanabilir bir test ortamının nasıl kurulacağı — araç çağırma tipi ve insan-makine etkileşimi tipi olmak üzere iki paradigma dahil. İkinci katman **değerlendirme yöntemleridir** ("nasıl karar verilir"): veri kümesi tasarım ilkelerinden ve değerlendirme metrikleri sisteminden (neyin ölçüleceği) LLM-as-a-Judge (büyük dil modelini hakem olarak kullanma) ile otomatik değerlendirmeye, oradan da ikili karşılaştırma ve model sıralamasına. Üçüncü katman **değerlendirmeye dayalı karar almadır** ("test edildikten sonra ne yapılır"): değerlendirme sonuçlarını model seçimi, mimari iyileştirme ve sürekli yineleme için eyleme dönük bir kılavuza çevirmek ve gözlenen puan farkının gerçekten güvenilir olup olmadığını istatistiksel anlamlılıkla karara bağlamak. Bunlara ek olarak bu bölüm observability'yi (gözlemlenebilirlik) ve üretim düzeyindeki Agent'ların iç değerlendirme altyapısını da tartışır, sonunda ise Bölüm 8'deki post-training'e bağlanan simülasyon ortamlarını tanıtır.
->
-> Bölüm boyunca süren temel fikir şudur: **bir değerlendirme sisteminin başlıca değeri mevcut sisteme puan vermek değil, model evrimini hızlı ve güvenilir biçimde takip etmenizi sağlamaktır**. Daha güçlü ya da daha ucuz bir model yayımlandığında, sağlam bir değerlendirme sistemine sahip ekip birkaç saat içinde geçiş kararını verebilir; böyle bir sistemi olmayan ekip ise yalnızca sezgisine güvenebilir veya topluluktan gelecek geri bildirimi bekleyebilir — rekabetin kızıştığı Agent pazarında bu hız farkı başarıyla başarısızlığı belirleyebilir.
+![Şekil 7-1: Agent Değerlendirme Sisteminin Dört Halkası](images/fig7-1.svg)
 
-![Şekil 7-1: Değerlendirme Sisteminin Üç Katmanı](images/fig7-1.svg)
+## Bir değerlendirme görevinin anatomisi: τ²-bench'in telecom alanı
 
-## Somut Bir Değerlendirme Örneği
+Önce τ²-bench'in telecom alanından gerçek bir görevi baştan sona inceleyelim. Kaynak kod depoda `chapter7/tau2-bench` altında, görev dosyası ise `data/tau2/domains/telecom/tasks_small.json`.
 
-Metodolojiye derinlemesine girmeden önce, eksiksiz bir örnek üzerinden sezgi kuralım. Bir müşteri hizmetleri Agent'ı kurduğumuzu ve onun iade taleplerini ele alma yeteneğini değerlendirmemiz gerektiğini varsayalım.
+### Görev tanımının dört bileşeni
 
-**Test durumu**: Kullanıcı 3 gün önceki siparişi iade etmek istiyor (sipariş numarası #12345, tutar ¥299). Şirket politikası: 7 gün içinde tam iade yapılabilir.
+Aşağıda o dosyadaki görevlerden biri, okumayı kolaylaştırmak için kısaltılarak verilmiştir.
 
-**Agent'ın trajectory'si**:
+```jsonc
+{
+  "id": "[mobile_data_issue]airplane_mode_on|user_abroad_roaming_enabled_off",
 
-```text
-Kullanıcı: 3 gün önce aldığım kulaklığı iade etmek istiyorum, sipariş numarası 12345. (Bugün 2026-04-10)
+  // Agent'a verilen çağrı kaydı
+  "ticket": "Kullanıcının telefonu internete bağlanamıyor ve durum çubuğunda
+             'No Service' yazıyor. Müşteri John Smith, numara 555-123-2002,
+             şu anda Fransa'da. Sorun ancak hız testi excellent verirse
+             çözülmüş sayılır. Tarife değiştirmek istemiyor, ama gerekirse
+             2,0 GB veri yüklemeyi kabul ediyor.",
 
-Agent (düşünüyor): Kullanıcı iade istiyor, önce sipariş bilgisini sorgulamam gerek.
-Agent → query_order(order_id="12345") aracını çağırır
-Araç döndürür: {status: "delivered", amount: 299, date: "2026-04-07", item: "Bluetooth kulaklık"}
+  // Kullanıcı simülatörüne verilen davranış kuralları
+  "user_scenario": { "instructions": {
+      "known_info": "You are John Smith with phone number 555-123-2002.
+                     You are currently abroad in France.",
+      "unknown_info": null,
+      "task_instructions":
+        "…express mild frustration after the first unsuccessful attempt.
+         You will consider the issue resolved only when speed test returns
+         excellent internet speed and nothing else. If it returns poor, fair
+         or good, you will not consider the issue resolved.
+         Whenever the agent asks you about your device, always ground your
+         responses on the results of tool calls. …
+         Never make up the results of tool calls."
+  }},
 
-Agent (düşünüyor): Sipariş tarihi 2026-04-07, bugün 2026-04-10, arada 3 gün var; 7 günlük iade süresi içinde, tam iade koşullarını karşılıyor.
-Agent → process_refund(order_id="12345", amount=299) aracını çağırır
-Araç döndürür: {refund_id: "R-98765", status: "processing", eta: "3-5 iş günü"}
+  // Çalıştırmadan önce her iki taraf aynı başlangıç noktasına sıfırlanır
+  "initial_state": { "initialization_actions": [
+      { "env_type": "user",      "func_name": "turn_airplane_mode_on" },
+      { "env_type": "user",      "func_name": "turn_roaming_off" },
+      { "env_type": "assistant", "func_name": "enable_roaming",
+        "arguments": { "customer_id": "C1001", "line_id": "L1002" } }
+  ]},
 
-Agent: Sizin için iade işlemini başlattım; #12345 numaralı siparişin (Bluetooth kulaklık, ¥299) tam iadesi işleniyor,
-      tutarın 3-5 iş günü içinde hesabınıza geçmesi bekleniyor. İade numarası R-98765, ilerlemeyi sorgulamak için kullanabilirsiniz.
+  // Puanlama ölçütleri
+  "evaluation_criteria": {
+      "actions": [
+        { "requestor": "user", "name": "toggle_airplane_mode" },
+        { "requestor": "user", "name": "toggle_roaming" }
+      ],
+      "env_assertions": [
+        { "func_name": "assert_mobile_data_status", "expected_status": true },
+        { "func_name": "assert_internet_speed",
+          "expected_speed": 200, "expected_desc": "excellent" }
+      ],
+      "communicate_info": null,
+      "nl_assertions": null,
+      "reward_basis": ["ENV_ASSERTION"]
+  }
+}
 ```
 
-**Rubric ile puanlama** (dört boyut, her boyut 1-4 puan). Tablo 7-1, bu müşteri hizmetleri iade görevi için bir puanlama örneği verir; Rubric'in bir Agent trajectory'sini nasıl denetlenebilir değerlendirme boyutlarına ayırdığını gösterir.
+Bu tanımda açılması gereken dört tasarım kararı var.
 
-Tablo 7-1 Müşteri Hizmetleri İade Görevi için Rubric Puanlama Örneği
+**Kullanıcının bilgi sınırı açıkça modellenmiştir.** `known_info` yalnızca üç şey içerir: ad, telefon numarası ve bulunulan ülke. Arızanın asıl iki nedeni — uçak modunun açık, veri dolaşımının kapalı olması — orada yoktur. Kullanıcı bunları bilmediği için kendiliğinden söyleyemez; Agent bunlara ancak soru sorarak ve kullanıcıdan kontrol etmesini isteyerek ulaşabilir. **Aşamalı bilgi açığa çıkarma (Progressive Information Disclosure)** görev tanımı düzeyinde işte böyle uygulanır: simülatörü "hepsini birden söyleme" gibi bir istemle bağlayarak değil, kullanıcının bilgi kapsamını ayrı bir alan olarak modelleyerek. Çoğu benchmark görevin başında tam gereksinimi ortaya koyar; oysa gerçek bir kullanıcının ilk cümlesi genellikle "internete giremiyorum" kadardır. Talebi uygulanabilir hale getirecek kadar netleştirmek, Agent'ın yapabilmesi gereken işin bir parçasıdır.
 
-| Boyut | Ölçüt | Puan | Gerekçe |
-|--------------------|-----------------------------------|---------|-------------------------------|
-| İşlem doğruluğu | İade tutarı ve sipariş numarası doğru mu | 4 | Doğru sorgulama yapıp ¥299'luk tam iadeyi başlattı |
-| Politika uygunluğu | 7 günlük iade politikasına uyuluyor mu | 4 | Sipariş iade süresi içinde, politikaya uygun |
-| Bilgi eksiksizliği | Tutar, hesaba geçiş süresi ve iade numarası bildirildi mi | 4 | Üç kritik bilginin üçü de bildirildi |
-| Halüsinasyon tespiti (veto maddesi) | Var olmayan bilgi uyduruldu mu | Geçti | Tüm bilgiler araçların döndürdüğü sonuçlardan geliyor |
+**Simülatör replik değil, davranış kuralı alır.** `task_instructions` üç tür kısıtı bir arada barındırır: duygu ayarı (ilk başarısız denemeden sonra hafif bir memnuniyetsizlik göstermek), kabul ölçütü (sorun ancak hız testi excellent verirse çözülmüş sayılır; poor, fair ve good kabul edilmez) ve **olguya dayandırma (Grounding)** koşulu: cihaz durumuna dair her yanıt bir araç çağrısının döndürdüğü değere dayanmalıdır — "Never make up the results of tool calls". Üçüncüsü en kritik olanıdır: dayandırma kısıtı olmadan simüle kullanıcı Agent'ın yönlendirmesine uyup sorunun çözüldüğünü onaylar ve değerlendirme, iki modelin birbirini teyit etmesine dönüşür.
 
-Halüsinasyonun derecelendirilen bir puanlama boyutu değil de bir **veto maddesi** olarak listelenmesinin nedeni, kaliteye dik (ortogonal) olmasıdır: akıcı, ayrıntılı ve nazik bir yanıt yanlış bilgi içeriyorsa, kullanıcıya verdiği zarar kısa ama doğru bir yanıtınkinden çok daha büyüktür. (Veto mekanizmasının genel tasarımı için ilerideki "Rubric'in Dört İlkesi" bölümüne bakın.)
+**Başlangıç durumu, denetleyen tarafa göre bölünmüştür.** `env_type` iki değer alır, `user` ve `assistant`: uçak modu ile dolaşım anahtarı kullanıcı tarafına, operatör tarafındaki `enable_roaming` ise Agent tarafına aittir. Arızanın biçimini belirleyen tam da bu ayrımdır: operatör tarafında dolaşım açıktır ama kullanıcının cihazında kapalıdır, dolayısıyla Agent veritabanına baktığında yalnızca "yapılandırma normal" sonucuna varır. Arıza, veritabanının göremediği taraftadır ve ancak kullanıcıdan kontrol etmesi istenerek ortaya çıkar.
 
-Bu test durumu geçti. Ama iyi bir değerlendirme yalnızca başarı senaryolarını değil, sınırları ve tuzakları da ölçer: kullanıcı 15 gün önceki bir siparişi (iade süresi dolmuş) iade etmek istediğinde Agent bunu doğru biçimde reddedebiliyor mu? Kullanıcı "müşteri temsilcisi iadeyi zaten onayladı" dediğinde, Agent sistemde hiçbir kayıt yokken buna kolayca inanır mı? Agent'ların yetenek düzeyini asıl ayıran, işte bu sınır senaryolarıdır.
+**Puanlama ölçütleri dört katmana ayrılır ve bu görev bunlardan yalnızca birini kullanır.** `env_assertions` son durumu denetler (mobil veri kullanılabilir, hız 200 Mbps ve üzeri ve derece excellent), `actions` kilit eylemlerin gerçekleşip gerçekleşmediğini ve **hangi tarafın** yaptığını denetler, `communicate_info` ile `nl_assertions` ise gerekli bilginin kullanıcıya iletilip iletilmediğini denetler. Bu görevin `reward_basis` alanında yalnızca `ENV_ASSERTION` bildirilmiştir; kalan katmanlar her zamanki gibi hesaplanıp kaydedilir ama nihai ödüle girmez. Puanlama dayanağı her görev için ayrı bildirilir, genel olarak sabitlenmez.
 
-Yukarıdaki akış — test durumlarını tanımlamak, Agent'ı çalıştırmak, Rubric ile puanlamak, sonuçları analiz etmek — değerlendirmenin temel iskeletidir. Bu bölümün geri kalanı her adımın tasarım yöntemini sırasıyla açacak.
+### Gerçek bir çalıştırmanın trajectory'si
 
-## Değerlendirme metrikleri sistemi: güncellenmiş ölçütler
+Şimdi okurdan τ²-bench telecom alanının değerlendirme görevlerini kendisinin çalıştırmasını, görev tasarımını, kullanıcı simülatörünü, süreç ve sonuç doğrulama mantığını gözlemlemesini, ayrıca Agent'ın yürütme trajectory'sine bakarak neden başarısız olduğunu çözümlemesini istiyoruz.
 
-Ortamı veya veri kümesini kurmadan önce “başarı”nın ne olduğunu belirlemek gerekir: bir kez çalışan bir yol bulmak yeterli mi, yoksa her çalıştırma hatasız mı olmalı? Tanım değişince mühendislik kararı da değişebilir. Bu bölüm önce bu ölçütü kurar, ardından ilerleyen kısımlarda ortamın, veri kümesinin ve puanlayıcının nasıl gerçeklendiğini anlatır.
+> **Deney 7-1 ★: τ²-bench'i çalıştırmak ve τ-bench'ten evrimini karşılaştırmak**
+>
+> Bu deney, insan-bilgisayar etkileşimi türündeki değerlendirme ortamının tasarım noktalarını anlamak için τ²-bench değerlendirme çerçevesini çalıştırır. Önce görev tanım dosyasını bu bölümdeki güzergâhı izleyerek okuyun: her görev dört bölümden oluşur — bilinen bilgi, görev yönergesi, başlangıç durumu ve başarı koşulları. Ardından tam değerlendirme akışını çalıştırın, kullanıcı simülatörü ile Agent arasındaki çok turlu diyaloğu gözlemleyin ve tipik başarısızlık kiplerini (politika ihlali, bilgi atlama, aşırı insan temsilciye aktarma vb.) çözümleyin.
+>
+> ![Şekil 7-3: τ²-bench'te çift denetimli ortam ve katmanlı doğrulama](images/fig7-3.svg)
+
+Eşlik eden depoda bir çalıştırma kaydı saklanmaktadır (`chapter7/tau2-bench-eval`). Aşağıda bunlardan başarılı olan bir çalıştırmayı çözümlüyoruz.
+
+İlk on küsur tur hesap belirleme aşamasıdır. Agent numaradan C1001 müşterisini bulur, ardından L1001, L1002 ve L1003 hatlarının veri kullanımını tek tek sorgular ve kullanıcının Fransa'da gerçekte hangi numarayı kullandığını yeniden sorar. 17. mesajda yanlış bir sonuca varır:
+
+> **Agent** (17): 555-123-2002 numarası etkin hatlarınız arasında yok; en yakını 555-123-2001…
+
+Bu sonuç yalnızca tek bir hattın, L1001'in sorgusuna dayanır. Kullanıcı numaranın doğru olduğunda ısrar edince Agent L1002'yi sorgular ve ancak o zaman eşleştirir. Belirleyici dönüm 30. mesajda gelir:
+
+> **Kullanıcı** (30) → `check_network_status()`, `check_status_bar()` çağırır
+>
+> **Aracın döndürdüğü** (31): `Airplane Mode: ON | Cellular Connection: no_service | Mobile Data Enabled: Yes | Data Roaming Enabled: No`
+>
+> **Kullanıcı** (33): telefonun şu an uçak modunda olduğunu görüyorum, sinyal olmamasının nedeni bu. Mobil veri açık ama veri dolaşımı kapalı. Uçak modunu kapatıp deneyeyim mi?
+
+Araç çağrısını yapan taraf Agent değil, **kullanıcıdır**. **Çift denetim (Dual-Control)** mekanizması budur: simüle kullanıcının `check_status_bar`, `toggle_airplane_mode`, `reseat_sim_card` ve `run_speed_test` gibi kendine ait bir araç kümesi vardır.
+
+Sonraki teşhis sorunsuz ilerler: Agent kullanıcıdan uçak modunu kapatıp dolaşımı açmasını ister, kullanıcı her iki işlemi de yapar (35, 37) ve durum çubuğu tam çekim 5G'ye döner; Agent hız testi ister, sonuç 275 Mbps ve derece Excellent gelir (46) ve kullanıcı sorunun çözüldüğünü onaylar. İki `env_assertions` da geçer ve `reward = 1.0` olur.
+
+Bu tam puanlı trajectory'de doğrulayıcının yakalayamadığı bir sorun da vardır. Telecom Agent politikasının ilk paragrafı "You should only make one tool call at a time" der; oysa 4. mesajda Agent `get_customer_by_phone` ile `get_customer_by_name` çağrılarını bir arada göndermiştir. Doğrulayıcı bunu hata saymamıştır, çünkü bu görevin `reward_basis` alanı yalnızca son durumu dikkate alır. Bu, τ²-bench'in bir ihmali değil, ikili ödülün doğasında olan bedeldir: süreç ayrıntısını, modeller arasında karşılaştırılabilir tek bir sayıyla takas eder. Ne var ki üretim ortamındaki değerlendirme sistemleri çoğu zaman daha fazlasını ister: yalnızca doğru mu yanlış mı demeyi değil, sorunun nerede olduğunu da göstermeyi.
+
+Başarısız olan görev de çözümlemeye değer. Kullanıcının numarası 555-123-2002'dir ama Agent L1001 hattını seçmiş ve o hattın 3,2/5 GB kullanımını dayanak alarak ilerlemiştir. Yol boyunca `get_details_by_id(L1001)` o hattın numarasının 555-123-2001 olduğunu açıkça döndürmüştür; Agent bu sonucu okumuş ama yargısını düzeltmemiş, ardından ilgisiz teşhislere onlarca mesaj harcamış ve sonunda insan temsilciye aktarmıştır. Aslında görevin yarısını tamamlamıştır: kullanıcıya veri tasarrufu modunu kapattırmış ve kullanıcı tarafındaki bu eylem gerçekten gerçekleşip ortam tarafından doğrulanmıştır. Ama hat seçimindeki hata yüzünden gereken 2 GB yükleme hiç yapılmamış ve üç son durum savı da başarısız olmuştur. Bu başarısızlığın biçimi, ileride "Başarısızlık atfı" bölümünde ele alınan AndroidWorld örneğine çok benzer: yargıyı düzeltmek için gereken kanıt bağlama çoktan girmiştir, ama Agent buna dayanarak geri dönmemiştir.
+
+Tek bir görev bile, bir değerlendirme kümesinin yanıtlaması gereken bütün soruları ortaya koyar: neyin başarı sayıldığı, görevlerin nereden geldiği, kimin doğruladığı ve puanın nasıl karara dönüştüğü. İzleyen bölümler bunları sırayla ele alıyor.
+
+## Değerlendirme metrikleri: başarının tanımı
+
+Bir önceki bölümün değerlendirme sonucu beş görevden dördünün geçmesiydi. Yalnızca 0,8 sayısına bakarak sistemin kullanılabilir olup olmadığına karar verilemez. Bu bir iade müşteri hizmetleri Agent'ıysa, beş kullanıcıdan birinin hak ettiği iadeyi alamaması demektir; açık arayan bir güvenlik Agent'ıysa, beşte dört isabet epeyce iyidir. Fark, iş senaryosunun ne kadar yüksek bir başarı oranı talep ettiğindedir.
 
 ### Teknik harika: Pass@k ile yetenek tavanı
 
@@ -99,209 +158,151 @@ $$
 
 Değerlendirme raporu $k$ denemenin ne olduğunu açıkça yazmalıdır: aynı görevin $k$ bağımsız örneklemi mi, yoksa üretim hattındaki ardışık $k$ görev mi. Yan etkisi olan işlemlerde "başarana kadar yeniden dene" denemez; örnekleme bir kum havuzunda ya da geri alınabilir bir ortamda yapılmalı ve her başarısızlık güvenilirlik ölçütüne işlenmelidir.
 
-### Süreç metrikleri: Siyah kutudan beyaz kutuya
+## Değerlendirme ortamı
 
-Yalnızca nihai sonuca bakmak yeterli değildir; Agent'ın sonuca ulaşma süreci de aynı ölçüde önemlidir. **Eylem geçerlilik ve yetki oranı**, işlemler içinde hem geçerli hem de yetkili olanların payını ölçer — geçersiz işlemler arasında var olmayan bir aracı çağırmak ve yanlış parametre türü geçirmek vardır; yetki aşımı ise izin sınırlarının dışına çıkan davranışları anlatır. Yüksek bir oran, Agent'ın araç ekosistemini net biçimde kavradığını gösterir. **Tool calling doğruluk oranı** bir adım daha ileri gider ve parametrelerin anlamsal olarak da makul olmasını ister: arama aracının sorgu sözcükleri ihtiyacı doğru ifade etmeli, dosya işlemlerinin yolu doğru hedefi göstermelidir.
+Metrik dayanağı belirlendikten sonraki soru nerede ölçüleceğidir. Değerlendirme ortamı, yinelenebilir biçimde çalıştırılabilen bir düzenektir: aynı başlangıç durumu verildiğinde aynı Agent karşılaştırılabilir sonuçlar üretmelidir.
 
-**Yol verimliliği**, görevin ne kadar ekonomik tamamlandığını ölçer: adım sayısı (düşün-eyle-gözlemle döngüsünün tekrar sayısı), gereksiz eylemler (aynı anahtar kelimeyi tekrar tekrar aramak, aynı dosyayı defalarca okumak) ve geri dönüş sayısı (hatanın fark edilip düzeltilme sıklığı — ara sıra geri dönmek normaldir, ama sık geri dönüş ileriye dönük planlamanın yetersiz olduğunu gösterir). "Makul adım sayısını" tanımlamak için insan uzmanlardan veya sezgisel algoritmalardan bir referans çizgisi oluşturmak gerekir.
+### Beş bileşen
 
-**Retrieval kapsama oranı** bilgi toplama türü görevlere yöneliktir: Agent bilgi uzayını yeterince araştırdı mı? Yalnızca arama sonuçlarının ilk sayfasına bakıp aceleyle bir sonuca mı vardı? **Maliyet ve gecikme** ise istek sayısına, token harcamasına (girdi/çıktı maliyetleri ayrılmalı, KV Cache'in yeniden kullanımı hesaba katılmalıdır) ve duvar saati süresine (model çıkarımı + araç yürütme + ağ gecikmesi dahil) bakar; darboğazı bulmak için sürenin dağılımını izlemek gerekir.
+Yukarıda incelenen telecom görevine dönelim. Onu ölçüt alırsak, yinelenebilir bir değerlendirme ortamının gerektirdiği her şey zaten mevcuttur.
 
-### Güvenlik, sağlamlık ve trajectory kapsamı
+**Veri kümesi (Dataset)**, görev dosyasının kendisidir: başlangıç durumu, Agent için çağrı kaydı, simülatör için davranış kuralları ve kabul ölçütleri tek bir kayıtta paketlenir; bir kayıt bir test durumudur.
 
+**Ortam durumu (Environment State)**, görev yürütülürken değişebilen bilgidir: veritabanındaki müşteriler, hatlar, tarifeler ve faturalar ile cihaz tarafındaki uçak modu, dolaşım, veri tasarrufu anahtarı ve kalan veri. Sıfırlanabilir olmalıdır ve `initialization_actions` tam da bu sıfırlama betiğidir. Gerçekçilik, durum değişimlerinin iş mantığına uymasını; denetlenebilirlik ise her çalıştırmadan önce aynı başlangıç noktasına dönülebilmesini gerektirir.
 
-**Güvenlik ve uyum metrikleri** üretim dağıtımında kritik önemdedir: hassas işlemlerin tetiklenmesi (veri silme / izin değiştirme / dışarıya iletişim gönderme), veri sızdırma (günlüklere parola yazdırma / özel dokümanları dış API'lere gönderme) ve kural dışı içerik — hepsi **sıfır tolerans ilkesine** tabi olmalıdır. Halüsinasyonun veto maddesiyle aynı mantık geçerlidir (bkz. ilerideki "Rubric'in Dört İlkesi"): tek bir ciddi güvenlik ihlali bütün değerlendirmeyi veto eder, diğer boyutlardaki üstün performans buna muafiyet sağlamaz.
+**Araç arayüzü (Tools)** iki tarafa bölünmüştür. Agent müşteri sorgulama, kullanım sorgulama, veri yükleme, insan temsilciye aktarma gibi operatör tarafı işlemleri çağırabilir; kullanıcı ise cihazındaki anahtarları kullanabilir. Her iki araç kümesi de atomik işlemlerdir; "kullanıcının internet sorununu çöz" gibi üst düzey bir soyutlama yoktur — soyutlama düzeyi fazla yükselirse değerlendirme tek bir işlev çağrısının denetimine iner, planlama ve akıl yürütme aracın kendisine soğurulur.
 
-**Sağlamlık**, belirsizlik karşısındaki kararlılığı ölçer: rastgele tohum duyarlılığı (farklı başlangıç değerleriyle performans ne kadar değişiyor), sayfa değişikliklerine uyum (bir sitenin arayüz güncellemesi tam bir çökmeye yol açmamalıdır), API dalgalanmalarına tolerans (geçici arızalar, zaman aşımları ve biçim değişiklikleri zarifçe ele alınabiliyor mu) ve uzun süreli bellek paraziti (context'te biriken güncelliğini yitirmiş bilgi hatalı kararlara yol açıyor mu).
+**Puanlama ölçütü (Rubric)**, `evaluation_criteria` içindeki dört katman denetim ile `reward_basis` toplama kuralıdır.
 
-**Yürütme trajectory'si ile nihai sonucun çifte kapsanması**. Değerlendirmede kolayca gözden kaçan bir ayrım şudur: Agent'ın yürütme sırasında "ne söylediği ve ne yaptığı" (yani Bölüm 1'de tanımlanan trajectory) ile "sistemin sonunda ne hale geldiği" (nihai sonuç, outcome) iki ayrı şeydir. Agent'ın "bilet alındı" demesi trajectory düzeyinde bir bilgidir; veritabanında gerçekten bir sipariş kaydının oluşması ise sonuç düzeyinde bir doğrulamadır. Yalnızca trajectory'ye bakmak "söyledi ama yapmadı" durumlarını kaçırır; yalnızca sonuca bakmak da ara adımların yoldan çıktığını göstermeyebilir. Anthropic bir keresinde şöyle bir örnek vermişti: bir uçak bileti rezervasyon Agent'ı yürütme sırasında havayolunun politikasındaki bir boşluğu fark edip kullanıcıya daha ucuz bir seçenek buldu — yalnızca önceden belirlenmiş yürütme yoluna göre puanlanırsa bu koşu başarısız sayılırdı; oysa nihai sonuç açısından bakıldığında kullanıcı daha iyi bir seçenek elde etmişti. Bu yüzden sistematik kör noktalardan kaçınmak için her iki değerlendirme türü de kapsanmalıdır.
+**Yürütme protokolü (Interaction Protocol)**, etkileşim sırasını ve bitiş koşullarını belirler. Buradaki normal bitiş sinyali, simüle kullanıcının `###STOP###` çıktısı vermesidir; ayrıca tur üst sınırı vardır ve simüle kullanıcı sabrı tükendiğinde konuşmayı kendisi de bitirebilir — iletişim verimliliğinin fazla düşük olması başlı başına başarısızlık sayılır.
 
-### İnsan örneklemesi ve adversarial inceleme
+Beş bileşenden biri eksilirse değerlendirme yinelenebilir bir döngü oluşturmaz. Aşağıda başka benchmark'ları incelerken de bu beş maddeyi karşılaştırma çerçevesi olarak kullanacağız.
 
-Otomatik değerlendirme çoğu durumda güvenilir olsa bile düzenli insan eliyle örnekleme denetimi gerekir: farklı görev türlerini, başarılı/başarısız vakaları ve sınır puanların yakınındaki belirsiz vakaları kapsayacak biçimde — yalnızca sonuçları değil, puanlama gerekçelerinin isabetliliğini de gözden geçirerek.
+### İnsan-bilgisayar etkileşimi ve araç çağrısı türündeki değerlendirme ortamları
 
-Bu denetim bir adım öteye götürülüp **değerlendirici kalibrasyonu** olarak sistemleştirilebilir: LLM değerlendiricilerini büyük ölçekte kullanmaya başlamadan önce, insan eliyle etiketlenmiş bir altın standart küme (örneğin görev türlerini ve zorluk düzeylerini kapsayan 100-200 vaka) oluşturulur; değerlendirici modelin (yani hakem rolündeki LLM'in; mekanizması için bkz. sonraki bölüm, LLM-as-a-Judge) insan etiketleriyle uyum oranı bu küme üzerinde ölçülür (basit uyum oranı ya da Cohen's kappa gibi bir uyum katsayısı; ikincisi rastgele tutturmadan gelen payı dışarıda bırakır). Değerlendirici model ancak önceden belirlenmiş bir eşiği (örneğin kappa'nın 0,7'nin üzerinde olması) aştıktan sonra büyük ölçekli değerlendirmede kullanılmalıdır; bundan sonra da değerlendirici model veya Rubric her güncellendiğinde altın standart küme üzerinde yeniden kalibre edilmelidir. Bu adım atlanırsa, LLM değerlendiricisinin verdiği puanlar insan yargısının güvenilir bir vekili değil, yalnızca "başka bir modelin görüşü" olur.
+Telecom gibi görevlerin mutlaka bir muhatabı olmalıdır ve beş bileşen içindeki kullanıcı simülasyonu kısmı vazgeçilmezdir. Bir de hiç muhatabı olmayan büyük bir görev sınıfı vardır: kod üretimi, veri çözümlemesi, matematik problemi çözme gibi görevlerde Agent baştan sona yalnızca araçlarla etkileşir, doğruluk yürütme doğrulamasından geçip geçmemesiyle belirlenir ve ne insan etiketlemesi ne de model yargısı gerekir. Bu tür ortamlar kullanıcı simülatörünü atlar; kalan dört bileşen yine vardır, yalnızca biçimleri yalınlaşır: ortam durumu bir dosya sistemi ya da veritabanıdır, puanlama ölçütü bir parça test kodudur ve yürütme protokolü "bir yanıt verene ya da tur hakkı bitene dek araç çağırmayı sürdür"e iner.
 
-**Düşmanca inceleme**, kırmızı takım (Red Teaming) yoluyla zorlayıcı vakaları bilerek kurgular: yüzeyde kusursuz görünen ama gizli hatalar içeren yanıtlar, anahtar kelime yığarak işin içinden sıyrılan yanıtlar ve değerlendirici modelin bilinen önyargılarını kullanarak hak etmediği yüksek puanı alan yanıtlar. **Çoklu hakem mekanizması** ise birden fazla bağımsız değerlendiricinin ayrı ayrı puan vermesini sağlar ve nihai sonucu ağırlıklı ortalama veya tutarlılık denetimiyle belirler — değerlendiriciler arasında ciddi bir görüş ayrılığı olduğunda vaka, ek insan incelemesi gerektiriyor diye işaretlenir.
+Verifiers çerçevesi bu tür ortamları iki boyuta göre katmanlar: görevin turlar arası durum tutması gerekip gerekmediği ve yalıtım gerekip gerekmediği. `SingleTurnEnv` bir matematik sorusu sorup yanıtı doğrudan doğrulamaya; `ToolEnv` birkaç web sayfasında arayıp derli toplu yanıt verdikten sonra nihai sonucu doğrulamaya; `StatefulToolEnv` veritabanı kaydını değiştirip durum değişimini doğrulamaya; `SandboxEnv` ise sandbox'ta kod çalıştırıp çıktı dosyalarını denetlemeye uygundur. Tablo 7-1 bu dört türü özetler; görev durumu, araç çağrısı ve yalıtım gereksinimlerine göre seçim yapmayı kolaylaştırır.
 
-## Otomatik Değerlendirme Ortamı
+Tablo 7-1 Verifiers ortam türlerinin karşılaştırması
 
-Agent değerlendirmesi, tekrar tekrar çalıştırılabilen otomatik bir ortam gerektirir — geliştirme aşamasında değişikliklerin etkisini hızlıca test edebilen bir ortam. Böyle bir ortamı kurmak üç soruyu yanıtlamayı gerektirir: ne değerlendirilecek (görev tanımı ve doğrulama ölçütleri), kime karşı değerlendirilecek (Agent'ın etkileşimde bulunduğu tarafın nasıl simüle edileceği) ve hangi ölçütle puanlanacak.
-
-### Değerlendirme Ortamının Temel Bileşenleri
-
-Bir değerlendirme ortamı beş öğeden oluşur — ilerideki alt bölümler bunlardan veri kümesi tasarımı ile puanlama ölçütü tasarımını ayrıntılandıracak:
-
-**Veri kümesi (Dataset)** görev kümesini tanımlar; başlangıç durumunu, hedef açıklamasını ve isteğe bağlı referans çözümleri içerir.
-
-**Ortam durumu (Environment State)** görev yürütülürken değişen bilgiyi tutar ve gerçekçilikle denetlenebilirlik arasında denge kurmalıdır. Örneğin müşteri hizmetleri değerlendirmesinde ortam durumu, veritabanındaki sipariş kayıtlarını ve kullanıcı hesap bakiyesini kapsar. Agent `process_refund`'u çağırdıktan sonra sipariş durumu "delivered" değerinden "refunded" değerine döner ve bakiye artar — işte bunlar "değişebilir bilgi"dir. "Gerçekçilik", durum değişimlerinin iş mantığına uygun olmasını gerektirir (iade tutarı sipariş tutarını aşamaz); "denetlenebilirlik" ise her testin aynı başlangıç durumuna sıfırlanabilmesini gerektirir.
-
-**Araç arayüzleri (Tools)** Agent'ın yürütebileceği işlemler kümesini tanımlar — araçlar aşırı yüksek düzeyli soyutlamalar ("kullanıcının sorununu çöz" gibi) değil, atomik işlemler (sipariş sorgulama, rezervasyon değiştirme, e-posta gönderme gibi) sunmalıdır; böylece Agent bu işlemleri planlayarak ve düşünerek birleştirmek zorunda kalır.
-
-**Puanlama ölçütü (Rubric)** Agent'ın performansını nicelleştirir; ikili (geçti/kaldı), sürekli (0 ile 100 arası puan) veya çok boyutlu (doğruluk, verimlilik ve güvenlik için ayrı ayrı puan) olabilir.
-
-**Yürütme protokolü (Interaction Protocol)** etkileşim biçimini ve sonlanma koşullarını belirler.
-
-Bu beş öğe birlikte tekrarlanabilir bir değerlendirme döngüsü oluşturur.
-
-![Şekil 7-2: Araç Çağırma Tipi ve İnsan-Makine Etkileşimi Tipi Değerlendirme Ortamları](images/fig7-2.svg)
-
-Agent'ın görevine göre değerlendirme ortamları kabaca araç çağırma tipi ve insan-makine etkileşimi tipi olarak ikiye ayrılabilir.
-
-### Araç Çağırma Tipi Değerlendirme Ortamı
-
-Kod üretimi ve veri analizi gibi ağırlıklı olarak araç kullanımına dayanan görevlerde, Verifiers çerçevesi tipik bir tasarım kalıbı sergiler. Agent görevi önceden tanımlanmış araçları çağırarak tamamlar; doğrulama, insan etiketlemesine veya model değerlendirmesine dayanmadan, çalıştırılabilir ölçütler (testler geçiyor mu, yanıt eşleşiyor mu) üzerinden yapılır.
-
-Verifiers katmanlı bir ortam tasarımı getirir: `SingleTurnEnv` tek turluk görevler (basit soru-yanıt gibi) için uygundur, `ToolEnv` çok turlu tool calling'in otonom döngüsünü destekler, `StatefulToolEnv` ve `SandboxEnv` ise durumlu araçları ve uzun süre çalışan sandbox ortamlarını (kod yürütme gibi) destekler. Örneğin `SingleTurnEnv`, bir matematik sorusu sorup yanıtı doğrudan doğrulamaya uygundur; `ToolEnv`, birden fazla web sayfasında arama yapıp yanıtı sentezledikten sonra nihai sonucu doğrulamaya uygundur; `StatefulToolEnv`, veritabanı kayıtlarını değiştirip veritabanı durumundaki değişimi doğrulamaya uygundur; `SandboxEnv` ise sandbox içinde kod çalıştırıp çıktı dosyalarını denetlemeye uygundur. Tablo 7-2 bu ortam türlerini özetler; okuyucu görev durumu, tool calling ve izolasyon ihtiyacına göre uygun değerlendirme ortamını seçebilir.
-
-Tablo 7-2 Verifiers Ortam Türlerinin Karşılaştırması
-
-| Ortam türü | Durum koruma | Tool calling | Tipik kullanım |
+| Ortam türü | Durum tutma | Araç çağrısı | Tipik kullanım |
 |---|---|---|---|
-| SingleTurnEnv | Yok | Yok | Tek turlu soru-yanıt, matematik soruları |
-| ToolEnv | Yok | Çok turlu | Arama + bilgi sentezi |
-| StatefulToolEnv | Var | Çok turlu | Veritabanı kayıtlarını değiştirme |
-| SandboxEnv | Var + izolasyon | Çok turlu | Kod yürütme ve test |
+| SingleTurnEnv | Yok | Yok | Tek turlu soru-yanıt, matematik |
+| ToolEnv | Yok | Çok turlu | Arama + bilgi birleştirme |
+| StatefulToolEnv | Var | Çok turlu | Veritabanı kaydı değiştirme |
+| SandboxEnv | Var + yalıtımlı | Çok turlu | Kod yürütme ve test |
 
-Çerçeve paralel örneklemeyi ve trajectory önbelleklemesini destekler; her değerlendirmenin eksiksiz trajectory'si (gözlem, eylem, ödül) sonradan analiz ve yeniden oynatma için saklanır.
+Çerçeve paralel örnekleme ve trajectory önbelleğini destekler; her değerlendirmenin tam trajectory'si (gözlem, eylem, ödül) saklanır, böylece sonradan çözümlemek ve yeniden oynatmak kolaylaşır. Ayrıca bir aracın yürütme etkisi o anki duruma bağlı olduğundan, başarısızlık halinde yalın bir başarısızlık bayrağı yerine açık bir hata iletisi döndürülmeli ve Agent buna göre stratejisini ayarlayabilmelidir.
 
-Ortamın ayrıca işlemlerin duruma bağımlılığını ele alması gerekir — bir aracın yürütme sonucu mevcut duruma bağlıdır; başarısızlık halinde basit bir hata bayrağı yerine açık hata mesajları verilmelidir ki Agent hatalarından öğrenip stratejisini ayarlayabilsin.
+Araç çağrısı türündeki değerlendirme, gözlemlenebilir durum değişimlerinin doğruluğunu sınar; insan-bilgisayar etkileşimi türündeki değerlendirme ise iletişim stratejisinin yerindeliğini sınar — ilki eylemi, ikincisi yönlendirmeyi doğrular. İki ortam türünün yapısal karşılaştırması için bkz. Şekil 7-2.
 
-### İnsan-Makine Etkileşimi Tipi Değerlendirme Ortamı
+![Şekil 7-2: Araç Çağrısı ve İnsan-Bilgisayar Etkileşimi Değerlendirme Ortamları](images/fig7-2.svg)
 
-Birçok gerçek görev yalnızca tool calling içermez, insan kullanıcılarla diyalog da gerektirir. Bir müşteri hizmetleri Agent'ının belirsiz ifadeleri anlaması, ihtiyacı netleştirmesi, arka uç sistemleri sorgulaması ve bilgiyi kullanıcıya doğrulatması gerekir. Bu tür görevlerin değerlendirmesi temel bir zorlukla karşılaşır: otomatik bir ortamda gerçek kullanıcı nasıl simüle edilir?
+## Değerlendirme veri kümesinin tasarımı
 
-Kilit tasarım ilkesi **kademeli bilgi açıklamadır (Progressive Information Disclosure)**; insan-makine etkileşimi tipi değerlendirmeyi geleneksel benchmark testlerinden ayıran temel fark budur. Çoğu benchmark en baştan bütün gereksinimi ortaya döker, oysa gerçek hayatta kullanıcılar ihtiyacını daha ilk anda net biçimde tarif edemez — genellikle yalnızca "uçuşumda bir sorun var galiba" ya da "internete bağlanamıyorum" derler. Agent'ın ihtiyacı proaktif sorularla netleştirmesi gerekir ve bu sürecin kendisi yeteneğin önemli bir göstergesidir. Bu yüzden değerlendirmede **simüle edilen kullanıcının tüm bilgileri asla en baştan Agent'a açılmamalıdır**; bilgi, diyalog boyunca ihtiyaç duyuldukça ve kademeli olarak verilmelidir.
+Değerlendirme ortamı sahne ise veri kümesi senaryodur. Aynı beş bileşenle, görev sınıfı değişince doldurma biçimi tümüyle farklılaşabilir: görevlerin nereden geldiği, doğrulayıcının ne kadar derine inebildiği ve ezberlenmenin nasıl önlendiği. Bu bölüm birkaç açık benchmark'ın tasarım pratiğinden yola çıkar ve daha pratik bir soruyla biter: kendi kurduğunuz değerlendirme kümesinin görevleri nereden gelmelidir?
 
-τ-bench'in çözümü **kullanıcı simülasyonudur (User Simulation)**: kullanıcı rolünü başka bir LLM üstlenir ve önceden tanımlanmış talimatlara göre Agent'la konuşur. Simüle edilen kullanıcı bir görev talimatı alır ("yarınki uçuşumu iptal etmem gerekiyor" gibi), diyalog sırasında gerekli bilgiyi Agent'a adım adım açar, sorulara yanıt verir ve görev tamamlandığında bir sonlandırma sinyali gönderir. Prompt, simüle edilen kullanıcıdan "bütün bilgiyi tek seferde açıklamamasını, yalnızca o adım için gerekli olanı vermesini" ve "talimatta verilmemiş bilgiyi uydurmamasını" ister. Kullanıcı simülasyonunun tasarımı gerçekçilikle denetlenebilirlik arasında bir ödünleşim gerektirir: davranış gerçek bir kullanıcıya yakın olmalı (belirsiz ifadeler, eksik bilgi, ara sıra duygusal dalgalanmalar), aynı zamanda tekrarlanabilirliği güvenceye almak için belirli bir senaryoyu izlemelidir.
+### Benchmark tasarım tercihlerinin yatay karşılaştırması
 
-Aşağıda kademeli bilgi açıklamalı çok turlu bir diyalog örneği verilmiştir (kullanıcı simülatörü sabit bir senaryoya göre hareket eder):
+Önceki bölümde ayırt edilen muhatabın varlığı ya da yokluğu, yalnızca ortam düzeyindeki ilk katman farktır; veri kümesi düzeyindeki ayrışmalar tasarım ödünleşimlerini daha iyi gösterir. Tablo 7-2 sık anılan birkaç benchmark'ı yan yana koyar.
 
-> **Kullanıcı**: "Uçuşumla ilgili bir sorun var."
-> **Agent**: "Hangi uçuş olduğunu söyleyebilir misiniz?"
-> **Kullanıcı** (senaryoya göre açıklar): "Delta 123, yarın sabah San Francisco'dan New York'a."
-> **Agent**: "Sorun tam olarak nedir?"
-> **Kullanıcı** (senaryoya göre açıklar): "Uçuş süresi çok uzun, değişiklik yaptırmak istiyorum."
-> **Agent**: "Yeni uçuş için bir tercihiniz var mı?"
-> **Kullanıcı** (senaryoya göre açıklar): "Öğleden sonraki uçuşların hepsi olur."
+Tablo 7-2 Birkaç Agent benchmark'ının temel tasarım tercihleri
 
-Kullanıcı simülatörü sabit bir senaryoyu (bilinen bilgi + açıklama kuralları) izler; böylece değerlendirmenin tekrarlanabilirliğini güvenceye alırken gerçek bir kullanıcının kademeli anlatım biçimini de taklit eder. Benzetilmiş kullanıcıya çoğu zaman **sınırlı bir sabır** da tanımlanır: Agent verimsiz iletişim kurarsa benzetilmiş kullanıcı konuşmayı sonlandırabilir ve görev başarısız olur.
+| Benchmark | Sınanan yetenek | Görev kaynağı | Ortamı canlandıran | Doğrulayıcı |
+|---|---|---|---|---|
+| τ²-bench | Müşteri hizmetlerinde insan-bilgisayar etkileşimi ve araç çağrısı | Elle yazım + birleşimsel üretim | Kullanıcı simülatörü + iş veritabanı | Dört katman denetim `reward_basis` ile ikiliye toplanır |
+| SWE-bench Verified | Yazılım geliştirme, coding | Gerçek GitHub issue'ları, elle elenmiş | Kod deposu + test paketi | FAIL\_TO\_PASS / PASS\_TO\_PASS çift doğrulama |
+| AndroidWorld | Android telefon GUI'sini kullanma | Parametreli şablonların örneklenmesi | Gerçek Android öykünücüsü | Nihai UI durumu savları |
+| OSWorld | Linux masaüstü GUI'sini kullanma | Önceden ayarlanmış ara durumdan başlar | Gerçek sanal makine | 134 bağımsız değerlendirme işlevi |
+| Terminal-Bench | Linux terminalini kullanma, coding | Elle yazım | Docker kapsayıcısı | Dosya sistemi denetimi + gerçek yürütme |
+| GAIA | Bilgi toplayan genel amaçlı AI asistanı | Elle yazım + özel ekler | Açık internet | Tam dizgi eşleşmesi |
 
-τ-bench, Agent'ın yapılandırılmış iş süreçlerindeki (havayolu müşteri hizmetleri, perakende müşteri hizmetleri gibi) performansını ölçen bir benchmark'tır. Denetimleri bileşen düzeyinde ve çok boyutludur: bir yandan veritabanının nihai durumunun doğru olup olmadığını kontrol eder (rezervasyon kaydının durumunun "iptal edildi"ye dönmesi gibi), diğer yandan Agent'ın diyalog sırasında gerekli kilit bilgileri verip vermediğini doğrular (iade tutarı ve hesaba geçiş süresi gibi; belirli dizeler veya kalıplar aranarak doğrulanır). Bu çifte doğrulama, işlem doğruluğunu ve iletişim etkinliğini aynı anda sınar. Ancak görev düzeyinde bu denetimler nihayetinde **sıfır ya da bir olan ikili bir ödüle** indirgenir: 1 puan almak için tüm denetimlerin geçmesi gerekir, herhangi biri geçmezse sonuç 0'dır. İkili ödül, Pass^k gibi güvenilirlik metriklerinin hesaplanmasını kolaylaştırır (bkz. ilerideki "Değerlendirme Metrikleri Sistemi" bölümü); bedeli ise "işlemi doğru yapıp kritik olmayan bir alanı atlamak" ile "tümüyle başarısız olmak"ın aynı puanı almasıdır.
+### Doğrulayıcılar
 
-Geliştirilmiş sürüm olan **τ²-bench**'in temel katkısı puanlama inceliğinde değil, iki noktadadır: birincisi **çift kontrollü ortam (Dual-Control)** — artık yalnızca Agent araç çağıramaz, kullanıcı simülatörü de aynı paylaşılan ortam üzerinde işlem yapabilir (Agent kullanıcıya uçak modunu açmasını söyler ve kullanıcının işlemi ortam durumunu gerçekten değiştirir); bu, kullanıcının elini taşın altına koyması gereken teknik destek gibi gerçek senaryolara daha yakındır. İkincisi **daha kesin görev şartnameleri ve bileşimsel görev üretimi** — başarı koşullarındaki belirsizlik azalır ve somut görev örnekleri parametrelendirilip toplu olarak üretilebilir (ayrıntılı doğrulama boyutları için ilerideki "Doğrulanabilirlik ve Nesnellik Güvencesi" bölümüne bakın).
+Bir Agent, görevi tamamen bitirdiğini söyleyen uzun bir rapor yazmakta hiç zorlanmaz; oysa gerçekte hiçbir şey bitmemiş olabilir. Değerlendirme çerçevesi, Agent'ın kendi beyanını değil, makinenin bağımsız olarak doğrulayabileceği olguları denetlemelidir.
 
-> **Deney 7-1 ★: τ²-bench'i Çalıştırmak ve τ-bench'ten Evrimini Karşılaştırmak**
+**SWE-bench Verified "düzeltme tamam"ı iki bağımsız önermeye ayırır.** Biri FAIL\_TO\_PASS'tır: düzeltmeden önce başarısız, sonra başarılı; bu, sorunun gerçekten çözüldüğünü kanıtlar. Diğeri PASS\_TO\_PASS'tır: düzeltmeden önce de sonra da başarılı; bu, yeni bir kusur sokulmadığını kanıtlar. Yalnızca ilkini denetlerseniz Agent, yolunu kesen savları silip değiştirerek sıyrılabilir; yalnızca ikincisini denetlerseniz hiç denetlememişsiniz demektir. Ancak ikisini birden denetlemek "düzeltildi" ile "hiçbir şey bozulmadı"yı ayrı ayrı kanıtlanabilir iki sonuca dönüştürür. Ayrıca testlerin kendi kararlılığını da doğrular ve kimi zaman geçip kimi zaman kalan kararsız testleri (flaky test) eler.
+
+**OSWorld'ün doğrulayıcısı, dışarıdan tamamlanmış görünen ama özünde yanlış olan durumları yakalayabilir.** 134 bağımsız değerlendirme işlevi ve işletim sistemine tam erişimle donatılmıştır; dosya sistemi yapısını, süreç durumlarını, ağ bağlantılarını ve uygulamaların iç durumunu denetleyebilir. Veritabanı görevlerinde değerlendirme betiği yalnızca rapor dosyasının varlığını doğrulamakla kalmaz, veritabanına bağlanıp SQL'in gerçekten çalışıp çalışmadığını da denetler; tarayıcı görevlerinde DOM ağacını çözümler, cookie ile localStorage'ı inceler ve formun gerçekten işleyip işlemediğini doğrulamak için arka uca istek gönderir.
+
+**Terminal-Bench'in `build-linux-kernel-qemu` görevi**, Linux 6.9 çekirdeğinin kaynaktan derlenmesini, `start_kernel` içine özel bir printk eklenmesini, bir initramfs üretilmesini ve bunun QEMU'da çalıştırılmasını ister; başarı ölçütü, açılış günlüğünde o özel iletinin görünmesidir. Agent çıktıyı sahteleyemez; bütün süreci gerçekten tamamlamaktan başka yolu yoktur.
+
+### Görevlerin zorluk düzeylerine ayrılması
+
+Bir değerlendirme görev kümesi farklı zorluktaki görevleri içermelidir. Böylece model yetenekleri arttığında küme çabucak eskimez.
+
+GAIA'nın 466 sorusu üç zorluk düzeyine ayrılmıştır: Level 1 bir iki araçla halledilir (insanlar %93,9, GPT-4 %30,3), Level 2 çok adımlı düşünmeyi gerektirir (%91,8'e %9,7) ve Level 3 karmaşık birleşimleri gerektirir (%87,3'e %0). Bu katmanlama yalnızca zorluk etiketlemez, tanısal değeri de vardır: Level 1'deki başarısızlık temel araç kullanımına, Level 2 çok adımlı planlama ve bilgi bütünleştirmeye, Level 3 ise uzun diziler boyunca düşünme ve karmaşıklık yönetimine işaret eder; üçü farklı iyileştirme yönlerine karşılık gelir.
+
+Terminal-Bench basit bir mlflow model kaydından orta zorlukta 7z parola kırmaya, zor bir git sunucusu ile web sunucusunun çok bileşenli tümleştirilmesine ve en ağır olan FEAL diferansiyel kriptanalizine kadar uzanır.
+
+τ²-bench ayrıca özel olarak **tuzak görevler** tasarlar: kullanıcı "müşteri hizmetleri iptali zaten onayladı" der ama bu aslında politikaya uygun değildir; böylece Agent'ın baskı ve yanıltma altında doğru yargısını koruyup koruyamadığı sınanır.
+
+### Veri sızıntısının önlenmesi
+
+**GAIA yanıtlarının internetten doğrudan aranmasını olanaksız kılar.** Görevleri kavramsal olarak yalın ama yolu açıktır: örneğin belirli bir tarihteki NASA Günün Astronomi Fotoğrafı'ndan yola çıkıp fotoğraftaki astronotu tanımak, mensup olduğu astronot grubunu bulmak, o grupta uzayda en kısa süre kalanı hesaplamak ve sonucu "soyadı, noktalı virgülle ayrılmış, binlik ayırıcılı" biçiminde tam olarak vermek. Yanıt son derece özgüldür ve doğruluğu tam dizgi eşleşmesiyle belirlenir. Sızıntı önleme iki şeye dayanır: birincisi, soruya ancak birkaç bilgi kaynağı birleştirilerek yanıt verilebilir ve tek bir web sayfası yanıtı doğrudan vermez; ikincisi, bazı görevlere özel olarak üretilmiş ekler iliştirilmiştir (internette bulunmayan PDF, ses ve görseller).
+
+**AndroidWorld tek bir şablondan çok sayıda örnek türetir.** Görevleri durağan metin değil, dinamik olarak örneklenebilen şablonlardır; örneğin "`[CONTACT_NAME]` kişisinin telefonunu `[NEW_PHONE]` yap" gibi, parametre değerleri her değerlendirmede rastgele üretilir. Bunun üç yararı vardır: parametreler her seferinde farklı olduğundan sabit bir işlem dizisini yeniden oynatmak işe yaramaz; tek bir şablon neredeyse sınırsız örnek üretebilir; bazı parametreler sabitlenip geri kalanlar değiştirilerek belirli bir etkenin etkisi kesin biçimde ölçülebilir.
+
+**Terminal-Bench soru metnine kanarya tanımlayıcısı gömer.** Her soru bir canary GUID taşır; bir model o GUID'i içeren içerik üretebiliyorsa benchmark verisi eğitim kümesine girmiş demektir. Sızıntıyı engellemez ama saptanabilir kılar.
+
+### Kalite denetimi ve uzun vadeli bakım
+
+Yüksek kaliteli bir değerlendirme kümesi hazırlamak çok zordur. Yukarıdaki benchmark'ların çoğunun bugünkü hali, ilk sürümleri kullanıma girip sorunları açığa çıktıktan sonra tur tur onarılmasının ürünüdür. Örneğin τ-bench'ten τ²-bench'e beş yer yeniden tasarlanmıştır.
+
+Birincisi, **görev yönergeleri fazla genel olduğundan yanıt tahmin edilebiliyordu**. İlk sürümün yönergeleri geniş yazılmıştı, bu yüzden modelin talebi gerçekten netleştirmesine gerek kalmıyor, sağduyuyla bir prosedür tahmin etmek geçmeye yetiyordu. τ²-bench senaryoyu `known_info` ve `task_instructions` diye iki alana böldü: ilki kullanıcının bildiklerinin sınırını çizer, ikincisi açığa çıkarma biçimini belirler. Kullanıcının bilmediğini Agent tahmin edemez, ancak sorgulayarak öğrenebilir.
+
+İkincisi, **başarı koşulları yeterince kesin olmadığından doğrulama yanlış hüküm veriyordu**. "Ağ düzeldi" gibi bir koşulun denetlenebilir bir sınırı yoktur. τ²-bench bunu "yalnızca hız testi excellent verirse çözülmüş sayılır; poor, fair ve good kabul edilmez" olarak değiştirdi. Bu değişiklik, belirtiyi bastırıp kök nedeni gidermeyen **göstermelik onarımları** hedefler.
+
+Üçüncüsü, **kullanıcı simülatörünün davranışı fazla mekanikti**. İlk sürümün simüle kullanıcısı yalnızca edilgen yanıt veriyordu. τ²-bench ona duygu (ilk onarım başarısız olunca hoşnutsuzluk göstermek), sabır sınırı (iletişim çok verimsizse konuşmayı kesmek) ve olguya dayandırma koşulunu ekledi. Üçü birlikte, simülatörü gerçek kullanıcıya yaklaştırırken yinelenebilirliği de korur.
+
+Dördüncüsü, **kullanıcı yalnızca konuşmaya değil, işleme de katılır**. Telecom alanı çift denetimli ortamı getirdi. Daha önceki değerlendirmelerde ortamı yalnızca Agent değiştirebiliyordu; oysa teknik destek gibi senaryolarda eylemlerin epeyce bir bölümünü aslında kullanıcının kendi cihazında yapması gerekir. Çift denetim, doğrulamaya bir boyut daha katar: kullanıcı durumu değiştirdikten sonra Agent sonucu ancak aracı yeniden çağırarak öğrenebilir, dolayısıyla doğrulama artık "Agent kullanıcı tarafındaki işlemin sonucunu gerçekten okudu mu" sorusunu da kapsar.
+
+Beşincisi, **görev örnekleri dinamik olarak üretilir**. τ²-bench'in somut örnekleri (kullanıcı adları, numaralar, arıza birleşimleri) parametreleştirilip toplu üretilebilir; bu hem kapsamı hem de sızıntıya direnci iyileştirir.
+
+**SWE-bench Verified: yayımlanmadan önce özgün görevlerin %71'i elendi.** OpenAI, özgün 2.294 görevten 1.699'unu rastgele seçip insan değerlendirmesine soktu ve Python'a hâkim 93 geliştirici toplayarak her birini tek tek denetletti: sorun açıklaması net mi, test durumları sınır koşullarını kapsıyor mu, testler kararlı mı, referans patch yeni hata sokuyor mu, zorluk makul mü. Sonunda yalnızca 500'ü geçti. Yüksek eleme oranı daha iyi bir sinyal-gürültü oranı getirir ve değerlendirme maliyeti de yaklaşık %80 düşer. Karmaşık Agent görevleri sıklıkla dakikalardan saatlere sürer ve öncü bir modelle bir değerlendirme veri kümesini baştan sona koşturmak çoğu zaman binlerce dolarlık token maliyeti getirir; bu yüzden değerlendirme maliyetini düşürmek son derece önemlidir.
+
+**OSWorld: yayımlandıktan sonraki 15 ayda 300'den fazla sorun açığa çıktı.** Nisan 2024'te yayımlandıktan kısa süre sonra çok kipli Agent değerlendirmesinin önemli bir benchmark'ı oldu; ancak sonraki yaygın kullanım dört tür sorunu ortaya çıkardı: ortam sorunları (sitelerin kazıma karşıtı önlemleri, CAPTCHA, dinamik içerik değişimi), görev açıklaması sorunları (belirsiz ifadeler), doğrulama mantığı sorunları (fazla katı ya da fazla gevşek) ve başlangıç durumu sorunları (eksik yapılandırma). Hong Kong Üniversitesi'nden yaklaşık 10 kişilik bir ekip iki ay boyunca MoonShot AI, OpenAI, ByteDance Seed TARS, Anthropic, Simular ve diğerleriyle yakın çalışarak sistematik bir onarım yürüttü: ortam sorunları sürüm sabitleme ve çevrimdışı yedeklerle, açıklama sorunları belirsiz ifadelerin yeniden yazılmasıyla, doğrulama sorunları elle doğru bir taban çizgisi kurulup koşulların ayarlanmasıyla, başlangıç durumu sorunları ise bütünlük denetimleri eklenerek hafifletildi.
+
+> **Deney 7-2 ★: Benchmark görevlerini elle yapmak**
 >
-> Bu deney, τ²-bench değerlendirme çerçevesini çalıştırarak insan-makine etkileşimi tipi değerlendirme ortamlarının tasarım noktalarını anlamayı ve τ-bench ile τ²-bench arasındaki farkları karşılaştırarak değerlendirme veri kümelerinin nasıl yinelemeyle iyileştirildiğini kavramayı amaçlar.
+> GAIA, AndroidWorld, SWE-Bench Verified, Terminal-Bench ve OSWorld-Verified'dan görevler seçip kendi elinizle tamamlayın; her veri kümesi için bir kolay, bir orta ve bir zor görev önerilir. "Zor" düzey insanlar için de meydan okuyucudur.
 >
-> Görev tanım dosyalarını derinlemesine okuyun: her görev bilinen bilgiyi (kullanıcının arka plan bilgisi), görev talimatlarını (bilginin nasıl kademeli açıklanacağını ve yanıt stratejisini yönlendirir) ve başarı koşullarını (veritabanının hedef durumu ve diyalogda mutlaka geçmesi gereken doğrulama bilgileri) içerir. Eksiksiz değerlendirme akışını çalıştırın, kullanıcı simülatörü ile Agent arasındaki çok turlu diyaloğu gözlemleyin ve tipik başarısızlık kalıplarını (politika ihlali, bilgi atlama, aşırı sıklıkta insan temsilciye aktarma vb.) analiz edin.
->
->
-> ![Şekil 7-3: τ²-bench Değerlendirme Mimarisi](images/fig7-3.svg)
->
->
-> τ-bench ile τ²-bench'in tasarım farklarını karşılaştırın: τ-bench'in ilk sürümünde kullanıcı talimatları fazla basitti (Agent yanıtı tahmin edebiliyordu), başarı koşulları yeterince kesin değildi (yanlış değerlendirmelere yol açıyordu) ve kullanıcı simülatörü fazla mekanikti. τ²-bench bu sorunlara karşı sistematik iyileştirmeler yaptı:
->
-> - **Daha ayrıntılı görev talimatları getirmek**: "olgusal dayanak gereksinimi" (Grounding) dahil, yani yanıtların ortamın gerçek durumuna dayanması zorunluluğu
-> - **Daha kesin değerlendirme ölçütleri**: örneğin "hız testi excellent döndürmedikçe sorun çözülmüş sayılmaz"
-> - **Daha gerçekçi kullanıcı simülatörü davranış kuralları**: kademeli bilgi açıklama, doğal duygusal dalgalanmalar
->
-> τ²-bench'e yeni eklenen telecom alanı görevlerine özellikle dikkat edin ve çift kontrollü ortam tasarımını kavrayın (yukarıda anlatıldığı gibi, kullanıcı ve Agent aynı paylaşılan ortamı birlikte kullanır).
->
+> Bitirdikten sonra iki soruyu yanıtlayın. Görev açıklaması birden çok makul yorum barındırıyor mu; barındırıyorsa doğrulayıcı hangisini kabul ediyor? İşi yapmadan sıyrılmaya kalksanız en ucuz yol ne olurdu ve doğrulayıcı bunu engelleyebilir mi?
 
-Araç çağırma tipi değerlendirme "gözlemlenebilir bir durum değişikliği tamamlandı mı" sorusuna odaklanırken, insan-makine etkileşimi tipi değerlendirme "kullanıcının kavrayışında veya kararında bir değişim sağlandı mı" sorusuna bakar — ilki Agent'ın eylem doğruluğunu, ikincisi iletişim stratejisinin isabetliliğini sınar.
+### Değerlendirme kümesinin üç kaynağı
 
-Değerlendirme ortamlarının kurulması simülasyon ortamı tasarımına da temas eder — bir değerlendirme ortamının büyük ölçekli, tekrarlanan etkileşimleri desteklemesi gerektiğinde simülasyon ortamına dönüşür; bu bölümün sonunda kısaca ele alınacaktır.
+Yaygın bir görüş, açık benchmark'ların model sıralaması için olduğunu ve gerçek işle pek ilgisi bulunmadığını söyler. Açık benchmark puanlarının ürün kararlarını doğrudan yönlendirmesinin güç olduğu doğrudur, ama tasarım teknikleri fazlasıyla aktarılabilir. Yukarıda tartışılan doğrulama derinliği, parametreli üretim, sızıntı önleme ve kalite bakımı, kendi kurduğunuz değerlendirme kümesinde en kolay atlanan noktalardır.
 
-## Değerlendirme Görev Veri Kümelerinin Tasarımı
+Üretim ortamındaki bir değerlendirme kümesinin genellikle üç kaynağı vardır.
 
-Değerlendirme ortamı "sahne", veri kümesi ise "senaryodur" — senaryonun ne kadar iyi yazıldığı, değerlendirmenin değerini çoğu zaman sahnenin kendisinden daha fazla belirler. Kötü tasarlanmış bir veri kümesi kusursuz bir ortamda çalıştırılsa bile yalnızca gürültü üretir. Bu bölüm; GAIA, AndroidWorld, SWE-Bench Verified (Software Engineering Benchmark, yazılım mühendisliği benchmark'ı), τ-bench ve τ²-bench, Terminal-Bench, OSWorld ve OSWorld-Verified gibi benchmark'ların tasarım pratiğinden defalarca doğrulanmış birkaç ilke damıtıyor.
+**Açık benchmark'lar** modelleri kabaca elemek ve tasarım tekniklerini ödünç almak için kullanılır, genelde ürün kararları için değil. Görev dağılımları gerçek işin görev dağılımıyla örtüşmez; GAIA'da iki puan yükselmenin iade başarı oranıyla zorunlu bir ilişkisi yoktur.
 
-> **Deney 7-2 ★: Benchmark Görevlerini Elle Yapmak**
->
-> GAIA, AndroidWorld, SWE-Bench Verified, τ²-bench, Terminal-Bench ve OSWorld-Verified'dan birer görev seçip kendi elinizle tamamlayın. Her veri kümesinden kolay, orta ve zor birer görev yapmanız önerilir — "zor" seviye insanlar için de zorlayıcıdır. Kendi sonuçlarınızı standart yanıtlarla karşılaştırın ve farkların kaynağını analiz edin. Bu birinci elden deneyimle şunları kavrayın: görev açıklamaları netlikle açıklık arasında denge kurmalıdır, doğrulama ölçütleri nesnel ve çalıştırılabilir olmalıdır, görev zorluğunun katmanlandırılması farklı yetenek düzeylerini ayırt edebilmelidir.
->
+**Kendi kurduğunuz iş kümesi** gerçek görev dağılımını kapsar ve model seçimi ile Harness tasarım kararlarına dayanak olabilir. Örneğin τ²-bench, simüle kullanıcı gerektiren herhangi bir değerlendirme sisteminin iskeleti olarak doğrudan kullanılabilir; yalnızca alan verilerini ve araç kümesini değiştirmek yeterlidir.
 
-### Görev Veri Kümesi Tasarımının Temel Zorlukları
+**Üretim trajectory'lerinin geri akışı** sahadaki gerçek başarısızlıklardan gelir: kullanıcının açık düzeltmeleri, kullanıcının olumsuz oyları ve sonradan durum denetimi, kural tabanlı doğrulayıcı ya da LLM incelemesiyle bulunan sorun örnekleri. Başarısızlık atfından geçtikten sonra regresyon durumlarına dönüşürler. Somut yöntem ileride "Başarısızlık atfı" ile "Uçtan uca regresyon görevleri ve trajectory prefix regresyon görevleri" bölümlerinde anlatılır. Bu kaynak en pahalı olduğu kadar en isabetlisidir de, çünkü doğrudan kullanıcıların gerçekten karşılaştığı sorunlardan gelir.
 
-**Zorluk bir: netlikle açıklık arasındaki gerilim.** Görev açıklaması, değerlendirmenin tekrarlanabilirliğini güvenceye alacak kadar net olmalı, ama Agent'ın yaratıcılığını kısıtlayacak kadar da katı olmamalıdır. GAIA buna bir örnek sunar: görevler "kavramsal olarak basit", ama uygulama yolları açıktır — örneğin NASA'nın Günün Astronomi Fotoğrafı'ndaki astronotun bilgilerini bulmak istenir; hedef nettir (belirli bir astronotu ve uzayda geçirdiği süreyi bulmak), ama nasıl arama yapılacağı, nasıl eleneceği ve nasıl doğrulanacağı tamamen Agent'ın kendi kararına bırakılmıştır.
+Başlangıç aşamasında genellikle yalnızca açık benchmark'lar ve elle yazılmış küçük bir iş kümesi bulunur; sistem üretimde bir süre çalıştıktan sonra üretim trajectory'lerinden geri akan durumlar ana gövdeyi oluşturur.
 
-**Zorluk iki: gerçekçilikle denetlenebilirlik dengesi.** Gerçek görevler belirsizlik ve gürültü içerir; bu, sağlamlığın görünür olmasını sağlar ama tekrarlanabilirliği de tehdit eder. SWE-Bench'in ilk sürümü doğrudan GitHub'daki gerçek issue'ları aldı; bu, gerçekçiliği güvenceye aldı ama görev açıklamalarının belirsiz, test durumlarının eksik ve değerlendirme ölçütlerinin öznel olmasına da yol açtı. SWE-Bench Verified, insan uzmanlarla sistematik bir doğrulama süreci getirdi ve bunlar arasından sorunu açık, testleri yeterli, çözümü belirgin 500 yüksek kaliteli görev seçti; böylece gerçekçiliği korurken denetlenebilirliği belirgin biçimde artırdı.
+## Otomatik değerlendirme yöntemleri
 
-**Zorluk üç: çeşitlilikle sistematikliğin uyumu.** Etkili bir veri kümesinin tipik durumları, sınır koşullarını ve hata tuzaklarını kapsaması, aynı zamanda sistematik bir organizasyonu olması gerekir; ancak böylece değerlendirme sonuçları belirli yetenek eksikliklerini teşhis edebilir. AndroidWorld'ün 116 görevi 20 gerçek uygulamaya yayılır ve her görev gerektirdiği temel yeteneklerle (çok adımlı planlama, görsel anlama, zamansal akıl yürütme) etiketlenmiştir; böylece değerlendirme sonuçları yalnızca genel bir başarı oranı vermez, belirli yetenek boyutlarındaki güçlü ve zayıf yanları da ortaya çıkarır. Daha da önemlisi, parametrelendirme mekanizmasıyla neredeyse sınırsız sayıda görev varyantı üretilebilir.
+Önceki bölümlerde ele alınan benchmark'ların ortak bir yanı vardır: doğrulayıcıları neredeyse tümüyle belirlenimcidir. SWE-bench bir test paketi çalıştırır, AndroidWorld nihai UI durumunu savlar, GAIA tam dizgi eşleşmesi yapar ve τ²-bench'in dört katman denetimi de aynı biçimde bütünüyle kodla yürütülür. Bu seçimin sağlam gerekçeleri vardır: belirlenimci doğrulama ek model maliyeti getirmez, sonuç tümüyle yinelenebilirdir, birim testi gibi sürekli tümleştirmeye katılabilir ve modeller arası sıralamayı kolaylaştırır.
 
-**Zorluk dört: değerlendirme maliyetine karşı kapsam.** Karmaşık Agent görevleri tamamlanması dakikalar hatta saatler süren ve büyük miktarda token tüketen işlerdir. Veri kümesinin büyüklüğü, kapsayıcılıkla ekonomiklik arasında dengelenmelidir. GAIA, üç zorluk düzeyine ayrılmış 466 soruyu özenle seçer; hem birçok yetenek boyutunu kapsar hem de değerlendirmenin makul bir maliyetle tamamlanmasına izin verir. SWE-Bench Verified ise 2.294 sorudan 500 soruya indi (maliyet yaklaşık beşte dört azaldı; daha katı kalite ölçütleriyle sinyal-gürültü oranı yükseldi).
+Bedeli, yalnızca nihai sonucun doğru olup olmadığını değerlendirebilmesi, hatanın nedenini verememesidir. τ²-bench'in başarısız görevi sonuçta 0 puan almıştır ve bu 0, Agent'ın hat seçiminde mi yanıldığını yoksa veri yükleme adımını mı atladığını söylemez; bir sonraki adımda neyin değiştirileceğini hiç göstermez. Sıralama için kullanılan açık bir benchmark açısından bu bir kusur değildir; sürekli iyileştirme gerektiren bir üretim sistemi açısından ise en çok ihtiyaç duyulan bilgi tam da budur.
 
-**Zorluk beş: veri sızıntısını (Data Contamination) önlemek.** Büyük dil modelleri çağında veri sızıntısı, değerlendirmenin karşılaştığı ciddi bir zorluktur: değerlendirme verisi eğitim verisine karıştığında, değerlendirme genelleme yeteneğini değil ezberi ölçmeye başlar; tıpkı sınavdan önce yanıtları ezberlemek gibi — alınan not ne kadar yüksek olursa olsun gerçek düzeyi göstermez. Her benchmark farklı bir önleme stratejisi benimsedi: GAIA yanıtların benzersizliğine dayanır; sorular ancak birden fazla bilgi kaynağı birleştirilerek yanıtlanabilir ve bazı görevlerde özel olarak üretilmiş ek dosyalar (internette bulunmayan PDF/ses/görsel) bulunur, dolayısıyla tek bir web sayfası yanıtı doğrudan veremez. SWE-Bench Verified'ın kendisi, OpenAI'nin özgün SWE-Bench üzerinde elle kalite elemesi yaparak elde ettiği 500 soruluk bir alt kümedir ve zaman boyutlu bir sızıntı önleme tasarımı içermez; sızıntıyı gerçekten zamansal tazelikle önleyenler SWE-bench-Live gibi sonraki çalışmalardır — bunlar modelin eğitim kesim tarihinden sonra açılan issue'ları sürekli toplayarak değerlendirmeyi modelin eğitim külliyatının hep önünde tutar. τ²-bench önlemeyi dinamik parametre üretimiyle yapar; somut görev örnekleri (kullanıcı adı, sipariş numarası, tarih vb.) her seferinde rastgele üretilir. AndroidWorld'ün parametrelendirilmiş görev üretimi doğası gereği sızıntıya dirençlidir, çünkü doğrulama işlem dizisine değil nihai UI durumuna dayanır. Terminal-Bench ise kanarya tanımlayıcıları (canary GUID, yani küresel benzersiz tanımlayıcı — benzersiz bir izleme işareti) gömerek sızıntıyı saptanabilir kılar: model bu GUID'i içeren bir içerik üretebiliyorsa, benchmark verisi eğitim kümesine sızmış demektir.
+Üretim ortamında bir ikinci güçlük daha vardır: birçok yargı, kodla denetlenebilen bir sava hiç dönüştürülemez. Bir şikâyet yanıtının yerinde olup olmadığı, bir araştırma raporunun kilit bir bilgiyi atlayıp atlamadığı, bir bellek erişiminin kişiler arasındaki ilişkiyi karıştırıp karıştırmadığı — bunların ne sorgulanacak tek bir nihai durumu vardır ne de anahtar sözcük eşleşmesiyle karara bağlanabilirler.
 
-### Görev Açıklamalarının Kesinlik Tasarımı
+Bu nedenle açık benchmark'lardan üretim ortamındaki değerlendirmeye geçerken doğrulama biçiminin, yatay ekseni görevin **makineyle doğrulanabilirlik derecesi** olan bir tayf boyunca sağa kayması gerekir; Şekil 7-4'te gösterilmiştir.
 
-GAIA, yanıtın tekliğini net bilgi kaynağı kısıtları, zaman aralıkları, konu ve sorgu hedefi üzerinden güvenceye alır. Örneğin bir Level 3 görevi, belirli bir tarihteki NASA görselinden yola çıkıp görsel anlamayla astronotu tanımayı, astronotun bağlı olduğu grubu sorgulamayı, uzayda kaldığı süreyi hesaplamayı ve çıktıyı tam olarak biçimlendirmeyi ister ("soyadı, noktalı virgülle ayrılmış, binlik ayırıcılı"); her ayrıntı otomatik doğrulamaya hizmet eder — yalnızca biçim ve içerik birebir eşleşirse geçmiş sayılır.
+![Şekil 7-4: Doğrulama biçimlerinin tayfı — belirlenimci doğrulamadan model yargısına](images/fig7-4.svg)
 
-τ²-bench bağlamsallaştırılmış bir tasarım getirir; her görev birden çok katman bilgi içerir: yüzeydeki sorun ("mobil veri çalışmıyor"), performans beklentisi ("kesinlikle mükemmel bir hız istiyorum"), kısıt ("başka bir hızı kabul etmem") ve örtük duygu durumu. Kilit iyileştirme, "bilinen bilgi" ile "görev talimatlarını" birbirinden ayırmaktır: bilinen bilgi kullanıcının o an elinde tuttuğu olgulardır; görev talimatları ise simülatöre bilgiyi nasıl kademeli açacağını gösterir ve içinde "olgusal dayanak gereksinimi" (Grounding Requirement, yani yanıtların tool calling'in gerçekte döndürdüğü sonuçlara dayanması, uydurulmaması) bulunur.
+Tayfın sağ yanındaki iki araç böylece üretim değerlendirmesinin gövdesi olur: **Rubric** bulanık "iyi mi kötü mü" sorusunu ayrı ayrı puanlanabilir birkaç boyuta ayırır, **LLM-as-a-Judge** ise belirlenimci bir ölçüt bulunmadığında puanlamayı üstlenir. Ancak ikisi birlikte, bulanık bir başarısızlık oranını üzerinde çalışılabilir somut sorunlara indirgeyebilir; bu bölümün ikinci yarısındaki **başarısızlık atfı** ile birleştiğinde üretim Agent'ı değerlendirmesinin tam kapalı çevrimi oluşur.
 
-SWE-Bench Verified; sorun açıklaması, yeniden üretme adımları, beklenen/gerçekleşen davranış gibi yapılandırılmış alanlar içerir ve etiketleyiciler açıklamayla test durumlarının uyuştuğunu doğrular. Terminal-Bench'in görev açıklamalarındaki her öğe mekanik olarak doğrulanabilir: dosya yolu var mı, izin değerleri doğru mu, sertifika parametreleri, tarih biçimi vb. Örneğin "build-linux-kernel-qemu" görevi Linux çekirdeği 6.9'un kaynaktan derlenmesini, `start_kernel` içine özel bir printk eklenmesini, bir initramfs üretilmesini ve bunun QEMU'da çalıştırılmasını ister; başarı ölçütü, açılış günlüğünde özel mesajın görünmesidir — Agent çıktıyı taklit ederek işin içinden sıyrılamaz, tüm süreci gerçekten tamamlamak zorundadır.
-
-AndroidWorld **parametrelendirilmiş şablon** tasarımını benimser. Bir görev statik metin değil, dinamik olarak örneklenebilen bir şablondur ("`[CONTACT_NAME]` kişisinin telefon numarasını `[NEW_PHONE]` olarak değiştir" gibi) ve her değerlendirmede farklı parametre değerleri rastgele üretilir. Bunun üç yararı var:
-
-- **Ezberi engeller**: parametre değerleri her seferinde farklıdır, sabit bir işlem dizisi yeniden oynatılamaz
-- **Veri çeşitliliğini artırır**: tek bir şablon neredeyse sınırsız sayıda örnek üretebilir
-- **Karşılaştırmalı deneyleri destekler**: bazı parametreler sabit tutulup yalnızca diğerleri değiştirilerek belirli bir etkenin etkisi hassas biçimde ölçülebilir
-
-Doğrulama, işlem dizisine değil nihai UI durumuna dayanır (telefon numarası alanının beklenen değeri içerip içermediği gibi).
-
-OSWorld'ün görevleri çoğunlukla "temiz" bir başlangıç durumundan değil, özenle yapılandırılmış ara durumlardan başlar; bu da gerçek kullanım senaryolarına daha yakındır. Görev açıklamalarının çok çözümlülüğü ("arka planı mora ayarla" isteğinde belirsizliği gidermek için somut bir renk kodu verilmelidir; "iki CSV'yi birleştir" isteğinde tek başlık/çift başlık gibi bütün makul yollar kabul edilmelidir) ve ortam belirsizliğini (sitelerin tarama engelleri, uygulama arayüzlerinin evrilmesi, zamanlama yarışları — OSWorld-Verified bunları çevrimdışı sayfa anlık görüntüleri, bağımlılık sürümlerini sabitleme ve açık bekleme koşulları gibi mekanizmalarla hafifletir) ele alması gerekir.
-
-Bu liste, Agent değerlendirmesinin haritasını tüketmiyor. Yalnızca Web/GUI kategorisinde bile farklı yönlere ağırlık veren birçok benchmark var: WebArena tümüyle yeniden üretilebilir bir web sitesi kümesi (e-ticaret, forum, kod barındırma vb.) kurarak "gerçek web sayfalarının" denetlenemezliğini bir sandbox'a kapatır; Mind2Web tam tersini yapar ve genelleme yeteneğini doğrudan yüzlerce gerçek web sitesi üzerinde ölçer; [ClawBench](https://claw-bench.com/) ([makale](https://arxiv.org/abs/2604.08523), [kod](https://github.com/TIGER-AI-Lab/ClawBench)) ise yalıtılmış bir container içinde çalışan Agent'ın canlı web sitelerinde uçtan uca gündelik görevleri yerine getirmesini sağlar. V1, 144 web sitesinde 153 görevi kapsar; V2 buna 130 görev daha ekler ve beş kanıt katmanını paralel olarak kaydeder: oturum tekrarları, eylem ekran görüntüleri, HTTP trafiği, tarayıcı eylemleri ve Agent mesajları. Canlı sitelerdeki değişimi ve uzun kuyruklu başarısızlıkları analiz etmeyi kolaylaştırarak sandbox benchmark'larını tamamlar; bunun karşılığında yeniden üretilebilirlik üçüncü taraf web sitelerindeki değişikliklere bağlıdır. BrowseComp ise derin retrieval'a odaklanır — yanıtlar çok derine gizlenmiştir, bulmak için çok sıçramalı gezinme ve çapraz doğrulama gerekir. Tool calling boyutunda ise BFCL (Berkeley Function-Calling Leaderboard) gibi özel fonksiyon çağırma sıralamaları var. Bu bölümün amacı bütün benchmark'ları sıralamak değil; iki temel ortam paradigmasını (araç çağırma tipi ve insan-makine etkileşimi tipi) ve veri kümesi örneklerinin içinden geçen GUI işlem senaryolarını alıp tasarım ödünleşimlerini derinlemesine kazmak — paradigmaları kavradıktan sonra, herhangi bir yeni benchmark karşısında neyi ölçtüğünü, sızıntıya karşı ne kadar korunduğunu ve sonuçlarının nereye kadar genellenebileceğini hızla değerlendirebilirsiniz.
-
-### Görev Karmaşıklığının Katmanlı Tasarımı
-
-GAIA üç zorluk düzeyi tasarladı: Level 1 yalnızca 1-2 araç gerektirir (insanlar %93,9, GPT-4 %30,3), Level 2 çok adımlı düşünme gerektirir (%91,8 ve %9,7), Level 3 karmaşık bileşimler gerektirir (%87,3 ve %0). Katmanlı tasarımın teşhis değeri şuradadır: Level 1'deki başarısızlık temel araç kullanımı sorununa, Level 2 çok adımlı planlama ve bilgi bütünleştirme sorununa, Level 3 ise uzun dizili düşünme ve karmaşıklık yönetimi sorununa işaret eder — her katman farklı bir iyileştirme yönüne karşılık gelir (prompt engineering, planlama mekanizması, katmanlı mimari/post-training).
-
-τ²-bench katmanlandırmayı iş karmaşıklığı üzerinden yapar: basit bilgi sorgularından çok adımlı süreçlere (uçuş değiştirmek için sorgulama, alternatifleri gösterme, onay alma, fiyat farkını hesaplama ve ödeme gerekir), oradan arıza teşhisine (birden fazla olası nedeni sistematik biçimde kontrol edip düzeltmeyi doğrulama) ve son olarak politika muhakemesine (politikaya uymayan talepleri ele alma) uzanır.
-
-Terminal-Bench katmanlandırmayı teknik alan × işlem karmaşıklığı olmak üzere iki boyutta yapar; görev kaydında 200'den fazla görev toplanmıştır (çekirdek değerlendirme kümesinin büyüklüğü sürümden sürüme değişir; örneğin 2.0 sürümü topluluk katkıları arasından 89 yüksek kaliteli görev seçmiştir). Görevler basit mlflow model kaydından orta düzeydeki 7z parola kırmaya, oradan zor olan git sunucusu + webserver çok bileşenli entegrasyonuna ve en zor olan FEAL diferansiyel kriptanalizine (kriptografi bilgisi ve 30 saniyelik zaman kısıtını karşılayacak algoritma optimizasyonu gerektirir) kadar uzanır.
-
-### Doğrulanabilirlik ve Nesnellik Güvencesi
-
-GAIA'nın yanıtları kısa ve nettir; katı biçim kuralları doğrulamanın tam dize eşleşmesiyle yapılmasını sağlar ve ikili sonuç (eşleşti ya da eşleşmedi) nesnel tekrarlanabilirliği güvenceye alır. Yanıtların nadirliği aynı zamanda hile önleyici bir işlev görür — son derece somut olguların eğitim verisinde birebir aynı biçimde bulunması pek olası değildir.
-
-SWE-Bench Verified doğrulamayı kodun çalıştırılabilirliği üzerinden yapar ve FAIL_TO_PASS (düzeltmeden önce başarısız, düzeltmeden sonra başarılı; sorunun çözüldüğünü kanıtlar) ile PASS_TO_PASS (düzeltmeden önce de sonra da başarılı; yeni bir bug eklenmediğini kanıtlar) arasında ayrım yaparak çifte doğrulama sağlar. Verified sürümü ayrıca testlerin kendi kalitesinin güvenilir olmasını, bazen geçip bazen kalan kararsız testlerin (flaky tests) bulunmamasını da güvenceye alır.
-
-τ²-bench'in doğrulama sistemi çok katmanlı denetimler içerir (katmanların sonuçları görev düzeyinde yine ikili bir ödüle indirgenir; başarı için hepsinin geçmesi gerekir):
-
-- **Veritabanı durumu denetimi**: rezervasyon kaydının durumu, iade kaydının oluşturulup oluşturulmadığı
-- **Diyalog içeriğinde anahtar kelime araması**: iade tutarının ve hesaba geçiş süresinin kullanıcıya doğrulatılıp doğrulatılmadığı
-- **Süreç uygunluğu**: tool calling dizisinin analizi; örneğin sipariş değiştirilmeden önce kullanıcının açık onayının alınıp alınmadığı
-
-τ²-bench'in çift kontrollü ortamı (bkz. yukarıdaki "İnsan-Makine Etkileşimi Tipi Değerlendirme Ortamı" bölümü) doğrulamaya bir boyut daha ekler: kullanıcı simülatörü ortam durumunu gerçekten değiştirdikten sonra Agent bu değişikliği tool calling ile gözlemleyip incelemesini buna göre sürdürmek zorundadır; böylece doğrulama, "Agent kullanıcı tarafındaki işlemin sonucunu gerçekten okudu mu" sorusunu da kapsar.
-
-OSWorld, tam işletim sistemi erişimine sahip 134 bağımsız değerlendirme fonksiyonuyla donatılmıştır; dosya sistemi yapısını, süreç durumlarını, ağ bağlantılarını ve uygulamaların iç durumunu derinlemesine denetleyebilir. Örneğin bir veritabanı işlemi görevinde değerlendirme betiği yalnızca rapor dosyasının var olup olmadığını doğrulamaz, doğrudan veritabanına bağlanıp SQL'in doğru çalıştırılıp çalıştırılmadığını da denetler; tarayıcı görevlerinde DOM ağacını analiz eder, cookie/localStorage'ı kontrol eder ve formun gerçekten geçerli olup olmadığını doğrulamak için arka uca doğrulama istekleri gönderir. Bu derin denetim, "yüzeyde tamamlanmış ama özünde hatalı" durumları yakalayabilir — örneğin Agent gönder düğmesine basmıştır, ama alanlar yanlış doldurulduğu için istek sunucu tarafından reddedilmiştir.
-
-Terminal-Bench, Docker konteynerlerine dayalı standartlaştırılmış bir ortam üzerine kuruludur; dosya sistemi durumu denetimlerini (yol var mı, izin değerleri, içerik biçimi) program yürütme işlevselliğinin doğrulanmasıyla (build-linux-kernel-qemu görevinde QEMU'nun gerçekten başlatılıp özel printk mesajının aranması) birleştirir; canary GUID de sızıntıyı izlenebilir kılar.
-
-### Görev Dağılımının Sistematik Tasarımı
-
-Görev dağılımının yetenek boyutlarını, zorluk boyutlarını, senaryo boyutlarını ve sınır durumlarını sistematik biçimde kapsaması gerekir. GAIA genelliği hedefler — görevlerin çoğu reasoning, çok modluluk, gezinme ve araç kullanımının bileşimini gerektirir. τ²-bench özellikle "tuzak görevler" tasarlamıştır — örneğin kullanıcı "müşteri hizmetleri iptali onayladı" der ama iptal aslında politikaya uymamaktadır; böylece Agent'ın baskı ve yanıltma karşısında doğru muhakemesini koruyup koruyamadığı sınanır. OSWorld, işlem türü (dosya IO / masaüstü uygulaması / web uygulaması / uygulamalar arası akış) ile uygulama alanından oluşan iki boyutlu bir matrise dayanır ve üç işletim sistemine yayılır (araştırmalar işletim sistemleri arası yeteneklerin güçlü biçimde ilişkili olduğunu, bir sistemde öğrenilen yeteneğin diğerlerine aktarılabildiğini gösteriyor). Terminal-Bench ise sistem düşüncesini sınamak için "teknoloji yığınları arası bileşim görevleri" içerir (veri işleme + dosya işlemleri + Python mühendisliğini birleştiren yeniden parçalama görevi gibi).
-
-### Veri Kalitesi Kontrolü ve Yinelemeli İyileştirme
-
-SWE-Bench Verified, kalite kontrolünün örnek vakasıdır. OpenAI, özgün 2.294 görev arasından rastgele 1.699'unu insan değerlendirmesine soktu ve Python'a hâkim 93 geliştirici görevlendirdi. Etiketleyicilerin birden çok denetimi tamamlaması gerekiyordu: sorun açıklaması açık mı (neyin çözüleceği anlaşılıyor mu), test durumları eksiksiz mi (bütün yönleri ve sınır koşullarını kapsıyor mu), testler kararlı mı (ortamdan veya rastgelelikten kaynaklanan flaky test var mı), patch doğru mu (yeni hata ekliyor mu), zorluk makul mü. Katı elemenin sonunda yalnızca 500'ü geçti (%29) — bu yüksek eleme oranı, değerlendirme kalitesine yapılan zorunlu bir yatırımdır. Ayrıca standartlaştırılmış bir etiketleme kılavuzu oluşturup her denetim için somut ölçütler ve örnekler tanımladılar; böylece farklı etiketleyiciler arasındaki tutarlılığı güvenceye aldılar.
-
-τ²-bench, "bilinen bilgi" ile "görev talimatları" ayrımını (simülatör davranışını daha gerçekçi kılar) ve daha katı tamamlanma koşullarını ("yalnızca excellent çözülmüş sayılır; poor/fair/good kabul edilmez" gibi) getirerek "göstermelik düzeltmelerin" önüne geçer.
-
-OSWorld-Verified, yinelemeli iyileştirmenin örnek vakasıdır. OSWorld, Nisan 2024'te yayımlandıktan sonra hızla çok modlu Agent değerlendirmesinin önemli bir benchmark'ı haline geldi, ama 15 aylık yaygın kullanım sırasında 300'den fazla sorun açığa çıktı. Bu sorunlar dört gruba ayrılıyor: ortam sorunları (sitelerin tarama engelleri / CAPTCHA / dinamik içerik değişimleri), görev açıklaması sorunları (belirsiz ifadeler), doğrulama mantığı sorunları (fazla katı ya da fazla gevşek) ve başlangıç durumu sorunları (eksik yapılandırma). Hong Kong Üniversitesi ekibi yaklaşık 10 kişilik bir grup kurdu ve MoonShot AI, OpenAI, ByteDance Seed TARS, Anthropic, Simular gibi kuruluşlarla iki ay boyunca yakın iş birliği yaparak sistematik bir düzeltme çalışması yürüttü. Her sorun türü için bir düzeltme stratejisi belirlendi: ortam sorunları sürümleri sabitleyerek ve çevrimdışı yedekler alarak çözüldü, görev açıklamalarındaki belirsiz ifadeler yeniden yazılarak giderildi, doğrulama mantığı elle doğru referans çizgileri kurulup koşullar ayarlanarak dengelendi, başlangıç durumları ise bütünlük denetimleri eklenerek güçlendirildi.
-
-## Otomatik Değerlendirme Yöntemleri
-
-Değerlendirme ortamı, veri kümesi ve net bir metrik sistemi hazır olduğuna göre sıradaki temel soru şudur: nasıl puanlanacak? Doğru yanıtı belli olan görevlerde (matematik soruları, SQL sorguları gibi) basit bir ikili karar (doğru/yanlış) yeterlidir; ama açık uçlu görevlerde (müşteri hizmetleri diyalogları, rapor yazımı gibi) daha ince değerlendirme yöntemleri gerekir.
-
-Kodla otomatik doğrulama yalnızca standart yanıtı olan senaryoları kapsar; bu bölümün asıl konusu açık uçlu görevlerin puanlanmasıdır. Bunlardan ödül sinyalinin yoğunluk tasarımı (ikili ödülden süreç ödülüne, oradan üretken ödüle) ve ödül modellerinin eğitim yöntemleri, Bölüm 8'nin post-training bölümünde sistematik olarak tartışılmak üzere bırakılmıştır; bu bölüm daha temel bir soruyu yanıtlar: açık uçlu görevlerin çıktı kalitesi LLM ile otomatik olarak nasıl değerlendirilir?
+Şunu belirtmek gerekir: sağa kaymak sol yanı bırakmak demek değildir. Program savı olarak yazılabilen her denetim sav olarak kalmalı, LLM yargısı yalnızca gerçekten makineyle karara bağlanamayan boyutlar için kullanılmalıdır. Belirlenimci denetimler daha ucuz ve daha kararlıdır, uzun soluklu regresyon testi olarak koşturulmaya da daha uygundur.
 
 ### LLM-as-a-Judge: Otomatik Değerlendirmenin Çekirdeği
 
-![Şekil 7-4: LLM-as-a-Judge Boru Hattı](images/fig7-4.svg)
+![Şekil 7-5: LLM-as-a-Judge Boru Hattı](images/fig7-5.svg)
 
 LLM-as-a-Judge'a neden ihtiyaç var? Açık uçlu görevlerde (rapor üretme, müşteri şikâyetlerini ele alma, yaratıcı içerik gibi) otomatik karşılaştırma yapılabilecek standart bir yanıt yoktur; insan değerlendirmesi ise pahalıdır ve ölçeklenmesi zordur. LLM-as-a-Judge, dil modelinin uzmanlarca tanımlanmış puanlama ölçütlerine (Rubric) göre değerlendirme yapmasını sağlayarak otomasyonun ölçeğiyle insan uzmanlığının yargısı arasında bir denge kurar. Ama bu yöntemin bilinen sınırları da var: değerlendirici modelin kendi önyargıları olabilir (en tipik olanı **uzunluk yanlılığıdır** — içerik daha doğru olmasa bile daha uzun ve daha ayrıntılı yanıtlara yüksek puan verme eğilimi) ve aynı girdi birden çok kez değerlendirildiğinde sonuçlar dalgalanabilir. Özellikle uzunluk yanlılığına karşı ayrıca önlem almaya değer; üç yaygın yöntem vardır: Rubric'te uzun uzadıya anlatımı açıkça cezalandırmak ve aynı tür görevler için yanıt uzunluğuna üst sınır koymak; ikili karşılaştırma yaparken iki adayın uzunluğunu önce birbirine yaklaştırıp sonra değerlendirmek; ve puanlarla yanıt uzunluğu arasındaki ilişkiyi düzenli olarak denetlemek — yüksek puanlar neredeyse her zaman uzun yanıtlara gidiyorsa, değerlendirme uzunluğun etkisine kapılmış demektir ve Rubric elden geçirilmelidir. Bu zorluklarla sistematik biçimde başa çıkmak için Rubric tasarımı aşağıdaki ilkelere uymalıdır:
 
@@ -363,7 +364,7 @@ rubric:
 
 Rubric ile Agent'ın yanıtını birlikte hakem modele verin; model her boyutu puanlayıp gerekçesini yazsın. Onlarca vakanın sonuçlarını boyutlara göre topladığınızda ve düşük puanlı trajectory'leri yeniden oynattığınızda, genel bir “başarı düştü” bulgusu somut bir teşhise dönüşür: retrieval bir olguyu kaçırmış olabilir, model kişi ya da olayları yanlış ilişkilendirmiş olabilir veya dayanağı olmayan bir iddia eklemiş olabilir. İyi bir Rubric yalnızca sistemin kaç puan aldığını değil, bir sonraki incelemenin nereye yönelmesi gerektiğini de gösterir.
 
-Aşağıda kullanıcı belleğini somut bir örnek olarak alıp, bu genel yöntemin çalıştırılabilir bir değerlendirme kümesine ve puanlayıcıya nasıl indirgendiğini gösteriyoruz.
+Aşağıda kullanıcı belleğini somut bir örnek olarak alıp, bu genel yöntemin çalıştırılabilir bir değerlendirme kümesine ve doğrulayıcıya nasıl indirgendiğini gösteriyoruz.
 
 > **Deney 7-3 ★★: Rubric Tabanlı Bir Kullanıcı Belleği Değerlendirme Sistemi Kurmak**
 >
@@ -534,7 +535,7 @@ Gerçek model seçimlerinde sık karşılaştığımız soru şudur: "A mı daha
 
 ### İkili Karşılaştırma ve Model Sıralaması
 
-![Şekil 7-5: Elo Puanlaması ve İkili Karşılaştırmayla Sıralama](images/fig7-5.svg)
+![Şekil 7-6: Elo Puanlaması ve İkili Karşılaştırmayla Sıralama](images/fig7-6.svg)
 
 **Elo puanlaması** (aslen satranç için tasarlanmış bir sıralama sistemi), çok sayıda ikili karşılaşma üzerinden modellerin göreli yeteneğini niceler: puan farkı ne kadar büyükse, güçlü olanın beklenen kazanma oranı o kadar yüksektir. Örneğin model A'nın puanı 1.200, model B'nin puanı 1.000 ise Elo sistemi A'nın kazanma oranını yaklaşık %76 olarak öngörür. B beklenmedik biçimde kazanırsa B daha çok puan kazanır, A daha çok puan kaybeder — sürpriz sonuçlar daha büyük bir düzeltme getirir ve bu mekanizma sıralamanın gerçek seviyeye hızla yakınsamasını sağlar. Arkasındaki istatistiksel temel **Bradley-Terry modelidir**: her model gizli bir "güç puanı" olarak soyutlanır ve ikili karşılaşmanın kazanma olasılığı iki puan arasındaki farkla belirlenir; Elo ise bu modelin çevrimiçi güncelleme biçimindeki mühendislik uygulamasıdır.
 
@@ -698,7 +699,7 @@ Birden çok hipotezi paralel doğrularken **çoklu karşılaştırmayı** da hes
 
 Değerlendirme güdümlü kararlar (ister model seçimi ister sürekli yineleme olsun) yüksek kaliteli çalışma verisine dayanır. Aşağıda önce bu verinin sistematik olarak nasıl toplandığını (observability), ardından değerlendirme sonuçlarının sistem iyileştirmelerine nasıl dönüştürüleceğini ele alıyoruz.
 
-![Şekil 7-6: Observability Teknoloji Yığını](images/fig7-6.svg)
+![Şekil 7-7: Observability Teknoloji Yığını](images/fig7-7.svg)
 
 Observability (gözlemlenebilirlik) kavramı dağıtık sistemler alanından ödünç alınmıştır: sistemin içini açıp ne yaptığını doğrudan göremezsiniz, yalnızca ürettiği loglardan, metriklerden ve trace verisinden ne olduğunu çıkarsayabilirsiniz — tıpkı hastanın içini doğrudan göremeyen bir hekimin ateş, tansiyon, görüntüleme gibi dışsal sinyallerden teşhis koyması gibi. Agent sistemleri bu işi daha da zorlaştırır: aynı girdi farklı çıktılar üretebilir, çok turlu çıkarım ve araç çağrıları yürütme yollarını son derece karmaşıklaştırır ve modelin "düşünme" süreci dışarıdan tamamen saydamsızdır.
 
@@ -718,11 +719,11 @@ Eksiksiz bir değerlendirme sistemi ve veri kümesi kurulduktan sonra kilit mese
 
 Aşağıdaki vaka, eşlik eden depodaki gerçek fakat bilinçli olarak dar tutulmuş bir AndroidWorld yinelemesinden geliyor. API 35 emülatöründe dört Wi-Fi ayarı görevi vardır ve görev başına bir eşleştirilmiş koşu yapılmıştır. Bu, 116 görevlik tam benchmark değildir ve API 33 referans ortamında yeniden çalıştırmanın yerini tutmaz. Değeri genel bir puanda değil, bir sonuçtan diğerine giden karar dizisindedir.
 
-![Şekil 7-7: Benchmark'tan İyileştirmeye Kapalı Döngü](images/fig7-7.svg)
+![Şekil 7-8: Benchmark'tan İyileştirmeye Kapalı Döngü](images/fig7-8.svg)
 
 Harness mühendisliği açısından bakıldığında bu bölüm özünde Harness'in yinelemeli optimizasyonunun yöntemini anlatır — değerlendirme verisiyle Harness'teki zayıf halkalar saptanır (context yetersiz mi? kısıt eksik mi? doğrulama yeterli değil mi? geri bildirim zamanında değil mi?), hedefli iyileştirmeler yapılır ve yeniden değerlendirilir; böylece Harness'in sürekli evrimini sağlayan kapalı bir döngü oluşur.
 
-Benchmark raporunu incelemeye başlamadan önce kolayca gözden kaçan bir ilke var: **Agent'ın performansı düştüğünde önce değerlendirme sisteminin kendisini kontrol edin, sonra Agent'a dokunun**. Yaygın bir yanılgı, puan düşer düşmez Agent kodunu değiştirmeye girişmek ve değerlendirme sisteminin kendisinin önce bozulmuş olabileceğini göz ardı etmektir — bozuk bir sinyale bakarak yön ayarlamak, daha ilk adımdan yanlış yöne gitmek demektir. Değerlendirme sistemindeki yaygın hata kaynakları şunlardır: çalışma ortamındaki kaynak yetersizliği yüzünden süreçlerin öldürülmesi (rastgele başarısızlık gibi görünür), puanlayıcının kendisindeki bir bug'ın doğru yanıtları başarısız sayması ve test durumlarının üretim senaryolarından kopması. Bunların hepsi sonuç rakamlarında modelin gerilemesiyle birebir aynı görünür; ancak eksiksiz trajectory'ler incelenerek ayırt edilebilirler.
+Benchmark raporunu incelemeye başlamadan önce kolayca gözden kaçan bir ilke var: **Agent'ın performansı düştüğünde önce değerlendirme sisteminin kendisini kontrol edin, sonra Agent'a dokunun**. Yaygın bir yanılgı, puan düşer düşmez Agent kodunu değiştirmeye girişmek ve değerlendirme sisteminin kendisinin önce bozulmuş olabileceğini göz ardı etmektir — bozuk bir sinyale bakarak yön ayarlamak, daha ilk adımdan yanlış yöne gitmek demektir. Değerlendirme sistemindeki yaygın hata kaynakları şunlardır: çalışma ortamındaki kaynak yetersizliği yüzünden süreçlerin öldürülmesi (rastgele başarısızlık gibi görünür), doğrulayıcının kendisindeki bir bug'ın doğru yanıtları başarısız sayması ve test durumlarının üretim senaryolarından kopması. Bunların hepsi sonuç rakamlarında modelin gerilemesiyle birebir aynı görünür; ancak eksiksiz trajectory'ler incelenerek ayırt edilebilirler.
 
 ### Benchmark Raporunu Okumak: Sorun Keşfetme Sanatı
 
@@ -827,7 +828,7 @@ Değerlendirmenin varış noktası puan vermek değil, iyileştirmedir. Bu böl�
 
 Bu köprünün iki ucu şöyle birleşir. Değerlendirme tarafında biriken varlıklar neredeyse kusursuz biçimde eğitim sinyaline dönüşebilir: açıkça tanımlanmış bir Rubric ya da doğrulayıcı, özünde bir **doğrulanabilir ödül (RLVR, Reinforcement Learning with Verifiable Rewards)** ödül fonksiyonudur — puanlama betiği doğrudan ödül betiğidir; testin geçip geçmediği, durumun ölçüte uyup uymadığı hem değerlendirmenin ölçütü hem de pekiştirmeli öğrenmenin getirisidir. Ama eğitim, değerlendirme aşamasında hiç dert edilmeyen yeni gereksinimler ortaya çıkarır. Birincisi **güvenilir reset semantiğidir**: eğitim milyonlarca episode koşar (bir episode, başlangıç durumundan görev sonuna kadarki eksiksiz bir etkileşim turudur) ve her episode ortamı belirli, temiz bir başlangıç durumuna sıfırlayabilmelidir; yoksa gradyan sinyali önceki turdan kalan artık durumla kirlenir. İkincisi **değerlendirmeninkinden çok daha yüksek throughput'tur**: değerlendirmede sonuca varmak için birkaç bin koşu yeterken, eğitimde kabul edilebilir bir duvar saati süresi içinde modele milyonlarca etkileşim beslenmelidir; ortamın paralellik derecesi ve tek örnek başına yükü, eğitimin yapılabilir olup olmadığını doğrudan belirler. Bu iki nokta — ödül fonksiyonuna dönüşen doğrulayıcılar ile eğitim ölçeğinde reset ve throughput — Bölüm 8'de açılacak.
 
-![Şekil 7-8: Simülasyon Sadakati Spektrumu](images/fig7-8.svg)
+![Şekil 7-9: Simülasyon Sadakati Spektrumu](images/fig7-9.svg)
 
 **Dijital ortamlar** tarafında AWorld çerçevesi, GAIA görevleri için denetlenebilir bir MCP sunucu sandbox'ı kurar; 26 MCP sunucusu ve 126 araç fonksiyonu sağlayarak gerçek API'lere doğrudan erişmenin getirdiği yasaklanma ve denetlenemeyen yan etkilerden kaçınır. Tüm araç çağrıları yeniden oynatılabilir ve denetlenebilir. AWorld'ün dağıtık mimarisi, geleneksel seri yürütmedeki 7.695 saniyeyi 525 saniyeye indirir (14,6 kat hızlanma); ortamın durumsuz tasarımı sayesinde her örnek tamamen bağımsızdır ve verimli paralellik desteklenir.
 
@@ -838,7 +839,7 @@ Bu köprünün iki ucu şöyle birleşir. Değerlendirme tarafında biriken varl
 > Robot manipülasyonu için bir simülasyon ortamı kurun. `ch7/SimpleVLA-RL` ile OpenVLA belgelerini okuyup görme-dil-eylem modelinin mimarisini anlayın (görme kodlayıcı + dil modeli + eylem kod çözücünün uçtan uca bütünleştirilmesi; görüntü ve metin ortak bir semantik uzaya izdüşürülür). RoboTwin2 ortamını yapılandırın; gözlem alanını (üç açılı RGB + 14 boyutlu eklem durumu) ve eylem alanını (14 boyutlu denetim vektörü) kavrayın. `move_can_pot` içindeki ortam rastgeleleştirme mekanizmasını ve uzamsal kısıt mantığını inceleyin. Önceden eğitilmiş modeli çalıştırıp değerlendirin; başarı oranını, tamamlanma süresini ve başarısızlık biçimlerini kaydedin, özellikle eylem parçalama mekanizmasının etkisine odaklanın.
 >
 >
-> ![Şekil 7-9: OpenVLA ve RoboTwin2 Bedenlenmiş Zeka Ortamı](images/fig7-9.svg)
+> ![Şekil 7-10: OpenVLA ve RoboTwin2 Bedenlenmiş Zeka Ortamı](images/fig7-10.svg)
 >
 >
 
@@ -850,7 +851,7 @@ Yüksek sadakatli ortamlar gerçek dünyaya daha iyi aktarılır, ama hesaplama 
 
 ## Bölüm Özeti
 
-Bu bölüm tek bir temel soru etrafında döndü: bir Agent'ın gerçekten iyileştiğine nasıl karar veririz? Yeniden üretilebilir test ortamından sızıntıya dayanıklı veri kümelerine, LLM hakemlerden değerlendirme güdümlü model seçimi ve yinelemeye kadar her halka sonucun güvenilirliğini etkiler. Ölçülen vakalar dört somut uyarı ekledi: yapılandırılmış bellek ile RAG'ı birleştirmek sinerjiyi garanti etmez; cache ve sıkıştırma tasarrufları toplanamaz; referans ses seçimi çok modlu puanın anlamını değiştirir; Harness'in girdi temsili hem görev başarısını hem token maliyetini belirleyebilir. Model seçiminde tek bir puan yerine farklı kaynak bütçelerindeki yetenek eğrileri karşılaştırılmalıdır. Üretim düzeyinde değerlendirme, ara sıra girilen bir sınav değil, her ürün kararına gömülü sürekli doğrulamadır.
+Bu bölüm tek bir temel soru etrafında döndü: bir Agent'ın gerçekten iyileştiğine nasıl karar veririz? Zincir dört halkadan oluşur: önce neyin başarı sayıldığını netleştirmek (Pass@k, Best@k ve Pass consecutive@k dayanaklarının farkı), sonra görevlerin nereden geldiğini belirlemek (açık benchmark'lar, kendi iş kümeniz ve üretim trajectory'lerinin geri akışı), ardından doğrulama biçimini seçmek (belirlenimci doğrulayıcılardan denetim listelerine, Rubric ile LLM yargısına ve ikili karşılaştırmaya kadar) ve son olarak puanları karara dönüştürmek (istatistiksel anlamlılık, başarısızlık atfı, regresyon görevleri ve model seçimi). Her halka sonucun güvenilirliğini etkiler. Ölçülen vakalar dört somut uyarı ekledi: yapılandırılmış bellek ile RAG'ı birleştirmek sinerjiyi garanti etmez; cache ve sıkıştırma tasarrufları toplanamaz; referans ses seçimi çok modlu puanın anlamını değiştirir; Harness'in girdi temsili hem görev başarısını hem token maliyetini belirleyebilir. Model seçiminde tek bir puan yerine farklı kaynak bütçelerindeki yetenek eğrileri karşılaştırılmalıdır. Üretim düzeyinde değerlendirme, ara sıra girilen bir sınav değil, her ürün kararına gömülü sürekli doğrulamadır.
 
 Kitabın bütünsel yapısı açısından bu bölüm, Bölüm 1'deki keşif döngüsünün **kanıt** kesitini kurar: hata atfı, sonraki önerilerin dayanacak sağlam bir zemini olup olmadığını belirler.
 
