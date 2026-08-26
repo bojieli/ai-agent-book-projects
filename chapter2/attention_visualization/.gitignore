@@ -41,7 +41,15 @@ visualizations/
 quickstart_visualizations/
 test_output/
 *.json
+# Preregistered experiment inputs are part of the repository, not run output.
+!/attention_experiment_protocol.json
+!/status_bar_protocol.json
+# Frozen 2026-07-30 evidence bundles: the NPZ tensors are committed, so keep
+# the JSON that documents them. Later runs stay ignored.
+!/runs/exp2-*-20260730-*/*.json
 *.png
+# Heatmaps hashed by validation/latest.json (canonical Experiment 2-2 run).
+!/runs/exp2-2-qwen3-0.6b-20260730-v3/*.png
 *.jpg
 *.log
 

@@ -1,0 +1,49 @@
+{
+  "experiment_id": "2-7",
+  "protocol_version": "1.0.0",
+  "frozen_on": "2026-07-30",
+  "authority": "book/chapter2.md:814",
+  "model": "Qwen/Qwen3-0.6B",
+  "device": "auto",
+  "matched_trials": 3,
+  "generation": {
+    "max_new_tokens": 128,
+    "temperature": 0.6,
+    "top_p": 0.9,
+    "seeds": [27, 41, 73]
+  },
+  "scenario": {
+    "company": "Xfinity",
+    "maximum_calls": 3,
+    "user_query": "Can you call Xfinity one more time to chase the refund?",
+    "distractor_searches": 4
+  },
+  "arms": {
+    "without_status_bar": "full trajectory only",
+    "with_status_bar": "the same trajectory followed by the manuscript's XML status block"
+  },
+  "attention": {
+    "layer": -1,
+    "heads": "mean",
+    "query_rows": "all generated response tokens",
+    "regions": [
+      "three historical Xfinity phone-call events",
+      "interleaved web-search distractors",
+      "agent_status block",
+      "latest user query"
+    ],
+    "heatmap_trial": 1
+  },
+  "acceptance_gates": [
+    "both arms use the same local model revision and base trajectory",
+    "the status arm contains the exact Xfinity 3/3 state block at the trajectory end",
+    "the control contains no agent_status block",
+    "all generated texts are retained with real token IDs",
+    "the last-layer attention tensor comes from a real eager-attention forward pass",
+    "response attention mass is reported for each preregistered context region",
+    "both heatmaps are rendered from the recorded matrices",
+    "behavioral outcomes are reported even if they do not favor the hypothesis"
+  ],
+  "hypothesis": "the status arm refuses a fourth call more reliably and places more response attention on the explicit 3/3 state than the control can place on the distributed call history",
+  "cost": "local inference; no API fee"
+}
