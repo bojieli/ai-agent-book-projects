@@ -10,7 +10,7 @@ Bab ini dimulai dengan contoh-contoh praktis dan menelusuri kembali ke komponen 
 
 ## Agent Modern = LLM + Context + Tool
 
-Inti dari sistem Agent modern cocok dengan satu formula ringkas: **Agent = LLM (Large Language Model) + Context + Tool**. Formula ini sederhana dan praktis—asalkan setiap istilah dibaca secara luas:
+Realisasi rekayasa paling minimal dari sebuah Agent modern dapat dinyatakan dalam satu rumus ringkas: **Agent = LLM (Large Language Model) + context + tool**. Tanda tambah di sini menandakan gabungan komponen rekayasa, bukan definisi formal dalam reinforcement learning; dan yang lebih penting, rumus ini hanya menggambarkan implementasi di dalam batas Agent, serta **tidak mencakup Environment (lingkungan) yang berinteraksi dengan Agent**. Setiap katanya harus dipahami secara luas, tetapi dengan batas yang jelas:
 
 - **LLM adalah mesin penalaran Agent**: Ini lebih dari sekadar kumpulan parameter model; ini adalah inti pengambilan keputusan Agent, yang bertanggung jawab untuk memahami niat, penalaran, perencanaan, dan penilaian. Kemampuan LLM berasal dari pengetahuan dunia dan kemampuan bahasa yang diperoleh selama **pre-training**, ditambah strategi pengambilan keputusan yang dienkode melalui **post-training** (teknik seperti supervised fine-tuning dan reinforcement learning dibahas di Bab 8).
 - **Context adalah sekumpulan informasi kerja Agent**: Bukan sekadar teks yang dimasukkan ke dalam model, tetapi sekumpulan informasi kerja yang tersedia untuk Agent pada setiap titik keputusan—lingkungan, memori pengguna, pengetahuan domain, state-nya sendiri, dan kemajuan tugas. Sama seperti seseorang yang membuat keputusan perlu menilai situasi, mengingat kembali pengalaman yang relevan, dan berkonsultasi dengan referensi, context window Agent berisi informasi yang dapat digunakannya pada saat itu.
@@ -146,7 +146,7 @@ Context adalah kumpulan kerja informasi yang tersedia bagi Agent pada setiap tit
 
 Dua item pertama (system prompt + tool definitions) membentuk prefix statis; tiga item terakhir (user messages + assistant messages + tool results) membentuk riwayat pesan dinamis (dynamic message history) yang tumbuh di setiap interaksi. Bersama-sama, kelima bagian ini membentuk context dari setiap inferensi LLM.
 
-Apakah setiap komponen benar-benar sangat diperlukan? Cara paling langsung untuk mengetahuinya adalah **studi ablasi (ablation study)**—metode diagnostik untuk mengesampingkan penyebab satu per satu: hilangkan komponen A dan lihat apakah sistem masih berfungsi, lalu komponen B, dan seterusnya, sampai kontribusi setiap komponen terlihat jelas. Eksperimen 1-1 persis menerapkan metode ini ke kelima komponen di atas. Hasilnya langsung: tanpa tool definitions, Agent benar-benar tidak mampu bertindak; tanpa tool results, ia tidak menerima feedback dari langkah sebelumnya, sehingga ia memanggil tool yang sama berulang kali, lalu terjebak dalam infinite loop (perulangan tak terbatas); tanpa reasoning di dalam assistant messages, keputusan-keputusan yang berurutan mulai saling bertentangan; tanpa message history, Agent kehilangan kontinuitas tugas dan memulai ulang seluruh tugas dari awal, mengulangi langkah-langkah yang telah diselesaikan.
+Untuk memverifikasi apakah setiap komponen benar-benar tak tergantikan, cara paling langsung adalah **studi ablasi** (Ablation Study): seperti dokter yang menyingkirkan penyebab satu per satu saat mendiagnosis—hilangkan komponen A dan lihat apakah sistem masih normal, lalu hilangkan komponen B, dan seterusnya, sehingga kontribusi tiap komponen dapat dinilai. Eksperimen 1-1 justru menguji kelima komponen di atas secara sistematis dengan alur pikir ini.
 
 > **Eksperimen 1-1 ★★: Peran Penting Context**
 >
@@ -168,7 +168,7 @@ Pertimbangkan contoh konkret—mengagregasi pendapatan lintas berbagai mata uang
 
 ![Gambar 1-4: Trajectory Agent—Loop ReAct untuk tugas agregasi multi-mata uang](images/fig1-4.svg)
 
-Sketsa bergaya Python berikut adalah pseudocode penjelas, bukan kode SDK yang dapat dijalankan; penanda `python` hanya digunakan untuk penyorotan sintaks.
+Mari lihat dulu kerangka jalan minimalnya. Yang ditunjukkannya adalah **bagaimana mekanismenya berjalan**: Model hanya menentukan langkah berikutnya, Harness merakit context serta memvalidasi dan menjalankan tool, dan Environment menghasilkan perubahan keadaan nyata beserta observasinya. Selanjutnya buku ini tetap memakai pseudocode bergaya Python; pseudocode itu tidak bisa langsung dijalankan dan tidak berpadanan dengan SDK tertentu. Kode yang benar-benar dapat dieksekusi ada di repositori kode pendamping buku ini.
 
 ```python
 trajectory = [user_request]
@@ -242,7 +242,7 @@ Sekarang setelah kita memahami loop operasi Agent, kita akan memeriksa dua ekspe
 > [^ch1-2]: Terima kasih kepada pembaca asdlem karena telah menunjukkan dan mengklarifikasi, melalui GitHub Issue #30, perbedaan bahwa apa yang diinternalisasi oleh RL adalah policy keputusan pemanggilan tool, bukan mekanisme eksekusi tool. Lihat https://github.com/bojieli/ai-agent-book/issues/30
 >
 > Keunggulan Kimi K3 yang menonjol dalam tugas-tugas Agent adalah **stabilitas panggilan tool berantai panjang (long-chain tool calls)**—ia dapat mempertahankan 200–300 pemanggilan tool berturut-turut dengan penalaran yang koheren di keseluruhannya, jauh melampaui beberapa lusin panggilan di mana sebagian besar model mulai menurun. K3 dioptimalkan untuk pemrograman berjangka panjang (long-horizon programming) dan beban kerja Agent, serta dirilis dalam dua varian: K3 Max (untuk dialog dan tugas Agent) dan K3 Swarm Max (untuk pemrosesan paralel skala besar). Sebagai model open-source, K3 sebanding dengan sistem closed-source papan atas pada benchmark rekayasa perangkat lunak dan Agent—bukti bahwa reinforcement learning dapat memberkati model dengan kemampuan Agent bawaan.
-
+>
 > **Eksperimen 1-3 ★: Kemampuan Deep Research Bawaan GPT-5.6**
 >
 > Eksperimen kedua menggunakan **OpenAI GPT-5.6** untuk menunjukkan bagaimana model tingkat lanjut, yang didukung oleh tool bawaan tingkat API, menutup loop orkestrasi "pencarian—baca—analisis" di sisi server untuk Deep Research. Salah satu fitur praktis GPT-5.6 adalah **Freeform Tool Calling**. Secara tradisional, model yang memanggil tool harus menserialisasi setiap parameter ke dalam JSON (format data terstruktur) yang ketat, seperti halnya mengisi formulir dengan aturan pemformatan yang kaku. Freeform tool calling (dideklarasikan di API melalui tool bertipe `type: "custom"`) memungkinkan model mengirimkan teks mentah (raw text) langsung ke tool tersebut (sepotong kode Python, kueri SQL), sama sekali menghindari escaping JSON. Patut ditekankan bahwa ini merupakan evolusi format parameter API, bukan inovasi dalam arsitektur model—loop pemanggilan tool klien (deteksi `tool_calls` → eksekusi → kembalikan hasil) tetap sama; hanya argumen yang berubah dari string JSON ke teks mentah.
@@ -453,8 +453,6 @@ Orchestration pattern memecahkan masalah pengorganisasian context dan tool di da
 
 ### Guardrail dan Safety (Penjagaan dan Keamanan)
 
-Bagian ini memberikan tinjauan umum tingkat tinggi (high-level overview) tentang guardrail untuk membentuk gambaran besarnya. Detail implementasi dan praktiknya akan menyusul di Bab 2 (lapis konteks: perlindungan dari prompt injection), Bab 4 (lapis eksekusi: kontrol permission tool), dan Bab 5 (lapis eksekusi dan data: keamanan eksekusi kode dan penurunan batas kepercayaan); pembaca yang baru pertama kali membacanya tidak perlu mengikuti setiap detailnya.
-
 Guardrail adalah cara lapisan "constrain, verify, and correct" dari Harness utamanya diimplementasikan—pertahanan berlapis yang menjaga perilaku Agent agar tetap aman dan dapat dikendalikan. **Guardrail (pagar pengaman)** yang dirancang dengan baik membantu mengelola risiko privasi data (misalnya, mencegah kebocoran system prompt) dan risiko reputasi (misalnya, menjaga agar perilaku model tetap konsisten dengan citra merek). Mulailah dengan guardrail untuk risiko yang sudah Anda identifikasi, lalu tambahkan yang baru ketika ada kerentanan (vulnerabilities) baru yang muncul.
 
 Anggaplah guardrail sebagai defense in depth (pertahanan berlapis). Tidak ada satu guardrail pun yang kemungkinan cukup jika berdiri sendiri, tetapi menggabungkan beberapa guardrail yang terspesialisasi akan membuat sistem Agent menjadi jauh lebih tangguh.
@@ -531,6 +529,8 @@ Bab-bab berikutnya berulang kali menggunakan kelompok design pattern yang sama; 
 Bab ini telah membangun kerangka kerja yang mengutamakan praktik (practice-first framework) untuk memahami dan membangun AI Agent.
 
 **Agent = Mesin Penalaran + Context Kerja + Antarmuka Tindakan**: LLM menyediakan penalaran dan pengambilan keputusan, context menyuplai kumpulan kerja informasi yang tersedia saat waktu keputusan, dan tool menyediakan antarmuka tindakan. Tak satu pun dari ketiganya dapat dihilangkan.
+
+**Memperluas mata dan tangan-kaki adalah tuas kemampuan yang utama**: ketika modelnya tetap, mendefinisikan ulang atau memperluas ruang observasi dan ruang tindakan—yakni memperluas context dan tool—kerap langsung mengubah tugas yang semula tak terpecahkan menjadi terpecahkan. Evolusi Manus dan OpenClaw sama-sama menunjukkan hal itu: kenaikan kemampuan yang paling kentara justru datang dari penambahan kanal observasi dan cara bertindak yang baru, bukan dari mengganti model.
 
 **Context Adalah Faktor Penentu**: Context terdiri dari prefix statis (system prompt + tool definitions) dan trajectory dinamis (message history). Ablasi menunjukkan bahwa komponennya tidak setara: menghilangkan tool definitions atau tool results langsung mencabut kemampuan bertindak atau menutup loop, sedangkan biaya menghilangkan dua komponen lainnya bergantung pada apakah informasi itu dapat direkonstruksi dari observasi saat ini. Inti dari loop ReAct adalah penambahan terus-menerus (appending) pada trajectory, secara berulang-ulang, sehingga model terus melanjutkan penuntasan tugas.
 
