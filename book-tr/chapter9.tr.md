@@ -65,6 +65,8 @@ Tablo 9-2 Dört Sürekli Evrim Biçiminin Uygulanabilirlik Sınırları
 | Program ve Harness | Deterministik süreçler, araçlar ve katı kısıtlar | Test edilebilir, yürütmesi kararlı, maliyeti düşük | Geliştirme ve bakım maliyeti görece yüksek |
 | Model parametreleri | Yüksek boyutlu algı, üretim üslubu ve örtük stratejiler | Genelleme gücü yüksek, çıkarım maliyeti düşük | Güncelleme ve regresyon maliyeti yüksek |
 
+Aynı yetenek birden çok taşıyıcıya bölünebilir: olgular bilgi tabanına, istisnaları açıklayan ilkeler bir Skill'e, atlanamayacak izinler yine programın kapısına, yüksek boyutlu tanıma yeteneği ise parametrelere gider. Yönlendirmenin sonucu yalnızca bir güncelleme önerisidir; henüz yayına çıkma yetkisi kazanmamıştır.
+
 ### Deneyimi Bilgi Olarak Biriktirmek
 
 En hafif evrim biçimi, birden çok çalışmada tekrar tekrar ortaya çıkan deneyimi retrieval yapılabilir bilgi dokümanlarına dönüştürmektir. Burada söz edilen "deneyim bilgi tabanı", depolama, indeksleme ve retrieval teknolojilerini Bölüm 3 ile paylaşır; ama bilginin kaynağı ve doğrulama hedefi farklıdır. Bölüm 3 ağırlıklı olarak kullanıcı konuşmalarından, dokümanlardan ve veri kümelerinden "kullanıcı ve dünya nasıldır"ı çıkarır; bu bölüm ise Agent'ın eylem trajectory'lerinden ve sonuçlarından "hangi koşullarda ne yapılmalı"yı çıkarır. Örneğin "bu havayolu özel yemeklerin yirmi dört saat önceden ısmarlanmasını şart koşuyor" alan bilgisidir; "bilet almadan önce özel yemek son başvuru zamanını kontrol et; yoksa ödemeyi yaptıktan sonra talebin karşılanamayacağını fark edersin" ise eylem deneyimidir.
@@ -101,43 +103,51 @@ GAIA deneyim öğrenmesi bunun sezgisel bir örneğini veriyor. GAIA[^gaia-2023]
 
 ### Deneyimi Talimat Olarak Yazmak
 
-Deneyim bilgi tabanı Agent'a başvuru malzemesi sunar; Prompt ve Skill ise çok daha buyurgan bir nitelik taşır. Birden çok trajectory aynı strateji hatasını tekrar tekrar ortaya çıkarıyorsa ve örüntü doğal dille açıkça anlatılabiliyorsa, sistem bunu "başvurulabilir deneyim" düzeyinden "uyulması gereken kural" düzeyine yükseltebilir. Neredeyse bütün görevlerde geçerli olan kurallar system prompt'a girmeye uygundur; yalnızca belirli bir alanda, projede veya araçta geçerli olan karmaşık süreçler ise ihtiyaç hâlinde yüklenen bir Skill ya da proje talimat dosyası olarak yazılmaya daha uygundur.
+Deneyim bilgi tabanı Agent'a "başvurabileceği malzemeyi" verir; Prompt ve Skill ise "nasıl davranması gerektiğini" belirler. Deneyimi talimata yükseltmeye ancak birbirine benzer çok sayıda yörünge aynı strateji hatasını üst üste açığa çıkardığında ve o hata sözcüklerle açıkça betimlenebildiğinde değer. Önce üç kavramı ayıralım: **sistem Prompt'u** bütün görevlerde geçerlidir, **Skill** yalnızca belirli bir alan ya da araçla eşleştiğinde talep üzerine yüklenir, **program/Harness** ise yetkileri ve diğer katı kısıtları üstlenir.
 
-Prompt öğrenmesinin işbölümü, Bölüm 2'deki prompt engineering'den farklıdır. Bölüm 2, yapısı net ve önbellek dostu bir prompt'un nasıl yazılacağını yanıtlar; burada ise hangi üretim geri bildiriminin prompt değişikliğini tetiklemeye yettiği ve yeni bir kuralın dağıtımdan önce nasıl doğrulanacağı yanıtlanır. Değişiklik, system prompt'un tamamının tekrar tekrar yeniden yazılması biçiminde de olmamalıdır. Daha güvenilir yol, aynı türden bir başarısızlık kümesine dayanarak asgari bir diff üretmek, kuralın etki alanını belirtmek, mevcut kurallarla çelişip çelişmediğini denetlemek ve ardından hem başarısızlığı tetikleyen sınır vakalarında hem de eski görevlerden oluşan saklı kümede aynı anda değerlendirmektir.
+Andrej Karpathy bu yaklaşımı **sistem promptu öğrenmesi** (System Prompt Learning)[^karpathy-system-prompt-learning] diye adlandırır: model bir sorunla karşılaştıktan sonra tek bir açık cümleyle gelecekteki kendisini uyarır. DSPy[^dspy-2023] bir geliştirme kümesi üzerinde talimat ve örnek arar; OPRO[^opro-2023] geçmiş promptlar ve onların puanlarından yeni prompt önerileri üretir; GEPA[^gepa-2025] başarısız yörüngeler üzerine doğal dilde yapılan düşünmelerden prompt önerileri üretip eler. Bu yöntemler çevrimdışı toplu optimizasyona uygundur; üretim ortamında ise denetlenebilir en küçük güncelleme önerilerini kullanmak ve hızlı geri alma yolunu açık tutmak daha yerindedir.
 
-Andrej Karpathy, 2025 yılında yazdığı uzun bir gönderide bu olası yeni paradigmayı geçici olarak **System Prompt Learning** (sistem prompt'u öğrenmesi) diye adlandırdı[^karpathy-system-prompt-learning]. Özeti şuydu: pre-training ağırlıklı olarak bilgi öğrenir, fine-tuning ağırlıklı olarak alışkanlık hâline gelmiş davranışı biçimlendirir; ama insanda bir öğrenme biçimi daha vardır — bir sorunla karşılaşıp yöntemi çözdükten sonra, gelecekteki kendine açık bir dille "bir dahaki sefere bu tür bir sorunla karşılaşırsan önce şu yolu dene" notunu bırakmak. Böyle bir not defteri olmayan LLM'i *Memento* filminin başkarakterine benzetiyor ve şunu belirtiyor: System Prompt Learning ile pekiştirmeli öğrenmenin ikisi de davranışı deneyimden yola çıkarak iyileştirir, ama güncelleme algoritmaları farklıdır — birincisi metni düzenler, ikincisi gradyan inişiyle parametreleri değiştirir. Verdiği örnek, o dönemde Claude'un yaklaşık 17.000 kelimelik system prompt'unda yer alan özel bir talimattı: kelime, harf veya karakter sayma sorularıyla karşılaşıldığında önce tek tek numaralandır ve açıkça say, cevabı ondan sonra ver. Bu talimat tam olarak "`strawberry` kelimesinde kaç tane `r` var" türünden soruları ele almak içindi.
-
-Agent sistemine indirgendiğinde bu, başarısızlıktan sonra dille ifade edilebilen dersleri, gelecekteki çalışmaların doğrudan okuyabileceği aday kurallara dönüştürmek demektir. Yalnızca "başarılı/başarısız" biçimindeki skaler bir sonuçla karşılaştırıldığında, kanıtlı bir tanı hatanın kimlik doğrulamada mı, araç seçiminde mi, yoksa insana devretme sınırında mı olduğunu gösterebilir ve böylece çok daha isabetli bir aday değişiklik üretilebilir. Karpathy'nin "bilgiyle yönlendirilen bir gözden geçirme, skaler ödüle kıyasla daha yüksek boyutlu bir geri bildirim kanalı sunar" sözü, bu yöntemin neden yüksek veri verimliliği taşıyabileceğini açıklıyor. Ne var ki bilginin daha zengin olması onun kendiliğinden doğru olduğu anlamına gelmez; aynı kullanıcı görüşü yalnızca tek bir müşteri ya da eski sürüm bir politika için geçerli olabilir. Dolayısıyla kümeleme, etki alanı değerlendirmesi ve regresyon testi yine de gereklidir.
-
-Prompt'un otomatik optimizasyonunda birkaç farklı yol izlenmiştir. DSPy[^dspy-2023], birden çok dil modeli çağrısından oluşan bir programı optimize edilebilir bir nesne olarak görür ve geliştirme kümesi üzerinde talimatları ve örnekleri arar; OPRO[^opro-2023], dil modelinin geçmiş prompt'lara ve bunların puanlarına bakarak yeni adaylar önermesini sağlar; GEPA[^gepa-2025] ise başarısız trajectory'ler üzerindeki doğal dil reflection'ından yararlanarak birbirini tamamlayan aday prompt'lar üretir ve eler. Bunlar ağırlıklı olarak çevrimdışı değerlendirme kümeleri üzerinde toplu optimizasyona yöneliktir; üretim sistemlerindeki asgari diff ise daha çok sürekli bakıma benzer — yeni ortaya çıkan sınır vakalarıyla tetiklenir; kaynağı, denetlenebilirliği ve hızlı geri almayı öne çıkarır. Pratikte önce çevrimdışı aramayla iyi bir başlangıç sürümü bulunabilir, sonra yayına alınmış sistemin uzun kuyruklu kuralları vaka bazlı yamalarla sürdürülebilir.
+Sistem promptu öğrenmesi, 2. bölümdeki prompt mühendisliğiyle aynı şey değildir. 2. bölüm iyi bir Prompt'un nasıl düzenleneceğini tartışıyordu; bu bölüm ise hangi geri bildirimin bir değişikliği tetiklemeye yeteceğini ve güncelleme önerisinin nasıl güvenle yayına alınacağını tartışıyor. Değişiklik, kaynağı belirtilmiş en küçük diff olmalı; modele her seferinde Prompt'un tamamını yeniden yazdırmak değil. Bu, 1. bölümde adı konan "en küçük diff + geri alınabilirlik" örüntüsünün ta kendisidir. Aday sürüm hem **hatayı tetikleyen sınır kümesinde** hem de **halihazırda çalışan koruma kümesinde** sınanmalıdır: ilki iyileşmeli, ikincisi gerilememelidir.
 
 #### Örnek 1: Başarısızlık Trajectory'lerine Dayanarak Prompt Kurallarını İyileştirmek
 
-Örneğin havayolu müşteri hizmetleri Agent'ı, kullanıcı politikayı sorguladığında çoğu kez fazla erken insana devrediyor olabilir. Trajectory değerlendirmesi kural ihlali olmadığını, ama kurallara uygun bir alternatifin de üretilmediğini gösterir. Aday yama; Agent'tan önce politikayı açıklamasını, kullanıcının gerçek hedefini belirlemesini ve izin verilen alternatifleri aramasını, yalnızca kullanıcı açıkça istediğinde veya konu gerçekten yetkisini aştığında devretmesini isteyebilir. Yeni kural aşırı devretmeyi azaltıyor, ama insana devredilmesi gereken güvenlik olaylarının Agent tarafından işlenmeyi sürdürmesine yol açıyorsa, regresyondan geçmemiş demektir. System Prompt Learning'in değeri otomatik olarak daha fazla metin eklemekte değil, üretimden gelen sınır vakalarıyla kuralların uygulanma kapsamını sürekli netleştirmektedir.
+7. bölümde τ-bench/τ²-bench ile bir havayolu müşteri hizmetleri Agent'ının nasıl değerlendirildiği anlatılmıştı: kullanıcı gereksinimlerini adım adım açar, sistem hem rezervasyon gibi ortam durumunu hem de konuşmada gerekli bilginin verilip verilmediğini denetler. O bölümdeki hata atfı ayrıca yalnızca "başarısız" diye kaydetmenin yetmediğini, **ilk hatalı adımın** bulunması gerektiğini vurguluyordu.
+
+Buradaki sorunlu vaka şu: kullanıcı iade, değişiklik ücreti ya da bagaj politikasından yakınır; Agent ise politikaya bakmadan, kuralı açıklamadan ve izin verilen bir alternatif aramadan `transfer_to_human` çağırır. Sıradan bir politika anlaşmazlığı aktarma gerektirmez; **aktarma yalnızca kullanıcı açıkça bir insan istediğinde ya da güvenlik/can riski doğduğunda zorunludur**. Dolayısıyla sorun "Agent yeterince kibar değil" değil, Prompt'un aktarma sınırını hiç yazmamış olmasıdır.
+
+Bu teşhis doğrudan promptta bir kurala dönüşür: önce politikayı sorgula ve açıkla, kullanıcının gerçekte çözmek istediği hedefi belirle ve mevzuata uygun bir alternatif sun; yalnızca açıkça insan istendiğinde ya da yetki aşıldığında veya güvenlik söz konusu olduğunda aktar.
+
+> **Deney 9-3 ★★: Başarısız yörüngelerden havayolu müşteri hizmetleri sistem Prompt'unu optimize etmek**
+>
+> **Deneyin amacı**: Havayolu müşteri hizmetleri Agent'ının "sıradan politika anlaşmazlığında hemen insana aktarma" davranışını düzeltmek, buna karşılık açık insan talebinde ve güvenlik olaylarında aktarma yeteneğini korumak.
+>
+> **Deneyin açıklaması**: Başarısız yörüngelerden kural uyumu, görev çözümü ve mevzuata uygun alternatif olmak üzere üç boyut çıkarılır ve kaynağı belirtilmiş tek bir en küçük Prompt yaması üretilir; ardından ilk sürüm ve elle ayarlanmış sürümle aynı koşullarda karşılaştırılır. Güncelleme önerisi ancak sınır vakaları iyileştiğinde, eski görevler gerilemediğinde ve yayın kapısından geçtiğinde kademeli yayına girer.
+>
+> **Deney neyi gösteriyor**: Prompt'un otomatik optimizasyonunda önemli olan, modelin büyük bir metin bloğunu serbestçe yeniden yazması değil; atfedilebilir bir hatayı, kapsamı belirgin, geri alınabilir ve doğrulanabilir yerel bir kurala dönüştürmektir.
 
 #### Örnek 2: Gereksinim Netleştirme Skill'i — "Doğrudan Başlamak" yerine "Önce Onaylayıp Sonra Uygulamak"
 
-Skill öğrenmesi aynı ilkeyi izler, ama etki alanı daha yereldir. Skill'i, ihtiyaç duyuldukça açılan bir görev el kitabı gibi düşünebilirsiniz: birden çok deneyim bir araya gelip eksiksiz bir sigorta hasar süreci oluşturuyorsa, sistem buna karşılık gelen Skill'i üretebilir veya gözden geçirebilir. Aday Skill yalnızca bir konuşmanın özeti olmamalı; en azından ne zaman yükleneceğini, ön koşullarını, işlem adımlarını, bilinen tuzakları ve doğrulama yöntemini açıklamalı ve kaynak trajectory'leri saklamalıdır. Sistem önce mevcut Skill kütüphanesinde benzer yetenekleri arar: aynı süreç zaten varsa öncelikle yerel bir `patch` uygular, yalnızca gerçekten yeni ve bağımsız bir yetenek ortaya çıktığında yeni bir dizin oluşturur. Böylece kütüphanenin adları farklı ama içerikleri birbirine benzeyen el kitaplarıyla dolması önlenir. Anthropic'in Skill Creator'ı[^anthropic-skill-creator] "taslak — test — değerlendirme — revizyon" üretim döngüsünü gösteriyor; bu, Skill'in nasıl üretilip iyileştirileceği sorusunu çözer. Asıl zor olan ise hangi çalışma kanıtlarının üretimi tetiklemeye yettiği, çatışmaların nasıl ele alınacağı ve değişikliğin alan görevlerinden ve eski görev regresyonundan geçip geçmediğidir.
+2. bölüm bir Skill'in nasıl yazılacağını anlatmıştı. Burada sistemde bir gereksinim netleştirme Skill'inin ilk sürümünün zaten bulunduğunu varsayıyor ve başka bir şeye bakıyoruz: Agent üretimde kullanıcı geri bildirimi almayı sürdürürken, "ne zaman önce sormalı, neyi sormalı, ne zaman doğrudan başlayabilir" kuralının güncellenmesi gerekip gerekmediğine nasıl kendiliğinden karar verir?
 
-> **Deney 9-9 ★★: Geri bildirimi yazma Skill'ine dönüştürmek**
->
-> `data/feedback_pairs.json` içindeki 20 before/after çifti üç partide işlenir; aday kurallar çıkarılır, tekrarlar birleştirilir, eşik çakışmaları bulunur ve kaynak/kapsam içeren `SKILL.md` üretilir. Deterministik kurallar kodla, LLM kuralları 10 altın örnekle kalibre edilir.
->
-> Eksik görev sınır kümesindeki tespit, normal metinlerdeki yanlış alarm ve kural sayısının büyümesi birlikte raporlanır. İlk gerçek çalışma 0/8 tespit ve 7/8 yanlış alarm verdi; model dışı filtre ve deterministik fallback sonrası 8/8, 0/8 ve 21 adaydan 8 kural elde edildi. Uygulama [`ai-style-skill`](../chapter9/ai-style-skill/) içindedir.
+Bu tipik bir süreç sorunudur. Kullanıcı "giriş sayfasını kurumsal oturum açmayı destekleyecek biçimde değiştir" der. Agent hemen işe koyulursa kimlik sağlayıcı, geri düşüş yolu, eski kullanıcılarla uyum ve yayına alma kapsamı konusunda kullanıcının henüz düşünmediği seçimleri onun yerine yapabilir. Buna karşılık görevin büyüklüğüne bakmadan on beş soru sıralarsa, basit bir değişiklik bir görüşmeye dönüşür. **Az sormak yeniden yapıma, çok sormak rahatsızlığa yol açar.** Skill'in ifade etmesi gereken "her görev onay ister" değil, kapsamı olan bir karar yoludur.
 
-Kıvrımlı tırnak vakası, Skill'in küresel bir değiştirme kuralı değil, veri sözleşmesi olması gerektiğini gösterir: SFT'den önce sentetik örnekler belge türü, kapsam ve programlama diline göre katmanlandırılmalı; kod/JSON/korunan alan kapılarından ve manuel denetimden geçmelidir. Exact-copy vakasında tokenizer encode→decode round-trip'i, modelin byte-exact kopyası, Harness serileştirmesi ve araç eşleşmesi ayrı regresyon katmanlarıdır.
+İlk sürüm süreç şöyle yazılabilir: önce görevin belirsizliğini, riskini ve yeniden yapım maliyetini değerlendir; düşük riskli, kolayca geri alınabilir küçük değişikliklerde varsayımları belirtip doğrudan uygula; mimari, veri, yetki, genel arayüz ya da geniş kapsamlı değişiklikler söz konusu olduğunda, planı gerçekten değiştirebilecek az sayıda soruyu toplu olarak sor; yanıtları alınca hedefleri, hedef olmayanları, kilit ödünleşmeleri, varsayımları ve kabul ölçütlerini içeren kısa bir Spec ya da Plan üret ve kullanıcının onayına sun; onaydan sonra uygula, yol boyunca özgün Spec'in geçerli olmadığı anlaşılırsa durup yeniden onay al.
 
-> **Deney 9-3 ★★: Başarısız Trajectory'lere Dayanarak System Prompt'u İyileştirmek**
+Sürekli evrim işletim kanıtıyla başlar. Sistem görevleri, netleştirme sorularını, Spec sürümlerini, kullanıcı düzenlemelerini, çalıştırma sonuçlarını ve teslim sonrası yeniden yapımı birlikte kaydetmelidir. Olumsuz geri bildirim "yapılan şey hayal ettiğim gibi değil" olabileceği gibi "çok fazla soru soruyorsun" da olabilir; olumlu geri bildirim ise tek bir onaydan sonra sorunsuz teslimi, kullanıcı Spec'i kendisi düzelttikten sonra yeniden yapımın azalmasını ve düşük riskli görevlerin gereksiz sorularla bölünmemesini kapsar. Tek başına bir yakınmayı saklamak güncellemeyi tetiklemeye yetmez; geri bildirim mutlaka somut bir yörünge, görev türü ve sonuçla ilişkilendirilmelidir.
+
+Birden çok yörünge aynı boşluğu üst üste işaret ettiğinde Agent en küçük Skill güncelleme önerisini ortaya koyabilir. Örneğin kimlik doğrulama mimarisine dokunan birkaç görevde eski oturum açma yönteminin desteklenmesi gerektiği ancak teslimden sonra anlaşıldıysa, kural taslağı uygulamadan önce "kimlik sağlayıcı, geri düşüş yolu ve uyum kapsamının" onaylanmasını isteyebilir; tersine, çok sayıda yazım düzeltmesinin her birinde önce bir tur soru sorulduysa, kural taslağı tetiklenme kapsamını yüksek riskli ve yüksek belirsizlikli durumlara daraltmalıdır.
+
+Bu süreç kontrollü deneyle doğrulanmalıdır. "Doğrudan uygula", "önce sor sonra uygula" ve "sor, Spec üret, onayla, sonra uygula" olmak üzere üç strateji görev karmaşıklığına göre katmanlanarak karşılaştırılabilir. Ölçütler en azından gereksinimden sapma oranını, teslim sonrası yeniden yapım sayısını, netleştirme turu sayısını, ilk işe yarar çıktıya kadar geçen süreyi, kullanıcının vazgeçme oranını, Spec'in değiştirilme oranını ve yüksek riskli işlemlerdeki hata oranını içermelidir. Güncelleme önerisi ancak gereksinim sapmasını azaltırken rahatsızlığı belirgin biçimde artırmıyorsa ve damıtmada kullanılmamış görevlerde gerilemeden geçiyorsa kademeli yayına girer.
+
+Bu örnek Skill ile Harness arasındaki sınırı da gösterir. Skill bağlamı anlayıp kendiliğinden soru sormaktan, Spec'i derleyip toparlamaktan ve ödünleşmeleri açıklamaktan sorumludur; Harness ise onay yokken yüksek riskli yazmayı, doğrudan `main` üzerinde işlem yapmayı ya da yayın sürecini atlamayı reddetmekten sorumludur. Harness'taki reddedici, bir PR'ın nasıl betimleneceğine model adına karar veremez; gereksinim çözümünü de onun yerine seçemez. Deneyim biriktikçe kararlı konuşma yörüngeleri, 8. bölümde gereken SFT ya da RL eğitim verisini de üretebilir.
+
+> **Deney 9-4 ★★: Kullanıcı geri bildiriminden gereksinim netleştirme ve Spec onayı Skill'ini evriltmek**
 >
-> **Deney Amacı**: Havayolu müşteri hizmetleri Agent'ının "kullanıcı politikayı sorguladığında fazla erken insana devretme" başarısızlık trajectory'lerinden öğrenmesini sağlamak ve aynı zamanda yeni kuralın gerçekten devretme gerektiren eski senaryoları bozmadığını kanıtlamak.
+> **Deneyin amacı**: Agent'ın "gereksinimden sapma" ile "etkileşimi bölme" arasında daha iyi bir netleştirme stratejisi bulup bulamayacağını sınamak ve doğrulanmış iyileştirmeleri Skill'e geri yazmak.
 >
-> **Akış**: Önce eski görevlerden oluşan saklı küme ile aşırı devretme sınır kümesi ayrı ayrı çalıştırılır; `learning_signal.py` başarısızlığı kural uyumu, görev çözümü ve kurallara uygun alternatif olmak üzere üç boyuta ayırır ve kaynak vaka kimliklerini saklar. Ardından Kodlama Agent'ı mevcut Prompt'u okur ve denetlenebilir tek bir asgari `old_str → new_str` düzenlemesi üretir: Agent'tan önce politikayı açıklaması, gerçek hedefi belirlemesi ve kurallara uygun alternatifler bulması istenir; kullanıcının açıkça insan talep ettiği ya da bir güvenlik olayının ortaya çıktığı durumlar için devretme yolu korunur. Yama; kaynağı, hedef kuralı ve değişiklik gerekçesiyle birlikte aday manifest'e yazılır.
+> **Deneyin açıklaması**: Düşük riskli ve düşük belirsizlikli bir görev kümesiyle mimari, yetki, veri ya da genel arayüz içeren yüksek riskli bir görev kümesi hazırlayın ve üç akışı karşılaştırın: doğrudan uygula; sor, sonra uygula; sor, Spec onayı al, sonra uygula. Kullanıcı yanıtlarını, Spec düzenlemelerini, teslim sonuçlarını ve yeniden yapım geri bildirimini kaydedin ve Agent'ın bir Skill güncelleme önerisi üretmesini sağlayın; öneri, ayrılmış görevlerde gerilemeden, rahatsızlık maliyeti denetiminden ve yüksek riskli reddedicinin doğrulanmasından mutlaka geçmelidir.
 >
-> **Üç Karşılaştırma Grubu**: Başlangıç Prompt'u, otomatik üretilen aday Prompt ve insan eliyle tek seferde ayarlanmış Prompt. Üçü de aynı modeli ve aynı saklı/sınır görev kümesini kullanır; `--quick` yalnızca vaka sayısını azaltır, görev Agent'ını, LLM Judge'ı ve Kodlama Agent'ını yine gerçekten çağırır, dolayısıyla çevrimdışı bir benzetim sonucu sayılamaz.
->
-> **Yayım Eşiği ve Metrikler**: Aday dört koşulu birden sağlamalıdır: yama boş olmamalı, kaynağı izlenebilmeli, sınır kümesindeki başarım gerçekten iyileşmeli ve saklı kümede gerileme olmamalı. Sınır görevlerindeki doğruluk, saklı görevlerdeki doğruluk, Prompt'un uzama miktarı, ortaya çıkan regresyon sayısı ve başarısızlığın fark edilmesinden adayın üretilmesine kadar geçen süre karşılaştırılır. Eşiği geçmek yalnızca `release_to_canary` sonucunu verir, kararlı Prompt'un üzerine doğrudan yazılmaz; koşullardan herhangi biri sağlanmazsa `reject_candidate` döndürülmelidir.
->
-> Eşlik eden uygulama için bkz. [`prompt-auto-optimization`](../chapter9/prompt-auto-optimization/). Çevrimdışı testler tanıyı ve yayım eşiğini kapsar; `--quick` ise görev Agent'ını, LLM Judge'ı ve Kodlama Agent'ını gerçekten çağırır.
+> **Deney neyi gösteriyor**: Sürekli evrim, her yakınmayı doğrudan Prompt'a eklemek değil; sonuç ve geri bildirimden kapsamı saptayıp en küçük talimat güncellemesini önermek ve yayınlanıp yayınlanmayacağına bağımsız bir değerlendiricinin karar vermesini sağlamaktır.
 
 [^dspy-2023]: Khattab, O., et al. *DSPy: Compiling Declarative Language Model Calls into Self-Improving Pipelines.* arXiv:2310.03714, 2023.
 
@@ -146,8 +156,6 @@ Kıvrımlı tırnak vakası, Skill'in küresel bir değiştirme kuralı değil, 
 [^gepa-2025]: Agrawal, L., et al. *GEPA: Reflective Prompt Evolution Can Outperform Reinforcement Learning.* arXiv:2507.19457, 2025.
 
 [^karpathy-system-prompt-learning]: Karpathy, A. “We’re missing (at least one) major paradigm for LLM learning … system prompt learning?” X, May 11, 2025. https://x.com/karpathy/status/1921368644069765486
-
-[^anthropic-skill-creator]: Anthropic. *Skill Creator.* 2026. https://github.com/anthropics/skills/blob/main/skills/skill-creator/SKILL.md
 
 ### Deneyimi Program Olarak Yazmak
 
@@ -168,7 +176,7 @@ Tarayıcı iş akışları, programlaşmış deneyimin değerini iyi gösteriyor
 
 E-posta göndermeyi ele alalım: derlemenin sonucu yalnızca "şu düğmelere sırayla tıkla" değildir; alıcı, konu ve gövde parametreleri olan küçük bir programdır. Göndermeden önce yazma penceresini ve giriş alanlarını kontrol eder, gönderdikten sonra başarı bildirimini kontrol eder, en sonunda gönderilmiş listesinde ilgili e-postanın belirdiğini doğrular. PreAct'ın[^preact] deneylerinde bu tür programlar tekrarlanan görevlerde uçtan uca 8,5–13 kat hızlanma sağladı ve yeniden oynatma aşamasında dil modelinin adım adım çağrılmasına gerek kalmadı. Daha da önemli sonuç şudur: süreç belleği aynı anda **eylem öncesi doğrulama, eylem sonrası doğrulama ve saklamadan önce bağımsız doğrulama** içermek zorundadır. Aksi hâlde sistem kolayca tehlikeli bir yanılsamaya kapılır: yeniden oynatma kapsamı yüzde 100'dür, her düğmeye tıklanmıştır, ama aslında bir alan boş kalmıştır ve görev hiçbir zaman gerçekten tamamlanmamıştır.
 
-> **Deney 9-4 ★★★: Tarayıcı Trajectory'lerinden Doğrulanabilir İş Akışı Üretmek**
+> **Deney 9-5 ★★★: Tarayıcı Trajectory'lerinden Doğrulanabilir İş Akışı Üretmek**
 >
 > **Deney Amacı**: Web Agent'ının pahalı bir keşfi yeniden kullanılabilir bir iş akışına dönüştürüp dönüştüremediğini ve sayfa değiştiğinde hatalı yeniden oynatmayı reddedip reddetmediğini, yani "eylemlerin hepsi yürütüldü" durumunu başarı diye raporlamadığını doğrulamak.
 >
@@ -188,7 +196,7 @@ Aday üretecinin girdisi de yalnızca başarısız vakalar olmamalıdır. Self-H
 
 Araç yaratma da aynı protokolü izler. Alita'nın[^alita-2025] verdiği örnek şudur: Agent'ın, *Yüzüklerin Efendisi*'ndeki Gollum'u seslendiren oyuncunun anlatımını yaptığı bir YouTube 360 VR videosunda, dinozorların ilk göründüğü andan hemen sonra anılan sayıyı bulması gerekir. Altyazı okuma yeteneğinin olmadığını fark edince `youtube-transcript-api` paketini arayıp test eder, bunu yeni bir altyazı aracı olarak sarmalar ve sonunda altyazıdan `100000000` cevabını elde eder. Yeni araç, ancak güvenlik taraması, işlevsel testler ve sonraki görevlerde yeniden kullanım denemelerinin hepsi geçtikten sonra yetenek kütüphanesine girer. Bölüm 4'teki proaktif araç keşfi "mevcut araçlardan hangisi uygun" sorusunu çözer, Bölüm 5 "araç nasıl yazılır" sorusunu çözer; bu bölümün ilgilendiği soru ise "hangi çalışma kanıtı yaratmayı tetikler ve yeni araç nasıl doğrulanmış bir uzun vadeli yeteneğe dönüşür" sorusudur.
 
-> **Deney 9-5 ★★★: Başarısız Trajectory'lerle Agent'ın Kendini Değiştirmesini Tetiklemek**
+> **Deney 9-6 ★★★: Başarısız Trajectory'lerle Agent'ın Kendini Değiştirmesini Tetiklemek**
 >
 > **Deney Amacı**: "`retryable=false` olan hataların art arda çağrılmayı sürdürdüğü" birden çok trajectory verildiğinde, sistemin kök nedeni yeniden deneme ve circuit breaker koduna kadar götürüp götüremediğini ve geçici arızalarda yeniden deneme yeteneğini bozmadan aday bir düzeltme üretip üretemediğini sınamak.
 >
@@ -200,15 +208,15 @@ Araç yaratma da aynı protokolü izler. Alita'nın[^alita-2025] verdiği örnek
 >
 > Eşlik eden uygulama için bkz. [`self-modifying-agent`](../chapter9/self-modifying-agent/); deterministik aday üreteci ya da gerçek bir LLM Kodlama Agent'ı seçilebilir, iki yol da aynı yayım eşiğini paylaşır.
 
+Deney 9-7 aynı protokolü doğrulama katmanına uygular. Kullanıcı düzeltmeleri, düşük puanlar ve denetimler onaysız yüksek riskli işlemi tekrar tekrar gösterdiğinde aday değişiklik izole dizine yazılır. Araç adı ve argümanlardan tehlikeli silmeleri ve `git push --force` çağrılarını sınıflandırın; tek kullanımlık onay tokenını somut işleme bağlayın. Aday AST/statik kontrolleri, sahte veya tekrar kullanılan tokenları içeren sınır yeniden oynatmasını ve koruma kümesini geçmelidir.
+
+> **Deney 9-7 ★★: Kullanıcı geri bildirimiyle yüksek riskli işlem onay kapısı**
+>
+> `failure_trajectories.json` içindeki üç sinyal ve kontrol trajectory'leri kullanılır. Gerçek `gpt-4o-mini` adayı eksik görev, normal işlem ve tek kullanımlık token kontrollerini geçemediği için güvenlik kapısı tarafından reddedildi. Deterministik aday bütün kontrolleri geçip `release_to_canary` oldu; kontroller, karar ve kararlı dizinin hash'i kaydedilir. Uygulama [`harness-safety-gate`](../chapter9/harness-safety-gate/) içindedir.
+
 [^preact]: Li, Bojie. *PreAct: Computer-Using Agents that Get Faster on Repeated Tasks.* arXiv:2606.17929, 2026.
 
 [^alita-2025]: Qiu, J., et al. *Alita: Generalist Agent Enabling Scalable Agentic Reasoning with Minimal Predefinition and Maximal Self-Evolution.* arXiv:2505.20286, 2025.
-
-Deney 9-8 aynı protokolü doğrulama katmanına uygular. Kullanıcı düzeltmeleri, düşük puanlar ve denetimler onaysız yüksek riskli işlemi tekrar tekrar gösterdiğinde aday değişiklik izole dizine yazılır. Araç adı ve argümanlardan tehlikeli silmeleri ve `git push --force` çağrılarını sınıflandırın; tek kullanımlık onay tokenını somut işleme bağlayın. Aday AST/statik kontrolleri, sahte veya tekrar kullanılan tokenları içeren sınır yeniden oynatmasını ve koruma kümesini geçmelidir.
-
-> **Deney 9-8 ★★: Kullanıcı geri bildirimiyle yüksek riskli işlem onay kapısı**
->
-> `failure_trajectories.json` içindeki üç sinyal ve kontrol trajectory'leri kullanılır. Gerçek `gpt-4o-mini` adayı eksik görev, normal işlem ve tek kullanımlık token kontrollerini geçemediği için güvenlik kapısı tarafından reddedildi. Deterministik aday bütün kontrolleri geçip `release_to_canary` oldu; kontroller, karar ve kararlı dizinin hash'i kaydedilir. Uygulama [`harness-safety-gate`](../chapter9/harness-safety-gate/) içindedir.
 
 #### Vaka: Her şeyin eklenti olduğu DeepSeek Harness öz-evrimi
 
@@ -238,8 +246,6 @@ Bir yeteneğin parametreleştirilip parametreleştirilmeyeceğini tek başına "
 
 Bölüm 8, SFT'yi, damıtmayı ve RL'i eksiksiz biçimde tartıştığı için burada yinelenmiyor. Sürekli evrim açısından kilit nokta, değerlendirilmiş üretim trajectory'lerini eğitim verisine dönüştürmektir: yüksek nitelikli gösterimler SFT'ye girebilir, açık tercihler ikili veri oluşturabilir, güvenilir ortam ödülü bulunan etkileşimler RL'de kullanılabilir. Eğitime girmeden önce yine de gizli bilgiler temizlenmeli, hatalı trajectory'ler filtrelenmeli ve bağımsız bir regresyon kümesi ayrılmalıdır; eğitimden sonra ise genel yeteneklerin ve güvenlik hizalamasının unutulup unutulmadığı denetlenmelidir.
 
-Parametre öğrenmesi genellikle dışsal yöntemlerle birlikte çalışır. Tıbbi görüntüleme modeli görsel temsilleri parametrelerle öğrenir, güncel kılavuzları bilgi tabanından alır, lezyon ölçümünü ve risk hesabını kodla yapar; doğal bir müşteri hizmetleri ses tonu tercih eğitimiyle genel dağılım düzeyinde biçimlendirilebilir, o anki marka kimliği Prompt'la belirlenir, kişisel iletişim tercihlerine uyum ise kullanıcı belleğiyle sağlanır. Sürekli evrim, dört yöntem arasından tek bir doğruyu seçmek değil; her yeteneği onu ifade etmeye ve yönetmeye en uygun yere yerleştirmektir.
-
 ### Artifact'ı Güncellemekten "Güncelleme Yöntemi"ni Güncellemeye
 
 Önceki dört yöntem, deneyimin sonunda **nereye yazıldığını** tartıştı; ama sürekli evrimin buna dik başka bir ekseni daha var: sistem, belirli bir artifact'ın içeriğini mi optimize ediyor, yoksa bu artifact'ları üreten, yöneten ve doğrulayan yöntemi mi? Bu eksende optimizasyon nesnesi katman katman genişleyebilir: **tek bir kural veya bellek kaydı → yapılandırılmış context → iş akışı → Harness kodu → aday çözümler üreten optimize edici kod**[^weng-harness-2026]. Bunlar beş yeni güncelleme taşıyıcısı değil, beş farklı arama ölçeğidir; bilgi, Prompt, Skill ve program bu katmanların birkaçında birden görünebilir.
@@ -250,7 +256,7 @@ Bir katman daha dışarı çıkıldığında optimizasyon nesnesi artık yalnız
 
 Aynı düşünce iş akışlarına ve tüm Harness'e genişletilebilir. AFlow, birden çok LLM çağrısından oluşan iş akışını bir kod grafiği olarak temsil eder ve yürütme geri bildirimiyle düğüm ve kontrol akışı birleşimlerini arar[^aflow-2025]; Meta-Harness ise Kodlama Agent'ına aday Harness'in kaynak kodunu, puanlarını ve trajectory'lerini okutarak bilginin nasıl saklandığını, getirildiğini ve sunulduğunu belirleyen kodu arar[^meta-harness-2026]. Bölüm 5, kodun Agent'ın sistem yapısını ifade ettiği genel dil olduğunu zaten göstermişti; buradaki yenilik şu: kod yalnızca bir kez üretilen bir çıktı değildir, değerlendirme geçmişiyle birlikte sürekli aramanın nesnesi de olabilir.
 
-> **Deney 9-6 ★★★: Bu Kitabı Hermes'e Verirsek Kendini Yükseltebilir mi?**
+> **Deney 9-8 ★★★: Bu Kitabı Hermes'e Verirsek Kendini Yükseltebilir mi?**
 >
 > **Amaç**: Bir Agent'ın dış bilgiyi kendi yeteneklerinde gerçek bir güncellemeye dönüştürüp dönüştüremediğini sınamak. Deney bir sorun ya da özellik listesi vermez; Hermes'e on bölüm ve kendi kaynak kodu verilir, ilkeleri anlaması, uygulamasını incelemesi ve değerli bir iyileştirmeyi kendisinin seçmesi beklenir.
 >
@@ -294,6 +300,18 @@ Değerlendirme, öğrenme bittikten sonra girilen bir sınav değil, kendi kendi
 - Uzun vadeli mühendislik kalitesi, yani bakım karmaşıklığının, mimari tutarlılığın, sahiplik sınırlarının, geriye dönük uyumluluğun ve gelecekteki taşıma ile hata ayıklama yükünün kötüleşip kötüleşmediği.
 
 Yalnızca mevcut başarısızlık vakasının sorununu çözüp diğer mevcut vakalarda veya yeni alanlarda gerilemeye yol açmak, başarılı bir sürekli öğrenme değildir.
+
+> **Deney 9-9 ★★★: Agent'ın Gerçekten Sürekli Evrilip Evrilmediğini Değerlendirmek**
+>
+> **Deney Amacı**: "Tek bir geri bildirimi saklayabilme", "yalnızca durmadan ekleme yapma" ve "güncelleyebilme, aktarabilme ve yeteneği koruyabilme" biçimindeki üç uzun vadeli davranışı birbirinden ayırmak ve aynı soru kümesini tekrar tekrar çalıştırmayı sürekli öğrenme diye göstermeyi önlemek.
+>
+> **Dört Aşamalı Görev Akışı**: Öğrenme aşaması; iade, kimlik doğrulama ve bagaj politikası gibi ortak örtük örüntüler taşıyan görevler sunar. Aktarım aşaması ifadeyi, kullanıcıyı ve yerel ortamı değiştirerek eski deneyimin yeni görevlerde kullanılıp kullanılamadığını denetler. Kural değişikliği aşaması bagaj üst sınırını 20 kg'dan 23 kg'a çıkarır ve sistemden eski bilgiyi değiştirmesini ya da elemesini ister. Koruma aşaması ise değişmemiş yetenekleri ve o an geçerli olan kuralları yeniden test ederek güncellemenin unutmaya yol açıp açmadığını ölçer. Geri bildirimli her görev bittikten sonra dış belleğin güncellenmesine izin verilir; o anki sorunun beklenen eylemi Agent'a önceden sızdırılamaz.
+>
+> **Karşılaştırma Grupları**: `static` geri bildirimi kalıcı hâle getirmez; `append_only` kuralın ilk sürümünü hatırlayabilir, ama çatışmayı ele almaz ve eskiyen bilgiyi elemez; `evolving` sürümleri saklar ve eski kuralı yeni kanıtla değiştirir. Referans uygulama, değerlendirme Harness'inin bu davranışları ayırt edip edemediğini doğrulamak içindir; gerçek deneyde LLM aynı 14 soruluk sıralı görev akışından geçirilebilir, ama sonucun model dışındaki Harness tarafından hesaplanması zorunludur.
+>
+> **Metrikler ve Kabul**: Doğruluk ve öğrenme eğrisi aşama aşama raporlanır; ayrıca aktarım doğruluğu, yeni kural alındıktan sonra doğruya dönmek için gereken görev sayısı, eski yetenek koruma oranı, negatif aktarım oranı, güvenlik Rubric'i geçme oranı ve Token, gecikme ile depolama maliyeti ayrı ayrı hesaplanır. Prompt, Skill veya Harness güncellemesi kullanan gerçek sistemlerde aday değişiklik etkinliği, artifact etkinleşme oranı ve uyum başarı oranı da ayrı ayrı kaydedilmelidir; böylece "güncelleme doğru ama yüklenmemiş" durumunun güncelleme başarısızlığı sayılması önlenir. Bir Agent'ın nihai doğruluğu görece yüksek olsa bile; yürürlükten kalkmış kurallara başvurmayı sürdürüyorsa, görevi kural dışı kestirmelerle tamamlıyorsa ya da güncellemeden sonra eski yeteneklerini unutuyorsa, sürekli evrim gerçekleştirdiğine hükmedilemez.
+>
+> Eşlik eden uygulama için bkz. [`self-evolution-eval`](../chapter9/self-evolution-eval/); varsayılan olarak güncellenebilir, yalnızca ekleyen ve statik olmak üzere üç referans Agent karşılaştırılır; `--profile llm` ile gerçek bir LLM aynı uzun vadeli görev akışından geçirilebilir.
 
 ### Doğrulanabilir Döngünün Sınırı: "Tamamlandı" "İlerleme" Demek Olmadığında
 
@@ -342,18 +360,6 @@ Sürekli evrim, bilginin, Prompt'un ve araçların sınırsızca büyümesi deme
 - Uzun süredir kullanılmayan araçları yeniden doğrulamak;
 - Yeni kanıtlarla çürütülen bilgileri silmek;
 - LoRA'yı özgün temel modelden yeniden eğitmek. Mantık Bölüm 1'deki veri katmanıyla aynıdır: gerçek güvence, değişikliği yapanın erişemediği bir katmandan gelmelidir.
-
-> **Deney 9-7 ★★★: Agent'ın Gerçekten Sürekli Evrilip Evrilmediğini Değerlendirmek**
->
-> **Deney Amacı**: "Tek bir geri bildirimi saklayabilme", "yalnızca durmadan ekleme yapma" ve "güncelleyebilme, aktarabilme ve yeteneği koruyabilme" biçimindeki üç uzun vadeli davranışı birbirinden ayırmak ve aynı soru kümesini tekrar tekrar çalıştırmayı sürekli öğrenme diye göstermeyi önlemek.
->
-> **Dört Aşamalı Görev Akışı**: Öğrenme aşaması; iade, kimlik doğrulama ve bagaj politikası gibi ortak örtük örüntüler taşıyan görevler sunar. Aktarım aşaması ifadeyi, kullanıcıyı ve yerel ortamı değiştirerek eski deneyimin yeni görevlerde kullanılıp kullanılamadığını denetler. Kural değişikliği aşaması bagaj üst sınırını 20 kg'dan 23 kg'a çıkarır ve sistemden eski bilgiyi değiştirmesini ya da elemesini ister. Koruma aşaması ise değişmemiş yetenekleri ve o an geçerli olan kuralları yeniden test ederek güncellemenin unutmaya yol açıp açmadığını ölçer. Geri bildirimli her görev bittikten sonra dış belleğin güncellenmesine izin verilir; o anki sorunun beklenen eylemi Agent'a önceden sızdırılamaz.
->
-> **Karşılaştırma Grupları**: `static` geri bildirimi kalıcı hâle getirmez; `append_only` kuralın ilk sürümünü hatırlayabilir, ama çatışmayı ele almaz ve eskiyen bilgiyi elemez; `evolving` sürümleri saklar ve eski kuralı yeni kanıtla değiştirir. Referans uygulama, değerlendirme Harness'inin bu davranışları ayırt edip edemediğini doğrulamak içindir; gerçek deneyde LLM aynı 14 soruluk sıralı görev akışından geçirilebilir, ama sonucun model dışındaki Harness tarafından hesaplanması zorunludur.
->
-> **Metrikler ve Kabul**: Doğruluk ve öğrenme eğrisi aşama aşama raporlanır; ayrıca aktarım doğruluğu, yeni kural alındıktan sonra doğruya dönmek için gereken görev sayısı, eski yetenek koruma oranı, negatif aktarım oranı, güvenlik Rubric'i geçme oranı ve Token, gecikme ile depolama maliyeti ayrı ayrı hesaplanır. Prompt, Skill veya Harness güncellemesi kullanan gerçek sistemlerde aday değişiklik etkinliği, artifact etkinleşme oranı ve uyum başarı oranı da ayrı ayrı kaydedilmelidir; böylece "güncelleme doğru ama yüklenmemiş" durumunun güncelleme başarısızlığı sayılması önlenir. Bir Agent'ın nihai doğruluğu görece yüksek olsa bile; yürürlükten kalkmış kurallara başvurmayı sürdürüyorsa, görevi kural dışı kestirmelerle tamamlıyorsa ya da güncellemeden sonra eski yeteneklerini unutuyorsa, sürekli evrim gerçekleştirdiğine hükmedilemez.
->
-> Eşlik eden uygulama için bkz. [`self-evolution-eval`](../chapter9/self-evolution-eval/); varsayılan olarak güncellenebilir, yalnızca ekleyen ve statik olmak üzere üç referans Agent karşılaştırılır; `--profile llm` ile gerçek bir LLM aynı uzun vadeli görev akışından geçirilebilir.
 
 [^claude-code-memory]: Anthropic, “How Claude remembers your project”, 2026. https://code.claude.com/docs/en/memory
 

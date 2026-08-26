@@ -65,6 +65,8 @@ Table 9-2 Applicable boundaries of four continual evolution methods
 | Programs and Harness | Deterministic procedures, tools, and hard constraints | Testable, stable execution, low cost | Higher development and maintenance costs |
 | Model parameters | High-dimensional perception, generation style, and implicit strategies | Strong generalization, low inference overhead | High update and regression costs |
 
+A single capability can be split across several carriers: facts go into the knowledge base, the principles that explain exceptions go into a Skill, permissions that must not be bypassed stay gated by the program, and high-dimensional recognition goes into the parameters. The routing result is only an update proposal; it has not yet earned the right to be released.
+
 ### Consolidating Experience into Knowledge
 
 The most lightweight form of evolution is to organize recurring experience from multiple runs into retrievable knowledge documents. The “experience knowledge base” described here shares storage, indexing, and retrieval technologies with Chapter 3, but differs in its knowledge sources and verification objectives. Chapter 3 primarily extracts “what the user and the world are like” from user conversations, documents, and datasets; this chapter extracts “what should be done under which conditions” from Agent action trajectories and outcomes. For example, “This airline requires special meals to be reserved twenty-four hours in advance” is domain knowledge, whereas “Check the special-meal deadline before booking to avoid discovering only after payment that the request cannot be fulfilled” is action experience.
@@ -101,43 +103,51 @@ GAIA experience learning provides an intuitive example. GAIA[^gaia-2023] contain
 
 ### Encoding Experience as Instructions
 
-An experience knowledge base provides reference material for an Agent, whereas Prompts and Skills are more prescriptive. When multiple trajectories repeatedly reveal the same strategic error, and the pattern can be clearly expressed in natural language, the system can elevate it from “experience for reference” to “a rule that must be followed.” Rules that apply to nearly all tasks are suitable for inclusion in the system Prompt; complex procedures that apply only to a particular domain, project, or tool are better written as on-demand Skills or project instruction files.
+An experience knowledge base gives an Agent "material it can consult"; Prompts and Skills prescribe "how it should act." Only when many similar trajectories repeatedly expose the same strategic error, and that error can be stated clearly in words, is it worth promoting experience into an instruction. Three concepts should be kept apart here: the **system Prompt** applies to every task, a **Skill** is loaded on demand only when a domain or tool matches, and the **program/Harness** enforces permissions and other hard constraints.
 
-Prompt learning serves a different role from the Prompt engineering discussed in Chapter 2. Chapter 2 explains how to write structurally clear, cache-friendly Prompts; this section addresses what production feedback is sufficient to trigger a Prompt revision and how new rules should be validated before deployment. Revision should not mean repeatedly rewriting the entire system Prompt. A more reliable approach is to generate a minimal diff from a group of similar failures, specify the rule’s scope, check for conflicts with existing rules, and evaluate it against both the boundary cases that triggered the failures and a retention set of old tasks.
+Andrej Karpathy calls this practice **System Prompt Learning**[^karpathy-system-prompt-learning]: after running into a problem, the model leaves one clear sentence to remind its future self. DSPy[^dspy-2023] searches over instructions and examples on a development set; OPRO[^opro-2023] proposes new prompts from a history of prompts and their scores; GEPA[^gepa-2025] generates and filters prompt proposals from natural-language reflections on failed trajectories. These methods suit offline batch optimization; production settings are better served by auditable minimal update proposals with a fast rollback path.
 
-In a 2025 long-form post, Andrej Karpathy provisionally called this possible new paradigm **System Prompt Learning**[^karpathy-system-prompt-learning]. His summary was that pretraining primarily learns knowledge and fine-tuning primarily shapes habitual behavior, while another kind of human learning occurs when we solve a problem and leave an explicit note to our future selves: “Next time I encounter this kind of problem, I should try this approach first.” He compared an LLM without such a notebook to the protagonist of the film *Memento* and noted that System Prompt Learning and reinforcement learning both improve behavior from experience but use different update algorithms—the former edits text, while the latter changes parameters through gradient descent. His example was an instruction in Claude’s then roughly 17,000-word system Prompt requiring the model to number and explicitly count words, letters, or characters before answering, precisely to handle questions such as “How many `r`s are in `strawberry`?”
-
-In an Agent system, this means turning lessons that can be expressed in language into candidate rules that future runs can read directly. Compared with a scalar success/failure result, an evidence-backed diagnosis can identify whether the error was in identity verification, tool selection, or escalation boundaries, enabling a more targeted candidate change. Karpathy’s observation that a knowledge-guided review is a higher-dimensional feedback channel than a scalar reward helps explain the method’s potential data efficiency. Richer information is not automatically correct, however: one user’s feedback may apply only to that customer or an outdated policy, so clustering, scope analysis, and regression testing remain necessary.
-
-Several established approaches automate Prompt optimization in different ways. DSPy[^dspy-2023] treats a program composed of multiple language-model calls as an optimizable object and searches instructions and examples on a development set. OPRO[^opro-2023] asks a language model to propose new candidates from the history of Prompts and their scores. GEPA[^gepa-2025] uses natural-language reflection over failed trajectories to generate and select complementary candidate Prompts. These methods primarily perform batch optimization on offline evaluation sets; minimal production diffs are closer to continual maintenance, triggered by newly observed boundary cases and designed for provenance, auditing, and rapid rollback. In practice, offline search can establish a strong initial version, followed by case-by-case patches for long-tail production rules.
+System prompt learning is not the same thing as the prompt engineering of Chapter 2. Chapter 2 discusses how to organize a good Prompt; this section discusses what feedback is sufficient to trigger a change, and how an update proposal is released safely. A change should be a minimal diff with provenance, not a full rewrite of the Prompt on every pass—precisely the minimal-diff-plus-rollback pattern named in Chapter 1. A candidate version must be tested both on the **boundary set that triggered the failure** and on a **retention set that already works**: the former must improve, the latter must not regress.
 
 #### Example 1: Optimizing Rules in Prompts from Failure Trajectories
 
-For example, an airline customer-service Agent may escalate to a human too early when users challenge a policy. Trajectory evaluation shows that it violates no rules but lacks compliant flexibility. A candidate patch can require the Agent to explain the policy first, identify the user’s actual goal, and seek permitted alternatives, escalating only when the user explicitly requests it or the issue genuinely exceeds the Agent’s authority. If the new rule reduces unnecessary escalation but causes the Agent to continue handling safety incidents that should be escalated, it has failed regression testing. The value of system Prompt learning lies not in automatically appending more text, but in continually clarifying the scope of rules through production boundary cases.
+Chapter 7 used τ-bench/τ²-bench to illustrate how an airline customer-service Agent is evaluated: the user reveals requirements step by step, and the system checks both environment state such as the booking record and whether the conversation supplied the necessary information. That chapter's failure attribution also stressed that recording "failure" is not enough; one must locate the **first erroneous step**.
+
+The bad case here is this: the user is unhappy about a refund, a change fee, or a baggage policy, and the Agent calls `transfer_to_human` without looking up the policy, explaining the rule, or looking for a permitted alternative. An ordinary policy dispute does not require a transfer; **a transfer is mandatory only when the user explicitly asks for a human or a safety/personal-risk situation arises**. The problem, therefore, is not that "the Agent is not polite enough" but that the Prompt never spelled out the transfer boundary.
+
+This diagnosis translates directly into one rule in the prompt: first look up and explain the policy, identify the goal the user actually wants to reach, and offer a compliant alternative; transfer only when a human is explicitly requested, or when the request exceeds the Agent's authority or involves safety.
+
+> **Experiment 9-3 ★★: Optimizing an Airline Customer-Service System Prompt from Failure Trajectories**
+>
+> **Objective:** Have the airline customer-service Agent fix its habit of escalating to a human too early in ordinary policy disputes, while retaining the ability to transfer on an explicit request for a human and on safety incidents.
+>
+> **Description:** Extract three dimensions from the failure trajectories—rule compliance, task resolution, and compliant workarounds—and generate one minimal Prompt patch with provenance; then compare it against the initial version and a hand-tuned version under identical conditions. An update proposal enters staged rollout only after the boundary cases improve, the old tasks do not regress, and the release gate is passed.
+>
+> **What it shows:** The point of automatic Prompt optimization is not to let the model freely rewrite a large block of text, but to turn an attributable failure into a local rule with a clear scope that can be rolled back and verified.
 
 #### Example 2: Requirement Clarification Skill—From Direct Execution to Confirm First
 
-Skill learning follows the same principle, but with a more localized scope. A Skill can be understood as an on-demand operating manual for a particular job: if multiple experiences collectively form a complete insurance claims process, the system can generate or revise the corresponding Skill. A candidate Skill should not merely summarize one conversation; at minimum, it should specify when to load, prerequisites, operating steps, known pitfalls, validation methods, and source trajectories. The system first searches the existing Skill library for similar capabilities, preferring a local `patch` when the same process already exists and creating a new directory only for a genuinely independent capability. This prevents the library from filling with manuals that differ in name but duplicate one another. Anthropic’s Skill Creator[^anthropic-skill-creator] demonstrates a draft–test–evaluate–revise loop. It addresses how to create and improve a Skill; the harder questions remain what operational evidence is sufficient to trigger creation, how to resolve conflicts, and whether the revision passes domain-specific and old-task regression tests.
+Chapter 2 explained how to write a Skill. Here we assume the system already has a first version of a requirement-clarification Skill, and focus on something else: as the Agent keeps receiving user feedback in production, how does it decide automatically whether "when to ask first, what to ask, and when to simply begin" needs updating?
 
-> **Experiment 9-9 ★★: Turning Feedback into a Writing Skill**
->
-> Process the 20 before/after pairs in `data/feedback_pairs.json` in three batches. Extract candidate rules, merge duplicate patterns, detect threshold conflicts, and generate a sourced, scoped `SKILL.md`. Check deterministic rules in code and calibrate LLM rules on ten gold examples.
->
-> Report detection on the unfinished-task boundary set, false positives on the normal-text holdout, and rule-count growth together. The first real run produced 0/8 detection and 7/8 false positives; after model-external filtering and deterministic fallback it produced 8/8, 0/8, and merged 21 candidates into 8 rules. Implementation: [`ai-style-skill`](../chapter9/ai-style-skill/).
+This is a classic procedural problem. A user says "change the login page to support enterprise sign-in." If the Agent starts immediately, it may make choices on the user's behalf—identity provider, fallback path, compatibility with existing users, rollout scope—that the user has not yet considered. If it instead lists a dozen questions regardless of task size, a simple change turns into an interview. **Asking too little causes rework; asking too much causes interruption.** What the Skill needs to express is not "every task must be confirmed" but a scoped decision path.
 
-The curved-quote case shows why a Skill should become a data contract rather than a global replacement rule: synthetic examples must be stratified by article type, scope, and programming language, pass code/JSON/protected-region gates, and receive manual audits before SFT. The exact-string case adds a tokenizer audit: encode→decode round-trip, model byte-exact copying, Harness serialization, and tool matching are separate regression layers.
+A first version of the procedure might read: judge the task's ambiguity, risk, and cost of rework; for low-risk, easily reversible small changes, state the assumptions and proceed; when architecture, data, permissions, public interfaces, or wide-reaching changes are involved, ask a small number of questions that would genuinely change the plan; once answered, produce a short Spec or Plan listing goals, non-goals, key trade-offs, assumptions, and acceptance criteria, and hand it to the user for confirmation; execute after confirmation, and pause to re-confirm whenever the original Spec turns out not to hold.
 
-> **Experiment 9-3 ★★: Optimizing System Prompts from Failure Trajectories**
+Continual evolution starts from operational evidence. The system should record tasks, clarifying questions, Spec versions, user edits, execution results, and post-delivery rework together. Negative feedback may be "this isn't what I imagined," but it may equally be "you asked too many questions"; positive feedback includes a smooth delivery after a single confirmation, less rework after the user amended the Spec, and low-risk tasks that were not interrupted by superfluous questions. Storing an isolated complaint is not enough to trigger an update: feedback must be tied to a specific trajectory, task type, and outcome.
+
+When many trajectories point repeatedly at the same gap, the Agent can propose a minimal Skill update. For instance, if several tasks touching authentication architecture only discovered after delivery that legacy sign-in had to keep working, a draft rule can require confirming "identity provider, fallback path, and compatibility scope" before execution; conversely, if a large number of typo fixes were each preceded by a round of questions, the draft rule should narrow the trigger to high-risk and highly ambiguous cases.
+
+This procedure must be validated by controlled experiment. One can compare three strategies—"execute directly," "ask first, then execute," and "ask, produce a Spec, confirm, then execute"—stratified by task complexity. The metrics should include at least requirement-deviation rate, post-delivery rework count, number of clarification rounds, time to first useful output, user abandonment rate, the proportion of Specs that were edited, and the error rate on high-risk operations. An update proposal reaches staged rollout only if it reduces requirement deviation without significantly increasing interruption, and passes regression on tasks that were not used to distill it.
+
+This example also illustrates the boundary between Skill and Harness. The Skill understands context and takes the initiative to ask questions, assemble the Spec, and explain trade-offs; the Harness vetoes high-risk writes, direct operations on `main`, or bypassing the release process when confirmation is missing. A veto gate in the Harness cannot decide for the model how a PR should be described, nor choose the requirement design on its behalf. As experience accumulates, stable conversational trajectories can further yield the SFT or RL training data needed in Chapter 8.
+
+> **Experiment 9-4 ★★: Evolving a Requirement-Clarification and Spec-Confirmation Skill from User Feedback**
 >
-> **Objective:** Teach an airline customer-service Agent from trajectories in which it escalates too quickly when a user challenges a policy, while demonstrating that the new rule does not break older scenarios that genuinely require escalation.
+> **Objective:** Test whether the Agent can find a better clarification strategy between "requirement deviation" and "interaction interruption," and write verified improvements back into the Skill.
 >
-> **Procedure:** First run the old-task retention set and the excessive-escalation boundary set separately. `learning_signal.py` decomposes failures into rule adherence, task resolution, and compliant flexibility, while retaining source case IDs. A Coding Agent then reads the existing Prompt and produces exactly one auditable `old_str → new_str` minimal edit: require the Agent to explain the policy, identify the actual goal, and seek compliant alternatives before escalating, while preserving escalation when the user explicitly requests a human or a safety incident occurs. The patch, provenance, target rule, and rationale are written into a candidate manifest.
+> **Description:** Prepare one set of low-risk, low-ambiguity tasks and one set of high-risk tasks involving architecture, permissions, data, or public interfaces, and compare three procedures: execute directly, ask then execute, and ask then confirm a Spec. Record user answers, Spec edits, delivery outcomes, and rework feedback, and let the Agent generate a Skill update proposal; the proposal must pass regression on held-out tasks, an interruption-cost check, and validation of the high-risk veto gate.
 >
-> **Three controls:** Compare the initial Prompt, the automatically generated candidate Prompt, and a one-time manually optimized Prompt. All three use the same model and the same retention and boundary tasks. `--quick` only reduces the number of cases; it still makes real calls to the task Agent, LLM Judge, and Coding Agent and must not be reported as an offline simulation.
->
-> **Release gate and metrics:** A candidate must pass four conditions: a nonempty patch, traceable provenance, measurable improvement on the boundary set, and no degradation on the retention set. Compare boundary-task accuracy, retention-task accuracy, Prompt growth, regressions introduced, and time from failure discovery to candidate generation. Passing the gate produces only `release_to_canary`, never a direct overwrite of the stable Prompt; failure of any condition returns `reject_candidate`.
->
-> The accompanying implementation is available at [`prompt-auto-optimization`](../chapter9/prompt-auto-optimization/). Offline tests cover diagnosis and release gates, while `--quick` makes real calls to the task Agent, LLM Judge, and Coding Agent.
+> **What it shows:** Continual evolution is not appending every complaint to the Prompt, but identifying the scope from outcomes and feedback, proposing a minimal instruction update, and letting an independent evaluator decide whether to release it.
 
 [^dspy-2023]: Khattab, O., et al. *DSPy: Compiling Declarative Language Model Calls into Self-Improving Pipelines.* arXiv:2310.03714, 2023.
 
@@ -146,8 +156,6 @@ The curved-quote case shows why a Skill should become a data contract rather tha
 [^gepa-2025]: Agrawal, L., et al. *GEPA: Reflective Prompt Evolution Can Outperform Reinforcement Learning.* arXiv:2507.19457, 2025.
 
 [^karpathy-system-prompt-learning]: Karpathy, A. “We’re missing (at least one) major paradigm for LLM learning … system prompt learning?” X, May 11, 2025. https://x.com/karpathy/status/1921368644069765486
-
-[^anthropic-skill-creator]: Anthropic. *Skill Creator.* 2026. https://github.com/anthropics/skills/blob/main/skills/skill-creator/SKILL.md
 
 ### Encoding Experience as Programs
 
@@ -168,7 +176,7 @@ In the browser setting, the knowledge-distillation process shown in Figure 9-4 b
 
 For an email workflow, the compiled result is not merely “click these buttons in order,” but a small program parameterized by recipient, subject, and body: it checks the compose window and fields before sending, checks the success indicator afterward, and finally confirms that the corresponding message appears in the sent list. In PreAct[^preact], such programs delivered an 8.5–13× end-to-end speedup on repeated tasks and required no step-by-step language-model calls during replay. More importantly, process memory needs **before-action validation, after-action validation, and independent pre-storage validation**. Otherwise, the system can produce a dangerous illusion: replay coverage is 100 percent and every button was clicked, yet one field was empty and the task was never actually completed.
 
-> **Experiment 9-4 ★★★: Generating Verifiable Workflows from Browser Trajectories**
+> **Experiment 9-5 ★★★: Generating Verifiable Workflows from Browser Trajectories**
 >
 > **Objective:** Determine whether a web Agent can turn one expensive exploration into a reusable workflow and reject an incorrect replay when the page changes, rather than reporting success merely because every action ran.
 >
@@ -188,7 +196,7 @@ The candidate generator should not receive only failed cases. Self-Harness also 
 
 Tool creation follows the same protocol. Alita[^alita-2025] presents a case in which an Agent must identify the number mentioned immediately after dinosaurs first appear in a YouTube 360 VR video narrated by the voice actor for Gollum in *The Lord of the Rings*. After recognizing that it lacks subtitle-reading capability, the Agent finds and tests `youtube-transcript-api`, wraps it as a new subtitle tool, and extracts the answer `100000000` from the transcript. A new tool enters the capability library only after safety scanning, functional tests, and successful reuse on later tasks. Chapter 4’s proactive tool discovery asks which existing tool fits; Chapter 5 asks how to write a tool; this chapter asks what operational evidence should trigger creation and how a new tool becomes a validated long-term capability.
 
-> **Experiment 9-5 ★★★: Triggering Agent Self-Modification from Failure Trajectories**
+> **Experiment 9-6 ★★★: Triggering Agent Self-Modification from Failure Trajectories**
 >
 > **Objective:** Given multiple trajectories in which errors marked `retryable=false` are still called repeatedly, determine whether the system can locate the root cause in retry and circuit-breaker code and produce a candidate fix without breaking recovery from transient failures.
 >
@@ -200,15 +208,15 @@ Tool creation follows the same protocol. Alita[^alita-2025] presents a case in w
 >
 > The accompanying implementation is available at [`self-modifying-agent`](../chapter9/self-modifying-agent/). It supports either a deterministic candidate generator or a real LLM Coding Agent, with both paths sharing the same release gate.
 
+Experiment 9-7 applies the same protocol to the verification layer. Only repeated user corrections, downvotes, and audits pointing to an unconfirmed high-risk operation create a change request; the candidate is written to an isolated directory. Classify dangerous deletions and `git push --force` from tool names and arguments, and bind a one-time confirmation token to the concrete operation. A candidate must pass AST/static checks, boundary replay (including forged and reused tokens), and holdout replay before canary release.
+
+> **Experiment 9-7 ★★: A User-Feedback-Triggered Confirmation Gate for High-Risk Operations**
+>
+> Use the three signal types and control trajectories in `failure_trajectories.json`. The real `gpt-4o-mini` candidate failed unfinished-task replay, normal-operation replay, and one-time-token checks, so the safety gate rejected it. The deterministic candidate passed all checks and received `release_to_canary`; record checks, the release decision, and the stable-directory hash. Implementation: [`harness-safety-gate`](../chapter9/harness-safety-gate/).
+
 [^preact]: Li, Bojie. *PreAct: Computer-Using Agents that Get Faster on Repeated Tasks.* arXiv:2606.17929, 2026.
 
 [^alita-2025]: Qiu, J., et al. *Alita: Generalist Agent Enabling Scalable Agentic Reasoning with Minimal Predefinition and Maximal Self-Evolution.* arXiv:2505.20286, 2025.
-
-Experiment 9-8 applies the same protocol to the verification layer. Only repeated user corrections, downvotes, and audits pointing to an unconfirmed high-risk operation create a change request; the candidate is written to an isolated directory. Classify dangerous deletions and `git push --force` from tool names and arguments, and bind a one-time confirmation token to the concrete operation. A candidate must pass AST/static checks, boundary replay (including forged and reused tokens), and holdout replay before canary release.
-
-> **Experiment 9-8 ★★: A User-Feedback-Triggered Confirmation Gate for High-Risk Operations**
->
-> Use the three signal types and control trajectories in `failure_trajectories.json`. The real `gpt-4o-mini` candidate failed unfinished-task replay, normal-operation replay, and one-time-token checks, so the safety gate rejected it. The deterministic candidate passed all checks and received `release_to_canary`; record checks, the release decision, and the stable-directory hash. Implementation: [`harness-safety-gate`](../chapter9/harness-safety-gate/).
 
 #### Case: DeepSeek Harness—Self-Evolution Where Everything Is a Plugin
 
@@ -238,8 +246,6 @@ Whether a capability should be parameterized is not determined solely by whether
 
 Chapter 8 provided a complete discussion of SFT, distillation, and RL, so this section does not repeat it. For continual evolution, the key is to transform evaluated production trajectories into training data: high-quality demonstrations can be used for SFT, explicit preferences can form paired data, and interactions with reliable environmental rewards can be used for RL. Before training, private information must still be removed, erroneous trajectories filtered out, and an independent regression set retained. After training, the system must check whether general capabilities or safety alignment have been forgotten.
 
-Parameter learning usually works in conjunction with external methods. A medical-imaging model can learn visual representations through parameters, obtain the latest guidelines from a knowledge base, and use code to measure lesions and calculate risk. A natural customer-service tone can be shaped at the distributional level through preference training, while a Prompt specifies the current brand identity and user memory adapts communication to individual preferences. Continual evolution does not mean selecting a single answer from among the four methods, but placing each capability in the medium best suited to expressing and governing it.
-
 ### From Updating Artifacts to Updating the “Update Method”
 
 The preceding four methods ask **where experience is written**, but continual evolution has another, orthogonal axis: is the system optimizing the contents of an artifact, or the method used to produce, manage, and validate artifacts? Along this axis, the optimization target can expand from **an individual rule or memory → structured context → workflow → Harness code → optimizer code that generates candidate solutions**[^weng-harness-2026]. These are not five new update carriers but five search scales; knowledge, Prompts, Skills, and programs may appear at several of them.
@@ -250,7 +256,7 @@ At the next level, the optimization target is no longer merely what context cont
 
 The same idea extends to workflows and the entire Harness. AFlow represents workflows composed of multiple LLM calls as code graphs and searches over combinations of nodes and control flow using execution feedback[^aflow-2025]. Meta-Harness has a Coding Agent inspect candidate Harness source, scores, and trajectories to search the code that determines how information is stored, retrieved, and presented[^meta-harness-2026]. Chapter 5 established code as a general language for expressing Agent system structure. The additional point here is that code, together with its evaluation history, can itself become the object of continual search rather than a one-time output.
 
-> **Experiment 9-6 ★★★: Give Hermes This Book: Can It Upgrade Itself?**
+> **Experiment 9-8 ★★★: Give Hermes This Book: Can It Upgrade Itself?**
 >
 > **Objective:** Test whether an Agent can turn external knowledge into an update to its own capabilities. The experiment supplies no problem statement and no feature checklist. Hermes receives all ten chapters and its own source, then must understand the principles, inspect its implementation, and choose a worthwhile improvement itself.
 >
@@ -294,6 +300,18 @@ Evaluation is not an examination performed after learning ends, but an indispens
 - Long-term engineering quality, namely whether maintenance complexity, architectural consistency, ownership boundaries, backward compatibility, and future migration and debugging costs deteriorate.
 
 Fixing only the current failed case while degrading performance on other existing cases or in new domains does not constitute successful continual learning.
+
+> **Experiment 9-9 ★★★: Evaluating Whether an Agent Is Continually Evolving**
+>
+> **Objective:** Distinguish among three long-term behaviors—saving one piece of feedback, merely appending forever, and genuinely updating, transferring, and retaining capabilities—so that repeatedly running the same tasks is not mistaken for continual learning.
+>
+> **Four-stage task stream:** The learning stage presents refund, identity-verification, and baggage-policy tasks that share latent patterns. The transfer stage changes the phrasing, user, and local environment to test whether old experience applies to new tasks. The rule-change stage updates the baggage limit from 20 kg to 23 kg and requires the system to replace or retire obsolete knowledge. The retention stage retests unchanged capabilities and currently valid rules to measure forgetting. External memory may be updated only after each feedback-bearing task ends; the expected action for the current task must never be leaked to the Agent in advance.
+>
+> **Control groups:** `static` persists no feedback. `append_only` remembers the first version of a rule but cannot resolve conflicts or retire it. `evolving` stores versions and replaces old rules with new evidence. The reference implementation verifies that the evaluation Harness can distinguish these behaviors. A real experiment can put an LLM through the same ordered stream of 14 tasks, but outcomes must be computed by a Harness outside the model.
+>
+> **Metrics and acceptance:** Report accuracy and the learning curve for each stage, and separately calculate transfer accuracy, tasks needed to recover after a new rule, old-capability retention, negative-transfer rate, safety-Rubric pass rate, and Token, latency, and storage costs. For real systems that update Prompts, Skills, or a Harness, also record candidate-change validity, artifact activation rate, and successful adherence rate, so that “the update was correct but never loaded” is not misclassified as a failed update. Even an Agent with high final accuracy does not qualify as continually evolving if it still cites retired rules, succeeds through unsafe shortcuts, or forgets existing capabilities after an update.
+>
+> The accompanying implementation is available at [`self-evolution-eval`](../chapter9/self-evolution-eval/). By default, it compares three reference Agents: updatable, append-only, and static. Use `--profile llm` to have a real LLM undergo the same long-term task stream.
 
 ### The Boundary of a Verifiable Loop: When “Done” Does Not Mean “Progress”
 
@@ -342,18 +360,6 @@ Continual evolution does not mean allowing knowledge, Prompts, and tools to grow
 - Revalidate tools that have not been used for a long time;
 - Delete knowledge invalidated by new evidence;
 - Retrain LoRA from the original base model. The reasoning is the same as for the data layer in Chapter 1: a real guarantee must come from a layer the modifier cannot reach.
-
-> **Experiment 9-7 ★★★: Evaluating Whether an Agent Is Continually Evolving**
->
-> **Objective:** Distinguish among three long-term behaviors—saving one piece of feedback, merely appending forever, and genuinely updating, transferring, and retaining capabilities—so that repeatedly running the same tasks is not mistaken for continual learning.
->
-> **Four-stage task stream:** The learning stage presents refund, identity-verification, and baggage-policy tasks that share latent patterns. The transfer stage changes the phrasing, user, and local environment to test whether old experience applies to new tasks. The rule-change stage updates the baggage limit from 20 kg to 23 kg and requires the system to replace or retire obsolete knowledge. The retention stage retests unchanged capabilities and currently valid rules to measure forgetting. External memory may be updated only after each feedback-bearing task ends; the expected action for the current task must never be leaked to the Agent in advance.
->
-> **Control groups:** `static` persists no feedback. `append_only` remembers the first version of a rule but cannot resolve conflicts or retire it. `evolving` stores versions and replaces old rules with new evidence. The reference implementation verifies that the evaluation Harness can distinguish these behaviors. A real experiment can put an LLM through the same ordered stream of 14 tasks, but outcomes must be computed by a Harness outside the model.
->
-> **Metrics and acceptance:** Report accuracy and the learning curve for each stage, and separately calculate transfer accuracy, tasks needed to recover after a new rule, old-capability retention, negative-transfer rate, safety-Rubric pass rate, and Token, latency, and storage costs. For real systems that update Prompts, Skills, or a Harness, also record candidate-change validity, artifact activation rate, and successful adherence rate, so that “the update was correct but never loaded” is not misclassified as a failed update. Even an Agent with high final accuracy does not qualify as continually evolving if it still cites retired rules, succeeds through unsafe shortcuts, or forgets existing capabilities after an update.
->
-> The accompanying implementation is available at [`self-evolution-eval`](../chapter9/self-evolution-eval/). By default, it compares three reference Agents: updatable, append-only, and static. Use `--profile llm` to have a real LLM undergo the same long-term task stream.
 
 [^claude-code-memory]: Anthropic, “How Claude remembers your project”, 2026. https://code.claude.com/docs/en/memory
 
