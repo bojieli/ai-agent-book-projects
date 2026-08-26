@@ -19,7 +19,8 @@ Lấy Coding Agent làm ví dụ. Hướng dẫn tương tự là "Giúp tôi s�
 Ba loại thông tin này—mã, quy trình và môi trường—tạo thành lượng ngữ cảnh tối thiểu để Agent hoạt động hiệu quả. Thứ đi vào ngữ cảnh ở đây là các quan sát, mô tả hoặc cấu hình về Môi trường, chứ không phải bản thân Môi trường; Môi trường vẫn là đối tượng bên ngoài mà Agent tương tác. Năng lực vốn có của mô hình chỉ là nền tảng; **chất lượng ngữ cảnh mới là chìa khóa thực sự đối với năng lực của Agent**. Một mô hình có năng lực vừa phải với ngữ cảnh được tổ chức tốt thường có thể hoạt động tốt hơn một mô hình cấp cao nhất đang dò dẫm mù quáng với quá ít thông tin.
 
 Do đó, kỹ thuật theo ngữ cảnh là chìa khóa để phát triển Agent hiệu quả bằng cách sử dụng các mô hình hiện có. Đó không chỉ là vấn đề kỹ thuật nhồi nhét thêm thông tin vào dấu nhắc (prompt word) mà là vấn đề thiết kế, tổ chức và cung cấp một cách có hệ thống tất cả các kiến thức nền tảng mà AI yêu cầu để hoàn thành nhiệm vụ.
-Kỹ thuật ngữ cảnh không chỉ là **vấn đề kỹ thuật**, mà còn là **vấn đề tổ chức**. Kiến thức quan trọng của hầu hết các nhóm đều ở dạng ngầm: các quyết định kiến trúc chỉ nằm trong trí nhớ của những nhân viên kỳ cựu, các quy tắc kinh doanh được truyền miệng và thông tin nền quan trọng bị khóa trong nhật ký trò chuyện riêng tư. Nếu bản thân nhóm là một lỗ đen thông tin thì dù AI Agent có tốt đến đâu cũng không thể làm được gì.
+
+Và đây không chỉ là vấn đề kỹ thuật, mà hơn thế còn là **vấn đề tổ chức**. Ở phần lớn các nhóm, tri thức then chốt đều ngầm ẩn: quyết định kiến trúc chỉ có nhân viên cũ nhớ, quy tắc nghiệp vụ truyền miệng nhau, thông tin nền quan trọng bị khoá trong các đoạn chat riêng. Nếu bản thân nhóm đã là một hố đen thông tin thì AI Agent giỏi tới đâu cũng bó tay.
 
 **Các nhóm làm việc từ xa hiệu quả thường cũng tạo ra môi trường hiệu quả cho AI Agent.** Các dự án nguồn mở như nhân Linux là một ví dụ điển hình: developer phân tán khắp thế giới đã duy trì dự án trong hơn ba mươi năm. Thành công đó đến từ văn hóa giao tiếp minh bạch và dựa trên tài liệu—mọi cuộc thảo luận đều công khai, mọi quyết định đều được ghi lại và người mới có thể hiểu sự phát triển của mã bằng cách đọc lịch sử. Cách làm việc này tự nhiên tạo ra một môi trường thân thiện với AI: thông tin công khai, có thể truy xuất và có cấu trúc.
 
@@ -249,7 +250,7 @@ Nếu người dùng thấy vẫn cần thêm thông tin, chẳng hạn hỏi "C
 
 ### Sử dụng mã để triển khai vòng lặp cốt lõi của Agent
 
-Sau khi hiểu cấu trúc JSON, chúng ta hãy sử dụng mã Python để xâu chuỗi quá trình tương tác trên lại với nhau. Sau đây là cách triển khai Agent đơn giản nhất - cốt lõi là vòng lặp while:
+Sau khi hiểu cấu trúc JSON, chúng ta hãy sử dụng mã Python để xâu chuỗi quá trình tương tác trên lại với nhau. Sau đây là cách triển khai Agent đơn giản nhất - cốt lõi là vòng lặp while: Chương này cố ý giữ lại trọn vòng lặp API như một tham chiếu giao thức; các chương khác dùng mã khung kiểu Python để nói về cơ chế.
 
 ```python
 from openai import OpenAI
@@ -376,7 +377,7 @@ Nửa trên (Dấu nhắc hệ thống + Định nghĩa công cụ) không đổ
 
 Phần còn lại của chương này sẽ tập trung vào từng lớp của cấu trúc này: cách sử dụng tính bất biến của tiền tố tĩnh để tăng tốc khả năng suy luận (KV Cache), cách thiết kế Dấu nhắc hệ thống tốt (Prompt Engineering nhở), cách ngăn nội dung bên ngoài chiếm quyền điều khiển ngữ cảnh (phòng thủ prompt injection nhở), cách tải kiến thức chuyên môn theo yêu cầu (Kỹ năng Agent), cách đưa thông tin trạng thái động vào cuối cuộc trò chuyện (Agent) thanh trạng thái) và cách nén lịch sử hội thoại một cách thông minh khi nó phình to (chiến lược nén).
 
-**Xây dựng context trước mỗi request:**
+Các kỹ thuật phía sau tuy tên gọi rất nhiều, nhưng quy về trước mỗi lần gọi thì thực ra chỉ là một quyết định dựng ngữ cảnh. Dưới đây là mã giả kiểu Python giữ lại bộ khung tối thiểu của quyết định ấy; nó bổ sung cho vòng lặp API đầy đủ ở trên bằng cách nhấn mạnh cách bố trí ngữ cảnh, chứ không thay thế các chi tiết giao thức như vai trò thông điệp hay `tool_call_id`.
 
 ```python
 stable_prefix = system_message
@@ -394,6 +395,8 @@ request.messages = [stable_prefix] + trajectory + [status_message]
 request.tools = stable_tools
 response = call_model(request)
 ```
+
+Giữ prompt hệ thống và các định nghĩa công cụ cốt lõi ổn định hết mức có thể; chỉ nén đầu ra công cụ cũ theo lô khi sắp chạm ngân sách; và đặt trạng thái hiện tại ở đuôi quỹ đạo, để mô hình khỏi phải suy dẫn lại nó từ một lịch sử dài.
 
 > **Thử nghiệm 2-1 ★: Gọi công cụ và triển khai dịch vụ LLM cục bộ**
 >
@@ -772,6 +775,7 @@ Khi Agent bao gồm ngày càng nhiều kịch bản kinh doanh, các từ nhắ
 Ý tưởng cốt lõi của Kỹ năng Agent là mô-đun hóa các khả năng của Agent thành các gói kiến thức độc lập có thể tải theo yêu cầu [^ch2-3]. Mỗi Kỹ năng về cơ bản là một tập hợp các từ gợi ý chứa hướng dẫn trong lĩnh vực chuyên môn, giống như sổ tay hướng dẫn vận hành cho nhân viên mới về một nhiệm vụ cụ thể. Khác với cách làm truyền thống là nhồi tất cả hướng dẫn vào một system prompt duy nhất, Skills áp dụng triết lý thiết kế Tiết lộ lũy tiến - trước tiên, hiển thị Agent bản tóm tắt của danh mục, sau đó tải nội dung hoàn chỉnh khi cần, giống như bạn sẽ không chất đống sổ tay hướng dẫn vận hành của tất cả các phòng ban trong công ty trên bàn làm việc của nhân viên mới mà đưa ra một danh mục chung trước, sau đó lấy bất kỳ bản sao nào cần thiết.
 
 [^ch2-3]: Anthropic, "Equipping Agents for the Real World with Agent Skills" , 2025.
+[^ch2-codex-skills]: OpenAI, “Build skills”, tài liệu Codex. https://developers.openai.com/codex/skills/
 
 **Lớp đầu tiên (siêu dữ liệu)**: Mỗi Skill nên cung cấp một tệp `SKILL.md` bắt đầu bằng YAML frontmatter (khối siêu dữ liệu được phân tách bằng `---`) với hai trường `name` và `description`. Danh mục phải hiển thị cho Agent trước khi tải phần nội dung chính, để Agent có thể đánh giá một năng lực có liên quan hay không mà không phải trả toàn bộ chi phí ngữ cảnh của mọi Skill. Các runtime có thể đặt danh mục ở những lớp ngữ cảnh khác nhau; mục đích chung là khả năng khám phá, không phải mang toàn bộ quy trình của lĩnh vực.
 
@@ -782,8 +786,6 @@ Trường `description` trong siêu dữ liệu rất quan trọng đối với 
 [^ch2-4]: Anthropic, "PPTX Skill" , 2025. https://github.com/anthropics/skills/
 [^ch2-cc-skill-inject]: Claude Code Docs, [“How Claude Code uses prompt caching”](https://code.claude.com/docs/en/prompt-caching), mục “Invoking skills and commands”: “Skills and commands inject their instructions as user messages at the point of invocation.” Về sự phân vai giữa kích hoạt tường minh và kích hoạt do mô hình quyết định, xem Agent Skills, [“How to add skills support to your agent”](https://agentskills.io/client-implementation/adding-skills-support), mục “User-explicit activation”: Harness chặn lệnh gạch chéo và tự tiêm nội dung, nên mô hình không cần thực hiện thao tác kích hoạt nào.
 
-[^ch2-codex-skills]: OpenAI, “Build skills”, tài liệu Codex. https://developers.openai.com/codex/skills/
-
 **Cấp độ 3 (Bản in đẹp)**: Đi sâu vào các tài liệu phụ chi tiết hơn thông qua các tham chiếu tệp. Tài liệu chính tham khảo `html2pptx.md` (quy trình chi tiết để tạo PowerPoint từ mẫu HTML), `reference.md` (định dạng chi tiết kỹ thuật), v.v. Agent sẽ đọc chuyên sâu các tài liệu phụ có liên quan một cách có chọn lọc theo nhu cầu cụ thể.
 
 ### Cách viết một Skill hữu dụng
@@ -791,7 +793,6 @@ Trường `description` trong siêu dữ liệu rất quan trọng đối với 
 Cấu trúc runtime giải quyết “khi nào tải” và “tải bao nhiêu”; nội dung vẫn phải biến kinh nghiệm thành chỉ dẫn mà mô hình có thể thực thi. Một Skill hữu dụng cần nói cho thành viên mới biết nó áp dụng cho tác vụ nào, phải hành động theo thứ tự nào, khi nào cần dừng để xác nhận và kết quả nào được xem là hoàn tất.
 
 Theo hướng dẫn của Baoyu trong *Minh họa về Skill*[^ch2-baoyu-remove-ai-writing-flavor], có thể bắt đầu với bốn phần:
-
 - **Vai trò và người đọc**: Skill phục vụ ai, hướng đến tác vụ nào và đầu ra phải đạt tiêu chuẩn gì;
 - **Nguyên tắc cốt lõi**: ba đến năm phán đoán quan trọng, kèm ví dụ đúng và sai cho các nguyên tắc chính;
 - **Danh sách cấm**: lỗi thường gặp, hành động vượt phạm vi và cách diễn đạt dễ gây hiểu nhầm, cùng các ngoại lệ hợp lệ;
@@ -815,7 +816,7 @@ Khi đánh giá chi phí ngữ cảnh của Skills, cần tách danh mục siêu
 - **Claude Code về mặt khái niệm**: cung cấp một danh mục nhỏ như ngữ cảnh runtime và nối thêm chỉ dẫn đầy đủ tại điểm gọi Skill. “System prompt” có thể mô tả lớp chỉ dẫn ổn định về mặt logic, nhưng không có nghĩa mọi client đều dùng role API `system`. Hình 2-12 vẽ trường hợp do mô hình khởi xướng, nên trajectory chứa trọn vòng gọi: một tool_use `Skill(skill: "pptx")`, một tool_result chỗ giữ, rồi phần thân được nối thêm dưới dạng một user message riêng. Nếu người dùng gõ thẳng `/pptx`, client bung lệnh ngay tại máy nên cặp thông điệp công cụ này không xuất hiện, chỉ còn lại user message cuối cùng.
 - **Codex về mặt khái niệm**: trong lúc dựng ngữ cảnh mỗi lượt, kết xuất danh mục Skills trong ngữ cảnh `developer`; Skill được chọn rõ ràng được tiêm dưới dạng ngữ cảnh `user` có dấu `<skill>`. Skills từ nguồn khác có thể được đọc theo yêu cầu qua công cụ.[^ch2-codex-skills]
 
-Agent Harness thay đổi nhanh nên biểu diễn cụ thể có thể khác đi. Nguyên tắc ổn định là **giữ một danh mục nhỏ có thể khám phá và tải phần thân đầy đủ khi cần**. Hai hình dưới đây theo dõi vị trí của Skills trong trajectory và sự phát triển của KV Cache.
+Agent Harness thay đổi nhanh nên biểu diễn cụ thể có thể khác đi. Nguyên tắc ổn định là **giữ một danh mục nhỏ có thể khám phá và tải phần thân đầy đủ khi cần**. Hai hình dưới đây theo dõi vị trí của Skills trong trajectory và sự phát triển của KV Cache. Để cảm nhận trực tiếp hiệu quả của thiết kế này, hai hình dưới đây lần lượt theo dõi từ hai góc nhìn: vị trí của Skills trong quỹ đạo và sự tiến triển của KV Cache.
 
 ![Hình 2-12 Cấu trúc hoàn chỉnh của Trajectory đặc vụ sau khi kích hoạt Kỹ năng ](images/fig2-12.svg){height=55%}
 
@@ -854,14 +855,11 @@ Xét về quản lý context, cơ chế Skills rất thân thiện với KV Cach
 
 ![Hình 2-14 Cấu trúc thanh trạng thái tác nhân ](images/fig2-14.svg)
 
-Phần trước tập trung vào những khả năng mà Skills cung cấp theo yêu cầu. Phần này giải quyết vấn đề riêng: làm sao để mô hình luôn thấy tiến độ nhiệm vụ, thay đổi môi trường và số lần gọi công cụ. Khung Agent đóng gói thông tin động thành trạng thái có cấu trúc rồi tiêm vào ngữ cảnh; cơ chế này gọi là **Thanh trạng thái Agent (Agent Status Bar)**.
-
-Dự án gợi ý được thảo luận trước đó giải quyết vấn đề "cung cấp những hướng dẫn tĩnh nào cho mô hình". Nhưng trong quá trình thực thi thực tế, Agent cũng cần tự động nhận biết trạng thái của chính nó và tiến trình nhiệm vụ - đây là lúc thanh trạng thái Agent xuất hiện.
+Skills của mục trước giải quyết "Agent có sẵn những năng lực nào có thể nạp theo nhu cầu"; mục này bàn một vấn đề độc lập khác: làm sao để Agent lúc nào cũng thấy được **trạng thái lúc chạy** như tiến độ tác vụ, biến động môi trường và số lần gọi công cụ. Kỹ nghệ prompt cho ra chỉ dẫn tĩnh, còn Agent trong quá trình thực thi vẫn cần cảm nhận động về trạng thái của chính nó và tiến triển của tác vụ. Khung Agent gom những thông tin động ấy thành bản tóm tắt có cấu trúc rồi tiêm vào ngữ cảnh; cơ chế này được gọi là **thanh trạng thái Agent (Agent Status Bar)**.
 
 Khi xây dựng hệ thống Agent cấp sản xuất, việc chỉ dựa vào khả năng vốn có của các mô hình lớn thường là không đủ. Agent dễ rơi vào nhiều bẫy khác nhau khi thực hiện các nhiệm vụ phức tạp: vòng lặp vô hạn, quên trạng thái và đi chệch khỏi mục tiêu nhiệm vụ. Căn nguyên của những vấn đề này nằm ở việc Agent thiếu nhận thức về hiện trạng môi trường và khả năng theo dõi tiến độ nhiệm vụ. Thanh trạng thái Agent cung cấp cho Agent cơ chế tự nhận thức và tự điều chỉnh bằng cách nhúng siêu thông tin có cấu trúc vào ngữ cảnh.
 
 Sự tương tự tốt nhất cho khái niệm này là thanh trạng thái của hệ điều hành. Khi bạn sử dụng điện thoại, thời gian, nguồn điện, cường độ tín hiệu và số lượng thông báo luôn được hiển thị ở phía trên màn hình—thông tin này không phải là nội dung giao diện chính của ứng dụng nhưng bạn luôn có thể nắm bắt được trạng thái hiện tại của thiết bị trong nháy mắt. Thanh trạng thái Agent đóng vai trò hoàn toàn giống với mô hình: nó không phải là nội dung chính của cuộc hội thoại (không phải là một phần của tin nhắn người dùng, đầu ra mô hình hoặc kết quả công cụ), mà là **tóm tắt trạng thái** mà khung Agent liên tục chèn vào cuối ngữ cảnh - "Bạn đã gọi 3 lần", "Thời gian hiện tại là 10:30", "TODO còn 2 mục cần hoàn thành". Mô hình có thể "xem xét" các trạng thái này mỗi khi tạo ra phản hồi mới, cho phép nó đưa ra quyết định chính xác hơn.
-
 
 ### Agent Cơ sở lý thuyết của thanh trạng thái
 
@@ -913,6 +911,8 @@ Thanh trạng thái Agent gồm các loại thông tin sau:
 **Thông tin kênh phụ của sự kiện (Side-channel Information)**: Gắn metadata cho từng sự kiện—thời gian chính xác, vị trí địa lý, khoảng thời gian từ phản hồi gần nhất của Agent, v.v. Thông tin kênh phụ không đi qua kênh dữ liệu chính nhưng giúp hiểu sự kiện; nó giúp mô hình nắm quan hệ thời gian và bối cảnh môi trường để quyết định phù hợp hơn.
 
 **Tóm tắt quan sát hiện tại của môi trường**: Bao gồm thông tin môi trường động (thời gian hệ thống, thư mục làm việc, v.v.), cảnh báo thao tác bất thường (“công cụ này đã được gọi lặp lại N lần”) và việc chuyển trạng thái ngầm thành quan sát rõ ràng. Nguyên tắc này cũng áp dụng cho giao diện con người—cả CLI lẫn GUI đều cố giúp người dùng nhận biết rõ trạng thái hiện tại của hệ thống.
+
+Thông tin kênh phụ của sự kiện thường được nối thêm cùng với chính sự kiện đó; còn kế hoạch tác vụ và trạng thái môi trường thì liên tục được cập nhật theo tiến độ công việc. Những thông tin động này được ghi vào lịch sử hội thoại ra sao có liên hệ trực tiếp tới cái giá của KV Cache, và dưới đây ta sẽ bàn cụ thể cùng với cấu trúc thông điệp.
 
 ### Agent Vị trí cụ thể của thanh trạng thái trong ngữ cảnh
 
@@ -996,16 +996,11 @@ Nén ngữ cảnh có ba động cơ riêng biệt, và việc hiểu cả ba l�
 
 **Đầu tiên, giải ràng buộc về độ dài và ràng buộc về chi phí**. Đây là lý do trực quan nhất: cửa sổ ngữ cảnh bị giới hạn (ví dụ: 128K mã thông báo) và kết quả lệnh gọi công cụ thường chứa hàng chục nghìn ký tự. Một vài vòng tương tác có thể lấp đầy cửa sổ và nhiệm vụ buộc phải bị gián đoạn. Đồng thời, càng nhiều token thì giá API càng cao và độ trễ suy luận cũng sẽ tăng mạnh.
 
-**Thứ hai, nâng cao chất lượng tư duy - kiến thức tóm tắt có lợi cho việc sử dụng mô hình hơn dạng ban đầu**. Động lực này sâu sắc hơn và dễ bị bỏ qua hơn. Ngay cả khi cửa sổ ngữ cảnh đủ lớn, việc xếp chồng tất cả thông tin thô trong ngữ cảnh vẫn không tối ưu.
-
-Hãy xem xét một ví dụ cụ thể: Agent đã tích lũy thông tin về một chủ đề thông qua 10 tìm kiếm trên web trong quá trình thực hiện một nhiệm vụ phức tạp. Các kết quả tìm kiếm này nằm rải rác trong ngữ cảnh ở dạng thô—kết quả cho vòng 2 cao hơn trong ngữ cảnh và kết quả cho vòng 9 xa hơn. Khi Agent cần đưa ra quyết định cuối cùng dựa trên tất cả thông tin này, nó phải liên tục "truy xuất" các đoạn có liên quan trong số hàng chục nghìn mã thông báo. Sự chú ý bị phân tán và thông tin quan trọng dễ bị bỏ qua.
-
-Và nếu sau lần tìm kiếm thứ 10, lệnh gọi LLM được sử dụng để tạo một bản tóm tắt có cấu trúc của thông tin hiện có - "Hiện đã biết: A là..., B là..., vẫn còn thiếu thông tin về C" - mô hình có thể trực tiếp sử dụng cách biểu diễn kiến thức tinh tế này trong tư duy tiếp theo mà không cần trích xuất lại từ dữ liệu gốc.
+**Thứ hai, nâng chất lượng tư duy—tri thức đã tóm tắt dễ dùng cho mô hình hơn dạng thô của nó.** Động cơ này ở tầng sâu hơn, và cũng dễ bị bỏ qua hơn. Ngay cả khi cửa sổ ngữ cảnh đủ lớn, chất hết thông tin thô vào ngữ cảnh cũng không phải lựa chọn tối ưu: kết quả thô của cả chục vòng tìm kiếm nằm rải rác khắp ngữ cảnh, nên mỗi lần ra quyết định mô hình lại phải lục tìm các đoạn liên quan giữa hàng chục nghìn token, sự chú ý bị phân tán, thông tin then chốt dễ bị bỏ sót. Ngược lại, nếu trước đó dùng một lần gọi LLM để tóm tắt thông tin đã có thành dạng cấu trúc—"hiện đã biết: A là…, B là…, còn thiếu thông tin về C"—thì phần tư duy về sau có thể dùng thẳng biểu diễn tinh gọn ấy. Mục tiếp theo sẽ giải thích cơ chế đằng sau điều này.
 
 **Thứ ba, giảm bớt tình trạng lo lắng về ngữ cảnh (Context Anxiety) của mô hình**[^ch2-7]. Khi mô hình cho rằng cửa sổ ngữ cảnh sắp cạn, nó có thể kết thúc công việc sớm khi nhiệm vụ vẫn chưa hoàn thành. Nén ngữ cảnh từ sớm, khi cửa sổ vẫn còn xa mới cạn, có thể cải thiện chất lượng quyết định của mô hình.
 
 [^ch2-7]: Prithvi Rajasekaran, [“Harness design for long-running application development”](https://www.anthropic.com/engineering/harness-design-long-running-apps), Anthropic Engineering, 2026.
-
 
 ### Hoạt động bên trong của In-Context Learning (học trong ngữ cảnh): truy hồi thay vì suy luận
 
@@ -1016,18 +1011,11 @@ Hãy sử dụng một ví dụ đơn giản để hiểu một cách trực qua
 > Lồng 1: Mèo đen. Lồng 2: Mèo trắng. Lồng 3: Mèo đen. Lồng 4: Mèo đen. Lồng 5: Mèo trắng.
 > ...(tổng cộng 100 chuồng, trong đó có 90 con mèo đen và 10 con mèo trắng)
 
-Điều gì xảy ra khi bạn hỏi mô hình: "Có bao nhiêu con mèo đen và mèo trắng?"
-
-Nếu chuỗi suy nghĩ không được kích hoạt, mô hình khó có thể trực tiếp đưa ra câu trả lời chính xác - bởi vì cơ chế chú ý rất giỏi **tìm kiếm**("Con mèo nào ở trong lồng 37?"), thay vì **quy nạp thống kê**("Tổng cộng có bao nhiêu con mèo đen?"). Cái sau yêu cầu lặp qua tất cả các bản ghi và duy trì trạng thái đếm, về cơ bản là suy nghĩ hơn là truy xuất.
-
-Nếu chuỗi suy nghĩ được kích hoạt, mô hình có thể nhận được câu trả lời chính xác bằng cách đếm từng câu một - nhưng cái giá phải trả là mỗi khi được hỏi câu hỏi này, nó cần phải đếm lại từ đầu, tạo ra một số lượng lớn mã thông báo suy nghĩ. Trong kịch bản Agent, nếu loại thông tin thống kê này cần được sử dụng nhiều lần (ví dụ: nó phải được tham chiếu mỗi khi đưa ra quyết định) thì chi phí tư duy tích lũy sẽ rất cao.
-
-Và nếu chúng ta tóm tắt trước và viết trực tiếp "số liệu thống kê hiện tại: 90 con mèo đen và 10 con mèo trắng" vào ngữ cảnh, mô hình có thể rút ra ngay kết luận này mà không cần suy nghĩ lại. **Đây là giá trị thứ hai của sự nén: biến những kết luận đòi hỏi phải suy nghĩ thành kiến thức có thể rút ra trực tiếp.**
+Khi bạn hỏi "có bao nhiêu mèo đen và bao nhiêu mèo trắng?", mô hình không bật chuỗi suy nghĩ rất khó trả lời đúng ngay: **tra tìm** ("lồng 37 là mèo gì?") là sở trường của cơ chế chú ý, còn **thống kê quy nạp** ("tổng cộng có bao nhiêu mèo đen?") lại đòi duyệt hết mọi bản ghi và duy trì trạng thái đếm—về bản chất là suy nghĩ chứ không phải truy hồi. Bật chuỗi suy nghĩ dĩ nhiên đếm đúng được, nhưng cứ mỗi lần hỏi lại phải đếm lại từ đầu; trong các kịch bản Agent, loại thống kê này thường phải dùng đi dùng lại nên chi phí suy nghĩ tích luỹ rất cao. Ngược lại, nếu tóm tắt trước một lần và ghi thẳng vào ngữ cảnh "thống kê hiện tại: 90 mèo đen, 10 mèo trắng", mô hình lập tức truy hồi được kết luận ấy. **Đây chính là giá trị thứ hai của việc nén: biến những kết luận phải suy nghĩ mới có được thành tri thức có thể truy hồi trực tiếp.**
 
 Ngoài ra, ngữ cảnh dài làm giảm độ chính xác của truy xuất. Ngay cả khi cửa sổ ngữ cảnh còn xa mới đầy, Agent vẫn có thể đột nhiên không tìm thấy thông tin then chốt hoặc liên tục mắc kẹt ở một vấn đề đã được giải quyết từ lâu. Hiện tượng này được gọi là **Context Rot**.
 
 Context Rot khác với tràn ngữ cảnh, tức là cửa sổ đã hết chỗ. Tràn nghĩa là “không thể chứa thêm”, còn rot nghĩa là “vẫn chứa được nhưng không tìm thấy”. Vấn đề sau khó nhận ra hơn vì Agent bề ngoài vẫn hoạt động bình thường trong khi chất lượng quyết định âm thầm giảm. Khi ngữ cảnh dài hơn, attention bị phân tán trên nhiều token hơn và nội dung hữu ích ngày càng khó được chú ý, nhất là khi thông tin không liên quan chiếm phần lớn. Điều này giống như tìm một cuốn sách trong thư viện khổng lồ: trên kệ càng có nhiều sách không liên quan thì càng khó tìm thấy mục tiêu.
-
 
 Điều này tiết lộ nguyên tắc thiết kế nén ngữ cảnh: thay vì mong đợi mô hình tự động học từ ngữ cảnh dài, việc trích xuất kiến thức phải được thực hiện một cách chủ động và rõ ràng. Mặc dù cần đầu tư tính toán bổ sung (được tóm tắt bằng lệnh gọi LLM chuyên dụng), nhưng những gì được tạo ra là biểu diễn kiến thức được nén và mật độ cao - **Đừng để mô hình truy xuất một cách thụ động lượng thông tin khổng lồ mà hãy tích cực cung cấp cho mô hình kiến thức có cấu trúc tinh tế**.
 
@@ -1105,9 +1093,7 @@ Về cơ bản, điều này thay thế việc nén bằng cách ly: quá trình
 
 ## Tóm tắt chương này
 
-Đằng sau nhiều chi tiết kỹ thuật, chương này có một lập luận cốt lõi: những gì bạn cho mô hình thấy và cách bạn tổ chức chúng thường ảnh hưởng đến kết quả cuối cùng nhiều hơn năng lực của chính mô hình. Cấu trúc thông điệp của API xác định cấu trúc cơ bản của ngữ cảnh; KV Cache giới hạn những gì có thể và không thể thay đổi; kỹ thuật prompt và Agent Skills quyết định cách cung cấp hiệu quả các chỉ dẫn tĩnh cùng kiến thức động cho mô hình; Thanh trạng thái Agent biến trạng thái ngầm thành thông tin rõ ràng có thể sử dụng trực tiếp; còn các chiến lược nén giải quyết vấn đề ngữ cảnh không ngừng phình to, không chỉ bằng cách kiểm soát độ dài mà còn chủ động tóm lược dữ liệu thô thành tri thức có cấu trúc với mật độ thông tin cao.
-
-Điểm chung của các kỹ thuật này là cách quản lý thông tin rõ ràng và được thiết kế có chủ đích: thay vì để mô hình thụ động tìm manh mối trong một ngữ cảnh khổng lồ, ta chủ động cung cấp trạng thái đã được chắt lọc và cấu trúc hóa. Mọi kỹ thuật trong chương này, từ cách bố trí ngữ cảnh thân thiện với KV Cache đến nén có nhận thức về ngữ cảnh, đều là những thực hành kỹ thuật cụ thể nhằm tối đa hóa hiệu quả thông tin tại ranh giới năng lực hiện tại của mô hình.
+Mạch chính của kỹ nghệ ngữ cảnh là quản lý thông tin một cách tường minh: cấu trúc thông điệp của API định ra bộ khung; tiền tố ổn định nâng tỉ lệ trúng KV Cache; prompt, Skills và thanh trạng thái lần lượt gánh các quy tắc, tri thức theo nhu cầu và trạng thái hiện tại; còn nén thì nâng mật độ thông tin của lịch sử trên cơ sở giữ lại các quyết định, ràng buộc, thất bại và nguồn gốc.
 
 Chương này bàn về việc cập nhật trạng thái và suy giảm ngữ cảnh **trong phạm vi một nhiệm vụ**. Chương tiếp theo sẽ vượt ra ngoài việc quản lý thông tin trong một cửa sổ ngữ cảnh để đến với các hệ thống tri thức bền vững xuyên suốt nhiều nhiệm vụ: bộ nhớ người dùng và cơ sở tri thức. Các hệ thống này cho phép Agent tích lũy kinh nghiệm theo thời gian, dần trở thành một trợ lý hiểu người dùng hơn hoặc một chuyên gia có kiến thức chuyên sâu hơn trong một lĩnh vực.
 
