@@ -34,6 +34,8 @@ Bir modelin eğitim külliyatı neredeyse bütünüyle tur temellidir—bir soru
 
 Bölüm 4'te ele alınan algılama, yürütme ve işbirliği araçlarının tümünü Agent etkin biçimde çağırır. Peki Agent, herhangi bir anda gelebilecek dış olaylara nasıl yanıt vermelidir? Bunun için olay güdümlü asenkron bir mimari gerekir. Bölüm 1'de kalan iki araç sınıfı—olay tetikleme ve kullanıcı iletişimi araçları—da bu mimariye dayanır; bu yüzden burada birlikte ele alınır.
 
+Bu bölümde kiplik değişmiyor; hâlâ metin. Değişen tek şey zamanlama. Bu, önceki beş bölümün sıra tabanlı dünyasından atılan ilk adımdır.
+
 ### Asenkronluk Neden Gereklidir
 
 Asenkronluğun neden gerekli olduğunu açıklamak için bir benzetmeyle başlayalım. Senkron, "bir sonrakini yapabilmek için önce birini yapmak" anlamına gelirken, asenkron "birden fazla şeyin eş zamanlı olarak gerçekleşebilmesi" anlamına gelir. Geleneksel bir senkron Agent mimarisi, bir mağazadaki tek hatlı bir gişeye benzer—yalnızca bir seferde bir müşteriyi ele alabilir ve mevcut müşteriyle bitirdikten sonra ancak bir sonraki numarayı çağırır. Gerçekten akıllı bir asistan, daha çok esnek bir sekretere benzer—masada bekleyen birden fazla iş (e-postalar, telefon aramaları, ziyaretçiler) olduğunda, sekreter aciliyete göre hangisini önce ele alacağına karar verir ve yarı yolda daha acil bir göreve geçiş yapıp duraklayabilir. Senkron modda, Agent ya kullanıcıyla konuşmadan önce arka plan görevinin tamamlanmasını beklemek zorunda kalır, ya da yeni gelen bir olayı işlemeden önce konuşmanın bitmesini bekler. Gerçek bir asistan senaryosunun gerektirdiği temel yetenekleri sunamaz:
@@ -57,6 +59,8 @@ Açık kaynak çerçevesi OpenClaw (mimarisi Bölüm 5'te ayrıntılı olarak el
 - **Heartbeat (Kalp Atışı Arka Plan Süreci)**: Agent'ı her N dakikada bir uyandırarak dikkat gerektiren herhangi bir konu olup olmadığını kontrol eder, uyarı yorgunluğunu önlemek için yargı kullanır
 
 Bu üç mekanizma OpenClaw Agent'larına bir otonomi görünümü verir—kullanıcı çevrimdışı olsa bile, Agent zamanında rapor üretebilir, sistem durumunu kontrol edebilir ve rutin işleri halledebilir. Ancak daha yakından bakıldığında, temel bir sınırlama ortaya çıkar. Kesin olmak gerekirse: Gateway, yerleşik kanallardan (IM, web arayüzü) gelen mesajları zaten **push** tarzında ele alır—bunlar geldikleri anda Agent'a yönlendirilir. Ve üç otomasyon mekanizmasından yalnızca Cron ve Heartbeat, Agent'ın bir kullanıcı mesajı olmadan hareket etmesine izin verir ve ikisi de **zaman güdümlüdür**—Heartbeat sabit aralıklarla kontrol eder, Cron önceden belirlenmiş zamanlarda tetiklenir. Hooks yalnızca çerçevenin iç yaşam döngüsü olaylarına tepki verir ve dış dünyadan yeni değişiklikler getiremez. Gerçek boşluk şudur: yerleşik kanalların ötesindeki herhangi bir üçüncü taraf olay kaynağı için—yeni bir e-posta, veri gönderen bir dış API geri çağrısı, anlık dikkat talep eden acil bir bildirim—OpenClaw'ın anlık bir giriş yolu yoktur. Agent, olay gerçekleştiği anda yanıt veremez; en iyi ihtimalle bir sonraki Cron/Heartbeat tetiklenmesinde fark eder.
+
+Asıl zayıf nokta şurada: yerleşik kanalların dışındaki üçüncü taraf olay kaynakları için—yeni bir e-postanın gelmesi, harici bir API geri çağrısının iletilmesi, hemen ele alınması gereken acil bir bildirim—OpenClaw'da anında bağlanacak bir kanal yoktur; bu yüzden Agent olay gerçekleşir gerçekleşmez tepki veremez, ancak bir sonraki Cron/Heartbeat döngüsünde fark edebilir.
 
 Bu gecikme birçok senaryoda kabul edilemez. **PineClaw**'ı (Pine AI'ın OpenClaw eklentisi) örnek alalım: Pine AI, kullanıcı adına gerçek telefon aramaları yapan bir yapay zeka asistanıdır, tipik senaryolar fatura müzakeresi, abonelik iptali ve sigorta taleplerini ele almayı içerir. Bir kullanıcı bir OpenClaw Agent'ı aracılığıyla bir Pine telefon görevi başlattığında, Pine'ın sesli yapay zekası kullanıcı adına aramayı yapar, ama kullanıcının arama sırasında her an müdahale etmesi gerekebilir:
 
@@ -84,15 +88,13 @@ Tasarım açısından, olay tetikleyici araçlar ilgisiz olayların Agent'ı uya
 
 ### Kullanıcı İletişim Araçları
 
-OpenClaw'da oturumlar kullanıcıya şeffaftır; kullanıcı ve Agent özel araçlarla görüntü, dosya, push bildirimi, çok modlu içerik ve Generative UI içeren mesajları her zaman paylaşabilir.
+Kullanıcı iletişim araçları, Agent ile kullanıcı arasındaki iletişim kanallarının giderek çeşitlenmesine uyum sağlamak için ortaya çıktı. Birçok Agent (Claude Code, Manus gibi) yerel bir ReAct döngüsü kullanır: Agent'ın "söylediği" her şey, yani assistant mesajları, doğrudan kullanıcıya gönderilir ve kullanıcının Agent ile konuşabilmesi için uygulamada belirli bir oturumu açması gerekir. Kullanıcı bu oturum içinde çoğu zaman Agent'ın araç çağırma sürecini de görebilir.
 
-Kullanıcı iletişim araçları, Agent ile kullanıcı arasındaki iletişim kanallarının giderek çeşitlenmesinden doğar. Birçok Agent (Claude Code, Manus, Genspark gibi) yerleşik bir ReAct döngüsü kullanır, burada Agent'ın "söylediği" her şey (yani asistan mesajları) doğrudan kullanıcıya gönderilir, kullanıcının Agent ile konuşmak için uygulamada belirli bir oturum açması gerekir. OpenClaw, bu insan-bilgisayar iletişim paradigmasını bozan en etkili genel amaçlı Agent'lardan biridir: oturumları kullanıcı için şeffaftır—kullanıcının oturumun varlığından haberdar olmasına veya Agent'ın tool call'larının ayrıntılarını umursamasına gerek yoktur; hem kullanıcı hem de Agent her an birbirine mesaj gönderebilir, katı bir kullanıcı-mesajı, Agent-yanıtı kalıbı yerine. Sonuç olarak, birçok kullanıcı OpenClaw'ın bir sekreterin yapacağı gibi asenkron olarak mesaj gönderen "insan benzeri bir varlığa" sahip olduğunu hissediyor. Bu metin mesajları modelin asistan mesajlarının doğrudan kullanıcıya aktarılması değildir; özel araçlar aracılığıyla gönderilir, görüntü ve dosya ekleri taşıyabilir ve aciliyete göre push bildirimlerini tetikleyebilir.
+OpenClaw bu insan-makine iletişim paradigmasını kırar. Kullanıcının oturumun varlığını fark etmesi de, Agent'ın araç çağırma ayrıntılarıyla ilgilenmesi de gerekmez; kullanıcı bir mesaj gönderip Agent bir yanıt vermek yerine, kullanıcı da Agent da istediği an karşı tarafa mesaj gönderebilir. Bu yüzden birçok kişi OpenClaw'ın **"canlı bir insan hissi"** verdiğini söyler; tıpkı bir sekreter gibi metin mesajlarıyla kullanıcıyla eşzamansız iletişim kurar. OpenClaw, modelin ürettiği assistant mesajını doğrudan kullanıcıya sunmaz; mesaj göndermek için özel araçlar kullanır. Bu mesajlara görseller ve dosyalar eklenebilir, aciliyet derecesine göre anlık bildirim de iliştirilebilir.
 
 Metin tabanlı iletişimin ötesinde, giderek artan sayıda Agent, yapılandırılmış kart mesajları veya hatırlatma e-postaları gönderme gibi çok modlu iletişim yeteneklerine sahiptir. Bazı Agent'lar, bilgiyi kullanıcılara daha kullanıcı dostu bir şekilde sunmak için HTML veya diğer yöntemleri kullanarak etkileşimli arayüzler oluşturan üretici UI ile deneyler yapmaya başladı. Tasarım açısından, kullanıcı iletişim araçları asenkron mesajlaşmayı desteklemeli (kullanıcı çevrimiçi olmayabilir), okundu/okunmadı durumu izlemesi sağlamalı ve birden fazla kanal arasında mesaj tutarlılığını korumalıdır.
 
 **Çok Kanallı Kullanıcı İletişimi ve Geri Çağırma.**
-
-Bir kategori sınırı kolayca karıştırılabilir: her iki tür araç da "bildirim gönderir", ama alıcı bir onaylayan veya iş birlikçiyse (yönetici onayı isteme, bir iş birlikçi Agent'a ilerleme raporlama), araç iş birliği kategorisine aittir; yalnızca alıcı son kullanıcıyken bir kullanıcı iletişim aracı sayılır. Ayrım kanalda değil, kimin ve neden bilgilendirildiğinde yatar.
 
 **Bir Agent'ın yanıtı tek bir kanalla sınırlı olmamalıdır; bildirim mekanizması aynı zamanda bir kullanıcı geri çağırma mekanizması olarak da hizmet eder.** Mesaj gönderme anlık mesajlaşmaya, SMS'e, e-postaya, telefon aramalarına, push bildirimlerine ve diğer kanallara genişler. Agent, önemli mesajların kaçırılmamasını sağlarken gereksiz kesintilerden kaçınarak, aciliyet, kullanıcı durumu, içerik doğası ve kullanıcı tercihlerinin bir bileşimine dayanarak kanala karar verir.
 
@@ -116,7 +118,7 @@ Olay tetikleyici araçlar dünyanın Agent'ı uyandırmasına izin verir, kullan
 
 Tek bir Agent örneği, eş zamanlı olarak birden fazla olayla karşılaşabilir: kullanıcıdan yeni bir mesaj, bir araçtan bir sonuç, süresi dolan bir zamanlayıcı, başka bir Agent'tan bir iş birliği isteği. Bu olayların ne kadar verimli ve doğru biçimde ele alındığı, performansı ve kullanıcı deneyimini doğrudan etkiler.
 
-Bu mekanizmanın iskeleti, eşzamanlı programlamadaki **olay döngüsüdür** (event loop). Asenkron bir Agent'ı uzun süre çalışan bir döngü olarak düşünün: her tur, girdi kuyruğundan bir grup olay alır, bunları trajectory'ye ekler, LLM'i bir kez çağırır, LLM'in karar verdiği araçları yürütür ve sonraki olay grubunu beklemek için döngünün başına döner—bu, bir Go goroutine'inin bir channel'dan mesaj okuyup bunları `for { select { ... } }` içinde tur tur işlemesiyle aynı yapıdır. Bu modelin kritik bir özelliği vardır: **olaylar yalnızca her döngü turunun sınırlarında tüketilir**. LLM çıkarım yaparken veya bir araç yürütülürken, yeni gelen bir olay birdenbire araya girip mevcut adımı bozamaz; tur bir **güvenli noktaya** (bir çıkarım dizisinin sonu, bir araç dönüşü) ulaşana dek kuyrukta bekler ve sonra toplu olarak ele alınır. İptal de aynı disiplini izler: keyfi bir anda zorla kesmek yerine, Agent güvenli bir noktada "durmam istendi mi?" diye kontrol eder—Go'da `ctx.Done()`ın oynadığı rol tam olarak budur (Bölüm 10, bir üst Agent'ın alt Agent'larını basamaklı iptalini tartışmak için aynı context yaklaşımını kullanır). Bu anlaşıldığında, aşağıdaki üç işleme stratejisi yalnızca güvenli noktayı ele alış biçimleriyle ayrışır: olayı doğal olarak gelen bir sonraki güvenli noktaya kadar bekletmek (kuyruğa alınmış), proaktif olarak erkenden bir güvenli nokta yaratmak (iptal tabanlı) ya da düpedüz ayrı bir döngü başlatıp ana döngünün güvenli noktasını hiç beklememek (paralel).
+Bu mekanizmanın iskeleti, eşzamanlı programlamadaki **olay döngüsüdür** (event loop). Asenkron bir Agent'ı uzun süre çalışan bir döngü olarak düşünün: her tur, girdi kuyruğundan bir grup olay alır, bunları trajectory'ye ekler, LLM'i bir kez çağırır, LLM'in karar verdiği araçları yürütür ve sonraki olay grubunu beklemek için döngünün başına döner—bu, bir Go goroutine'inin bir channel'dan mesaj okuyup bunları `for { select { ... } }` içinde tur tur işlemesiyle aynı yapıdır.
 
 Bu modelin kilit bir özelliği vardır: **olaylar yalnızca her turun sınırlarında tüketilir**. LLM akıl yürütürken ya da bir araç çalışırken, yeni gelen bir olay araya zorla girip mevcut adımı bozmaz; önce kuyrukta bekler ve bu tur bir **güvenli noktaya** (bir akıl yürütme parçasının bitişi, bir araç çağrısının dönüşü) ulaştığında hepsi birlikte işlenir. İptal de aynı disiplini izler: işi herhangi bir anda zorla kesmek yerine güvenli noktada "durmam istendi mi" diye bakar—Go'daki `ctx.Done()` tam olarak bu rolü üstlenir.
 
@@ -142,7 +144,7 @@ Bir müşteri iade talebi e-postasını örnek alırsak, yapılandırılmış ol
 }
 ```
 
-Bu boyutlar yalnızca yapılandırılmış olaylar olarak net biçimde modellendiğinde, Agent çok taraflı iletişimde net bir bilişi koruyabilir, kullanıcı girdisini bir araç sonucuyla karıştırmaktan veya gizli talimatlar içeren bir araç sonucunu bir kullanıcı komutuyla karıştırmaktan (prompt injection) kaçınabilir. Çok iş parçacıklı context yönetiminin karmaşıklığı, Agent'ın birden fazla konuşma iş parçacığı arasındaki ilişkileri anlamasını da gerektirir—üçüncü bir taraftan gelen bir mesajın kullanıcının ruh halini nasıl etkilediği, kullanıcının rolünün farklı konuşmalar arasında nasıl değiştiği ve tavsiye sunmak için farklı iş parçacıklarından bilginin ne zaman sentezleneceği. n8n gibi workflow platformlarının tetikleyici ekosistemi—webhook'lar, zamanlayıcılar, e-postalar, veritabanı değişiklikleri, dosya izleyicileri—aynı resmi gösterir: her tetikleyici, Agent'ın dünyayı algıladığı bir "duyu organıdır". Bu heterojen olaylar tek bir yapılandırılmış formata modellendiğinde, Agent herhangi bir kaynaktan gelen uyaranları tutarlı biçimde işleyebilir. Aşağıdaki aciliyet belirleme ve işleme stratejileri hepsi bu birleşik modelleme üzerine inşa edilmiştir.
+Bu boyutlar yalnızca yapılandırılmış olaylar olarak net biçimde modellendiğinde, Agent çok taraflı iletişimde net bir bilişi koruyabilir, kullanıcı girdisini bir araç sonucuyla karıştırmaktan veya gizli talimatlar içeren bir araç sonucunu bir kullanıcı komutuyla karıştırmaktan (prompt injection) kaçınabilir. Çok iş parçacıklı context yönetiminin karmaşıklığı, Agent'ın birden fazla konuşma iş parçacığı arasındaki ilişkileri anlamasını da gerektirir—üçüncü bir taraftan gelen bir mesajın kullanıcının ruh halini nasıl etkilediği, kullanıcının rolünün farklı konuşmalar arasında nasıl değiştiği ve tavsiye sunmak için farklı iş parçacıklarından bilginin ne zaman sentezleneceği.
 
 n8n gibi iş akışı platformlarının tetikleyici ekosistemi bunu açıkça gösterir: Webhook, zamanlayıcı, e-posta, veritabanı değişikliği, dosya izleme—her tetikleyici, Agent'ın dünyayı algıladığı bir "duyu organı"dır. Bu heterojen olaylar yapılandırılmış bir biçimde tek bir modele oturtulduğunda Agent, farklı kaynaklardan gelen uyaranları tutarlı bir biçimde işleyebilir; aşağıda ele alınan aciliyet belirleme ve işleme stratejileri de bu birleşik modellemenin üzerine kurulur.
 
@@ -333,9 +335,11 @@ Ticari sesli yardımcıların çoğu hâlâ seri bir boru hattı kullanır (Şek
 | LLM | Anlamak, akıl yürütmek ve üretmek | İlk token süresi; reasoning ek bekleme getirir |
 | TTS | Metni konuşmaya çevirmek | İlk paket sentezi ve oynatma tamponu |
 
-Reasoning içermeyen kısa bir yanıtta VAD, ASR, LLM ve TTS beklemeleri seri biçimde toplanır (Şekil 6-7); gerçek değerler girdi uzunluğu, model, donanım, ağ ve yüke bağlıdır. Üretim kuyruğu boşta geçen gecikmeyi daha da büyütür (Şekil 6-8).
+Reasoning açılmamış kısa bir yanıtta VAD, ASR, LLM ve TTS beklemeleri seri olarak birikir (Şekil 6-7). Gerçek değerler girdi uzunluğuna, modele, donanıma, ağa ve yüke bağlıdır.
 
 ![Şekil 6-7: Seri yanıt için gecikme şelalesi](images/fig6-7.svg)
+
+Üretim ortamındaki kuyruklanma boştaki gecikmeyi daha da büyütür (Şekil 6-8), ancak bu servis kapasite planlamasına girer; bu bölümde kuyruk modelleri ele alınmaz.
 
 ![Şekil 6-8: Kuyruk gecikmesi eğrisi](images/fig6-8.svg)
 
@@ -390,7 +394,7 @@ Omni modelleri hâlâ sırayla konuşmayı varsayar ve genellikle söz hakkını
 
 ### Paradigma 3 · Full-duplex etkileşimli modeller
 
-Omni “kullanıcı konuşur” ve “model konuşur” ayrımını korur, ancak simultane çeviri gibi görevler örtüşme ister. Full-duplex model sürekli dinler ve konuşur; devam etme, durma, araya girme veya tool çağırma kararını yinelemeli olarak verir. Kyutai'nin Moshi'si erken bir araştırma örneğidir. Thinking Machines Lab bu yaklaşımı **Interaction Model**[^ch6-14] olarak adlandırır: etkileşim VAD çevresinde dışarıdan kurulmaz, modelin içine yerleştirilir. GPT-Live bunu üretim ölçeğine taşır ve ön plandaki model sohbeti sürdürürken karmaşık işi arka plan reasoning modeline devreder.
+Omni hâlâ konuşmayı "kullanıcı konuşuyor" ve "model konuşuyor" diye iki döneme ayırır; oysa eşzamanlı çeviri gibi görevler ikisinin üst üste binmesini gerektirir. Bu yüzden tam çift yönlü (full-duplex) model artık sırayı önvarsaymaz: sürekli dinler, sürekli konuşur ve durmadan devam etmeye mi, duraklamaya mı, araya girmeye mi, yoksa bir araç çağırmaya mı karar verir.
 
 Araştırma tarafındaki öncüsü Kyutai'nin **Moshi** modelidir (2024). Kullanıcının ve modelin ses akışlarını paralel modeller; böylece üst üste konuşma ve söz kesme modelin doğal davranışı hâline gelir.
 
@@ -447,9 +451,7 @@ Ana LLM, metne ek olarak **THINKING**, **EMO:happy** ve **SPEED:0.8x** gibi kont
 
 ## Computer Use: GUI Otomasyonu Agent'ları
 
-Buraya kadar okuyunca, bu bölümün sese ayırdığı yerin sonraki iki senaryodan belirgin biçimde fazla olduğu fark edilebilir — bu bilinçli bir tercihtir. Gerçek zamanlı çok modluluk çizgisinde ses, en uzun yolu almış ve referans çerçevesi olarak alınmaya en değer alandır: "seri boru hattının gecikmesi çok yüksek" sorunundan yola çıkıp uçtan uca modeller, full-duplex etkileşim ve düşünürken konuşma gibi bir dizi çözümden geçerek bugünkü görece olgunlaşmış noktaya ulaşmıştır; sorun → çözüm → son durum güzergâhının tamamı katedilmiştir. Bu yüzden onu enine boyuna anlattık. Sıradaki Computer Use ve robotik senaryolarını okurken bu güzergâhla karşılaştırın: her biri bu evrim çizgisinin neresine gelmiştir ve nerede takılı kalmıştır?
-
-Bu üç senaryo görünüşte birbirinden çok farklıdır, ama aynı temel zorluklarla yüzleşir: gerçek zamanlı algı, düşük gecikmeli karar verme ve sürekli etkileşim. Şimdi bu teknik temaların görsel etkileşimde (Computer Use) ve fiziksel etkileşimde (robotik) nasıl yeniden ortaya çıktığına bakalım — önce bakış açısını işitsel modaliteden görsel modaliteye genişletelim: ya bir Agent yalnızca konuşmayı anlamakla kalmayıp ekranı da "görebilseydi" ve grafik arayüzü kullanabilseydi?
+Ses, zamanlama eksenini milisaniye düzeyine indirdi; ama gözlemi hâlâ tek boyutlu bir ses akışıdır. Computer Use aynı sorunu iki boyutlu ekrana taşır: gözlem sürekli değişen piksellere, eylem ise koordinatlar üzerindeki tıklama ve girdilere dönüşür. Ses senaryosunda vurgu "ne zaman konuşmalı" üzerindedir; Computer Use'da ise "bir sonraki adımda nereye tıklamalı" üzerinde — ve buna sesli etkileşimde hiç bulunmayan bir soru eklenir: eylem yürütüldükten sonra gerçeklik hâlâ planla uyumlu mudur?
 
 Computer Use (GUI otomasyonu Agent'ı olarak da anılır), yapay zekanın tıpkı bir insan gibi ekranı gözleyerek ve fare ile klavyeyi kullanarak yazılım çalıştırmasını sağlar — örneğin bilgi aramak için tarayıcı açmak, bir tablo yazılımına veri girmek veya sistem ayarlarında bir yapılandırmayı değiştirmek. Özünde bir **algılama-düşünme-eylem** döngüsü vardır (Şekil 6-11):
 
@@ -461,7 +463,6 @@ Computer Use (GUI otomasyonu Agent'ı olarak da anılır), yapay zekanın tıpk�
 Burada **arayüzü anlamak** ile **görevi tamamlamak** birbirinden ayrılmalıdır. İlki çok modlu anlamaya daha yakındır ve tek bir ekran görüntüsü üzerinde soru-cevapla ölçülebilir; ikincisi ise modelin anlama ve eylem üretimini sayfa yüklenmesini, durum değişikliklerini, hatalı işlemleri ve geri döndürülemez sonuçları ele alan kapalı bir döngüye yerleştirmesini gerektirir. Dolayısıyla Computer Use'ın zorluğu yalnızca ekran görüntüsü hakkında doğru yanıt vermek değil, her adımdan sonra gerçeğin hâlâ planla uyuştuğunu yeniden doğrulamaktır.
 
 ![Şekil 6-11: Computer Use Agent'ının algılama-düşünme-eylem döngüsü](images/fig6-11.svg)
-
 
 Bu döngüde üç kritik tasarım boyutu vardır: **action space** (eylem alanı — Agent'ın hangi işlemleri yürütebildiği), **görsel konumlandırma** (ekran görüntüsünde hedef öğenin nasıl bulunacağı) ve **model mimarisi** (ekran görüntüsünden doğru eylemin nasıl üretileceği).
 
