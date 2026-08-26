@@ -28,31 +28,17 @@ Mivel az Ügynökök nem osztanak meg kontextust, az információt explicit komm
 
 A két IPC paradigmára leképezve: a megosztott fájlrendszer a "megosztott memóriának" felel meg, míg az eszközhívás-paraméterek és az üzenetsor az "üzenetküldés" formái. Az eszközparaméterek szinkron módon, egy hívással együtt érkeznek; a sorban lévő üzenetek aszinkron módon, egy közvetítőn keresztül kerülnek kézbesítésre. Minden paradigmának megvannak a maga kompromisszumai. A Go-nak van egy széles körben idézett mondása: "Ne megosztott memóriával kommunikálj; ehelyett ossz meg memóriát kommunikációval."
 
-Az üzenetsor természeténél fogva támogatja az "aszinkron kommunikációt" – a feladónak és a vevőnek nem kell egyszerre online lennie. Ez olyan, mint egy belső vállalati e-mail rendszer: amikor e-mailt küldesz egy kollégának, nem kell, hogy éppen a gépénél legyen; az e-mail tárolódik a szerveren, és akkor kerül feldolgozásra, amikor a kolléga online lesz. Ez a megközelítés különösen alkalmas olyan forgatókönyvekhez, ahol több Ügynök párhuzamosan dolgozik, és koordinációra van szükségük egymással (lásd a "Párhuzamos Koordináció" szakaszt később ebben a fejezetben).
-
 ![10-1. ábra: Megosztott kontextus vs. Nem megosztott kontextus](images/fig10-1.svg)
-
-Az egyértelműség kedvéért: mindkét architektúra valódi többügynökös rendszer, mert a rendszerprompt és az eszközkészlet szakaszonként eltérő, így azok különböző Ügynökök. A különbség a koordinációs módszerben rejlik. A "megosztott kontextus" implicit koordinációra támaszkodik: a következő Ügynökök öröklik az előzőek teljes kontextus-előzményét, áttekinthetik látható interakciós előzményeiket és munkanyomaikat, és magán a kontextuson keresztül kapják az információt. A "nem megosztott kontextus" explicit koordinációra támaszkodik: az Ügynökök fájlokon, üzeneteken vagy strukturált adat-interfészeken keresztül cserélnek információt, és minden Ügynök csak a saját munkájához releváns tartalmat látja.
-
-Analógiával élve: az előbbi egy csapat egy asztal körül, ahol mindenki mindent hall; az utóbbi osztályok, amelyek e-mailben és dokumentumokkal dolgoznak együtt, mindegyiknek saját munkaterülettel.
-
-Az operációs rendszerekben járatos olvasók számára hasznos analógia lehet: a megosztott kontextusú Ügynökök a szálakra, a nem megosztott kontextusúak a folyamatokra hasonlítanak. A szálak közös címtartományt használnak, ami olcsóvá teszi a váltást és a kommunikációt, de kevés elszigeteltséget nyújt; egy szál memóriameghibásodása az egész folyamatot összeomlaszthatja. Minden folyamat saját címtartománnyal rendelkezik, erősebb elszigeteltséget és biztonságosabb párhuzamosságot biztosítva, de a kommunikáció explicit IPC-t igényel.
-
-**Egyszerű ökölszabály**: Ha a várható kumulált kontextus meghaladja az ablak 50%-át (heurisztika, nem pontos küszöbérték), ne osszd meg. Ha a nulla információs veszteség szigorú követelmény a feladat helyességéhez, oszd meg. A legtöbb valós rendszer különböző megközelítéseket használ a különböző szakaszokban: az első néhány Ügynök osztozik a kontextuson, de ha a megosztott előzmény túl naggyá válik, a rendszer nem megosztott kontextusokra vált, és egy explicit átadást használ, amelyben a felsőbb Ügynök kiválasztja, mit adjon tovább.
 
 ### 2. Dimenzió: Együttműködési Topológia
 
-A második dimenzió az együttműködési topológia: az a struktúra, amelyen keresztül a vezérlés és az információ áramlik az Ügynökök között. A topológia és a kontextusmegosztás fogalmilag elkülönül, de a gyakorlatban összefüggenek. A megosztott kontextusú rendszereknek is van topológiájuk; például a `transfer_to_agent` minta a 10-1. kísérletben egy átadási láncot alkot. Mivel azonban minden átadás a teljes előzményt hordozza, általában nincs szükség eldönteni, milyen információt adjunk át, így a topológia gyakran egy egyszerű szerepváltási sorozattá válik. A csoportos csevegés stílusú együttműködés kivétel, amelyről később, a decentralizációs szakaszban lesz szó. Nem megosztott kontextus esetén viszont a tervezőknek explicit módon kell eldönteniük, hogyan áramlik az információ és ki koordinálja azt.
-
-> **Terminológia: Gráf-mérnökség**. A "Gráf-mérnökség" kifejezés, amely 2026 júliusában vált népszerűvé, a mai Ügynök-kontextusban általában egy végrehajtási gráf explicit tervezésére utal: a csomópontok Ügynökök, hagyományos programok vagy emberi döntések; az élek feladatfüggőségeket, feltételes útválasztást és hibautakat határoznak meg; a strukturált állapot csomópontok között áramlik.[^ch10-graph-engineering] Az ebben a fejezetben tárgyalt "együttműködési topológia" ennek az elképzelésnek a többügynökös részhalmaza – a társak közötti együttműködés, a menedzseri vezénylés és a decentralizált átadások különböző gráftopológiák. Mivel az elnevezés még új, és könnyen összetéveszthető a tudásgráfokkal, a GraphRAG-gal és a végrehajtási nyomokkal, ez a könyv továbbra is a stabilabb "együttműködési topológia" és "vezénylés" kifejezéseket használja elsődleges szókészletként.
-
-[^ch10-graph-engineering]: Az elnevezés korai tárgyalásához lásd: Josh C. Simmons, *We Are Entering the Graph Engineering Phase*, 2026. A mainstream keretrendszerek általában gráf-alapú munkafolyamatnak vagy vezénylésnek nevezik ugyanazt a mérnöki struktúrát, nem pedig teljesen új technológiának. Lásd: https://www.drjoshcsimmons.com/writing/we-are-entering-the-graph-engineering-phase, https://docs.langchain.com/oss/python/langgraph/overview, https://learn.microsoft.com/en-us/agent-framework/workflows/ és https://adk.dev/workflows/.
-
-Más szóval, a két dimenzió elvileg egy 2×3-as mátrixot alkot (megosztott/nem megosztott × három topológia) – de a megosztott kontextus sorában a topológia többnyire egy szerepváltási sorozattá degenerálódik, ahol kevés dönteni való marad (a "Többszakaszos Szerepváltás" alatt később tárgyalt forma). Ez a fejezet ezért csak a három nem megosztott cellát részletezi. Íme a három jellemző topológia nem megosztott kontextus alatt, a növekvő komplexitás sorrendjében:
+A második dimenzió az együttműködési topológia: milyen szerkezetben áramlik a vezérlés és az információ az Agentek között. Három tipikus topológia van:
 
 - **Társi Együttműködési Minta**: Egy kis számú Ügynök (jellemzően 2-3) egyenrangú félként lép kapcsolatba, iteratív fejlesztési hurkot alkotva – mint amikor egy ember megír egy tanulmányt, egy másik pedig jegyzetekkel látja el és átdolgozza, és a minőség több kör után messze meghaladja azt, amit egyetlen ember egyedül elérhetne.
 - **Menedzser Minta** (Vezénylési Minta): Egy központi Menedzser Ügynök felelős a feladattervezésért és ütemezésért, míg több al-ügynök mindegyike specifikus részfeladatokat kezel – mint egy projektmenedzser, aki több specializált mérnököt irányít egy projekten.
 - **Decentralizált Minta**: Nincs futásidejű központi vezérlő; az Ügynökök úgy kommunikálnak egymással, mint az emberek, hogy együttműködjenek a feladatokon.
+
+> **Terminológia: Gráf-mérnökség**. A "Gráf-mérnökség" kifejezés, amely 2026 júliusában vált népszerűvé, a mai Ügynök-kontextusban általában egy végrehajtási gráf explicit tervezésére utal: a csomópontok Ügynökök, hagyományos programok vagy emberi döntések; az élek feladatfüggőségeket, feltételes útválasztást és hibautakat határoznak meg; a strukturált állapot csomópontok között áramlik. Az ebben a fejezetben tárgyalt "együttműködési topológia" ennek az elképzelésnek a többügynökös részhalmaza – a társak közötti együttműködés, a menedzseri vezénylés és a decentralizált átadások különböző gráftopológiák. Mivel az elnevezés még új, és könnyen összetéveszthető a tudásgráfokkal, a GraphRAG-gal és a végrehajtási nyomokkal, ez a könyv továbbra is a stabilabb "együttműködési topológia" és "vezénylés" kifejezéseket használja elsődleges szókészletként.
 
 Az egyes minták részletes tervezését és alkalmazási forgatókönyveit későbbi dedikált alszakaszok tárgyalják.
 
@@ -133,8 +119,6 @@ Korábban ebben a fejezetben összehasonlítottuk a kommunikációs mechanizmuso
 | Kilépési kód és wait() | Az al-ügynök által visszaadott strukturált összefoglaló |
 | Megosztott memória / üzenetküldés | Megosztott fájlrendszer / üzenetküldés |
 
-Egy program statikus kód; a folyamat a program egy futó példánya. Hasonlóképpen, a statikus előtag határozza meg, ki az Ügynök, míg a trajektória rögzíti, mennyire jutott előre. Az LLM a CPU szerepét tölti be: nincs saját állapota, és időosztásos módban több Ügynök között oszlik meg különböző kontextusok betöltésével – maga a "kontextusváltás" kifejezés is az operációs rendszerektől kölcsönzött. És ugyanezen okból: egy gyorsabb CPU behelyezése ugyanúgy futó programot eredményez; egy erősebb modellre váltás ugyanazt az Ügynököt tartja meg – az identitása és memóriája az előtagban és a trajektóriában él, nem a modell súlyaiban.
-
 Ez az absztrakció nem újdonság: a privát állapot, az aszinkron üzenetek és az új tagok létrehozásának képessége pontosan az 1970-es évek Actor modelljének[^actor-model] alapvető felépítése. Egy többügynökös rendszer ezért az Actor modell LLM-alapú változatának tekinthető, és az operációs rendszerekből és elosztott rendszerekből felhalmozott tudás nagy része közvetlenül alkalmazható.
 
 [^actor-model]: Hewitt, C., Bishop, P., Steiger, R. *A Universal Modular ACTOR Formalism for Artificial Intelligence.* IJCAI 1973.
@@ -148,6 +132,8 @@ Az explicit együttműködés megosztott kontextus nélkül két topológiától
 ### A Fájlrendszer az Ügynök Szemszögéből
 
 A fejezet elején a "megosztott fájlrendszer" a három kommunikációs mechanizmus egyikeként szerepelt a megosztott kontextus nélküli architektúrákban. Egy valós rendszerben az Ügynök által elért fájlrendszer nem egyetlen tárolórendszer, hanem egy "virtuális fájlrendszer", amelyben a különböző forrású, életciklusú és jogosultságú tárolórendszerek egy könyvtárfa alá vannak csatolva. Az Ügynök egységes `read_file`/`write_file`/`list_dir` interfészeken keresztül éri el őket, míg az alapul szolgáló rétegek lehetnek lokális ideiglenes lemezek, perzisztens objektumtárolók, harmadik féltől származó felhő-meghajtó API-k vagy írásvédett rendszer erőforráscsomagok. A könyvtárfa összetételének – az egyes területek láthatóságának és életciklusának – egyértelmű meghatározása előfeltétele a többügynökös együttműködés tervezésének: a konkurencia-ütközések és információs szivárgások jelentős része abból származik, hogy olyan területek keverednek, amelyeket el kellene különíteni. Ez a könyvtárfa az Ügynök címtartományának felel meg, és a négy területtípus különböző jogosultságú memóriaszegmens: néhány privát és írható, néhány több fél által megosztott, és néhány írásvédett. Az operációs rendszer védelmi filozófiája itt is érvényes: alapértelmezés szerint izolálni, és a megosztást explicit módon deklarálni. Egy érett többügynökös rendszerben a fájlrendszer jellemzően a következő négy területtípusból áll:
+
+Egy érett több-Agentes rendszer fájlrendszere rendszerint az alábbi négyféle területből áll:
 
 **I. Ügynök-Specifikus Munkaterület (Piszkozat).** Minden Ügynök példányhoz tartozó privát könyvtár, amely köztes termékeket, ideiglenes fájlokat, vázlatokat és hibakeresési naplókat tárol. Életciklusa a példányhoz kötődik, és más Ügynökök és felhasználók számára láthatatlan. A piszkozat izolálása két célt szolgál: megakadályozza, hogy több Ügynök ideiglenes fájljai felülírják egymást, és a fő Ügynök kontextusát karcsún tartja – az al-ügynökök próba-hiba folyamata a saját munkaterületükön marad, csak a végső termék kerül a megosztott térbe. Ez a 4. fejezet azon elvének tárolási szintű megfelelője, hogy az al-ügynökök a teljes trajektória helyett strukturált összefoglalókat adnak vissza.
 
@@ -246,7 +232,7 @@ Ez a paradigma alkalmazható olyan forgatókönyvekben is, mint a biztonsági fe
 
 **Miért nem tud egyetlen Ügynök generálni, majd felülvizsgálni a saját munkáját?** Pontosan itt alkalmazható a "Mikor Jobb Valóban a Több Ügynök, Mint az Egyetlen Ügynök?" kritériuma a fejezet korábbi részéből – ha a felülvizsgálat nem vezet be új információt, az csak annyi, hogy "újragondoltatjuk a modell válaszával." A kapcsolódó kutatás egyértelmű választ ad. Az ICLR 2024-es "Large Language Models Cannot Self-Correct Reasoning Yet" című tanulmányában Huang és munkatársai azt találták, hogy a GPT-4 arra kérése, hogy vizsgálja felül és javítsa ki saját válaszait külső visszajelzés nélkül, valójában csökkentette a pontosságot – a modell gyakrabban változtatott helyes válaszokat helytelenekké, mint helyteleneket helyesekké.
 
-**Proposer–Reviewer ciklus:**
+A javasló–ellenőrző hurok minimális invariánsa a következő: az ellenőrző **független bizonyítékot** olvas, nem pusztán megismétli a javasló magyarázatát, és visszaküldéskor megadható, behatárolható javítási feltételt kell adnia:
 
 ```python
 candidate = proposer(task, constraints)
@@ -264,13 +250,11 @@ else:
     escalate_or_reject(review)
 ```
 
+Az ellenőrző nem módosíthatja a teszteket, a bizonyítékgyűjtőt vagy a kiadási kaput; különben a „független ellenőrzés” önjóváhagyássá silányul.
+
 Egy 2024-es, a TACL-ben megjelent áttekintő tanulmány, a "When Can LLMs Actually Correct Their Own Mistakes?" (arXiv:2406.01297), tovább erősítette ezt a következtetést: hacsak nem biztosítanak megbízható külső visszajelzést (pl. tesztesetek végrehajtási eredményei, külső eszközök által végzett ellenőrzés kimenete), a modell saját "önjavítására" hagyatkozás nagyrészt hatástalan.
 
 Az ICLR 2024-es CRITIC tanulmány egy szemléletes összehasonlító kísérletet nyújt. A CRITIC során a modell külső eszközöket (keresőmotor, Python interprete) használt saját válaszainak ellenőrzésére, ami jelentős teljesítményjavuláshoz vezetett. Amikor azonban a kísérletvezetők eltávolították az eszköz-ellenőrzési lépést, és csak a modell önértékelését tartották meg, a javulás nagy része eltűnt. Ez azt jelzi, hogy a felülvizsgálat értéke nem "a modell újragondoltatásában" rejlik, hanem **olyan új információ bevezetésében, amely nem állt rendelkezésre a modell generálása során** – teszt eredmények, renderelt képernyőképek, fordítási hibák, külső keresési eredmények.
-
-Ez a Javasló-Ellenőrző paradigma core tervezési elve. Az 5. fejezet PPT generálási kísérletében az Ellenőrző Ügynök értéke nem az volt, hogy "ugyanaz a modell újra megnézte a kódot", hanem hogy **renderelte a PPT-t és készített egy képernyőképet** – egy olyan képernyőképet, amely vizuális információt tartalmazott, amelyet a Javasló Ügynök nem tudott megszerezni a kód generálásakor. Hasonlóképpen, a kódgenerálási forgatókönyvekben a tesztesetek végrehajtásából származó siker/sikertelen eredmények olyan új jelek, amelyek nem léteztek a kód megírásakor – az Ellenőrző független értéke pontosan abból a képességéből származik, hogy hozzáfér ehhez a külső visszajelzéshez, amely a Javasló számára nem elérhető.
-
-A Hurok-mérnökség lencséjén keresztül nézve az iparág által katalogizált hurokminták e könyv mintáira képeződnek le. Egy emberi jóváhagyással rendelkező zárt hurok a 4. fejezet előzetes jóváhagyásának felel meg, ahol az ember a végső felülvizsgáló. Egy kerettel vagy körkorláttal rendelkező nyitott hurok az 5. fejezet többlépcsős PPT iterációjának felel meg, amely legfeljebb öt kört engedélyez. A vezényelt al-ügynökök a következő szakasz menedzser mintájának felelnek meg. A Hurok-mérnökség tehát nem új architektúrát ír le, hanem egy közös keretrendszert – hurok + ellenőrzés + leállási feltételek –, amely egyesíti ezeket az együttműködési mintákat. A Javasló-Ellenőrző paradigma az ellenőrzési szerepet tölti be ezen a keretrendszeren belül.
 
 Az Anthropic 2026-os, hosszú ideig futó alkalmazásfejlesztési kísérlete ezt az elképzelést három Ügynökből álló, tervező–generáló–értékelő architektúrában valósította meg. A tervező termékspecifikációvá bontotta ki a felhasználó kérését; a generáló és az értékelő előbb megállapodott az egyes körök befejezési feltételeiben, majd a generáló megvalósította a feladatot, az értékelő pedig Playwrighttal használta a valódi alkalmazást és hibajelentést készített. Az Ügynökök fájlokon keresztül adták át az állapotot. A kísérlet azt mutatja, hogy ha a feladat meghaladja azt, amit a jelenlegi modell egyedül megbízhatóan el tud végezni, a külső bizonyítékra támaszkodó független ellenőrzés lényegesen magasabb költségért jobb fejlesztési minőséget adhat.[^anthropic-harness-2026]
 
@@ -292,114 +276,17 @@ Több Ügynök egymástól függetlenül állít elő ötleteket, majd megosztj�
 
 Minden Ügynök egy meghatározott szakterület nézőpontját képviseli, és közösen tárgyalnak egy több területet érintő problémát. Egy új termék megvalósíthatóságának értékelésekor például a mérnök Ügynök a technikai megvalósítás nehézségét, a termékes Ügynök a felhasználói élmény felől a piaci vonzerőt, az üzemeltetési Ügynök pedig a költségek és erőforrások alapján az üzleti életképességet elemzi. Ezek a szerepek nem egymás ellen dolgoznak, hanem kiegészítik egymást: együtt állítják össze a teljes képet, és tárják fel a szakterületek közötti korlátokat és lehetőségeket.
 
-**Felülvizsgálati Megjegyzések Hurok** (Review Notes Loop): Az Ellenőrző megjegyzésekkel látja el a Javasló kimenetét, a Javasló pedig ezek alapján javít. Ez egy minimalista változata a Javasló-Ellenőrző paradigmának, ahol az Ellenőrző eszközkészlete lényegében azonos a Javaslóéval – minden új információ abból származik, hogy az Ellenőrző más perspektívából (és gyakran más modellel) vizsgálja ugyanazt a szöveget. Bár a korábbi kutatások szerint az "újraolvasás" önmagában nem javít, a gyakorlatban a felülvizsgálati megjegyzések hurok akkor működik jól, ha az Ellenőrzőt egy szigorúbb modell vagy egy meghatározott szempontra (pl. biztonság) hangolt prompt üzemelteti – vagyis a "külső információ" helyébe a "külső perspektíva vagy különböző képzési irányultság" lép.
-
-Több körön keresztül a Javasló megtanulja elkerülni az Ellenőrző által gyakran jelzett hibákat, ami az eredmény fokozatos javulásához vezet. Az Ellenőrző azonban ugyanazt a kontextust látja, mint a Javasló, és gyakran ugyanazt a modellt használja – ez korlátozza a tényleges információ-növekedést a körök között, és a visszatérő hozam csökkenéséhez vezet. A gyakorlatban a felülvizsgálati megjegyzések hurok akkor a leghatékonyabb, ha az Ellenőrző ténylegesen más információhoz fér hozzá (például vizuális visszajelzés a renderelt képernyőképekből) vagy más modellt használ.
-
-**Véletlenszerű Ellenőrzés**: Ez a minta a "vakszerencse" előnyét használja ki: vegyél mintát több lehetséges kimenetből, és válaszd ki a legjobban értékeltet. A modell által generált több javaslat közötti választás nem csupán ugyanazon kimenet újragondolása – minden egyes mintavétel új lehetőségeket vezet be, és az eloszlás végei minőségileg jobb eredményeket hozhatnak, mint a determinisztikus legjobb út. Például a programozási feladatokban a modell gyakran egy ismerős, de hibás útvonalon ragad; a többszörös mintavétel lehetővé teheti az ismerősnek tűnő, de valójában teljesen más – és helyes – megközelítés megtalálását. A 3. fejezetben (3. kísérlet: ★★★) a többszörös párhuzamos mintavétellel történő feladatjavítás pontosan ezt az ötletet használja.
-
 ### Menedzser Minta: Centralizált Vezénylés és Párhuzamos Végrehajtás
 
-A menedzser minta jellemzője, hogy egy központi Menedzser Ügynök koordinál több al-ügynököt. A menedzser felelős a feladatbontásért, az al-ügynökök indításáért és az eredmények integrálásáért, míg az al-ügynökök mindegyike egy specifikus részfeladatra összpontosít. Belsőleg ez a folyamat gyakran magában foglalja a társi együttműködést is – de a különbség az, hogy az al-ügynökök kapcsolatait a Menedzser határozza meg, és ők a Menedzseren keresztül kommunikálnak, nem egymással közvetlenül.
+Amikor egy feladat sok részfeladatot érint, dinamikus ütemezést kíván, vagy a részfeladatok között bonyolult függőségek vannak, az egyenrangú együttműködés már nem elég, és be kell vezetni a menedzser mintát. A Menedzser Ügynök felelőssége olyan, mint a projektmenedzseré: előbb megérti a teljes feladatot, majd kiosztható részfeladatokra bontja, kiválasztja a megfelelő Ügynököt a végrehajtásra, követi a haladást és kezeli a rendellenességeket (újrapróbálkozás, Ügynökcsere, terv módosítása), végül pedig az egyes Ügynökök kimeneteit végeredménnyé integrálja.
 
-Ez a minta hasonlít egy vállalati szervezeti felépítésre: a Menedzser a projektmenedzser, az al-ügynökök a különböző szakterületek mérnökei. A projektmenedzser feladata a követelmények, nem a technikai megvalósítás megértése. Hasonlóképpen, a Menedzser Ügynök felelőssége a feladat megértése, részfeladatokra bontása, megfelelő al-ügynökök kiválasztása, feladat kiosztása és ütemterv összehangolása; a tényleges végrehajtás az al-ügynökök feladata.
-
-A menedzser minta négy mechanizmustól függ:
-
-**Feladatbontás (Task Decomposition)**: A Menedzser a felhasználó általános kérését specifikus, jól meghatározott részfeladatokra bontja. Ez magában foglalja a függőségek azonosítását is (például: "most kell generálni a stílus útmutatót, mert később mindenki erre támaszkodik"). A részfeladatok végrehajtása lehet szekvenciális, párhuzamos vagy ezek keveréke. Ez a párhuzamosság az, ahol a menedzser minta eltér a megosztott kontextusú többszakaszos szerepváltástól (amely csak soros átadásokat tesz lehetővé).
-
-**Ügynök Kiválasztás (Agent Selection)**: Minden részfeladathoz a Menedzser kiválaszt vagy létrehoz egy megfelelő al-ügynököt. A kiválasztás a szükséges készségektől, a választott modelltől és a rendelkezésre álló erőforrásoktól függ. Például a kódolási részfeladatokhoz egy Python szakértő Ügynök, a dokumentációs részfeladatokhoz egy írásra specializált Ügynök kerül indításra.
-
-**Párhuzamos Végrehajtás és Koordináció**: Amikor a részfeladatok egymástól függetlenek, a Menedzser párhuzamosan indítja az al-ügynököket, ami jelentősen lerövidítheti a teljes feldolgozási időt. A párhuzamos végrehajtás magában foglalja az erőforrás-ütemezést (ne indíts 10 párhuzamos feladatot, ha a modell API kvótája csak 5-öt engedélyez), a konkurencia-vezérlést (hogyan kezeljük, ha két al-ügynök ugyanazt a fájlt írja) és a kaszkád megszakítást (amint az egyik al-ügynök elkezdte a feladatát, és kiderül, hogy a másik al-ügynök munkája felesleges).
-
-**Eredmény Integráció**: Miután az al-ügynökök befejezték, a Menedzser összegyűjti és integrálja az eredményeket. Ez magában foglalhatja a konfliktusok feloldását és az ellentmondások egyeztetését. Végül a Menedzser ellenőrzi az integrált eredményt.
-
-![10-4. ábra: A Menedzser szekvenciális koordinációja](images/fig10-4.svg)
-
-> **10-2. kísérlet ★★★: Többügynökös Vezénylési Rendszer: Többnyelvű Dokumentáció Készítő**
-
-> Ez a kísérlet egy többszereplős, menedzser mintájú feladatot valósít meg, amelyben egy Menedzser Ügynök koordinál három al-ügynököt – Fordító, Műszaki Felülvizsgáló és Formázó – automatikus nyelvi dokumentáció generálásához.
-
-> **Rendszer Tervezés**:
-
-> A 4. fejezet al-ügynök mechanizmusára építve (`spawn_subagent` a gyermek Ügynök létrehozásához, `send_message_to_subagent` az aszinkron kommunikációhoz, `cancel_subagent` a megszakításhoz) építs fel egy menedzser mintájú architektúrát a következő lépésekkel:
-
-> **1. lépés: Kezdeti Feladatbontás**. A `triage` szerep (kapu) fogadja a felhasználó utasítását, pl. "Automatikusan fordítsd le az angol dokumentációt kínaira, németre és japánra, és biztosítsd, hogy a műszaki kifejezések konzisztensek legyenek minden nyelven." A `triage` meghatározza a feladat bontását:
->
-> - A Műszaki Író elkészíti a termék angol szójegyzékét.
-> - Két Fordító párhuzamosan lefordítja a szójegyzéket németre és japánra.
-> - A Műszaki Felülvizsgáló ellenőrzi a lefordított dokumentáció műszaki pontosságát.
-> - A Formázó egységesíti a formázást.
-> - Végül a tesztelő integrációs teszteket futtat.
-
-> **2. lépés: Al-ügynök Csoport Létrehozása**. A `triage` átadja a kontextust a Menedzser Ügynöknek, amely létrehozza és ütemezi a feladatokat. A kód stílusának szemléltetésére:
-
-> ```python
-> # Szójegyzék feladat: indíts egy al-ügynököt a szójegyzék létrehozásához
-> task_glossary = spawn_subagent(
->     agent_id="glossary_writer",
->     system_prompt="Angol műszaki szójegyzék írója. {glossary_rules}",
->     tools=[write_file, read_file, web_search],
->     task="Hozz létre egy angol műszaki szójegyzéket a termékhez. ..."
-> )
-
-> # Fordítás feladatok: párhuzamosan indítva
-> task_de = spawn_subagent(
->     agent_id="translator_de",
->     system_prompt="Angolról németre fordító, technikai dokumentáció specialista.",
->     tools=[write_file, read_file],
->     task=f"Fordítsd le a teljes dokumentációt németre. ..."
-> )
-
-> task_ja = spawn_subagent(
->     agent_id="translator_ja",
->     system_prompt="Angolról japánra fordító, technikai dokumentáció specialista.",
->     tools=[write_file, read_file],
->     task=f"Fordítsd le a teljes dokumentációt japánra. ..."
-> )
-> ```
-
-> **3. lépés: Kommunikáció az Al-ügynökökkel**. A Menedzser a megosztott fájlrendszeren keresztül kapcsolódik az al-ügynökökhöz. Az eredményeket a `/workspace/shared/` könyvtáron keresztül adják át. Párhuzamos kommunikációhoz használj üzenetsort.
-
-> A Menedzser időszakosan ellenőrzi a `/workspace/shared/progress/*.md` előrehaladási fájlokat. Ha egy fordító al-ügynök egy órája nem frissítette a fájlt, a Menedzser üzenetet küld neki: "Mi a helyzet a német fordítással?"
-
-> **4. lépés: Párhuzamos Végrehajtás**. A két fordítási feladat párhuzamosan fut. A Menedzser aszinkron módon gyűjti az előrehaladási információkat a megosztott könyvtáron keresztül.
-
-> **5. lépés: Integráció és Ellenőrzés**. Miután minden al-ügynök befejezte, a Menedzser integrálja az eredményeket. Ez magában foglalhatja a formázás egységesítését a Formázó al-ügynök segítségével, és végül az integráció tesztelését.
-
-> **Kísérleti Követelmények**:
-> 1. Valósíts meg egy Menedzser Ügynököt, amely három al-ügynököt koordinál: Fordító, Műszaki Felülvizsgáló, Formázó
-> 2. Valósítsd meg a feladatbontást, a párhuzamos végrehajtást és az eredmény-integrációt
-> 3. Tervezz egy előrehaladási megosztási mechanizmust a megosztott fájlrendszeren keresztül (a Menedzser olvassa az al-ügynökök `progress.md` fájljait)
-> 4. Valósítsd meg a Menedzser számára, hogy elakadás észlelésekor üzenetet küldhessen az al-ügynöknek
-> 5. Ellenőrizd, hogy a Menedzser párhuzamosan indíthat-e több al-ügynököt
-> 6. Határozz meg egy időkorlátot: ha az al-ügynök nem fejezi be időben, a Menedzser jelezze a felhasználónak
-
-> **Opció: Korai Befejezés**.
-> Ha a Fordító hirtelen letiltja a kérést, töröld ki a felesleges al-ügynököket. A Menedzser küldjön egy `cancel_subagent(task_de)` kérést a német fordító leállítására. Ekkor a japán fordítónak tovább kell dolgoznia, mert nincs függőség. A Menedzser megkeresheti a következő elérhető modellt, vagy felhasználói beavatkozást kérhet.
->
-
-> ![10-5. ábra: Könyvfordító Ügynök architektúrája](images/fig10-5.svg)
->
-
-> **Hibakezelési Stratégiák a Menedzser Mintában.**
-
-A menedzser minta egyik fontos tervezési szempontja a hibakezelés. Az alábbi táblázat felsorol néhány gyakori forgatókönyvet:
-
-| Hiba Típusa | Kezelési Stratégia | Példa |
-|------|------|------|
-| Al-ügynök időtúllépés | Újrapróbálkozás (3-szor), majd értesítés | Fordítási feladat 5 perc alatt nem fejeződött be |
-| Al-ügynök hibás kimenet | Visszajelzés és újraküldés | Fordított dokumentáció hiányzó részekkel |
-| Üzenetsor meghibásodás | Átmenet fájlrendszer-alapú kommunikációra | Az üzenetsor szerver nem elérhető |
-| Erőforrás elégtelenség | Várakozási sor vagy leállítás | API kvóta túllépés |
+Rendszertervezési szempontból a menedzser minta minden szakosodott Ügynököt olyan eszközként modellez, amelyet a Menedzser meghívhat. A Menedzser eszközkészletében nemcsak a hagyományos külső eszközök (keresés, fájlműveletek) szerepelnek, hanem a többi Ügynök hívási felülete is. A Menedzser az eszközhívás mechanizmusán át indítja el a megfelelő Ügynököt, átadja a feladat paramétereit és a szükséges kontextust, majd a befejezés után átveszi a visszatérési eredményt. A Menedzser nézőpontjából egy Ügynök meghívása és egy közönséges eszköz meghívása között nincs lényegi különbség. Ez az egységes absztrakció adja a menedzser minta jó bővíthetőségét: új képességhez elég a megfelelő Ügynököt megírni és eszközként regisztrálni, a Menedzser központi logikáját nem kell módosítani. Egyúttal természetes módon támogatja a heterogenitást is: a különböző Ügynökök más-más modellt, promptot, eszközkészletet használhatnak, sőt eltérő hardverkörnyezetben is futhatnak.
 
 **A Menedzser Képessége, mint a Rendszer Szűk Keresztmetszete.** A menedzser minta legnagyobb kockázata, hogy a Menedzser képessége a teljes rendszer szűk keresztmetszetévé válik. Ha a Menedzser nem tudja helyesen felbontani a feladatot, vagy ha rossz al-ügynököket választ ki, akkor a legerősebb al-ügynökök sem lesznek hatékonyak. Ezért a Menedzserhez kell rendelni a legerősebb modellt; az al-ügynökök használhatnak gyengébb, olcsóbb modelleket.
 
-A "tervező korlát" problémájára egy gyakorlati megoldás a visszacsatolási hurok: a Menedzser ne csak a tervet adja ki, hanem kövesse nyomon a tényleges végrehajtást is. Ha egy al-ügynök folyamatosan hibázik egy adott feladattípusban, a Menedzsernek képesnek kell lennie a hozzárendelés és a feladatbontás módosítására. Ez olyan, mint egy projektmenedzser, aki az első sprint után módosítja a csapat munkaelosztását. A 4. fejezet 4-2. kísérlete, az "Al-ügynök által visszaadott strukturált összefoglaló", pontosan ezt teszi lehetővé.
-
 A 2025-ös Plan-and-Act tanulmány[^plan-and-act-2025] empirikusan is elemezte ezt a jelenséget. Egy tervező–végrehajtó kétügynökös architektúrában **a gyenge tervező jelenti a teljes rendszer legkritikusabb szűk keresztmetszetét**. Ha a tervezés minősége elég jó, viszonylag egyszerű végrehajtóval is jó eredmény érhető el. Ha viszont a tervező hibásan bontja fel a feladatot, minden későbbi végrehajtói munka téves alapokra épül. A tanulmány 54%-os sikerarányt ért el a WebArena-Lite benchmarkon, és a fő hozzájárulása a tervező képességének javítása volt, nem a végrehajtóé. A tanulság: a legerősebb modellt és a leggondosabban megírt promptot a Menedzserhez – vagyis a tervezőhöz – érdemes rendelni, nem pedig egyenletesen elosztani az erőforrásokat az összes Ügynök között.
 
-**Első ellenőrzött párhuzamos győztes:**
+A párhuzamos menedzsernek ezen felül az elszámolási pontot „az első **ellenőrzött** sikerként” kell meghatároznia, nem pedig „az elsőként bejelentett sikerként”:
 
 ```python
 workers = launch_independent_workers(subtasks)
@@ -417,7 +304,43 @@ while workers.any_running:
 return summarize_failures(workers)
 ```
 
+A `settle_once` legyen idempotens (rendszerint zárral vagy tranzakcióval védve); különben két, szinte egyszerre érkező sikeresemény kétszer indítja el az összesítést.
+
 [^plan-and-act-2025]: Erdogan, L. E., et al. *Plan-and-Act: Improving Planning of Agents for Long-Horizon Tasks.* arXiv:2503.09572, 2025.
+
+**Szekvenciális koordinációs forma.**
+
+![10-4. ábra: A Menedzser szekvenciális koordinációja](images/fig10-4.svg)
+
+A Menedzser sorban, egymás után hívja a szakosodott Ügynököket; mindegyik a befejezés után visszaadja az eredményt, és a Menedzser ez alapján dönt a következő lépésről. A vezérlési folyam lineáris, egyszerű és áttekinthető, és jól illik azokhoz a helyzetekhez, ahol a részfeladatok között világos sorrendi függőség van.
+
+> **10-2. kísérlet ★★: Könyvfordító Ügynök**
+>
+> A könyvfordítás tipikusan olyan összetett feladat, amely több Ügynök együttműködését kívánja. Egy műszaki könyv fordítása nem pusztán szöveg átültetése egyik nyelvről a másikra: gondoskodni kell arról is, hogy a szakkifejezések az egész könyvben egységesek legyenek, a szövegkörnyezet pontos, az olvasás pedig végig gördülékeny. Egy nagy nyelvi modellekről szóló angol könyv fordításakor például rengeteg szakkifejezés tér vissza újra meg újra, gyakran több bevett megfelelővel, és ezeket az egész könyvben egységesíteni kell: ha az 1. fejezetben az `agent` „ügynök”, akkor később nem lehet belőle „proxy”.
+>
+> Egyetlen Ügynökkel súlyos kontextusgondok támadnának. Ahogy az Ügynök fejezetről fejezetre halad, a kontextus szüntelenül gyűlik: a könyv szójegyzéke, a már lefordított fejezetek, az aktuális bekezdés, a fordítási gondolatmenet, az eszközhívások eredményei. Egy több száz oldalas műszaki könyv a fordítás közti termékekkel együtt könnyen túllépi a kontextusablakot. Ennél is rosszabb, hogy a túl hosszú kontextusban az Ügynök könnyen „eltéved”: elfelejti a korábbi terminológiai megállapodásokat, és a 9. fejezetben a 2. fejezettől eltérő megfelelőt használ; az átnézési szakaszban feleslegesen ellenőriz újra dolgokat; sőt a figyelem szétszóródása miatt hallucinálhat is, és olyan terminológiai szabályokra „emlékezhet”, amelyek soha nem léteztek.
+>
+> A menedzser minta feladatbontással és felelősség-szétválasztással oldja meg mindezt:
+>
+> - **Glossary Agent** (szójegyzék-Ügynök): megkapja a könyv egészét, felismeri az ismétlődő szakkifejezéseket, szakszótárakban és fordítási irányelvekben keres, majd strukturált szójegyzéket állít elő (JSON/CSV formátumban, az angol kifejezéssel, a magyar megfelelővel, a szófajjal és a használati környezettel). Ha végzett, kiírja a közös fájlrendszerre, és az Ügynök megszüntethető, erőforrásai felszabadíthatók
+> - **Translation Agent** (fejezetfordító Ügynök): megkapja az aktuális fejezetet, a szójegyzéket és a fordítási útmutatót (célközönség szintje, nyelvi stílus), és gördülékeny magyar szöveggé fordítja. A szójegyzékben szereplő kifejezéseknél szigorúan az előírt megfelelőt használja; új kifejezésnél megállapítja a fordítást és megjelöli felülvizsgálatra. Minden példány önálló kontextusban dolgozik, egymást nem zavarva. A fordítást a fájlrendszerbe írja (például `chapter1_hu.md`). A Menedzser több példányt párhuzamosan vagy sorban is indíthat
+> - **Proofreading Agent** (teljes szövegű átnéző Ügynök): megkapja az összes fordítást és a szójegyzéket, és konzisztencia-ellenőrzést végez — egyenként igazolja, hogy a szakkifejezések fordítása egységes-e, felderíti az eltéréseket, és megvizsgálja a szöveg egészének gördülékenységét és olvashatóságát. Az átnézési jelentést a fájlrendszerbe írja
+> - **Manager Agent**: kontextusában elsősorban a feladat leírása, a végrehajtási terv, az egyes Ügynökök hívási naplója és a haladás állapota van. A teljes fordítást nem tárolja (az a fájlrendszerben van), csak a fájlok indexét tartja karban. Az átnézési jelentés alapján a Menedzser egyes fejezeteket visszaküldhet a Translation Agentnek javításra
+>
+> Ebben az architektúrában a Manager Agent kontextusa mindvégig kezelhető méretű marad: elég ismernie a feladat egészének leírását és célját, az egyes szakaszok végrehajtási tervét, minden Ügynök hívási naplóját és visszatérési eredményét, valamint az aktuális haladást — nem kell befogadnia az egyes fejezetek teljes fordítását.
+>
+> A döntő előny a **kontextus-elszigetelés**: a Glossary Agent csak azt látja, ami a kifejezések kinyeréséhez kell, a Translation Agent csak az aktuális fejezetet és a szójegyzéket, a Proofreading Agentnek pedig, bár a teljes szöveghez hozzáfér, csak a konzisztencia-ellenőrzésre kell figyelnie. Mindegyik Ügynök karcsú, összpontosított kontextusban dolgozik, ami nemcsak hatékonyabb, hanem kevesebb hibalehetőséget is hagy — az Ügynök figyelme nem szóródik szét az információözöntől.
+>
+> **A kísérlet követelményei**:
+> 1. Válasszunk fordítandó műszaki könyvet, amelyben ábrák és kód is van
+> 2. Valósítsuk meg a Manager, Glossary, Translation és Proofreading Ügynököt
+> 3. Rögzítsük az egyes Ügynökök kontextusfogyasztását, és igazoljuk, hogy a menedzser minta valóban kordában tartja a kontextus felduzzadását
+> 4. Hasonlítsuk össze az egy Ügynökös és a menedzser mintájú megoldást fordítási minőség, végrehajtási hatékonyság és erőforrás-fogyasztás szempontjából
+>
+>
+> ![10-5. ábra: A könyvfordító Ügynök architektúrája](images/fig10-5.svg)
+>
+>
 
 **Párhuzamos Koordinációs Minta.**
 
@@ -425,75 +348,114 @@ return summarize_failures(workers)
 
 Az alapvető menedzser minta egy központi Menedzser általi szekvenciális feladatbontáson és elosztáson alapul. A gyakorlatban azonban a részfeladatok gyakran nem függetlenek egymástól. Az egyik al-ügynök kimenete egy másik al-ügynök bemenete lehet, vagy több al-ügynöknek kell együttműködnie, hogy egy közös eredményt hozzanak létre. Ilyenkor a párhuzamos koordináció lép életbe, amely a megosztott kontextus nélküli architektúrákban egy "üzenetsoron" alapul.
 
-Az al-ügynökök nem hívják közvetlenül egymást, hanem üzeneteket tesznek közzé az üzenetsoron. A többi al-ügynök (beleértve a Menedzsert is) feliratkozik bizonyos típusú üzenetekre. Ez a mintázat jelentős előnyöket kínál: az üzenetek természetes módon naplózhatók és nyomon követhetők; az új al-ügynökök egyszerűen feliratkoznak a kapcsolódó üzenettípusokra, anélkül hogy a meglévő al-ügynököket módosítani kellene; a Menedzser és az al-ügynökök aszinkron módon kommunikálhatnak.
-
 **Lingtai: a menedzser minta termékesített példája.** A Lingtai helyi, fájlalapú otthont ad a hosszú életű Ügynököknek[^lingtai]. Három szerepe szorosan megfeleltethető e szakasz fogalmainak. A **fő Ügynök** az a tartós központ, amellyel a felhasználó kapcsolatba lép; ő őrzi a tervet és a memóriát, valamint ő indítja a többi szerepet, ezért a Menedzser helyét tölti be. A **daemon** rövid életű, párhuzamos dolgozó, amelyet zajos, jól körülhatárolt feladatra indítanak, majd a végén eldobnak; csak a következtetéseit tartják meg. Ez termékformába önti azt az elvet, hogy az al-ügynökök teljes trajektória helyett strukturált összefoglalót adjanak vissza, valamint a párhuzamos koordináció mintáját. Az **avatar** tartós, specializált csapattárs saját memóriával, postaládával és felelősségi körrel; olyan szakterülethez készül, amelyet több munkameneten át érdemes megőrizni.
+
+- A **fő Ügynök** (main agent) az állandó központ, amely a felhasználóval beszélget, kezeli a tervet és a memóriát, és a munkát a többi szerepnek adja tovább — pontosan ez a Menedzser Ügynök helye;
+- A **daemon** rövid életű párhuzamos munkás, amelyet egyetlen zajos, de körülhatárolt munkára hasítanak ki; a végén eldobják, és csak a következtetést viszi vissza a fő Ügynöknek — épp ez az „az al-Ügynök strukturált összefoglalót ad vissza, nem a teljes trajektóriát” elvének és a párhuzamos koordinációs formának a termékesítése;
+- Az **avatar** tartós, szakosodott csapattárs saját memóriával, postafiókkal és felelősségi körrel; olyan szakmai munkamegosztásra való, amelyet érdemes több munkameneten át megőrizni.
 
 A Lingtai többi tervezési eleme is visszautal a korábbi szakaszokra. A tudás az egyes Ügynökök tartós, privát memóriafájljaiban él, a készségek pedig minden Ügynök által megosztott Markdown-kézikönyvek – vagyis „A fájlrendszer az Ügynök szemszögéből” című rész beépített rendszererőforrásai. Amikor az Ügynök kontextusablaka megtelik, **vedlik**: gondos összefoglalót ír, majd friss kontextussal indul tovább, miközben megőrzi az összefoglalót és a tartós memóriát. Ez a 2. fejezet kontextustömörítési megközelését követi. Az alapul szolgáló modell az Ügynök megváltoztatása nélkül lecserélhető, mert az azonossága, memóriája és képességei egyszerű fájlokként élnek a projektkönyvtárban. Ebben az értelemben az Ügynök maga a fájlkészlete. Ez a 10-2. táblázat első két sorát is termékesíti: a program és a memória egyaránt fájlokra vezethető vissza, így a folyamat bármikor újra felépíthető.
 
 [^lingtai]: A Lingtai hivatalos oktatóanyaga: https://lingtai.ai/en/tutorial/
 
-> **10-3. kísérlet ★★: Telefon + Számítógép Többügynökös Együttműködés**
-
-> Ez a kísérlet megköveteli a 6. fejezet valós idejű telefonhívás Ügynökét. A könyvben a „telefon” valós idejű hangkapcsolatot jelent: amikor a hívott fél maga a felhasználó, nincs szükség PSTN-hozzáférésre vagy E.164-es telefonszámra. A helyi WebRTC-oldal elegendő a kísérlethez; távoli telepítésnél a hálózati környezet igényei szerint jelzéskezelés és TURN adható hozzá.
-
-> **Feladat Forgatókönyv**: A felhasználó bejelentkezik a weblapra és kitölt egy űrlapot (online bejelentkezéses ellenőrző pont). Eközben a felhasználónak át kell adnia egy ellenőrző kódot a vevőszolgálat által küldött SMS-ből. Ebben a forgatókönyvben a számítógép Ügynök segít a felhasználónak a webes műveletekben, miközben a telefon Ügynök hívja a vevőszolgálatot, hogy megszerezze a kódot.
-
-> **Rendszer Tervezés**: Elegendő két Ügynök, mindegyik saját szakterülettel. A számítógép Ügynökök eszközei: `read_file`, `write_file`, `execute_code`, `list_dir`, `search_web`, `send_message`. A telefon Ügynök (a 6. fejezetből) hozzáadja a `make_call` eszközt. Ebben a társi együttműködési mintában nincs Menedzser; a két Ügynök közvetlen pont-pont üzenetküldéssel kommunikál (`send_message`). A koordináció a következőképpen történik:
-
-> 1. A számítógép Ügynök navigál az ügyfélszolgálati weboldalra, és elindít egy csevegést.
-> 2. A csevegés során a weboldal SMS küldésére kéri a felhasználót egy ellenőrző kóddal. Mivel ez nem hajtható végre a számítógépen, a számítógép Ügynök üzenetet küld a telefon Ügynöknek: "Hívd fel az ügyfélszolgálati számot, kérdezd meg az ellenőrző kódot. Itt van a telefonszám és a hívás kontextusa."
-> 3. A telefon Ügynök megkapja az üzenetet és elindítja a hívást. A hívás befejezése után visszaküldi az ellenőrző kódot a számítógép Ügynöknek.
-> 4. A számítógép Ügynök kitölti az ellenőrző kódot a weboldalon, és befejezi az űrlap kitöltését.
-
-> A megosztott kontextus nyilvánvalóan nem szükséges: webes böngészés és valós idejű hanghívás két különböző környezet, és nincs szükség a teljes beszélgetési előzmény átadására. Mindössze egy üzenet elegendő.
-
-> **Kísérleti Követelmények**:
-> 1. Két Ügynök előkészítése különböző eszközkészletekkel (számítógép és telefon)
-> 2. Pont-pont kommunikációs mechanizmus megvalósítása `send_message` segítségével
-> 3. Csak a szükséges információ átadása az együttműködés során (nem a teljes kontextus)
+> **10-3. kísérlet ★★★: Önállóan vezényelt telefon + számítógép Ügynök**
 >
-
-> ![10-7. ábra: Telefonos és számítógépes kettős Ügynök-architektúra](images/fig10-7.svg)
+> **Előfeltétel**: ez a kísérlet a 6. fejezet Computer Use és hang-Ügynök technikáit használja együtt.
 >
-
-> A menedzser minta természetesen támogatja a párhuzamos koordinációt, amelyben a Menedzser dinamikusan hozza létre és koordinálja az al-ügynököket. A Menedzser monitorozza az előrehaladást, és szükség esetén beavatkozik. Ez a mintázat alkalmas összetett feladatokhoz, ahol a számos részfeladat áttekintéséhez és koordinálásához központi vezérlésre van szükség. A fő korlátja, hogy a Menedzser potenciális szűk keresztmetszetté és egyetlen meghibásodási ponttá válik.
-
-> **10-4. kísérlet ★★★: Üzenetsor-alapú Párhuzamos Keresés**
+> **Feladat-forgatókönyv**: a felhasználó csupán egy webcímet ad meg, és arra kéri az Ügynököt, hogy töltsön ki egy bonyolult regisztrációs vagy repülőjegy-foglalási űrlapot. A Computer Agent előbb megnyitja az oldalt és felismeri a mezőket; a név, okmányszám, elérhetőség, cím és preferenciák nincsenek benne az aktuális kontextusban, ezért a felhasználótól kell begyűjteni őket.
 >
-> **Feladat Forgatókönyv**: A felhasználó kér egy összetett keresést, pl. "Találd meg a kapcsolati adatait a Samsung amerikai ügyfélszolgálatának." Ehhez több forrás (weboldal, hivatalos dokumentum, fórum stb.) egyidejű keresése szükséges. A kihívás az, hogy a keresésnek hatékonynak kell lennie – ha az egyik forrás megtalálja az eredményt, a többit azonnal le kell állítani.
+> **Rendszerarchitektúra**: a Computer Agent végzi a böngészőműveleteket, és egyben ő e kísérlet vezénylője; a Phone Agent felel az ASR-ért, az LLM-ért, a TTS-ért és a valós idejű párbeszédért. A kettő pont-pont eszközön vagy üzenetbuszon át cserél strukturált üzeneteket (küldő, címzett, típus, tartalom). Külön Menedzser-folyamatra nincs szükség: a Computer Agent úgy hívhatja a Phone Agentet, mint egy eszközt.
 >
-> **Rendszer Tervezés**:
+> Ha a felhasználónak a csevegőablakban kellene tételenként begépelnie mindent, az lassabb volna, és könnyen kimaradna egy adat vagy elrontaná a formátumot; a telefon-Ügynök viszont folyamatosan kérdezhet, visszaigazolhat és újrakérdezhet, és a természetes nyelvű válaszokat strukturált mezőkké alakíthatja.
 >
-> A keresés egy "elosztott párhuzamos felszámolás (parallel teardown)" alkalmazási forgatókönyve. A Menedzser elindít több kereső al-ügynököt, amelyek különböző forrásokat vizsgálnak. Amint az egyik al-ügynök megtalálja az eredményt, közzétesz egy `result_found` eseményt az üzenetsoron. A Menedzser feliratkozik erre az eseményre, és amikor megkapja, elküldi a `terminate` parancsot a többi al-ügynöknek. Minden al-ügynök szabályosan leáll, erőforrásokat szabadítva fel.
-
-> **Üzenetsor Használat**:
-
-> - A Menedzser üzenetet küld: `{type: "search", target: "all", payload: {query: "..."}}`
-> - Az al-ügynökök válaszüzenetet küldenek: `{type: "status_update", target: "manager", payload: {agent: "agent_A", status: "searching"}}`
-> - Amikor egy al-ügynök megtalálja az eredményt: `{type: "result_found", target: "manager", payload: {result: "..."}}`
-> - A Menedzser elküldi a `terminate` parancsot a többi al-ügynöknek: `{type: "terminate", target: "agent_B|agent_C|...", payload: {reason: "result_found"}}`
-
-> **Versenyhelyzet Védelem**: Több al-ügynök szinte egyszerre találhat eredményt. A `result_found` feldolgozása előtt a Menedzser ellenőrizze a `result_lock` állapotot. Csak az első sikeres eseményt fogadja el; az összes későbbi esemény további kezelés nélkül eldobásra kerül.
-
-> **Kísérleti Követelmények**:
-> 1. Állíts fel egy üzenetsort a Menedzser Ügynök és az al-ügynökök közötti kommunikációhoz (használhatsz Redis, RabbitMQ, vagy egy egyszerűbb eseménybusz implementációt)
-> 2. Indíts el legalább 3 kereső al-ügynököt, amelyek párhuzamosan dolgoznak
-> 3. Valósítsd meg a kaszkád megszakítást: amint az egyik al-ügynök megtalálja a választ, a Menedzser megszakítja a többit
-> 4. Valósítsd meg a versenyhelyzet védelmet a `result_lock` segítségével
-> 5. Naplózd az egyes al-ügynökök végrehajtási idejét és a kaszkád megszakítás hatékonyságát
+> **Két futtatási mód**:
 >
-
-> ![10-8. ábra: Párhuzamos webes adatgyűjtési architektúra](images/fig10-8.svg)
+> - **Rögzített mód (párhuzamossági alapvonal)**: mindkét Ügynököt előre elindítjuk, és igazoljuk az önálló ReAct-hurkokat, a kétirányú kommunikációt és a valódi párhuzamosságot.
+> - **Önálló mód (a fő kísérlet)**: csak a Computer Agentet indítjuk el. Az oldal, a már ismert információk és a feladat igényei alapján maga dönti el, meghívja-e az `initiate_phone_call_agent(purpose, required_info)` függvényt; ne helyettesítsük a modell döntését olyan Python-szabállyal, hogy „a mezők száma meghalad egy küszöböt”. A hívás után a rendszer a feladat célját, a begyűjtendő mezőket és a formátumkorlátokat önálló kontextusként adja át a Phone Agentnek, majd a rögzített mód kommunikációs és párhuzamossági mechanizmusai következnek.
+>
+> **Párhuzamosság és zárt hurok**: a Phone Agent WebRTC-n át tételenként kérdez, kinyeri és ellenőrzi a válaszokat; a Computer Agent eközben képernyőképet készít, értelmezi az oldalt és kitölti a mezőket. Minden érvényes érték beérkezésekor `info_collected` üzenetet küld, és a Phone Agent nem várja meg a weblap kitöltését, hanem rögtön a következőt kérdezi; a Computer Agent `fill_error` üzenettel vagy az oldal állapotával válaszol, a Phone Agent pedig ehhez igazítja a megfogalmazást. Formátumhiba esetén `format_invalid` megy vissza és újra kérdez; ha az újrapróbálkozások száma túllépi a korlátot vagy az oldal rendellenes, a folyamat biztonságosan felfüggeszt. Az adatgyűjtés végén `task_completed` üzenet megy, és a Computer Agent az ellenőrzés után beküldi az űrlapot. Rendellenességkor a még futó másik felet le kell mondani, be kell zárni a böngészőt, a hangsávokat és a hívást; élő emberi hanghoz kifejezett hozzájárulás, a beküldéshez kifejezett felhatalmazás kell.
+>
+> **A kísérlet követelményei**:
+> 1. Valósítsuk meg a két önálló Ügynököt és a hatékony, kétirányú strukturált kommunikációt;
+> 2. Igazoljuk mind a rögzített, mind az önálló módban, hogy a „következő kérdezése” és az „előző kitöltése” valóban átfedésben van;
+> 3. Valósítsuk meg a mezőformátum-ellenőrzést, az újrakérdezést, az oldalhiba-visszajelzést, az időtúllépést és az erőforrások felszabadítását;
+> 4. Rögzítsük az üzenetek időrendjét, az önálló indítási döntést, a késleltetést, a sikerarányt és az erőforrás-fogyasztást, majd hasonlítsuk össze a két módot.
+>
+>
+> ![10-7. ábra: A Phone és a Computer Ügynök kettős architektúrája](images/fig10-7.svg)
+>
+> **10-4. kísérlet ★★★: Ügynök, amely egyszerre több webhelyről gyűjt információt**
+>
+> **Előfeltétel**: érdemes előbb megismerni a 6. fejezet eseményvezérelt és megszakítási mechanizmusait.
+>
+> Ez a kísérlet a több Ügynökös párhuzamos végrehajtás alkalmazását vizsgálja információgyűjtési helyzetben. A 10-3. kísérlet két heterogén Ügynökének együttműködésétől eltérően itt **több homogén Ügynök párhuzamos keresése** a tárgy, valamint az, hogyan érhető el központi koordinációval a hatékony feladatvégzés és az erőforrások optimalizálása.
+>
+> **A feladat**: adott egy egyetem több karának webhelye; a kari oktatói névjegyzékekben meg kell találni egy megadott oktatót (például „Kovács István”), és megtalálás után vissza kell adni a karát, beosztását, kutatási területét és egyéb adatait.
+>
+> **A fő kihívások**:
+>
+> **1. Párhuzamos indítás**: a Manager Agent a feladat igényei szerint dinamikusan hoz létre 10 Computer Use Agent példányt, mindegyiket egy-egy kari webhelyhez. Minden példány önálló folyamat vagy szál legyen, saját böngésző-munkamenettel, hogy egyidejűleg, egymást nem blokkolva futhassanak. Indításkor át kell adni: a cél webhely címét, a keresendő oktató nevét és a feladat azonosítóját (az üzenetek irányításához).
+>
+> **2. Valós idejű megfigyelés**: minden Ügynök futás közben rendszeresen küld állapotfrissítést („töltöm a webhelyet”, „elemzem az oktatói névjegyzéket”, „nem találtam, a feladat kész”, „egyezést találtam, az adatok a következők”). A Manager Agent az üzenetbuszon fogadja ezeket, feladatállapot-táblát tart karban, és valós időben látja, mely Ügynökök futnak még, melyek végeztek, és melyek hibáztak.
+>
+> **3. Kaszkádolt leállítás**: tegyük fel, hogy az informatikai kart feldolgozó Ügynök megtalálja a keresett oktatót; ekkor elküldi a `{"type": "target_found", "agent_id": "agent_3", "data": {...}}` üzenetet. A Manager Agent ezt megkapva azonnal minden még futó Ügynöknek elküldi a `{"type": "terminate", "reason": "target_found_by_agent_3"}` üzenetet, és minden érintett Ügynök elegánsan leáll, majd visszaigazol. A Manager Agent megvárja az összes visszaigazolást (vagy az időtúllépést), és utána összegzi az eredményt. Követelmény: az Ügynök bármikor tudjon válaszolni a leállítási jelre (a 6. fejezet megszakítási mechanizmusához hasonlóan), és a leállás legyen elegáns — ne maradjanak lógó folyamatok vagy lezáratlan erőforrások; a versenyhelyzeteket (race condition) is kezelni kell.
+>
+> **Fogalmi kiegészítés: mi az a versenyhelyzet?** Tegyük fel, hogy az A és a B Ügynök szinte ugyanabban az ezredmásodpercben találja meg a keresett oktatót, és egyszerre jelenti a Manager Agentnek: „megvan!”. Ha a Manager Agent ezt rosszul kezeli — mondjuk A jelentése után elkezdi összegezni az eredményt, de közvetlenül utána B jelentése egy második összegzést indít —, ismétlődő eredmények vagy egymásnak ellentmondó állapotok keletkezhetnek. A szokásos megoldás a zár: az első jelentés beérkezésekor az állapot azonnal zárolódik, a későbbi jelentéseket pedig ismétlésként ismeri fel és eldobja a rendszer.
+>
+> **4. Hibakezelés**: éles futásban többféle rendellenesség adódhat: egyik kar webhelye nem érhető el (hálózati hiba, leállt kiszolgáló), egy webhely szerkezete eltér a várttól, így az Ügynök nem tudja helyesen elemezni, vagy minden Ügynök végigkeres, de senki sem találja a keresettet. A Manager Agent stratégiája: minden Ügynökhöz időtúllépést rendel (például 2 perc), és az időtúllépést kudarcnak tekinti; a hibákat elszigeteli, hogy a többi Ügynök tovább futhasson; a végén pedig összegez — ha akár egy Ügynök is sikerrel járt, visszaadja az adatokat, ha mind elbukott, jelenti a felhasználónak, hogy „a keresett oktató nem található”, és statisztikát ad a kudarcok okairól.
+>
+> **A kísérlet követelményei**:
+> 1. Valósítsunk meg olyan Manager Agentet, amely dinamikusan több párhuzamos Ügynököt indít
+> 2. Valósítsuk meg a Computer Use Agentet a browser-use vagy hasonló nyílt forráskódú projekt alapján
+> 3. Valósítsunk meg üzenetbuszt, amely támogatja a Manager Agent és a több al-Ügynök közötti kétirányú kommunikációt
+> 4. Valósítsuk meg a siker utáni kaszkádolt leállítást, hogy a cél megtalálása után minden más Ügynök gyorsan megálljon
+> 5. Kezeljük a különféle rendellenességeket (a webhely elérhetetlensége, elemzési hiba, sehol sem található)
+> 6. Rögzítsük és hasonlítsuk össze a párhuzamos és a soros végrehajtás időigényét, igazolva a párhuzamosítás teljesítménynyereségét
+>
+>
+> ![10-8. ábra: A párhuzamos web scraping architektúrája](images/fig10-8.svg)
+>
 >
 
 ### Decentralizált minta
 
-A központi vezérlő elhagyásának célja az emberi szervezetek mintázata: egyenrangú szerepek osztják fel a munkát és ellenőrzik egymást, minden Agent maga dönti el, mikor ad át feladatot, kér visszajelzést vagy jelez ellentmondást. Ez a Manager leállásából eredő egyetlen hibapontot is csökkenti. A mikroszolgáltatások világában a két megközelítés neve **orchestration** és **choreography**.
+Ha már van vezetői modell, mire jó a decentralizált? A központi vezérlő elhagyásának indoka mindenekelőtt az, hogy az emberi társadalom szervezőelvét utánozzuk: több, felelősségében egyenrangú szerep ossza meg a munkát és tartsa egyensúlyban egymást, mindegyik a maga szakmai nézőpontjából vizsgálja a problémát, és maga döntse el, kivel beszél – ahelyett, hogy minden ítélet egyetlen Managernél futna össze. A decentralizált modellben minden Agent saját szakmai megítélése alapján dönti el, mikor fordul egy másik Agenthez: lehet ez feladatátadás („a magam részével végeztem, tiéd a folytatás”), visszajelzéskérés („ez a megoldás technikailag megvalósítható?”) vagy problémajelzés („a kapott követelmények ellentmondanak egymásnak, újra kell tárgyalnunk”).
 
-A következő példák a kommunikáció szétcsatolásától a vezérlési folyamat decentralizálásáig vezetnek: a MetaGPT rögzített futószalag, az AutoGen group chat megosztott beszélgetést és központi ütemezést vegyít, az OpenAI Swarm pedig a devirányítást az egyenrangú Agentek között osztja el.
+A decentralizált modell az Agentek stabilitási gondjain is segít. A modell vagy az API-szolgáltatás hibái miatt egyes Agentek leállhatnak, elronthatják az eszközhívásokat, vagy hibás eszközhívások végtelen ciklusába ragadhatnak. A vezetői modellben **a vezető Agent összeomlása gyakran a rendszer legnagyobb egypontos hibája**. A decentralizáció ezt a bajt enyhíti.
 
-**Decentralizált handoff-protokoll:**
+A mikroszolgáltatások világa a vezetői és a decentralizált modellt **orkesztrációnak** (orchestration), illetve **koreográfiának** (choreography) nevezi: az elsőben egy karmester vezényel mindent, a másodikban minden táncos maga méri fel, mikor lépjen színre.
+
+Az alábbi három eset fokozatosan halad előre: a MetaGPT vezérlési folyama valójában rögzített futószalag (áldecentralizáció, csak a kommunikációs mechanizmusban van szétcsatolás), az AutoGen group chatje a közös beszélgetésnapló és a központi ütemezés hibridje, és csak az OpenAI Swarm valósít meg a vezérlési folyamban is valóban egyenrangú decentralizációt.
+
+**MetaGPT: SOP-vezérelt szoftvercég-szimuláció.**
+
+![10-9. ábra A MetaGPT többügynökös együttműködési hálózata](images/fig10-9.svg)
+
+A MetaGPT alapgondolata a következő: az emberi szoftvercégek által felhalmozott **szabványos működési eljárások** (SOP, Standard Operating Procedure) maguk is sokszorosan bevált együttműködési protokollok – ha az SOP-t belekódoljuk egy több-Agentes rendszerbe, és minden szerep úgy állít elő szabványosított szállítmányt, ahogy egy futószalag szakmunkása, akkor ezek a szállítmányok természetes módon alkotják a szerepek közötti kommunikációs felületet.
+
+A MetaGPT-ben a szerepek rögzített sorrendben dolgoznak (Product Manager → Architect → Project Manager → Engineer → QA), és mindegyik strukturált „átadási csomagot” bocsát ki:
+
+- **Product Manager Agent**: átveszi a követelményleírást, és strukturált PRD-t (termékkövetelmény-dokumentumot) készít: funkciólistával, felhasználói történetekkel, elfogadási kritériumokkal és priorizálással
+- **Architect Agent**: elolvassa a PRD-t, meghozza az architekturális döntéseket (technológiai készlet kiválasztása, modulokra bontás, interfészek meghatározása, adatmodell tervezése), és tervezési dokumentumot ad ki
+- **Project Manager Agent**: elolvassa az architekturális tervet, konkrét feladatlistára és fájlszintű munkamegosztásra bontja a rendszert, tisztázza a modulok függőségi sorrendjét, majd kiosztja a feladatokat a mérnököknek
+- **Engineer Agents**: elolvassák a tervezési dokumentumot, megvalósítják a rájuk bízott modulokat, és kódot állítanak elő; több példány párhuzamosan is dolgozhat
+- **QA Engineer Agent**: elolvassa a kódot és a PRD-t, teszteseteket generál, futtatja a teszteket, rögzíti a hibákat, és tesztjelentést ad ki
+
+A gyakorlatban egy hatékony „átadási csomag” rendszerint három részből áll: **feladatleírás** (mit tegyen a fogadó fél, mik az elfogadási kritériumok), **megerősített tények és korlátok** (felhasználói preferenciák, üzleti szabályok, az előző szakaszban lezárt döntések), valamint **hivatkozások a strukturált termékekre** (fájlútvonalak, nem a fájlok tartalma; a fogadó fél igény szerint olvassa). Egyik Agentnek sem kell értenie a többiek „gondolatmenetét”: elég, ha az átadási csomag és a termékek formátumát és jelentését érti.
+
+A MetaGPT igazi hozzájárulása a decentralizált kommunikációhoz az információátadás mechanizmusa: **közös üzenetkészlet plusz szerep szerinti feliratkozás**. Minden szerep strukturált üzenetet tesz közzé egy minden szerep számára látható üzenetkészletben, a többi szerep pedig a saját feliratkozási beállítása szerint csak a felelősségi körébe tartozó üzeneteket veszi ki – nem pedig pontról pontra adják tovább a szót. A közzétevőnek nem kell tudnia, ki fogyasztja majd a kimenetét; új szerep felvételéhez elég deklarálni, mely üzenettípusokra iratkozik fel, és egyetlen meglévő szerepet sem kell módosítani. Ez hozza el a valódi szétcsatolást: ha például a Product Managert erősebb modellre cseréljük, addig, amíg az általa közzétett PRD megfelel a specifikációnak, a többi Agenten semmit sem kell változtatni.
+
+Az őszinteség kedvéért: **vezérlési folyam** tekintetében a MetaGPT nem decentralizált – a szerepek sorrendjét az SOP előre rögzíti, és az egész inkább egy futószalagra hasonlít (az 1. fejezet nyelvén: munkafolyamatra). Azért tárgyaljuk mégis ebben a szakaszban, mert az üzenetkészlet és feliratkozás alkotta kommunikációs mechanizmus a decentralizált rendszerek legfontosabb tervezési elemét, a szétcsatolást mutatja meg. Az olyan többirányú, dinamikus visszacsatolás pedig, mint hogy „a QA közvetlenül a Product Managertől kérdez rá a követelményre”, vagy „az Engineer az Architecttel beszéli meg az alternatívát”, ennek az architektúrának természetes továbbgondolása; az eredeti MetaGPT nem valósította meg.
+
+**AutoGen csoportos csevegés.**
+
+Az AutoGen csoportos csevegése (group chat) több Agentet ültet ugyanabba a beszélgetésbe: minden körben egy „beszélőválasztó” dönti el, melyik Agent szólal meg legközelebb. A választó lehet egyszerű körbeforgó szabály, de lehet olyan LLM is, amely az aktuális beszélgetés tartalma alapján ítéli meg, ki a legalkalmasabb a folytatásra; bármelyik Agent megszólalása minden résztvevő számára látható. Ez nem teljesen decentralizált rendszer: a beszélő kiválasztását egy központi GroupChatManager dönti el egységesen, és már az is vezérlésifolyam-döntés, hogy „ki következik”. A „közös beszélgetésnapló plusz központi ütemezés” hibrid formája: minden Agent ugyanazt a nyilvános naplót látja, de mindegyik megtartja saját rendszerpromptját és eszközkészletét, az ütemezés joga pedig a választónál összpontosul.
+
+**OpenAI Swarm.**
+
+Az OpenAI Swarm annak példája, amikor a vezérlési folyam valóban egyenrangú decentralizációt valósít meg: minden Agent több handoff (átadási) lehetőséggel rendelkezik, és bármikor átadhatja a vezérlést a hálózat bármely másik Agentjének. A rendszerben nincs központi ütemező; a vezérlés váltóbotként jár körbe az egyenrangú Agentek között, az útválasztási döntések pedig teljesen szétoszlanak az egyes Agentek saját megítélésébe. A közös kontextusú több-Agentes együttműködéstől eltérően a handoff csak egyértelmű feladatcsomagot és termékhivatkozásokat adjon át, és ne tárja fel alapértelmezésben a teljes privát trajektóriát. Az egyenrangú átadás kockázata a kör kialakulása: A átadja B-nek, B visszaadja A-nak, és a feladat üresen forog a hurokban; ezért kellenek védelmi mechanizmusok, például az átadások számának felső korlátja.
+
+A decentralizált handoff minimális protokollja így írható fel:
 
 ```python
 handoff = {
@@ -511,21 +473,15 @@ else:
     run_local_agent(handoff)
 ```
 
-**MetaGPT: SOP-vezérelt szoftvervállalat-szimuláció.**
+Ez a „kontextus-elszigetelést” ellenőrizhető interfésszé alakítja: a fogadó fél elolvassa a feladatcsomagot és a hivatkozásokat, és igény szerint gyűjt bizonyítékot; a költségkeretet, a látogatási láncot és a körfelismerést a futtatókörnyezet őrzi, és egyik Agent sem törölheti magától.
 
-![10-9. ábra A MetaGPT többügynökös együttműködési hálózata](images/fig10-9.svg)
+> 2025 óta az „Agent Swarm” (ágensraj) a különféle gyártók divatszava lett, csakhogy nem egyetlen architektúrának felel meg. Az iparági használat nagyjából kétféle. Az egyik az OpenAI Swarm-féle handoff-hálózat (ide tartozik a LangGraph swarm könyvtára és a Microsoft Agent Framework handoff-orkesztrációja is), ez e szakasz decentralizált modellje. A másik: több elterjedt kereskedelmi termékben az Agent Swarm valójában méretre növelt vezetői modell. A Kimi K2.5-tel bemutatott Agent Swarmban a fő Agent dinamikusan több száz al-Agentet hoz létre párhuzamos futtatásra, és a „mikor bontsunk, hányfelé” orkesztrációs döntéseket párhuzamos Agenteken végzett megerősítéses tanulással közvetlenül a modellbe tanítja; a K3 ezt önálló modellszintként vitte tovább, és nyílt forráskódúvá tette a hozzá tartozó, párhuzamos Agent-tréninghez való AgentEnv homokozót[^ch10-kimi-swarm]. Az Anthropic több-Agentes kutatórendszere és a Manus Wide Researchje egyaránt orchestrator-worker csillagtopológia. Reméljük, e könyv elolvasása után az olvasó átlát a neveken, meglátja a fogalmak mögötti lényeget, és a nevek megtévesztése nélkül elemzi a különböző több-Agentes rendszerek tényleges szerkezetét.
 
-A MetaGPT egy szoftvercég szabványos eljárásait kódolja. A szerepek Product Manager → Architect → Project Manager → Engineer → QA sorrendben dolgoznak, és mindegyik strukturált átadási csomagot készít: feladatleírást és elfogadási feltételeket, megerősített tényeket és korlátokat, valamint termékhivatkozásokat, például fájlútvonalakat. A szerepek közös üzenetkészletbe publikálnak, és csak a feliratkozott típusokat olvassák. Ez szétcsatolja a küldőt és fogadót, de a vezérlési folyamatot az SOP rögzíti; a MetaGPT ezért nem teljesen decentralizált.
+**Több egyenrangú Agent-példány ugyanazon a gépen.**
 
-**AutoGen group chat.** Az Agentek közös nyilvános naplót látnak, de a következő megszólalót egy `GroupChatManager` választja. Ez megosztott kontextus és központi ütemezés keveréke.
+A fenti három rendszer Agentjei mind ugyanazon az egy dolgon dolgoztak együtt. Van a decentralizációnak egy másik fajtája is, ahol mindenki a magáét csinálja: minden Agentnek saját feladata van, és a köztük folyó kommunikáció nem a munkamegosztást szolgálja, hanem a közös erőforrások használatának összehangolását. A Claude Code már támogatja, hogy ugyanazon a gépen több Agent felfedezze egymást (éppen ez a 4. fejezetbeli `list_agents` rendeltetése), és üzenetet küldjön egymásnak: két Agent, amely ugyanazt a fájlkészletet módosítja, megtárgyalja az ütközés feloldását; ha a gépen csak egy GPU van, de mindkét példány tanítást futtatna, összehangolják a GPU használatát.
 
-**OpenAI Swarm.** Minden Agent központi ütemező nélkül adhatja át a vezérlést egy másiknak. A vezérlés stafétaként halad, de A → B → A ciklus keletkezhet, ezért átadási korlát szükséges.
-
-> Az „Agent Swarm” 2025 óta több architektúrát jelölhet: OpenAI Swarm-szerű decentralizált handoff hálózatot, vagy nagy léptékű Manager-mintát, ahol a fő Agent sok párhuzamos al-Agentet indít, mint a Kimi K2.5/K3 és az AgentEnv[^ch10-kimi-swarm]. Az Anthropic és a Manus több-Agentes kutatórendszerei is orchestrator-worker csillagtopológiát használnak.
-
-**Több egyenrangú Agent-példány ugyanazon a gépen.** A fenti három rendszer Agentjei ugyanazon a feladaton dolgoznak együtt; a decentralizációnak van ezzel ellentétes fajtája is: minden Agentnek saját feladata van, és nem a munkamegosztás miatt kommunikálnak egymással, hanem hogy összehangolják a közös erőforrások használatát. A Claude Code már támogatja, hogy az azonos gépen futó Agentek felfedezzék egymást (pontosan erre való a 4. fejezet `list_agents` primitívje) és üzenetet küldjenek egymásnak: ha két Agent ugyanazt a fájlcsoportot módosítja, egyeztetik az ütközés feloldását; ha a gépben csak egy GPU van, és mindkét példánynak tanítást kell futtatnia, egyeztetik a GPU használatát.
-
-A decentralizált minta következő fejlődési lépése az Agent-társadalom.
+A decentralizált modell további fejlődési iránya az Agent-társadalom, amelyet e fejezet végén mutatunk be.
 
 [^ch10-kimi-swarm]: Moonshot AI, *Kimi Agent Swarm: 100 Sub-Agents at Scale*, 2026, https://www.kimi.com/blog/agent-swarm. A GTC 2026-on 300 párhuzamos al-Agentes felső határt jelentettek be; az AgentEnv a Kimi K3-mal együtt, 2026 júliusában jelent meg.
 
@@ -537,25 +493,7 @@ A decentralizált minta következő fejlődési lépése az Agent-társadalom.
 - **Feladat Életciklus (Task Lifecycle)**: Az A2A a feladatot mögöttes entitásként használja, és szabványos állapotokat határoz meg: elküldve (submitted), feldolgozás alatt (working), bemenetre vár (input-required), befejezve (completed), sikertelen (failed).
 - **Push és Pull Üzenetküldés**: Támogatja a Menedzser által indított pull alapú és az Ügynök által indított push alapú frissítéseket.
 
-Az A2A fejlődésének figyelemmel kísérése ajánlott, ahogy a szabvány és annak iparági elfogadottsága alakul.
-
-> **Kétügynökös PPT Javasló-Ellenőrző"**
-
-> Ez a kísérlet az 5. fejezet 5-2. kísérletének (PPT generálás vizuális visszajelzéssel) adaptációja a megosztott kontextus nélküli architektúrához. A Javasló és az Ellenőrző Ügynökök most nem osztanak kontextust; fájlok és eszközhívás paraméterek segítségével kommunikálnak.
-
-> **Rendszer Tervezés**:
-
-> Javasló Ügynök: a PPT Python kódját írja és a `/workspace/shared/` könyvtárba menti, majd üzenetet küld az Ellenőrzőnek: "Kérlek, ellenőrizd le a generált PPT-t." Az Ellenőrző beolvassa a PPT kódot, rendereli a PPT-t, képernyőképet készít, majd visszaküldi a képernyőképet az ellenőrzési eredményekkel együtt.
-
-> Ahelyett, hogy a Javasló és az Ellenőrző osztozna a kontextuson, most a `/workspace/shared/` megosztott könyvtáron keresztül kommunikálnak: a Javasló a generált PPT kódot a `/workspace/shared/output/` útvonalra menti; miután az Ellenőrző elkészíti a visszajelzést, visszaírja a `/workspace/shared/feedback/` útvonalra. Minden Ügynök felelős a saját kontextusáért, és nincs szükség a teljes előzmények átadására.
->
-> **Kísérleti Követelmények**:
-> 1. Két Ügynök definiálása: Javasló (PPT kódot generál) és Ellenőrző (PPT-t renderel és ellenőrzi)
-> 2. Kommunikációs mechanizmus a megosztott fájlrendszeren keresztül
-> 3. Ellenőrzésre vonatkozó ismételt körök: a Javasló minden körben beolvassa az Ellenőrző visszajelzését, és javítja a PPT-t
-> 4. Iteráció számkorlát (pl. legfeljebb 5 kör)
->
->
+Az A2A helyét a 4. fejezet MCP-jével összevetve érdemes érteni: az MCP az Ügynök és az eszközök közötti együttműködést oldja meg, az A2A pedig az Ügynökök közöttit. Nem váltja ki az ebben a fejezetben bemutatott kommunikációs mechanizmusokat, hanem szervezeti határon átnyúló esetre általánosítja őket: azon belül továbbra is elég a megosztott fájlrendszer és az üzenetbusz, szervezetek között viszont szabványos képességleírásra, hitelesítésre és feladatéletciklusra van szükség.
 
 ## Többügynökös Hibamódok
 
@@ -577,15 +515,9 @@ Ha egyszer a megosztott memória stílusú kommunikációt választod, a konkure
 
 **Szemantikai Ütközések (Logikai Szintű Konzisztencia Ütközések)**: Fájlszinten nem látható ütközés, de több Ügynök műveletei logikailag ellentmondanak egymásnak – ez a típusú ütközés alattomosabb és veszélyesebb. Például: A Ügynök felelős az összes kép újraszámozásáért egy könyvben, míg B Ügynök egyidejűleg módosítja egy fejezet tartalmát és az eredeti számok alapján hivatkozik a képekre. A kettő különböző fájlokon dolgozik, így fájlszinten nincs ütközés. Az eredmény azonban az, hogy az összes B Ügynök által hivatkozott képszám érvénytelenné válik, miután A Ügynök befejezi az újraszámozást, és az olvasók hibás képreferenciákat látnak.
 
-**Megoldás: Optimista Zárolási Mechanizmus**. Ez egy általános konkurencia-vezérlési stratégia az adatbázisokban. Hogy megértsük, vegyünk egy hétköznapi példát: te és egy kollégád egyszerre nyitjátok meg ugyanazt az online dokumentumot. Egy "pesszimista zárolás" zárolná a dokumentumot, amikor megnyitod, és a kollégád "fájl zárolva" üzenetet látna szerkesztéskor. Ez biztonságos, de nem hatékony, mert lehet, hogy csak nézed a dokumentumot. Az "optimista zárolás" rugalmasabb: mindenki szabadon megnyithat és szerkeszthet, de mentéskor a rendszer megkérdezi: "Módosította-e valaki más a dokumentumot azóta, hogy megnyitottad?" Ha igen, felszólít a frissítésre és az újrapróbálkozásra.
+**Megoldás: optimista zárolás (Optimistic Locking).** Ez az adatbázisok világában bevett párhuzamosságkezelési stratégia. A megvalósítás a következő: minden fájl nyilvántart egy verziószámot (vagy utolsó módosítási időbélyeget). Az Agent olvasáskor feljegyzi az aktuális verziószámot, íráskor pedig ellenőrzi, hogy a verziószám még mindig ugyanaz-e, mint olvasáskor. Ha időközben egy másik Agent módosította a fájlt, az írás meghiúsul, és az Agent kénytelen újraolvasni a legfrissebb verziót, majd annak alapján újra elvégezni a műveletet. E mechanizmus ára az alkalmi újrapróbálkozás, cserébe viszont garantálja az adatok konzisztenciáját.
 
-A konkrét megvalósítás: minden fájl egy verziószámot (vagy utolsó módosítási időbélyeget) tart fenn. Amikor egy Ügynök beolvas egy fájlt, rögzíti az aktuális verziószámot; íráskor ellenőrzi, hogy a verziószám még mindig ugyanaz-e, mint a beolvasáskor. Ha a fájlt időközben egy másik Ügynök módosította, az írás sikertelen, és az Ügynök kénytelen újra beolvasni a legújabb verziót, és újra végrehajtani a műveletet azon verzió alapján. Ennek a mechanizmusnak az ára időnkénti újrapróbálkozás, de biztosítja az adatok konzisztenciáját – az Ügynök soha nem hoz döntéseket elavult fájlállapot alapján.
-
-Vegye figyelembe, hogy az optimista zárolás csak "ugyanazon a fájlon történő írási ütközéseket" tudja megakadályozni. Az említett "fájlok közötti szemantikai ütközésekhez" (pl. több helyen hivatkozott képszámok) magasabb szintű koordinációra vagy szemantikai validációra van szükség, mint például az egymástól függő fájlok párhuzamos módosításának elkerülése vagy egy globális konzisztencia-ellenőrzés futtatása az írások után.
-
-Például: A Ügynök beolvassa a `config.json` fájlt (verzió=3) t=0 időpontban. B Ügynök módosítja ugyanazt a fájlt t=1 időpontban, a verziót 4-re változtatva. Amikor A Ügynök megpróbál írni t=2 időpontban, azt találja, hogy a verzió már nem 3, így az írás elutasításra kerül. A Ügynök ezután újra beolvassa a 4-es verziót, rekonstruálja a változtatását a legújabb tartalom ellenében, és újra próbálkozik az írással.
-
-Amikor több Kódoló Ügynök egyidejűleg módosítja ugyanazt a kódbázist, az iparágban elterjedt megközelítés nem egyetlen munkapéldány zárolása, hanem "munkapéldány izoláció" használata. Minden Ügynök kap egy független Git ágat vagy munkafát, és a saját példányát módosítja anélkül, hogy a többit zavarná. Az ütközések egy végső egyesítésre halasztódnak, ahol egy dedikált folyamat vagy egy ember oldja meg azokat. A másolás-írásra (copy-on-write) mechanizmus, amelyet egy operációs rendszer használ egy folyamat fork-elésekor, ugyanezt az ötletet követi. Ez tükrözi a 2. fejezet "izoláció a kompresszió felett" elvét: ahelyett, hogy megosztott módosítható állapotot osztanánk meg és folyamatosan oldanánk fel az ütközéseket, izoláljuk a munkát a kezdetektől, és a koordinációs költséget egy jól meghatározott egyesítési pontnál viseljük.
+Fontos, hogy az optimista zárolás csak **ugyanazon fájl** írási ütközéseit előzi meg. A fentebb leírt **fájlokon átívelő jelentésbeli ütközésekhez** magasabb szintű jelentésellenőrző mechanizmus kell. A leggyakoribb helyzetben — amikor több Coding Agent párhuzamosan módosítja ugyanazt a kódbázist — az iparági bevett gyakorlat a **munkamásolatok elszigetelése**: minden Agent önálló Git-ágat vagy worktree-t kap, mindegyik a saját másolatán módosít párhuzamosan, egymást nem zavarva, az ütközések pedig egy tömbben a végső összefésülési pontra tolódnak.
 
 ### Hibamód Kettő: Hibák Kaszkád Amplifikációja
 
@@ -611,15 +543,17 @@ A korai leállás ellentéte az **ellenőrizetlen ciklus**. A ciklus a végtelen
 
 ### Hatodik Hibamód: Megértési Adósság és Kognitív Feladás
 
-Minél gyorsabban szállít kódot egy ciklus, annál jobban lemaradhat mögötte a mérnök megértése. Idővel az ember már nem érti a rendszert, vagy felhagy a független ellenőrzéssel. A megoldást valós megfigyeléseken alapuló ellenőrzők és az jelentik, hogy az ember továbbra is a ciklus felelős mérnöke marad.
+Ez a mód nem az Agent, hanem az ember kudarca. Ahogy az Agentek okosabbak lesznek és egyre hosszabb folyamatokat visznek végig, úgy lesz mind nehezebb, hogy az ember megértse, amit az Agent leszállít, és hogy hatékony útmutatást adjon neki.
+
+Az Agentekkel végzett fejlesztés könnyen halmoz fel **megértési adósságot**: minél gyorsabban szállít kódot a hurok, annál jobban lemarad a mérnök képe arról, mit is csinál valójában a rendszer – mire egy súlyos hiba kézi beavatkozást kényszerít ki, a mérnök már nem olvassa a saját rendszerét. A másik baj a **kognitív megadás**: miután hozzászokott, hogy az Agentre bízza a munkát, a mérnök fokozatosan feladja az önálló gondolkodást és az átvizsgálást, a szoftver minősége pedig kicsúszik az ellenőrzés alól.
+
+Andrej Karpathy egyszer így fogalmazott: a gondolkodásodat kiszervezheted, a megértésedet nem. Az Agentek irányítása olyan, mint a műszaki munkatársak irányítása: sem elvégezni nem szabad helyettük a munkát, sem magukra hagyni őket. A jó műszaki vezetőnek értenie és irányítania kell a rendszerarchitektúrát, nem pedig pusztán utasítgatnia az Agentet. Épp ezért számítanak annyira a felhasználó saját műszaki alapjai.
+
+Minden eddigi fejtegetés mérnöki nézőpontból szólt: hogyan vegyünk rá egy csapatnyi Agentet, hogy együttműködve elvégezzen egy feladatot. Most nézőpontot váltunk: mi bukkan fel, amikor Agentek sokasága hosszú időn át együtt létezik, és már nem egyetlen cél hajtja őket?
 
 ## Ügynök Társadalom
 
 Az előző három szakasz mindegyike célirányos feladat-együttműködéssel foglalkozott. Minden esetben – akár társi együttműködést, a menedzser mintát vagy a decentralizált mintát használva – a fejlesztők előre meghatározzák a szerepeket, interfészeket és vezérlési folyamatokat. Most egy nyitottabb kérdésre térünk át: **Amikor az Ügynökök száma néhányról százakra vagy ezrekre nő, és az interakció elég szabad, milyen viselkedések jelennek meg?** Ez az anyag feltáró és akadémiai jellegű, különbözik a fenti mérnöki iránymutatásoktól.
-
-A megjelenő viselkedés (emergent behavior) olyan viselkedés, amelyet a rendszer egésze mutat, és amely nem jósolható meg közvetlenül az egyes tagjait irányító szabályokból. Egy klasszikus természeti példa a "hangyatelep": minden hangya csak egyszerű szabályokat követ (feromonnyomok követése, feromonok hagyása étel találásakor), mégis az egész telep megtalálja a legrövidebb utat a fészek és az ételforrás között – egyetlen hangya sem "tervezte" ezt az útvonalat; az természetesen jön létre sok egyed egyszerű interakcióiból.
-
-Amikor a MI Ügynökök elég nagy számban és elég szabadon lépnek kapcsolatba, hasonló megjelenő viselkedések kezdenek megjelenni. A kutatók több környezetben is megfigyelték, hogy amint egy Ügynök rendszer átlép egy kritikus méretskálát, olyan kollektív viselkedések alakulnak ki, amelyeket senki sem tervezett – egy spontán szerveződő bulitól a csoportkultúrákig és gazdasági játékokig, amelyek csak ezres skálán jelennek meg (részletezve az alábbi alszakaszokban).
 
 Az ebben a szakaszban szereplő esetek három dimenzióból érthetők meg:
 
@@ -750,9 +684,13 @@ A Farkasos (Werewolf) rögzíti e szakasz harmadik dimenzióját, a "stratégiai
 
 ## Fejezet Összefoglaló
 
-A többügynökös együttműködés akkor indokolt, ha olyan új információt hoz be, amelyet egyetlen Agent a generáláskor nem láthatott: például végrehajtási eredményt, vizuális visszajelzést vagy külső eszköz ellenőrzését. A tervezésnek a megosztott vagy elkülönített kontextus, illetve a partneri, menedzseri vagy decentralizált topológia között kell választania. A strukturált átadási csomagok, a jogosultsági határok, a független ellenőrzés, az eltérő információforrások, a költségkeretek és a leállítási mechanizmusok adják az alapvető hibatűrő hurkot; a homogén Ügynökök még így is okozhatnak közös okú meghibásodást.
+A több-Agentes együttműködés értéke abban áll, hogy olyan információt hoz be, amelyhez egyetlen Agent nem juthat hozzá. A kódfuttatás eredménye, a vizuális visszajelzés és a külső eszközökkel végzett ellenőrzés áttörheti egyetlen gondolatlánc vakfoltjait. Ezért az első próba, hogy egyáltalán érdemes-e több Agentet bevetni, éppen az: hoz-e valódi információtöbbletet, és megéri-e ez a többlet a járulékos token-költséget.
 
-Hosszú, nyílt interakcióban társadalmi kapcsolatok, normák, piacok és stratégiák is kialakulhatnak. Az erősebb modell vagy az egyedi szintű összehangolás nem hoz létre automatikusan csoportszintű koordinációt. A többügynökös mérnöki munkának egyszerre kell megterveznie az információáramlást, a képességek felosztását, az ösztönzők korlátozását, a viták rendezését és a hibák felfedezését.
+A több-Agentes rendszer tervezésének központi kérdései: a kontextus közös legyen-e vagy elszigetelt, és a topológia egyenrangú együttműködés, vezetői orkesztráció vagy decentralizáció legyen-e. A közös kontextus megőrzi a részleteket, de könnyen kontextusduzzadáshoz és szereptehetetlenséghez vezet. Az elszigetelt kontextus kedvez a párhuzamosságnak, a modularitásnak és a jogosultságkezelésnek, de megköveteli, hogy strukturált átadási csomagokat továbbítsunk eszközparamétereken, közös fájlokon vagy üzenetbuszon keresztül. A virtuális fájlrendszer, az Agentek életciklusa, az üzenetprotokoll és az A2A rendre az adatsíkot, a vezérlősíkot és a szervezetek közötti átjárhatóságot adja. A jó együttműködés interfészeket, határokat, jogosultságokat és elfogadási kritériumokat tesz láthatóvá – nem pedig a résztvevők magánbeli gondolatláncait.
+
+A több-Agentes rendszer a hibákat is felnagyítja: a közös erőforrásokon párhuzamossági és jelentésbeli ütközések keletkeznek, a hibák végigkaszkádolnak a kommunikációs láncon, a homogén Agentek közös okú meghibásodást szülnek, a ciklus pedig túl korán is leállhat, és korlátlanul is nőhet. Az optimista zárolás és a munkamásolatok elszigetelése, a független keresztellenőrzés, az információforrások változatossága, valamint a költségkeret és a megszakítás mechanizmusa alkotja az alapvető hibatűrő hurkot. Az ember nem szervezheti ki a megértést és a felelősséget a végrehajtással együtt: a megértési adósság és a kognitív megadás valós kockázat marad.
+
+Amikor az Agentek rövid távú feladat-együttműködésből hosszan tartó, nyílt csoportos interakcióvá nőnek, a rendszerben társas kapcsolatok, kulturális normák, piaci verseny és aszimmetrikus információ melletti stratégiai viselkedés bukkanhat fel. Egy erősebb modell vagy az egyedi szintű alignment önmagában nem hoz csoportszintű koordinációt. A több-Agentes mérnökség lényege, hogy egyszerre tervezzük meg, hogyan áramlik az információ, hogyan oszlanak meg a képességek, hogyan korlátozzuk az ösztönzőket, hogyan döntjük el a vitákat, és hogyan derülnek ki a hibák. Csak ha ezek a mechanizmusok elég robusztusak, haladhatja meg a kollektív intelligencia az egyénit.
 
 ## Gondolatébresztő Kérdések
 

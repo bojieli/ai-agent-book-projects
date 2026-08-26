@@ -65,6 +65,8 @@ Bảng 9-2 Phạm vi áp dụng của bốn phương thức tiến hóa liên t�
 | Chương trình và Harness | Quy trình xác định, công cụ và ràng buộc cứng | Có thể kiểm thử, thực thi ổn định, chi phí thấp | Chi phí phát triển và bảo trì tương đối cao |
 | Tham số mô hình | Tri giác nhiều chiều, phong cách sinh và chiến lược ngầm | Năng lực khái quát hóa mạnh, chi phí suy luận thấp | Chi phí cập nhật và hồi quy cao |
 
+Cùng một năng lực có thể tách ra nhiều vật mang: sự kiện đi vào cơ sở tri thức, những nguyên tắc giải thích ngoại lệ đi vào Skill, các quyền không được phép đi vòng vẫn do chương trình gác cổng, còn năng lực nhận dạng nhiều chiều thì đi vào tham số. Kết quả định tuyến chỉ là một đề xuất cập nhật; nó chưa hề có tư cách để phát hành.
+
 ### Kết tinh kinh nghiệm thành tri thức
 
 Phương thức tiến hóa nhẹ nhất là tổ chức những kinh nghiệm lặp đi lặp lại qua nhiều lần vận hành thành tài liệu tri thức có thể truy xuất. “Kho tri thức kinh nghiệm” ở đây chia sẻ công nghệ lưu trữ, lập chỉ mục và truy xuất với Chương 3, nhưng nguồn tri thức và mục tiêu xác minh khác nhau. Chương 3 chủ yếu trích xuất từ hội thoại người dùng, tài liệu và tập dữ liệu để trả lời “người dùng và thế giới có đặc điểm như thế nào”; chương này trích xuất từ quỹ đạo hành động và kết quả của Agent để trả lời “trong điều kiện nào nên làm gì”. Ví dụ, “hãng hàng không này yêu cầu đặt suất ăn đặc biệt trước hai mươi bốn giờ” là tri thức lĩnh vực; còn “trước khi đặt vé, hãy kiểm tra hạn chót đăng ký suất ăn đặc biệt để tránh thanh toán xong mới phát hiện không thể đáp ứng nhu cầu” là kinh nghiệm hành động.
@@ -101,43 +103,51 @@ Học kinh nghiệm GAIA cung cấp một ví dụ trực quan. GAIA[^gaia-2023]
 
 ### Viết kinh nghiệm thành chỉ dẫn
 
-Kho tri thức kinh nghiệm cung cấp tài liệu tham khảo cho Agent, còn Prompt và Skill có tính chỉ dẫn mạnh hơn. Khi nhiều quỹ đạo liên tục cho thấy cùng một loại sai lầm chiến lược và quy luật có thể được diễn đạt rõ bằng ngôn ngữ tự nhiên, hệ thống có thể nâng nó từ “kinh nghiệm có thể tham khảo” thành “quy tắc phải tuân thủ”. Quy tắc áp dụng cho gần như mọi nhiệm vụ phù hợp để đưa vào Prompt hệ thống; quy trình phức tạp chỉ có hiệu lực với một lĩnh vực, dự án hoặc công cụ cụ thể phù hợp hơn để viết thành Skill được nạp theo nhu cầu hoặc tệp chỉ dẫn dự án.
+Cơ sở tri thức kinh nghiệm cung cấp cho Agent "tài liệu có thể tham khảo", còn Prompt và Skill quy định "nên hành động thế nào". Chỉ khi nhiều quỹ đạo tương tự lặp đi lặp lại phơi bày cùng một lỗi chiến lược, và lỗi đó diễn đạt được rõ ràng bằng lời, thì mới đáng nâng kinh nghiệm lên thành chỉ dẫn. Ở đây hãy tách ba khái niệm ra trước: **Prompt hệ thống** có hiệu lực với mọi nhiệm vụ, **Skill** chỉ được nạp theo nhu cầu khi khớp với một lĩnh vực hay công cụ nào đó, còn **chương trình/Harness** đảm nhiệm quyền hạn và các ràng buộc cứng khác.
 
-Học Prompt có phân công khác với kỹ thuật Prompt ở Chương 2. Chương 2 trả lời cách viết Prompt có cấu trúc rõ ràng và thân thiện với bộ nhớ đệm; ở đây trả lời loại phản hồi sản xuất nào đủ để kích hoạt sửa đổi Prompt và cách xác minh quy tắc mới trước khi triển khai. Việc sửa đổi cũng không nên thể hiện thành quá trình liên tục viết lại toàn bộ Prompt hệ thống. Cách đáng tin cậy hơn là tạo diff tối thiểu dựa trên một nhóm thất bại cùng loại, ghi rõ phạm vi tác dụng của quy tắc, kiểm tra xem nó có mâu thuẫn với quy tắc hiện có hay không, rồi đồng thời đánh giá trên các trường hợp biên đã kích hoạt thất bại và tập lưu giữ nhiệm vụ cũ.
+Andrej Karpathy gọi cách làm này là **học Prompt hệ thống** (System Prompt Learning)[^karpathy-system-prompt-learning]: sau khi vấp phải vấn đề, mô hình dùng một câu rõ ràng để nhắc chính mình trong tương lai. DSPy[^dspy-2023] tìm kiếm chỉ dẫn và ví dụ trên tập phát triển; OPRO[^opro-2023] đề xuất prompt mới dựa trên lịch sử prompt và điểm số của chúng; GEPA[^gepa-2025] sinh và sàng lọc các đề xuất prompt từ những phản tỉnh bằng ngôn ngữ tự nhiên trên quỹ đạo thất bại. Các phương pháp này hợp với tối ưu hóa theo lô ngoại tuyến; môi trường sản xuất thì hợp hơn với những đề xuất cập nhật tối thiểu có thể kiểm toán, đồng thời giữ lại đường quay lui nhanh.
 
-Trong một bài viết dài năm 2025, Andrej Karpathy tạm gọi mô thức mới tiềm năng này là **học Prompt hệ thống** (System Prompt Learning)[^karpathy-system-prompt-learning]. Ông tóm lược rằng tiền huấn luyện chủ yếu học tri thức, tinh chỉnh chủ yếu định hình hành vi theo thói quen; nhưng con người còn một cách học khác: sau khi gặp vấn đề và nghĩ ra phương pháp, ta dùng ngôn ngữ rõ ràng để nhắc bản thân trong tương lai rằng “lần tới gặp loại vấn đề này, hãy thử cách này trước”. Ông ví LLM thiếu cuốn sổ tay như vậy với nhân vật chính trong phim *Memento*, đồng thời chỉ ra rằng học Prompt hệ thống và học tăng cường đều cải thiện hành vi từ kinh nghiệm nhưng dùng thuật toán cập nhật khác nhau — cách thứ nhất sửa văn bản, cách thứ hai dùng gradient descent để sửa tham số. Ví dụ ông nêu là Prompt hệ thống dài khoảng 17.000 từ của Claude khi đó có một yêu cầu riêng: khi gặp bài toán đếm từ, chữ cái hoặc ký tự, hãy đánh số từng mục và đếm tường minh trước khi đưa ra đáp án. Quy tắc này nhằm xử lý những câu hỏi như “có bao nhiêu chữ `r` trong `strawberry`”.
-
-Trong hệ thống Agent, điều đó có nghĩa là sau thất bại, bài học có thể ngôn ngữ hóa được viết thành quy tắc ứng viên mà lần chạy sau có thể đọc trực tiếp. So với kết quả vô hướng chỉ có “thành công/thất bại”, chẩn đoán kèm bằng chứng có thể chỉ ra lỗi nằm ở xác minh danh tính, lựa chọn công cụ hay ranh giới chuyển tiếp, nhờ đó sinh sửa đổi ứng viên đúng trọng tâm hơn. Nhận xét của Karpathy rằng “phản tư được tri thức dẫn dắt có kênh phản hồi nhiều chiều hơn phần thưởng vô hướng” giải thích vì sao cách này có thể hiệu quả về dữ liệu. Tuy vậy, thông tin phong phú hơn không có nghĩa là tự nhiên đúng. Cùng một ý kiến người dùng có thể chỉ áp dụng cho một khách hàng hoặc phiên bản chính sách cũ, nên vẫn phải phân cụm, xác định phạm vi và kiểm thử hồi quy.
-
-Tối ưu Prompt tự động đã có nhiều hướng khác nhau. DSPy[^dspy-2023] coi chương trình gồm nhiều lần gọi mô hình ngôn ngữ là đối tượng có thể tối ưu và tìm kiếm chỉ dẫn cùng ví dụ trên tập phát triển. OPRO[^opro-2023] để mô hình ngôn ngữ tiếp tục đề xuất ứng viên dựa trên Prompt lịch sử và điểm số của chúng. GEPA[^gepa-2025] dùng phản tư bằng ngôn ngữ tự nhiên về quỹ đạo thất bại để tạo và tuyển chọn các Prompt ứng viên bổ sung cho nhau. Các hướng này chủ yếu phục vụ tối ưu hàng loạt trên tập đánh giá ngoại tuyến. Diff tối thiểu trong hệ thống sản xuất giống bảo trì liên tục hơn: được kích hoạt bởi ca biên mới và nhấn mạnh nguồn gốc, kiểm toán, khôi phục nhanh. Trong thực tế, có thể tìm một phiên bản khởi đầu tốt bằng tìm kiếm ngoại tuyến, rồi duy trì các quy tắc đuôi dài sau triển khai bằng bản vá theo từng ca.
+Học Prompt hệ thống không phải là kỹ thuật prompt ở chương 2. Chương 2 bàn cách tổ chức một Prompt tốt; mục này bàn xem phản hồi thế nào thì đủ để kích hoạt việc sửa, và đề xuất cập nhật được phát hành an toàn ra sao. Sửa đổi phải là một diff tối thiểu có nguồn gốc, chứ không phải mỗi lần đều để mô hình viết lại toàn bộ Prompt — đây chính là mô thức "diff tối thiểu + có thể quay lui" đã được đặt tên ở chương 1. Phiên bản chờ kiểm chứng bắt buộc phải được thử đồng thời trên **tập biên đã gây ra thất bại** và **tập giữ lại vốn đang chạy tốt**: tập trước phải cải thiện, tập sau không được thoái lui.
 
 #### Ví dụ 1: Tối ưu hóa quy tắc trong prompt dựa trên quỹ đạo thất bại
 
-Ví dụ, Agent chăm sóc khách hàng hàng không thường chuyển sang nhân viên quá sớm khi người dùng chất vấn chính sách. Đánh giá quỹ đạo cho thấy nó không vi phạm quy định, nhưng thiếu tính linh hoạt trong tuân thủ. Bản vá ứng viên có thể yêu cầu Agent trước tiên giải thích chính sách, nhận diện mục tiêu thực sự của người dùng và tìm phương án thay thế được phép; chỉ chuyển sang nhân viên khi người dùng yêu cầu rõ ràng hoặc vấn đề thực sự vượt quá quyền hạn. Nếu quy tắc mới giảm chuyển tiếp quá mức nhưng lại khiến các sự cố an toàn đáng lẽ phải chuyển cho con người tiếp tục được xử lý, thì nó chưa vượt qua hồi quy. Giá trị của việc học Prompt hệ thống không nằm ở tự động nối thêm nhiều văn bản, mà ở việc liên tục làm rõ phạm vi áp dụng của quy tắc bằng các trường hợp biên trong sản xuất.
+Chương 7 đã dùng τ-bench/τ²-bench để nói về cách đánh giá Agent chăm sóc khách hàng hàng không: người dùng hé lộ nhu cầu từng bước, hệ thống vừa kiểm tra trạng thái môi trường như đơn đặt chỗ, vừa kiểm tra xem trong hội thoại đã đưa ra thông tin cần thiết hay chưa. Phần quy trách thất bại của chương đó còn nhấn mạnh rằng không thể chỉ ghi "thất bại", mà phải tìm ra **bước sai đầu tiên**.
+
+Ca xấu trong ví dụ này là: người dùng không hài lòng về hoàn vé, phí đổi vé hay chính sách hành lý, còn Agent thì gọi `transfer_to_human` mà không tra chính sách, không giải thích quy định, cũng không tìm phương án thay thế được phép. Tranh cãi chính sách thông thường không cần chuyển tiếp; **chỉ khi người dùng yêu cầu rõ ràng gặp nhân viên, hoặc xuất hiện rủi ro an toàn/thân thể, thì mới bắt buộc chuyển tiếp**. Vậy nên vấn đề không phải là "Agent chưa đủ lễ độ", mà là Prompt chưa viết rõ ranh giới chuyển tiếp.
+
+Chẩn đoán này chuyển thẳng thành một quy tắc trong prompt: trước hết tra cứu và giải thích chính sách, nhận ra mục tiêu mà người dùng thực sự muốn giải quyết, đưa ra phương án thay thế hợp quy; chỉ chuyển tiếp khi được yêu cầu rõ ràng gặp nhân viên, hoặc khi vượt quá thẩm quyền/liên quan đến an toàn.
+
+> **Thí nghiệm 9-3 ★★: Tối ưu hóa Prompt hệ thống của chăm sóc khách hàng hàng không từ quỹ đạo thất bại**
+>
+> **Mục đích thử nghiệm**: Giúp Agent chăm sóc khách hàng hàng không sửa hành vi "gặp tranh cãi chính sách thông thường là chuyển người ngay", đồng thời giữ được khả năng chuyển tiếp khi có yêu cầu rõ ràng gặp nhân viên và khi có sự cố an toàn.
+>
+> **Mô tả thử nghiệm**: Trích ba chiều — tuân thủ quy tắc, giải quyết nhiệm vụ và phương án thay thế hợp quy — từ các quỹ đạo thất bại, sinh một bản vá Prompt tối thiểu có nguồn gốc, rồi đối chứng với bản khởi đầu và bản tinh chỉnh thủ công trong cùng điều kiện. Đề xuất cập nhật chỉ bước vào giai đoạn phát hành dần khi các ca biên cải thiện, các nhiệm vụ cũ không thoái lui và đã qua cổng phát hành.
+>
+> **Thử nghiệm cho thấy điều gì**: Trọng tâm của tối ưu hóa Prompt tự động không phải là để mô hình tự do viết lại một khối văn bản lớn, mà là biến một thất bại quy trách được thành quy tắc cục bộ có phạm vi rõ ràng, quay lui được và kiểm chứng được.
 
 #### Ví dụ 2: Skill làm rõ yêu cầu — từ "bắt tay làm ngay" đến "xác nhận trước khi thực hiện"
 
-Học Skill tuân theo cùng nguyên tắc nhưng có phạm vi tác động cục bộ hơn. Có thể xem Skill là sổ tay nghiệp vụ được mở khi cần. Nếu nhiều kinh nghiệm cùng hình thành một quy trình yêu cầu bồi thường bảo hiểm hoàn chỉnh, hệ thống có thể tạo hoặc sửa Skill tương ứng. Skill ứng viên không nên chỉ là bản tóm tắt một hội thoại; tối thiểu nó phải nêu khi nào cần nạp, điều kiện tiên quyết, các bước thao tác, bẫy đã biết và cách xác minh, đồng thời lưu quỹ đạo nguồn. Hệ thống trước tiên tìm năng lực gần giống trong kho Skill hiện có: nếu đã có cùng quy trình thì ưu tiên `patch` cục bộ; chỉ tạo thư mục mới khi thật sự xuất hiện một năng lực độc lập mới, tránh để kho chứa đầy các sổ tay khác tên nhưng gần giống nội dung. Skill Creator của Anthropic[^anthropic-skill-creator] minh họa vòng tạo “soạn thảo — kiểm thử — đánh giá — sửa đổi”. Nó giải quyết cách tạo và cải thiện Skill; phần khó thực sự vẫn là bằng chứng vận hành nào đủ để kích hoạt, xử lý xung đột thế nào và sau sửa đổi có vượt qua nhiệm vụ lĩnh vực cùng hồi quy nhiệm vụ cũ hay không.
+Chương 2 đã giới thiệu cách viết một Skill. Ở đây giả định hệ thống đã có bản đầu của Skill làm rõ yêu cầu, và ta quan tâm chuyện khác: khi Agent liên tục nhận phản hồi người dùng trong môi trường sản xuất, làm sao tự động phán đoán rằng "khi nào nên hỏi trước, hỏi gì, khi nào có thể bắt tay ngay" có cần cập nhật hay không.
 
-> **Thí nghiệm 9-9 ★★: Chuyển phản hồi thành Skill viết**
->
-> Xử lý 20 cặp before/after trong `data/feedback_pairs.json` theo ba đợt, trích xuất quy tắc ứng viên, gộp mẫu trùng, kiểm tra xung đột ngưỡng và tạo `SKILL.md` có nguồn/phạm vi. Quy tắc xác định kiểm tra bằng mã; quy tắc LLM được hiệu chỉnh trên 10 mẫu vàng.
->
-> Báo cáo đồng thời tỷ lệ phát hiện trên tập nhiệm vụ chưa hoàn thành, tỷ lệ báo nhầm trên văn bản bình thường và số quy tắc tăng. Lần chạy thật đầu tiên đạt 0/8 phát hiện và nhầm 7/8; sau bộ lọc ngoài mô hình và fallback xác định, đạt 8/8, nhầm 0/8, gộp 21 ứng viên thành 8 quy tắc. Xem [`ai-style-skill`](../chapter9/ai-style-skill/).
+Đây là một vấn đề quy trình điển hình. Người dùng nói "đổi trang đăng nhập sang hỗ trợ đăng nhập doanh nghiệp"; nếu Agent bắt tay ngay, nó có thể thay người dùng đưa ra những lựa chọn mà họ chưa hề cân nhắc về nhà cung cấp danh tính, cách dự phòng, tương thích người dùng cũ và phạm vi phát hành. Ngược lại, nếu bất kể nhiệm vụ lớn nhỏ đều liệt kê cả chục câu hỏi, thì một sửa đổi đơn giản sẽ biến thành một cuộc phỏng vấn. **Hỏi quá ít dẫn tới làm lại, hỏi quá nhiều thì gây phiền.** Điều Skill cần diễn đạt không phải "mọi nhiệm vụ đều phải xác nhận", mà là một lối phán đoán có phạm vi.
 
-Trường hợp dấu ngoặc kép cong cho thấy Skill phải trở thành hợp đồng dữ liệu thay vì quy tắc thay thế toàn cục: trước SFT, các ví dụ tổng hợp được phân tầng theo thể loại bài, phạm vi và ngôn ngữ lập trình, vượt qua gate mã/JSON/vùng bảo vệ và được kiểm tra thủ công. Với exact-copy, round-trip encode→decode của tokenizer, sao chép byte-exact của mô hình, tuần tự hóa Harness và đối sánh công cụ phải được kiểm toán như các lớp hồi quy riêng.
+Bản quy trình đầu tiên có thể viết thế này: trước hết đánh giá mức mơ hồ, rủi ro và chi phí làm lại của nhiệm vụ; với những thay đổi nhỏ, rủi ro thấp, dễ hoàn tác thì nêu giả định rồi thực thi ngay; khi động đến kiến trúc, dữ liệu, quyền, giao diện công khai hay thay đổi diện rộng thì gom lại vài câu hỏi thực sự có thể làm đổi phương án; có câu trả lời rồi thì sinh một Spec hoặc Plan ngắn, liệt kê mục tiêu, phi mục tiêu, các đánh đổi then chốt, giả định và tiêu chí nghiệm thu, giao cho người dùng xác nhận; xác nhận xong mới thực thi, giữa chừng phát hiện Spec ban đầu không còn đúng thì tạm dừng và xác nhận lại.
 
-> **Thí nghiệm 9-3 ★★: Tối ưu Prompt hệ thống dựa trên quỹ đạo thất bại**
+Tiến hóa liên tục bắt đầu từ bằng chứng vận hành. Hệ thống nên ghi lại đồng thời nhiệm vụ, câu hỏi làm rõ, phiên bản Spec, chỉnh sửa của người dùng, kết quả thực thi và phần làm lại sau khi bàn giao. Phản hồi tiêu cực có thể là "làm ra không giống điều tôi hình dung", cũng có thể là "anh hỏi nhiều quá"; phản hồi tích cực gồm việc bàn giao trôi chảy sau một lần xác nhận, việc người dùng tự sửa Spec khiến giảm làm lại, và những nhiệm vụ rủi ro thấp không bị cắt ngang bởi câu hỏi thừa. Lưu riêng một lời than phiền thì chưa đủ kích hoạt cập nhật; phản hồi bắt buộc phải gắn với quỹ đạo cụ thể, loại nhiệm vụ và kết quả.
+
+Khi nhiều quỹ đạo lặp lại cùng chỉ về một lỗ hổng, Agent có thể đưa ra đề xuất cập nhật Skill tối thiểu. Ví dụ, nhiều nhiệm vụ liên quan kiến trúc xác thực đều đến khi bàn giao mới phát hiện phải tương thích với cách đăng nhập cũ, thì bản thảo quy tắc có thể yêu cầu xác nhận trước khi thực thi về "nhà cung cấp danh tính, đường dự phòng và phạm vi tương thích"; ngược lại, nếu hàng loạt sửa lỗi chính tả đều bị Agent hỏi một vòng trước, thì bản thảo quy tắc nên thu hẹp phạm vi kích hoạt về các tình huống rủi ro cao và mơ hồ cao.
+
+Quy trình này cần được kiểm chứng bằng thử nghiệm đối chứng. Có thể so sánh ba chiến lược — "thực thi ngay", "hỏi trước rồi thực thi" và "hỏi xong sinh Spec, xác nhận rồi thực thi" — phân tầng theo độ phức tạp của nhiệm vụ. Bộ chỉ số ít nhất phải gồm tỉ lệ lệch yêu cầu, số lần làm lại sau bàn giao, số vòng làm rõ, thời gian tới sản phẩm hữu ích đầu tiên, tỉ lệ người dùng bỏ cuộc, tỉ lệ Spec bị sửa và tỉ lệ sai sót ở thao tác rủi ro cao. Đề xuất cập nhật chỉ bước vào phát hành dần khi vừa giảm được lệch yêu cầu vừa không làm tăng đáng kể sự phiền nhiễu, và vượt qua kiểm thử hồi quy trên những nhiệm vụ không tham gia chưng cất.
+
+Ví dụ này còn cho thấy ranh giới giữa Skill và Harness. Skill lo hiểu ngữ cảnh, chủ động đặt câu hỏi, sắp xếp Spec và giải thích các đánh đổi; Harness lo phủ quyết những thao tác ghi rủi ro cao, thao tác trực tiếp lên `main` hay lách quy trình phát hành khi thiếu xác nhận. Bộ phủ quyết trong Harness không thể thay mô hình quyết định PR nên mô tả ra sao, cũng không thể thay mô hình chọn phương án cho yêu cầu. Kinh nghiệm tích lũy dần, những quỹ đạo hội thoại ổn định còn có thể sinh ra dữ liệu huấn luyện SFT hoặc RL mà chương 8 cần.
+
+> **Thí nghiệm 9-4 ★★: Tiến hóa Skill làm rõ yêu cầu và xác nhận Spec từ phản hồi người dùng**
 >
-> **Mục tiêu thí nghiệm**: Giúp Agent chăm sóc khách hàng hàng không học từ quỹ đạo thất bại “chuyển sang nhân viên quá sớm khi người dùng chất vấn chính sách”, đồng thời chứng minh quy tắc mới không phá hỏng các tình huống cũ thật sự cần chuyển tiếp.
+> **Mục đích thử nghiệm**: Kiểm tra xem Agent có tìm được chiến lược làm rõ tốt hơn giữa "lệch yêu cầu" và "làm phiền tương tác" hay không, và ghi những cải tiến đã kiểm chứng trở lại Skill.
 >
-> **Quy trình**: Trước tiên chạy riêng tập lưu giữ nhiệm vụ cũ và tập biên chuyển tiếp quá mức. `learning_signal.py` tách thất bại thành ba chiều: tuân thủ quy tắc, giải quyết nhiệm vụ và linh hoạt trong tuân thủ, đồng thời giữ lại case ID nguồn. Coding Agent sau đó đọc Prompt hiện tại và chỉ tạo một chỉnh sửa tối thiểu có thể kiểm toán theo dạng `old_str → new_str`: yêu cầu Agent trước tiên giải thích chính sách, nhận diện mục tiêu thật và tìm phương án thay thế tuân thủ, đồng thời giữ lộ trình chuyển tiếp khi người dùng yêu cầu rõ ràng hoặc có sự cố an toàn. Bản vá cùng nguồn, quy tắc mục tiêu và lý do sửa đổi được ghi vào manifest ứng viên.
+> **Mô tả thử nghiệm**: Chuẩn bị một nhóm nhiệm vụ rủi ro thấp, mơ hồ thấp và một nhóm nhiệm vụ rủi ro cao liên quan kiến trúc, quyền, dữ liệu hay giao diện công khai, rồi so sánh ba quy trình: thực thi ngay; hỏi rồi thực thi; hỏi rồi xác nhận Spec. Ghi lại câu trả lời của người dùng, các sửa đổi Spec, kết quả bàn giao và phản hồi làm lại, để Agent sinh đề xuất cập nhật Skill; đề xuất bắt buộc phải qua kiểm thử hồi quy trên nhiệm vụ giữ lại, kiểm tra chi phí làm phiền và kiểm chứng bộ phủ quyết rủi ro cao.
 >
-> **Ba nhóm đối chứng**: Prompt ban đầu, Prompt ứng viên sinh tự động và Prompt do con người tối ưu một lần. Cả ba dùng cùng mô hình và cùng tập nhiệm vụ lưu giữ/biên. `--quick` chỉ giảm số ca nhưng vẫn thật sự gọi Agent nhiệm vụ, LLM Judge và Coding Agent; không thể coi đó là kết quả mô phỏng ngoại tuyến.
->
-> **Ngưỡng phát hành và chỉ số**: Ứng viên phải đồng thời đáp ứng bốn điều kiện: bản vá không rỗng, nguồn có thể truy vết, hiệu quả trên tập biên thực sự cải thiện và tập lưu giữ không suy giảm. So sánh độ chính xác nhiệm vụ biên, độ chính xác nhiệm vụ lưu giữ, độ dài Prompt tăng thêm, số hồi quy được đưa vào và thời gian từ phát hiện thất bại đến sinh ứng viên. Vượt qua ngưỡng chỉ tạo `release_to_canary`, không trực tiếp ghi đè Prompt ổn định; bất kỳ điều kiện nào thất bại đều phải trả về `reject_candidate`.
->
-> Phần triển khai đi kèm nằm tại [`prompt-auto-optimization`](../chapter9/prompt-auto-optimization/). Kiểm thử ngoại tuyến bao quát ngưỡng chẩn đoán và phát hành, còn `--quick` sẽ thực sự gọi Agent thực hiện nhiệm vụ, LLM Judge và Coding Agent.
+> **Thử nghiệm cho thấy điều gì**: Tiến hóa liên tục không phải là cứ có lời than phiền là nối thẳng vào Prompt, mà là nhận ra phạm vi từ kết quả và phản hồi, đề xuất bản cập nhật chỉ dẫn tối thiểu, rồi để một bộ đánh giá độc lập quyết định có phát hành hay không.
 
 [^dspy-2023]: Khattab, O., et al. *DSPy: Compiling Declarative Language Model Calls into Self-Improving Pipelines.* arXiv:2310.03714, 2023.
 
@@ -146,8 +156,6 @@ Trường hợp dấu ngoặc kép cong cho thấy Skill phải trở thành h�
 [^gepa-2025]: Agrawal, L., et al. *GEPA: Reflective Prompt Evolution Can Outperform Reinforcement Learning.* arXiv:2507.19457, 2025.
 
 [^karpathy-system-prompt-learning]: Karpathy, A. “We’re missing (at least one) major paradigm for LLM learning … system prompt learning?” X, May 11, 2025. https://x.com/karpathy/status/1921368644069765486
-
-[^anthropic-skill-creator]: Anthropic. *Skill Creator.* 2026. https://github.com/anthropics/skills/blob/main/skills/skill-creator/SKILL.md
 
 ### Viết kinh nghiệm thành chương trình
 
@@ -168,7 +176,7 @@ Quy trình chắt lọc tri thức trong Hình 9-4 tương ứng với một vò
 
 Với thao tác gửi email, kết quả biên dịch không chỉ là “nhấp các nút này theo thứ tự” mà là một chương trình nhỏ có tham số người nhận, chủ đề và nội dung: trước khi gửi, kiểm tra cửa sổ soạn thư và ô nhập; sau khi gửi, kiểm tra thông báo thành công; cuối cùng xác nhận thư tương ứng xuất hiện trong mục Đã gửi. Trong thí nghiệm PreAct[^preact], các chương trình như vậy đạt tốc độ đầu-cuối nhanh hơn 8,5–13 lần trên nhiệm vụ lặp lại và giai đoạn phát lại không cần gọi mô hình ngôn ngữ theo từng bước. Quan trọng hơn, bộ nhớ quy trình phải đồng thời có **xác minh trước hành động, xác minh sau hành động và xác minh độc lập trước khi lưu**. Nếu không, hệ thống dễ tạo ra ảo giác nguy hiểm: độ phủ phát lại là 100%, mọi nút đều đã được nhấp, nhưng một trường thực ra trống và nhiệm vụ chưa bao giờ thật sự hoàn thành.
 
-> **Thí nghiệm 9-4 ★★★: Tạo quy trình công việc có thể xác minh từ quỹ đạo trình duyệt**
+> **Thí nghiệm 9-5 ★★★: Tạo quy trình công việc có thể xác minh từ quỹ đạo trình duyệt**
 >
 > **Mục tiêu thí nghiệm**: Xác minh liệu Web Agent có thể biến một lần khám phá tốn kém thành quy trình tái sử dụng và từ chối phát lại sai khi trang web thay đổi, thay vì báo nhầm “mọi hành động đã chạy” là thành công hay không.
 >
@@ -188,7 +196,7 @@ Bộ sinh ứng viên cũng không nên chỉ nhận các ca thất bại. Self-
 
 Việc tạo công cụ cũng tuân theo cùng giao thức. Trường hợp Alita[^alita-2025] đưa ra yêu cầu Agent tìm con số được nhắc ngay sau lần đầu khủng long xuất hiện trong một video YouTube 360 VR do diễn viên lồng tiếng Gollum trong *Chúa tể những chiếc nhẫn* thuyết minh. Khi nhận ra mình thiếu năng lực đọc phụ đề, nó tìm kiếm và kiểm thử `youtube-transcript-api`, đóng gói thư viện thành công cụ phụ đề mới và cuối cùng lấy được đáp án `100000000` từ phụ đề. Chỉ sau khi vượt qua quét an toàn, kiểm thử chức năng và tái sử dụng trong nhiệm vụ sau, công cụ mới đi vào kho năng lực. Khám phá công cụ chủ động ở Chương 4 giải quyết “công cụ hiện có nào phù hợp”; Chương 5 giải quyết “viết công cụ thế nào”; chương này quan tâm “bằng chứng vận hành nào kích hoạt việc tạo và công cụ mới trở thành năng lực dài hạn đã xác minh ra sao”.
 
-> **Thí nghiệm 9-5 ★★★: Kích hoạt Agent tự sửa đổi từ quỹ đạo thất bại**
+> **Thí nghiệm 9-6 ★★★: Kích hoạt Agent tự sửa đổi từ quỹ đạo thất bại**
 >
 > **Mục tiêu thí nghiệm**: Với nhiều quỹ đạo trong đó lỗi `retryable=false` vẫn bị gọi liên tiếp, kiểm tra hệ thống có định vị nguyên nhân gốc ở mã thử lại và ngắt mạch, đồng thời tạo sửa chữa ứng viên mà không phá năng lực thử lại lỗi tạm thời hay không.
 >
@@ -200,15 +208,15 @@ Việc tạo công cụ cũng tuân theo cùng giao thức. Trường hợp Alit
 >
 > Phần triển khai đi kèm nằm tại [`self-modifying-agent`](../chapter9/self-modifying-agent/), có thể chọn bộ sinh ứng viên xác định hoặc LLM Coding Agent thực; cả hai lộ trình dùng chung một ngưỡng phát hành.
 
+Thí nghiệm 9-7 áp dụng cùng giao thức vào lớp xác minh. Chỉ tạo yêu cầu thay đổi khi nhiều sửa chữa của người dùng, đánh giá thấp và audit cùng chỉ ra thao tác rủi ro cao không được xác nhận; ứng viên được ghi vào thư mục cô lập. Phân loại thao tác xóa nguy hiểm và `git push --force` theo tên/đối số công cụ, buộc token một lần vào thao tác cụ thể. Ứng viên phải qua kiểm tra AST/tĩnh, replay tập ranh giới (kể cả token giả/tái sử dụng) và replay tập giữ lại.
+
+> **Thí nghiệm 9-7 ★★: Cổng xác nhận thao tác rủi ro cao từ phản hồi người dùng**
+>
+> Dùng ba tín hiệu và trajectory đối chứng trong `failure_trajectories.json`. Ứng viên `gpt-4o-mini` thật không qua replay nhiệm vụ chưa hoàn thành, thao tác bình thường và token một lần nên bị cổng an toàn từ chối. Ứng viên xác định vượt qua và nhận `release_to_canary`; ghi lại kiểm tra, quyết định và hash thư mục ổn định. Xem [`harness-safety-gate`](../chapter9/harness-safety-gate/).
+
 [^preact]: Li, Bojie. *PreAct: Computer-Using Agents that Get Faster on Repeated Tasks.* arXiv:2606.17929, 2026.
 
 [^alita-2025]: Qiu, J., et al. *Alita: Generalist Agent Enabling Scalable Agentic Reasoning with Minimal Predefinition and Maximal Self-Evolution.* arXiv:2505.20286, 2025.
-
-Thí nghiệm 9-8 áp dụng cùng giao thức vào lớp xác minh. Chỉ tạo yêu cầu thay đổi khi nhiều sửa chữa của người dùng, đánh giá thấp và audit cùng chỉ ra thao tác rủi ro cao không được xác nhận; ứng viên được ghi vào thư mục cô lập. Phân loại thao tác xóa nguy hiểm và `git push --force` theo tên/đối số công cụ, buộc token một lần vào thao tác cụ thể. Ứng viên phải qua kiểm tra AST/tĩnh, replay tập ranh giới (kể cả token giả/tái sử dụng) và replay tập giữ lại.
-
-> **Thí nghiệm 9-8 ★★: Cổng xác nhận thao tác rủi ro cao từ phản hồi người dùng**
->
-> Dùng ba tín hiệu và trajectory đối chứng trong `failure_trajectories.json`. Ứng viên `gpt-4o-mini` thật không qua replay nhiệm vụ chưa hoàn thành, thao tác bình thường và token một lần nên bị cổng an toàn từ chối. Ứng viên xác định vượt qua và nhận `release_to_canary`; ghi lại kiểm tra, quyết định và hash thư mục ổn định. Xem [`harness-safety-gate`](../chapter9/harness-safety-gate/).
 
 #### Trường hợp: DeepSeek Harness tự tiến hóa, nơi mọi thứ đều là plugin
 
@@ -238,8 +246,6 @@ Có tham số hóa hay không không chỉ do “nhiệm vụ có ổn định l
 
 Chương 8 đã thảo luận đầy đủ về SFT, chưng cất và RL nên phần này không lặp lại thuật toán. Đối với tiến hóa liên tục, điều then chốt là chuyển các quỹ đạo sản xuất đã được đánh giá thành dữ liệu huấn luyện: bản minh họa chất lượng cao có thể đi vào SFT, ưu tiên rõ ràng có thể tạo thành dữ liệu theo cặp, còn tương tác có phần thưởng môi trường đáng tin cậy có thể dùng cho RL. Trước khi đưa vào huấn luyện, vẫn cần loại bỏ thông tin riêng tư, lọc quỹ đạo sai và giữ lại tập hồi quy độc lập; sau huấn luyện, cần kiểm tra xem năng lực tổng quát và căn chỉnh an toàn có bị quên hay không.
 
-Học tham số thường phối hợp với các phương pháp bên ngoài. Mô hình ảnh y khoa dùng tham số để học biểu diễn thị giác, dùng kho tri thức cung cấp hướng dẫn mới nhất, dùng mã để đo tổn thương và tính rủi ro; giọng điệu tự nhiên của dịch vụ khách hàng có thể được định hình ở cấp phân phối tổng thể bằng huấn luyện ưu tiên, sau đó dùng Prompt quy định nhận diện thương hiệu hiện tại và dùng bộ nhớ người dùng để thích nghi với sở thích giao tiếp cá nhân. Tiến hóa liên tục không phải là chọn một đáp án duy nhất trong bốn phương thức, mà là đặt từng năng lực vào vị trí phù hợp nhất để biểu đạt và quản trị nó.
-
 ### Từ cập nhật tạo tác đến cập nhật “phương pháp cập nhật”
 
 Bốn phương thức trước trả lời **kinh nghiệm được ghi vào đâu**, nhưng tiến hóa liên tục còn có một trục độc lập khác: hệ thống đang tối ưu nội dung của một tạo tác, hay phương pháp tạo, quản lý và xác minh các tạo tác đó? Theo trục này, đối tượng tối ưu có thể mở rộng từ **một quy tắc hoặc ký ức → ngữ cảnh có cấu trúc → quy trình công việc → mã Harness → mã bộ tối ưu sinh phương án ứng viên**[^weng-harness-2026]. Đây không phải năm vật mang cập nhật mới mà là năm quy mô tìm kiếm; tri thức, Prompt, Skill và chương trình có thể xuất hiện ở nhiều tầng.
@@ -250,7 +256,7 @@ Ra ngoài một tầng, đối tượng tối ưu không chỉ là “ngữ cả
 
 Ý tưởng này mở rộng tới quy trình công việc và toàn bộ Harness. AFlow biểu diễn quy trình gồm nhiều lần gọi LLM thành đồ thị mã và dùng phản hồi thực thi để tìm tổ hợp nút cùng luồng điều khiển[^aflow-2025]. Meta-Harness để Coding Agent đọc mã nguồn, điểm số và quỹ đạo của Harness ứng viên rồi tìm kiếm mã quyết định cách lưu, truy xuất và trình bày thông tin[^meta-harness-2026]. Chương 5 đã xem mã là ngôn ngữ chung biểu đạt cấu trúc hệ thống Agent; điểm mới ở đây là mã cùng lịch sử đánh giá có thể trở thành đối tượng tìm kiếm liên tục, không chỉ là đầu ra một lần.
 
-> **Thí nghiệm 9-6 ★★★: Đưa cuốn sách này cho Hermes: nó có thể tự nâng cấp không?**
+> **Thí nghiệm 9-8 ★★★: Đưa cuốn sách này cho Hermes: nó có thể tự nâng cấp không?**
 >
 > **Mục tiêu**: Kiểm tra liệu một Agent có thể biến tri thức bên ngoài thành một bản cập nhật thật cho chính năng lực của mình hay không. Thí nghiệm không nêu sẵn vấn đề hay danh sách tính năng. Hermes nhận cả mười chương và mã nguồn của mình, rồi phải hiểu nguyên tắc, xem lại cách triển khai và tự chọn một cải tiến đáng làm.
 >
@@ -294,6 +300,18 @@ Bảng 9-3 Các chỉ số đánh giá phân tầng cho tiến hóa liên tục
 - chất lượng kỹ thuật dài hạn, tức độ phức tạp bảo trì, tính nhất quán kiến trúc, ranh giới sở hữu, khả năng tương thích ngược và chi phí di chuyển, gỡ lỗi tương lai có xấu đi hay không.
 
 Một vấn đề chỉ giải quyết được trường hợp thất bại hiện tại nhưng suy giảm ở những trường hợp hiện có khác hoặc lĩnh vực mới không phải là học liên tục thành công.
+
+> **Thí nghiệm 9-9 ★★★: Đánh giá Agent có đang tiến hóa liên tục hay không**
+>
+> **Mục tiêu thí nghiệm**: Phân biệt ba hành vi dài hạn — “biết lưu một lần phản hồi”, “chỉ biết nối thêm” và “có thể cập nhật, chuyển giao, duy trì năng lực” — để tránh giả mạo học liên tục bằng cách lặp lại cùng một tập câu hỏi.
+>
+> **Luồng nhiệm vụ bốn giai đoạn**: Giai đoạn học cung cấp các nhiệm vụ hoàn tiền, xác minh danh tính và chính sách hành lý có chung quy luật tiềm ẩn. Giai đoạn chuyển giao thay đổi cách diễn đạt, người dùng và môi trường cục bộ để kiểm tra kinh nghiệm cũ có dùng được cho nhiệm vụ mới hay không. Giai đoạn thay đổi quy tắc cập nhật giới hạn hành lý từ 20kg lên 23kg, yêu cầu hệ thống thay thế hoặc loại bỏ tri thức cũ. Giai đoạn duy trì kiểm thử lại năng lực không thay đổi và quy tắc hiện hành để đo xem cập nhật có gây quên hay không. Chỉ sau khi mỗi nhiệm vụ có phản hồi kết thúc mới được cập nhật bộ nhớ ngoài; hành động kỳ vọng của câu hỏi hiện tại không được rò rỉ cho Agent trước.
+>
+> **Nhóm đối chứng**: `static` không lưu phản hồi lâu dài; `append_only` nhớ được phiên bản quy tắc đầu tiên nhưng không xử lý xung đột hay loại bỏ; `evolving` lưu phiên bản và dùng bằng chứng mới thay quy tắc cũ. Bản triển khai tham chiếu dùng để xác minh Harness đánh giá có phân biệt được các hành vi này hay không. Thí nghiệm thực có thể cho LLM trải qua cùng một luồng tuần tự 14 câu, nhưng kết quả phải do Harness bên ngoài mô hình tính toán.
+>
+> **Chỉ số và nghiệm thu**: Báo cáo độ chính xác và đường cong học tập theo từng giai đoạn; tính riêng độ chính xác chuyển giao, số nhiệm vụ cần thiết để trở lại đáp án đúng sau khi nhận quy tắc mới, tỷ lệ duy trì năng lực cũ, tỷ lệ chuyển giao tiêu cực, tỷ lệ vượt qua Rubric an toàn, cùng chi phí Token, độ trễ và lưu trữ. Với hệ thống thực cập nhật Prompt, Skill hoặc Harness, còn phải ghi tỷ lệ thay đổi ứng viên hữu hiệu, tỷ lệ kích hoạt tạo tác và tỷ lệ tuân thủ thành công, tránh coi “cập nhật đúng nhưng không được tải” là cập nhật thất bại. Dù độ chính xác cuối cao, một Agent vẫn trích dẫn quy tắc đã bãi bỏ, hoàn thành nhiệm vụ bằng lối tắt vi phạm hoặc quên năng lực cũ sau cập nhật cũng không thể được coi là đang tiến hóa liên tục.
+>
+> Phần triển khai đi kèm nằm tại [`self-evolution-eval`](../chapter9/self-evolution-eval/), mặc định so sánh ba Agent tham chiếu: có thể cập nhật, chỉ nối thêm và tĩnh; dùng `--profile llm` để LLM thực trải qua cùng một luồng nhiệm vụ dài hạn.
 
 ### Ranh giới của vòng khép kín có thể xác minh: khi “hoàn thành” không có nghĩa là “tiến bộ”
 
@@ -342,18 +360,6 @@ Tiến hóa liên tục cũng không có nghĩa là để tri thức, Prompt và
 - xác minh lại các công cụ lâu ngày không được sử dụng;
 - xóa tri thức bị bằng chứng mới bác bỏ;
 - huấn luyện lại LoRA từ mô hình nền tảng gốc. Đạo lý giống hệt tầng dữ liệu ở Chương 1: bảo đảm thật sự phải đến từ tầng mà bên sửa đổi không chạm tới được.
-
-> **Thí nghiệm 9-7 ★★★: Đánh giá Agent có đang tiến hóa liên tục hay không**
->
-> **Mục tiêu thí nghiệm**: Phân biệt ba hành vi dài hạn — “biết lưu một lần phản hồi”, “chỉ biết nối thêm” và “có thể cập nhật, chuyển giao, duy trì năng lực” — để tránh giả mạo học liên tục bằng cách lặp lại cùng một tập câu hỏi.
->
-> **Luồng nhiệm vụ bốn giai đoạn**: Giai đoạn học cung cấp các nhiệm vụ hoàn tiền, xác minh danh tính và chính sách hành lý có chung quy luật tiềm ẩn. Giai đoạn chuyển giao thay đổi cách diễn đạt, người dùng và môi trường cục bộ để kiểm tra kinh nghiệm cũ có dùng được cho nhiệm vụ mới hay không. Giai đoạn thay đổi quy tắc cập nhật giới hạn hành lý từ 20kg lên 23kg, yêu cầu hệ thống thay thế hoặc loại bỏ tri thức cũ. Giai đoạn duy trì kiểm thử lại năng lực không thay đổi và quy tắc hiện hành để đo xem cập nhật có gây quên hay không. Chỉ sau khi mỗi nhiệm vụ có phản hồi kết thúc mới được cập nhật bộ nhớ ngoài; hành động kỳ vọng của câu hỏi hiện tại không được rò rỉ cho Agent trước.
->
-> **Nhóm đối chứng**: `static` không lưu phản hồi lâu dài; `append_only` nhớ được phiên bản quy tắc đầu tiên nhưng không xử lý xung đột hay loại bỏ; `evolving` lưu phiên bản và dùng bằng chứng mới thay quy tắc cũ. Bản triển khai tham chiếu dùng để xác minh Harness đánh giá có phân biệt được các hành vi này hay không. Thí nghiệm thực có thể cho LLM trải qua cùng một luồng tuần tự 14 câu, nhưng kết quả phải do Harness bên ngoài mô hình tính toán.
->
-> **Chỉ số và nghiệm thu**: Báo cáo độ chính xác và đường cong học tập theo từng giai đoạn; tính riêng độ chính xác chuyển giao, số nhiệm vụ cần thiết để trở lại đáp án đúng sau khi nhận quy tắc mới, tỷ lệ duy trì năng lực cũ, tỷ lệ chuyển giao tiêu cực, tỷ lệ vượt qua Rubric an toàn, cùng chi phí Token, độ trễ và lưu trữ. Với hệ thống thực cập nhật Prompt, Skill hoặc Harness, còn phải ghi tỷ lệ thay đổi ứng viên hữu hiệu, tỷ lệ kích hoạt tạo tác và tỷ lệ tuân thủ thành công, tránh coi “cập nhật đúng nhưng không được tải” là cập nhật thất bại. Dù độ chính xác cuối cao, một Agent vẫn trích dẫn quy tắc đã bãi bỏ, hoàn thành nhiệm vụ bằng lối tắt vi phạm hoặc quên năng lực cũ sau cập nhật cũng không thể được coi là đang tiến hóa liên tục.
->
-> Phần triển khai đi kèm nằm tại [`self-evolution-eval`](../chapter9/self-evolution-eval/), mặc định so sánh ba Agent tham chiếu: có thể cập nhật, chỉ nối thêm và tĩnh; dùng `--profile llm` để LLM thực trải qua cùng một luồng nhiệm vụ dài hạn.
 
 [^claude-code-memory]: Anthropic, “How Claude remembers your project”, 2026. https://code.claude.com/docs/en/memory
 
