@@ -170,8 +170,6 @@ Vegyünk egy konkrét példát – a bevételek összesítését több devizába
 
 Az alábbi Python-stílusú vázlat magyarázó pszeudokód, nem futtatható SDK-kód; a `python` jelölő csak szintaxiskiemelésre szolgál.
 
-**ReAct vezérlési ciklus:**
-
 ```python
 trajectory = [user_request]
 
@@ -232,8 +230,6 @@ Vegyük észre, hogy a system prompt és az eszközdefiníciók nem jelennek meg
 A kísérletünkben ez a ciklus jól látható volt. Az első körben az ügynök elemezte a feladatot, és párhuzamosan három devizaváltó eszközt hívott; a másodikban a konverziós eredményeket egy kódértelmezőnek adta át a számításigényesebb aggregációhoz; a harmadikban, miután megerősítette, hogy minden számítás kész, előállította a végső választ. Egy összetett, többlépéses feladat 3 iterációban és 4 eszközhívásban készült el.
 
 Ebben a legalapvetőbb kialakításban az LLM által látott kontextus folyamatosan bővül. Minden egyes LLM-hívás megkapja a teljes trajektóriát, így a modell tudja, hogy a feladat mely szakaszában jár, mit próbált ki korábban, és mi lett az eredmény. Ahogy az emberek is folyamatosan áttekintik és összegzik a problémák megoldása során, az ügynök is egy globális képet tart fenn a feladatról a trajektóriáján keresztül. És mivel a trajektória strukturált – a felhasználói üzenetek, az asszisztens üzenetek (érvelés + eszközhívások) és az eszközeredmények mind tisztán elkülönülnek –, a rendszer jól értelmezhető és hibakereshető.
-
-A trajektória több, mint egy végrehajtási rekord; az ügynök képességének bizonyítéka. A trajektóriák nagy léptékű elemzése feltárja a viselkedésmintákat, a jobb döntési útvonalakat és a jobb eszközterveket. A trajektóriaadatok akár tudásbázisba desztillálhatók, vagy megerősítéses tanulással erősebb ügynökmodellek képzésére használhatók – bezárva a tapasztalatból való tanulás körét.
 
 Most, hogy megértettük az ügynök működési ciklusát, két kísérletet vizsgálunk meg, hogy lássuk, a különböző modellek hogyan vezérlik azt.
 

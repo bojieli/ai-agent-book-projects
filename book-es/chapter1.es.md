@@ -57,6 +57,7 @@ Comprender la función de estos tres elementos y sus relaciones mutuas es fundam
 | **Agentes personales de gestión de tareas como Pine AI** | Información de las cuentas del usuario, facturas anteriores, bases de conocimiento de proveedores de servicios | Abierto (razonamiento interno, llamadas telefónicas, envío de correos electrónicos, cumplimentación de formularios, confirmación con el usuario) | Ejecución de tareas de varios pasos: recopilar información→formular una estrategia de negociación→contactar con el proveedor de servicios→negociar→informar de los resultados |
 
 Estos sistemas de Agentes comparten varias características: todos utilizan un **espacio de acción abierto**—no eligen entre unos pocos botones limitados, sino que pueden generar cualquier lenguaje natural y código; todos pueden **razonar internamente**—piensan y planifican antes de actuar; y todos pueden **interactuar de forma continua**—ajustan constantemente su estrategia según la respuesta del entorno. Estas capacidades proceden precisamente de la acción coordinada del cerebro, los ojos y las manos y los pies—es decir, del LLM, el contexto y las herramientas.
+
 ### Herramientas: Las Interfaces de Acción del Agente
 
 Las herramientas son el puente del Agente hacia el mundo exterior. Convierten al Agente de un observador pasivo en un sistema activo que puede buscar, escribir archivos, ejecutar código, llamar a APIs, enviar mensajes u operar interfaces. Sin herramientas, un Agente se limita a la generación de texto; con ellas, puede actuar sobre sistemas externos.
@@ -110,6 +111,7 @@ Las herramientas de propósito general no siempre son mejores que las especializ
 El modelo de lenguaje de gran tamaño (Large Language Model, LLM) constituye el núcleo de toma de decisiones del Agente. Tras recibir la solicitud del usuario, primero debe interpretar su verdadera intención (lo que el usuario dice a menudo no es lo que realmente quiere) y, después, descomponer una tarea ambigua o compleja en pasos ejecutables. Durante la ejecución, también debe tomar decisiones de forma continua: qué hacer a continuación, si debe invocar una herramienta, cuál invocar y qué parámetros pasarle. Esta capacidad de «comprender-planificar-ejecutar» procede del conocimiento acumulado durante el preentrenamiento y es la base de la que dependen tanto los workflows como los Agentes autónomos.
 
 Una capacidad distintiva de los Agentes basados en LLM es el **razonamiento interno**—antes de emprender una acción real, el Agente puede planificar y simular primero. Este proceso no modifica el entorno externo, pero puede mejorar significativamente la calidad de las acciones posteriores. La capacidad del LLM para realizar simulaciones internas eficaces se debe a las competencias adquiridas durante el preentrenamiento (Pre-training, es decir, el entrenamiento inicial sobre enormes volúmenes de texto de Internet para que el modelo aprenda los patrones del lenguaje y conocimientos sobre el mundo)—al simular, el modelo sigue reglas lógicas ya consolidadas en el conocimiento humano, como leyes matemáticas, relaciones causales y estrategias de descomposición de problemas. Por tanto, a diferencia de los Agentes tradicionales de aprendizaje por refuerzo, los Agentes actuales basados en LLM no realizan una exploración aleatoria a ciegas, sino que razonan sobre un sistema de conocimiento estructurado.
+
 #### El Modelo como Agente: Cuando el Modelo Mismo se Convierte en el Producto
 
 El paradigma "El Modelo como Agente" (Model as Agent) es la dirección más reciente en el desarrollo de Agentes de IA. Los modelos avanzados internalizan la llamada a herramientas como una capacidad nativa a través del posentrenamiento (especialmente el aprendizaje por refuerzo): cuándo llamar a una herramienta, cuál llamar y con qué argumentos son decisiones que toma el modelo por completo, sin necesidad de orquestación manual. Esto no resta importancia a la capa de framework; al contrario: cuanto más fuerte es el modelo, más importa el Harness que lo rodea. La palabra *harness* se refería originalmente a los arreos y las riendas de un caballo: no sirven para limitar su capacidad de correr, sino para dirigir esa fuerza en la dirección adecuada. En el contexto de los Agentes, el modelo es ese caballo potente pero impredecible, mientras que el Harness es la infraestructura de ingeniería que canaliza su capacidad hacia una ejecución de tareas confiable. Incluye la gestión de contexto, las interfaces de herramientas, las restricciones de seguridad y los mecanismos de verificación y corrección.
@@ -158,6 +160,8 @@ Para comprobar si cada componente es realmente indispensable, el método más di
 
 ### El Bucle ReAct
 
+Conocidos ya los tres componentes del Agente, surge una pregunta natural: ¿cómo trabajan juntos? El bucle ReAct es justamente el mecanismo central que encadena el LLM, el contexto y las herramientas; veamos cómo un Agente piensa y actúa paso a paso.
+
 El patrón central mediante el cual un Agente ejecuta una tarea se llama **ReAct** (Reasoning + Acting). El bucle consta de tres etapas: el modelo **razona** sobre qué hacer a continuación, llama a una herramienta para **actuar**, y **observa** el resultado para volver a razonar. Este bucle "razonar → actuar → observar" se repite hasta completar la tarea.
 
 Consideremos la **trayectoria**: el historial de mensajes que se acumula a medida que el Agente trabaja. En cada llamada al LLM, el contexto completo es el **prefijo estático** más la **trayectoria** (historial dinámico) (Figura 1-4). De aquí se deriva una verdad clave: **Contexto del Agente = Prefijo Estático + Trayectoria**.
@@ -165,8 +169,6 @@ Consideremos la **trayectoria**: el historial de mensajes que se acumula a medid
 ![Figura 1-4: Trayectoria del Agente, Bucle ReAct para una tarea de agregación multimoneda](images/fig1-4.svg)
 
 El siguiente esquema con estilo Python es pseudocódigo explicativo, no código SDK ejecutable; el marcador `python` se usa únicamente para resaltar la sintaxis.
-
-**Bucle de control ReAct:**
 
 ```python
 trajectory = [user_request]
@@ -223,7 +225,13 @@ trajectory = [
 ]
 ```
 
+Observe que la trayectoria no muestra el prompt del sistema ni las definiciones de herramientas: son un prefijo estático que se antepone automáticamente a la trayectoria en cada llamada al LLM.
+
+En nuestro experimento el bucle se vio con claridad. En la primera ronda el Agente analizó la tarea y llamó en paralelo a tres herramientas de conversión de divisas; en la segunda pasó los resultados de la conversión a un intérprete de código para el cálculo más intensivo; en la tercera, tras confirmar que todos los cálculos estaban hechos, produjo la respuesta final. Una tarea compleja de varios pasos quedó resuelta en 3 iteraciones y 4 llamadas a herramientas.
+
 En este diseño básico, el contexto que ve el modelo se amplía mediante anexos sucesivos. Cada llamada al LLM recibe la trayectoria completa, permitiendo que el modelo conozca el estado de la tarea en todo momento.
+
+Entendido el bucle de ejecución del Agente, veamos con dos experimentos cómo distintos modelos lo impulsan.
 
 > **Experimento 1-2 ★: capacidades nativas de Agente de Kimi K3**
 >
@@ -357,7 +365,6 @@ El modelo es la base inteligente del Agente, y elegir el modelo adecuado suele s
 
 **Preste atención a la velocidad de salida y a las capacidades multimodales.** Además del coste, existen otras dos dimensiones que suelen pasarse por alto. La primera es la **velocidad de generación de tokens**: los Agentes suelen necesitar varias rondas de razonamiento y, en cada una, deben esperar a que el modelo termine de generar la salida antes de ejecutar el siguiente paso; por tanto, la velocidad de salida determina directamente la latencia de extremo a extremo—si una tarea de Agente necesita 20 rondas de razonamiento, dos segundos adicionales por ronda significan 40 segundos más de espera en total. La segunda es la **compatibilidad multimodal**: si su Agente necesita comprender imágenes, audio o vídeo, la capacidad multimodal es un requisito imprescindible, y las diferencias entre modelos en este aspecto son considerables.
 
-
 ### Patrones de orquestación: workflows y autonomía
 
 Los patrones de orquestación son la forma de organizar las capas de «contexto y herramientas» dentro del Harness—determinan cómo fluye el contexto entre las llamadas al LLM, cómo se programan las herramientas y si la ruta de ejecución del Agente está predefinida o se genera dinámicamente. La orquestación de los sistemas de Agentes ha evolucionado desde soluciones sencillas hasta otras más complejas; cada patrón tiene escenarios de aplicación adecuados y compromisos que deben sopesarse. Según la experiencia de Anthropic colaborando con decenas de equipos en la construcción de Agentes basados en LLM, las implementaciones más exitosas no suelen utilizar frameworks complejos, sino patrones sencillos y componibles.
@@ -413,7 +420,9 @@ Desde la perspectiva de la implementación, un Agente autónomo es esencialmente
 Los Agentes autónomos son especialmente adecuados para problemas abiertos—problemas en los que es difícil predecir el número de pasos necesarios. Entre los escenarios de aplicación típicos se incluyen: un Coding Agent que resuelve tareas de SWE-bench (Software Engineering Benchmark, una prueba de referencia que evalúa la capacidad de un Agente para corregir automáticamente GitHub Issues reales), un Agente de «uso del ordenador» (Computer Use) que maneja una interfaz informática como lo haría una persona y tareas de investigación que requieren búsquedas y análisis iterativos.
 
 No obstante, la autonomía también conlleva mayores costes y un posible riesgo de errores compuestos. Por tanto, al desplegar un Agente autónomo, es imprescindible realizar pruebas exhaustivas en un entorno aislado, configurar guardrails y mecanismos de supervisión adecuados, y considerar la incorporación de puntos de control con intervención humana en las decisiones críticas.
+
 #### Selección y Mezcla de Ambos Patrones
+
 Muchos sistemas combinan ambos: los procesos críticos funcionan como workflows, mientras que los pasos dinámicos se delegan a Agentes autónomos (ejemplo: n8n).
 
 ![Figura 1-7: Interfaz del editor de flujos de trabajo n8n](images/n8n-workflow.png)
@@ -441,6 +450,7 @@ Las dos primeras filas merecen una aclaración aparte. Codex es el producto Codi
 Los frameworks de Agentes evolucionan con rapidez. Para cuando lea este libro, algunos quizá ya estén obsoletos y otros nuevos se hayan popularizado. Por eso no es importante aprender la API de un framework concreto. Al elegir, la cuestión clave no es su complejidad, sino si ofrece una capa de abstracción lo bastante fina para permitirle centrarse en la lógica de negocio.
 
 Los modelos de orquestación analizados anteriormente resuelven el problema de cómo organizar el contexto y las herramientas dentro del Harness—cómo encadenar las llamadas a LLM, las herramientas y los flujos de datos. Sin embargo, no basta con poder ejecutar tareas; también hay que garantizar que se ejecuten correctamente y de forma segura. A continuación, abordaremos el principal mecanismo práctico para implementar las restricciones, la validación y la corrección construidas en torno al contexto y las herramientas: las guardrails.
+
 ### Guardarraíles y Seguridad
 
 Esta sección ofrece una visión general de alto nivel sobre los guardarraíles para establecer el panorama general. Los detalles de implementación y la práctica se desarrollan en el Capítulo 2 (la capa de contexto: protección contra inyección de prompts), Capítulo 4 (la capa de ejecución: control de permisos de herramientas) y Capítulo 5 (las capas de ejecución y de datos: seguridad en la ejecución de código y descenso de la frontera de confianza); los lectores por primera vez no necesitan seguir cada detalle inmediatamente.
@@ -460,13 +470,14 @@ Las barreras de la **capa de contexto** gobiernan **qué puede ver el modelo** e
 Una práctica industrial representativa de las barreras de protección basadas en clasificadores son los Constitutional Classifiers de Anthropic[^ch1-3]. Su mecanismo central consta de tres elementos: en primer lugar, un enfoque **guiado por reglas**—se utiliza reglas redactadas en lenguaje natural, que especifican claramente qué contenido está permitido y cuál está prohibido, para generar datos sintéticos de entrenamiento con los que se entrenan clasificadores de entrada y salida—; en segundo lugar, la **evaluación conjunta del contexto**—los sistemas de nueva generación examinan conjuntamente la pregunta del usuario y la respuesta del modelo, porque algunas respuestas no presentan ningún problema de forma aislada, como «cómo utilizar condimentos alimentarios», y solo al cotejarlas con la pregunta puede descubrirse que «condimentos alimentarios» es en realidad una expresión codificada para referirse a reactivos químicos—; en tercer lugar, un **proceso de filtrado en dos niveles**—primero, una sonda extremadamente ligera, que lee directamente las activaciones internas del modelo con un coste prácticamente nulo, comprueba todas las conversaciones y, cuando detecta algo sospechoso, lo remite a un clasificador más potente para una segunda revisión, en lugar de rechazarlo directamente—. De este modo, aunque el primer nivel genere un mayor número de falsos positivos, la experiencia del usuario no se ve afectada y el coste se reduce de forma considerable.
 
 [^ch1-3]: Anthropic. "Next-generation Constitutional Classifiers: More efficient protection against universal jailbreaks", 2026. https://www.anthropic.com/research/next-generation-constitutional-classifiers; artículo: Cunningham et al., "Constitutional Classifiers++: Efficient Production-Grade Defenses against Universal Jailbreaks", arXiv:2601.04603
-#### Intervención Humana (Human-in-the-loop)
 
 Pero esta capa tiene un techo estructural: **un Agente que vive dentro del propio contexto atacado difícilmente puede saber si ya ha sido inyectado**. La capa de contexto puede reducir la tasa de éxito de un ataque, pero no ofrece garantías; precisamente por eso hacen falta las dos capas inferiores.
 
 Las barreras de la **capa de ejecución** gobiernan **qué puede hacer el modelo** y validan la acción antes de que surta efecto. Su núcleo es la **clasificación de riesgo de herramientas**: cada herramienta recibe un nivel de riesgo (bajo/medio/alto) según la reversibilidad de la operación, el nivel de permisos y el impacto económico, y las operaciones de alto riesgo exigen revisión adicional o confirmación humana. Lo decisivo es que esa revisión la realice un mecanismo **externo al contexto** —un proceso de revisión independiente, credenciales de mínimo privilegio, aislamiento en sandbox, una persona en el bucle—, pues de lo contrario caerá junto con el Agente inyectado. La respuesta que se devuelve al usuario es también una acción (el capítulo 4 la clasifica como herramienta de comunicación con el usuario), de modo que las **comprobaciones de salida** pertenecen igualmente a esta capa: el **filtro de PII** revisa la salida en busca de información personal identificable (documentos de identidad, teléfonos) para evitar exposiciones innecesarias, y la **validación de salida** comprueba el contenido para mantener las respuestas alineadas con los valores de marca.
 
 Las barreras de la **capa de datos** gobiernan **en qué puede acabar convirtiéndose el mundo**, delegando «quién puede hacer qué sobre qué registro» en un mecanismo estable y revisado por personas: políticas de seguridad a nivel de fila en la base de datos, restricciones y validadores, vistas controladas y procedimientos almacenados, y un contexto de acceso vinculado por un runtime de confianza que no puede falsificarse. El valor de esta capa reside justamente en que no depende de que las dos anteriores sean correctas: aunque la inyección de prompt tenga éxito y el código generado omita por completo las comprobaciones de permisos, la operación no autorizada seguirá siendo rechazada en la capa de datos. El capítulo 5 desarrolla esta capa con el ejemplo del software generado dinámicamente.
+
+#### Intervención Humana (Human-in-the-loop)
 
 La intervención de **humano en el bucle (Human-in-the-loop)** es una medida de protección clave: permite que un Agente mejore su rendimiento en el mundo real sin degradar la experiencia del usuario. Es de máxima importancia en las primeras etapas de despliegue, donde ayuda a identificar modos de fallo, sacar a la luz casos límite y establecer un ciclo de evaluación robusto.
 
@@ -500,6 +511,7 @@ El capítulo 6 (interacción) no pertenece a ninguno de los cinco elementos: lo 
 La seguridad tampoco se reparte por capítulos: es una preocupación transversal (cross-cutting concern, un problema que afecta a varias partes del sistema) que recorre todo el libro y se organiza según las tres capas de barreras de la sección anterior: contexto, ejecución y datos. La columna «foco de seguridad» de la tabla indica dónde aterriza principalmente cada capítulo dentro de esas tres capas.
 
 La práctica de Anthropic en la construcción de Agentes de larga duración muestra cómo el diseño de Harness puede resolver problemas que el modelo por sí solo no puede. Dividen las tareas complejas entre un "Agente de Inicialización" (que configura el entorno y descompone la lista de tareas) y un "Agente de Ejecución" (que avanza de forma incremental en cada sesión y deja artefactos de entrega claros), utilizando un Harness estructurado para abordar los dos modos de fallo de las tareas largas: quedarse sin contexto y declarar la tarea completada prematuramente. Los capítulos siguientes analizan el Harness componente por componente: el Capítulo 2 comienza con el más central, la ingeniería de contexto, y el Capítulo 5 expone la práctica completa de la ingeniería de Harness en los Coding Agents.
+
 ## Patrones de diseño que recorren todo el libro
 
 Los nueve capítulos siguientes recurren una y otra vez al mismo puñado de estructuras. No pertenecen a ningún capítulo concreto: son soluciones repetidas bajo una misma restricción, así que aquí las nombramos de una vez y damos a cada una su definición canónica. Después, cada capítulo las invoca por su nombre y solo describe su variante local.

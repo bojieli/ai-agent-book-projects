@@ -170,8 +170,6 @@ Consider a concrete example—aggregating revenue across multiple currencies—t
 
 The following Python-style sketch is explanatory pseudocode, not runnable SDK code; the `python` marker is used only for syntax highlighting.
 
-**ReAct control loop:**
-
 ```python
 trajectory = [user_request]
 
@@ -232,8 +230,6 @@ Note that the system prompt and tool definitions are not shown in the trajectory
 In our experiment, this loop was clearly visible. In the first round, the Agent analyzed the task and called three currency conversion tools in parallel; in the second, it fed the conversion results to a code interpreter for the more computationally intensive calculation; in the third, having confirmed all calculations were complete, it produced the final answer. A complex multi-step task was completed in 3 iterations and 4 tool calls.
 
 In this most basic design, the context seen by the LLM is continually appended to. Every LLM call receives the complete trajectory, so the model knows which stage of the task it is in, what was tried before, and what the outcome was. Just as people keep reviewing and summarizing while solving a problem, the Agent maintains a global view of the task through its trajectory. And because the trajectory is structured—user messages, assistant messages (reasoning + tool calls), and tool results all separated cleanly—the system is highly interpretable and debuggable.
-
-The trajectory is more than an execution record; it is evidence of the Agent’s capability. Analyzing trajectories at scale reveals behavior patterns, better decision paths, and better tool designs. Trajectory data can even be distilled into a knowledge base, or used to train stronger Agent models via reinforcement learning—closing the loop of learning from experience.
 
 Now that we understand the Agent's operating loop, we examine two experiments to see how different models drive it.
 

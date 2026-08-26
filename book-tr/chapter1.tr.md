@@ -170,8 +170,6 @@ Somut bir örnek üzerinden—birden fazla para biriminde geliri toplama—bir A
 
 Aşağıdaki Python tarzı taslak açıklayıcı pseudocode'dur, çalıştırılabilir SDK kodu değildir; `python` işareti yalnızca sözdizimi vurgulama için kullanılır.
 
-**ReAct kontrol döngüsü:**
-
 ```python
 trajectory = [user_request]
 
@@ -233,9 +231,6 @@ Deneyimizde bu döngü tüm açıklığıyla ortaya çıktı. İlk turda Agent g
 
 Bu en temel tasarımda, LLM'in gördüğü context'e sürekli yeni bilgiler eklenir. Her LLM çağrısı eksiksiz trajectory'yi görür, böylece model görevin hangi aşamasında olduğunu, daha önce nelerin denendiğini ve sonucunun ne olduğunu bilir. İnsanların bir problemi çözerken sürekli gözden geçirip özetlemesi gibi, Agent da trajectory'si sayesinde göreve dair küresel bir bakış açısı taşır. Ve trajectory yapılandırılmış olduğundan—kullanıcı mesajları, asistan mesajları (reasoning + tool calls) ve araç sonuçları temiz biçimde ayrıldığından—sistem son derece yorumlanabilir ve hata ayıklanabilir durumdadır.
 
-Trajectory, bir yürütme kaydından fazlasıdır; Agent'ın yeteneğinin bir aynasıdır. Trajectory'leri büyük ölçekte analiz etmek, davranış kalıplarını, daha iyi karar yollarını ve daha iyi araç tasarımlarını ortaya çıkarır. Trajectory verisi hatta bir bilgi tabanına damıtılabilir, ya da pekiştirmeli öğrenme yoluyla daha güçlü Agent modelleri eğitmek için kullanılabilir—deneyimden öğrenme döngüsünü kapatır.
-
-
 Artık Agent'ın çalışma döngüsünü anladığımıza göre, farklı modellerin bu döngüyü nasıl yürüttüğünü görmek için iki deney yapalım.
 
 > **Deney 1-2 ★: Kimi K3'ün Yerleşik Agent Yeteneği**
@@ -263,7 +258,6 @@ Artık Agent'ın çalışma döngüsünü anladığımıza göre, farklı modell
 > Şekil 1-5, "Model as Agent" paradigması altındaki yerleşik tool calling'in tam mimarisini, Kimi K3 / GPT-5.6'nın gerçek dünya görevlerindeki ReAct yürütme süreciyle birlikte gösterir.
 >
 > ![Şekil 1-5: "Model as Agent" Mimarisi—Yerleşik Tool Calling](images/fig1-5.svg)
-
 
 ## Harness Engineering: Modelin Ötesinde Rekabet Gücü
 
@@ -370,7 +364,6 @@ Model, Agent'ın zeka altyapısıdır ve doğru olanı seçmek çoğu zaman herh
 **Agent'ların Büyük Çoğunluğu Reasoning Destekleyen Bir Model Gerektirir.** Agent'lar karmaşık kararlar alır—çok adımlı reasoning, araç seçimi—ve reasoning'i olmayan modeller bunları genellikle kötü yapar. İstisnalar azdır: tek bir basit adım, veya sabit bir konuma tıklamaktan ibaret Computer Use GUI işlemleri; bu durumlarda reasoning yapmayan bir model idare edebilir. Çok adımlı reasoning veya dinamik karar alma devreye girdiği anda, bir reasoning modeli şarttır.
 
 **Çıktı Hızına ve Çok Modlu Yeteneklere Dikkat Edin.** Maliyetin ötesinde, gözden kaçması kolay iki boyut vardır. Biri **çıktı token hızıdır**: Agent'lar tipik olarak çok sayıda çıkarım turu çalıştırır ve her tur bir sonraki başlamadan önce bitmelidir, bu yüzden çıktı hızı uçtan uca gecikmeyi doğrudan belirler—her turda 2 saniye daha yavaş çalışan 20 turluk bir Agent görevi, ekstra 40 saniyelik bir bekleme anlamına gelir. Diğeri ise **çok modlu (multimodal) destektir**: Agent'ınızın görüntüleri, sesi veya videoyu anlaması gerekiyorsa, multimodal yetenek zorunlu bir gereksinimdir ve modeller bu konuda büyük farklılıklar gösterir.
-
 
 ### Orkestrasyon Kalıpları: Workflow ve Autonomous
 
