@@ -95,7 +95,7 @@ Ebben a definícióban négy tervezési döntés kíván kifejtést.
 
 A továbbiakban arra kérjük az olvasót, hogy maga futtassa a τ²-bench telecom tartományának kiértékelő feladatait, figyelje meg a feladattervezést, a felhasználószimulátort, a folyamat- és eredményellenőrzés logikáját, továbbá az Agent végrehajtási trajectoryját elemezve fejtse meg, miért bukott el az Agent.
 
-> **Kísérlet 7-1 ★: A τ²-bench futtatása és a τ-benchhez képesti fejlődés összevetése**
+> **7-1. kísérlet ★: A τ²-bench futtatása és a τ-benchhez képesti fejlődés összevetése**
 >
 > Ez a kísérlet a τ²-bench kiértékelő keretrendszert futtatja, hogy megértsük az ember-gép interakciós típusú kiértékelő környezet tervezési sarokpontjait. Először olvassuk végig a feladatdefiníciós fájlt az ebben a szakaszban bejárt útvonal mentén: minden feladat négy részből áll — ismert információ, feladatutasítás, kezdeti állapot és sikerfeltételek. Ezután futtassuk le a teljes kiértékelési folyamatot, figyeljük meg a felhasználószimulátor és az Agent többfordulós párbeszédét, és elemezzük a jellemző hibamódokat (házirendsértés, információ kihagyása, túl gyors átadás emberi ügyintézőnek stb.).
 >
@@ -264,7 +264,7 @@ Negyedszer, **a felhasználó nemcsak a beszélgetésben, hanem a műveletvégz�
 
 **OSWorld: a közzététel utáni 15 hónapban több mint 300 probléma került felszínre.** A 2024 áprilisában megjelent benchmark gyorsan a multimodális Agent-kiértékelés fontos eszközévé vált, ám a széles körű használat négyféle problémát tárt fel: környezeti problémákat (a webhelyek adatgyűjtés elleni védelme, CAPTCHA, dinamikus tartalomváltozás), feladatleírási problémákat (kétértelmű megfogalmazás), ellenőrzési logikai problémákat (túl szigorú vagy túl megengedő) és kezdetiállapot-problémákat (hiányos konfiguráció). A Hongkongi Egyetem csapata mintegy tízfős csoportot állított fel, és két hónapon át szorosan együttműködött a MoonShot AI-jal, az OpenAI-jal, a ByteDance Seed TARS-szal, az Anthropickal, a Simularral és másokkal a rendszerszintű javításon: a környezeti problémákat verziórögzítéssel és offline mentésekkel, a leírási problémákat a kétértelmű megfogalmazások átírásával, az ellenőrzési problémákat kézzel felállított helyes alapvonallal és a feltételek hangolásával, a kezdetiállapot-problémákat pedig teljességi ellenőrzések hozzáadásával enyhítették.
 
-> **Kísérlet 7-2 ★: Benchmarkfeladatok kézi végrehajtása**
+> **7-2. kísérlet ★: Benchmarkfeladatok kézi végrehajtása**
 >
 > Válasszunk feladatokat a GAIA, az AndroidWorld, a SWE-Bench Verified, a Terminal-Bench és az OSWorld-Verified halmazokból, és oldjuk meg őket saját kezűleg; adathalmazonként egy könnyű, egy közepes és egy nehéz feladat ajánlott. A „nehéz” szint embernek is kihívás.
 >
