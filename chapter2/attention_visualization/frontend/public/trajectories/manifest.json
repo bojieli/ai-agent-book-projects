@@ -12,19 +12,5 @@
     "timestamp": "2025-09-14 21:14:44",
     "category": "ReAct",
     "query": "Calculate the exact compound interest on $5,000 invested at 6% annual interest rate for 30 years, compounded monthly."
-  },
-  {
-    "filename": "trajectory_20250918_203008.json",
-    "id": "20250918_203008",
-    "timestamp": "2025-09-18 20:30:08",
-    "category": "ReAct",
-    "query": "What's the weather like in Vancouver right now?"
-  },
-  {
-    "filename": "trajectory_20250930_193645.json",
-    "id": "20250930_193645",
-    "timestamp": "2025-09-30 19:36:45",
-    "category": "ReAct",
-    "query": "What's the weather like in Vancouver right now?"
   }
 ]

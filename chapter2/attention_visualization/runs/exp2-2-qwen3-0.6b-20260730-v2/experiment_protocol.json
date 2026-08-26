@@ -1,0 +1,20 @@
+{
+  "experiment_id": "2-2",
+  "protocol_version": "1.0.0",
+  "authority": "book/chapter2.md:418",
+  "model": "Qwen/Qwen3-0.6B",
+  "simple_prompt": "北京 的 天气 怎么样",
+  "reasoning_prompt": "请先认真推理，再用一句简洁的话回答：17 × 23 等于多少？",
+  "seed": 20260730,
+  "max_new_tokens": 512,
+  "layers": [0, 13, -1],
+  "acceptance_gates": [
+    "a real pinned Qwen3-0.6B revision is loaded with eager attention",
+    "the exact Beijing prompt is captured as token IDs and text",
+    "lossless first, middle, and last-layer attention matrices are retained",
+    "the causal upper triangle is numerically zero within tolerance",
+    "a real generated sequence contains distinct thinking and final-answer regions",
+    "attention-sink and beginning/middle/end position measurements are reported",
+    "a readable comparison heatmap and credential-free hashes are retained"
+  ]
+}
