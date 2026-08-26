@@ -168,6 +168,8 @@ The more common engineering equivalent keeps only a few basic tools (web search,
 
 **Hierarchical Matching and Fallback.** Efficient matching exploits the hierarchy already present in how tools are organized. In protocols like MCP, tools are grouped by **server** (like apps on a phone, each bundling a set of related functions), so matching can run in two layers: locate the relevant servers by capability description, then match specific tools within them. That shrinks the search space from "thousands of tools" to "dozens of servers × dozens of tools each," saving compute and cutting cross-domain semantic confusion. In engineering terms this rests on an embedding index built offline and updated incrementally. And when both layers' candidates score below threshold, the system should return an explicit "not found," prompting the Agent to rephrase and retry, to improvise with basic tools, or to create a new tool outright (the subject of Chapter 9).
 
+After the first load, the schema stays pinned at its original position in the trajectory, so the static prefix remains reusable.
+
 ![Figure 4-3: KV Cache Optimization for Dynamic Tool Loading](images/fig4-3.svg)
 
 **Dynamic Loading and KV Cache.** Proactive discovery carries a subtle engineering cost: dynamically loading tools **invalidates the KV Cache**—put all the tool definitions in the static prefix, and every newly loaded tool invalidates the whole cache. The fix matches Chapter 2's discussion of Skill injection position: append the variable part (the new tool's complete schema) at the end of the context, keeping the static prefix stable and the KV Cache fully reusable, with only a short list of tool names maintained in the Agent's status bar. This pattern is now natively supported by the major APIs and has become the default architecture of mainstream frameworks: the OpenAI Responses API provides a `tool_search` tool and a `defer_loading: true` flag, with loaded schemas appended at the end of the context as `tool_search_output` items so the prefix cache keeps hitting; Claude Code defers MCP tools by default (injected on demand via `tool_reference` blocks, with only tool names and server instructions kept at session start); and Codex CLI's `tool_search` (BM25 retrieval) is an always-on architecture rather than an optional feature.
@@ -308,6 +310,8 @@ A security Sidecar also needs a **rejection circuit breaker**. If the classifier
 
 Both the Sidecar and the Proposer-Reviewer mechanism introduce a second perspective, but their execution timing and review targets differ. Table 4-2 compares the key differences between these two mechanisms.
 
+**Make the security check invisible at the UX layer.** Security checks add latency. One way to improve the experience is to separate "display" from "admission" and run them in parallel: when the Agent is about to execute a tool call, the interface shows a progress hint ("Reading `src/main.py`...") while the security check runs in the background. This is Harness design at its best: safety not paid for with user experience.
+
 Table 4-2 Comparison of Proposer-Reviewer Mechanism and Sidecar Mechanism
 
 | Dimension | Proposer-Reviewer | Sidecar |
@@ -424,8 +428,6 @@ Although AI Agents are becoming increasingly powerful, human intervention remain
 ## Chapter Summary
 
 The core conclusion of this chapter: the quality of tool design sets the ceiling on an Agent's capabilities. The first decision is what form a capability takes—lean toward the general end by default, and fall back to a dedicated tool only in the four cases of security and permissions, complex parameters, very high usage frequency, and platform differences; that decision is independent of “how many capabilities the model sees at once,” the former fixing the resident cost of each capability and the latter how many are exposed together.
-
-In tool design, the MCP protocol standardizes tool interoperability, while hierarchical organization, dynamic tool discovery, and Skills answer the challenge of tool overload. At the same time, every third-party MCP server introduces a new trust boundary—tool description poisoning, tool shadowing, and credential risks demand review before integration and defense at runtime. And one baseline runs through all tool design: fidelity of parameter passing—no systematic gap between the world the model perceives and the world the tool operates on.
 
 This chapter covered the three of the five tool categories that the Agent invokes on its own initiative:
 
