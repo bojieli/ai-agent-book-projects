@@ -28,7 +28,9 @@ Egy alapvető Kódoló Ágensnek csak az alábbi hét mag-eszközzel kell rendel
 6. **Fájlnév Keresés Eszköz (Glob)**: Célfájlok gyors megtalálása a fájlrendszerben minták segítségével, pl. `**/*.py` használatával az összes Python fájl megtalálásához egy projektben
 7. **Fájltartalom Keresés Eszköz (Grep)**: Specifikus szövegminták keresése fájltartalomban, pl. egy adott függvényt meghívó kódsorok megtalálása
 
-Ez a hét eszköz egy komplett, mégis minimális eszközkészletet alkot, amelyet szinte bármely Ágensrendszer alacsony költséggel integrálhat. Implementációban mindegyik szabványosított szolgáltatásként elérhetővé tehető a 4. fejezetben bemutatott MCP protokollon keresztül. Fontos megjegyezni, hogy ez az eszközkészlet egy, a Kódoló Ágensekre jellemző alapkonfiguráció, amely elkülönül a 4. fejezetben a meghívási irány és funkcionális szerep szerint osztályozott öt általános eszközkategóriától (észlelés/végrehajtás/együttműködés/eseményindítás/felhasználói kommunikáció) — a hét mag-eszköz főként az észlelési és végrehajtási kategóriákat fedi le. Mi a helyzet az együttműködéssel, az eseményindítással és a felhasználói kommunikációval? Kódoló Ágensekben ezek tipikusan a keretrendszer feladatai, nem az eszközrétegé — a szubágens delegálást például a keretrendszer orchestációs logikája kezeli, nem dedikált együttműködési eszközök.
+Ez a hét eszköz teljes, mégis rendkívül szűkre szabott eszköztárat alkot, amelyet szinte bármelyik Agent-rendszer olcsón beépíthet.
+
+Vegyük észre, hogy ez az eszközkészlet a Coding Agent sajátos alapkonfigurációja, és eltér a 4. fejezet öt általános eszközkategóriájától, amelyeket a hívás iránya és a hatás jellege szerint osztottunk fel (észlelés / végrehajtás / együttműködés / eseményvezérelt / felhasználói kommunikáció). A Read, a Write, az Edit, a Grep, a Glob, a Bash és a kódértelmező abban a felosztásban mind végrehajtó vagy észlelő eszköz; a Coding Agent és az al-Agentek együttműködését pedig a keretrendszer orkesztrációs logikája kezeli, nem pedig dedikált együttműködési eszközök.
 
 Hogy lássuk, hogyan működik együtt a hét eszköz, vegyük a legegyszerűbb feladatot. Tegyük fel, hogy a felhasználó azt mondja: "Segíts összegyűjteni az összes TODO megjegyzést a projektben":
 
@@ -55,7 +57,7 @@ Miért kellene minden általános célú Ágensnek rendelkeznie kódolási képe
 
 ### Esettanulmány: A Manus-tól az OpenClaw-ig — az általános célú Ágensek Kódoló Magja
 
-Az olyan általános célú Agent termékek, mint a Manus és az OpenClaw, három fő képességet — Deep Research, Computer Use és Coding — egyetlen rendszerben egyesítenek. Miért nevezi hát ez a fejezet elején a Coding Agentet a magnak, nem pedig a másik kettő valamelyikét?
+Az olyan általános célú Agent-termékek, mint a Manus és az OpenClaw, három nagy képességet olvasztanak egyetlen rendszerbe: Deep Research (mélykutatás), Computer Use (számítógép-kezelés) és Coding (kódgenerálás). De miért mondtuk a fejezet elején, hogy ezek közül épp a Coding Agent a mag, és nem a másik kettő valamelyike?
 
 Azért, mert szinte minden hatékony tartalomgenerálás végső soron kódra vezethető vissza. A PowerPoint-prezentációk és a Word-dokumentumok lényegében kód az OOXML formátumban (Office Open XML, a Microsoft nyílt szabványa az irodai dokumentumokhoz). A PDF-jelentések Markdownon, HTML-en vagy LaTeX-en keresztül generálhatók; a Python-szkriptek adatfeldolgozást és vizualizációt végezhetnek; még a GUI-munkából származó sikeres böngészőműveleti sorozatok is rögzíthetők újrafelhasználható kódként (lásd a 9. fejezetet). A Deep Research keresési és információszintézis-feladatai kódvezérelt webkérésekkel és feldolgozással valósíthatók meg. A Computer Use sokoldalúbb, de a közvetlen kód- vagy API-hívások általában olcsóbbak, gyorsabbak és megbízhatóbbak az azonos műveletekhez. A kódgenerálás a leghatékonyabb, legalacsonyabb költségű és leginkább újrafelhasználható képességalap.
 
@@ -79,7 +81,6 @@ Még kritikusabb, hogy mivel az Ágens tud fájlokat írni, technikailag képes 
 
 ### A Kódoló Ágens Teljes Munkafolyamata
 
-
 ![5-2. ábra: Kódoló ágens munkafolyamata](images/fig5-2.svg)
 
 **Projekt Dokumentáció.**
@@ -90,7 +91,7 @@ Ha a kulcsfontosságú dokumentumok hiányoznak, az Ágens ne kezdjen el vakon d
 
 A projekt dokumentációnak ma már van egy Ágensek számára specifikus formája: "Projekt Utasítás Fájlok". Az olyan fájlok, mint a CLAUDE.md, AGENTS.md, .cursorrules iparági szabvánnyá váltak — automatikusan beinjektálódnak a kontextusba minden kapcsolat elején, projektszintű rendszer promptként működve. Az emberi olvasóknak szánt README-ktől eltérően az utasításfájlok Ágensekre vonatkozó viselkedési konvenciókat hordoznak: build és teszt parancsok ("használd a `pnpm test`-et a `npm test` helyett"), kódstílus ("kerüld az `any` típust"), és egyértelmű korlátozott zónák ("ne módosítsd a `migrations/` könyvtárat"). Ez ugyanaz az ötlet, mint az OpenClaw `SOUL.md` fájlja (amely az Ágens identitását és viselkedési szabályait definiálja) és `MEMORY.md` fájlja (amely a kapcsolatokon átívelő tapasztalatokat halmozza fel), csak eltérő szinten alkalmazva: a SOUL.md azt határozza meg, hogy "ki az Ágens," míg a projekt utasításfájlok azt határozzák meg, hogy "hogyan kell dolgozni ebben a projektben." A 2. fejezet kontextusmérnökségének szempontjából az utasításfájlok a leggazdaságosabb stabil előtagok is — tartalmuk nem változik a feladattal, így természetesen KV Cache-barátok; ezek a "tudásnak magában a kódbázisban kell léteznie" elv legközvetlenebb implementációi is.
 
-A tudás externalizációjának elvének van egy érdekes következménye is: **Azok a csapatok, amelyek barátságosak a távoli munkához, általában barátságosak az AI Ágensekhez is.** A távoli csapatok kénytelenek aszinkron kommunikációra és dokumentációra támaszkodni — a döntések dokumentumokba kerülnek rögzítésre, a kontextus issue és PR leírásokban él, a törzsi tudás fejlesztői útmutatókban halmozódik fel, nem a szomszéd asztalnál vagy egy tárgyaló tábláján szájról szájra terjed. Ez pontosan az a tudásforma, amelyet az Ágensek fel tudnak dolgozni: egy Ágens nem tud elolvasni egy szóbeli megállapodást, de el tud olvasni egy tervezési dokumentumot. Ezzel szemben egy olyan csapat, amely a "csak kérdezd meg a mellettem ülőt" elven működik, ugyanazt a meredek beilleszkedési költséget rója az Ágensre, mint egy új távoli kollégára. Egy egyszerű mérőszám arra, hogy egy csapat mennyire "AI-kész": tud-e egy távoli újonc önállóan dolgozni, csak a kódrepóra és annak dokumentációjára támaszkodva?
+Pontosan itt ér földet a kódtár szintjén a 2. fejezet megállapítása: „a távmunkára nyitott csapat rendszerint az AI Agentekre is nyitott”. A döntések dokumentumokban rögzülnek, a kontextus az issue- és PR-leírásokba kerül, a belső tapasztalat fejlesztői útmutatóba ülepszik — csak így tudja őket az Agent egyáltalán elolvasni. Ebből egyszerű mérőszám adódik arra, mennyire „AI-ready” egy csapat: **el tud-e kezdeni önállóan dolgozni egy távoli újonc pusztán a kódtárra és a dokumentációra támaszkodva.**
 
 **Feladat Megértése és Követelménytisztázás.**
 
@@ -255,9 +256,7 @@ Ezeket az információkat nem szabad statikus rendszer promptokba kódolni — e
 
 Amikor az Ágens kóddal dolgozik, sok művelet függ a környezet állapotától: könyvtárváltás, virtuális környezet aktiválása, környezeti változók beállítása, háttérszolgáltatások elindítása. Ha minden parancsot egy friss shell-ben hajtunk végre, ez az állapot elveszik — az Ágens éppen a `cd` paranccsal a projektkönyvtárba navigált, de a következő parancs újra a shell alapértelmezett könyvtárában indul, ami arra kényszeríti, hogy megismételje ugyanazt a beállítást. Ráadásul egyes műveletek (mint a Python virtuális környezet aktiválása) hatásai csak az aktuális shell kapcsolaton belül érvényesek, és nem vihetők át a kapcsolatok között.
 
-A megoldás a "perzisztens shell kapcsolat". Minden egyes eszközhívásnál az Ágens ugyanabban a shell kapcsolatban hajtja végre a parancsokat, megőrizve a munkakönyvtárat és a környezeti állapotot a hívások között. A gyakorlati implementáció egy szálbiztos munkamenet puffert használ: a kimenet párhuzamos olvasható, miközben a parancsok szekvenciálisan futnak, és a puffer kapacitásának túllépésekor a kimenet automatikusan ideiglenes fájlba kerül. Pontosabban, a tipikus implementáció egy pseudoterminal-t (PTY) használ a folyamatkapcsolat mögött, hogy ne csak a kimeneti adatfolyamot, hanem a terminál interaktív viselkedésének szimulációját is fenntartsa (mint a shell parancssora, a törlés/visszaépítés és a beviteli puffer). A perzisztens kapcsolat bevezeti a "kapcsolat szintű erőforrás szivárgás" problémáját: a shell kapcsolat által létrehozott erőforrásokkal (ideiglenes fájlok, gyermekfolyamatok, állomány leírók) nem gazdálkodnak automatikusan a kapcsolat megszakadásakor, szisztematikus takarítást igényelve.
-
-Meg kell jegyezni, hogy ez a mechanizmus ellentétben áll a korábban tárgyalt Sessionless architektúrával. A Sessionless elvárja, hogy a munkakörnyezet állapota perzisztens maradjon az üzenetek között, de a perzisztens shell kapcsolat ezt csak az aktuális feladaton belül éri el. Az Ágens munkafolyamatának hatékonyságának biztosításához a két mechanizmus kombinációja szükséges: a perzisztens kapcsolat a rövid távú, feladaton belüli állapot-megtartáshoz; a munkaterület fájl perzisztencia (a Sessionless megközelítés) a feladatok közötti hosszú távú környezeti állapot megőrzéséhez.
+Ezért érdemes egy perzisztens terminál-munkamenetet fenntartani: az Ágens indulásakor jön létre, és a teljes interakció alatt életben marad. Minden parancs ebben a közös terminálban fut, megőrizve a munkakönyvtárat, a környezeti változókat és a munkamenet állapotát. Ez a felépítés jobban illeszkedik az emberi fejlesztők szokásaihoz is – rendszerint mi is egyetlen, hosszan futó terminálablakban dolgozunk. Az Ágensnek természetesen meg kell tartania azt a képességét is, hogy izolált terminált indítson a párhuzamos feladatokhoz, de az alapértelmezés a perzisztens munkamenet legyen.
 
 **Azonnali szintaxis visszacsatolási mechanizmus.**
 
@@ -300,7 +299,7 @@ A fájlszerkesztés nehézsége nem magában a műveletben rejlik, hanem abban, 
 
 **Sorszám szerinti célzás** (Régi sorszámok → Új karakterlánc): A modell meghatározza az "X-től Y-ig terjedő sorok törlése, új tartalom beszúrása" parancsot. A sorszámok pontosak és egyértelműek, és a nagy blokkok törléséhez mindössze két számra van szükség. A modell azonban hajlamos a hibákra a sorszámok "számlálása" során, különösen a nagyon hosszú fájlok esetében. A gyakorlatban ezt enyhítik, ha a fájl olvasása során sorszám-jegyzeteket adnak minden sorhoz, de a következő sorszámok minden szerkesztés után megváltoznak, korlátozva a többszörös szerkesztés párhuzamosságát.
 
-**Vim-szerű szerkesztési parancsok**: kölcsönzés a Vim szerkesztő parancsrendszeréből, amely támogatja az olyan gazdag műveleteket, mint a másolás, kivágás és beillesztés. Nagyon hatékony a kód átstrukturálásához (egy funkció áthelyezése egyik helyről a másikra). De a parancs szintaxisa valódi tanulási terhet hordoz: a legerősebb modellek jól kezelik; a kisebb modellek észrevehetően több hibát követnek el.
+**Vim-szerű szerkesztőparancsok**: a Vim szerkesztő parancsrendszerét kölcsönzik, és gazdag műveleteket támogatnak, például másolást, kivágást, beillesztést. A kód átrendezésére (egy függvény egyik helyről a másikra mozgatására) rendkívül hatékonyak. A parancsszintaxis tanulási terhe azonban nagy: a legerősebb modellek jól bánnak vele, a kisebbeknél viszont észrevehetően nő a hibaarány. Ez a módszer ahhoz sem barátságos, amikor a modell egyetlen gondolkodási körből több szerkesztőparancsot ad ki, mert Vimben minden szerkesztés után megváltozik a fájl tartalma és a sorszámozás is, a modell pedig aligha tudja előre kiszámítani a módosítás utáni sorszámokat. Mélyebbre nézve: a Vimhez hasonló kódszerkesztőket embereknek tervezték, és **az embernek folyamatosan látnia kell az aktuális állapotot, hogy megtervezze a következő egyszerű műveletet** (ír egy sor kódot, töröl néhány sort). Ma viszont **a modell úgy dolgozik, hogy viszonylag hosszan gondolkodik, majd egyszerre végez el meglehetősen összetett műveleteket** (például több száz sor kódot ír).
 
 **Karakterlánc kezdete + vége egyezés** (Régi karakterlánc kezdete + vége → új karakterlánc): Ez a régi karakterlánc-cseresémához képest előrelépésnek tekinthető. A modellnek nem kell a teljes régi karakterláncot kiadnia; csak a törlendő tartalom első néhány sorát és az utolsó néhány sort kell megadnia, a középső részt kihagyva. A keretrendszer megkeresi a csereterületet ebből a kezdő- és végpárból, feltéve, hogy a kombináció egyedi a fájlon belül. Ez a séma egyesíti a szövegcsere megbízhatóságát a sorszámos megközelítés hatékonyságával – nagy kódblokkok törlésekor nem kell több száz sornyi eredeti kódot kiadni, csak a határokat kell megjeleníteni. Ugyanakkor, mivel továbbra is a tartalomegyeztetésen alapul, nem pedig az absztrakt sorszámokon, viszonylag alacsony annak a kockázata, hogy a modell hibázik.
 
@@ -328,10 +327,9 @@ Ez a három védelem a hitelesítési, végrehajtási és adatrétegekbe tartozi
 
 **Izoláció mint Biztonsági Háló: Mérnöki Döntések a Kódvégrehajtási Sandboxhoz.**
 
-- **Hálózati Kimenő Forgalom Szabályozása.** Ez a legkönnyebben figyelmen kívül hagyott és a legkritikusabb elem: alapértelmezés szerint nincs hálózat, a hozzáférés igény szerint, egy fehérlistás proxyn keresztül, korlátozott célpontokra (csomagforrások, dokumentációs oldalak, a feladat által expliciten igényelt API-k) engedélyezett. Visszatekintve a Halálos Triász 3. pontjára — "Külső Kommunikációs Képesség" — a hálózati kimenő forgalom szabályozása annak végrehajtási rétegbeli védelme: még ha egy prompt injekció sikeres is, és a rosszindulatú kód érzékeny adatokat olvas a sandboxon belül, kimenő útvonal nélkül az adatok nem továbbíthatók. Az összes injekció azonosításának megkísérléséhez képest az adatszivárgási csatorna elvágása sokkal determinisztikusabb védelmi vonal.
-- **Fájlrendszer Izolációs Terjedelem.** A forráskód könyvtárat csak olvashatóként csatlakoztassuk (az Ágens szerkesztő eszközökön keresztül módosítja a kódot, és a generált javítások felülvizsgálatra kerülnek, mielőtt lemezre íródnak, vagy egy másolat kerül egy írható munkaterületre); egy külön írható munkaterület könyvtár tárolja a generált artefaktumokat és köztes fájlokat; a hitelesítő fájlok (`~/.ssh`, kulcsok, tokenek) egyáltalán ne legyenek csatlakoztatva a sandboxba — a láthatatlan adatok nem szivároghatnak ki, ami a Halálos Triász 1. pontjának felel meg.
-- **Erőforrás-korlátozások és Időtúllépések.** Állítsunk be kvótákat CPU-ra, memóriára és lemezre, valamint egy teljes időtúllépést, hogy védjünk a végtelen ciklusok, fork bombák (egy olyan folyamat, amely gyorsan replikálja magát, amíg a rendszer összeomlik) és korlátlan lemezírások ellen. Egy gyakorlati részlet: az időtúllépéseket és korlátmegsértéseket strukturált hibaként adjuk vissza az Ágensnek ("A végrehajtás 120 másodperc után megszakadt, az utolsó kimenet ... volt") ahelyett, hogy csendesen megölnénk a folyamatot, így az Ágens esélyt kap a stratégia felülvizsgálatára a következő lépésben.
-- **A Perzisztens Kapcsolatok és az Izoláció Összeegyeztetése.** A későbbi "A parancsvégrehajtási környezet állapotának perzisztenciája" szakasz a hosszú életű terminál kapcsolatok fenntartását szorgalmazza, míg az izolációs elv az eldobható környezeteket szorgalmazza — feszültség van a kettő között. Az összeegyeztetés módja, hogy **a kapcsolatot csak a sandboxon belül tartjuk életben**: a terminál kapcsolat soha nem élheti túl a sandboxot, és a kapcsolat állapota soha nem szökhet ki a gazdagépre. A hosszú időintervallumokon átívelő helyreállítást igénylő forgatókönyvekhez (mint a korábban említett Sessionless architektúra) sandbox pillanatképekre vagy "munkaterületi fájl perzisztencia + környezet rekonstrukció szkriptekkel" támaszkodunk az állapot helyreállításához, ahelyett, hogy a sandbox élettartamát végtelenítenénk. Más szóval, ami perzisztálásra kerül, az "auditálható állapotleírás" (fájlok, szkriptek, manifestek), nem átlátszatlan futó folyamatok.
+- **Hálózati kimenet szabályozása.** Ez az a pont, amelyet a legkönnyebb átsiklani, és mégis a legkritikusabb: alapértelmezés szerint nincs hálózat, és igény szerint egy fehérlistás proxy enged át korlátozott számú célt (csomagforrások, dokumentációs oldalak, a feladat által kifejezetten igényelt API-k). Idézzük fel a halálos hármas 3. pontját — „a külvilággal való kommunikáció képessége”: a hálózati kimenet szabályozása pontosan ennek a végrehajtási síkon vett védelme. Még ha a promptinjekció sikerül is, és a rosszindulatú kód el is olvassa a homokozón belüli érzékeny adatokat, kimenet híján nem tudja kijuttatni őket.
+- **A fájlrendszer-elszigetelés hatóköre.** A forráskönyvtárat csak olvasható módon csatoljuk (az Agent szerkesztőeszközökkel módosítja a kódot, a keletkező foltot pedig felülvizsgálat után írjuk lemezre, vagy egy másolatot csatolunk egy írható munkaterületre); a termékeket és a köztes fájlokat külön írható munkaterület-könyvtár hordozza; a hitelesítő adatokat tartalmazó fájlokat (`~/.ssh`, kulcsok, tokenek) egyáltalán nem csatoljuk a homokozóba.
+- **Erőforráskvóták és időtúllépések.** A CPU-, memória- és lemezkvóták időtúllépéssel kiegészítve védenek a végtelen ciklusok, a fork bombák (magukat őrült módon sokszorozó folyamatok, amelyek maguk alá gyűrik a rendszert) és a korlátlan lemezírás ellen. Egy gyakorlati részlet: az időtúllépés és a kvótatúllépés strukturált hibát adjon vissza az Agentnek („a végrehajtást 120 másodperc után leállítottuk, az utolsó kimenet a következő…”), ne pedig némán ölje meg a folyamatot — így az Agentnek lesz esélye a következő körben javítani a stratégiáján.
 
 **Biztonság: Szemantikai Elemzés a Kulcsszó-feketelisták Helyett.**
 
@@ -656,7 +654,7 @@ Kódgeneráláson keresztül az Ágens strukturált interaktív felületeket hoz
 ![5-8. ábra: Dinamikus űrlap generálási folyamata](images/fig5-8.svg)
 
 
-> **Kísérlet 5-11 ★★: Szándék Tisztázó Rendszer Dinamikus Űrlapokkal**
+> **5-12. kísérlet ★★: szándéktisztázó rendszer dinamikus űrlapokkal**
 >
 > **Kísérlet Célja**: Annak ellenőrzése, hogy az Ágens képes-e tisztázni a felhasználói szándékot dinamikusan generált HTML űrlapok segítségével.
 >
@@ -678,7 +676,7 @@ A generált SQL-t és vizualizációs kódot nem szabad közvetlenül végrehajt
 
 Továbbmenve, az Ágens két artefaktumot generálhat, amelyek egy csővezetéket alkotnak: egy SQL lekérdezést és egy vizualizációs kódot, például egy oszlopdiagram kódját. A frontend közvetlenül átadja az SQL eredményeket a vizualizációs kódnak. Az LLM generálja a kódot, de nem vesz részt az adat útvonalban — ez a kódgenerálás mint felület lényege.
 
-> **Kísérlet 5-12 ★★: Természetes Nyelvű Interakciós ERP Ágens**
+> **5-13. kísérlet ★★: természetes nyelvű interakciójú ERP Ágens**
 >
 > Az ERP (Enterprise Resource Planning) szoftver kritikus rendszer a vállalkozások számára, jellemzően GUI felületet használ, ahol az összetett műveletek több egérkattintást igényelnek. Egy AI Ágens lefordíthatja a felhasználók természetes nyelvű kéréseit SQL lekérdezésekké, lehetővé téve az automatizált adatbázis-hozzáférést.
 >
@@ -702,7 +700,7 @@ A kódgenerálás végső alkalmazása, hogy az Ágens teljesen dinamikusan, a s
 
 A teljesen dinamikus generálás azonban költséges és lassú — inkább a lehetőségek bemutatására alkalmas, mint termelési használatra. Egy pragmatikusabb megközelítés egy "meglévő keretrendszer testreszabása". Ez a "fél-egyedi" modell megőrzi az alapszoftver stabilitását, miközben kiválasztott szempontokat a felhasználói kontroll alá helyez. A felhasználó mondhatja, hogy "tedd kékre a gombot," "adj hozzá egy gyorsmenüt az oldalsávhoz," vagy "válts olvashatóbb betűtípusra"; az Ágens frissíti a frontend kódot, és a HMR (Hot Module Replacement — amely érintett modulokat frissít teljes oldal újratöltés nélkül, és általában megőrzi az alkalmazás állapotát) azonnal alkalmazza a változtatásokat. Egy mindenre egyforma termék minden felhasználóra szabott élménnyé válik.
 
-> **Kísérlet 5-13 ★★: Beszélgetéses Felület Testreszabási Rendszer**
+> **5-14. kísérlet ★★: beszélgetéses felülettestreszabó rendszer**
 >
 > **Kísérlet Célja**: Lehetővé tenni a felhasználók számára a szoftverfelület azonnali testreszabását természetes nyelvű párbeszéden keresztül, és kiértékelni, hogy a kódgenerálás gyors újratöltéssel hatékonyan tud-e személyre szabott felhasználói élményeket nyújtani.
 >
@@ -716,7 +714,7 @@ Robusztusabb architektúra **a bizalmi határt az adatrétegbe helyezi át**. A 
 
 A jogosultság lefelé helyezése nem jelenti az összes üzleti logika adatbázisba költöztetését. Az alkalmazási réteg továbbra is végezhet előzetes ellenőrzéseket a gyors visszajelzésért, de a végső döntési jogkört az adatrétegnek kell megtartania. Ugyanaz a szabály javíthatja a felső réteg felhasználói élményét, és garanciát adhat az alsó rétegben. Ehhez minden adatelérési útvonalnak a megbízható adatrétegen kell áthaladnia; a generált kód nem kerülheti meg közvetlen adatbázis-kapcsolattal. Így a felső réteg folyamatosan változhat, miközben a nem alkuképes jogosultsági korlátok egy olyan rétegben maradnak, amelyet nem generálunk újra minden kérésnél. Ez az 1. fejezet háromrétegű vázának adatrétege — az, amelyet a legnehezebb megkerülni.
 
-> **Kísérlet 5-14 ★★★: Jogosultságot beágyazó adatobjektumok dinamikus szoftverhez**
+> **5-15. kísérlet ★★★: jogosultságot beágyazó adatobjektumok dinamikusan generált szoftverhez**
 >
 > **Kísérlet célja**: Olyan objektumtároló építése, amely lehetővé teszi az alkalmazási kód dinamikus generálását vagy átírását, miközben az engedélyezést és az adatintegritást az adatréteg kényszeríti ki. Ellenőrizze, hogy a generált kód nem lépheti át a stabil határt állapotátmenet kihagyásával, határon kívüli érték írásával vagy bérlők közötti olvasással.
 >
@@ -757,7 +755,7 @@ A példa alapú generálás előnye nyilvánvaló: a példakód magában hordozz
 
 Amikor egy Ágens feladatot kap egy új Ágens kifejlesztésére, először másolja le a saját kódját (vagy más validált, kiváló minőségű implementációkat), majd végezzen célzott módosításokat: igazítsa a rendszer promptot az új szerephez, cserélje ki vagy adjon hozzá eszközöket az új funkciókhoz, módosítsa az üzleti logikát az architekturális keret megőrzése mellett. Ez az "önreplikáció adaptív módosítással" minta biztosítja, hogy az új Ágens örökölje a mag technikai előnyöket, miközben lehetővé teszi a differenciálódást specifikus dimenziókban — akárcsak a génreplikáció mutációval a biológiában.
 
-> **Kísérlet 5-15 ★★★: Fejlessz Egy Ágenst, Amely Képes Ágenseket Létrehozni**
+> **5-16. kísérlet ★★★: fejlessz egy Ágenst, amely Ágenseket tud létrehozni**
 >
 > **Kísérlet Célja**: Építs egy Kódoló Ágenst metaprogramozási képességekkel — olyan képességgel, hogy olyan programokat írjon, amelyek más programokat generálnak vagy módosítanak —, hogy automatikusan létre tudjon hozni új Ágens rendszereket a felhasználói követelményekből, miközben betartja a legjobb gyakorlatokat.
 >
