@@ -252,7 +252,7 @@ Si el usuario considera que necesita más información —por ejemplo, si pregun
 
 ### Implementando el Bucle Central del Agente en Código
 
-Tras comprender la estructura JSON, utilicemos código Python para conectar el proceso de interacción anterior. A continuación se presenta la implementación más simple de un Agente: el núcleo es un bucle `while`:
+Tras comprender la estructura JSON, utilicemos código Python para conectar el proceso de interacción anterior. A continuación se presenta la implementación más simple de un Agente: el núcleo es un bucle `while`: Este capítulo conserva deliberadamente este bucle de API completo como referencia del protocolo; los demás capítulos explican los mecanismos con código esqueleto de estilo Python.
 
 ```python
 from openai import OpenAI
@@ -381,7 +381,7 @@ La parte superior (System Prompt + Tool Definitions) se mantiene inalterada a lo
 
 Las secciones siguientes del capítulo se desarrollarán en torno a cada nivel de esta estructura: cómo utilizar la inmutabilidad del prefijo estático para acelerar la inferencia (KV Cache), cómo diseñar un buen System Prompt (ingeniería de prompts), cómo prevenir el secuestro del contexto por contenidos externos (defensa contra inyección de prompts), cómo cargar conocimiento especializado a demanda (Agent Skills), cómo inyectar información dinámica de estado al final de la conversación (barra de estado del Agente) y cómo comprimir de forma inteligente el historial de mensajes cuando este se expande (estrategias de compresión).
 
-**Construcción del contexto antes de cada solicitud:**
+Las técnicas que siguen tienen muchos nombres, pero antes de cada petición se reducen a una única decisión de construcción del contexto. El pseudocódigo de estilo Python que sigue conserva el esqueleto mínimo de esa decisión; complementa el bucle de API completo anterior al poner el acento en la disposición del contexto, y no sustituye a detalles del protocolo como los roles de los mensajes o `tool_call_id`.
 
 ```python
 stable_prefix = system_message
@@ -399,6 +399,8 @@ request.messages = [stable_prefix] + trajectory + [status_message]
 request.tools = stable_tools
 response = call_model(request)
 ```
+
+Mantén el prompt de sistema y las definiciones de herramientas centrales tan estables como sea posible; comprime las salidas antiguas de herramientas solo por lotes cuando te acerques al presupuesto; y coloca el estado actual al final de la trayectoria, para que el modelo no tenga que volver a deducirlo de un historial largo.
 
 > **Experimento 2-1 ★: Despliegue de Servicios de LLM Locales y Llamada a Herramientas**
 >
@@ -587,9 +589,9 @@ Para los Agentes, la implicación es que un contexto largo no siempre tiene que 
 
 Comprendido el mecanismo de caché, la cuestión siguiente es: sabiendo cómo se procesa y almacena el contexto, ¿cómo debemos diseñar el contenido que introducimos en él? Las siguientes secciones abordan la organización del contenido a través de tres líneas de trabajo independientes:
 
-- **Ingeniería de prompts, inyección de prompts y prompts dinámicos (Agent Skills)**: Cómo redactar el prompt del sistema y cómo estructurar las definiciones de herramientas para maximizar la precisión del Agente. A esto le sigue la seguridad frente a la inyección de prompts y la divulgación progresiva de habilidades mediante Agent Skills.
-- **Barra de estado del Agente (Agent Status Bar)**: Un canal dedicado a inyectar metainformación dinámica al final del contexto (progreso de tareas, resumen de observaciones del entorno, contadores de herramientas) para suplir la incapacidad del modelo de resumir estados implícitos automáticamente.
-- **Estrategias de compresión de contexto**: Soluciones a la expansión del contexto (cuándo comprimir, cómo hacerlo y cómo convivir con la KV Cache).
+- **Ingeniería de prompts, inyección de prompts y prompts dinámicos (Agent Skills)**: cómo escribir el prompt de sistema y qué poner en él—esta es la parte más directa de la ingeniería de contexto; el diseño de las definiciones de herramientas (el otro componente estático, en pie de igualdad con el prompt de sistema) también influye directamente en la precisión con que el Agente usa las herramientas, y este capítulo da los principios centrales mientras que el capítulo 4 los desarrolla en detalle. A continuación viene la cuestión de seguridad—la inyección de prompts: cuando un contenido externo intenta secuestrar un contexto cuidadosamente diseñado, cómo levantar defensas en la capa de contexto. Y cuando el prompt se alarga cada vez más y cubre cada vez más escenarios, meterlo todo en un único prompt de sistema deja de ser viable (desperdicia tokens y además diluye la atención), de modo que surge de forma natural el mecanismo de divulgación progresiva de las Agent Skills: cargar bajo demanda en vez de llenarlo todo de una vez.
+- **Barra de estado del Agente (Agent Status Bar)**: un mecanismo independiente que, inyectando metainformación dinámica al final del contexto (progreso de la tarea, resumen de observación del entorno, número de llamadas a herramientas, etc.), compensa la incapacidad del modelo para resumir por sí mismo el estado implícito. Igual que la parte superior de la pantalla del móvil muestra siempre la hora, la batería y la señal de red, la barra de estado del Agente permite que el modelo sepa en cualquier momento, con un solo vistazo, cuál es el estado de ejecución actual.
+- **Estrategias de compresión del contexto**: resuelven el problema del contexto que no deja de crecer—cuándo comprimir, cómo comprimir y cómo la compresión convive con la KV Cache.
 
 ## Ingeniería de Prompts: Optimizando el Prompt del Sistema
 
@@ -749,6 +751,7 @@ Esta es la evolución natural desde la ingeniería estática de prompts hacia lo
 La idea central de Agent Skills consiste en modularizar las capacidades del Agente en paquetes independientes de conocimiento que pueden cargarse bajo demanda[^ch2-3]. En esencia, cada Skill es un conjunto de prompts con instrucciones especializadas en un dominio, similar al manual de operaciones para una tarea específica que se entrega a una persona recién contratada. A diferencia del enfoque tradicional, que introduce todas las instrucciones en un único prompt del sistema, Skills adopta la filosofía de diseño de la divulgación progresiva (Progressive Disclosure)—primero muestra al Agente un resumen del catálogo y carga el contenido completo solo cuando se necesita, del mismo modo que no se amontonarían en el escritorio de una persona recién contratada los manuales operativos de todos los departamentos de la empresa, sino que se le proporcionaría primero un índice general para que consultase el manual necesario cuando correspondiera.
 
 [^ch2-3]: Anthropic, "Equipping Agents for the Real World with Agent Skills", 2025.
+[^ch2-codex-skills]: OpenAI, «Build skills», documentación de Codex. https://developers.openai.com/codex/skills/
 
 **Primera capa (metadatos)**: cada Skill debe proporcionar un archivo `SKILL.md` que comience con YAML frontmatter (un bloque de metadatos delimitado por `---`), con los campos `name` y `description`. El catálogo debe estar visible para el Agente antes de cargar el cuerpo principal, para que pueda decidir si una capacidad es pertinente sin pagar el coste contextual completo de todos los Skills. Los distintos runtimes pueden colocar el catálogo en capas de contexto diferentes; su finalidad común es la descubribilidad, no transportar todo el flujo de trabajo del dominio.
 
@@ -759,8 +762,6 @@ El campo `description` de los metadatos es importante para el enrutamiento. Debe
 [^ch2-4]: Anthropic, "PPTX Skill", 2025. https://github.com/anthropics/skills/
 [^ch2-cc-skill-inject]: Claude Code Docs, [«How Claude Code uses prompt caching»](https://code.claude.com/docs/en/prompt-caching), sección «Invoking skills and commands»: «Skills and commands inject their instructions as user messages at the point of invocation». Sobre el reparto entre activación explícita y activación decidida por el modelo, véase Agent Skills, [«How to add skills support to your agent»](https://agentskills.io/client-implementation/adding-skills-support), sección «User-explicit activation»: el Harness intercepta el comando de barra e inyecta el contenido, sin que el modelo tenga que ejecutar ninguna acción de activación.
 
-[^ch2-codex-skills]: OpenAI, «Build skills», documentación de Codex. https://developers.openai.com/codex/skills/
-
 **Tercera capa (reglas detalladas)**: las referencias de archivos permiten profundizar en subdocumentos más detallados. El archivo principal hace referencia a `html2pptx.md` (el workflow detallado para crear archivos PowerPoint mediante plantillas HTML), `reference.md` (detalles técnicos del formato) y otros archivos. El Agente selecciona y consulta en profundidad los subdocumentos pertinentes según las necesidades concretas.
 
 ### Cómo escribir un Skill utilizable
@@ -768,7 +769,6 @@ El campo `description` de los metadatos es importante para el enrutamiento. Debe
 La estructura de runtime resuelve «cuándo cargar» y «cuánto cargar»; el contenido aún debe convertir la experiencia en instrucciones que el modelo pueda ejecutar. Un Skill útil debe indicar a una persona recién incorporada qué tarea cubre, en qué orden actuar, cuándo detenerse para pedir confirmación y qué significa terminar.
 
 Siguiendo la guía de redacción de Baoyu, *Guía visual de Skills*[^ch2-baoyu-remove-ai-writing-flavor], se puede empezar con cuatro partes:
-
 - **Rol y lector**: a quién sirve el Skill, qué tarea cubre y qué estándar debe cumplir la salida;
 - **Principios básicos**: tres a cinco decisiones importantes, con ejemplos positivos y negativos;
 - **Prohibiciones**: errores frecuentes, acciones fuera de alcance y expresiones confusas, incluidas las excepciones legítimas;
@@ -792,9 +792,7 @@ Al evaluar el coste contextual de Skills, hay que separar el catálogo de metada
 - **Claude Code, conceptualmente**: expone un catálogo pequeño como contexto del runtime y añade las instrucciones completas en el punto de invocación del Skill. «Prompt del sistema» puede describir la capa lógica de instrucciones estables, pero no implica que todo cliente use el rol API `system`. La Figura 2-12 muestra el caso iniciado por el modelo, donde la trayectoria contiene la ida y vuelta completa: un tool_use `Skill(skill: "pptx")`, un tool_result marcador de posición y, a continuación, el cuerpo añadido como un mensaje user independiente. Si el usuario escribe `/pptx` directamente, el cliente lo expande en local, así que ese par de mensajes de herramienta no aparece y solo queda el último mensaje user.
 - **Codex, conceptualmente**: durante la construcción del contexto de cada turno vuelve a representar el catálogo de Skills en contexto `developer`; el Skill seleccionado explícitamente se inyecta como contexto `user` marcado con `<skill>`. Skills de otras fuentes pueden leerse bajo demanda mediante herramientas.[^ch2-codex-skills]
 
-Los Agent Harness evolucionan con rapidez, por lo que sus representaciones concretas pueden cambiar. El principio estable es **mantener un catálogo pequeño y descubrible, y cargar el cuerpo completo bajo demanda**. Así, Skills combina carga dinámica y un coste contextual controlado. Las dos figuras siguientes muestran el diseño desde dos perspectivas: la posición de Skills en la trayectoria y la evolución de la Caché KV.
-
-Para mostrar de forma intuitiva el efecto de este diseño, las dos figuras siguientes siguen, desde dos perspectivas distintas, la posición de Skills en la trayectoria y la evolución de la Caché KV.
+Los Agent Harness evolucionan con rapidez, por lo que sus representaciones concretas pueden cambiar. El principio estable es **mantener un catálogo pequeño y descubrible, y cargar el cuerpo completo bajo demanda**. Así, Skills combina carga dinámica y un coste contextual controlado. Las dos figuras siguientes muestran el diseño desde dos perspectivas: la posición de Skills en la trayectoria y la evolución de la Caché KV. Para percibir con claridad el efecto de este diseño, las dos figuras siguientes rastrean, desde dos perspectivas, la posición de las Skills en la trayectoria y la evolución de la KV Cache.
 
 ![Figura 2-12 Estructura completa de Agent Trajectory con Skills habilitado](images/fig2-12.svg){height=55%}
 
@@ -835,12 +833,9 @@ Desde la perspectiva de la gestión del contexto, el mecanismo Skills resulta mu
 
 La sección anterior se centró en qué capacidades pone Skills a disposición bajo demanda. Esta sección aborda un problema distinto: cómo mantener al modelo al tanto del progreso de la tarea, los cambios del entorno y los recuentos de llamadas a herramientas. El framework del Agente empaqueta esa información dinámica como estado estructurado y la inyecta en el contexto; este mecanismo se denomina **barra de estado del Agente (Agent Status Bar)**.
 
-La ingeniería de prompts analizada anteriormente resuelve el problema de «qué clase de instrucciones estáticas proporcionar al modelo». Sin embargo, durante la ejecución real, el Agente también necesita percibir dinámicamente su propio estado y el progreso de la tarea—ahí es donde interviene la barra de estado del Agente.
-
 Al construir sistemas de Agentes aptos para producción, depender exclusivamente de las capacidades nativas del modelo suele ser insuficiente. Durante la ejecución de tareas complejas, el Agente puede caer fácilmente en distintas trampas: bucles infinitos, olvido del estado y desviación del objetivo de la tarea. La causa fundamental es que el Agente carece de la capacidad de percibir el estado actual del entorno y seguir el progreso de la tarea. La barra de estado del Agente incorpora metainformación estructurada al contexto para proporcionar al Agente mecanismos de autopercepción y autorregulación.
 
 La mejor analogía para este concepto es la **barra de estado** de un sistema operativo. Cuando se utiliza un teléfono móvil, la parte superior de la pantalla muestra en todo momento la hora, el nivel de batería, la intensidad de la señal y el número de notificaciones—esta información no forma parte del contenido principal de la App, pero basta con mirarla para conocer de inmediato el estado actual del dispositivo. La barra de estado del Agente cumple exactamente la misma función para el modelo: no es el contenido principal de la conversación (no pertenece a los mensajes del usuario, las salidas del modelo ni los resultados de herramientas), sino un **resumen de estado** que el framework del Agente inyecta continuamente al final del contexto—«ya has realizado 3 llamadas», «la hora actual es 10:30», «quedan 2 elementos TODO sin completar». Cada vez que genera una respuesta nueva, el modelo puede «echar un vistazo» a esos estados y tomar decisiones más precisas a partir de ellos.
-
 
 ### Fundamentos teóricos de la barra de estado del Agente
 
@@ -893,9 +888,7 @@ La barra de estado del Agente incluye los siguientes tipos de información:
 
 **Estado actual del entorno**: incluye información dinámica del entorno (hora del sistema, directorio de trabajo, etc.), avisos sobre operaciones anómalas («esta herramienta se ha invocado repetidamente N veces») y la conversión de estados implícitos en estados explícitos. Este principio de diseño también se aplica a las interfaces humanas—tanto las interfaces de línea de comandos (CLI) como las interfaces gráficas (GUI) procuran que el usuario perciba con claridad el estado actual del sistema.
 
-**Lista de capacidades disponibles**: cuando el framework del Agente admite la ampliación de capacidades mediante plugins (como el sistema Skills de la sección anterior), la lista de metadatos de todos los Skills instalados utiliza el mismo canal de inyección al final del contexto, lo que equivale a informar al modelo de «qué capacidades especializadas puedes invocar ahora». Es la información que cambia con menor frecuencia (solo cuando el usuario instala o desinstala Skills); su mecanismo de envío incremental ya se explicó en detalle en la sección anterior sobre Skills y no se repetirá aquí.
-
-La información de canal lateral y la lista de capacidades disponibles no vuelven a cambiar una vez añadidas, por lo que resultan muy favorables para la Caché KV (no destruyen el prefijo almacenado en caché). En cambio, la planificación de tareas y el resumen de observaciones del entorno cambian dinámicamente y deben añadirse al final del contexto mediante mensajes especiales de usuario que se actualizan continuamente a medida que avanza la tarea—la elección del método de actualización afecta directamente al coste de la Caché KV, como se analizará a continuación mediante una estructura de mensajes concreta.
+La información de canal lateral de un evento suele añadirse junto con ese mismo evento; la planificación de tareas y el estado del entorno, en cambio, se actualizan continuamente conforme avanza la tarea. Cómo se escribe esta información dinámica en el historial de la conversación afecta directamente al coste de la KV Cache, y a continuación lo desarrollamos junto con la estructura concreta de los mensajes.
 
 ### Posición concreta de la barra de estado del Agente en el contexto
 
@@ -979,16 +972,11 @@ Existen tres motivos completamente distintos para comprimir el contexto, y compr
 
 **Primero, resolver las restricciones de longitud y de coste**. Esta es la razón más evidente: la ventana de contexto es limitada —por ejemplo, 128K tokens—, los resultados de las llamadas a herramientas pueden alcanzar fácilmente decenas de miles de caracteres y unas pocas rondas de interacción pueden bastar para llenar la ventana, obligando a interrumpir la tarea. Al mismo tiempo, cuantos más tokens haya, mayor será el coste de la API y más aumentará la latencia de inferencia.
 
-**Segundo, mejorar la calidad del razonamiento—el conocimiento resumido es más fácil de utilizar para el modelo que su forma original**. Este motivo es más profundo y también más fácil de pasar por alto. Aunque la ventana de contexto sea suficientemente grande, acumular en ella toda la información original tampoco es la opción óptima.
-
-Consideremos un ejemplo concreto: durante la ejecución de una tarea compleja, un Agente acumula información sobre un tema mediante 10 búsquedas web. Los resultados de esas búsquedas quedan dispersos en su forma original por distintas posiciones del contexto—los resultados de la segunda ronda aparecen cerca del principio del contexto, mientras que los de la novena aparecen hacia el final. Cuando el Agente necesita tomar una decisión definitiva basándose en toda esa información, debe «recuperar» repetidamente los fragmentos pertinentes entre decenas de miles de tokens; su atención se dispersa y es fácil que pase por alto información clave.
-
-En cambio, si después de la décima búsqueda se utiliza primero una llamada al LLM para elaborar un resumen estructurado de la información disponible—«Lo que se sabe hasta ahora: A es..., B es..., aún falta información sobre C»—, el modelo puede utilizar directamente esta representación refinada del conocimiento durante el razonamiento posterior, sin tener que volver a extraerla de los datos originales.
+**Segundo, mejorar la calidad del razonamiento: el conocimiento resumido es más utilizable por el modelo que su forma bruta.** Esta motivación es más profunda y también más fácil de pasar por alto. Aunque la ventana de contexto sea suficientemente grande, amontonar toda la información bruta en el contexto no es la mejor opción: los resultados brutos de una docena de rondas de búsqueda quedan dispersos por todo el contexto, de modo que en cada decisión el modelo debe rebuscar una y otra vez los fragmentos relevantes entre decenas de miles de tokens, su atención se dispersa y es fácil que se le escape información clave. En cambio, si una sola llamada al LLM resume primero lo acumulado en una forma estructurada —«se sabe hasta ahora: A es…, B es…, falta información sobre C»—, el razonamiento posterior puede usar directamente esa representación depurada. La siguiente sección explica el mecanismo que hay detrás.
 
 **Tercero, mitigar la ansiedad de contexto (Context Anxiety) del modelo**[^ch2-7]. Cuando el modelo cree que su ventana de contexto está a punto de agotarse, puede empezar a cerrar el trabajo antes de haber terminado la tarea. Comprimir el contexto con antelación, cuando la ventana aún está lejos de agotarse, puede mejorar la calidad de sus decisiones.
 
 [^ch2-7]: Prithvi Rajasekaran, [“Harness design for long-running application development”](https://www.anthropic.com/engineering/harness-design-long-running-apps), Anthropic Engineering, 2026.
-
 
 ### El mecanismo interno del aprendizaje en contexto: recuperación, no razonamiento
 
@@ -999,18 +987,11 @@ Veamos un ejemplo sencillo para captar intuitivamente esta idea de «recuperaci�
 > Jaula 1: gato negro. Jaula 2: gato blanco. Jaula 3: gato negro. Jaula 4: gato negro. Jaula 5: gato blanco.
 > ……（100 jaulas en total, con 90 gatos negros y 10 gatos blancos）
 
-¿Qué ocurre cuando se le pregunta al modelo «¿Cuántos gatos negros y blancos hay, respectivamente?»?
-
-Si no se activa la cadena de pensamiento (Thinking), al modelo le resulta difícil dar directamente la respuesta correcta—porque el mecanismo de atención es bueno para **buscar** («¿Qué gato hay en la jaula 37?»), no para la **agregación estadística** («¿Cuántos gatos negros hay en total?»). Esto último exige recorrer todos los registros y mantener un estado de conteo, lo que constituye esencialmente razonamiento, no recuperación.
-
-Si se activa la cadena de pensamiento, el modelo puede obtener la respuesta correcta contando uno por uno—pero, cada vez que se le formula esta pregunta, debe volver a contar desde el principio, lo que genera una gran cantidad de tokens de razonamiento. En escenarios con Agentes, si este tipo de información estadística debe utilizarse repetidamente —por ejemplo, como referencia en cada decisión—, el coste acumulado del razonamiento puede ser muy elevado.
-
-En cambio, si elaboramos un resumen de antemano e introducimos directamente en el contexto «Estadísticas actuales: 90 gatos negros y 10 gatos blancos», el modelo puede recuperar de inmediato esta conclusión sin tener que volver a razonar. **Este es el segundo valor de la compresión: convertir las conclusiones que solo pueden obtenerse mediante razonamiento en conocimiento directamente recuperable.**
+Cuando preguntas «¿cuántos gatos negros y cuántos blancos hay?», a un modelo sin cadena de pensamiento le cuesta acertar directamente: la **búsqueda** («¿qué gato hay en la jaula 37?») es el fuerte de la atención, pero la **agregación estadística** («¿cuántos gatos negros hay en total?») exige recorrer todos los registros y mantener un estado de conteo, algo que en esencia es razonar y no recuperar. Activar la cadena de pensamiento permite contar bien, por supuesto, pero cada vez que se pregunta hay que contar desde cero; y en escenarios de Agente estas estadísticas suelen usarse una y otra vez, con lo que el coste de razonamiento acumulado es alto. En cambio, si se hace un resumen por adelantado y se escribe directamente en el contexto «estadística actual: 90 gatos negros, 10 gatos blancos», el modelo recupera esa conclusión al instante. **Ese es el segundo valor de la compresión: convertir conclusiones que exigen razonar en conocimiento que se puede recuperar directamente.**
 
 Además, los contextos largos reducen la precisión de la recuperación. Aunque la ventana esté aún muy lejos de llenarse, el Agente puede dejar repentinamente de encontrar información clave o atascarse una y otra vez en un problema resuelto hace tiempo. Este fenómeno se denomina **degradación del contexto (Context Rot)**.
 
 La degradación del contexto y el desbordamiento de la ventana son problemas distintos: el desbordamiento significa que «ya no cabe más», mientras que la degradación significa que «cabe, pero no se puede encontrar». Esto último es más insidioso porque el Agente parece seguir funcionando con normalidad mientras la calidad de sus decisiones disminuye silenciosamente. Al crecer el contexto, la atención se reparte entre más tokens y el contenido útil resulta cada vez más difícil de advertir, sobre todo cuando predomina la información irrelevante. Es como buscar un libro en una biblioteca gigantesca: cuantos más libros irrelevantes haya en las estanterías, más difícil será encontrar el objetivo.
-
 
 Esto revela un principio de diseño para la compresión del contexto: en vez de esperar que el modelo aprenda automáticamente de un contexto prolijo, es preferible destilar el conocimiento de forma activa y explícita. Aunque esto exige una inversión computacional adicional —utilizar una llamada específica al LLM para resumir—, el resultado es una representación comprimida del conocimiento y de alta densidad—**no hay que obligar al modelo a recuperar pasivamente información entre enormes volúmenes de datos, sino proporcionarle activamente conocimiento estructurado y destilado**.
 
@@ -1087,9 +1068,7 @@ Comparemos dos formas de abordar la misma tarea—«encontrar en el repositorio 
 En esencia, esto significa **sustituir la compresión por el aislamiento**: la compresión es una medida correctiva posterior, con pérdida y que requiere llamadas adicionales al LLM; el aislamiento, en cambio, mantiene el ruido separado del contexto principal desde el principio y deja completamente intacto el prefijo de la Caché KV del Agente principal. El coste es que el subagente no puede ver el contexto completo del Agente principal, por lo que la descripción de la tarea debe ser autosuficiente y tener un objetivo claro—esto nos devuelve al tema de este capítulo: la calidad del contexto determina el límite superior de la capacidad, y lo mismo se aplica a los subagentes. La herramienta Task de Claude Code y los subagentes de recuperación de diversos sistemas de investigación profunda (Deep Research) son implementaciones de producción de este patrón. El diseño completo de los subagentes como herramienta de colaboración se desarrollará en el capítulo 4, mientras que la arquitectura de contexto de los sistemas multiagente será el tema del capítulo 10.
 ## Resumen del Capítulo
 
-A través de sus numerosos detalles técnicos, este capítulo sostiene un argumento central: lo que se muestra al modelo y la forma de organizarlo suelen importar más para el resultado final que la capacidad del propio modelo. La estructura de mensajes de la API define la estructura básica del contexto; la KV Cache limita qué puede modificarse y qué no; la ingeniería de prompts y las Agent Skills determinan cómo proporcionar al modelo instrucciones estáticas y conocimiento dinámico de manera eficiente; la Barra de Estado del Agente convierte estados implícitos en información explícita y directamente utilizable; y las estrategias de compresión abordan el crecimiento continuo del contexto, no solo controlando su longitud, sino resumiendo activamente los datos sin procesar para convertirlos en conocimiento estructurado de alta densidad.
-
-El hilo común de estas técnicas es una gestión de la información explícita y diseñada: en lugar de dejar que el modelo busque pistas de forma pasiva en un contexto enorme, se le proporciona de manera proactiva un estado depurado y estructurado. Todas las técnicas presentadas en este capítulo, desde las disposiciones de contexto favorables para la KV Cache hasta la compresión consciente del contexto, son aplicaciones concretas de la ingeniería para maximizar la eficiencia de la información en el límite actual de las capacidades del modelo.
+El hilo conductor de la ingeniería de contexto es la gestión explícita de la información: la estructura de mensajes de la API define el esqueleto; un prefijo estable eleva los aciertos de la KV Cache; el prompt, las Skills y la barra de estado soportan respectivamente las reglas, el conocimiento bajo demanda y el estado actual; y la compresión aumenta la densidad informativa del historial preservando decisiones, restricciones, fallos y fuentes.
 
 Este capítulo se ocupa de las actualizaciones de estado y la degradación del contexto **dentro de una sola tarea**. El siguiente capítulo deja atrás la gestión de información en una única ventana de contexto y pasa a sistemas de conocimiento persistente que abarcan múltiples tareas: la memoria de usuario y las bases de conocimiento. Estos sistemas permiten que el Agente acumule experiencia con el tiempo y se convierta gradualmente en un asistente que comprende mejor al usuario o en un experto con conocimientos más especializados en un dominio.
 

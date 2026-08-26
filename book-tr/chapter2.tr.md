@@ -19,7 +19,8 @@ Bir Kodlama Agent'ını örnek alalım. Aynı talimat verildiğinde, "Bu hatayı
 Bu üç bilgi türü—kod, süreç ve ortam—bir Agent'ın etkili çalışması için gereken asgari bilgiyi oluşturur. Burada context'e giren şey Ortam'ın kendisi değil, Ortam'a ilişkin gözlemler, açıklamalar veya yapılandırmadır; Ortam hâlâ Agent'ın dışarıda etkileşim kurduğu nesnedir. Modelin doğuştan gelen yeteneği yalnızca temeldir; **context'in kalitesi Agent yeteneğinin gerçek anahtarıdır**. Dikkatle organize edilmiş bir context ile eşleştirilmiş orta düzeyde yetenekli bir model, yetersiz bilgiyle körlemesine ilerleyen üst düzey bir modelden çoğu zaman daha iyi performans gösterebilir.
 
 Context engineering, bu yüzden mevcut modelleri kullanarak verimli Agent'lar geliştirmenin anahtarıdır. Bu, salt bir prompt'a daha fazla bilgi tıkıştırmaktan ibaret teknik bir mesele değildir; yapay zekanın bir görevi tamamlamak için ihtiyaç duyduğu tüm arka plan bilgisini sistematik olarak tasarlamayı, organize etmeyi ve sağlamayı içerir.
-Context engineering yalnızca **teknik bir sorun** değil, aynı zamanda **organizasyonel bir sorundur**. Çoğu ekibin kritik bilgisi örtüktür: mimari kararlar yalnızca kıdemli çalışanların hafızasındadır, iş kuralları ağızdan ağıza aktarılır ve önemli arka plan bilgisi özel sohbet kayıtlarında kilitli kalır. Ekibin kendisi bir bilgi kara deliğiyse, en iyi AI Agent bile çaresiz kalır.
+
+Üstelik bu yalnızca teknik bir sorun değil, daha çok bir **örgütsel sorundur**. Çoğu ekipte kilit bilgi örtüktür: mimari kararları yalnızca kıdemli çalışanlar hatırlar, iş kuralları ağızdan ağıza aktarılır, önemli arka plan bilgisi özel sohbet kayıtlarına kilitlenmiştir. Ekibin kendisi bir bilgi kara deliğiyse, en iyi AI Agent bile çaresiz kalır.
 
 **Uzaktan çalışmada etkili olan ekipler genellikle AI Agent'lar için de etkili ortamlar sunar.** Linux çekirdeği gibi açık kaynak projeler mükemmel örneklerdir: dünya genelinde dağılmış geliştiriciler otuz yılı aşkın süredir projeyi birlikte sürdürüyor. Başarısının sırrı, son derece şeffaf ve dokümantasyon odaklı bir iletişim kültürüdür—tüm tartışmalar herkese açıktır, her karar kaydedilir ve herhangi bir yeni gelen, geçmişi okuyarak kodun evrimini anlayabilir. Bu çalışma tarzı doğal olarak yapay zeka dostu bir ortam yaratır: bilgi herkese açıktır, aranabilir ve yapılandırılmıştır.
 
@@ -249,7 +250,7 @@ Kullanıcı daha fazla bilgiye ihtiyaç duyarsa, örneğin "Ya Tokyo?" diye sora
 
 ### Agent'ın Temel Döngüsünü Kod Olarak Uygulamak
 
-Artık JSON yapısını anladığımıza göre, yukarıda açıklanan etkileşim sürecini bir araya getirmek için Python kodu kullanalım. Aşağıdaki, minimal bir Agent uygulamasıdır — özü basitçe bir while döngüsüdür:
+Artık JSON yapısını anladığımıza göre, yukarıda açıklanan etkileşim sürecini bir araya getirmek için Python kodu kullanalım. Aşağıdaki, minimal bir Agent uygulamasıdır — özü basitçe bir while döngüsüdür: Bu bölüm, tam API döngüsünü bilinçli olarak bir protokol referansı olarak korur; diğer bölümler mekanizmaları Python tarzı iskelet kodla anlatır.
 
 ```python
 from openai import OpenAI
@@ -376,7 +377,7 @@ Yukarıdaki örnek aracılığıyla, Agent'ın modeli her çağırışında cont
 
 Bu bölümün geri kalanı, bu yapının her katmanını inceleyecek: static prefix'in değişmezliğinden çıkarımı hızlandırmak için nasıl yararlanılır (KV Cache), iyi bir System Prompt nasıl tasarlanır (prompt engineering), dış içeriğin context'i ele geçirmesi nasıl önlenir (prompt injection savunması), özelleşmiş bilgi ihtiyaç halinde nasıl yüklenir (Agent Skills), konuşmanın sonuna dinamik durum bilgisi nasıl enjekte edilir (Agent Durum Çubuğu) ve konuşma geçmişi çok büyüdüğünde nasıl akıllıca sıkıştırılır (sıkıştırma stratejileri).
 
-**Her istek öncesi context oluşturma:**
+Sonraki tekniklerin adı çoktur, ama her istek öncesine indiğinde hepsi tek bir bağlam kurma kararına iner. Aşağıdaki Python tarzı sözde kod, bu kararın en yalın iskeletini korur; yukarıdaki tam API döngüsünü bağlam yerleşimini vurgulayarak tamamlar, mesaj rolleri ve `tool_call_id` gibi protokol ayrıntılarının yerini almaz.
 
 ```python
 stable_prefix = system_message
@@ -394,6 +395,8 @@ request.messages = [stable_prefix] + trajectory + [status_message]
 request.tools = stable_tools
 response = call_model(request)
 ```
+
+Sistem promptunu ve çekirdek araç tanımlarını olabildiğince kararlı tutun; eski araç çıktılarını yalnızca bütçeye yaklaşırken toplu olarak sıkıştırın; güncel durumu ise yörüngenin kuyruğuna koyun ki model onu uzun bir geçmişten yeniden türetmek zorunda kalmasın.
 
 > **Deney 2-1 ★: Yerel LLM Servisi Dağıtımı ve Tool Calling**
 >
@@ -748,6 +751,7 @@ Bu, statik prompt engineering'den dinamik prompt'lara doğru doğal bir evrimdir
 Agent Skills'in temel fikri, Agent'ın yeteneklerini bağımsız, yüklenebilir bilgi paketlerine modülerleştirmektir[^ch2-3]. Her Skill özünde, bir yeni çalışan için hazırlanmış belirli bir görev için işletim el kitabı gibi, özelleşmiş alan rehberliği içeren bir prompt koleksiyonudur. Tüm talimatları tek bir system prompt'a tıkıştıran geleneksel yaklaşımdan farklı olarak, Skills, Kademeli Açığa Çıkarma (Progressive Disclosure) tasarım felsefesini benimser—önce Agent'a bir içindekiler özeti gösterin, ardından gerektiğinde eksiksiz içeriği yükleyin. Her departmanın işletim el kitabını bir yeni çalışanın masasına yığmazsınız; ona bir ana dizin verir ve ihtiyaç duydukça her el kitabını getirmesine izin verirsiniz.
 
 [^ch2-3]: Anthropic, "Equipping Agents for the Real World with Agent Skills", 2025.
+[^ch2-codex-skills]: OpenAI, “Build skills”, Codex belgeleri. https://developers.openai.com/codex/skills/
 
 **Katman 1 (Meta veri)**: Her Skill, `name` ve `description` alanlarını içeren YAML ön ekiyle (`---` ile sınırlanan meta veri bloğu) başlayan bir `SKILL.md` sağlamalıdır. Katalog, ana gövde yüklenmeden önce Agent'a görünür olmalıdır; böylece Agent her Skill'in tam context maliyetini ödemeden bir yeteneğin ilgili olup olmadığına karar verebilir. Çalışma zamanları kataloğu farklı context katmanlarına yerleştirebilir; ortak amaç tam alan iş akışını taşımak değil, keşfedilebilirlik sağlamaktır.
 
@@ -758,8 +762,6 @@ Meta verideki `description` alanı yönlendirme için önemlidir. Sürekli mevcu
 [^ch2-4]: Anthropic, "PPTX Skill", 2025. https://github.com/anthropics/skills/
 [^ch2-cc-skill-inject]: Claude Code Docs, [“How Claude Code uses prompt caching”](https://code.claude.com/docs/en/prompt-caching), “Invoking skills and commands” bölümü: “Skills and commands inject their instructions as user messages at the point of invocation.” Açık tetikleme ile modelin başlattığı tetikleme arasındaki ayrım için bkz. Agent Skills, [“How to add skills support to your agent”](https://agentskills.io/client-implementation/adding-skills-support), “User-explicit activation” bölümü: eğik çizgi komutunu Harness yakalar ve içeriği kendisi enjekte eder, modelin ayrıca bir etkinleştirme adımı atmasına gerek kalmaz.
 
-[^ch2-codex-skills]: OpenAI, “Build skills”, Codex belgeleri. https://developers.openai.com/codex/skills/
-
 **Katman 3 (Ayrıntılar)**: Dosya referansları, daha ayrıntılı alt dokümanlara daha derin gezinmeye izin verir. Ana dosya, `html2pptx.md`e (HTML şablonlarından PowerPoint oluşturmanın ayrıntılı iş akışı), `reference.md`e (format teknik ayrıntıları) ve diğerlerine referans verir. Agent, belirli ihtiyaçlara göre ilgili alt dokümanları seçici olarak okur.
 
 ### Kullanılabilir bir Skill nasıl yazılır?
@@ -767,7 +769,6 @@ Meta verideki `description` alanı yönlendirme için önemlidir. Sürekli mevcu
 Çalışma zamanı yapısı “ne zaman yüklenir” ve “ne kadarı yüklenir” sorularını çözer; içeriğin ise deneyimi modelin uygulayabileceği talimatlara dönüştürmesi gerekir. Yararlı bir Skill yeni ekip üyesine hangi göreve uygulandığını, hangi sırayla hareket edileceğini, ne zaman durup onay isteneceğini ve tamamlanmanın ne demek olduğunu anlatmalıdır.
 
 Baoyu'nun *Skill'lerin görsel rehberi*[^ch2-baoyu-remove-ai-writing-flavor] doğrultusunda dört bölümle başlayın:
-
 - **Rol ve okuyucu**: Skill kime hizmet eder, hangi görevi kapsar ve çıktı hangi standardı karşılamalıdır;
 - **Temel ilkeler**: üç ila beş önemli karar ve ana ilkeler için olumlu/olumsuz örnekler;
 - **Yasaklar**: sık hatalar, kapsam dışı eylemler ve meşru istisnalarıyla birlikte kafa karıştırıcı ifadeler;
@@ -791,7 +792,7 @@ Skills'in context maliyetini değerlendirirken meta veri kataloğu ile tam Skill
 - **Claude Code kavramsal olarak**: küçük bir kataloğu çalışma zamanı context'i olarak sunar ve tam talimatları Skill'in çağrıldığı noktaya ekler. “System prompt” mantıksal olarak sabit talimat katmanını anlatabilir; tüm istemcilerin API `system` rolünü kullandığı anlamına gelmez. Şekil 2-12 modelin kendi başlattığı durumu gösterir; iz kaydında gidiş dönüşün tamamı görünür: bir `Skill(skill: "pptx")` tool_use'u, yer tutucu bir tool_result ve ardından ayrı bir user mesajı olarak eklenen gövde. Kullanıcı doğrudan `/pptx` yazdığında istemci komutu yerel olarak genişlettiği için bu araç mesajı çifti hiç görünmez, geriye yalnızca son user mesajı kalır.
 - **Codex kavramsal olarak**: her tur context'i oluşturulurken Skills kataloğunu `developer` context'inde yeniden işler; açıkça seçilen Skill'i `<skill>` işaretli `user` context'i olarak enjekte eder. Diğer kaynaklardaki Skill'ler araçlarla ihtiyaç halinde okunabilir.[^ch2-codex-skills]
 
-Agent Harness'ler hızla geliştiği için somut gösterimler değişebilir. Sabit ilke **küçük ve keşfedilebilir bir katalog tutmak, tam gövdeyi ihtiyaç halinde yüklemektir**. Aşağıdaki iki şekil Skills'in trajectory'deki konumunu ve KV Cache'in evrimini gösterir.
+Agent Harness'ler hızla geliştiği için somut gösterimler değişebilir. Sabit ilke **küçük ve keşfedilebilir bir katalog tutmak, tam gövdeyi ihtiyaç halinde yüklemektir**. Aşağıdaki iki şekil Skills'in trajectory'deki konumunu ve KV Cache'in evrimini gösterir. Bu tasarımın etkisini somut olarak görmek için, aşağıdaki iki şekil Skills'in yörüngedeki yerini ve KV Cache'in evrimini iki ayrı bakış açısından izler.
 
 ![Şekil 2-12: Skills etkinleştirildikten sonra Agent Trajectory'sinin eksiksiz yapısı](images/fig2-12.svg){height=55%}
 
@@ -832,12 +833,9 @@ Context yönetimi açısından Skills mekanizması KV Cache ile son derece uyuml
 
 Önceki bölüm Skills'in ihtiyaç halinde hangi yetenekleri sunduğunu ele aldı. Bu bölüm ayrı bir sorunu inceler: modelin görev ilerlemesini, ortam değişikliklerini ve araç çağrısı sayılarını nasıl sürekli göreceği. Agent çerçevesi bu dinamik bilgiyi yapılandırılmış bir durum özeti olarak context'e enjekte eder; bu mekanizmaya **Agent Durum Çubuğu** denir.
 
-Daha önce tartışılan prompt engineering, "modele hangi statik talimatların verileceği" sorununu çözdü. Ancak gerçek yürütme sırasında, Agent'ın kendi durumunu ve görev ilerlemesini dinamik olarak algılaması da gerekir—işte burada Agent Durum Çubuğu devreye girer.
-
 Üretim düzeyinde Agent sistemleri inşa ederken, yalnızca büyük modellerin yerleşik yeteneklerine güvenmek çoğu zaman yetersiz kalır. Karmaşık görevleri yürüten Agent'lar kolayca çeşitli tuzaklara düşer: sonsuz döngüler, durum unutma, görev hedeflerinden sapma. Bu sorunların temel nedeni, Agent'ın ortamın mevcut durumuna dair farkındalık eksikliği ve görev ilerlemesini takip etme yeteneğidir. Agent Durum Çubuğu, context'e yapılandırılmış meta bilgi gömerek Agent'a öz farkındalık ve öz düzenleme mekanizması sağlar.
 
 Bu kavram için en iyi benzetme, bir işletim sisteminin **durum çubuğudur**. Telefonunuzu kullandığınızda, ekranın üstü her zaman saati, pil seviyesini, sinyal gücünü, bildirim sayısını gösterir—bu bilgi uygulamanın ana içeriği değildir, ama cihazın mevcut durumunu bilmek için her an göz atabilirsiniz. Agent Durum Çubuğu model için tam olarak aynı rolü oynar: konuşmanın ana içeriği değildir (kullanıcı mesajlarının, model çıktılarının veya araç sonuçlarının bir parçası değildir), ama Agent çerçevesi tarafından context'in sonuna sürekli enjekte edilen bir **durum özetidir**—"3 çağrı yaptınız", "Şu anki saat 10:30", "2 TODO öğesi kaldı". Model her yeni bir yanıt ürettiğinde, bu duruma "göz atabilir" ve buna dayanarak daha isabetli kararlar alabilir.
-
 
 ### Agent Durum Çubuğunun Teorik Temeli
 
@@ -890,9 +888,7 @@ Agent Durum Çubuğu şu bilgi türlerini içerir:
 
 **Mevcut Ortam Gözlem Özeti**: Dinamik ortam bilgisini (sistem saati, çalışma dizini vb.), anormal işlem uyarılarını ("Bu araç N kez tekrar tekrar çağrıldı") ve örtük durumdan açık gözleme dönüşümü içerir. Bu tasarım ilkesi insan arayüzleri için de geçerlidir—hem Komut Satırı Arayüzleri (CLI) hem de Grafiksel Kullanıcı Arayüzleri (GUI), kullanıcıların sistemin mevcut durumunu net biçimde algılamasını amaçlar.
 
-**Mevcut Yetenek Listesi**: Agent çerçevesi eklenti tabanlı yetenek genişletmelerini desteklediğinde (önceki bölümdeki Skills sistemi gibi), yüklü tüm Skill'lerin meta veri listesi de aynı context-sonu enjeksiyon kanalından geçer, özünde modele "şu anda hangi profesyonel yeteneklere çağırabilir durumda sahip olduğunuzu" söyler. En az sıklıkta değişir (yalnızca kullanıcı bir Skill kurduğunda/kaldırdığında) ve artımlı gönderme mekanizması önceki Skills bölümünde ayrıntılı olarak ele alındı, burada tekrarlanmayacak.
-
-Yan kanal bilgisi ve mevcut yetenek listesi, bir kez eklendikten sonra değişmez, bu da KV Cache için çok dosttur (önbelleğe alınmış ön eki geçersiz kılmadıklarından). Görev planlaması ve ortam gözlemlerinin özeti dinamiktir ve görev ilerledikçe güncellenen özel user mesajları olarak context'in sonuna eklenmesi gerekir—güncelleme yönteminin seçimi KV Cache maliyetiyle doğrudan ilgilidir, bu aşağıda belirli mesaj yapısıyla birlikte tartışılacaktır.
+Bir olayın yan kanal bilgisi genellikle o olayla birlikte eklenir; buna karşılık görev planı ve ortam durumu, görev ilerledikçe sürekli güncellenir. Bu dinamik bilginin konuşma geçmişine nasıl yazıldığı KV Cache'in maliyetiyle doğrudan ilgilidir; aşağıda bunu somut mesaj yapısıyla birlikte ele alacağız.
 
 ### Agent Durum Çubuğunun Context'teki Belirli Konumu
 
@@ -976,16 +972,11 @@ Context'i sıkıştırmanın üç farklı motivasyonu vardır. Bunların üçün
 
 **Birincisi, uzunluk ve maliyet kısıtlarını ele almak.** Bu en sezgisel nedendir: context penceresi sınırlıdır (örn. 128K token), tool calling sonuçları rutin olarak on binlerce karaktere ulaşır ve birkaç etkileşim turu pencereyi doldurup görevi yarıda kesebilir. Daha fazla token aynı zamanda daha yüksek API maliyeti ve keskin biçimde daha yüksek çıkarım gecikmesi anlamına gelir.
 
-**İkincisi, düşünme kalitesini artırmak—özetlenmiş bilgi, modele ham halinden daha faydalıdır.** Bu motivasyon daha derindir ve gözden kaçırılması daha kolaydır. Context penceresi yeterince büyük olsa bile, tüm ham bilgiyi context'e yığmak en uygun seçim değildir.
-
-Somut bir örnek düşünün: karmaşık bir görev sırasında, bir Agent 10 web araması yoluyla bir konu hakkında bilgi biriktirir. Bu arama sonuçları context boyunca ham halleriyle dağılmış durumdadır—2. turun sonuçları başa yakın, 9. turun sonuçları ise sona yakındır. Agent tüm bu bilgiye dayanarak nihai bir karar vermesi gerektiğinde, on binlerce token boyunca ilgili parçaları tekrar tekrar "getirmek" zorundadır, dikkati dağılır ve kilit bilgi kolayca kaçırılır.
-
-Ancak, 10. aramadan sonra, mevcut bilginin yapılandırılmış bir özetini üretmek için tek bir LLM çağrısı kullanılırsa—"Şu anda bilinenler: A ..., B ..., C hakkındaki bilgi hâlâ eksik"—model bu inceltilmiş bilgi temsilini, ham veriden yeniden çıkarmasına gerek kalmadan sonraki düşünmede doğrudan kullanabilir.
+**İkincisi, düşünme kalitesini yükseltmek—özetlenmiş bilgi, ham hâline kıyasla model için daha kullanışlıdır.** Bu güdü katman olarak daha derindir ve gözden kaçması da daha kolaydır. Bağlam penceresi yeterince büyük olsa bile, bütün ham bilgiyi bağlama yığmak en iyi seçim değildir: on küsur arama turunun ham sonuçları bağlamın dört bir yanına dağılır; model her kararda on binlerce token arasında ilgili parçaları tekrar tekrar aramak zorunda kalır, dikkati dağılır ve kilit bilgi kolayca gözden kaçar. Buna karşılık tek bir LLM çağrısıyla eldeki bilgi önce "şu ana dek bilinen: A şudur…, B şudur…, C'ye dair bilgi hâlâ eksik" biçiminde yapılandırılmış bir özete dönüştürülürse, sonraki düşünme doğrudan bu arıtılmış temsili kullanabilir. Bir sonraki bölüm bunun ardındaki mekanizmayı açıklıyor.
 
 **Üçüncüsü, modelin context kaygısını (Context Anxiety) azaltmak**[^ch2-7]. Model context penceresinin tükenmek üzere olduğunu düşündüğünde, görev henüz tamamlanmadan işi toparlamaya başlayabilir. Pencerenin tükenmesine daha çok varken context'i erkenden sıkıştırmak, modelin karar kalitesini artırabilir.
 
 [^ch2-7]: Prithvi Rajasekaran, [“Harness design for long-running application development”](https://www.anthropic.com/engineering/harness-design-long-running-apps), Anthropic Engineering, 2026.
-
 
 ### Bağlam İçi Öğrenmenin İçsel Mekanizması: Retrieval, Reasoning Değil
 
@@ -996,18 +987,11 @@ Ancak, 10. aramadan sonra, mevcut bilginin yapılandırılmış bir özetini ür
 > Kafes 1: Siyah kedi. Kafes 2: Beyaz kedi. Kafes 3: Siyah kedi. Kafes 4: Siyah kedi. Kafes 5: Beyaz kedi.
 > ... (toplam 100 kafes, 90 siyah kedi, 10 beyaz kedi)
 
-Modele "Kaç siyah kedi ve kaç beyaz kedi var?" diye sorduğunuzda ne olur?
-
-Düşünme etkin değilse, model doğru yanıtı doğrudan vermekte zorlanır—çünkü attention mekanizması **arama yapmakta** iyidir ("37. kafeste hangi kedi var?"), **istatistiksel özetlemede** değil ("toplamda kaç siyah kedi var?"). İkincisi, tüm kayıtları gezmeyi ve bir sayma durumu tutmayı gerektirir, bu da özünde retrieval değil düşünmedir.
-
-Düşünme etkinse, model birer birer sayarak doğru yanıtı alabilir—ama maliyeti, bu soru her sorulduğunda sıfırdan saymaya başlaması ve büyük miktarda düşünme token'ı üretmesi gerekmesidir. Bir Agent senaryosunda, böyle bir istatistiksel bilgi tekrar tekrar kullanılması gerekiyorsa (örn. her karar için), birikimli düşünme maliyeti çok yüksek hale gelir.
-
-Ancak, önceden bir özet yapıp context'e doğrudan "Mevcut istatistikler: 90 siyah kedi, 10 beyaz kedi" yazarsak, model bu sonucu yeniden düşünmeye gerek kalmadan hemen getirebilir. **Bu, sıkıştırmanın ikinci değeridir: düşünme gerektiren sonuçları doğrudan getirilebilen bilgiye dönüştürmek.**
+"Kaç siyah, kaç beyaz kedi var?" diye sorduğunuzda, düşünce zinciri açık olmayan bir modelin doğrudan doğru yanıt vermesi zordur: **arama** ("37 numaralı kafeste hangi kedi var?") dikkat mekanizmasının güçlü yanıdır; oysa **istatistiksel toplama** ("toplam kaç siyah kedi var?") bütün kayıtları dolaşmayı ve bir sayma durumu tutmayı gerektirir, ki bu özünde erişim değil düşünmedir. Düşünce zinciri açıldığında elbette doğru sayılabilir, ama her soruluşta baştan saymak gerekir; Agent senaryolarında bu tür istatistikler sık sık yeniden kullanıldığından biriken düşünme maliyeti çok yüksektir. Buna karşılık önceden bir kez özetleyip bağlama doğrudan "güncel istatistik: 90 siyah kedi, 10 beyaz kedi" yazılırsa, model bu sonuca anında erişir. **Sıkıştırmanın ikinci değeri işte budur: düşünmeden elde edilemeyen sonuçları, doğrudan erişilebilir bilgiye dönüştürmek.**
 
 Ayrıca uzun Context, retrieval doğruluğunu düşürür. Context penceresi dolmaktan hâlâ çok uzakken bile Agent kilit bilgiyi bir anda bulamayabilir veya çoktan çözülmüş bir probleme tekrar tekrar takılabilir. Bu olguya **Context Rot (Context Çürümesi)** denir.
 
 Context çürümesi, pencerenin tükenmesi anlamındaki Context taşmasından farklıdır. Taşma “artık sığmıyor”, çürüme ise “sığıyor ama bulunamıyor” demektir. İkincisi daha sinsidir; Agent görünürde normal çalışırken karar kalitesi sessizce düşer. Context uzadıkça attention daha fazla token arasında dağılır ve özellikle ilgisiz bilgi çoğunluğu oluşturduğunda yararlı içerik giderek daha zor fark edilir. Bu, devasa bir kütüphanede tek bir kitabı aramaya benzer: raflarda ne kadar çok ilgisiz kitap varsa hedefi bulmak o kadar zorlaşır.
-
 
 Bu, context sıkıştırmanın tasarım ilkesini ortaya koyar: modelin uzun context'ten otomatik olarak öğrenmesini beklemek yerine, aktif ve açık biçimde bilgi damıtması yapmalıyız. Bu ek hesaplama yatırımı gerektirse de (özetleme için özel LLM çağrıları kullanmak), sıkıştırılmış, yüksek yoğunluklu bilgi temsilleri üretir—**modelin devasa miktarda bilgiyi pasif olarak taramasına izin vermeyin; bunun yerine, modele aktif olarak inceltilmiş, yapılandırılmış bilgi sağlayın**.
 
@@ -1085,9 +1069,7 @@ Bu özünde **sıkıştırmayı izolasyonla değiştirmektir**: sıkıştırma, 
 
 ## Bölüm Özeti
 
-Bu bölümün çok sayıdaki teknik ayrıntısının ardında tek bir temel sav vardır: modele ne gösterdiğiniz ve bunu nasıl düzenlediğiniz, çoğu zaman nihai sonuç için modelin kendi yeteneğinden daha önemlidir. API'nin mesaj yapısı context'in temel yapısını tanımlar; KV Cache nelerin değiştirilip değiştirilemeyeceğini sınırlar; prompt engineering ve Agent Skills, statik talimatlarla dinamik bilginin modele nasıl verimli biçimde sunulacağını belirler; Agent Durum Çubuğu örtük durumları doğrudan kullanılabilir açık bilgilere dönüştürür; sıkıştırma stratejileri ise sürekli büyüyen context sorununu yalnızca uzunluğu denetleyerek değil, ham verileri etkin biçimde özetleyip bilgi yoğunluğu yüksek yapılandırılmış bilgiye dönüştürerek ele alır.
-
-Bu tekniklerin ortak noktası açık ve mühendislik ürünü bilgi yönetimidir: modelin devasa bir context içinde ipuçlarını pasif biçimde aramasını beklemek yerine, ona önceden ayıklanmış ve yapılandırılmış durum sağlarız. KV Cache dostu context düzenlerinden bağlama duyarlı sıkıştırmaya kadar bu bölümde sunulan her teknik, modellerin mevcut yetenek sınırında bilgi verimliliğini en üst düzeye çıkarmaya yönelik somut bir mühendislik uygulamasıdır.
+Bağlam mühendisliğinin ana hattı, bilgiyi açıkça yönetmektir: API'nin mesaj yapısı iskeleti tanımlar; kararlı bir ön ek KV Cache isabetini artırır; prompt, Skills ve durum çubuğu sırasıyla kuralları, talebe göre bilgiyi ve güncel durumu taşır; sıkıştırma ise kararları, kısıtları, başarısızlıkları ve kaynakları koruyarak geçmişin bilgi yoğunluğunu yükseltir.
 
 Bu bölüm, durum güncellemelerini ve context bozulmasını **tek bir görev içinde** ele alır. Bir sonraki bölüm, tek bir context penceresindeki bilgi yönetiminin ötesine geçerek görevler arasında kalıcı olan bilgi sistemlerine, yani kullanıcı belleği ve bilgi tabanlarına yönelir. Bu sistemler Agent'ın zaman içinde deneyim biriktirerek kullanıcıyı daha iyi anlayan bir asistana veya belirli bir alanda daha uzmanlaşmış bilgiye sahip bir uzmana dönüşmesini sağlar.
 

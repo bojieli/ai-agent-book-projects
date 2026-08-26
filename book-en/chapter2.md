@@ -250,7 +250,7 @@ If the user wants more information (for example, by asking "What about Tokyo?"),
 
 ### Implementing the Agent's Core Loop in Code
 
-Now that the JSON structure is clear, we can connect the steps above in Python. The following is a minimal Agent implementation built around a single loop:
+Now that the JSON structure is clear, we can connect the steps above in Python. The following is a minimal Agent implementation built around a single loop: This chapter deliberately keeps this full API loop as a protocol reference; other chapters use Python-style skeleton code to explain mechanisms.
 
 ```python
 from openai import OpenAI
@@ -377,7 +377,7 @@ The upper part (System Prompt + Tool Definitions) remains unchanged throughout t
 
 The rest of this chapter examines each layer of this structure: how to use a stable static prefix to accelerate inference (KV Cache), how to design an effective System Prompt (prompt engineering), how to prevent external content from hijacking the context (prompt injection defense), how to load specialized knowledge on demand (Agent Skills), how to inject dynamic state at the end of the conversation (Agent Status Bar), and how to compress conversation history when it grows too large (compression strategies).
 
-**Context construction before each request:**
+The techniques that follow go by many names, but at each request they amount to a single context-construction decision. The Python-style pseudocode below preserves the minimal skeleton of that decision; it complements the full API loop above by emphasizing context layout, and does not replace protocol details such as message roles and `tool_call_id`.
 
 ```python
 stable_prefix = system_message
@@ -395,6 +395,8 @@ request.messages = [stable_prefix] + trajectory + [status_message]
 request.tools = stable_tools
 response = call_model(request)
 ```
+
+Keep the system prompt and core tool definitions as stable as possible; compress old tool outputs only in batches as the budget approaches; and place the current state at the tail of the trajectory so the model does not have to re-derive it from a long history.
 
 > **Experiment 2-1 ★: Local LLM Service Deployment and Tool Calling**
 >
@@ -750,6 +752,7 @@ This is the natural evolution from static prompt engineering to dynamic prompts:
 The core idea of Agent Skills is to modularize the Agent's capabilities into independent, loadable knowledge packages[^ch2-3]. Each Skill is essentially a collection of prompts and files containing specialized domain guidance, like an operating manual for a specific task. Unlike the traditional approach of placing all instructions into a single system prompt, Skills use Progressive Disclosure: first show the Agent a table-of-contents summary, then load the full content only when needed. Instead of loading every domain manual into context at once, the framework provides a directory and lets the Agent retrieve the relevant manual as needed.
 
 [^ch2-3]: Anthropic, "Equipping Agents for the Real World with Agent Skills", 2025.
+[^ch2-codex-skills]: OpenAI, "Build skills," Codex documentation. https://developers.openai.com/codex/skills/
 
 **Layer 1 (Metadata)**: Each Skill should provide a `SKILL.md` file that starts with YAML frontmatter (a metadata block at the top of the file delimited by `---`, similar to a book's copyright page), containing `name` and `description` fields. The catalog should be visible to the Agent before the main body is loaded, so it can decide whether a capability is relevant without paying the full context cost for every Skill. Runtimes may place the catalog in different context layers; its shared purpose is discoverability, not carrying the complete domain workflow.
 
@@ -760,8 +763,6 @@ The metadata's `description` field is important for routing. Keep it short enoug
 [^ch2-4]: Anthropic, "PPTX Skill", 2025. https://github.com/anthropics/skills/
 [^ch2-cc-skill-inject]: Claude Code Docs, [“How Claude Code uses prompt caching”](https://code.claude.com/docs/en/prompt-caching), “Invoking skills and commands”: “Skills and commands inject their instructions as user messages at the point of invocation.” For the division between explicit and model-driven triggering, see Agent Skills, [“How to add skills support to your agent”](https://agentskills.io/client-implementation/adding-skills-support), “User-explicit activation”: the harness intercepts the slash command and injects the content, so the model does not have to take an activation action itself.
 
-[^ch2-codex-skills]: OpenAI, "Build skills," Codex documentation. https://developers.openai.com/codex/skills/
-
 **Layer 3 (Details)**: File references allow deeper navigation into more detailed sub-documents. The main file references `html2pptx.md` (detailed workflow for creating PowerPoint from HTML templates), `reference.md` (format technical details), and others. The Agent selectively reads relevant sub-documents based on specific needs.
 
 ### How to Write a Usable Skill
@@ -769,7 +770,6 @@ The metadata's `description` field is important for routing. Keep it short enoug
 The runtime structure solves “when to load” and “how much to load”; the content still needs to turn experience into instructions a model can execute. A useful Skill should tell a new team member what task it applies to, what order to follow, when to stop and ask for confirmation, and what counts as complete.
 
 Based on the writing guidance in Baoyu's *A Visual Guide to Skills*[^ch2-baoyu-remove-ai-writing-flavor], start with four parts:
-
 - **Role and reader**: who the Skill serves, what task it covers, and what quality the output should meet;
 - **Core principles**: three to five important judgments, with positive and negative examples for key principles;
 - **Prohibitions**: common errors, out-of-scope actions, and confusing wording, including legitimate exceptions;
@@ -793,9 +793,7 @@ When assessing Skill context cost, separate the metadata catalog from the full S
 - **Claude Code conceptually**: it exposes a small catalog as runtime context and appends the full instructions at the point where the Skill is invoked. “System prompt” can describe the logical stable instruction layer, but it should not be read as a claim that every client uses an API `system` role. Figure 2-12 shows the model-triggered case, where the trajectory contains the full round trip: a `Skill(skill: "pptx")` tool_use, a placeholder tool_result, and then the body appended as a separate user message. When the user types `/pptx` directly, the client expands it locally, so that pair of tool messages never appears and only the final user message remains.
 - **Codex conceptually**: during turn-context construction it renders the Skills catalog in developer context; an explicitly selected Skill is injected as user context marked with `<skill>`. Skills from other sources may be read on demand through tools.[^ch2-codex-skills]
 
-Harnesses evolve quickly, so their concrete representations may change. The stable design principle is **a small catalog kept discoverable and the full body loaded on demand**. This is what lets Skills combine dynamic loading with controlled context cost. The following two figures show the design from two perspectives: the position of Skills in the trajectory and the evolution of the KV Cache.
-
-The following two figures show the effect of this design from two perspectives: the position of Skills in the trajectory and the evolution of the KV Cache.
+Harnesses evolve quickly, so their concrete representations may change. The stable design principle is **a small catalog kept discoverable and the full body loaded on demand**. This is what lets Skills combine dynamic loading with controlled context cost. The following two figures show the design from two perspectives: the position of Skills in the trajectory and the evolution of the KV Cache. To make the effect of this design concrete, the following two figures trace, from two perspectives, where Skills sit in the trajectory and how the KV Cache evolves.
 
 ![Figure 2-12: Complete Structure of the Agent Trajectory After Enabling Skills](images/fig2-12.svg){height=55%}
 
@@ -835,8 +833,6 @@ From a context-management perspective, the Skills mechanism is highly KV Cache-f
 ![Figure 2-14: Agent Status Bar Architecture](images/fig2-14.svg)
 
 The previous section focused on which capabilities Skills make available on demand. This section addresses a separate problem: how the Agent can keep the model aware of task progress, environment changes, and tool-call counts. The Agent framework packages this dynamic information as structured state and injects it into the context; this mechanism is called the **Agent Status Bar**.
-
-The prompt engineering discussed earlier solved the problem of "what static instructions to give the model." However, during actual execution, the Agent also needs to track its own state and task progress dynamically—this is where the Agent Status Bar comes in.
 
 When building production-grade Agent systems, relying solely on the native capabilities of LLMs is often insufficient. Agents executing complex tasks can fall into failure modes such as infinite loops, loss of state, and goal drift. The root cause is often that the model lacks a clear view of the current environment state and task progress. The Agent Status Bar addresses this by embedding structured meta-information in the context, giving the model explicit state signals it can use during decision-making.
 
@@ -893,9 +889,7 @@ The Agent Status Bar includes the following types of information:
 
 **Current Environment Observation Summary**: Includes dynamic environment information (system time, working directory, etc.), abnormal operation alerts ("This tool has been called N times repeatedly"), and the transformation from implicit state to explicit observation. This design principle also applies to human interfaces—both Command Line Interfaces (CLI) and Graphical User Interfaces (GUI) aim to let users clearly perceive the current state of the system.
 
-**Available Capability List**: When the Agent framework supports plugin-based capability extensions (like the Skills system from the previous section), the metadata list of all installed Skills also goes through this same end-of-context injection channel. It tells the model which specialized capabilities are currently available. It changes infrequently (only when the user installs or uninstalls a Skill), and its incremental sending mechanism was detailed in the previous Skills section, so it will not be repeated here.
-
-Side-channel information and the available capability list usually do not change after being added, making them cache-friendly because they do not invalidate the cached prefix. Task planning and environment state are dynamic and must be appended to the end of the context as special user messages, then updated as the task progresses. The update method directly affects KV Cache cost, as discussed below.
+Side-channel information for an event is usually appended together with that event; task planning and environment state, by contrast, are updated continuously as the task progresses. How this dynamic information gets written into the conversation history bears directly on the cost of the KV Cache, which the following discussion takes up alongside the concrete message structure.
 
 ### Specific Position of the Agent Status Bar in the Context
 
@@ -979,11 +973,7 @@ Context compression has three distinct motivations. Understanding all three is c
 
 **First, addressing length and cost constraints.** This is the most intuitive reason: the context window is limited (e.g., 128K tokens), tool call results routinely run to tens of thousands of characters, and a few rounds of interaction can fill the window and cut the task short. More tokens also mean higher API costs and sharply higher inference latency.
 
-**Second, improving reasoning quality—summarized knowledge is more useful to the model than raw information.** This motivation is deeper and easier to overlook. Even if the context window is large enough, adding all raw information to the context is not always the best choice.
-
-Consider a concrete example: during a complex task, an Agent accumulates information on a topic through 10 web searches. These search results are scattered in their raw form throughout the context—the results from round 2 are near the beginning, and the results from round 9 are near the end. When the Agent must make a final decision from all this information, it has to retrieve relevant fragments scattered across tens of thousands of tokens. Its attention becomes diffuse, and it can easily miss key information.
-
-After the 10th search, however, a single LLM call could produce a structured summary of the accumulated information: "Currently known: A is..., B is..., information on C is still missing." The model can then use this refined knowledge representation in subsequent reasoning, without re-extracting it from the raw data.
+**Second, improving reasoning quality—summarized knowledge is more usable by the model than its raw form.** This motivation runs deeper and is more easily overlooked. Even when the context window is large enough, piling all the raw information into the context is not the optimal choice: the raw results of a dozen search rounds are scattered throughout the context, so at every decision the model has to search repeatedly through tens of thousands of tokens for the relevant fragments, its attention is dispersed, and key information is easily missed. If instead a single LLM call first summarizes what has accumulated into a structured form—"Known so far: A is…, B is…, still missing information about C"—then subsequent reasoning can use that distilled representation directly. The next section explains the mechanism behind this.
 
 **Third, mitigating the model's context anxiety**[^ch2-7]. When a model believes its context window is about to run out, it may start wrapping up before the task is complete. Compressing the context well before the window is close to full may improve the quality of the model's decisions.
 
@@ -998,13 +988,7 @@ A simple example makes the idea of "retrieval, not reasoning" concrete. Suppose 
 > Cage 1: Black cat. Cage 2: White cat. Cage 3: Black cat. Cage 4: Black cat. Cage 5: White cat.
 > ... (100 cages total, 90 black cats, 10 white cats)
 
-When you ask the model, "How many black cats and white cats are there?" what happens?
-
-If reasoning is not enabled, the model will find it difficult to give the correct answer directly—because the attention mechanism is good at **looking up** ("What cat is in cage 37?"), not **aggregation** ("How many black cats are there in total?"). The latter requires traversing all records and maintaining a counting state, which is essentially reasoning, not retrieval.
-
-If reasoning is enabled, the model can obtain the correct answer by counting one by one. The cost is that every time this question is asked, it must start counting from scratch, generating many reasoning tokens. In an Agent scenario, if such statistical information needs to be used repeatedly (e.g., for every decision), the cumulative reasoning cost becomes very high.
-
-However, if we summarize the records in advance and write "Current statistics: 90 black cats, 10 white cats" directly into the context, the model can retrieve the conclusion without repeating the count. **This is the second value of compression: turning conclusions that require reasoning into knowledge that can be directly retrieved.**
+When you ask "How many black cats and how many white cats are there?", a model without chain-of-thought enabled will struggle to answer correctly: **lookup** ("Which cat is in cage 37?") is where attention excels, whereas **aggregation** ("How many black cats are there in total?") requires traversing all the records and maintaining a counting state—essentially reasoning rather than retrieval. Enabling chain-of-thought can of course get the count right, but it has to start counting from scratch every time it is asked; in Agent scenarios such statistics are often used repeatedly, so the accumulated reasoning cost is high. If instead you summarize once in advance and write "Current statistics: 90 black cats, 10 white cats" directly into the context, the model retrieves that conclusion immediately. **This is the second value of compression: turning conclusions that require reasoning into knowledge that can be retrieved directly.**
 
 In addition, long contexts reduce retrieval precision. Even when the context window is far from full, the Agent may suddenly fail to find key information or repeatedly focus on a problem that has already been solved. This phenomenon is known as **Context Rot**.
 
@@ -1086,9 +1070,7 @@ This is essentially **replacing compression with isolation**: compression is a l
 
 ## Chapter Summary
 
-Across its many technical details, this chapter has one central argument: what you show the model, and how you organize it, often matters more to the final outcome than how capable the model itself is. The API's message structure defines the basic structure of the context; the KV Cache constrains what can and cannot be changed; prompt engineering and Agent Skills determine how to efficiently provide static instructions and dynamic knowledge to the model; the Agent Status Bar converts implicit states into directly usable explicit information; and compression strategies address the ever-expanding context problem—not just by controlling length, but by actively summarizing raw data into high-density structured knowledge.
-
-The common thread among these techniques is explicit, engineered information management: rather than letting the model search passively for clues in a vast context, proactively provide it with refined, structured state. Every technique presented in this chapter—from KV Cache-friendly context layouts to context-aware compression—is a concrete practice of using engineering to maximize information efficiency at the current boundary of model capability.
+The through-line of context engineering is explicit information management: the API message structure defines the skeleton; a stable prefix raises the KV Cache hit rate; prompts, Skills, and the status bar carry rules, on-demand knowledge, and current state respectively; and compression raises the information density of history while preserving decisions, constraints, failures, and sources.
 
 This chapter addresses state updates and context degradation **within a single task**. The next chapter moves beyond information management within a single context window to persistent knowledge systems that span tasks: user memory and knowledge bases. These systems allow the Agent to accumulate experience over time and gradually become an assistant that understands the user better, or a domain expert with more specialized knowledge.
 
