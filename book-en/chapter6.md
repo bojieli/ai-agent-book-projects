@@ -21,8 +21,6 @@ The previous chapters expanded the **content** of these two spaces; this chapter
 | **Modality** (this chapter) | Voice, screen, physical sensors | Speaking, clicking, joint motion |
 | **Timing** (this chapter) | The world pushes, continuous streams | Across turns, interruptible, preemptible |
 
-The core proposition of this chapter compresses into one sentence: **turn-taking is an assumption left behind by training, not a property of the environment.**
-
 A model's training corpus is almost entirely turn-based—a question followed by an answer, a tool call followed by a tool result, one speaker finishing before the other begins. So the policy a model learns assumes the world will wait for it. The real environment does not wait for the model to react: mail arrives while it is thinking, the user cuts in mid-sentence, the page has already changed between two screenshots, and the cup is knocked over while the arm is reaching for it.
 
 | Scale | Scenario | Change on the observation side | Change on the action side |
@@ -31,10 +29,6 @@ A model's training corpus is almost entirely turn-based—a question followed by
 | 10 ms — 1 s | Voice | Listen while speaking, without waiting for a full sentence | Think while speaking, interruptible, revisable midway |
 | Sub-second — seconds | Computer Use | The screen keeps changing between frames | After acting, reality must be re-confirmed against the plan |
 | Milliseconds | Robotics | Sensors stream back continuously | Actions are chunked: plan a little at a time, preemptible |
-
-The four sections share one set of primitives—**wake-up, safe point, cancellation, preemption, and fast/slow separation**—differing only in parameters and failure modes. "Check the cancellation signal at a safe point" in event-driven async and "on anomaly, discard the remaining actions and re-observe" in robot action chunking are the same mechanism implemented twice, five orders of magnitude apart in time. Seeing that isomorphism matters more than memorizing the technical detail of any single scenario.
-
-**One arrangement in the reading order is deliberate: this chapter gives voice noticeably more space than the two scenarios that follow it.** Along the evolutionary line of real-time interaction, voice is the one that has travelled furthest and is most worth using as a frame of reference: starting from "the serial pipeline has too much latency," through end-to-end models, full duplex, and thinking-while-speaking, all the way to a relatively settled endgame—problem, solution, and endgame have all been walked through. So we tell it fully, and Computer Use and robotics can then be read against that line—how far along it each has come, and where each is stuck.
 
 ## Async and Event-Driven: When the World Comes Looking for You
 
@@ -124,6 +118,10 @@ A single Agent instance may face multiple events concurrently: a new message fro
 
 The skeleton of this mechanism is the **event loop** from concurrent programming. Think of an asynchronous Agent as a long-running loop: each round takes a batch of events off the input queue, appends them to the trajectory, invokes the LLM once, executes the tools it decides to call, then returns to the top of the loop to wait for the next batch of events—the same structure as a Go goroutine reading messages from a channel and processing them round by round inside a `for { select { ... } }`. This model has one crucial property: **events are consumed only at the boundaries of each loop iteration**. While the LLM is reasoning or a tool is executing, a newly arrived event cannot inject itself out of nowhere and disrupt the current step; it waits in the queue until the round reaches a **safe point** (the end of a stretch of reasoning, a tool return) and is then handled as a batch. Cancellation follows the same discipline: rather than forcibly cutting off at an arbitrary moment, the Agent checks "have I been asked to stop?" at a safe point—which is exactly the role played by `ctx.Done()` in Go (Chapter 10 uses the same context idiom to discuss a parent Agent's cascading cancellation of its sub-agents). Once this is understood, the three processing strategies below differ only in how they treat the safe point: let the event wait for the next naturally occurring safe point (queued), proactively force a safe point early (cancellation), or simply spin up a separate loop and not wait for the main loop's safe point at all (parallel).
 
+This model has one key property: **events are consumed only at the boundaries of each round**. While the LLM is reasoning or a tool is executing, a newly arriving event does not barge in and disrupt the current step; it waits in the queue until the round reaches a **safe point** (the end of a stretch of reasoning, the return of a tool call), where all pending events are then handled together. Cancellation follows the same discipline: rather than forcibly cutting off work at an arbitrary moment, it checks "have I been asked to stop?" at the safe point—precisely the role that `ctx.Done()` plays in Go.
+
+Once this is understood, the three processing strategies below differ only in how they treat the safe point: let the event wait for the next safe point that arrives naturally (queued), proactively manufacture a safe point early (cancellation-based), or simply start another loop and not wait for the main loop's safe point at all (parallel).
+
 **Structured Event Modeling.**
 
 Handling requires understanding. A general-purpose Agent's input doesn't come only from the user—a third-party message is not sent by the user to the Agent, yet the Agent must understand it, weigh its importance, and decide whether to step in. This requires modeling each input as a **structured event** rich with semantics:
@@ -146,6 +144,8 @@ Taking a customer refund request email as an example, the structured event looks
 
 Only when these dimensions are clearly modeled as structured events can the Agent maintain a clear understanding in multi-party communication, avoiding mistaking user input for a tool result, or mistaking a tool result containing hidden instructions for a user command (prompt injection). The complexity of multi-threaded context management also requires the Agent to understand the relationships between multiple conversation threads—how a message from a third party affects the user's mood, the user's role transitions across different conversations, and when to synthesize information from different threads to provide advice. The trigger ecosystem of workflow platforms like n8n—webhooks, timers, emails, database changes, file watchers—illustrates the same principle: each trigger is a "sense organ" through which the Agent perceives the world. Once these heterogeneous events are modeled into one structured format, the Agent can process stimuli from any source consistently. The urgency determination and processing strategies below are all built on this unified modeling.
 
+The trigger ecosystem of workflow platforms such as n8n makes the point: webhooks, timers, email, database changes, file watchers—each trigger is one of the Agent's "senses" for perceiving the world. Once these heterogeneous events are modeled uniformly in a structured format, the Agent can handle stimuli from different sources in a consistent way; the urgency determination and processing strategies discussed below all rest on this unified modeling.
+
 **Dynamic Processing Strategy Based on Urgency.**
 
 Humans juggling multiple tasks adapt their strategy to urgency: an emergency makes them drop what they're doing; a routine to-do goes on the list for later. An Agent's event handling should show the same intelligence.
@@ -165,6 +165,8 @@ Urgent events: User interrupt (`user.interrupt`), supervisor instruction (`super
 Non-urgent events: Regular user input (`user.input`), Agent input (`agent.input`), tool results (`tool.result`), timer triggers (`timer.trigger`), regular external triggers.
 
 Hardcoded rules have limitations; the semantics of the event dictate the handling method—"Stop immediately!" uses cancellation-based processing, "What's the weather like today?" uses parallel processing, "Send the report in Chinese" uses queued processing. **It is recommended to use a lightweight classification LLM as an event router**, quickly determining which strategy to adopt when an event arrives.
+
+A cancellation point must be a position where the tool or the reasoning can wind down safely; an unfinished tool result is represented by an explicit placeholder and must never be faked as a success.
 
 The following experiment, an event-driven email processing Agent, implements the event handling strategies discussed above into a runnable implementation.
 

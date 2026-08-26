@@ -21,8 +21,6 @@ Gözlem uzayı ile eylem uzayını açtığımızda, her birinin genişletilebil
 | **Kip** (bu bölüm) | Ses, ekran, fiziksel sensörler | Konuşma, tıklama, eklem hareketi |
 | **Zamanlama** (bu bölüm) | Dünyanın itmesi, sürekli akışlar | Turları aşan, kesilebilir, öne geçilebilir |
 
-Bu bölümün çekirdek savı tek cümleye sığdırılabilir: **sıralı tur, eğitimin geride bıraktığı bir varsayımdır; ortamın bir özelliği değil.**
-
 Bir modelin eğitim külliyatı neredeyse bütünüyle tur temellidir—bir soru ardından bir yanıt, bir araç çağrısı ardından bir araç sonucu, biri başlamadan diğeri bitmiş olur. Dolayısıyla modelin öğrendiği politika, dünyanın onu bekleyeceğini varsayar. Gerçek ortam ise modelin tepki vermesini beklemez: o düşünürken posta gelir, kullanıcı cümlesinin ortasında araya girer, sayfa iki ekran görüntüsü arasında çoktan değişmiştir ve kol ona uzanırken bardak devrilir.
 
 | Ölçek | Senaryo | Gözlem tarafındaki değişim | Eylem tarafındaki değişim |
@@ -31,10 +29,6 @@ Bir modelin eğitim külliyatı neredeyse bütünüyle tur temellidir—bir soru
 | 10 ms — 1 sn | Ses | Konuşurken dinlemek, cümlenin bitmesini beklemeden | Düşünürken konuşmak; kesilebilir, ortasında düzeltilebilir |
 | Saniye altı — saniye | Computer Use | Ekran iki kare arasında sürekli değişir | Eylemden sonra gerçekliğin hâlâ plana uyup uymadığı yeniden doğrulanmalı |
 | Milisaniye | Robot | Sensörler sürekli geri akar | Eylem parçalanır: her seferinde kısa bir dilim planlanır, öne geçilebilir |
-
-Dört kısım aynı ilkel kümesini paylaşır—**uyandırma, güvenli nokta, iptal, öne geçme ve hızlı/yavaş ayrımı**—yalnızca parametreler ve başarısızlık biçimleri farklıdır. Olay güdümlü asenkronda "güvenli noktada iptal sinyalini kontrol et" ile robot eylem parçalamada "anormallik görünce kalan eylemleri at ve yeniden gözlemle", beş büyüklük mertebesi uzaklıktaki zaman ölçeklerinde aynı mekanizmanın iki kez uygulanmasıdır. Bu eşyapılılığı görmek, herhangi tek bir senaryonun teknik ayrıntısını ezberlemekten daha önemlidir.
-
-**Okuma sırasında bilinçli bir düzenleme var: bu bölüm sese, kendisinden sonraki iki senaryodan belirgin biçimde daha çok yer ayırıyor.** Gerçek zamanlı etkileşimin evrim hattında ses, en uzağa gitmiş ve referans çerçevesi olarak en değerli örnektir: "seri boru hattının gecikmesi çok yüksek" sorunundan yola çıkıp uçtan uca, tam çift yönlü ve konuşurken düşünme gibi bir dizi çözümden geçerek bugünün görece oturmuş nihai tablosuna varır; sorun → çözüm → nihai tablo yolculuğunun tamamı çoktan kat edilmiştir. Bu yüzden onu enine boyuna anlatıyoruz; sonraki Computer Use ve robot bölümleri bu hatla karşılaştırılarak okunabilir—her biri bu evrim hattının neresine gelmiş ve nerede takılmıştır.
 
 ## Asenkron ve Olay Güdümlü: Dünya Kapınızı Çaldığında
 
@@ -108,10 +102,6 @@ Kullanıcı iletişim araçları "kullanıcıya nasıl ulaşılacağı" sorununu
 
 ### Sanal Kimlik ve İzole Yürütme Ortamı
 
-Sanal bilgisayar 7/24 çalışabilir, Agent'ın yerel dosyalara serbest erişimini sınırlar ve bir hata en fazla sanal ortamı etkiler. Veriler paylaşılan dosya sistemi ve yol referanslarıyla aktarılır.
-
-Bu bölümün konumu hakkında bir not: sanal kimlik ve izole yürütme ortamları özünde yürütme araçları altında tartışılan sandbox'larla aynı özün parçası olan yürütme ortamı altyapısıdır. Burada, asenkron mimari bölümünde görünmelerinin nedeni, bunlara en acil ihtiyaç duyan Agent'ların bağımsız çalışan, yerleşik kalan ve her an kullanıcı adına hareket eden Agent'lar olmasıdır.
-
 Dördüncü bölüm, *Her* filmindeki Samantha'yı örnek alarak bir Agent'ın araçları kullanıp gerçek dijital dünyayla nasıl etkileşime girdiğini açıklar. Böyle bir genel amaçlı asistan elde etmek, kilit bir mimari seçime zorlar: Agent, kullanıcının kişisel hesaplarını doğrudan mı yönetmeli, yoksa kendi sanal kimliğine mi sahip olmalı? Doğrudan yönetim uygun görünür, ama tek bir Agent hatası veya ele geçirilmesi kullanıcının tüm dijital kimliğini açığa çıkarır. Daha güvenli yaklaşım, bir sekreterin kendi ofis telefonuna ve posta kutusuna sahip olması gibi, Agent'a özel iletişim hesapları, depolama ve hesaplama ortamlarından oluşan bağımsız bir sanal kimlik vermektir, böylece Agent kullanıcı adına açıkça çalışabilir. Açıkça beyan edilen bir kimlik güveni zayıflatmak bir yana, iletişimi daha gerçek kılar.
 
 Sanal kimlikler izole yürütme ortamlarına dayanmalıdır. **Sanal bilgisayarlar** (VM'ler/konteynerler) ve **sanal telefonlar** (Android emülatörleri), Agent'a işletim sistemi düzeyinde izolasyon ve tam masaüstü/mobil işlem yetenekleri sağlar: Agent bunların içinde kendi kullanıcı hesabına, ana dizinine ve giriş kimlik bilgilerine sahiptir, tüm işlemleri izlenebilir ve denetlenebilir kılar; hatalı işlemler gerçekleştirilse bile, host sistemi ve kullanıcının gerçek cihazı etkilenmeden kalır. Bu, yürütme araçları bölümünde tartışılan sandbox kavramının "dijital kimlik" boyutuna bir uzantısıdır—sandbox'lar kod yürütmeyi izole eder, sanal bilgisayarlar ve telefonlar ise tüm dijital kimliği izole eder.
@@ -127,6 +117,10 @@ Olay tetikleyici araçlar dünyanın Agent'ı uyandırmasına izin verir, kullan
 Tek bir Agent örneği, eş zamanlı olarak birden fazla olayla karşılaşabilir: kullanıcıdan yeni bir mesaj, bir araçtan bir sonuç, süresi dolan bir zamanlayıcı, başka bir Agent'tan bir iş birliği isteği. Bu olayların ne kadar verimli ve doğru biçimde ele alındığı, performansı ve kullanıcı deneyimini doğrudan etkiler.
 
 Bu mekanizmanın iskeleti, eşzamanlı programlamadaki **olay döngüsüdür** (event loop). Asenkron bir Agent'ı uzun süre çalışan bir döngü olarak düşünün: her tur, girdi kuyruğundan bir grup olay alır, bunları trajectory'ye ekler, LLM'i bir kez çağırır, LLM'in karar verdiği araçları yürütür ve sonraki olay grubunu beklemek için döngünün başına döner—bu, bir Go goroutine'inin bir channel'dan mesaj okuyup bunları `for { select { ... } }` içinde tur tur işlemesiyle aynı yapıdır. Bu modelin kritik bir özelliği vardır: **olaylar yalnızca her döngü turunun sınırlarında tüketilir**. LLM çıkarım yaparken veya bir araç yürütülürken, yeni gelen bir olay birdenbire araya girip mevcut adımı bozamaz; tur bir **güvenli noktaya** (bir çıkarım dizisinin sonu, bir araç dönüşü) ulaşana dek kuyrukta bekler ve sonra toplu olarak ele alınır. İptal de aynı disiplini izler: keyfi bir anda zorla kesmek yerine, Agent güvenli bir noktada "durmam istendi mi?" diye kontrol eder—Go'da `ctx.Done()`ın oynadığı rol tam olarak budur (Bölüm 10, bir üst Agent'ın alt Agent'larını basamaklı iptalini tartışmak için aynı context yaklaşımını kullanır). Bu anlaşıldığında, aşağıdaki üç işleme stratejisi yalnızca güvenli noktayı ele alış biçimleriyle ayrışır: olayı doğal olarak gelen bir sonraki güvenli noktaya kadar bekletmek (kuyruğa alınmış), proaktif olarak erkenden bir güvenli nokta yaratmak (iptal tabanlı) ya da düpedüz ayrı bir döngü başlatıp ana döngünün güvenli noktasını hiç beklememek (paralel).
+
+Bu modelin kilit bir özelliği vardır: **olaylar yalnızca her turun sınırlarında tüketilir**. LLM akıl yürütürken ya da bir araç çalışırken, yeni gelen bir olay araya zorla girip mevcut adımı bozmaz; önce kuyrukta bekler ve bu tur bir **güvenli noktaya** (bir akıl yürütme parçasının bitişi, bir araç çağrısının dönüşü) ulaştığında hepsi birlikte işlenir. İptal de aynı disiplini izler: işi herhangi bir anda zorla kesmek yerine güvenli noktada "durmam istendi mi" diye bakar—Go'daki `ctx.Done()` tam olarak bu rolü üstlenir.
+
+Bu anlaşıldığında, aşağıdaki üç işleme stratejisi arasındaki fark yalnızca güvenli noktaya nasıl davrandıklarına iner: olayı doğal olarak gelecek bir sonraki güvenli noktaya kadar bekletmek (kuyruğa alınmış), önceden bilinçli olarak bir güvenli nokta imal etmek (iptal tabanlı) ya da doğrudan başka bir döngü açıp ana döngünün güvenli noktasını hiç beklememek (paralel).
 
 **Yapılandırılmış Olay Modellemesi.**
 
@@ -150,6 +144,8 @@ Bir müşteri iade talebi e-postasını örnek alırsak, yapılandırılmış ol
 
 Bu boyutlar yalnızca yapılandırılmış olaylar olarak net biçimde modellendiğinde, Agent çok taraflı iletişimde net bir bilişi koruyabilir, kullanıcı girdisini bir araç sonucuyla karıştırmaktan veya gizli talimatlar içeren bir araç sonucunu bir kullanıcı komutuyla karıştırmaktan (prompt injection) kaçınabilir. Çok iş parçacıklı context yönetiminin karmaşıklığı, Agent'ın birden fazla konuşma iş parçacığı arasındaki ilişkileri anlamasını da gerektirir—üçüncü bir taraftan gelen bir mesajın kullanıcının ruh halini nasıl etkilediği, kullanıcının rolünün farklı konuşmalar arasında nasıl değiştiği ve tavsiye sunmak için farklı iş parçacıklarından bilginin ne zaman sentezleneceği. n8n gibi workflow platformlarının tetikleyici ekosistemi—webhook'lar, zamanlayıcılar, e-postalar, veritabanı değişiklikleri, dosya izleyicileri—aynı resmi gösterir: her tetikleyici, Agent'ın dünyayı algıladığı bir "duyu organıdır". Bu heterojen olaylar tek bir yapılandırılmış formata modellendiğinde, Agent herhangi bir kaynaktan gelen uyaranları tutarlı biçimde işleyebilir. Aşağıdaki aciliyet belirleme ve işleme stratejileri hepsi bu birleşik modelleme üzerine inşa edilmiştir.
 
+n8n gibi iş akışı platformlarının tetikleyici ekosistemi bunu açıkça gösterir: Webhook, zamanlayıcı, e-posta, veritabanı değişikliği, dosya izleme—her tetikleyici, Agent'ın dünyayı algıladığı bir "duyu organı"dır. Bu heterojen olaylar yapılandırılmış bir biçimde tek bir modele oturtulduğunda Agent, farklı kaynaklardan gelen uyaranları tutarlı bir biçimde işleyebilir; aşağıda ele alınan aciliyet belirleme ve işleme stratejileri de bu birleşik modellemenin üzerine kurulur.
+
 **Aciliyete Dayalı Dinamik İşleme Stratejisi.**
 
 Birden fazla görevi jonglörlük yapan insanlar stratejilerini aciliyete göre uyarlar: bir acil durum onları yaptıklarını bırakmaya zorlar; rutin bir yapılacak iş daha sonrası için listeye eklenir. Bir Agent'ın olay işlemesi aynı zekayı göstermelidir.
@@ -169,6 +165,8 @@ Acil olaylar: Kullanıcı kesintisi (`user.interrupt`), denetleyici talimatı (`
 Acil olmayan olaylar: Düzenli kullanıcı girdisi (`user.input`), Agent girdisi (`agent.input`), araç sonuçları (`tool.result`), zamanlayıcı tetikleyicileri (`timer.trigger`), düzenli dış tetikleyiciler.
 
 Sabit kodlanmış kuralların sınırlamaları vardır; olayın semantiği işleme yöntemini belirler—"Hemen dur!" iptal tabanlı kullanır, "Bugün hava nasıl?" paralel kullanır, "Raporu Çince gönder" kuyruğa alınmış kullanır. **Bir olay geldiğinde hangi stratejinin benimseneceğine hızlıca karar veren bir olay yönlendiricisi olarak hafif bir sınıflandırma LLM'i kullanılması önerilir**.
+
+İptal noktası, aracın ya da akıl yürütmenin güvenle toparlanabileceği bir konum olmalıdır; tamamlanmamış araç sonucu açık bir yer tutucuyla temsil edilir, asla başarı gibi gösterilemez.
 
 Aşağıdaki deney, olay güdümlü bir e-posta işleme Agent'ı, yukarıda tartışılan olay işleme stratejilerini çalıştırılabilir bir uygulamaya dönüştürür.
 
@@ -394,7 +392,13 @@ Omni modelleri hâlâ sırayla konuşmayı varsayar ve genellikle söz hakkını
 
 Omni “kullanıcı konuşur” ve “model konuşur” ayrımını korur, ancak simultane çeviri gibi görevler örtüşme ister. Full-duplex model sürekli dinler ve konuşur; devam etme, durma, araya girme veya tool çağırma kararını yinelemeli olarak verir. Kyutai'nin Moshi'si erken bir araştırma örneğidir. Thinking Machines Lab bu yaklaşımı **Interaction Model**[^ch6-14] olarak adlandırır: etkileşim VAD çevresinde dışarıdan kurulmaz, modelin içine yerleştirilir. GPT-Live bunu üretim ölçeğine taşır ve ön plandaki model sohbeti sürdürürken karmaşık işi arka plan reasoning modeline devreder.
 
+Araştırma tarafındaki öncüsü Kyutai'nin **Moshi** modelidir (2024). Kullanıcının ve modelin ses akışlarını paralel modeller; böylece üst üste konuşma ve söz kesme modelin doğal davranışı hâline gelir.
+
+Thinking Machines Lab bu hattı **etkileşim modeli (Interaction Model)** diye adlandırır[^ch6-14]: etkileşimlilik artık VAD gibi dış bir harness ile monte edilmez, modelin içine gömülüdür. Mikro-tur mekanizması kısa ses bloklarıyla kesintisiz ilerler; böylece sessizlik, üst üste binme ve söz kesme sürekli bağlam olarak korunur. Etkileşim modeli ayrıca tüm konuşmayı arka plandaki bir akıl yürütme modeline devredebilir ve kendisi sohbetin ipini elde tutmayı sürdürür; arka plandan sonuç döndüğünde ön plan onu uygun anda devreye sokar.
+
 [^ch6-14]: Thinking Machines Lab, “Interaction Models: A Scalable Approach to Human-AI Collaboration”, 2026-05. https://thinkingmachines.ai/blog/interaction-models/
+
+OpenAI'nin GPT-Live modeli ise tam çift yönlü hattı üretim ölçeğine taşır: model girdiyi sürekli işler ve çıktı üretir; kullanıcıyı bekleyebilir, onaylayıcı sesler çıkarabilir, sözü kesilebilir ve gerçek zamanlı çeviriyle başa çıkar. Etkileşim modeli gibi o da karmaşık görevleri arka plandaki bir modele devreder, ön plan ise sohbeti sürdürür.
 
 ### Bilişsel zaman: gerçek zamanlı etkileşim ve derin düşünme
 
