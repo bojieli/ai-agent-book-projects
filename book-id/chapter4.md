@@ -26,7 +26,7 @@ Tabel 4-1 Arah Pemanggilan dan Sasaran Tindakan untuk Lima Kategori Alat
 
 **Event-Triggered Tools** adalah sarana di mana dunia eksternal menggerakkan tindakan Agent. Contohnya termasuk mengatur timer (`set_timer`), memantau tugas command-line di latar belakang (`monitor_shell`), dan terhubung ke sumber event eksternal (`connect_channel`). Tools ini melibatkan dua momen: **Registration**, di mana Agent secara aktif memanggil tool untuk mendeklarasikan event mana yang dipedulikannya; dan **Triggering**, di mana sebuah event eksternal secara asinkron memanggil kembali untuk membangunkan Agent sehingga ia dapat mulai memproses—ini adalah arti dari "Agent registers, external triggers" pada Tabel 4-1. Tanpa Event-Triggered Tools, sebuah Agent hanya dapat merespons secara pasif ketika pengguna memulai percakapan, tidak dapat bertindak secara otonom pada waktu yang ditentukan atau bereaksi terhadap event eksternal seperti email baru atau peringatan sistem.
 
-**User Communication Tools** adalah sarana di mana sebuah Agent secara aktif menyampaikan informasi kepada pengguna. Contohnya termasuk membalas pesan pengguna (`reply_to_user`), mengirim pesan kartu terstruktur (`send_card_to_user`), dan mengirim peringatan notifikasi pengguna (`send_user_notification`). Ketika komunikasi antara Agent dan pengguna meluas dari tanya-jawab sederhana dalam satu sesi ke pesan asinkron multi-saluran, "berbicara" itu sendiri perlu menjadi pemanggilan tool eksplisit.
+**Tool pemicu peristiwa** adalah cara dunia luar menggerakkan Agent untuk bertindak. Misalnya menyetel pengatur waktu (set_timer), memantau tugas baris perintah di latar (monitor_shell), menyambung ke sumber peristiwa eksternal (connect_channel). Tool jenis ini menyangkut dua momen: pada saat **pendaftaran**, Agent-lah yang aktif memanggil tool untuk menyatakan peristiwa apa yang ia pedulikan; pada saat **pemicuan**, peristiwa eksternal memanggil balik secara asinkron dan membangunkan Agent untuk mulai menangani—inilah makna "Agent mendaftar, pemicu dari luar" pada Tabel 4-1. Tanpa tool pemicu peristiwa, Agent hanya bisa menanggapi secara pasif ketika pengguna memulai percakapan; ia tak dapat bertindak sendiri pada waktu yang ditentukan, dan tak dapat menanggapi peristiwa eksternal seperti surel baru atau peringatan sistem.
 
 Tiga kategori pertama dipanggil secara proaktif oleh Agent, dan desainnya dibahas satu per satu di bawah ini. Alat Pemicu Peristiwa digerakkan oleh peristiwa eksternal, sedangkan alat Komunikasi Pengguna harus menjangkau pengguna secara asinkron melalui beberapa kanal tanpa mengandaikan pengguna sedang daring—desain keduanya tak terpisahkan dari runtime asinkron berbasis peristiwa, sehingga dibahas di Bab 6 bersama interaksi real-time. Berikut ini kita mulai dengan prinsip desain yang berlaku untuk semua alat.
 
@@ -113,7 +113,7 @@ MCP menggunakan arsitektur *client-server*: **MCP server** mengekspos sekumpulan
 
 Nilai ekosistem MCP adalah **kembangkan sekali, gunakan di mana saja**. MCP server dapat digunakan secara bersamaan oleh *client* mana pun yang kompatibel seperti Cursor, Claude Desktop, atau OpenClaw, tanpa pengembang tool perlu khawatir tentang perbedaan dalam kerangka kerja Agent di hulu. MCP telah diadopsi oleh beberapa kerangka kerja Agent dan IDE utama dan menjadi standar penting untuk interoperabilitas tool. Semua eksperimen di bab ini membangun tool berdasarkan protokol MCP.
 
-**Cara lain mendistribusikan kemampuan: Skill Hub**. Yang disatukan MCP adalah cara menyambungkan satu mekanisme distribusi, yaitu **dedicated tool**. Sisi Skill tidak memerlukan protokol: satu skill hanyalah sebuah folder berisi `SKILL.md`, sehingga mekanisme distribusinya adalah sebuah **registry**, bukan protokol. skills.sh yang diluncurkan Vercel pada Januari 2026 termasuk yang paling berpengaruh: cukup satu perintah `npx skills add <owner>/<repo>` untuk memasangnya[^ch4-skills-sh]. Ekosistem OpenClaw punya ClawHub sendiri[^ch4-clawhub].
+**Cara lain mendistribusikan kemampuan: Skill Hub**. Yang diseragamkan MCP adalah cara tersambungnya satu mekanisme distribusi saja, yaitu **tool khusus**. Di sisi Skill tidak diperlukan protokol: sebuah skill hanyalah sebuah folder berisi `SKILL.md`, sehingga mekanisme distribusinya adalah **registry**, bukan protokol. skills.sh yang diluncurkan Vercel pada Januari 2026 adalah salah satu yang cukup berpengaruh: satu perintah `npx skills add <owner>/<repo>` sudah cukup untuk memasangnya[^ch4-skills-sh]. Ekosistem OpenClaw punya ClawHub-nya sendiri[^ch4-clawhub].
 
 [^ch4-skills-sh]: Vercel, “Introducing skills, the open agent skills ecosystem,” 2026-01-20. https://vercel.com/changelog/introducing-skills-the-open-agent-skills-ecosystem; direktori dan papan peringkat di https://skills.sh
 [^ch4-clawhub]: ClawHub https://clawhub.ai/
@@ -140,7 +140,7 @@ Jawabannya berlapis tiga, masing-masing lebih «sesuai kebutuhan» daripada yang
 
 Pi Coding Agent menerapkan gagasan ini sebagai pilihan arsitektur yang lebih radikal: intinya sengaja tidak menyertakan MCP, dan lebih menganjurkan membungkus kemampuan menjadi tool CLI berisi README, lalu dimuat sesuai kebutuhan oleh Skills; bila ekosistem MCP memang diperlukan, ia disambungkan lewat ekstensi[^ch4-pi-no-mcp]. Ekstensi komunitas `pi-mcp-adapter` memperlihatkan satu implementasi jalan tengah: secara bawaan model hanya melihat satu tool proksi berukuran sekitar 200 token, menemukan tool backend sesuai kebutuhan melalui alur "cari → lihat definisi → panggil", dan MCP server pun baru dinyalakan saat pertama kali dipakai[^ch4-pi-mcp-adapter]. Kasus ini menunjukkan bahwa **apakah MCP dipakai sebagai protokol interoperabilitas** dan **apakah semua definisi tool MCP diekspos di awal sesi** adalah dua keputusan yang terpisah: backend boleh tetap menjaga kompatibilitas ekosistem MCP, sementara frontend semestinya tetap mewujudkan pengungkapan bertahap lewat CLI + Skills atau tool proksi, agar konteks dan biaya token tidak ikut membengkak ketika server yang tersambung makin banyak.
 
-[^ch4-pi-no-mcp]: Pi Coding Agent, “Philosophy: No MCP,” https://github.com/earendil-works/pi/tree/main/packages/coding-agent#philosophy; Mario Zechner, “What if you don’t need MCP at all?”, 2025-11-02. https://mariozechner.at/posts/2025-11-02-what-if-you-dont-need-mcp/；Pi 介绍中的相关讨论见 21:25 起：https://www.youtube.com/watch?v=Dli5slNaJu0&t=1285s（国内镜像：https://www.bilibili.com/video/BV1M7796VEHj/）
+[^ch4-pi-no-mcp]: Pi Coding Agent, “Philosophy: No MCP,” https://github.com/earendil-works/pi/tree/main/packages/coding-agent#philosophy; Mario Zechner, “What if you don’t need MCP at all?”, 2025-11-02. https://mariozechner.at/posts/2025-11-02-what-if-you-dont-need-mcp/; lihat pula diskusi yang dimulai pada menit 21:25 dalam presentasi Pi: https://www.youtube.com/watch?v=Dli5slNaJu0&t=1285s (cermin Bilibili: https://www.bilibili.com/video/BV1M7796VEHj/)
 [^ch4-pi-mcp-adapter]: `pi-mcp-adapter`, “Why This Exists” dan “Quick Start,” https://github.com/nicobailon/pi-mcp-adapter
 
 **Organisasi hierarkis.** Selain memuat deskripsi tool sesuai kebutuhan, ketika jumlah tool tumbuh hingga ratusan, organisasi hierarkis lebih efektif daripada daftar datar. Salah satu pendekatan yang efektif adalah **klasifikasi menurut sifat sumber informasi**:
@@ -199,8 +199,6 @@ Jelas, seluruh mekanisme deklarasi-pencocokan-injeksi ini berfungsi, tetapi memb
 
 ### Skills: Mengubah Penemuan Tool Menjadi "Pencarian Sesuai Permintaan"
 
-**Pengungkapan progresif.** Saat mulai, Agent hanya melihat katalog tipis berisi `name` dan `description` setiap Skill, lalu membaca sub-Skill beserta berkas rujukannya hanya ketika konteks saat ini memerlukannya—seperti membuka buku pegangan atau Wikipedia hanya pada entri yang dibutuhkan. Skill terasa ringan dirawat justru karena hierarki ini sudah tertanam sejak awal.
-
 Alur pemikiran yang belakangan ini mendapat tempat berasal dari mekanisme Skills. Bab 2 memperkenalkan **Progressive Disclosure** pada Skills sebagai rekayasa konteks; di sini kita memperlakukannya sebagai paradigma penemuan tool—dan perbedaan utamanya dari bagian sebelumnya adalah infrastruktur "indeks *embedding* + pencocokan semantik" dihilangkan sama sekali.
 
 **Bukan membuka semuanya sekaligus, melainkan menelusuri lapis demi lapis.** Protokol seperti MCP cenderung menyodorkan schema tool secara lengkap ke hadapan model sekaligus (entah menyuntikkan semuanya, entah memilih sekelompok lewat prapenyaringan). Skills melakukan kebalikannya: saat mulai, Agent hanya melihat daftar isi tipis—`name` dan `description` setiap skill, totalnya beberapa ratus token. Baru ketika **konteks saat ini** benar-benar memerlukan suatu kemampuan, model membaca sub-skill yang bersangkutan, lalu menyusuri rujukan di dalamnya turun satu lapis lagi ke skrip atau dokumen anak yang konkret.
@@ -217,9 +215,7 @@ Semua hal di atas adalah persoalan yang dimiliki bersama oleh semua tool: bentuk
 
 ## Tool Persepsi
 
-Tool persepsi adalah saluran utama bagi Agent untuk mendapatkan informasi eksternal.
-
-Merancang sistem tool persepsi yang sangat baik membutuhkan pertukaran yang hati-hati di berbagai dimensi, termasuk granularitas, organisasi, dan format output.
+Tool persepsi adalah saluran utama bagi Agent untuk memperoleh informasi eksternal, dan perancangannya menuntut pertimbangan cermat pada beberapa dimensi: granularitas, cara pengorganisasian, dan format keluaran.
 
 Tool persepsi sering menghadapi tantangan untuk mengembalikan jauh lebih banyak informasi daripada yang dapat diproses Agent: satu pencarian mungkin mengembalikan puluhan ribu karakter, PDF mungkin panjangnya ratusan halaman. Membuang semuanya ke dalam konteks akan mengisi jendela konteks dan menenggelamkan konten utama dalam kebisingan. Respons umumnya adalah mengintegrasikan **kompresi sadar konteks (*context-aware compression*)** (diperkenalkan di Bab 2) pada tingkat tool—ketika output melebihi ambang batas (misalnya, 10.000 karakter), kompres secara otomatis berdasarkan maksud kueri Agent saat ini (prinsip dan efektivitas kompresi dirinci dalam Bab 2 dan tidak diulangi di sini). Di luar mekanisme umum ini, beberapa jenis tool persepsi yang umum memiliki masalah desain unik mereka sendiri.
 
@@ -249,15 +245,19 @@ Untuk memahami gambar, video, audio, dan PDF, Agent memerlukan persepsi multimod
 
 #### Pemrosesan Multimodal Native
 
-Pemrosesan asli memiliki batas kemampuan tertinggi; encoder seperti Vision Transformer memetakan berbagai data ke ruang semantik bersama.
+**Pemrosesan multimodal native** adalah jalur teknis dengan langit-langit kemampuan tertinggi. Terobosan teknis intinya terletak pada penggunaan encoder khusus untuk memetakan data dari berbagai jenis ke satu ruang semantik berdimensi tinggi yang sama. Untuk gambar, model multimodal berarsitektur terbuka (seperti Qwen-VL dan LLaVA) biasanya mengintegrasikan encoder visual berbasis **Vision Transformer** (ViT). Secara konkret, ViT memotong gambar menjadi patch berukuran tetap dan, sebagaimana memperlakukan kata dalam kalimat, menderetkan setiap patch menjadi vektor yang hidup berdampingan dengan vektor kata teks dalam ruang embedding multimodal bersama. Mekanisme self-attention Transformer memperlakukan token teks dan token gambar setara dan dapat menghitung keterkaitan lintas modal apa pun. Pada model yang mendukung multimodal secara native, model dapat langsung "melihat" tata letak halaman PDF, diagram, dan teksnya, serta memahami hubungan spasial dan semantik antara gambar dan teks.
 
 #### Ekstraksi ke Teks
 
-Ekstraksi teks cocok untuk model tanpa dukungan asli dan biasanya lebih hemat token pada PDF yang didominasi teks, tetapi kehilangan tata letak, bagan, dan gambar.
+Kini banyak model yang cukup kuat, misalnya GLM 5.2 dan DeepSeek V4 Flash, tidak mendukung pemrosesan multimodal native. Jalan keluarnya adalah **mengekstrak konten multimodal menjadi teks (Extract to Text)**. Ini proses dua tahap: mula-mula tool khusus (layanan OCR, layanan transkripsi audio) mengubah konten nonteks menjadi teks polos, lalu teks itu dimasukkan ke model bahasa.
+
+Untuk dokumen PDF dan sejenisnya yang isinya didominasi teks, ekstraksi menjadi teks umumnya lebih hemat token daripada pemrosesan multimodal native lewat konversi ke gambar. Tangkapan layar satu halaman PDF kerap membutuhkan lebih dari seribu token, sedangkan teks pada halaman yang sama biasanya hanya beberapa ratus. Namun ekstraksi menjadi teks ada harganya, yaitu kehilangan informasi: seluruh tata letak, diagram, dan gambar terbuang dalam proses ekstraksi.
 
 #### Analisis Multimodal Berbasis Tool
 
-Jika model utama tidak multimodal, tool seperti `analyze_image`, `analyze_pdf`, dan `analyze_audio` dapat meneruskan berkas serta pertanyaan ke model khusus dan mengembalikan ringkasan singkat, sehingga konteks tetap kecil.
+Ketika model utama Agent tidak mendukung multimodal, **menjadikan analisis multimodal sebagai tool** adalah cara yang lebih baik daripada mengekstrak menjadi teks. Cara ini memberi Agent tool yang mampu menganalisis berkas aslinya secara mendalam (`analyze_image`, `analyze_pdf`, `analyze_audio`); tool tersebut menerima sebuah berkas multimodal dan sebuah pertanyaan berbahasa alami sebagai parameter, lalu mengembalikan hasil analisis yang dinarasikan dalam bahasa alami. Di dalamnya dapat diimplementasikan dengan model multimodal, dan model itu tidak harus punya kemampuan Agent yang kuat, sehingga ruang pilihan teknologinya lebih luas.
+
+Dibandingkan pemrosesan multimodal native, analisis multimodal berbasis tool hanya menyisakan pertanyaan singkat dan hasil analisis di dalam context, sehingga terhindar dari keadaan ketika token data multimodal (gambar, video, dan sebagainya) yang sangat banyak memenuhi context.
 
 > **Eksperimen 4-3 ★★: Ekstraksi Informasi Multimodal — Analisis Perbandingan Tiga Paradigma Teknis**
 >
@@ -295,7 +295,7 @@ Mekanisme kedua adalah **post-validation** (validasi setelahnya): setelah operas
 
 **Sidecar Mechanism: Verifikasi Keamanan Sejajar dengan Pemikiran Utama.**
 
-Mekanisme Proposer-Reviewer mengatasi masalah "persetujuan sebelum eksekusi operasi atau validasi setelah penyelesaian operasi", sedangkan **Sidecar mechanism** (mekanisme Sidecar) mengatasi masalah lain: "bagaimana memverifikasi keamanan dan keandalan secara *real-time* selama eksekusi operasi." Ini dapat dilihat sebagai bentuk implementasi konkret dari fungsi "verifikasi" dalam *framework* Harness dari Bab 1, dan bagian ini menjelaskannya secara rinci.
+Mekanisme Pengusul-Peninjau menyelesaikan persoalan "persetujuan sebelum operasi dijalankan atau verifikasi setelah operasi selesai", sedangkan **mekanisme Sidecar** menyelesaikan persoalan lain: "bagaimana memverifikasi keamanan dan keandalan secara real-time saat operasi sedang dijalankan".
 
 Auto Mode pada Claude Code adalah contoh khasnya: ketika model utama memutuskan menjalankan sebuah pemanggilan perkakas, satu panggilan LLM ringan yang terpisah dipicu untuk menilai "apakah pemanggilan perkakas ini aman". Modul pemeriksaan keamanan jalur samping ini menilai risiko secara mandiri sebelum tiap pemanggilan, sambil berusaha tidak memperlambat irama berpikir Agent utama. Nama Sidecar berasal dari pola sidecar pada arsitektur microservice: seperti kereta samping sepeda motor, ia berjalan mandiri namun sejajar dengan badan utama. Sidecar adalah pola panggilan LLM ringan yang mengiringi lingkar berpikir Agent utama; ia tidak memeriksa keluaran akhir Agent, melainkan menilai **perilakunya** secara mandiri.
 
@@ -305,9 +305,11 @@ Ancaman utama di sini tetaplah **prompt injection** (seperti yang diperkenalkan 
 
 Pembaca mungkin keberatan: kita baru saja mengatakan bahwa peninjauan melintasi kesenjangan kemampuan yang besar tidak dapat diandalkan—lalu mengapa model yang ringan dapat diterima di sini? Jawabannya terletak pada apa yang sedang ditinjau. Proposer-Reviewer memeriksa pemikiran terbuka, sehingga *reviewer* harus mengimbangi penalaran *proposer*, yang menuntut kemampuan yang serupa; Sidecar menilai masalah klasifikasi atas data terstruktur (apakah perintah ini melampaui batas?), sebuah tugas yang jauh lebih sederhana yang dapat ditangani dengan nyaman oleh model yang ringan.
 
-Baik Sidecar maupun mekanisme Proposer-Reviewer memperkenalkan perspektif kedua, tetapi waktu eksekusi dan target peninjauannya berbeda. Tabel 4-2 membandingkan perbedaan utama antara kedua mekanisme ini.
+Sidecar keamanan juga memerlukan **rejection circuit breaker** (*circuit breaker* penolakan): ketika pengklasifikasi menolak operasi demi operasi, sistem tidak boleh mencoba lagi tanpa batas—hal itu membuang-buang sumber daya dan dapat menjebak pengguna dalam sebuah *loop* (perulangan)—tetapi kembali dengan meminta pengguna untuk menilai secara manual. Ini adalah contoh tipikal dari fungsi "koreksi" Harness dari Bab 1.
 
 **Membuat pemeriksaan keamanan "tak terlihat" di lapisan pengalaman pengguna.** Pemeriksaan keamanan bisa menambah latensi. Salah satu cara memperbaiki pengalaman adalah memisahkan "menampilkan" dari "meloloskan" lalu menjalankannya paralel: ketika Agent hendak mengeksekusi sebuah pemanggilan perkakas, antarmuka lebih dulu menampilkan petunjuk kemajuan ("Membaca `src/main.py`...") sementara pemeriksaan keamanan berjalan di latar. Inilah puncak desain Harness: keamanan yang tidak dibayar dengan pengalaman pengguna.
+
+Baik Sidecar maupun mekanisme Proposer-Reviewer memperkenalkan perspektif kedua, tetapi waktu eksekusi dan target peninjauannya berbeda. Tabel 4-2 membandingkan perbedaan utama antara kedua mekanisme ini.
 
 Tabel 4-2 Perbandingan Mekanisme Proposer-Reviewer dan Mekanisme Sidecar
 
@@ -320,8 +322,6 @@ Tabel 4-2 Perbandingan Mekanisme Proposer-Reviewer dan Mekanisme Sidecar
 | **Penggunaan Umum** | Persetujuan operasi ireversibel (tidak dapat diubah), pembuatan dokumen, modifikasi konfigurasi | Klasifikasi izin, penilaian relevansi memori, peringkasan *output tool* |
 
 Aplikasi khas lain dari pola Sidecar adalah **context enrichment** (pengayaan konteks): saat model utama sedang berpikir, panggilan *out-of-band* berjalan secara paralel untuk menyaring relevansi memori pengguna, meringkas *output tool* yang besar, dan melakukan pra-penilaian terhadap persyaratan izin — hasil ini siap digunakan ketika model utama membutuhkannya, dan pengguna tidak merasakan latensi tambahan.
-
-Sidecar keamanan juga memerlukan **rejection circuit breaker** (*circuit breaker* penolakan): ketika pengklasifikasi menolak operasi demi operasi, sistem tidak boleh mencoba lagi tanpa batas—hal itu membuang-buang sumber daya dan dapat menjebak pengguna dalam sebuah *loop* (perulangan)—tetapi kembali dengan meminta pengguna untuk menilai secara manual. Ini adalah contoh tipikal dari fungsi "koreksi" Harness dari Bab 1.
 
 **Validasi Otomatis dan Loop Umpan Balik.**
 
@@ -363,7 +363,7 @@ Tingkat isolasi harus dipilih berdasarkan lingkungan penerapan (*deployment*) da
 
 Pendekatan inti untuk menangani hal ini adalah **idempotensi**: mengeksekusi operasi yang sama satu kali dan mengeksekusinya beberapa kali memiliki efek yang persis sama pada dunia eksternal, yang memungkinkan percobaan ulang (*retry*) yang aman. Terdapat dua metode desain umum: pertama, membuat operasi tersebut membawa **pengidentifikasi unik** (misalnya, *idempotency key* yang dibuat oleh klien), yang digunakan server untuk deduplikasi, mengembalikan hasil pertama untuk permintaan duplikat alih-alih mengeksekusinya lagi; kedua, **query before mutation** (kueri sebelum mutasi) — sebelum mencoba lagi, tanyakan status sumber daya target saat ini (apakah pesanan telah dibuat, apakah file telah ditulis), dan hanya jalankan jika operasi belum selesai. Operasi dengan idempotensi membuat penanganan *timeout* dan interupsi menjadi jauh lebih sederhana.
 
-Namun tidak semua operasi dapat dibuat idempoten. Operasi seperti **mengirim email, menelepon, atau mentransfer uang** masing-masing menghasilkan peristiwa dunia nyata yang ireversibel setiap kali dieksekusi. Selain itu, server sering kali berada di luar kendali Anda, sehingga mustahil untuk mendeduplikasi menggunakan pengidentifikasi unik. Untuk operasi semacam itu, pendekatan **dua fase "pemeriksaan awal kemudian konfirmasi"** harus digunakan: fase pertama menggunakan model dari keluarga model yang berbeda beserta prompt pemeriksaan keamanan khusus untuk melakukan validasi (memeriksa saldo, mengonfirmasi penerima, membuat konten yang akan dikirim); baru fase kedua yang benar-benar mengeksekusi. Jika fase eksekusi gagal, ia tidak boleh mencoba ulang secara membabi buta, melainkan harus mengembalikan informasi kesalahan yang terperinci kepada model utama Agent untuk merencanakan ulang. Hal ini sejalan dengan *pre-approval* Proposer-Reviewer yang dibahas sebelumnya, dan dengan pemisahan "memulai/menyelesaikan" dari antarmuka *tool* asinkron yang akan dibahas nanti.
+Namun tidak semua operasi bisa dibuat idempoten. Operasi seperti **mengirim surel, menelepon, atau mentransfer dana keluar** menghasilkan satu peristiwa dunia nyata yang tak dapat dibatalkan setiap kali dijalankan. Untuk operasi semacam itu hendaknya dipakai pendekatan dua tahap **"pra-periksa lalu konfirmasi"**: tahap pertama memvalidasi dengan model dari keluarga model yang berbeda beserta prompt pemeriksaan keamanan khusus—memeriksa saldo, memastikan penerima, menyusun konten yang akan dikirim; baru tahap kedua yang benar-benar mengeksekusi. Bila tahap eksekusi gagal, jangan mencoba ulang secara membabi buta, melainkan kembalikan galat terperinci kepada model utama Agent untuk direncanakan ulang.
 
 > **Eksperimen 4-4 ★★: Execution Tool MCP Server**
 >
@@ -394,7 +394,7 @@ Nilai inti dari sub-agent terletak pada **spesialisasi melalui pembagian kerja**
 
 **Batasan tugas harus didefinisikan dengan jelas.** Tentukan mana yang termasuk dalam cakupan tanggung jawab dan mana yang perlu diserahkan atau dieskalasi.
 
-**Format output harus distandardisasi.** Struktur JSON yang seragam mengurangi beban *parsing* (penguraian) pada Agent utama dan membuat penanganan kesalahan menjadi lebih dapat diandalkan.
+**Format keluaran harus dibakukan.** Entah memakai JSON atau Markdown, format keluaran sub-Agent harus dinyatakan dengan jelas di dalam prompt. Ini menjamin sub-Agent memikirkan semua aspek yang perlu dipikirkan, mengurangi beban penguraian Agent utama, dan membuat penanganan galat lebih andal.
 
 **Mekanisme Kolaborasi Antar Agent.**
 
@@ -427,7 +427,7 @@ Meskipun AI Agent menjadi semakin kuat, intervensi manusia tetap diperlukan pada
 
 ## Ringkasan Bab
 
-Kesimpulan inti dari bab ini: kualitas desain tool menetapkan batas atas kemampuan sebuah Agent. Keputusan pertama adalah dalam bentuk apa sebuah kemampuan diekspresikan—secara bawaan condong ke ujung umum, dan kembali ke dedicated tool hanya dalam empat keadaan: keamanan dan izin, parameter yang rumit, frekuensi penggunaan yang sangat tinggi, serta perbedaan platform. Keputusan itu bebas dari «berapa banyak kemampuan yang dilihat model sekaligus»: yang pertama menetapkan biaya menetap tiap kemampuan, yang kedua menetapkan berapa banyak yang dipaparkan bersamaan.
+Perancangan tool menentukan langit-langit kemampuan Agent. Keputusan pertama adalah dalam bentuk apa sebuah kemampuan dinyatakan: secara bawaan condonglah ke ujung yang umum, dan mundur ke tool khusus hanya pada empat keadaan—keamanan dan izin, kerumitan parameter, frekuensi pemakaian yang amat tinggi, serta perbedaan platform. Keputusan ini terpisah dari "berapa banyak kemampuan yang dilihat model sekaligus": yang pertama menetapkan biaya menetap tiap kemampuan, yang kedua menetapkan berapa yang dipaparkan serentak. Kemampuan disebarkan lewat dua saluran: protokol MCP menyeragamkan cara tool khusus tersambung, dan Skill Hub membagikan `SKILL.md` melalui package manager. Kedua saluran itu menekan biaya memasukkan satu kemampuan menjadi satu perintah saja, dan keduanya pun melebarkan batas kepercayaan—karena itu deskripsi dan versi harus ditinjau, kredensial harus diisolasi, dan parameter yang dilihat model harus dijamin sama dengan parameter yang benar-benar dieksekusi tool. Ketika tool bertumbuh menjadi ratusan atau ribuan, pengorganisasian berjenjang, pemuatan sesuai kebutuhan, penemuan aktif, dan Skills mengambil alih secara berurutan, mengubah "tool mana yang saya pilih" menjadi "rujukan mana yang saya buka".
 
 Bab ini membahas tiga dari lima kategori alat, yaitu kategori yang dipanggil Agent atas inisiatifnya sendiri:
 
