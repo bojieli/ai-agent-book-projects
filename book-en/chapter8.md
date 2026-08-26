@@ -285,8 +285,14 @@ This also explains why SFT should not be treated as the main vehicle for knowled
 ### Constructing Mid-training Data
 
 1. **Infer data needs from the failure distribution.** Slice evaluations by topic, language, document type, code pattern, and context length. Determine which low-`pass@k` cases come from a base-model gap, and add data only for knowledge and capability gaps rather than misdiagnosing output-format errors as missing knowledge.
+
 2. **Build high-density target corpora.** Raw documents establish terminology and factual associations; repositories teach structure and dependencies; textbook-style derivations, synthetic explanations, and cross-document association samples make implicit relationships explicit. Deduplicate, filter for quality, and check for evaluation-set contamination.
-3. **Mix by capability bucket, not only by corpus source.** The data for context stage $i$ can be written as
+
+3. **Mix the data by capability.** The mixture needs natural long text such as books, long documents, and code repositories; chain-of-thought data embodying the atomic long-text capabilities—long-text retrieval, multi-hop reasoning, instruction following, information aggregation and statistics; and Agent execution trajectories embodying the capabilities an Agent cannot do without—planning, tool selection and invocation, long-range state tracking, and recovery from errors. The chain-of-thought and Agent-trajectory data can be distilled from a stronger open-source model or taken from existing datasets.
+
+4. **Use two forms of replay at every stage.** The first is the original short text and general data, which preserves language, knowledge, and short-context capability. The second is "old tasks lifted to the new length": place short tasks the model already handles into a context of the current length, scattering relevant information and distractors across different positions, and check whether the same capability still holds in the wider window. The general data is best drawn from the base model's original pre-training set; when that is unavailable, an open pre-training corpus such as FineWeb-2 can stand in.
+
+5. **Decide when to stop with multidimensional gates.** Besides training loss, track `pass@1`/`pass@k` on held-out domain tasks, general capabilities, prior instruction following, and the target task. If domain metrics rise while the general retention set drops, the mixture or the learning rate is too aggressive; if loss falls while `pass@k` does not move, check whether the data truly covers the required capability, and whether the SFT that makes knowledge accessible is missing downstream.
 
 After Mid-training, evaluation sets such as LongBench v2, IFEval, and the end-to-end Agent benchmarks described in Chapter 7 are needed to verify that the model's **foundational long-context capability across different context lengths** has not been lost. Long-context capability underpins long chain-of-thought and instruction following, and those in turn underpin higher-order Agent capabilities such as tool calling.
 
