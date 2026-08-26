@@ -14,11 +14,9 @@ Continuing the context engineering approach from Chapter 2, this chapter extends
 
 ## User Memory System
 
-A user memory system is indispensable for building an AI Agent that offers truly personalized, continuous service. Memory is not a transcript of everything a user says. We don't remember the raw content of every conversation with a friend either; through repeated interaction we gradually form a vivid mental model of them—their hobbies, habits, and values—and that model lets us understand and even predict what they need.
+To offer personalized service across sessions, an Agent needs a layer of persistent user memory. It does not store every utterance; instead it uses an extra LLM call to extract, compress, and vet the facts that will be useful later—unlike in-context learning, which only takes effect within the current window.
 
-At its core, a user memory system is an active, continuous learning process aimed at building a concise, effective predictive model of the user. It uses additional compute—dedicated LLM calls that analyze, summarize, and structure—to explicitly extract and compress the key information scattered through long conversation histories. The contrast with in-context learning is sharp: user memory is persistent and reviewable; in-context learning is temporary and vanishes when the session ends.
-
-Let's understand this process with a concrete example. Suppose a user and an Agent have the following conversation:
+A concrete example makes the process clear. Suppose a user and an Agent have the following exchange:
 
 ```text
 User: Help me book a flight to Tokyo next Friday. I prefer window seats
@@ -30,7 +28,7 @@ Agent: Here are your options. Based on your preference, I've filtered for
 User: Yes, and use my United MileagePlus number 12345678.
 ```
 
-After this conversation ends, the Agent framework calls a dedicated LLM to analyze the dialogue and extract information worth remembering long-term:
+Once the conversation ends, the Agent framework makes one dedicated LLM call to analyze it and extract what is worth remembering long term:
 
 ```text
 Extracted memories:
@@ -40,11 +38,7 @@ Extracted memories:
 - User has travel plans to Tokyo (recent activity)
 ```
 
-**Selectivity**—the Agent won't remember transient information like "the search returned 3 options," only facts useful for the future;
-
-**Abstraction**—"I prefer window seats" is refined into a general preference, not tied to this specific flight;
-
-**Structure**—whether Markdown, JSON, or another format is used, good organization makes later retrieval easier. The next time the user books a flight, the Agent will not need to ask about seat preference or meal requirements because this information is already in memory.
+The extraction should satisfy three rules at once: **selectivity** (discard short-lived detail such as "the search returned 3 options"), **abstraction** (generalize this one "window seat" into a lasting preference), and **structure** (store facts in retrievable fields).
 
 ### Evaluating Memory Capabilities: A Three-Level Framework
 
@@ -121,9 +115,9 @@ The practical selection criterion is: use Advanced JSON Cards for **critical, lo
 
 The four formats discussed above, whether simple or complex, are fundamentally **text**—meaning that the "storage" and "use" of memory remain two separate steps: first retrieve the relevant text, then feed it to an error-prone LLM to read and compute. Text-based memory excels at recalling individual facts but struggles with aggregating statistics across many records, detecting contradictory facts, or enforcing logical rules, because all these operations rely on the LLM's "mental arithmetic." User as Code[^uac] proposes a solution: shift the representation medium from text to **executable code**. It treats the Agent's model of the user as a **living software engineering project**—using typed Python objects to store user state and ordinary Python functions to encode constraint rules, so that "representing the user" and "reasoning about the user" happen in the same medium that can be executed by an interpreter.
 
-It splits memory updates into two phases[^uac]: the **memory phase** (after each session, the LLM extracts facts from the conversation one by one as strings, appending them to an append-only fact log) and the **structuring phase** (periodically, the LLM regenerates the entire typed Python representation from the complete fact log—organizing facts into dataclasses, using `date()` for dates, typed lists for collections, and `notes: list[str]` for miscellaneous items that are hard to type). This is the classic "write-ahead log + periodic checkpoint" design from databases, applied to LLM memory for the first time: the append-only log ensures no facts are lost, and the periodic checkpoint compresses them into a clean, queryable structure. (This periodic reconstruction process is consistent with the "memory compression and organization mechanism" discussed later in this chapter, except the output is code rather than text.)
+It borrows the write-ahead log plus checkpoint mechanism: after a session ends, facts are first appended to an append-only log, and the typed state is periodically rebuilt from the complete log. This preserves the raw evidence while yielding a queryable, executable derived state.
 
-Below is a simplified example. The structuring phase stores the user's passport and trips as typed state:
+Below is a simplified state fragment showing how typed state and rules fit together:
 
 ```python
 state = {
@@ -140,11 +134,7 @@ state = {
 }
 ```
 
-With typed state, three tasks that previously required the LLM to "read the text and do mental arithmetic" now become deterministic code:
-
-First, **statistical aggregation**. "How many times did I go abroad in 2025?"—with text memory, you'd need to recall all trips and count them one by one, and errors become more likely as the number of records grows; with User as Code, it is a single expression, achieving nearly 100% accuracy[^uac]:
-
-**Deterministic aggregation:**
+Typed state hands operations that once required the LLM to "read it through and do the arithmetic in its head" over to deterministic functions. **Statistical aggregation**, for example, can be written like this:
 
 ```python
 count(
@@ -154,9 +144,7 @@ count(
 # => 2
 ```
 
-Second, **conflict detection**. By placing "current medications" and "allergy history" side by side, a single function can cross-reference them by drug class, uncovering contradictions scattered across different conversations that would be nearly impossible to automatically associate in text form:
-
-**Conflict detection:**
+**Conflict detection** can cross-reference current medications against allergy history:
 
 ```python
 def check_drug_allergy(profile):
@@ -166,9 +154,7 @@ def check_drug_allergy(profile):
                 emit_conflict(medication, allergy)
 ```
 
-Third, **constraint enforcement**. The Agent can codify such check functions and trigger them automatically every time the state is updated—without the user needing to speak or the Agent needing to retrieve anything. For example, a passport validity constraint: alert if the passport expires less than 180 days after the departure date of an international trip.
-
-**Constraint enforcement:**
+**Constraint enforcement** checks passport validity automatically whenever the state is updated, without waiting for the user to ask again:
 
 ```python
 def check():
@@ -547,11 +533,7 @@ Although periodic reorganization is comprehensive, its output still must not ove
 
 With a powerful knowledge base built, the next question is how the Agent can use it intelligently and autonomously. The traditional RAG process is a simple one-way data flow: the user's query is directly used for retrieval, the results are directly injected into the model's context, and the model directly generates the final answer. This "**Non-Agentic**" mode is efficient, but its ceiling is low: it is fundamentally a passive retrieve-and-generate pipeline, with no capacity to deeply understand a problem, decompose it, or explore it iteratively.
 
-To overcome this limitation, we must upgrade RAG from a fixed data processing flow to a dynamic, iterative exploration process led by the Agent. This is the core idea of "**Agentic RAG**."
-
-Traditional RAG is like being allowed a single library search before you must write your report. Agentic RAG is like a researcher who keeps returning to different shelves, adjusting search strategies, and cross-checking sources—starting to write only once the material is in hand.
-
-In this new paradigm, knowledge base retrieval is no longer an automated preliminary step. Instead, it is encapsulated as a **tool** that the Agent can call at any time. The Agent adopts the ReAct pattern (see definition in Chapter 1), leading the process through a "Think → Act → Observe" loop.
+To overcome this limitation, we must upgrade RAG from a fixed data processing flow to a dynamic, iterative exploration process led by the Agent. This is the core idea of "**Agentic RAG**." Traditional RAG is like being allowed a single library search before you must write your report. Agentic RAG is like a researcher who keeps returning to different shelves, adjusting search strategies, and cross-checking sources—starting to write only once the material is in hand. In this new paradigm, knowledge base retrieval is no longer an automated preliminary step. Instead, it is encapsulated as a **tool** that the Agent can call at any time. The Agent adopts the ReAct pattern (see definition in Chapter 1), leading the process through a "Think → Act → Observe" loop.
 
 Faced with a complex question, the Agent first "thinks" to analyze the core need and autonomously decides what query keywords would be most effective for retrieving information. Then it "acts" by calling the `knowledge_base_search` tool. After "observing" the preliminary results, it does not immediately generate an answer. Instead, it evaluates whether the information is sufficient—if not, it enters the next loop, refines the query for a more precise search, or even calls other tools for assistance. Only when it determines that sufficient information has been gathered does it synthesize all the context to generate a final, well-reasoned answer.
 
@@ -576,7 +558,7 @@ Agentic RAG fuses retrieval and reasoning through the Agent's own decisions: it 
 >
 > The comparison makes a strong case that agentic RAG's value lies in "solving problems," not merely "answering questions". It trades some response speed for robustness and answer quality on hard problems—and in this experiment's sentencing scenario, the shift from passive pipeline to active explorer shows up directly as a significant gain in multi-hop accuracy.
 
-This chapter and the preceding one both address Context—one within a single session, the other across multiple sessions. What this chapter primarily consolidates is declarative knowledge about users and the world. Chapter 9 reuses the same extraction and retrieval infrastructure, but applies it to behavioral knowledge supported by operational successes and failures: “under what conditions should the Agent do what?” The next chapter turns to Tools: how Agents interact with the external world through tool design and the MCP interoperability standard. Chapter 6 covers the event-driven runtime.
+At this point we have covered the full stack, from basic retrieval through structured indexing to Agentic RAG. Recall the question left open in the first half of this chapter: once user memories number in the thousands, how do we retrieve precisely the relevant few, and how do we tell contradictory records apart? We now turn these knowledge-base techniques **back** onto the user memory discussed at the start of the chapter. Experiments 3-9 and 3-11 reuse the three-tier evaluation framework established earlier (and the evaluation set from Experiment 3-1) to test whether these techniques resolve, tier by tier, the precision and conflict problems of user-memory retrieval.
 
 > **Experiment 3-9 ★★: Building User Memory with Agentic RAG**
 >
@@ -676,19 +658,13 @@ A face's appearance or a person's voice is difficult to describe in words and ca
 
 ## Chapter Summary
 
-This chapter built the AI Agent's persistent memory system at two scales: user memory for the individual, and a shared knowledge base for everyone.
+This chapter divided persistent knowledge into two scales: user memory, which serves an individual, and a shared knowledge base, which serves everyone. The former follows a lifecycle of read relevant memories → extract candidates in the background → verify source and policy → update, and can be traded off among Simple Notes, JSON Cards, or executable state as requirements dictate.
 
-In terms of the book's larger structure, this chapter builds the **proposal** segment of Chapter 1's discovery loop: turning one piece of evidence into a minimal, reviewable, reversible change—not judging whether the system as a whole got better.
+In terms of the book's structure, this chapter builds the **proposal** stage of the discovery loop from Chapter 1: turning one piece of evidence into a minimal, auditable, reversible change, without judging whether the system as a whole improved.
 
-For **user memory**, we explored four progressive strategies, from atomic facts (Simple Notes) to contextualized knowledge management (Advanced JSON Cards), exposing the fundamental tension in information representation between simplicity and expressiveness. Frameworks like Mem0 and Memobase supply engineered memory management, and privacy protection keeps sensitive information safe throughout.
+The main pipeline of a knowledge base is chunking → dense/sparse retrieval → fusion → reranking → generation, accepted against metrics such as recall@k. RAPTOR, GraphRAG, OpenViking, contextual retrieval, and Agentic RAG each change how knowledge is organized, chunked, or how retrieval is controlled; in practice a structured overview can stay resident in context while raw detail is recalled on demand.
 
-For **knowledge acquisition**, the core stack is: document chunking defines retrieval units, dense embeddings capture semantics, sparse embeddings match keywords, result fusion merges candidates into a single pool, neural reranking refines the final order, and metrics like recall@k measure retrieval quality.
-
-For **knowledge understanding**, we moved past flat document chunking: RAPTOR's tree of hierarchical summaries and GraphRAG's entity-relationship network give knowledge structure; Contextual Retrieval repairs the semantic loss caused by chunking at its source; and Agentic RAG turns the passive "retrieve-generate" pipeline into active, iterative exploration led by the Agent. The same techniques apply to user memory, converging at last in a **two-tier memory architecture**: Advanced JSON Cards kept resident in the context supply the "overview," Contextual Retrieval supplies "details" on demand. Stacked together, the two tiers sharply improve cross-session recall accuracy and conflict resolution—and are what truly support "proactive service," the top level of the three-level framework from the chapter's start.
-
-For **knowledge updating**, the system needs two rhythms: incremental updates promptly absorb new evidence, while periodic reorganization returns to the complete knowledge and raw data to deduplicate, retire, merge, restructure, check omissions, and qualify scenarios. Whether the knowledge is represented as Markdown or Python, both paths should have a Proposer Agent submit an evidence-grounded diff and a heterogeneous Reviewer Agent audit it independently. Only after approval should the PR merge and the derived indexes be rebuilt.
-
-This chapter and the previous one both address the "context" problem—one within a single session, the other across multiple sessions. This chapter primarily distills declarative knowledge about users and the world. Chapter 9 will reuse the same extraction and retrieval infrastructure for behavioral knowledge supported by successful and failed runs: what should be done under which conditions. The next chapter turns to "tools": how Agents interact with the external world through tools, including tool design and the MCP interoperability standard. Chapter 6 covers the event-driven runtime.
+Writes must not skip source, time, conflict, and privacy checks. Incremental updates absorb new evidence, while periodic consolidation goes back to the raw data to deduplicate, merge, and rebuild the index, and a pending diff is published only after independent review. The previous chapter managed context within a single task; this one manages declarative knowledge across tasks. Chapter 9 applies the same infrastructure to behavioral experience—what to do under which conditions.
 
 ## Thought Questions
 

@@ -14,11 +14,9 @@ Melanjutkan pendekatan rekayasa context dari Bab 2, bab ini memperluas manajemen
 
 ## Sistem Memori Pengguna
 
-Sistem memori pengguna sangat penting untuk membuat AI Agent yang dapat memberikan layanan yang terus-menerus dan terpersonalisasi. Memori bukanlah transkrip kata demi kata dari pengguna. Kita juga tidak mengingat setiap kata teman kita; dari interaksi berulang, kita perlahan membentuk model mental mereka—apa hobi, kebiasaan, dan nilai mereka—dan itu memungkinkan kita mengerti bahkan memprediksi kebutuhan mereka.
+Agar sebuah Agent dapat memberi layanan yang dipersonalisasi lintas sesi, dibutuhkan lapisan memori pengguna yang bertahan. Lapisan itu tidak menyimpan setiap kalimat percakapan, melainkan memakai satu panggilan LLM tambahan untuk mengekstraksi, memampatkan, dan menyaring fakta yang berguna kelak — berbeda dari pembelajaran dalam konteks yang hanya berlaku di jendela saat ini.
 
-Intinya, sistem memori pengguna adalah proses belajar aktif berkelanjutan untuk membangun model prediksi pengguna yang ringkas dan ampuh. Ia menggunakan tambahan komputasi—berupa panggilan LLM khusus untuk analisis, ringkasan, dan penataan—demi menyaring dan memadatkan informasi penting yang tersebar di riwayat percakapan. Perbedaannya dengan in-context learning sangat jelas: memori pengguna bersifat awet dan bisa ditinjau ulang; sedangkan in-context learning hanya sementara dan hilang saat sesi selesai.
-
-Mari kita lihat contoh nyatanya. Bayangkan percakapan pengguna dan Agent berikut:
+Sebuah contoh konkret memperjelas prosesnya. Misalkan seorang pengguna dan sebuah Agent bertukar percakapan berikut:
 
 ```text
 User: Tolong pesankan tiket pesawat ke Tokyo untuk Jumat depan. Saya suka kursi dekat jendela dan saya seorang vegetarian, jadi saya butuh makanan khusus.
@@ -28,7 +26,7 @@ Agent: Ini opsi untuk Anda. Sesuai preferensi Anda, saya sudah memfilter kursi d
 User: Ya, dan gunakan nomor United MileagePlus saya 12345678.
 ```
 
-Setelah percakapan ini usai, sistem Agent akan memanggil LLM khusus untuk menganalisis dialog dan menyaring informasi yang patut diingat selamanya:
+Setelah percakapan berakhir, kerangka kerja Agent melakukan satu panggilan LLM khusus untuk menganalisisnya dan mengekstraksi apa yang layak diingat dalam jangka panjang:
 
 ```text
 Memori yang diekstrak:
@@ -38,11 +36,7 @@ Memori yang diekstrak:
 - Pengguna punya rencana bepergian ke Tokyo (aktivitas terbaru)
 ```
 
-**Selektivitas**—Agent tidak mengingat informasi sementara seperti "pencarian menghasilkan 3 opsi", melainkan hanya fakta yang berguna kelak.
-
-**Abstraksi**—"Saya suka kursi dekat jendela" disaring menjadi preferensi umum, bukan diikat pada penerbangan tertentu.
-
-**Struktur**—baik menggunakan Markdown, JSON, maupun format lain, pengorganisasian yang baik memudahkan retrieval di kemudian hari. Saat pengguna memesan tiket lagi, Agent tidak perlu menanyakan ulang preferensi kursi atau makanan karena informasi itu sudah tersimpan di memori.
+Hasil ekstraksi harus memenuhi tiga aturan sekaligus: **selektivitas** (buang detail berumur pendek seperti "pencarian mengembalikan 3 opsi"), **abstraksi** (generalisasikan "kursi dekat jendela" kali ini menjadi preferensi jangka panjang), dan **struktur** (simpan fakta dalam medan yang dapat ditelusuri).
 
 ### Menilai Kemampuan Memori: Kerangka Tiga Tingkat
 
@@ -119,9 +113,9 @@ Kriteria praktisnya: gunakan Advanced JSON Cards untuk data **kritis bervolume r
 
 Keempat format yang dibahas sebelumnya, baik sederhana maupun kompleks, pada dasarnya tetap berupa **teks**. Artinya, fase "penyimpanan" dan "penggunaan" memori masih terpisah: sistem harus mengambil teks yang relevan terlebih dahulu, kemudian menyerahkannya kepada LLM untuk ditafsirkan dan diolah. Memori berbasis teks efektif untuk mengingat fakta sederhana, tetapi kesulitan melakukan agregasi statistik atas ratusan catatan, menemukan fakta yang saling bertentangan, atau menegakkan batasan logis karena semua operasi tersebut bergantung pada "perhitungan mental" LLM yang rentan salah. User as Code[^uac] menawarkan pendekatan lain: mengubah media penyimpanan dari teks menjadi **kode yang dapat dieksekusi**. Konsep ini memperlakukan model preferensi pengguna sebagai **proyek perangkat lunak yang terus berkembang**—objek Python bertipe merepresentasikan status pengguna, sedangkan fungsi Python biasa menjadi aturan pembatas. Dengan demikian, "merepresentasikan pengguna" dan "bernalar tentang pengguna" berlangsung dalam media yang sama dan dapat dieksekusi langsung oleh interpreter.
 
-Konsep tersebut membagi pembaruan memori ke dalam dua tahapan[^uac]: tahap memori atau **memory phase** (setelah sesi berakhir, LLM mengekstraksi fakta-fakta percakapan ke dalam catatan berformat string, lalu menambahkannya ke penyimpanan bergaya jurnal) dan fase strukturisasi atau **structuring phase** (secara berkala, LLM merangkum seluruh fakta yang terfragmentasi ini menjadi objek Python dengan tipe data yang ketat—mengelompokkan fakta terkait ke dalam dataclasses, menggunakan objek `date()` yang sebenarnya untuk kalender, daftar bertipe (typed lists) untuk himpunan data, dan sebuah senarai `notes: list[str]` untuk ragam informasi yang tak dapat diklasifikasikan dengan rapi). Ini merupakan arsitektur klasik "write-ahead log + periodic checkpoint" dari sistem basis data yang diterapkan pada memori LLM: log aslinya menjamin tidak ada fakta yang hilang, dan checkpoint berkala memampatkannya menjadi struktur yang dapat dikueri. (Waktu pelaksanaan checkpoint berkala ini sejalan dengan "mekanisme kompresi dan organisasi memori" yang akan dibahas nanti di bab ini, hanya saja output-nya berupa kode alih-alih teks).
+Ia meminjam mekanisme "write-ahead log + checkpoint": setelah sesi berakhir, fakta lebih dulu ditambahkan ke log yang hanya bisa ditambah, lalu keadaan bertipe dibangun ulang secara berkala dari log lengkap. Dengan begitu bukti mentah tetap tersimpan sekaligus diperoleh keadaan turunan yang dapat dikueri dan dieksekusi.
 
-Berikut contoh ringkasnya. Pada fase strukturisasi, sistem menyimpan dokumen perjalanan dan paspor pengguna sebagai state bertipe yang ketat:
+Berikut potongan keadaan yang disederhanakan, memperlihatkan bagaimana keadaan bertipe dan aturan saling bertaut:
 
 ```python
 state = {
@@ -138,11 +132,7 @@ state = {
 }
 ```
 
-Bersenjata wujud state bertipe (typed state) ini, tiga tugas yang sebelumnya menuntut LLM untuk membaca teks dan melakukan kalkulasi mental (mental arithmetic), kini berubah menjadi kode yang deterministik (deterministic code):
-
-Pertama, **pengumpulan statistik (statistical aggregation)**. "Berapa banyak perjalanan internasional yang saya lakukan pada tahun 2025?"—dengan memori berbasis teks, Anda harus memanggil ulang setiap perjalanan dan menghitungnya satu per satu, dan kesalahan makin mungkin terjadi seiring bertambahnya jumlah catatan; sedangkan dengan User as Code, hal tersebut hanyalah satu ekspresi yang mencapai akurasi hampir 100%[^uac]:
-
-**Agregasi deterministik:**
+Keadaan bertipe menyerahkan kepada fungsi deterministik operasi yang dulu menuntut LLM "membaca sekali lalu menghitung di kepala". Misalnya, **agregasi statistik** dapat ditulis begini:
 
 ```python
 count(
@@ -152,9 +142,7 @@ count(
 # => 2
 ```
 
-Kedua, **deteksi konflik (conflict detection)**. Dengan mensejajarkan "pengobatan saat ini" dan "alergi", sebuah fungsi tunggal mampu menyilangkan data tersebut (cross-reference) berdasarkan kelas obat (drug class), serta menyingkap kontradiksi yang tersebar melintasi beragam percakapan berbeda, yang mana hal ini nyaris mustahil untuk dikaitkan secara otomatis dalam format teks:
-
-**Deteksi konflik:**
+**Deteksi konflik** dapat menyilangkan obat yang sedang dikonsumsi dengan riwayat alergi:
 
 ```python
 def check_drug_allergy(profile):
@@ -164,9 +152,7 @@ def check_drug_allergy(profile):
                 emit_conflict(medication, allergy)
 ```
 
-Ketiga, **penegakan batasan (constraint enforcement)**. Agent dapat menyandikan fungsi pemeriksaan (check functions) semacam itu dan memicunya (trigger) secara otomatis setiap kali statusnya diperbarui (updated)—tanpa mengharuskan pengguna untuk berbicara atau Agent untuk memanggil (retrieve) apa pun. Sebagai contoh, batasan mutlak pada masa kedaluwarsa paspor: bunyikan peringatan (alert) jika paspor tersebut kedaluwarsa dalam kurang dari 180 hari setelah tanggal keberangkatan perjalanan internasional (international trip departure).
-
-**Penegakan constraint:**
+**Penegakan batasan** memeriksa masa berlaku paspor secara otomatis setiap kali keadaan diperbarui, tanpa menunggu pengguna bertanya lagi:
 
 ```python
 def check():
@@ -544,11 +530,7 @@ Walaupun penataan ini menyeluruh, hasilnya tetap tidak boleh langsung menimpa ba
 
 Dengan dibangunnya Knowledge Base yang kuat, pertanyaan selanjutnya adalah bagaimana Agent dapat menggunakannya secara cerdas dan otonom. Proses RAG tradisional adalah aliran data satu arah yang sederhana: kueri pengguna secara langsung digunakan untuk retrieval, hasilnya secara langsung disuntikkan ke dalam konteks model, dan model secara langsung menghasilkan jawaban akhir. Mode "**Non-Agentic**" ini efisien, tetapi batas kemampuannya rendah: pada dasarnya ia merupakan pipeline retrieve-and-generate (tarik-dan-hasilkan) yang pasif, tanpa kapasitas untuk memahami suatu masalah secara mendalam, mengurainya, atau mengeksplorasinya secara iteratif.
 
-Untuk mengatasi keterbatasan ini, kita harus meningkatkan RAG dari aliran pemrosesan data yang tetap (fixed) menjadi proses eksplorasi dinamis dan iteratif yang dipimpin oleh Agent. Ini adalah gagasan inti dari "**Agentic RAG**."
-
-RAG tradisional ibarat diizinkan melakukan satu kali pencarian di perpustakaan sebelum Anda harus menulis laporan Anda. Agentic RAG ibarat seorang peneliti yang terus kembali ke rak yang berbeda, menyesuaikan strategi pencarian, dan melakukan pemeriksaan silang terhadap sumber-sumber—dan hanya mulai menulis setelah materinya sudah di tangan.
-
-Dalam paradigma baru ini, knowledge base retrieval tidak lagi menjadi langkah awal yang diotomatiskan. Alih-alih, hal itu dienkapsulasi sebagai sebuah **alat** (tool) yang dapat dipanggil oleh Agent kapan saja. Agent mengadopsi pola ReAct (lihat definisinya di Bab 1), memimpin prosesnya melalui loop "Think → Act → Observe".
+Untuk mengatasi keterbatasan ini, kita harus meningkatkan RAG dari aliran pemrosesan data yang tetap (fixed) menjadi proses eksplorasi dinamis dan iteratif yang dipimpin oleh Agent. Ini adalah gagasan inti dari "**Agentic RAG**." RAG tradisional ibarat diizinkan melakukan satu kali pencarian di perpustakaan sebelum Anda harus menulis laporan Anda. Agentic RAG ibarat seorang peneliti yang terus kembali ke rak yang berbeda, menyesuaikan strategi pencarian, dan melakukan pemeriksaan silang terhadap sumber-sumber—dan hanya mulai menulis setelah materinya sudah di tangan. Dalam paradigma baru ini, knowledge base retrieval tidak lagi menjadi langkah awal yang diotomatiskan. Alih-alih, hal itu dienkapsulasi sebagai sebuah **alat** (tool) yang dapat dipanggil oleh Agent kapan saja. Agent mengadopsi pola ReAct (lihat definisinya di Bab 1), memimpin prosesnya melalui loop "Think → Act → Observe".
 
 Diperhadapkan dengan sebuah pertanyaan kompleks, Agent pertama-tama akan "berpikir" (think) untuk menganalisis kebutuhan intinya dan secara otonom memutuskan kata kunci kueri apa yang paling efektif untuk menarik informasi. Lalu ia "bertindak" (act) dengan memanggil alat `knowledge_base_search`. Setelah "mengamati" (observe) hasil sementaranya, ia tidak langsung menghasilkan sebuah jawaban. Alih-alih, ia mengevaluasi apakah informasi tersebut cukup—jika tidak, ia memasuki loop berikutnya, menyempurnakan kueri untuk pencarian yang lebih presisi, atau bahkan memanggil alat lain untuk mendapatkan bantuan. Hanya jika ia menentukan bahwa informasi yang dikumpulkan sudah cukup, ia akan mensintesis semua konteks tersebut untuk menghasilkan jawaban akhir yang beralasan.
 
@@ -563,17 +545,17 @@ Agentic RAG menggabungkan retrieval dan penalaran melalui keputusan Agent itu se
 > **Eksperimen 3-8 ★★: Studi Banding Agentic RAG dan Non-Agentic RAG**
 >
 > Proyek `agentic-rag` membangun sistem Agent yang utuh dan dapat dengan bebas beralih di antara kedua mode serta terhubung ke berbagai backend Knowledge Base (termasuk `retrieval-pipeline`, `structured-index`, dsb.), yang memungkinkan studi ablasi yang komprehensif (yaitu, secara sistematis mengganti atau menonaktifkan suatu komponen untuk mengamati kontribusinya pada efek keseluruhan). Eksperimen ini berpusat di sekitar set data Q&A peradilan Tiongkok yang dikonstruksi secara khusus, yang berisi pertanyaan-pertanyaan hukum mulai dari yang sederhana hingga kompleks.
-
+>
 > Pertanyaan sederhana seperti "Apa saja aturan tentang pembelaan diri?" biasanya dapat dijawab dengan satu *direct retrieval*. Non-agentic RAG, dengan proses *single-retrieval* yang lugas, menawarkan waktu respons yang lebih cepat dan kualitas jawaban yang sebanding dengan agentic RAG. Hal ini membuktikan bahwa RAG tradisional tetap menjadi pilihan yang efisien untuk skenario dengan kebutuhan informasi yang jelas dan sempit. Namun, ketika dihadapkan pada pertanyaan kompleks seperti "Bagaimana seseorang yang karena kelalaiannya menyebabkan cedera serius saat mabuk dan memiliki riwayat hukuman pencurian sebelumnya harus dijatuhi hukuman?", kesenjangannya menjadi signifikan: Non-agentic RAG, karena kata kunci awal yang tidak tepat, sering kali mengambil *context* yang tidak lengkap, kehilangan informasi penting dan bahkan menghasilkan kesalahan faktual. Agentic RAG, sebaliknya, melakukan *retrieval* secara iteratif dalam beberapa putaran, layaknya seorang pengacara ahli:
-
+>
 > 1.  **First Round Retrieval**: Agent memecah masalah dan mencari secara paralel untuk "standar hukuman untuk kelalaian yang menyebabkan cedera serius", "pertanggungjawaban pidana untuk mabuk", dan "dampak dari riwayat hukuman pencurian sebelumnya".
 > 2.  **Thinking and Evaluation**: Setelah mengamati hasil awal, Agent menemukan ketentuan hukum dasar untuk setiap sub-pertanyaan tetapi tidak memiliki informasi kunci yang menghubungkannya—bagaimana "riwayat hukuman pencurian sebelumnya" yang tidak terkait harus dipertimbangkan dalam penjatuhan hukuman untuk "kelalaian yang menyebabkan cedera serius".
 > 3.  **Second Round Retrieval**: Berdasarkan masalah yang lebih terfokus, Agent menyusun *secondary queries* yang tepat tentang hubungan antara "pelanggaran kelalaian yang menyebabkan cedera serius" dan "residivisme" atau "hukuman gabungan untuk berbagai kejahatan".
 > 4.  **Final Synthesis**: Setelah menemukan interpretasi peradilan tentang "residivisme" di bawah dakwaan yang berbeda, Agent menyintesis jawaban lengkap yang masuk akal secara logis dan berdasar secara hukum.
-
+>
 > Perbandingan ini memberikan argumen kuat bahwa nilai dari agentic RAG terletak pada "memecahkan masalah," bukan hanya "menjawab pertanyaan". Agentic RAG menukar kecepatan respons demi ketahanan dan kualitas jawaban pada masalah-masalah sulit—dan dalam skenario penjatuhan hukuman pada eksperimen ini, pergeseran dari *passive pipeline* menjadi *active explorer* terlihat secara langsung sebagai peningkatan signifikan dalam akurasi *multi-hop*.
 
-Bab ini dan bab sebelumnya keduanya membahas Context—satu di dalam *single session*, yang lainnya melintasi *multiple sessions*. Apa yang terutama dikonsolidasikan oleh bab ini adalah pengetahuan deklaratif tentang pengguna dan dunia. Bab 9 menggunakan kembali infrastruktur ekstraksi dan *retrieval* yang sama, tetapi menerapkannya pada pengetahuan perilaku yang didukung oleh keberhasilan dan kegagalan operasional: "di bawah kondisi apa Agent harus melakukan apa?" Bab berikutnya beralih ke Tools: bagaimana Agents berinteraksi dengan dunia luar melalui desain *tool* dan standar interoperabilitas MCP. Runtime *event-driven* dibahas di Bab 6.
+Sampai di sini kita telah menguasai seluruh tumpukan teknologi, dari pencarian dasar, indeks terstruktur, hingga RAG agentik. Ingat kembali pertanyaan yang ditinggalkan paruh pertama bab ini: ketika memori pengguna menumpuk hingga ribuan, bagaimana menemukan kembali beberapa yang relevan secara tepat, dan bagaimana membedakan catatan yang saling bertentangan? Kini kita terapkan teknik basis pengetahuan itu **secara terbalik** pada memori pengguna yang dibahas di awal bab. Eksperimen 3-9 dan 3-11 akan memakai ulang kerangka evaluasi tiga tingkat yang dibangun di awal bab (dan set evaluasi dari Eksperimen 3-1) untuk menguji apakah teknik-teknik ini menyelesaikan, tingkat demi tingkat, masalah presisi dan konflik dalam pencarian memori pengguna.
 
 > **Eksperimen 3-9 ★★: Membangun Memori Pengguna dengan Agentic RAG**
 >
@@ -673,19 +655,13 @@ Rupa wajah atau suara seseorang sulit dijelaskan dengan kata-kata dan tidak dapa
 
 ## Ringkasan Bab
 
-Bab ini membangun sistem memori persisten AI Agent pada dua skala: User Memory untuk individu, dan Knowledge Base bersama untuk semua orang.
+Bab ini membagi pengetahuan yang bertahan lama ke dalam dua skala: memori pengguna yang melayani satu individu, dan basis pengetahuan bersama yang melayani semua orang. Yang pertama mengikuti siklus hidup baca memori relevan → ekstraksi kandidat di latar belakang → verifikasi sumber dan kebijakan → pembaruan, dan dapat ditimbang antara Simple Notes, JSON Cards, atau keadaan yang dapat dieksekusi sesuai kebutuhan.
 
-Dilihat dari struktur buku secara keseluruhan, bab ini membangun ruas **usulan** dalam lingkar penemuan Bab 1: mengubah satu bukti menjadi satu perubahan yang minimal, dapat ditinjau, dan dapat dibalik—bukan menilai apakah sistem secara keseluruhan membaik.
+Dari sudut struktur buku, bab ini membangun tahap **usulan** dalam lingkar penemuan pada Bab 1: mengubah satu bukti menjadi satu perubahan yang minimal, dapat diaudit, dan dapat dibatalkan — bukan menilai apakah sistem secara keseluruhan menjadi lebih baik.
 
-Untuk **User Memory**, kita telah mengeksplorasi empat strategi progresif, dari fakta atomik (Simple Notes) ke manajemen pengetahuan yang dikontekstualisasikan (Advanced JSON Cards), mengungkap ketegangan fundamental pada representasi informasi antara kesederhanaan dan ekspresifitas. Kerangka kerja (*frameworks*) seperti Mem0 dan Memobase menyediakan manajemen memori yang direkayasa, dan perlindungan privasi menjaga agar informasi sensitif tetap aman di seluruh prosesnya.
+Pipeline utama basis pengetahuan adalah pemotongan → pencarian padat/jarang → penggabungan → pemeringkatan ulang → penghasilan, dan diterima dengan metrik seperti recall@k. RAPTOR, GraphRAG, OpenViking, pencarian sadar konteks, dan RAG agentik masing-masing mengubah cara pengetahuan diorganisasi, cara dipotong, atau cara pencarian dikendalikan; dalam praktik, ringkasan terstruktur dapat menetap di konteks sementara detail mentah dipanggil sesuai kebutuhan.
 
-Untuk ***knowledge acquisition***, tumpukan intinya adalah: *document chunking* menentukan unit *retrieval*, *dense embeddings* menangkap semantik, *sparse embeddings* mencocokkan kata kunci, *result fusion* menggabungkan kandidat ke dalam *pool* tunggal, *neural reranking* menyempurnakan urutan akhir, dan metrik seperti recall@k mengukur kualitas *retrieval*.
-
-Untuk ***knowledge understanding***, kita bergerak melampaui *flat document chunking*: pohon dari ringkasan hierarkis RAPTOR dan jaringan entitas-hubungan dari GraphRAG memberi struktur pengetahuan; Contextual Retrieval memperbaiki hilangnya semantik yang disebabkan oleh *chunking* tepat di sumbernya; dan Agentic RAG mengubah saluran "retrieve-generate" pasif menjadi eksplorasi iteratif yang aktif yang dipimpin oleh Agent. Teknik-teknik yang sama berlaku untuk User Memory, akhirnya bertemu pada sebuah ***two-tier memory architecture***: Advanced JSON Cards yang disimpan menetap di dalam *context* menyuplai "gambaran umum," Contextual Retrieval menyuplai "detail" sesuai permintaan (*on-demand*). Jika ditumpuk bersama, kedua tingkat tersebut secara tajam meningkatkan akurasi *cross-session recall* serta resolusi konflik—dan inilah yang benar-benar mendukung "*proactive service*," tingkat teratas dari *three-level framework* pada awal bab.
-
-Untuk ***knowledge updating***, sistem memerlukan dua ritme: pembaruan inkremental segera menyerap bukti baru, sedangkan penataan berkala kembali ke seluruh pengetahuan dan data mentah untuk melakukan deduplicasi, penonaktifan, penggabungan, restrukturisasi, pemeriksaan kelalaian, serta pembatasan skenario. Baik pengetahuan direpresentasikan sebagai Markdown maupun Python, Proposer Agent harus mengajukan diff yang didukung bukti dan Reviewer Agent heterogen harus mengauditnya secara independen. PR baru boleh di-merge dan indeks turunan dibangun ulang setelah disetujui.
-
-Bab ini dan bab sebelumnya keduanya membahas masalah "*context*"—satu di dalam *single session*, yang lainnya melintasi *multiple sessions*. Bab ini terutama menyaring pengetahuan deklaratif tentang pengguna dan dunia. Bab 9 akan menggunakan kembali infrastruktur ekstraksi dan retrieval yang sama untuk pengetahuan perilaku yang didukung oleh eksekusi berhasil dan gagal: apa yang harus dilakukan dalam kondisi tertentu. Bab berikutnya beralih pada "*tools*": bagaimana Agents berinteraksi dengan dunia eksternal melalui alat-alat, termasuk desain *tool* dan standar interoperabilitas MCP. Runtime *event-driven* dibahas di Bab 6.
+Penulisan tidak boleh melewati pemeriksaan sumber, waktu, konflik, dan privasi. Pembaruan inkremental menyerap bukti baru, sedangkan konsolidasi berkala kembali ke data mentah untuk menghapus duplikat, menggabungkan, dan membangun ulang indeks; diff yang menunggu baru diterbitkan setelah tinjauan independen. Bab sebelumnya mengelola konteks dalam satu tugas; bab ini mengelola pengetahuan deklaratif lintas tugas. Bab 9 akan menerapkan infrastruktur yang sama pada pengalaman perilaku: dalam kondisi apa harus berbuat apa.
 
 ## Pertanyaan Pemikiran
 
