@@ -34,6 +34,8 @@ Ngữ liệu huấn luyện của một mô hình gần như hoàn toàn theo l�
 
 Các công cụ nhận thức, thực thi và cộng tác ở Chương 4 đều do Agent chủ động gọi. Agent phải phản ứng thế nào với sự kiện bên ngoài có thể đến bất cứ lúc nào? Điều này đòi hỏi kiến trúc bất đồng bộ hướng sự kiện. Hai loại công cụ còn lại ở Chương 1—công cụ kích hoạt sự kiện và công cụ giao tiếp với người dùng—dựa trên kiến trúc này nên cũng được trình bày tại đây.
 
+Trong phần này phương thức không thay đổi, vẫn là văn bản; thứ thay đổi chỉ là thời điểm. Đây là bước đầu tiên ra khỏi thế giới lần lượt theo lượt của năm chương trước.
+
 ### Tại sao cần có tính năng không đồng bộ
 
 Đầu tiên hãy sử dụng một phép loại suy để giải thích tại sao cần có tính không đồng bộ. Đồng bộ có nghĩa là "làm một việc trước khi bạn có thể làm việc tiếp theo" và không đồng bộ có nghĩa là "nhiều việc có thể được thực hiện cùng một lúc". Kiến trúc Agent đồng bộ truyền thống giống như một bộ đếm chỉ xếp hàng - nó chỉ có thể xử lý một khách hàng tại một thời điểm và số tiếp theo có thể được gọi sau khi xử lý; trong khi một trợ lý thực sự thông minh lại giống một thư ký linh hoạt hơn - có nhiều mục cần xử lý (email, cuộc gọi điện thoại, khách thăm) trên bàn. Thư ký quyết định xử lý vấn đề nào trước dựa trên mức độ khẩn cấp và có thể tạm dừng và chuyển đổi nếu có vấn đề khẩn cấp hơn trong quá trình xử lý. Ở chế độ đồng bộ, Agent đợi hoàn thành tác vụ nền trước khi nói chuyện với người dùng hoặc đợi cuộc trò chuyện kết thúc trước khi xử lý các sự kiện mới đến, điều này không thể đáp ứng được một số khả năng cốt lõi cần thiết cho các tình huống trợ lý thực sự:
@@ -57,6 +59,8 @@ Khung công tác nguồn mở OpenClaw (có kiến trúc sẽ được mô tả 
 - **Heartbeat (Heartbeat Daemon)**: Đánh thức Agent cứ sau N phút, kiểm tra xem có vấn đề gì cần chú ý không và dựa vào phán đoán để tránh cảnh báo mệt mỏi
 
 Ba cơ chế này mang lại cho OpenClaw Agent vẻ ngoài "tự chủ" - ngay cả khi người dùng không trực tuyến, Agent có thể thường xuyên tạo báo cáo, kiểm tra trạng thái hệ thống và xử lý các giao dịch thông thường. Nhưng nhìn kỹ hơn sẽ thấy một hạn chế cơ bản. Trước tiên, cần phải làm rõ một điều: Bản thân Cổng này **đẩy** các tin nhắn từ các kênh tích hợp sẵn (chẳng hạn như IM, giao diện Web) và các tin nhắn được định tuyến đến Agent ngay khi chúng đến; trong số ba cơ chế tự động hóa, chỉ Cron và Heartbeat thực sự có thể cho phép Agent "tự di chuyển" khi không có tin nhắn của người dùng và cả hai đều **theo thời gian** - Heartbeat kiểm tra mọi khoảng thời gian cố định, Cron kích hoạt tại một thời điểm định sẵn và Hooks Nó chỉ phản hồi một cách thụ động với các sự kiện vòng đời trong khuôn khổ và không thể đưa ra những thay đổi mới ở thế giới bên ngoài. Thiếu sót thực sự là: đối với bất kỳ nguồn sự kiện của bên thứ ba nào ngoài kênh tích hợp - một email mới đến, một lệnh gọi lại API bên ngoài được đẩy, một thông báo khẩn cấp cần được xử lý ngay lập tức - OpenClaw thiếu kênh truy cập ngay lập tức và Agent không thể phản hồi sự kiện tại thời điểm nó xảy ra và chỉ có thể đợi đến chu kỳ Cron/Heartbeat tiếp theo để thông báo.
+
+Điểm yếu thật sự nằm ở chỗ: với các nguồn sự kiện của bên thứ ba nằm ngoài những kênh có sẵn—một email mới tới, một callback API bên ngoài được đẩy về, một thông báo khẩn cần xử lý ngay—OpenClaw thiếu đường tiếp nhận tức thời, nên Agent không thể phản ứng ngay khi sự kiện xảy ra mà phải đợi đến chu kỳ Cron/Heartbeat kế tiếp mới có thể nhận ra.
 
 Sự chậm trễ này là không thể chấp nhận được trong nhiều trường hợp. Lấy **PineClaw**(plug-in OpenClaw của Pine AI) làm ví dụ: Pine AI là trợ lý AI thực hiện các cuộc gọi điện thoại thực thay mặt người dùng. Các tình huống điển hình bao gồm đàm phán hóa đơn, hủy đăng ký và xử lý yêu cầu bảo hiểm. Khi người dùng bắt đầu tác vụ gọi điện thoại Pine thông qua OpenClaw Agent, AI giọng nói của Pine sẽ thay mặt người dùng thực hiện cuộc gọi, nhưng có thể cần sự can thiệp của người dùng bất cứ lúc nào trong cuộc gọi:
 
@@ -84,15 +88,13 @@ Công cụ kích hoạt sự kiện là lối vào cho các hành động Agent 
 
 ### Công cụ giao tiếp với người dùng
 
-Trong OpenClaw, session không lộ ra với người dùng; người dùng và Agent có thể nhắn tin bất cứ lúc nào bằng công cụ chuyên dụng, kèm ảnh, tệp, thông báo đẩy, nội dung đa phương thức và Generative UI.
+Công cụ giao tiếp với người dùng ra đời để thích ứng với các kênh liên lạc ngày càng đa dạng giữa Agent và người dùng. Nhiều Agent (như Claude Code, Manus) dùng vòng lặp ReAct nguyên bản: mọi thứ Agent "nói"—tức các thông điệp assistant—đều được gửi thẳng tới người dùng, và người dùng phải mở một phiên nhất định trong ứng dụng mới đối thoại được với Agent. Trong phiên đó, người dùng thường còn nhìn thấy cả quá trình Agent gọi công cụ.
 
-Công cụ giao tiếp người dùng được ra đời khi các kênh giao tiếp của Agent với người dùng ngày càng đa dạng. Nhiều Agent (chẳng hạn như Claude Code, Manus, Genspark) áp dụng vòng lặp ReAct gốc. Tất cả các từ được Agent "nói" (tức là tin nhắn trợ lý) đều được gửi trực tiếp đến người dùng. Người dùng phải mở một phiên được chỉ định trong Ứng dụng để nói chuyện với Agent. OpenClaw là một trong những đại diện có ảnh hưởng nhất của Agent nói chung đã phá vỡ mô hình giao tiếp giữa người và máy tính này: phiên của nó là minh bạch đối với người dùng - người dùng không cần biết về sự tồn tại của phiên và không cần quan tâm đến các chi tiết của công cụ gọi điện Agent; cả người dùng và Agent đều có thể gửi tin nhắn cho nhau bất kỳ lúc nào, thay vì người dùng gửi một tin nhắn và Agent trả lời một tin nhắn. Vì vậy, nhiều người nhận xét OpenClaw có "cảm giác sống động" và giao tiếp không đồng bộ với người dùng thông qua tin nhắn giống như một thư ký. Tại thời điểm này, các tin nhắn văn bản này không trực tiếp xuất ra các tin nhắn trợ lý do mô hình xuất ra cho người dùng mà sử dụng các công cụ đặc biệt để gửi tin nhắn. Những tin nhắn này cũng có thể được đính kèm với hình ảnh và tệp đính kèm, đồng thời có thể kèm theo lời nhắc thông báo đẩy tùy theo mức độ khẩn cấp.
+OpenClaw phá vỡ mô thức giao tiếp người–máy này. Người dùng không cần cảm nhận sự tồn tại của phiên, cũng không cần bận tâm tới chi tiết Agent gọi công cụ; cả người dùng lẫn Agent đều có thể gửi tin cho nhau bất cứ lúc nào, chứ không phải người dùng gửi một câu rồi Agent đáp một câu. Vì vậy nhiều người đánh giá OpenClaw có **"cảm giác như người thật"**, giao tiếp bất đồng bộ với người dùng qua tin nhắn văn bản y như một thư ký. OpenClaw không đưa thẳng thông điệp assistant do mô hình sinh ra cho người dùng, mà dùng công cụ chuyên dụng để gửi tin. Những tin nhắn này còn có thể kèm hình ảnh và tệp, và tuỳ mức khẩn cấp mà đính thêm nhắc nhở đẩy.
 
 Ngoài việc giao tiếp với người dùng qua văn bản, Agent ngày càng có khả năng giao tiếp đa phương thức, chẳng hạn như gửi tin nhắn thẻ có cấu trúc và gửi email nhắc nhở. Một số Agent đã bắt đầu thử nghiệm giao diện người dùng tổng quát, nghĩa là sử dụng HTML và các phương pháp khác để tạo giao diện tương tác nhằm hiển thị thông tin cho người dùng theo cách thân thiện hơn. Ở cấp độ thiết kế, các công cụ giao tiếp với người dùng phải hỗ trợ chế độ nhắn tin không đồng bộ (người dùng không nhất thiết phải trực tuyến), cung cấp tính năng theo dõi trạng thái đã đọc/chưa đọc và duy trì tính nhất quán của tin nhắn trong các tình huống đa kênh.
 
 **Nhiều kênh liên lạc và thu hồi người dùng.**
-
-Ở đây chúng ta cần làm rõ ranh giới danh mục dễ bị nhầm lẫn: đó cũng là "gửi thông báo". Nếu đối tượng thông báo là người phê duyệt hoặc cộng tác viên (chẳng hạn như yêu cầu phê duyệt của quản trị viên, báo cáo tiến trình cộng tác Agent), thì công cụ này được phân loại là công cụ cộng tác; nếu đối tượng thông báo là người dùng cuối thì nó được phân loại là công cụ giao tiếp với người dùng. Sự khác biệt giữa cả hai không nằm ở kênh mà ở "ai được thông báo và tại sao".
 
 **Phản hồi của Agent không nên giới hạn ở một kênh duy nhất. Cơ chế thông báo cũng là cơ chế thu hồi của người dùng**. Việc gửi tin nhắn mở rộng đến nhiều kênh như nhắn tin tức thời, tin nhắn văn bản, email, cuộc gọi điện thoại và thông báo đẩy. Agent xác định toàn diện việc lựa chọn kênh dựa trên mức độ khẩn cấp, trạng thái người dùng, tính chất nội dung và tùy chọn của người dùng, đảm bảo rằng các tin nhắn quan trọng không bị bỏ sót và tránh bị gián đoạn nhiều lần.
 
@@ -116,7 +118,7 @@ Các công cụ kích hoạt sự kiện cho phép thế giới đánh thức Ag
 
 Phiên bản Agent có thể gặp phải nhiều sự kiện cùng lúc: tin nhắn mới từ người dùng, kết quả được công cụ trả về, hết hạn hẹn giờ và yêu cầu cộng tác từ một Agent khác. Cách xử lý những sự kiện này một cách hiệu quả và chính xác sẽ ảnh hưởng trực tiếp đến hiệu suất và trải nghiệm người dùng.
 
-Bộ khung của cơ chế này chính là **vòng lặp sự kiện** (event loop) trong lập trình đồng thời. Có thể xem Agent không đồng bộ như một vòng lặp chạy dài hạn: mỗi vòng lấy ra một số sự kiện từ hàng đợi đầu vào, nối vào trajectory, gọi LLM một lần, thực thi các công cụ mà nó quyết định, rồi quay về đầu vòng lặp để chờ lô sự kiện tiếp theo—đây là cùng một cấu trúc với việc goroutine của Go đọc tin nhắn từ channel và xử lý từng vòng trong `for { select { ... } }`. Mô hình này có một tính chất then chốt: **sự kiện chỉ được tiêu thụ tại ranh giới của mỗi vòng lặp**. Khi LLM đang suy luận, khi công cụ đang thực thi, sự kiện mới đến sẽ không tự nhiên chen vào giữa và làm rối bước hiện tại, mà trước hết chờ trong hàng đợi, đợi vòng này đạt đến một **điểm an toàn** (một đoạn suy luận kết thúc, một lần công cụ trả về) rồi mới xử lý thống nhất. Việc hủy cũng tuân theo cùng một kỷ luật: không cưỡng bức cắt ngang tại bất kỳ thời điểm nào, mà kiểm tra "có bị yêu cầu dừng hay không" tại điểm an toàn—đây chính là vai trò mà `ctx.Done()` trong Go đảm nhiệm (Chương 10 sẽ dùng cùng một tư duy context để thảo luận việc Agent cha hủy Agent con theo kiểu tầng). Hiểu được điều này thì sự khác biệt giữa ba chiến lược xử lý dưới đây chỉ nằm ở cách đối xử với điểm an toàn: để sự kiện chờ đến điểm an toàn tự nhiên tiếp theo (kiểu xếp hàng), chủ động tạo sớm một điểm an toàn (kiểu hủy), hay đơn giản là mở một vòng lặp khác, khỏi phải chờ điểm an toàn của vòng lặp chính (kiểu song song).
+Bộ khung của cơ chế này chính là **vòng lặp sự kiện** (event loop) trong lập trình đồng thời. Có thể xem Agent không đồng bộ như một vòng lặp chạy dài hạn: mỗi vòng lấy ra một số sự kiện từ hàng đợi đầu vào, nối vào trajectory, gọi LLM một lần, thực thi các công cụ mà nó quyết định, rồi quay về đầu vòng lặp để chờ lô sự kiện tiếp theo—đây là cùng một cấu trúc với việc goroutine của Go đọc tin nhắn từ channel và xử lý từng vòng trong `for { select { ... } }`.
 
 Mô hình này có một tính chất then chốt: **sự kiện chỉ được tiêu thụ tại ranh giới của mỗi vòng lặp**. Khi LLM đang suy luận hay công cụ đang chạy, sự kiện vừa đến sẽ không chen ngang làm rối bước hiện tại, mà trước hết chờ trong hàng đợi, đến khi vòng lặp này đạt tới một **điểm an toàn** (kết thúc một đoạn suy luận, một lần công cụ trả về) thì mới được xử lý gộp. Việc hủy cũng tuân theo đúng kỷ luật ấy: không cắt ngang cưỡng bức vào bất kỳ thời điểm nào, mà kiểm tra tại điểm an toàn xem "đã có yêu cầu dừng chưa"—đây chính là vai trò mà `ctx.Done()` đảm nhiệm trong Go.
 
@@ -142,7 +144,7 @@ Lấy email yêu cầu hoàn tiền của khách hàng làm ví dụ, hình th�
 }
 ```
 
-Chỉ khi các thứ nguyên này được mô hình hóa rõ ràng dưới dạng sự kiện có cấu trúc, Agent mới có thể duy trì nhận thức rõ ràng trong giao tiếp nhiều bên và tránh nhầm thông tin đầu vào của người dùng với kết quả công cụ hoặc nhầm kết quả công cụ với hướng dẫn ẩn cho hướng dẫn người dùng, dẫn đến việc tiêm nhanh. Sự phức tạp của quản lý ngữ cảnh đa luồng cũng yêu cầu Agent hiểu được mối tương quan giữa nhiều chuỗi hội thoại - cách tin nhắn từ bên thứ ba ảnh hưởng đến cảm xúc của người dùng, sự chuyển đổi vai trò của người dùng trong nhiều cuộc hội thoại và khi thông tin từ các chuỗi khác nhau cần được kết hợp để đưa ra đề xuất. Từ hệ sinh thái kích hoạt của các nền tảng quy trình làm việc như n8n, chúng ta có thể thấy rằng Webhooks, bộ hẹn giờ, email, thay đổi cơ sở dữ liệu và giám sát tệp - mỗi trình kích hoạt là một "giác quan" để Agent nhận thức thế giới. Khi các sự kiện không đồng nhất này được mô hình hóa thống nhất thành định dạng có cấu trúc, Agent có thể xử lý các kích thích từ các nguồn khác nhau một cách nhất quán. Các chiến lược xử lý và xác định mức độ khẩn cấp dưới đây cũng dựa trên mô hình thống nhất này.
+Chỉ khi các thứ nguyên này được mô hình hóa rõ ràng dưới dạng sự kiện có cấu trúc, Agent mới có thể duy trì nhận thức rõ ràng trong giao tiếp nhiều bên và tránh nhầm thông tin đầu vào của người dùng với kết quả công cụ hoặc nhầm kết quả công cụ với hướng dẫn ẩn cho hướng dẫn người dùng, dẫn đến việc tiêm nhanh. Sự phức tạp của quản lý ngữ cảnh đa luồng cũng yêu cầu Agent hiểu được mối tương quan giữa nhiều chuỗi hội thoại - cách tin nhắn từ bên thứ ba ảnh hưởng đến cảm xúc của người dùng, sự chuyển đổi vai trò của người dùng trong nhiều cuộc hội thoại và khi thông tin từ các chuỗi khác nhau cần được kết hợp để đưa ra đề xuất.
 
 Nhìn vào hệ sinh thái trigger của các nền tảng workflow như n8n có thể thấy: Webhook, bộ hẹn giờ, email, thay đổi cơ sở dữ liệu, theo dõi tệp—mỗi trigger đều là một "giác quan" để Agent cảm nhận thế giới. Chỉ khi những sự kiện dị biệt này được mô hình hóa thống nhất thành định dạng có cấu trúc, Agent mới có thể xử lý các kích thích đến từ những nguồn khác nhau theo một cách nhất quán; việc xác định mức độ khẩn cấp và các chiến lược xử lý bàn ở phần sau cũng đều dựng trên nền mô hình hóa thống nhất này.
 
@@ -333,9 +335,11 @@ Phần lớn trợ lý giọng nói thương mại vẫn dùng pipeline tuần t
 | LLM | Hiểu, suy luận và sinh câu trả lời | Thời gian đến token đầu tiên; reasoning làm chờ lâu hơn |
 | TTS | Chuyển văn bản thành giọng nói | Tổng hợp gói đầu tiên và bộ đệm phát |
 
-Với câu trả lời ngắn không reasoning, thời gian chờ của VAD, ASR, LLM và TTS cộng dồn theo chuỗi (Hình 6-7); giá trị thực phụ thuộc độ dài đầu vào, mô hình, phần cứng, mạng và tải. Trong sản xuất, xếp hàng còn khuếch đại độ trễ nhàn rỗi (Hình 6-8).
+Trong một câu trả lời ngắn, không bật reasoning, thời gian chờ của VAD, ASR, LLM và TTS cộng dồn theo chuỗi (Hình 6-7). Giá trị thực tế phụ thuộc vào độ dài đầu vào, mô hình, phần cứng, mạng và tải.
 
 ![Hình 6-7: Thác độ trễ của câu trả lời tuần tự](images/fig6-7.svg)
+
+Việc xếp hàng trong môi trường sản xuất còn khuếch đại thêm độ trễ nhàn rỗi (Hình 6-8), nhưng đó thuộc về hoạch định năng lực dịch vụ, và chương này không triển khai mô hình hàng đợi.
 
 ![Hình 6-8: Đường cong độ trễ xếp hàng](images/fig6-8.svg)
 
@@ -390,7 +394,7 @@ Mô hình Omni vẫn giả định chia lượt và thường dùng VAD để x�
 
 ### Mô hình 3 · Mô hình tương tác full-duplex
 
-Omni vẫn tách “người dùng nói” và “mô hình nói”, nhưng phiên dịch đồng thời cần chồng lấp. Full-duplex lắng nghe và nói liên tục, liên tiếp quyết định có tiếp tục, dừng, ngắt hay gọi công cụ. Moshi của Kyutai là một ví dụ nghiên cứu sớm. Thinking Machines Lab gọi đây là **Interaction Model**[^ch6-14]: tương tác được xây trong mô hình thay vì lắp quanh VAD. GPT-Live đưa hướng này lên quy mô sản xuất và ủy thác việc phức tạp cho mô hình suy luận nền trong khi mô hình tiền cảnh giữ cuộc trò chuyện.
+Omni vẫn tách “người dùng nói” và “mô hình nói”, nhưng phiên dịch đồng thời cần chồng lấp. Full-duplex lắng nghe và nói liên tục, liên tiếp quyết định có tiếp tục, dừng, ngắt hay gọi công cụ.
 
 Tiền thân về mặt nghiên cứu là **Moshi** của Kyutai (2024). Nó mô hình hóa song song luồng âm thanh của người dùng và của mô hình, nhờ vậy việc nói chồng lấn và ngắt lời trở thành hành vi tự nhiên của mô hình.
 
@@ -447,9 +451,7 @@ LLM chính có thể phát ra các ký hiệu điều khiển ngoài văn bản,
 
 ## Computer Use: GUI Tự động hóa Agent
 
-Khi đọc điều này, bạn có thể nhận thấy rằng chương này dành nhiều không gian cho giọng nói hơn đáng kể so với hai cảnh cuối - điều này là có chủ ý. Trên tiến trình phát triển của đa phương thức thời gian thực, giọng nói là thứ hoàn thiện nhất và đáng được sử dụng làm hệ thống tham chiếu nhất: bắt đầu từ vấn đề "độ trễ đường ống nối tiếp quá cao", thông qua một loạt các giải pháp như end-to-end, full-duplex, suy nghĩ và nói chuyện, v.v., cho đến phần cuối tương đối hình thành ngày nay, toàn bộ quá trình của vấn đề → giải pháp → kết thúc đã được hoàn thành. Vì vậy, hãy giải thích nó kỹ lưỡng. Hai cảnh tiếp theo của Computer Use và robot có thể được xem trong ngữ cảnh giọng nói - chúng đã đạt đến giai đoạn nào của đường tiến hóa này và chúng đang bị mắc kẹt ở đâu.
-
-Ba kịch bản này có vẻ khác nhau nhưng chúng phải đối mặt với những thách thức cốt lõi giống nhau: nhận thức theo thời gian thực, ra quyết định có độ trễ thấp và tương tác liên tục. Hãy xem cách các chủ đề kỹ thuật này được tái tạo trong tương tác trực quan (Computer Use) và tương tác vật lý (robot) – trước tiên bằng cách mở rộng góc nhìn từ phương thức thính giác sang phương thức thị giác: Điều gì sẽ xảy ra nếu Agent không chỉ hiểu được lời nói mà còn có thể “đọc” màn hình và vận hành giao diện đồ họa?
+Giọng nói đã đẩy trục thời điểm xuống mức mili-giây, nhưng quan sát của nó vẫn là một dòng âm thanh một chiều. Computer Use đưa chính bài toán ấy lên màn hình hai chiều: quan sát trở thành những điểm ảnh biến đổi liên tục, hành động trở thành cú nhấp và thao tác gõ trên toạ độ. Kịch bản giọng nói nhấn mạnh "khi nào cất lời"; Computer Use nhấn mạnh "bước tiếp theo nhấp vào đâu", cùng một câu hỏi hoàn toàn không tồn tại trong tương tác giọng nói—sau khi hành động được thực thi, hiện thực có còn khớp với kế hoạch hay không?
 
 Computer Use (còn gọi là GUI Automation Agent) cho phép AI sử dụng phần mềm giống con người bằng cách quan sát màn hình và thao tác chuột, bàn phím - chẳng hạn như mở trình duyệt để tìm kiếm thông tin, điền dữ liệu vào phần mềm bảng tính hoặc điều chỉnh cấu hình trong cài đặt hệ thống. Cốt lõi của nó là một chu trình nhận thức-suy nghĩ-hành động (Hình 6-11):
 
@@ -461,7 +463,6 @@ Computer Use (còn gọi là GUI Automation Agent) cho phép AI sử dụng ph�
 Ở đây cần phân biệt **hiểu giao diện** với **hoàn thành tác vụ**. Vế đầu gần với năng lực hiểu đa phương thức hơn và có thể đo bằng hỏi đáp trên một ảnh chụp màn hình; vế sau đòi hỏi mô hình đưa việc hiểu và sinh hành động vào một vòng lặp khép kín, xử lý tải trang, thay đổi trạng thái, thao tác sai và hậu quả không thể đảo ngược. Vì vậy, khó khăn của Computer Use không chỉ là trả lời đúng về ảnh chụp màn hình, mà còn là xác nhận lại sau mỗi bước rằng thực tế vẫn phù hợp với kế hoạch.
 
 ![Hình 6-11 Chu trình nhận thức-suy nghĩ-hành động của Tác nhân sử dụng máy tính ](images/fig6-11.svg)
-
 
 Có ba chiều thiết kế chính trong chu trình này: **không gian hành động**(những thao tác mà Agent có thể thực hiện), **định vị trực quan**(cách tìm phần tử mục tiêu trong ảnh chụp màn hình) và **kiến trúc mô hình**(cách tạo hành động chính xác từ ảnh chụp màn hình).
 

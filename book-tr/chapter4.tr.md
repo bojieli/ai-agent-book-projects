@@ -67,8 +67,9 @@ Buna karşılık **Skills'in üstünlüğü insan yazarlara daha dost olmasıdı
 - **Parametre karmaşıklığı**: iç içe nesneler, çok alanlı birleşik doğrulama veya karmaşık tür kısıtları içeren işlemlerde özel bir aracın yapılandırılmış şeması modeli doğru parametre aktarımına daha iyi yönlendirir; parametreleri basit işlemlerde CLI komutuyla aktarmak da aynı ölçüde güvenilirdir.
 - **Değişim sıklığı**: sık değişen yetenekleri Skill olarak sürdürmek özel araçlardan çok daha ucuza gelir—bir metin parçasını düzeltmek, kodu değiştirip test edip dağıtmaktan çok daha kolaydır. Buna karşılık kararlı, düşük seviyeli işlemler özel araç olmaya daha uygundur.
 - **Model yeteneği**: daha güçlü modeller Skill + genel yürütücü yaklaşımıyla daha fazla yeteneği ifade edip araç sayısını azaltabilir; daha zayıf modeller doğru çağrıya yönlendirilmek için yapılandırılmış araç şemalarına ihtiyaç duyar.
-
 9. bölümde, Agent'ın sürekli evrim içinde yeni yetenekleri kalıcılaştırırken aynı seçimi nasıl yaptığı ele alınacaktır.
+
+Dokuzuncu bölümde, Agent sürekli evrimi sırasında yeni yetenekleri biriktirirken aynı seçimi nasıl yapacağı tartışılacaktır.
 
 **Bir adım daha ileri: araç çağrılarını kod orkestre etsin.** Genel yürütücünün gözden kaçan bir üstünlüğü daha vardır: modelin birden fazla aracı kodla **zincirlemesine** izin verir; araçları teker teker çağırıp her ara sonucu bağlamdan geçirmek gerekmez. Bir benzetme olarak: geleneksel yaklaşım, her adımdan sonra patronunuza e-posta gönderip bir sonraki ne yapacağınızı söyleyen bir yanıt beklemeye benzer—her gidiş-dönüş «e-postası» token tüketimidir. Kod orkestrasyonu, patronun önceden eksiksiz işletim el kitabını yazması gibidir; siz onu izler ve yalnızca her şey bittiğinde rapor verirsiniz. Somut olarak, LLM bir kerede bir betik üretir, ara değişkenler kod yürütme ortamında kalır ve yalnızca nihai sonuç LLM'e döner. Örneğin birden fazla web sayfası çekip toplu olarak alan çıkarırken, sayfaların tam metni yalnızca yürütme ortamının değişkenlerinde bulunur; bağlama yalnızca birleştirilmiş yapılandırılmış sonuç döner. Böylece sayfa içeriğinin bağlama tekrar tekrar girip çıkması önlenir ve token tüketimi yaklaşık iki büyüklük derecesi azalabilir. Bu «araç çağrılarını kod orkestre etsin» kalıbı, 5. bölümde sistematik olarak geliştirilen «genel bir Agent üst yeteneği olarak kod» paradigmasına aittir.
 
@@ -205,8 +206,6 @@ Açıkçası, tüm bildir-eşleştir-enjekte mekanizması çalışır, ama çok 
 
 ### Skills: Araç Keşfini "İhtiyaç Halinde Arama"ya Dönüştürmek
 
-**Aşamalı açığa çıkarma.** Başlangıçta Agent yalnızca her Skill'in `name` ve `description` bilgisini içeren ince bir katalog görür; alt Skill'i ve içindeki başvuruları ancak mevcut bağlam gerektirdiğinde okur—tıpkı bir el kitabına ya da Wikipedia'ya yalnızca gereken maddeyi bakmak gibi. Skills'in bakımının bu kadar hafif olması, tam da bu hiyerarşinin baştan yerleşik olmasındandır.
-
 Son zamanlarda ivme kazanan düşünce hattı Skills mekanizmasından gelir. Bölüm 2, Skills'in **Kademeli Açığa Çıkarmasını** context engineering olarak tanıttı; burada bunu bir araç keşfi paradigması olarak ele alıyoruz—ve önceki bölümden ayırt edici farkı, "embedding indeksi + semantik eşleştirme" altyapısının tamamen ortadan kalkmasıdır.
 
 **Hepsini bir kerede değil, katman katman.** MCP gibi protokoller aracın tam şemasını modelin önüne bir kerede serme eğilimindedir (ya hepsini enjekte ederek ya da erişimle ön eleme yapıp bir küme seçerek). Skills bunun tersini yapar: başlangıçta Agent yalnızca ince bir içindekiler listesi görür—her skill'in `name` ve `description`'ı, toplamda birkaç yüz token. Ancak **mevcut bağlam** gerçekten bir yeteneğe ihtiyaç duyduğunda model ilgili sub-skill'i okur ve içindeki başvuruları izleyerek bir katman daha aşağıya, somut betiklere ve alt belgelere iner.
@@ -223,9 +222,7 @@ Yukarıdakilerin hepsi bütün araçların ortak sorunlarıydı: bir yeteneğin 
 
 ## Algı Araçları
 
-Algı araçları, Agent'ların dış bilgiyi elde etmesinin başlıca kanalıdır.
-
-Mükemmel bir algı aracı sistemi tasarlamak, granülarite, organizasyon ve çıktı formatı dahil olmak üzere birden fazla boyutta dikkatli ödünleşimler gerektirir.
+Algı araçları, Agent'ın dış bilgiyi edindiği başlıca kanaldır ve tasarımlarında ayrıntı düzeyi, örgütlenme biçimi ve çıktı biçimi gibi birden çok boyutta özenli bir tartım gerekir.
 
 Algı araçları sıklıkla, Agent'ın işleyebileceğinden çok daha fazla bilgi döndürme zorluğuyla karşılaşır: tek bir arama on binlerce karakter döndürebilir, bir PDF yüzlerce sayfa olabilir. Her şeyi context'e boşaltmak pencere alanını tüketir ve kilit içeriği gürültüde boğar. Genel yanıt, araç düzeyinde **bağlama duyarlı sıkıştırmayı** (Bölüm 2'de tanıtıldı) entegre etmektir—çıktı bir eşiği (örn. 10.000 karakter) aştığında, Agent'ın mevcut sorgu niyetine göre otomatik olarak sıkıştırın (ilke ve sıkıştırma etkinliği Bölüm 2'de ayrıntılı olarak ele alındı, burada tekrarlanmayacak). Bu genel mekanizmanın ötesinde, birkaç yaygın algı aracı türünün kendine özgü tasarım sorunları vardır.
 
@@ -255,15 +252,19 @@ Görüntüleri, videoyu, sesi ve PDF'leri anlayabilmek için Agent'ın çok modl
 
 #### Doğal Çoklu Modlu İşleme
 
-Yerel işleme en yüksek yetenek tavanına sahiptir; Vision Transformer gibi kodlayıcılar farklı verileri ortak bir anlamsal uzaya eşler.
+**Yerel çok kipli işleme**, yetenek tavanı en yüksek olan teknik yoldur. Çekirdek teknik atılımı, farklı türdeki verilerin tümünü özel kodlayıcılar aracılığıyla tek bir yüksek boyutlu anlam uzayına eşlemektir. Görseller örneğinde, mimarisi açık çok kipli modeller (Qwen-VL, LLaVA gibi) genellikle **Vision Transformer** (ViT) temelli bir görsel kodlayıcı barındırır. Somut olarak ViT, görseli sabit boyutlu yamalara (patch) böler ve tıpkı cümledeki sözcükleri işler gibi her yamayı bir vektöre dizerek, metin sözcük vektörleriyle ortak bir çok kipli gömme uzayında bir arada tutar. Transformer'ın öz-dikkat mekanizması metin ve görsel token'larına eşit davranır ve herhangi bir kipler arası ilişkiyi hesaplayabilir. Çok kipliliği yerel olarak destekleyen bir modelde, model PDF'in sayfa yerleşimini, şemalarını ve yazısını doğrudan "görebilir" ve görsel ile metin arasındaki uzamsal ve anlamsal ilişkileri kavrayabilir.
 
 #### Metne Dönüştürme
 
-Metin çıkarma, yerel desteği olmayan modeller ve metin ağırlıklı PDF'ler için daha az token kullanır, ancak düzeni, grafikleri ve görüntüleri kaybeder.
+Bugün yetenekli modellerin çoğu — örneğin GLM 5.2 ve DeepSeek V4 Flash — yerel çok kipli işlemeyi desteklemiyor. Bu durumda bir çözüm yolu, çok kipli içeriği **metne çıkarmaktır (Extract to Text)**. Bu iki aşamalı bir süreçtir: önce özel bir araç (OCR hizmeti, ses dökümü hizmeti) metin dışı içeriği düz metne çevirir, sonra bu metin dil modeline verilir.
+
+İçeriğinin ağırlığını metnin oluşturduğu PDF belgeleri gibi durumlarda metne çıkarma, görüntüye çevirerek yapılan yerel çok kipli işlemeye göre çoğunlukla daha az token harcar. Bir PDF sayfasının ekran görüntüsü sıklıkla binin üzerinde token gerektirirken, aynı sayfadaki metin genellikle yalnızca birkaç yüz token tutar. Ne var ki metne çıkarmanın bedeli bilgi kaybıdır: tüm sayfa düzeni, şemalar ve görseller çıkarma sırasında atılır.
 
 #### Araç Tabanlı Çoklu Modlu Analiz
 
-Ana model çok modlu değilse `analyze_image`, `analyze_pdf` ve `analyze_audio` gibi araçlar dosyayı ve soruyu uzman bir modele aktararak bağlamda yalnızca kısa bir sonuç tutabilir.
+Agent'ın ana modeli çok kipliliği desteklemediğinde, **çok kipli analizi bir araca dönüştürmek** metne çıkarmaktan daha iyi bir yoldur. Bu, Agent'a özgün dosyayı derinlemesine çözümleyebilen araçlar verir (`analyze_image`, `analyze_pdf`, `analyze_audio`); araç, parametre olarak bir çok kipli dosya ile doğal dilde bir soru alır ve doğal dille betimlenmiş bir çözümleme sonucu döndürür. İçeride çok kipli bir modelle gerçeklenebilir; üstelik bu modelin güçlü Agent yeteneklerine sahip olması şart olmadığından teknoloji seçiminde daha geniş bir alan kalır.
+
+Yerel çok kipli işleme ile karşılaştırıldığında, araçlaştırılmış çok kipli analiz bağlamda yalnızca kısa soruyu ve çözümleme sonucunu bırakır; böylece çok kipli verilerin (görseller, videolar vb.) çok sayıda token'ıyla bağlamı doldurması önlenir.
 
 > **Deney 4-3 ★★: Çok Modlu Bilgi Çıkarımı — Üç Teknik Paradigmanın Karşılaştırmalı Analizi**
 >
@@ -301,7 +302,7 @@ Bir ret sonrasında, sistem basitçe yeniden denememelidir. Bunun yerine, **ret 
 
 **Sidecar Mekanizması: Ana Düşünmeye Paralel Güvenlik Doğrulaması.**
 
-Proposer-Reviewer mekanizması "işlem yürütülmeden önce onay veya işlem tamamlandıktan sonra doğrulama" sorununu ele alırken, **Sidecar mekanizması** başka bir sorunu ele alır: "işlem yürütme sırasında güvenlik ve güvenilirlik gerçek zamanlı olarak nasıl doğrulanır." Bu, Bölüm 1'deki Harness çerçevesinin "doğrulama" işlevinin somut bir uygulama biçimi olarak görülebilir ve bu bölüm bunu eksiksiz olarak ele alacaktır.
+Öneren–İnceleyen mekanizması "işlem yürütülmeden önce onay ya da işlem bittikten sonra doğrulama" sorununu çözer; **Sidecar mekanizması** ise başka bir sorunu çözer: "işlem yürütülürken güvenlik ve güvenilirlik gerçek zamanlı olarak nasıl doğrulanır".
 
 Claude Code'un Otomatik Modu (Auto Mode) bunun tipik bir örneğidir: ana model bir araç çağrısını yürütmeye karar verdiğinde, bağımsız ve hafif bir LLM çağrısı tetiklenir ve "bu araç çağrısı güvenli mi" sorusunu yanıtlar. Bu yan hattaki güvenlik denetim modülü, her araç çağrısından önce riski bağımsız olarak değerlendirir ve bunu yaparken ana Agent'ın düşünme temposunu olabildiğince yavaşlatmaz. Sidecar adı mikroservis mimarisindeki sidecar örüntüsünden gelir: motosikletin yanına takılan sepet gibi, bağımsız çalışır ama ana gövdeyle birlikte ilerler. Sidecar, ana Agent'ın düşünme döngüsüne eşlik eden hafif bir LLM çağrı örüntüsüdür; ana Agent'ın nihai çıktısını değil, **davranışını** bağımsız olarak değerlendirir.
 
@@ -311,9 +312,11 @@ Buradaki kilit tehdit hâlâ **prompt injection**dır (daha önce MCP güvenlik 
 
 Bir okuyucu itiraz edebilir: büyük bir yetenek farkı üzerinden incelemenin güvenilmez olduğunu az önce söyledik—öyleyse burada hafif bir model neden kabul edilebilir? Yanıt, neyin inceleniyor olduğunda yatar. Proposer-Reviewer açık uçlu düşünmeyi inceler, bu yüzden inceleyenin önerenin reasoning'ine yetişmesi gerekir, bu da benzer bir yetenek talep eder; Sidecar ise yapılandırılmış veri üzerinde bir sınıflandırma problemini değerlendirir (bu komut sınırların dışında mı?), bu da hafif bir modelin rahatlıkla ele alabileceği çok daha basit bir görevdir.
 
-Hem Sidecar hem de Proposer-Reviewer mekanizması ikinci bir perspektif tanıtır, ama yürütme zamanlamaları ve inceleme hedefleri farklıdır. Tablo 4-2, bu iki mekanizma arasındaki kilit farkları karşılaştırır.
+Bir güvenlik Sidecar'ı ayrıca bir **ret circuit breaker'ına** ihtiyaç duyar: sınıflandırıcı işlem üstüne işlemi reddettiğinde, sistem sonsuza kadar yeniden denememeli—bu kaynakları israf eder ve kullanıcıyı bir döngüye hapsedebilir—bunun yerine kullanıcıdan elle karar vermesini istemeye geri dönmelidir. Bu, Bölüm 1'deki Harness "düzeltme" işlevinin tipik bir örneğidir.
 
 **Güvenlik denetimini kullanıcı deneyimi katmanında "görünmez" kılmak.** Güvenlik denetimleri gecikme ekleyebilir. Deneyimi iyileştirmenin bir yolu, "gösterme" ile "geçirme"yi ayırıp paralel çalıştırmaktır: Agent bir araç çağrısını yürütmek üzereyken arayüz önce bir ilerleme ipucu gösterir ("`src/main.py` okunuyor..."), güvenlik denetimi ise arka planda koşar. Bu, Harness tasarımının vardığı en yüksek nokta: güvenliğin bedeli kullanıcı deneyimi olmaz.
+
+Hem Sidecar hem de Proposer-Reviewer mekanizması ikinci bir perspektif tanıtır, ama yürütme zamanlamaları ve inceleme hedefleri farklıdır. Tablo 4-2, bu iki mekanizma arasındaki kilit farkları karşılaştırır.
 
 Tablo 4-2 Proposer-Reviewer Mekanizması ve Sidecar Mekanizmasının Karşılaştırması
 
@@ -326,8 +329,6 @@ Tablo 4-2 Proposer-Reviewer Mekanizması ve Sidecar Mekanizmasının Karşılaş
 | **Tipik Kullanımlar** | Geri alınamaz işlem onayı, doküman üretimi, yapılandırma değişikliği | İzin sınıflandırması, bellek ilgisi yargısı, araç çıktısı özetleme |
 
 Sidecar kalıbının bir başka tipik uygulaması **context zenginleştirmesidir**: ana model düşünürken, bir yan çağrı paralel olarak çalışıp kullanıcı belleklerinin ilgisini filtreler, büyük araç çıktılarını özetler ve gereken izinleri önceden değerlendirir — bu sonuçlar ana model ihtiyaç duyduğunda hazırdır ve kullanıcı ek bir gecikme algılamaz.
-
-Bir güvenlik Sidecar'ı ayrıca bir **ret circuit breaker'ına** ihtiyaç duyar: sınıflandırıcı işlem üstüne işlemi reddettiğinde, sistem sonsuza kadar yeniden denememeli—bu kaynakları israf eder ve kullanıcıyı bir döngüye hapsedebilir—bunun yerine kullanıcıdan elle karar vermesini istemeye geri dönmelidir. Bu, Bölüm 1'deki Harness "düzeltme" işlevinin tipik bir örneğidir.
 
 **Otomatik Doğrulama ve Geri Bildirim Döngüsü.**
 
@@ -400,7 +401,7 @@ Alt Agent'ların temel değeri **iş bölümü yoluyla uzmanlaşmada** yatar—h
 
 **Görev sınırları açıkça tanımlanmalıdır.** Sorumluluk kapsamında ne olduğu ve neyin devredilmesi veya yükseltilmesi gerektiği.
 
-**Çıktı formatı standartlaştırılmalıdır.** Tekdüze bir JSON yapısı, ana Agent'ın ayrıştırma yükünü azaltır ve hata yönetimini daha güvenilir kılar.
+**Çıktı biçimi standartlaştırılmalıdır.** İster JSON ister Markdown kullanılsın, alt Agent'ın çıktı biçimi istemde açıkça belirtilmelidir. Böylece alt Agent göz önünde bulundurması gereken bütün yönleri kapsar, ana Agent'ın ayrıştırma yükü azalır ve hata işleme daha güvenilir olur.
 
 **Agent'lar Arası İş Birliği Mekanizmaları.**
 
@@ -433,7 +434,7 @@ AI Agent'lar giderek güçlense de, insan müdahalesi belirli kritik karar nokta
 
 ## Bölüm Özeti
 
-Bu bölümün temel sonucu: araç tasarımının kalitesi bir Agent'ın yeteneklerinin tavanını belirler. İlk karar, bir yeteneğin hangi biçimde ifade edileceğidir—varsayılan olarak genel uca yaslanın ve yalnızca dört durumda özel araca dönün: güvenlik ve izinler, karmaşık parametreler, çok yüksek kullanım sıklığı ve platform farkları. Bu karar, «modelin bir seferde kaç yeteneği gördüğü»nden bağımsızdır: ilki her yeteneğin kalıcı maliyetini, ikincisi aynı anda kaçının açığa çıkarıldığını belirler.
+Araç tasarımı, Agent'ın yetenek tavanını belirler. İlk karar, bir yeteneğin hangi biçimde ifade edileceğidir: varsayılan olarak genel uca yaslanın ve yalnızca dört durumda —güvenlik ve izinler, parametre karmaşıklığı, aşırı yüksek kullanım sıklığı ve platform farkları— özel araca dönün. Bu karar, "modelin bir kerede kaç yeteneği gördüğü" sorusundan bağımsızdır: ilki her yeteneğin sürekli maliyetini, ikincisi aynı anda kaçının açığa çıkarıldığını belirler. Yetenekler iki kanaldan dağıtılır: MCP protokolü özel araçların bağlanışını tekleştirir, Skill Hub ise `SKILL.md` dosyalarını bir paket yöneticisiyle dağıtır. Her iki kanal da bir yeteneği devreye almanın maliyetini tek bir komuta indirmiştir, ama her ikisi de güven sınırını genişletmiştir; bu yüzden açıklamalar ve sürümler denetlenmeli, kimlik bilgileri yalıtılmalı ve modelin gördüğü parametrelerin aracın gerçekte yürüttüğü parametrelerle aynı olduğu güvence altına alınmalıdır. Araçlar yüzlere, binlere çıktığında sırayla katmanlı örgütlenme, gerektikçe yükleme, etkin keşif ve Skills devreye girer ve "hangi aracı seçeyim" sorusunu "hangi belgeye bakayım" sorusuna dönüştürür.
 
 Bu bölümde, beş kategoriden Agent'ın kendi inisiyatifiyle çağırdığı üçü ele alındı:
 

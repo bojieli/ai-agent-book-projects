@@ -10,7 +10,7 @@ Chương này sẽ giúp bạn hiểu các thành phần cốt lõi của AI Age
 
 ## Agent hiện đại = LLM + context + tools
 
-Bản chất của hệ thống Agent hiện đại có thể được thể hiện bằng một công thức ngắn gọn: **Agent = LLM (Large Language Model) + Context + Tools**. Công thức này ngắn gọn và thiết thực, nhưng mỗi từ trong đó cần được hiểu theo nghĩa rộng:
+Hiện thực kỹ thuật tối thiểu của một Agent hiện đại có thể diễn đạt bằng một công thức gọn: **Agent = LLM (mô hình ngôn ngữ lớn, Large Language Model) + ngữ cảnh + công cụ**. Các dấu cộng ở đây biểu thị sự kết hợp của các thành phần kỹ thuật, chứ không phải một định nghĩa hình thức trong học tăng cường; quan trọng hơn, công thức này chỉ mô tả phần hiện thực nằm trong ranh giới của Agent và **không bao gồm Environment (môi trường) mà Agent tương tác**. Mỗi từ trong đó cần được hiểu theo nghĩa rộng nhưng ranh giới rõ ràng:
 
 - **LLM là bộ não của Agent**: Nó không chỉ là một tập hợp các tham số mô hình, mà là toàn bộ cốt lõi ra quyết định của Agent - hiểu ý định, suy nghĩ và lập kế hoạch cũng như đưa ra phán đoán. Cũng giống như bộ não con người không chỉ là tập hợp các tế bào thần kinh mà còn bao gồm cách suy nghĩ được hình thành bởi kinh nghiệm. Khả năng của LLM cũng đến từ hai phần: kiến thức thế giới và khả năng ngôn ngữ được tích lũy trong **tiền đào tạo** và chiến lược ra quyết định được củng cố trong **post-training** - công nghệ cụ thể của phần sau (như tinh chỉnh có giám sát và học tăng cường) sẽ được ra mắt trong Chương 8.
 - **Ngữ cảnh là con mắt của Agent**: Nó không chỉ là văn bản đầu vào cho mô hình mà còn là tất cả thông tin Agent có thể nhìn thấy tại mỗi điểm quyết định - thông tin môi trường, bộ nhớ người dùng, kiến thức miền, trạng thái riêng và tiến độ nhiệm vụ. Giống như con người cần nhìn rõ tình hình hiện tại, nhớ lại những trải nghiệm liên quan và duyệt tài liệu tham khảo khi đưa ra quyết định, cửa sổ ngữ cảnh của Agent là tất cả những gì nó có thể nhìn thấy vào lúc này.
@@ -124,17 +124,15 @@ Nhưng ở đây còn treo lơ lửng một câu hỏi sâu hơn: nếu mô hìn
 
 #### Cơ chế học tập của Agent: post-training, In-Context Learning (học trong ngữ cảnh) và học từ bên ngoài
 
-Trước đây chúng ta đã đề cập rằng mô hình có thể nội hóa chiến lược quyết định gọi công cụ thành khả năng gốc thông qua học tăng cường. Nhưng việc học của Agent không chỉ diễn ra ở giai đoạn huấn luyện - một số độc giả cho rằng mô hình phải được huấn luyện khi Agent học hỏi kinh nghiệm. Trên thực tế, post-training không phải là cách duy nhất Agent học hỏi kinh nghiệm. Cơ chế học tập của Agent có thể được tóm tắt thành ba mô hình bổ sung (Hình 1-2):
+Trước đó ta đã bàn rằng mô hình có thể nội hóa chiến lược gọi công cụ thành năng lực gốc thông qua học tăng cường. Nhưng thay đổi trong hành vi của Agent không chỉ xảy ra ở giai đoạn huấn luyện. Theo vị trí và thời gian tồn tại của cập nhật, có thể hiểu nó thành ba con đường bổ trợ nhau (hình 1-2): thích nghi ngữ cảnh trong phạm vi một nhiệm vụ, cập nhật sản phẩm bên ngoài (artifact) xuyên nhiệm vụ, và cập nhật tham số trong chu kỳ huấn luyện.
 
 ![Hình 1-2: Ba mô hình học tập của Đặc vụ ](images/fig1-2.svg)
 
-- **Post-training**: Củng cố kinh nghiệm về các tham số của mô hình thông qua học tăng cường, mang lại tính linh hoạt giữa các tác vụ mạnh nhất nhưng chi phí cập nhật cao (xem Chương 8 để biết chi tiết).
-- **In-Context Learning (học trong ngữ cảnh)**: Điều chỉnh nhanh chóng công thức truy xuất mẫu trong ngữ cảnh thông qua cơ chế chú ý (Cơ chế chú ý, tức là cơ chế mà mô hình quyết định "thông tin nào cần chú ý" khi xử lý đầu vào). Ví dụ: nếu bạn hiển thị cho mô hình một số ví dụ về xử lý các cuộc hội thoại dịch vụ khách hàng bằng các từ gợi ý (chẳng hạn như "Khiếu nại của người dùng → Kế hoạch xoa dịu + bồi thường"), mô hình sẽ có thể xử lý các cuộc hội thoại dịch vụ khách hàng mới theo cách tương tự - đây là In-Context Learning (học trong ngữ cảnh). Thích ứng nhanh chóng nhưng chỉ là tạm thời và biến mất vào cuối phiên. Cần lưu ý rằng mặc dù tên là "học tập" nhưng cơ chế bên trong của nó gần với việc khớp mẫu hơn là học thực sự. Ví dụ: nếu bạn được xem ba câu hỏi và câu trả lời toán cùng loại, sau đó được đưa ra câu hỏi thứ tư, rất có thể bạn sẽ làm theo cùng một khuôn mẫu - đây là điều mà việc In-Context Learning (học trong ngữ cảnh) đang thực hiện. Nhưng nếu câu hỏi thứ tư đòi hỏi một cách giải quyết vấn đề mới thì việc chỉ nhìn vào câu trả lời cho ba câu hỏi đầu tiên là chưa đủ. Nói cách khác, In-Context Learning (học trong ngữ cảnh) cho phép mô hình **áp dụng các mẫu mà nó đã thấy**, nhưng nó không thể **khám phá các quy tắc mới** - điều này về cơ bản khác với post-training (Chương 2 sẽ mở rộng chi tiết về lập luận này từ góc độ của cơ chế chú ý).
-- **External Learning (học bên ngoài tham số mô hình)**: Ngoại hóa kiến thức và quy trình thành cơ sở kiến thức và mã công cụ thực thi, vừa bền vững vừa có thể hiểu được.
+**Thích nghi ngữ cảnh** diễn ra ngay trong nhiệm vụ hiện tại. Khi ví dụ, trạng thái và kết quả truy hồi đi vào ngữ cảnh, mô hình có thể điều chỉnh hành vi tức thì, song điều đó không làm thay đổi trạng thái bền vững của phiên kế tiếp. Ưu thế của nó là nhanh và rẻ; giới hạn là bị ràng buộc bởi cửa sổ ngữ cảnh và cách tổ chức thông tin. Chương 2 sẽ bàn kỹ cách thích nghi này vận hành.
 
-Ba mô hình này bổ sung cho nhau ở các khoảng thời gian khác nhau: post-training cung cấp các năng lực nền tảng, In-Context Learning (học trong ngữ cảnh) cho phép thích ứng nhanh chóng và External Learning (học bên ngoài tham số mô hình) đảm bảo độ tin cậy và hiệu quả. Chương 9 sẽ so sánh một cách có hệ thống các mối quan hệ hiệp lực giữa ba mô hình.
+Muốn thay đổi được giữ lại xuyên qua các nhiệm vụ thì có thể cập nhật **sản phẩm bên ngoài**: chỉnh lý sự kiện và kinh nghiệm thành tài liệu tri thức, viết những chiến lược diễn đạt được bằng lời vào Prompt hoặc Skill, viết các quy trình và ràng buộc tất định thành chương trình và Harness. Những sản phẩm này kiểm toán được, sửa đổi được, và khi chạy thì vẫn phải thông qua ngữ cảnh hoặc giao diện công cụ để Agent dùng tới. Chương 3 đến chương 5 lần lượt đặt nền cho tri thức và chương trình, còn chương 9 bàn cách sinh ra những cập nhật ấy từ các quỹ đạo chạy đã được đánh giá.
 
-Ví dụ: post-training cũng giống như việc học sách giáo khoa một cách có hệ thống - sau khi học, khả năng được nâng cao vĩnh viễn nhưng chi phí học tập cao; In-Context Learning (học trong ngữ cảnh) cũng giống như tham khảo tài liệu tham khảo ngay tại chỗ - bạn có thể làm điều đó nếu có thông tin và quên nó sau khi đóng lại; External Learning (học bên ngoài tham số mô hình) giống như việc sắp xếp một cuốn sổ cá nhân - thông tin luôn tồn tại và có thể kiểm tra bất cứ lúc nào, nhưng nó cần phải được sắp xếp một cách đặc biệt.
+Khi mục tiêu là những năng lực nhiều chiều như hiểu ảnh y khoa, phong cách ngôn ngữ tự nhiên hay chiến lược quyết định hàm ẩn, quy tắc bên ngoài khó lòng diễn đạt trọn vẹn, nên cần cập nhật **tham số mô hình** thông qua hậu huấn luyện. Cập nhật tham số có chi phí triển khai cao hơn, nhưng hình thành được khả năng khái quát tự nhiên và rộng; chương 8 sẽ giới thiệu phương pháp một cách hệ thống. Vậy nên ba con đường này không phải là những phân loại loại trừ lẫn nhau, mà là các cơ chế phối hợp trên những thang thời gian khác nhau: ngữ cảnh lo thích nghi tại chỗ, sản phẩm bên ngoài lo tích lũy có kiểm soát, tham số lo nội hóa những năng lực khó biểu đạt tường minh.
 
 ### Ngữ cảnh: Đôi mắt của Agent
 
@@ -148,7 +146,7 @@ Ngữ cảnh là tất cả thông tin mà Agent có thể thấy ở mỗi th�
 
 Hai mục đầu tiên (lời nhắc hệ thống + định nghĩa công cụ) là tiền tố tĩnh và ba mục cuối cùng (thông báo người dùng + trả lời mô hình + kết quả thực thi công cụ) là lịch sử thông báo động tiếp tục phát triển cùng với sự tương tác. Năm phần này cùng nhau tạo thành ngữ cảnh cho mỗi lần suy luận của LLM.
 
-Để xác minh từng thành phần có cần thiết hay không, phương pháp trực tiếp nhất là Ablation Study: Giống như bác sĩ loại bỏ từng nguyên nhân một khi chẩn đoán - đầu tiên loại bỏ thành phần A để xem hệ thống có còn bình thường không, sau đó loại bỏ thành phần B, v.v., để xác định sự đóng góp của từng thành phần. Thí nghiệm 1.1 đã thử nghiệm một cách có hệ thống năm thành phần trên dựa trên ý tưởng này. Kết quả cho thấy: nếu không có định nghĩa công cụ, Agent hoàn toàn không có khả năng hoạt động; khi thiếu kết quả thực thi công cụ, Agent sẽ gọi đi gọi lại cùng một công cụ và rơi vào vòng lặp vô hạn vì không thể nhìn thấy phản hồi từ bước trước; một khi quá trình suy nghĩ trong câu trả lời mô hình bị loại bỏ, các quyết định trước và sau bắt đầu mâu thuẫn với nhau; đối với tin tức lịch sử, nếu không có nó, Agent tương đương với chứng mất trí nhớ, vì vậy toàn bộ quá trình nhiệm vụ bắt đầu lại từ đầu và các bước hoàn thành sẽ được lặp lại.
+Muốn kiểm chứng xem mỗi thành phần có thật sự không thể thiếu hay không, cách trực tiếp nhất là **thí nghiệm cắt bỏ** (Ablation Study): giống như bác sĩ chẩn đoán bằng cách loại trừ nguyên nhân từng cái một — bỏ thành phần A đi rồi xem hệ thống còn chạy bình thường không, sau đó bỏ thành phần B, cứ thế mà xét đóng góp của từng thành phần. Thí nghiệm 1-1 chính là theo mạch ấy mà kiểm thử một cách hệ thống năm thành phần nêu trên.
 
 > **Thí nghiệm 1.1 ★★: Vai trò quan trọng của ngữ cảnh**
 >
@@ -170,7 +168,7 @@ Hãy cùng tìm hiểu trajectory của Agent thông qua một ví dụ cụ th�
 
 ![Hình 1-4: Trajectory tác nhân - Vòng lặp ReAct của nhiệm vụ tóm tắt đa tiền tệ ](images/fig1-4.svg)
 
-Bản phác thảo theo phong cách Python dưới đây là pseudocode mang tính giải thích, không phải mã SDK có thể chạy; marker `python` chỉ dùng để tô sáng cú pháp.
+Trước hết hãy xem bộ khung chạy tối thiểu. Nó cho thấy **cơ chế vận hành ra sao**: Model chỉ quyết định bước kế tiếp, Harness lo ráp ngữ cảnh cùng việc kiểm định và thực thi công cụ, còn Environment tạo ra những thay đổi trạng thái thật và các quan sát. Phần sau của sách cũng dùng mã giả theo phong cách Python; mã giả không chạy trực tiếp được và cũng không ứng với một SDK cụ thể nào. Mã thực thi cụ thể nằm trong kho mã đi kèm cuốn sách.
 
 ```python
 trajectory = [user_request]
@@ -244,7 +242,7 @@ Sau khi hiểu được vòng lặp đang chạy của Agent, chúng ta hãy s�
 > [^ch1-2]: Cảm ơn độc giả asdlem đã chỉ ra và làm rõ, qua GitHub Issue #30, sự phân biệt "thứ RL nội hóa là chiến lược quyết định gọi công cụ, chứ không phải cơ chế thực thi công cụ". Xem https://github.com/bojieli/ai-agent-book/issues/30
 >
 > Một trong những ưu điểm nổi bật của Kimi K3 trong tác vụ Agent là tính ổn định của các lệnh gọi công cụ chuỗi dài - nó có thể thực hiện liên tục 200 đến 300 lệnh gọi công cụ trong khi vẫn duy trì tính nhất quán trong suy nghĩ, vượt xa hiệu suất của hầu hết các mô hình bắt đầu suy giảm sau hàng chục cuộc gọi. K3 được tối ưu hóa cho lập trình chu kỳ dài và khối lượng công việc Agent. Nó có sẵn với hai thông số kỹ thuật: K3 Max (dành cho các cuộc hội thoại và tác vụ Agent) và K3 Swarm Max (dành cho xử lý song song quy mô lớn). Là một mô hình nguồn mở, nó đã chứng minh được hiệu suất có thể so sánh với các hệ thống nguồn đóng tiên tiến nhất về công nghệ phần mềm và các điểm chuẩn Agent, chứng minh tính hiệu quả của việc trao quyền cho các mô hình bằng khả năng Agent nguyên gốc thông qua học tăng cường.
-
+>
 > **Thí nghiệm 1.3 ★: Khả năng nghiên cứu sâu bản địa của GPT-5.6**
 >
 > Thử nghiệm thứ hai sử dụng **OpenAI GPT-5.6** để cho thấy một mô hình tiên tiến, dựa vào các công cụ tích hợp sẵn ở cấp API, khép kín vòng lặp điều phối "tìm kiếm — đọc — phân tích" của Deep Research ngay phía máy chủ như thế nào. Một tính năng tiện lợi của GPT-5.6 là **Freeform Tool Calling**. Theo cách truyền thống, khi một mô hình gọi một công cụ, tất cả các tham số phải được đóng gói thành định dạng JSON nghiêm ngặt (định dạng dữ liệu có cấu trúc), giống như điền vào một biểu mẫu có nhiều hạn chế về định dạng. Lệnh gọi công cụ dạng tự do (được khai báo trong API qua loại công cụ `type: "custom"`) cho phép mô hình gửi trực tiếp văn bản thô (chẳng hạn như một đoạn mã Python, một truy vấn SQL) đến công cụ, loại bỏ rắc rối của việc thoát ký tự JSON. Cần nhấn mạnh rằng đây là bước tiến hóa của định dạng tham số API, chứ không phải cách tân trong kiến trúc mô hình — vòng lặp gọi công cụ phía client (phát hiện `tool_calls` → thực thi → trả kết quả về) vẫn giữ nguyên, thứ thay đổi chỉ là tham số từ chuỗi JSON trở thành văn bản thô.
@@ -455,8 +453,6 @@ Mẫu phối hợp đã thảo luận trước đó giải quyết vấn đề t
 
 ### Guardrails và an ninh
 
-Phần này cung cấp cái nhìn tổng quan ở cấp độ cao về guardrails để giúp người đọc có được sự hiểu biết tổng thể; chi tiết triển khai cụ thể và các phương pháp thực tế sẽ được trình bày trong Chương 2 (tầng ngữ cảnh: bảo vệ prompt injection), Chương 4 (tầng thực thi: kiểm soát quyền công cụ) và Chương 5 (tầng thực thi và tầng dữ liệu: bảo mật thực thi mã và hạ thấp ranh giới tin cậy). Không cần thiết phải đi sâu vào từng chi tiết khi đọc lần đầu.
-
 Guardrails là phương tiện triển khai cốt lõi của cấp độ "kiềm chế, xác minh và sửa chữa" trong Harness - chúng tạo thành một tuyến phòng thủ nhiều lớp để đảm bảo an toàn và khả năng kiểm soát hành vi của Agent. Guardrails được thiết kế tốt giúp quản lý rủi ro về quyền riêng tư dữ liệu (chẳng hạn như ngăn chặn rò rỉ lời nhắc của hệ thống) hoặc rủi ro về danh tiếng (chẳng hạn như đảm bảo hành vi của mô hình nhất quán với hình ảnh thương hiệu). Bạn có thể bắt đầu bằng cách thiết lập các biện pháp bảo vệ chống lại các rủi ro đã xác định và sau đó dần dần thêm các biện pháp bảo vệ mới khi phát hiện ra các lỗ hổng bảo mật mới.
 
 Guardrails có thể được coi là cơ chế phòng thủ theo lớp. Một guardrails đơn lẻ khó có thể cung cấp khả năng bảo vệ đầy đủ nhưng việc kết hợp nhiều guardrails chuyên dụng sẽ tạo ra hệ thống Agent linh hoạt hơn.
@@ -489,8 +485,6 @@ Thường có hai tình huống chính kích hoạt sự can thiệp thủ công
 
 **Vượt quá ngưỡng thất bại**
 Đặt giới hạn trên cho số lần thử lại hoặc thao tác cho Agent. Nếu Agent vượt quá các giới hạn này, thì vấn đề này sẽ được chuyển sang can thiệp thủ công.
-
-**Năm mô thức xuyên suốt cuốn sách**: Người đề xuất—Người thẩm định, tiết lộ dần, chỉ thêm không sửa, tập biên + tập giữ lại, diff tối thiểu có thể hoàn tác — tất cả chia sẻ cùng một chủ đề: dời phán quyết từ chính mô hình sang cơ chế bên ngoài nó. Các chương sau gọi theo tên thay vì diễn giải lại.
 
 **Hoạt động rủi ro cao**
 Cần kích hoạt giám sát thủ công khi liên quan đến các hoạt động nhạy cảm, không thể đảo ngược hoặc có rủi ro cao, ít nhất là cho đến khi nhóm có đủ niềm tin vào độ tin cậy của Agent. Các ví dụ điển hình bao gồm cho phép hoàn lại tiền hoặc thanh toán số tiền lớn, v.v.
@@ -541,6 +535,8 @@ Chương này bắt đầu từ thực tiễn và thiết lập khuôn khổ cơ
 **Con mắt (ngữ cảnh) là yếu tố quyết định**: Ngữ cảnh bao gồm tiền tố tĩnh (system prompt + định nghĩa công cụ) và trajectory động (lịch sử tin nhắn). Các thí nghiệm cắt bỏ cho thấy các thành phần không tương đương nhau: bỏ định nghĩa công cụ hoặc kết quả công cụ là tước đi ngay khả năng hành động hoặc khả năng khép vòng, còn cái giá của việc bỏ hai thành phần kia phụ thuộc vào chỗ thông tin đó có dựng lại được từ quan sát hiện tại hay không. Bản chất của vòng lặp ReAct là cho phép mô hình tiếp tục nâng cao nhiệm vụ bằng cách liên tục thêm các trajectory.
 
 **Harness là khả năng cạnh tranh**: Các khả năng của mô hình đang được thương mại hóa và sự khác biệt thực sự là ở Harness—các cơ chế ràng buộc, xác minh và hiệu chỉnh được xây dựng xung quanh ngữ cảnh và các công cụ để đảm bảo rằng Agent “thực hiện mọi việc một cách đáng tin cậy”. Trong hệ thống Agent cấp sản xuất, hầu hết mã của Harness đang triển khai các cơ chế đảm bảo này, không chỉ ngữ cảnh và công cụ.
+
+**Từ workflow đến Agent tự chủ**: trước hết tối ưu prompt, sau đó mới cân nhắc workflow, cuối cùng mới đưa Agent tự chủ vào — đây là trình tự thực dụng nhất để giảm rủi ro ngoài ý muốn. Mỗi mô thức điều phối đều có bối cảnh áp dụng riêng, không tồn tại lời giải tối ưu chung cho mọi trường hợp.
 
 **Năm mẫu thiết kế xuyên suốt cuốn sách**: Người đề xuất–Người đánh giá, tiết lộ dần, chỉ thêm, tập biên + tập duy trì, diff tối thiểu + có thể hoàn tác.
 
