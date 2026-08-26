@@ -146,6 +146,8 @@ Năm yếu tố này hợp lại tạo thành một vòng lặp đánh giá có 
 
 ![Hình 7-2 Môi trường gọi công cụ và đánh giá tương tác giữa người và máy tính ](images/fig7-2.svg)
 
+Tuỳ theo tác vụ của Agent, môi trường đánh giá có thể chia đại thể thành loại gọi công cụ và loại tương tác người-máy.
+
 ### Môi trường đánh giá loại lệnh gọi công cụ
 
 Đối với các nhiệm vụ như tạo mã và phân tích dữ liệu chủ yếu dựa vào việc sử dụng các công cụ, khung Verifiers sẽ thể hiện các mẫu thiết kế điển hình. Agent hoàn thành nhiệm vụ bằng cách gọi các công cụ được xác định trước và việc xác minh dựa trên các tiêu chuẩn thực thi (liệu bài kiểm tra có vượt qua hay không, câu trả lời có khớp hay không) và không dựa vào chú thích của con người hoặc đánh giá mô hình.
@@ -183,7 +185,7 @@ Dưới đây là ví dụ về cuộc trò chuyện nhiều lượt với việ
 > **Agent**: "Có ưu tiên nào cho chuyến bay mới không?"
 > **Người dùng**(được tiết lộ theo kịch bản): "Chuyến bay buổi chiều nào cũng được."
 
-Trình mô phỏng người dùng tuân theo một tập lệnh cố định (thông tin đã biết + quy tắc được tiết lộ), đảm bảo rằng đánh giá có thể lặp lại trong khi mô phỏng các biểu thức lũy tiến của người dùng thực.
+Trình mô phỏng người dùng tuân theo một tập lệnh cố định (thông tin đã biết + quy tắc được tiết lộ), đảm bảo rằng đánh giá có thể lặp lại trong khi mô phỏng các biểu thức lũy tiến của người dùng thực. Người dùng mô phỏng thường còn được đặt **mức kiên nhẫn hữu hạn**: nếu Agent giao tiếp kém hiệu quả, người dùng mô phỏng có thể chấm dứt hội thoại, khiến tác vụ thất bại.
 
 τ-bench là bài kiểm tra điểm chuẩn để đánh giá hiệu suất của Agent trong các quy trình kinh doanh có cấu trúc (chẳng hạn như dịch vụ khách hàng hàng không, dịch vụ khách hàng bán lẻ). Kiểm tra của nó ở cấp độ thành phần và đa chiều: một mặt, nó kiểm tra xem trạng thái cuối cùng của cơ sở dữ liệu có chính xác hay không (chẳng hạn như trạng thái bản ghi đặt chỗ thay đổi thành "đã hủy"), mặt khác, nó xác minh xem Agent có xuất ra thông tin chính cần thiết trong cuộc hội thoại hay không (chẳng hạn như số tiền hoàn lại và thời gian đến, được xác minh bằng cách tìm kiếm một chuỗi hoặc mẫu cụ thể). Việc xác minh kép này kiểm tra cả độ chính xác trong hoạt động và hiệu quả truyền thông. Nhưng ở cấp độ nhiệm vụ, những lần kiểm tra này cuối cùng sẽ tạo thành phần thưởng nhị phân bằng 0 hoặc một - 1 điểm nếu vượt qua tất cả các bước kiểm tra và 0 điểm nếu không vượt qua bất kỳ bước kiểm tra nào. Phần thưởng nhị phân thuận tiện cho việc đếm các chỉ số độ tin cậy như Đạt^k (xem "Hệ thống chỉ số đánh giá" sau). Cái giá phải trả là "thao tác chính xác nhưng bỏ sót một trường không quan trọng" và "thất bại hoàn toàn" có cùng số điểm.
 
@@ -215,8 +217,6 @@ Việc xây dựng môi trường đánh giá cũng liên quan đến việc thi
 ## Thiết kế bộ dữ liệu nhiệm vụ đánh giá
 
 Môi trường đánh giá là "giai đoạn" và tập dữ liệu là "tập lệnh" - chất lượng của thiết kế tập lệnh thường quyết định giá trị của việc đánh giá hơn chính giai đoạn đó. Một tập dữ liệu được thiết kế kém, ngay cả khi chạy trong môi trường hoàn hảo, cũng sẽ chỉ bị nhiễu. Phần này trích xuất một số nguyên tắc đã được xác minh nhiều lần từ thực tiễn thiết kế các điểm chuẩn như GAIA, AndroidWorld, SWE-Bench Verified (Software Engineering Benchmark, điểm chuẩn kỹ thuật phần mềm), τ-bench và τ²-bench, Terminal-Bench, OSWorld và OSWorld-Verified.
-
-Danh sách này không đầy đủ về ngữ cảnh đánh giá Agent. Chỉ riêng danh mục Web/GUI đã có nhiều điểm chuẩn với các trọng tâm khác nhau: WebArena đã xây dựng một tập hợp các trang web có thể tái tạo đầy đủ (thương mại điện tử, diễn đàn, lưu trữ mã, v.v.) để đưa tính chất không thể kiểm soát của "các trang web thực" vào hộp cát; Mind2Web đi theo hướng ngược lại và trực tiếp kiểm tra khả năng khái quát trên hàng trăm website thực; [ClawBench](https://claw-bench.com/) ([bài báo](https://arxiv.org/abs/2604.08523), [mã nguồn](https://github.com/TIGER-AI-Lab/ClawBench)) cho phép Agent trong các bộ chứa cô lập thực hiện các tác vụ hằng ngày đầu cuối trên website thực. V1 bao phủ 153 nhiệm vụ trên 144 website, V2 bổ sung thêm 130 nhiệm vụ, đồng thời ghi lại năm lớp bằng chứng: bản phát lại phiên, ảnh chụp màn hình từng hành động, lưu lượng HTTP, thao tác trình duyệt và thông điệp của Agent. Nó bổ sung cho các điểm chuẩn hộp cát, giúp phân tích sự biến động của website thực và các lỗi đuôi dài; đổi lại, khả năng tái tạo chịu ảnh hưởng từ những thay đổi ở các website bên thứ ba; DuyệtComp chuyên về truy xuất chuyên sâu - câu trả lời được ẩn sâu và yêu cầu duyệt nhiều bước và xác thực chéo để tìm. Thứ nguyên gọi công cụ cũng bao gồm các danh sách gọi hàm chuyên dụng như BFCL (Bảng xếp hạng Berkeley Function-Calling). Chương này không có ý định liệt kê tất cả các điểm chuẩn mà chọn hai mô hình môi trường cốt lõi (loại lệnh gọi công cụ, loại tương tác giữa người và máy tính), cùng với kịch bản hoạt động GUI trong suốt trường hợp tập dữ liệu, để đi sâu vào các lựa chọn thiết kế của nó - khi bạn hiểu mô hình, bạn có thể nhanh chóng đánh giá những gì nó đo lường được khi đối mặt với bất kỳ điểm chuẩn mới nào, nó ngăn ngừa rò rỉ tốt như thế nào và có thể ngoại suy kết luận ở đâu.
 
 > **Thí nghiệm 7-2 ★: Thực thi thủ công các nhiệm vụ benchmark**
 >
@@ -252,6 +252,8 @@ AndroidWorld được thiết kế bằng cách sử dụng **các mẫu đượ
 Việc xác thực dựa trên trạng thái giao diện người dùng cuối cùng (chẳng hạn như liệu trường số điện thoại có chứa giá trị mong đợi hay không) thay vì trình tự thao tác.
 
 Các tác vụ của OSWorld thường không bắt đầu từ trạng thái ban đầu “sạch” mà từ trạng thái trung gian được cấu hình cẩn thận, gần với các tình huống sử dụng thực tế hơn. Mô tả nhiệm vụ cần xử lý nhiều giải pháp ("đặt nền thành màu tím" cần cung cấp mã màu cụ thể để loại bỏ sự mơ hồ, "ghép hai CSV" cần chấp nhận tất cả các cách hợp lý để giữ lại tiêu đề đơn/tiêu đề kép, v.v.) và sự không chắc chắn về môi trường (chống thu thập dữ liệu trang web, phát triển giao diện người dùng ứng dụng, cạnh tranh về thời gian - OSWorld-Verified giảm thiểu thông qua các cơ chế như ảnh chụp nhanh trang ngoại tuyến, khóa phiên bản phụ thuộc, điều kiện chờ rõ ràng, v.v.).
+
+Danh sách này không đầy đủ về ngữ cảnh đánh giá Agent. Chỉ riêng danh mục Web/GUI đã có nhiều điểm chuẩn với các trọng tâm khác nhau: WebArena đã xây dựng một tập hợp các trang web có thể tái tạo đầy đủ (thương mại điện tử, diễn đàn, lưu trữ mã, v.v.) để đưa tính chất không thể kiểm soát của "các trang web thực" vào hộp cát; Mind2Web đi theo hướng ngược lại và trực tiếp kiểm tra khả năng khái quát trên hàng trăm website thực; [ClawBench](https://claw-bench.com/) ([bài báo](https://arxiv.org/abs/2604.08523), [mã nguồn](https://github.com/TIGER-AI-Lab/ClawBench)) cho phép Agent trong các bộ chứa cô lập thực hiện các tác vụ hằng ngày đầu cuối trên website thực. V1 bao phủ 153 nhiệm vụ trên 144 website, V2 bổ sung thêm 130 nhiệm vụ, đồng thời ghi lại năm lớp bằng chứng: bản phát lại phiên, ảnh chụp màn hình từng hành động, lưu lượng HTTP, thao tác trình duyệt và thông điệp của Agent. Nó bổ sung cho các điểm chuẩn hộp cát, giúp phân tích sự biến động của website thực và các lỗi đuôi dài; đổi lại, khả năng tái tạo chịu ảnh hưởng từ những thay đổi ở các website bên thứ ba; DuyệtComp chuyên về truy xuất chuyên sâu - câu trả lời được ẩn sâu và yêu cầu duyệt nhiều bước và xác thực chéo để tìm. Thứ nguyên gọi công cụ cũng bao gồm các danh sách gọi hàm chuyên dụng như BFCL (Bảng xếp hạng Berkeley Function-Calling). Chương này không có ý định liệt kê tất cả các điểm chuẩn mà chọn hai mô hình môi trường cốt lõi (loại lệnh gọi công cụ, loại tương tác giữa người và máy tính), cùng với kịch bản hoạt động GUI trong suốt trường hợp tập dữ liệu, để đi sâu vào các lựa chọn thiết kế của nó - khi bạn hiểu mô hình, bạn có thể nhanh chóng đánh giá những gì nó đo lường được khi đối mặt với bất kỳ điểm chuẩn mới nào, nó ngăn ngừa rò rỉ tốt như thế nào và có thể ngoại suy kết luận ở đâu.
 
 ### Thiết kế phân cấp độ phức tạp của nhiệm vụ
 
@@ -290,8 +292,6 @@ SWE-Bench Verified là hình ảnh thu nhỏ của việc kiểm soát chất l�
 τ²-bench giới thiệu sự tách biệt giữa "thông tin đã biết"/"hướng dẫn nhiệm vụ" (làm cho hoạt động của trình mô phỏng trở nên thực tế hơn) và các điều kiện hoàn thành chặt chẽ hơn (chẳng hạn như "chỉ xuất sắc mới được coi là giải pháp và poor/fair/good sẽ không được chấp nhận") để ngăn chặn "sửa chữa chiếu lệ".
 
 OSWorld-Verified là một ví dụ tuyệt vời về cải tiến lặp đi lặp lại. OSWorld nhanh chóng trở thành tiêu chuẩn quan trọng để đánh giá Agent đa phương thức sau khi phát hành vào tháng 4 năm 2024, nhưng hơn 300 vấn đề đã bộc lộ trong suốt 15 tháng sử dụng rộng rãi. Những vấn đề này được chia thành bốn loại: vấn đề về môi trường (chống thu thập dữ liệu trang web/CAPTCHA/thay đổi nội dung động), vấn đề về mô tả nhiệm vụ (biểu thức không rõ ràng), vấn đề về logic xác minh (quá nghiêm ngặt hoặc quá lỏng lẻo) và vấn đề về trạng thái ban đầu (cấu hình không hoàn chỉnh). Nhóm Đại học Hồng Kông đã thành lập một nhóm khoảng 10 người và làm việc chuyên sâu với MoonShot AI, OpenAI, ByteDance Seed TARS, Anthropic, Simular, v.v. trong hai tháng để thực hiện sửa chữa hệ thống. Policy sửa chữa được xây dựng cho từng loại sự cố: sự cố môi trường được giải quyết bằng cách khóa phiên bản và sao lưu ngoại tuyến, mô tả tác vụ được loại bỏ bằng cách viết lại các biểu thức không rõ ràng, logic xác minh được cân bằng bằng cách thiết lập đường cơ sở chính xác và điều chỉnh các điều kiện theo cách thủ công, đồng thời trạng thái ban đầu được nâng cao bằng cách thêm các kiểm tra tính toàn vẹn.
-
-Điều đáng nói là môi trường đánh giá và môi trường post-training thường có cùng nguồn gốc: môi trường đánh giá được thiết kế tốt có thể biến thành môi trường đào tạo với một chút sửa đổi - SWE-Gym là một ví dụ điển hình về các nhiệm vụ đào tạo được xây dựng dựa trên SWE-bench và các mẫu được tham số hóa của τ²-bench và AndroidWorld có thể tạo ra các phiên bản đào tạo lớn theo đợt. Tuy nhiên, cần phải vạch ra một ranh giới màu đỏ: thứ có thể được tái sử dụng là **cơ chế xây dựng môi trường** và các câu hỏi cụ thể trong bản thân bộ đánh giá phải được tách biệt hoàn toàn khỏi dữ liệu huấn luyện - một khi các câu hỏi đánh giá được đưa vào tập huấn luyện, trí nhớ sẽ được đo lường chứ không phải khả năng (xem Chương 8 để biết chi tiết).
 
 ## Phương pháp đánh giá tự động
 
@@ -363,6 +363,8 @@ thất bại: "Thông tin bịa đặt không tồn tại trong cuộc trò chuy
 
 Đưa Rubric cùng câu trả lời thực tế của Agent cho mô hình đánh giá để nhận điểm và lý do theo từng tiêu chí. Khi tổng hợp hàng chục ca rồi xem lại các trajectory có điểm thấp, ta có thể biến một nhận xét mơ hồ như “tỷ lệ thành công giảm” thành chẩn đoán cụ thể: không truy xuất được dữ kiện, nối sai quan hệ giữa các nhân vật, hay tự thêm thông tin không có căn cứ. Rubric vì thế không chỉ cho biết hệ thống đạt bao nhiêu điểm, mà còn chỉ ra nên sửa ở đâu.
 
+Dưới đây lấy bộ nhớ người dùng làm một trường hợp cụ thể, để cho thấy cách đưa phương pháp tổng quát này xuống thành tập đánh giá và bộ chấm điểm chạy được.
+
 > **Thử nghiệm 7-3 ★★: Xây dựng hệ thống đánh giá bộ nhớ người dùng dựa trên Rubric**
 >
 > **Điều kiện tiên quyết**: Cần phải hoàn thành Thử nghiệm bộ nhớ người dùng Chương 3 (`chapter3/user-memory-evaluation`).
@@ -392,11 +394,7 @@ Bảng 7-3 Tỷ lệ thành công theo độ khó của ba hệ thống bộ nh�
 | RAG | 90% | 40% | 15% | 48.3% (29/60) |
 | Kết hợp | 80% | 70% | 50% | 66.7% (40/60) |
 
-Điểm đáng chú ý nhất là kết hợp hai cách không tự động tạo ra kết quả tốt hơn. Hệ thống kết hợp giải được 3 câu mà cả hai hệ thống đơn lẻ đều trượt, nhưng ở 8 câu khác lại kém hơn hệ thống đơn lẻ tốt nhất. So với phương án đơn lẻ tốt nhất cho từng câu, reward trung bình của nó thấp hơn 0.092. RAG gần ngang thẻ có cấu trúc ở phần nhớ lại cơ bản, nhưng chỉ đạt 15% với liên hệ giữa các phiên. Tìm được đoạn hội thoại liên quan mới là bước đầu; Agent còn phải ghép đúng người, thời gian và sự kiện.
-
-Một con số khác dễ bị bỏ qua: điều kiện phủ quyết do hallucination đã kích hoạt 28 lần trong 180 lượt chấm. Đây không phải chi tiết trang trí trong Rubric mà thực sự làm thay đổi kết quả. Khi xây hệ thống, không nên mặc định “có cấu trúc + RAG” sẽ cộng hưởng. Hãy xem từng cách thất bại ở mỗi mức độ khó rồi mới quyết định dữ kiện nào thường trú và câu hỏi nào kích hoạt truy xuất. Kết quả này đến từ ca tổng hợp và một cấu hình model/judge duy nhất; nó giúp hiểu cơ chế thành công và thất bại, chứ không tạo ra bảng xếp hạng phổ quát.
-
-Các kết luận trên còn giả định mô hình đánh giá đủ đáng tin. Nếu Agent và judge cùng một họ model, chúng có thể chia sẻ sở thích và điểm mù. Phần tiếp theo bàn về vấn đề này.
+Đáng chú ý nhất là phương án lai không tự nhiên thắng thế. Ở 3 câu nó làm được điều mà cả hai phương án đơn lẻ đều không làm được, nhưng ở 8 câu khác lại kém phương án đơn lẻ tốt hơn; so với phương án đơn lẻ tốt nhất trên từng câu, tỉ lệ thành công trung bình của nó ngược lại còn thấp hơn. RAG thuần không chênh nhiều so với thẻ có cấu trúc ở các câu hồi tưởng cơ bản, nhưng vừa sang câu liên kết xuyên phiên thì tỉ lệ thành công tụt xuống 15%. Còn một con số dễ bị bỏ qua: trong 180 lần chấm, phủ quyết ảo giác kích hoạt 28 lần—đủ thấy mục phủ quyết tuyệt đối quan trọng đến đâu.
 
 **Các vấn đề về mô hình tương đồng và đánh giá đa nguồn.**
 
@@ -433,6 +431,8 @@ Kho đi kèm lưu một pilot nghe trực tiếp quy mô nhỏ. OpenAI và Fish 
 Tám mẫu chưa đủ để kết luận dịch vụ nào tốt hơn. Mỗi bên chỉ có bốn mẫu, và quan trọng hơn, audio tham chiếu cố định được tạo bởi Fish S1 nên phép so độ giống giọng vốn đã có lợi cho Fish Audio. Nếu so TTS phổ thông, không nên đưa tiêu chí “giống giọng tham chiếu Fish” vào tổng điểm. Nếu so voice cloning, mọi hệ thống phải bắt chước cùng một người nói và điểm của model cần được hiệu chỉnh bằng nghe mù của con người. **Việc chọn câu trả lời, hình ảnh hay audio tham chiếu là một phần của thiết kế đánh giá, không phải bước chuẩn bị trung tính trước thí nghiệm.**
 
 Rubric viết tay phù hợp để nhanh chóng tạo các chiều chẩn đoán này. Khi quy mô tăng, có thể huấn luyện **mô hình phần thưởng sinh** để tự động hóa việc chấm; Chương 8 trình bày phương pháp huấn luyện.
+
+Điểm số mà mô hình chấm đưa ra chỉ nói kết quả tốt hay xấu; muốn biến kết quả ấy thành một vấn đề sửa được thì còn phải định vị xem thất bại thực sự bắt đầu từ bước nào.
 
 ### Quy trách nhiệm thất bại: Định vị lỗi đầu tiên trong trajectory
 
@@ -542,8 +542,6 @@ Chatbot Arena sử dụng các cuộc đấu tay đôi ngẫu nhiên ẩn danh -
 
 Khi LLM hoàn thành phán quyết ghép đôi thay vì con người bỏ phiếu, chúng ta cũng phải đề phòng Xu hướng vị trí - mô hình đánh giá sẽ ưu tiên một cách có hệ thống ứng cử viên xuất hiện ở một vị trí nhất định (thường là đầu tiên). Cho dù nội dung của hai ứng viên có hoàn toàn trái ngược nhau thì phán quyết cũng có thể không thay đổi. Phương pháp giảm thiểu tiêu chuẩn là trao đổi thứ tự và đánh giá từng trường hợp một lần: A được đánh giá một lần trước đó, B được đánh giá lại trước đó và lấy trung bình cộng của hai kết quả; một cách tiếp cận chặt chẽ hơn là chỉ tính khi hai phán đoán nhất quán và nếu chúng không nhất quán, nó sẽ được ghi là hòa hoặc gửi để xem xét thủ công. Chatbot Arena về cơ bản thực hiện điều tương tự—ngẫu nhiên hóa vị trí của hai phản hồi để các thành kiến về vị trí triệt tiêu lẫn nhau trên một cỡ mẫu lớn.
 
-**Từ đánh giá đến đào tạo: chuyển các tín hiệu so sánh theo cặp**. So sánh cặp không chỉ là phương pháp đánh giá mà còn là nguồn tín hiệu quan trọng cho quá trình huấn luyện sau. Thuật toán **GRPO**(Tối ưu hóa chính sách tương đối nhóm) sẽ được giới thiệu trong Chương 8, giới thiệu phương pháp đánh giá "so sánh cái nào tốt hơn" vào đào tạo mô hình - ý tưởng cốt lõi của nó là lấy mẫu nhiều câu trả lời của ứng viên cho cùng một câu hỏi và sử dụng giá trị tương đối (thay vì điểm tuyệt đối) giữa chúng để ước tính lợi thế, từ đó loại bỏ rắc rối khi đào tạo mạng giá trị bổ sung (quan trọng, dùng để ước tính đường cơ sở) trong PPO - lưu ý GRPO loại bỏ mạng giá trị thay vì chính tín hiệu phần thưởng. Nó vẫn dựa vào mô hình khen thưởng hoặc các quy tắc khen thưởng có thể kiểm chứng được để đánh giá chất lượng của từng ứng viên. Đây chỉ là một điềm báo. Việc dẫn xuất thuật toán hoàn chỉnh, so sánh với PPO/DPO và chi tiết triển khai trong quá trình post-training của Agent còn lại ở Chương 8.
-
 > **Thử nghiệm 7-8 ★★: Xây dựng thứ hạng mô hình từ dữ liệu so sánh theo cặp**
 >
 > Thử nghiệm này triển khai hệ thống tính toán xếp hạng Elo từ đầu để hiểu sâu hơn về cách mô hình Bradley-Terry trích xuất xếp hạng khả năng tương đối từ một số lượng lớn so sánh theo cặp. Sử dụng tập dữ liệu bỏ phiếu trong thế giới thực mã nguồn mở của Chatbot Arena gồm hàng triệu phiếu bầu của người dùng mù.
@@ -576,15 +574,13 @@ Xung quanh hai giai đoạn này, các chỉ số thông lượng và độ tr�
 
 **Đường cong ngân sách–năng lực**: Một điểm số đơn lẻ dưới ngân sách cố định không đủ để xác định Agent có thể đảm nhiệm nhiệm vụ dài hạn hay không. Ngoài tỷ lệ thành công, cần báo cáo hiệu năng thay đổi theo thời gian thực, số token, số lần gọi công cụ hoặc ngân sách tính toán. Đối chiếu người–máy trong RE-Bench cho thấy rõ điều này: với tổng ngân sách 2 giờ cho mỗi môi trường, Agent tốt nhất đạt điểm khoảng gấp 4 lần chuyên gia con người; nhưng con người hưởng lợi nhiều hơn khi tăng thời gian, nhỉnh hơn Agent tốt nhất ở mốc 8 giờ và đạt khoảng gấp đôi điểm số khi có tổng cộng 32 giờ qua nhiều lần thử[^re-bench-2025]. Vì vậy, ưu thế ở ngân sách ngắn không thể được ngoại suy trực tiếp thành năng lực vận hành dài; việc chọn mô hình phải so sánh nhiều mốc ngân sách gần với thời lượng nhiệm vụ thực tế.
 
-Trong thực tế, chiến lược cộng tác đa mô hình có thể được áp dụng: sử dụng các mô hình gọn nhẹ để xử lý các yêu cầu đơn giản nhằm giảm chi phí và sử dụng các mô hình mạnh mẽ để xử lý các tác vụ phức tạp nhằm đảm bảo chất lượng; hoặc sử dụng các mô hình chuyên biệt để xử lý các nhiệm vụ con cụ thể (chẳng hạn như hiểu hình ảnh, tạo mã) và cộng tác thông qua cơ chế sub-Agent. Sự kết hợp không đồng nhất này cần được xác minh thông qua đánh giá để xác nhận xem lợi ích tổng thể có lớn hơn độ phức tạp ngày càng tăng của hệ thống hay không.
+Trong thực tế, chiến lược cộng tác đa mô hình có thể được áp dụng: sử dụng các mô hình gọn nhẹ để xử lý các yêu cầu đơn giản nhằm giảm chi phí và sử dụng các mô hình mạnh mẽ để xử lý các tác vụ phức tạp nhằm đảm bảo chất lượng; hoặc sử dụng các mô hình chuyên biệt để xử lý các nhiệm vụ con cụ thể (chẳng hạn như hiểu hình ảnh, tạo mã) và cộng tác thông qua cơ chế sub-Agent. Sự kết hợp không đồng nhất này cần được xác minh thông qua đánh giá để xác nhận xem lợi ích tổng thể có lớn hơn độ phức tạp ngày càng tăng của hệ thống hay không (chẳng hạn, coi những câu như "9,9 và 9,11 cái nào lớn hơn?" hay "tôi muốn rửa xe, tiệm rửa cách nhà 50 mét—nên đi bộ hay lái xe?" là câu hỏi đơn giản rồi giao cho mô hình nhẹ, dẫn tới quyết định sai).
 
 ### Hành vi mô hình: Khi nào ngừng đọc và bắt đầu chỉnh sửa
 
 Việc chọn mô hình không chỉ so sánh liệu mô hình có hoàn thành được nhiệm vụ hay không, mà còn so sánh **hành vi mặc định của nó**. Một khác biệt dễ quan sát ở Coding Agent là ngưỡng hành động. Với cùng một nhiệm vụ lập trình, một số mô hình khám phá rộng kho mã và xác nhận kiến trúc, các điểm gọi và kiểm thử trước khi chỉnh sửa. Những mô hình khác định vị thay đổi từ ít bằng chứng hơn, chỉnh sửa sớm rồi dùng phản hồi kiểm thử để hoàn thiện hiểu biết. Nhóm đầu đánh giá chi phí của việc sửa quá sớm cao hơn; nhóm sau đánh giá chi phí cơ hội của việc đọc thêm một tệp cao hơn.
 
-Khi một xu hướng vẫn đi theo mô hình qua các Harness và thay đổi khi chỉ thay mô hình trong một Harness cố định, lời giải thích chính phải là **hành vi mô hình**. Post-training là một nguồn có khả năng cao: các quỹ đạo SFT minh họa cần đọc đến đâu trước khi hành động, phần thưởng quá trình củng cố hoặc phạt những đường đi công cụ cụ thể, còn phần thưởng kết quả củng cố toàn bộ chiến lược đã dẫn đến thành công. Do đó, mô hình không chỉ học cách viết mã mà còn học khi nào đã có đủ bằng chứng. Dataset và công thức phần thưởng chính xác thường là thông tin riêng; phép thay mô hình có kiểm soát có thể xác định hành vi nằm phía mô hình nhưng không tiết lộ công thức huấn luyện cụ thể của nhà cung cấp. Harness vẫn có thể dịch chuyển ngưỡng bằng system prompt, mô tả công cụ và ngân sách, nhưng nếu không ép buộc quy trình thì nên xem nó là yếu tố điều chỉnh, không phải nguyên nhân gốc mặc định.
-
-Thí nghiệm đi kèm so sánh `openai/gpt-5.6-sol` và `anthropic/claude-sonnet-5` trong một **Harness trung lập và cố định**. Cả hai dùng cùng endpoint OpenRouter và nhận cùng system prompt, nhiệm vụ, kho mã, tên công cụ, JSON Schema và kết quả công cụ. Harness không bắt buộc khám phá hay chỉnh sửa sớm. Ba kho mã thu nhỏ bao phủ một lỗi cục bộ, chuẩn hóa định danh xuyên mô-đun và sửa bộ nhớ đệm nhạy với hợp đồng công khai. Mỗi mô hình chạy độc lập từng nhiệm vụ ba lần, tạo 18 quỹ đạo. Trước lần chỉnh sửa đầu tiên, GPT-5.6-sol gọi công cụ trung bình 6,89 lần và đọc 4,67 tệp; Claude Sonnet 5 đạt 4,56 lần và 3,56 tệp. Chênh lệch lớn nhất ở nhiệm vụ cục bộ và gần như biến mất ở nhiệm vụ xuyên mô-đun được nêu rõ (7,00 so với 6,67 tệp). Cả hai mô hình đều đạt 100% ở bản vá đầu tiên được kiểm thử và kiểm thử cuối. Vì thế, thí nghiệm nhỏ này ủng hộ kết luận “chính sách hành động thay đổi theo mô hình”, chứ không phải “đọc nhiều hơn” hay “sửa sớm hơn” luôn tốt hơn. Thời gian tới lần chỉnh sửa đầu tiên cũng gần như bằng nhau (15,01 so với 14,48 giây), nhắc chúng ta phải tách số bước công cụ, lời gọi song song và độ trễ mô hình.
+Xu hướng ấy của Agent có hai nguồn: một là prompt hệ thống trong Harness, hai là chính sách hành vi của mô hình. Hậu huấn luyện là nguồn then chốt của chính sách hành vi: các quỹ đạo SFT làm mẫu "đọc đến đâu rồi mới bắt tay vào", phần thưởng quá trình thưởng hoặc phạt một lối đi công cụ nào đó, còn phần thưởng kết quả lại củng cố trọn bộ chiến lược cuối cùng đã thành công. Lâu dần, thứ mô hình học được không chỉ là cách viết mã, mà còn là thói quen kỹ thuật.
 
 > **Thí nghiệm 7-9 ★★: Đo ngưỡng hành động của mô hình trong một Coding Harness cố định**
 >
@@ -597,8 +593,6 @@ Thí nghiệm đi kèm so sánh `openai/gpt-5.6-sol` và `anthropic/claude-sonne
 > **Tiêu chí nghiệm thu**: mọi unit test offline đều qua; trước tiên phải xác nhận mỗi fixture nhiệm vụ ở trạng thái ban đầu làm kiểm thử thất bại; kết quả chính thức chứa đủ các ô `mô hình × nhiệm vụ × lần lặp`, không có lỗi API, có kiểm thử cuối độc lập và quỹ đạo kiểm toán được; `manifest.json` xác minh hash của cấu hình, quan sát và bản tổng hợp. Thư mục dự án lưu một lần chạy thực tế hoàn chỉnh 18/18 ô. Người đọc nên chạy lại trên phiên bản mô hình và workload thực tế mà mình quan tâm, thay vì coi các số liệu của kho mã nhỏ này là bảng xếp hạng vĩnh viễn.
 
 ### Phân tích chi phí của hệ thống Agent
-
-Chi phí là một khía cạnh dễ bị đánh giá thấp trong việc lựa chọn mô hình. Nếu Agent của bạn đã bước vào môi trường sản xuất hoặc đang chuẩn bị bước vào môi trường sản xuất thì không nên bỏ qua phần phân tích chi phí trong phần này.
 
 Phần trước liệt kê chi phí là một trong những khía cạnh chính của việc lựa chọn mô hình, nhưng chi phí trong kịch bản Agent phức tạp hơn nhiều so với việc định giá mã thông báo đơn giản—nhiều vòng lý luận, lệnh gọi công cụ và tích lũy ngữ cảnh sẽ khiến chi phí tăng phi tuyến tính. Phân tích chi phí một cách có hệ thống là một phần không thể thiếu trong hệ thống đánh giá và là điều kiện tiên quyết cần thiết để triển khai sản xuất.
 
@@ -676,19 +670,15 @@ Các nhóm có hệ thống đánh giá được thiết lập tốt có thể �
 
 ## Đánh giá ý nghĩa thống kê của kết quả
 
-"Quyết định chuyển đổi trong vài giờ" có một tiền đề ngầm: sự khác biệt quan sát được về điểm số là tín hiệu thực, không phải nhiễu lấy mẫu. Tiền đề cho rằng kích thước của tập đánh giá bị giới hạn và đầu ra của mô hình không chắc chắn sẽ không tự động được giữ vững.
+Tập đánh giá thì hữu hạn, đầu ra của mô hình lại ngẫu nhiên, nên chênh lệch điểm có thể chỉ là nhiễu lấy mẫu. Nếu đo được tỉ lệ thành công $p$ trên $n$ ca, sai số chuẩn có thể ước lượng thô như sau:
 
-Một công cụ để ước tính đại khái băng thông nhiễu là sai số chuẩn của phân bố nhị thức (sai số chuẩn, được sử dụng để mô tả phạm vi dao động của tỷ lệ thành công do lấy mẫu ngẫu nhiên. Giá trị càng lớn thì tỷ lệ thành công càng kém tin cậy). Nếu tỷ lệ thành công p được đo trên n trường hợp thử nghiệm thì sai số chuẩn sẽ xấp xỉ √(p(1-p)/n). Để đưa ra một ví dụ cụ thể: 100 trường hợp sử dụng, tỷ lệ thành công 70%, sai số chuẩn ≈ √(0,7×0.3/100) ≈ 4,6%. Theo trực quan, khoảng tin cậy 95% (phạm vi trong đó tỷ lệ thành công thực sự chắc chắn giảm khoảng 95%) là khoảng p ± 2 sai số chuẩn, hoặc 70% ± 9 điểm phần trăm. Nghĩa là, chênh lệch 3 điểm phần trăm như "mô hình mới 73% so với mô hình cũ 70%" nằm trong phạm vi băng thông nhiễu - khi so sánh hai tỷ lệ thành công như thể chúng độc lập với nhau, sai số chuẩn của chênh lệch là khoảng hệ số √2 (ở đây là khoảng 6,5%). Nhưng cần nhấn mạnh rằng √2 này là thuật toán cho "hai phép đo độc lập với nhau". Trong chiến đấu thực tế, hai cấu hình thường chạy trên cùng một loạt nhiệm vụ và các mẫu không độc lập - giả định về tính độc lập chỉ là giới hạn trên bảo thủ, được sử dụng để nhanh chóng đánh giá rằng "sự khác biệt này không đáng để xem xét nghiêm túc". Theo cách tính bảo thủ này, chênh lệch điểm số 3% nhỏ hơn nhiều so với mức độ ồn 6,5%. Theo đó, việc chuyển đổi mô hình không khác nhiều so với việc tung đồng xu.
+$$
+\mathrm{SE}(p)\approx\sqrt{\frac{p(1-p)}{n}}
+$$
 
-Có thêm một lớp bất định trong đánh giá Agent: cùng mô hình và cùng tập dữ liệu vẫn có thể cho kết quả khác nhau giữa các lần chạy, do lấy mẫu, biến động của kết quả công cụ và thời điểm của môi trường. Vì vậy, một lần chạy không đủ để quyết định triển khai. Hãy **chạy lặp và lấy trung bình** — chẳng hạn 3-5 lần cho mỗi cấu hình — đồng thời báo cáo cả giá trị trung bình lẫn độ phân tán. Thử nghiệm AndroidWorld nhỏ ở phần sau chỉ có một lần chạy ghép cặp cho mỗi nhiệm vụ; nó chỉ giúp sàng lọc ý tưởng đáng thử ở quy mô lớn hơn. Quyết định triển khai vẫn cần một đợt chạy nhiều seed trên toàn bộ tập nhiệm vụ.
+Ví dụ với 100 ca và tỉ lệ thành công 70%, khoảng tin cậy 95% vào khoảng $70\%\pm9$ điểm phần trăm; "mô hình mới 73% so với mô hình cũ 70%" chưa đủ để biện minh cho việc chuyển đổi.
 
-Một nguyên tắc thực tế được rút ra từ điều này: **Khi chênh lệch điểm nhỏ hơn băng thông nhiễu, không có quyết định chuyển đổi nào được đưa ra**. Nhưng trước khi “không chuyển đổi”, trước tiên bạn nên chuyển sang phương pháp phân tích nhạy cảm và chính xác hơn. Khi so sánh hai cấu hình trên cùng một loạt nhiệm vụ, phương pháp mặc định đúng là **phân tích cặp**: so sánh kết quả của hai vấn đề theo từng câu hỏi, chỉ xem xét các trường hợp sử dụng đó với các kết quả khác nhau (một đúng và một sai) và sử dụng các ý tưởng như thử nghiệm của McNemar để xác định xem sự khác biệt có đáng kể hay không. Phân tích theo cặp loại trừ nguồn nhiễu phổ biến là "độ khó của chính câu hỏi", do đó, nó nhạy hơn nhiều so với "trừ hai tỷ lệ thành công độc lập" với cùng cỡ mẫu - ước tính √2 trước đó dựa trên giả định về tính độc lập chỉ là một sàng lọc thận trọng không yêu cầu truy cập Internet, chỉ cần tính toán bằng miệng và được sử dụng để nhanh chóng loại bỏ sự khác biệt về điểm số rõ ràng là ngoài tầm với. Nếu phân tích ghép đôi vẫn cho thấy sự khác biệt là không chắc chắn thì hãy xem xét mở rộng mẫu: sai số chuẩn giảm theo √n và băng thông nhiễu chỉ giảm một nửa khi mở rộng mẫu từ 100 lên 400. Chi phí mở rộng mẫu rất cao. Mặt khác, nếu bản thân lợi ích dự kiến của việc cải tiến chỉ là điểm phần trăm 2-3 và bộ đánh giá chỉ có vài chục trường hợp sử dụng thì bộ đánh giá này không thể cho biết liệu cải tiến đó có hiệu quả hay không - ưu tiên tại thời điểm này là mở rộng bộ đánh giá thay vì tiếp tục lặp lại Agent.
-
-Có một cạm bẫy khác dễ bị bỏ qua: **so sánh nhiều giả thuyết**. Nếu kiểm tra sáu giả thuyết độc lập với ngưỡng tin cậy 95%, xác suất xuất hiện ít nhất một kết quả dương tính giả là 1 − 0,95^6 ≈ 26%. Càng thử nhiều thay đổi, càng dễ có một thay đổi “trông như hiệu quả” chỉ do ngẫu nhiên. Có hai cách xử lý: siết ngưỡng ý nghĩa theo số phép thử, chẳng hạn hiệu chỉnh Bonferroni, hoặc chạy xác nhận độc lập và chỉ chấp nhận kết luận có thể lặp lại. Chuỗi AndroidWorld ở phần sau giảm rủi ro này bằng cách chỉ đổi một biến mỗi vòng; nếu sàng lọc nhiều hướng song song, vẫn phải hiệu chỉnh hoặc xác nhận lại độc lập.
-
-Các quyết định dựa trên đánh giá dựa trên dữ liệu chất lượng cao thu được từ việc ghi lại có hệ thống các hoạt động Agent—đây chính là giải pháp mà observability có thể giải quyết được.
-
-**So sánh theo cặp:**
+Khi so hai cấu hình trên cùng một mẻ tác vụ, hãy ưu tiên **phân tích ghép cặp**: ghi lại từng bài xem bên nào thắng, rồi dùng kiểm định McNemar hoặc bootstrap ghép cặp để phán đoán chênh lệch, chứ không lấy hai tỉ lệ thành công độc lập trừ thẳng cho nhau. Vì mỗi lần chạy Agent cũng có thể khác nhau, tốt nhất là chạy mỗi cấu hình với nhiều hạt giống ngẫu nhiên (chẳng hạn 3–5 lần) và báo cáo giá trị trung bình kèm biên độ dao động; một lần chạy chỉ dùng để sàng hướng. Nếu mức lợi kỳ vọng chỉ 2–3 điểm phần trăm mà tập đánh giá chỉ có vài chục bài, hãy mở rộng mẫu trước—sai số chuẩn co lại theo $1/\sqrt{n}$.
 
 ```python
 for task in paired_tasks:
@@ -699,6 +689,10 @@ for task in paired_tasks:
 
 return paired_bootstrap_or_mcnemar(all_deltas)
 ```
+
+Ghép cặp nghĩa là hai nhóm dùng chung tác vụ và điều kiện ngẫu nhiên, chứ không phải lấy riêng hai mẻ mẫu rồi so trung bình.
+
+Khi kiểm chứng song song nhiều giả thuyết còn phải tính tới **so sánh bội**: siết ngưỡng ý nghĩa, hoặc chạy lại độc lập những kết quả dương tính. Tiêu chí thực dụng rất đơn giản: chênh lệch điểm phải vượt nhiễu, phải đứng vững trong phân tích ghép cặp, và phải tái lập được, thì mới đáng để đổi mô hình hay phát hành thay đổi.
 
 ## Observability của Agent
 
@@ -716,7 +710,7 @@ LangSmith là một trong những nền tảng tiêu biểu trong lĩnh vực n�
 
 Nền tảng này cũng hỗ trợ thử nghiệm A/B (định tuyến một phần lưu lượng truy cập của người dùng sang phiên bản mới, tự động so sánh các chỉ báo khác nhau và hỗ trợ khôi phục nhanh hoặc mở rộng dần dần), quản lý phiên bản từ nhanh chóng (mỗi phiên bản được liên kết với dữ liệu hiệu suất thời gian chạy) và phát triển cộng tác (các thành viên trong nhóm có thể chia sẻ dữ liệu theo dõi và các trường hợp sự cố). Dữ liệu thực khổng lồ trong môi trường sản xuất là mỏ vàng để cải tiến liên tục - nó có thể phát hiện ra các tình huống không mong muốn và xác định các điểm chức năng cần tối ưu hóa nhất.
 
-Điểm đến có giá trị nhất cho dữ liệu có thể quan sát được là quay trở lại các tài sản được đánh giá. Một vòng khép kín thực tế là: lọc ra các trường hợp thất bại và đáng ngờ khỏi quá trình sản xuất → khử nhạy cảm (xóa các trường nhạy cảm như quyền riêng tư và khóa của người dùng) → đưa các trường hợp sử dụng mới và thử nghiệm hồi quy vào các bộ đánh giá. Bằng cách này, bộ đánh giá không còn là một bộ sưu tập tĩnh được xây dựng một lần nữa mà là một tài sản sống phát triển cùng với sản phẩm và tiếp tục được phân phối gần với người dùng thực - chế độ lỗi hiển thị trực tuyến hôm nay sẽ trở thành trường hợp hồi quy để duy trì điểm mấu chốt này vào ngày mai. Đây chính xác là điểm giao thoa giữa observability và luồng đánh giá chính trong chương này: observability chịu trách nhiệm "nhìn thấy" những gì đang xảy ra trong thế giới thực và đánh giá chịu trách nhiệm củng cố những quan sát này thành các tiêu chuẩn có thể được kiểm tra nhiều lần.
+Đích đến giá trị nhất của dữ liệu khả quan sát là **chảy ngược trở lại và biến thành tài sản đánh giá**. Một vòng khép kín thiết thực là: sàng từ quỹ đạo sản xuất ra những ca thất bại và đáng ngờ → xử lý ẩn danh (bỏ đi quyền riêng tư người dùng, khoá bí mật và các trường nhạy cảm khác) → lắng đọng thành ca mới và bài kiểm thử hồi quy cho tập đánh giá. Nhờ vậy tập đánh giá không còn là một tập tĩnh dựng lên một lần, mà là tài sản sống tiến hoá cùng sản phẩm và liên tục bám sát phân bố người dùng thực. Kiểu thất bại hôm nay lộ ra trên môi trường chạy thật, ngày mai chính là ca hồi quy giữ lấy lằn ranh ấy.
 
 Với một hệ thống đánh giá hoàn chỉnh và bộ dữ liệu sẵn có, điều quan trọng là chuyển các kết quả đánh giá thành những cải tiến hệ thống thực tế.
 
@@ -732,7 +726,7 @@ Trước khi bắt đầu phân tích báo cáo Điểm chuẩn, có một nguy�
 
 ### Hiểu báo cáo điểm chuẩn: Nghệ thuật tìm ra vấn đề
 
-Báo cáo ban đầu ghi lại một lần chạy trên mỗi nhiệm vụ trong số 116 nhiệm vụ, với tỷ lệ thành công tổng thể khoảng 88%. Lỗi không phân tán ngẫu nhiên: ba trong bốn nhiệm vụ `SystemWifiTurn*` thất bại, và trajectory cho thấy Agent liên tục đi tới lui mà không xác nhận trạng thái cuối.
+Báo cáo ban đầu ghi lại kết quả chạy một lần cho mỗi trong 116 tác vụ, với tỉ lệ thành công tổng thể khoảng 88%. Nhưng các thất bại không rải rác lẻ tẻ: ba trong bốn tác vụ `SystemWifiTurn*` đều hỏng, và trong quỹ đạo còn lặp đi lặp lại hiện tượng điều hướng qua lại, không xác nhận được trạng thái cuối cùng. Ở đây có ít nhất hai cách giải thích: có thể Agent không biết lối vào phần cài đặt, mà cũng có thể thông tin giao diện nó nhận được là không đầy đủ.
 
 Điểm tổng 88% dễ che khuất cụm lỗi nhỏ nhưng nhất quán này. Tăng giới hạn bước cũng không giải quyết đúng vấn đề: nó có thể biến “Agent không nhìn thấy điều khiển” thành “Agent chưa đủ kiên trì”. Cách đọc đúng là đi từ chi tiết lên: tìm cụm theo nhiệm vụ và nhãn năng lực, phát lại trajectory, xác định lỗi nằm ở quan sát, suy luận, hành động hay xác minh, rồi mới chọn một biến để thay đổi. Nhóm nhiệm vụ Wi-Fi ở đây được dùng để chẩn đoán cơ chế với chi phí thấp, không phải để ước lượng hiệu năng toàn hệ thống.
 
@@ -852,8 +846,6 @@ Về mặt **môi trường hiện thân**, RoboTwin2 xây dựng nhiệm vụ v
 
 Môi trường có độ chính xác cao có thể được chuyển sang thế giới thực tốt hơn nhưng lại tốn kém về mặt tính toán. Một khía cạnh khác của độ chính xác là mức độ ngẫu nhiên hóa: ngẫu nhiên hóa vừa phải có thể cải thiện việc khái quát hóa, trong khi ngẫu nhiên hóa quá mức có thể khiến nhiệm vụ trở nên quá khó khăn. **Ngẫu nhiên hóa tên miền** là công nghệ then chốt giúp thu hẹp khoảng cách giữa mô phỏng và thực tế (khoảng cách sim-to-real): giới thiệu một loạt các thay đổi ngẫu nhiên về thông số vật lý, hình thức trực quan, nhiễu cảm biến, v.v. - giống như luyện tập cầm nắm dưới nhiều ánh sáng và góc độ khác nhau, bạn sẽ không bỏ lỡ do thay đổi ánh sáng trong môi trường thực. Trong môi trường kỹ thuật số, sim-to-real thể hiện ở sự khác biệt về kết xuất giao diện, thời gian phản hồi, v.v., có thể được giảm thiểu bằng cách đưa ra sự ngẫu nhiên về độ trễ và lỗi.
 
-Tại thời điểm này, môi trường đánh giá đã hoàn thành quá trình phát triển cuối cùng của nó: từ phòng thi để đo lường khả năng thành nơi rèn luyện trau dồi khả năng. Chương 8 sẽ giới thiệu cách AWorld-train biến loại môi trường mô phỏng này thành địa điểm đào tạo, cũng như những thách thức kỹ thuật liên quan - hệ thống đánh giá và môi trường mô phỏng được thiết lập trong chương này là hai nền tảng của quá trình post-training.
-
 [^re-bench-2025]: Wijk, Hjalmar, et al. *RE-Bench: Evaluating Frontier AI R&D Capabilities of Language Model Agents against Human Experts.* arXiv:2411.15114, 2025.
 
 ## Tóm tắt chương này
@@ -862,11 +854,11 @@ Chương này xoay quanh một câu hỏi: làm sao biết Agent thực sự đ�
 
 Xét theo cấu trúc toàn sách, chương này dựng đoạn **chứng cứ** trong vòng lặp khám phá của Chương 1: quy trách nhiệm thất bại quyết định các đề xuất về sau có chỗ vững chắc để dựa vào hay không.
 
+Đánh giá biên trên tiền tố quỹ đạo còn cho thấy thêm rằng **lấy được một mẩu thông tin và dùng nó đúng cách cho quyết định hiện tại là hai năng lực khác nhau**: hồi quy đầu-cuối bảo đảm các tác vụ cơ bản không suy giảm, còn tập biên theo trajectory prefix thì kiểm tra trực tiếp việc phán đoán phạm vi, việc chỉ dẫn hiện tại ghi đè, việc hỏi làm rõ và việc xác nhận trước hành động nguy hiểm. Bộ nhớ người dùng chỉ là một trường hợp của phương pháp tổng quát này. Đánh giá Agent cấp sản xuất không phải kỳ thi thi thoảng mới tổ chức, mà là một hệ thống kiểm chứng liên tục sinh ra tác vụ hồi quy và tác vụ biên từ những ca vấn đề thực.
+
 Phương pháp cốt lõi: quan sát → giả thuyết → thử nghiệm → xác minh → hiểu biết mới → giả thuyết mới, khiến dự án Agent chuyển từ “giả kim thuật” dựa trên kinh nghiệm sang kỹ thuật khoa học dựa trên dữ liệu.
 
 Hệ thống đánh giá được giới thiệu trong chương này tạo thành một vòng khép kín hoàn chỉnh: **Môi trường đánh giá** cung cấp cơ sở hạ tầng kiểm thử tự động → **Bộ dữ liệu đánh giá** xác định các trường hợp kiểm thử → **Phương pháp đánh giá tự động**(LLM-as-a-Judge và Rubric) cho điểm hiệu suất Agent → **Phân tích điểm chuẩn** cho thấy hướng cải tiến → **Cải tiến hệ thống** Khắc phục sự cố → Cập nhật môi trường đánh giá và bộ dữ liệu để bắt đầu một lần lặp mới.
-
-Từ góc độ kỹ thuật Harness được giới thiệu trong Chương 1, phương pháp đánh giá trong chương này là việc triển khai có hệ thống chức năng "xác minh" trong Harness và vòng khép kín "từ báo cáo Điểm chuẩn đến cải tiến hệ thống" là cơ chế cốt lõi của tối ưu hóa lặp lại Harness - việc đánh giá không chỉ đo lường khả năng hiện tại của Agent mà còn định hướng hướng phát triển liên tục của Harness.
 
 Hệ thống đánh giá được thiết lập trong chương này không chỉ phục vụ việc tối ưu hóa hệ thống hiện tại mà còn cung cấp nền tảng chính cho mô hình post-training trong chương tiếp theo - môi trường đánh giá và tập dữ liệu là đầu vào quan trọng cho post-training và môi trường mô phỏng là nền tảng thực hành cho post-training. Chương tiếp theo sẽ chuyển từ đánh giá sang cải tiến ở cấp độ mô hình, đi sâu vào cách viết chiến lược tương tác vào tham số mô hình thông qua SFT và RL.
 
