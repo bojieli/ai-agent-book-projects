@@ -205,8 +205,6 @@ Không khó để nhận thấy rằng mặc dù toàn bộ cơ chế "khai báo
 
 ### Kỹ năng: Biến việc khám phá công cụ thành “truy cập theo yêu cầu”
 
-**Phơi bày tiệm tiến.** Khi khởi động, Agent chỉ thấy một mục lục mỏng gồm `name` và `description` của từng Skill, rồi chỉ đọc sub-Skill cùng các tệp được tham chiếu khi ngữ cảnh hiện tại thực sự cần—giống như tra một cuốn cẩm nang hay Wikipedia chỉ ở đúng mục mình cần. Sở dĩ Skill nhẹ công chăm sóc chính là vì tầng bậc này vốn đã được dựng sẵn bên trong.
-
 Một trong những ý tưởng phổ biến gần đây đến từ cơ chế Kỹ năng. Chương 2 đã giới thiệu Công bố Kỹ năng Tiến bộ từ góc độ Context Engineering (kỹ thuật ngữ cảnh); ở đây, từ một góc độ khác, hãy coi nó như một mô hình khám phá công cụ - điểm khác biệt lớn nhất so với phần trước là nó không còn yêu cầu cơ sở hạ tầng "chỉ mục nhúng + khớp ngữ nghĩa" nữa.
 
 **Không phơi hết một lượt, mà tra từng tầng.** Những giao thức như MCP có xu hướng bày toàn bộ schema của công cụ ra trước mặt mô hình cùng một lúc (hoặc tiêm hết, hoặc dựa vào sàng lọc trước để chọn ra một nhóm). Skill thì ngược lại: khi khởi động, Agent chỉ thấy một mục lục mỏng—`name` và `description` của từng skill, tổng cộng vài trăm token. Chỉ khi **ngữ cảnh hiện tại** thực sự cần đến một năng lực nào đó, mô hình mới đọc sub-skill tương ứng, rồi lần theo các tham chiếu bên trong xuống thêm một tầng nữa để đọc script hoặc tài liệu con cụ thể.
@@ -223,9 +221,7 @@ Tất cả những điều trên đều là vấn đề chung của mọi công 
 
 ## Công cụ nhận thức
 
-Các công cụ nhận thức là kênh chính để Agent thu thập thông tin bên ngoài.
-
-Để thiết kế một hệ thống công cụ nhận thức xuất sắc đòi hỏi phải có sự cân bằng cẩn thận ở nhiều khía cạnh như mức độ chi tiết, tổ chức và định dạng đầu ra.
+Công cụ nhận thức là kênh chính để Agent thu nhận thông tin bên ngoài, và việc thiết kế chúng đòi hỏi cân nhắc kỹ trên nhiều chiều: độ hạt, cách tổ chức và định dạng đầu ra.
 
 Các công cụ nhận biết thường phải đối mặt với thách thức trả về nhiều thông tin hơn Agent có thể xử lý: một tìm kiếm có thể trả về hàng chục nghìn ký tự và PDF có thể dài hàng trăm trang và việc nhồi nhét ngữ cảnh trực tiếp sẽ làm cạn kiệt không gian cửa sổ và nhấn chìm nội dung chính trong tiếng ồn. Phản hồi phổ biến là tích hợp **Nén nhận biết ngữ cảnh** được giới thiệu trong Chương 2 ở cấp công cụ - khi đầu ra vượt quá ngưỡng (chẳng hạn như 10.000 ký tự), nó sẽ tự động được nén dựa trên mục đích truy vấn hiện tại của Agent (nguyên tắc và hiệu ứng nén của nó được trình bày chi tiết trong Chương 2 và sẽ không được mở rộng ở đây). Ngoài cơ chế chung này, một số loại công cụ nhận thức phổ biến cũng có những vấn đề về thiết kế độc đáo của riêng chúng.
 
@@ -255,15 +251,19 @@ Các công cụ nhận biết thường phải đối mặt với thách thức 
 
 #### Xử lý đa phương tiện nguyên bản
 
-Xử lý gốc có trần năng lực cao nhất; các bộ mã hóa như Vision Transformer ánh xạ nhiều loại dữ liệu vào không gian ngữ nghĩa chung.
+**Xử lý đa phương thức nguyên bản** là hướng kỹ thuật có trần năng lực cao nhất. Đột phá kỹ thuật cốt lõi của nó nằm ở chỗ dùng những bộ mã hóa chuyên biệt để ánh xạ mọi loại dữ liệu vào cùng một không gian ngữ nghĩa nhiều chiều. Lấy hình ảnh làm ví dụ, các mô hình đa phương thức có kiến trúc công khai (như Qwen-VL, LLaVA) thường tích hợp bộ mã hóa thị giác dựa trên **Vision Transformer** (ViT). Cụ thể, ViT cắt ảnh thành các mảnh (patch) có kích thước cố định và, hệt như xử lý từ trong câu, tuần tự hóa mỗi mảnh thành một vector cùng tồn tại với vector từ của văn bản trong một không gian nhúng đa phương thức dùng chung. Cơ chế tự chú ý của Transformer đối xử bình đẳng với token văn bản và token hình ảnh, và có thể tính mọi liên hệ xuyên phương thức. Ở mô hình hỗ trợ đa phương thức nguyên bản, mô hình có thể trực tiếp "nhìn thấy" bố cục trang PDF, biểu đồ và chữ, hiểu được quan hệ không gian và ngữ nghĩa giữa hình và chữ.
 
 #### Trích xuất thành văn bản
 
-Trích xuất văn bản tiết kiệm token cho mô hình không hỗ trợ gốc và PDF nhiều chữ, nhưng làm mất bố cục, biểu đồ và hình ảnh.
+Hiện nay nhiều mô hình khá mạnh, chẳng hạn GLM 5.2 hay DeepSeek V4 Flash, không hỗ trợ xử lý đa phương thức nguyên bản. Khi ấy một cách xoay xở là **trích nội dung đa phương thức thành văn bản (Extract to Text)**. Đây là quá trình hai giai đoạn: trước hết dùng công cụ chuyên dụng (dịch vụ OCR, dịch vụ chuyển âm thanh thành chữ) biến nội dung phi văn bản thành văn bản thuần, rồi mới đưa vào mô hình ngôn ngữ.
+
+Với những tài liệu PDF mà văn bản chiếm phần lớn nội dung, cách trích thành văn bản thường tiết kiệm token hơn cách xử lý đa phương thức nguyên bản qua việc chuyển thành ảnh. Ảnh chụp một trang PDF thường cần tới hàng nghìn token, trong khi chữ trên chính trang ấy thường chỉ vài trăm token. Nhưng cái giá của việc trích thành văn bản là mất mát thông tin: toàn bộ bố cục, biểu đồ và hình ảnh đều bị bỏ đi trong quá trình trích.
 
 #### Phân tích đa phương tiện dựa trên công cụ
 
-Nếu mô hình chính không đa phương thức, các công cụ như `analyze_image`, `analyze_pdf`, `analyze_audio` có thể gửi tệp và câu hỏi tới mô hình chuyên dụng rồi chỉ giữ kết quả ngắn trong ngữ cảnh.
+Khi mô hình chính của Agent không hỗ trợ đa phương thức, **biến phân tích đa phương thức thành công cụ** là cách tốt hơn so với trích thành văn bản. Cách này trao cho Agent những công cụ có thể phân tích sâu tệp gốc (`analyze_image`, `analyze_pdf`, `analyze_audio`); công cụ nhận tham số là một tệp đa phương thức và một câu hỏi bằng ngôn ngữ tự nhiên, rồi trả về kết quả phân tích cũng được diễn đạt bằng ngôn ngữ tự nhiên. Bên trong có thể hiện thực bằng mô hình đa phương thức, mà mô hình ấy không nhất thiết phải có năng lực Agent mạnh, nhờ đó không gian lựa chọn kỹ thuật rộng hơn.
+
+So với phương án xử lý đa phương thức nguyên bản, phân tích đa phương thức dạng công cụ chỉ giữ lại trong ngữ cảnh câu hỏi ngắn và kết quả phân tích, nhờ đó tránh được cảnh lượng token khổng lồ của dữ liệu đa phương thức (ảnh, video, v.v.) chiếm hết ngữ cảnh.
 
 > **Thử nghiệm 4-3 ★★: Trích xuất thông tin đa phương thức — phân tích so sánh ba mô thức kỹ thuật**
 >
@@ -301,7 +301,7 @@ Cơ chế thứ hai là **xác minh sau thực tế**: sau khi hoạt động ho
 
 **Cơ chế Sidecar: xác minh bảo mật song song với suy nghĩ chính.**
 
-Cơ chế người đề xuất-đánh giá giải quyết vấn đề "phê duyệt trước khi hoạt động được thực hiện hoặc xác minh sau khi hoạt động hoàn tất", trong khi **Cơ chế Sidecar** giải quyết một vấn đề khác: "cách xác minh tính bảo mật và độ tin cậy trong thời gian thực khi hoạt động được thực thi". Nó có thể được coi là một hình thức triển khai cụ thể của chức năng "xác minh" trong khung Harness ở Chương 1, sẽ được phát triển đầy đủ trong phần này.
+Cơ chế Người đề xuất—Người thẩm định giải quyết vấn đề "phê duyệt trước khi thao tác được thực thi hoặc kiểm chứng sau khi thao tác hoàn tất", còn **cơ chế Sidecar** giải quyết một vấn đề khác: "làm sao kiểm định an toàn và độ tin cậy theo thời gian thực ngay lúc thao tác đang chạy".
 
 Auto Mode của Claude Code là một ca tiêu biểu: khi mô hình chính quyết định thực thi một lần gọi công cụ, một lần gọi LLM nhẹ và độc lập được kích hoạt để phán đoán "lần gọi công cụ này có an toàn không". Mô-đun kiểm tra an toàn chạy rẽ nhánh này đánh giá rủi ro độc lập trước mỗi lần gọi công cụ, đồng thời cố không làm chậm nhịp suy nghĩ của Agent chính. Tên Sidecar lấy từ mẫu sidecar trong kiến trúc microservices: như chiếc thùng gắn bên hông xe máy, nó chạy độc lập nhưng song song với thân chính. Sidecar là một mẫu gọi LLM nhẹ đi kèm vòng lặp suy nghĩ của Agent chính; nó không soát đầu ra cuối cùng mà phán đoán độc lập về **hành vi** của Agent.
 
@@ -311,9 +311,11 @@ Mối đe dọa chính ở đây vẫn là **prompt injection**(đã được gi
 
 Bạn đọc có thể hỏi: Tôi vừa nhấn mạnh ở bài trước rằng “việc đánh giá lẫn nhau các mô hình có sự khác biệt quá lớn về năng lực là không đáng tin cậy”, tại sao ở đây lại sử dụng các mô hình nhẹ để đánh giá? Điều quan trọng là các đối tượng đánh giá là khác nhau - người đề xuất-người đánh giá xem xét tư duy mở và người đánh giá phải theo kịp suy nghĩ của người đánh giá, vì vậy cần có một mô hình có khả năng tương tự; Sidecar xác định vấn đề phân loại trên dữ liệu có cấu trúc (liệu lệnh này có vượt qua ranh giới hay không), độ phức tạp của nhiệm vụ thấp hơn nhiều và mô hình nhẹ là đủ.
 
-Sidecar và cơ chế người đề xuất-đánh giá đều đưa ra góc nhìn thứ hai, nhưng đối tượng đánh giá và thời gian thực hiện của chúng là khác nhau. Bảng 4-2 so sánh những khác biệt chính giữa hai cơ chế.
+Đối với Sidecar bảo mật, cũng cần trang bị **bộ ngắt mạch từ chối**: khi bộ phân loại từ chối các hoạt động nhiều lần liên tiếp, hệ thống không nên thử lại vô thời hạn (điều này sẽ lãng phí tài nguyên và cũng có thể đưa người dùng vào một vòng lặp vô hạn), mà sẽ chuyển sang yêu cầu người dùng đánh giá thủ công. Đây là một ví dụ điển hình về chức năng “sửa” của Harness ở Chương 1.
 
 **Làm cho việc kiểm tra an toàn "vô hình" ở tầng trải nghiệm người dùng.** Kiểm tra an toàn có thể làm tăng độ trễ. Một cách cải thiện trải nghiệm là tách "hiển thị" khỏi "cho qua" và chạy song song: khi Agent chuẩn bị thực thi một lần gọi công cụ, giao diện hiển thị trước gợi ý tiến trình ("Đang đọc `src/main.py`...") trong khi việc kiểm tra an toàn chạy ở nền. Đây là đỉnh cao của thiết kế Harness: an toàn mà không đánh đổi bằng trải nghiệm người dùng.
+
+Sidecar và cơ chế người đề xuất-đánh giá đều đưa ra góc nhìn thứ hai, nhưng đối tượng đánh giá và thời gian thực hiện của chúng là khác nhau. Bảng 4-2 so sánh những khác biệt chính giữa hai cơ chế.
 
 Bảng 4-2 So sánh cơ chế người đề xuất-đánh giá và cơ chế sidecar
 
@@ -326,8 +328,6 @@ Bảng 4-2 So sánh cơ chế người đề xuất-đánh giá và cơ chế si
 |**Cách sử dụng điển hình**| Phê duyệt hoạt động không thể đảo ngược, tạo tài liệu, sửa đổi cấu hình | Phân loại quyền, đánh giá mức độ liên quan của bộ nhớ, tóm tắt đầu ra công cụ |
 
 Một ứng dụng điển hình khác của mẫu Sidecar là **làm giàu ngữ cảnh**: trong khi mô hình chính đang suy nghĩ, các lệnh gọi kênh bên sẽ song song sàng lọc mức độ liên quan của bộ nhớ của người dùng, tóm tắt đầu ra công cụ lớn và dự đoán các quyền có thể được yêu cầu - những kết quả này sẵn sàng khi mô hình chính cần chúng và người dùng không gặp phải sự chậm trễ bổ sung.
-
-Đối với Sidecar bảo mật, cũng cần trang bị **bộ ngắt mạch từ chối**: khi bộ phân loại từ chối các hoạt động nhiều lần liên tiếp, hệ thống không nên thử lại vô thời hạn (điều này sẽ lãng phí tài nguyên và cũng có thể đưa người dùng vào một vòng lặp vô hạn), mà sẽ chuyển sang yêu cầu người dùng đánh giá thủ công. Đây là một ví dụ điển hình về chức năng “sửa” của Harness ở Chương 1.
 
 **Vòng khép kín xác minh và phản hồi tự động.**
 
@@ -369,7 +369,7 @@ Các công cụ thực thi thay đổi thế giới bên ngoài, do đó, chúng
 
 Cốt lõi của việc xử lý nó là tính lũy đẳng: cùng một thao tác được thực hiện một lần và được thực hiện nhiều lần có tác động giống hệt nhau đến thế giới bên ngoài, vì vậy nó có thể được thử lại một cách an toàn. Có hai phương pháp thường được sử dụng trong thiết kế: một là làm cho thao tác mang một **mã định danh duy nhất**(chẳng hạn như idempotency key do máy khách tạo ra) và máy chủ sử dụng phương pháp này để loại bỏ trùng lặp và các yêu cầu lặp lại sẽ trực tiếp trả về kết quả đầu tiên thay vì thực hiện lại; cách còn lại là **truy vấn trước rồi thay đổi** - trước khi thử lại, trước tiên hãy truy vấn trạng thái hiện tại của tài nguyên đích (lệnh đã được tạo chưa, tệp đã được ghi chưa) và xác nhận rằng nó chưa được hoàn thành trước khi thực thi. Các hoạt động có tính lũy đẳng giúp việc xử lý thời gian chờ và gián đoạn trở nên đơn giản hơn nhiều.
 
-Nhưng không phải tất cả các hoạt động có thể được thực hiện bình thường. **Gửi email, gọi điện thoại và chuyển khoản ra bên ngoài** các hoạt động tạo ra một sự kiện trong thế giới thực không thể hủy ngang mỗi khi chúng được thực thi và máy chủ thường không nằm dưới sự kiểm soát của chính nó và không thể dựa vào số nhận dạng duy nhất để loại bỏ sự trùng lặp. Đối với loại hoạt động này, nên áp dụng phương pháp hai giai đoạn "tiền kiểm - xác nhận": giai đoạn đầu tiên dùng một mô hình thuộc họ mô hình khác cùng với prompt kiểm tra an toàn chuyên dụng để xác minh (kiểm tra số dư, xác nhận người nhận thanh toán và tạo nội dung cần gửi); đến giai đoạn thứ hai mới thực sự thực thi. Nếu giai đoạn thực thi thất bại, không được thử lại một cách mù quáng mà phải trả thông tin lỗi chi tiết về mô hình chính của Agent để lập kế hoạch lại. Điều này phù hợp với ý tưởng về sự phê duyệt trước của người đề xuất-đánh giá trong bài viết trước và việc tách "bắt đầu/hoàn thành" giao diện công cụ không đồng bộ sau này.
+Nhưng không phải thao tác nào cũng làm cho lũy đẳng được. Những thao tác như **gửi email, gọi điện thoại, chuyển tiền ra ngoài** cứ mỗi lần chạy là sinh ra một sự kiện không thể thu hồi trong thế giới thực. Với loại thao tác này nên dùng cách hai đoạn **"tiền kiểm—xác nhận"**: đoạn thứ nhất dùng một mô hình thuộc họ mô hình khác cùng prompt kiểm tra an toàn chuyên dụng để thẩm định, chẳng hạn kiểm tra số dư, xác nhận người nhận, sinh nội dung sắp gửi; đoạn thứ hai mới thực sự thực thi. Nếu giai đoạn thực thi thất bại thì không được thử lại một cách mù quáng, mà phải trả thông tin lỗi chi tiết về cho mô hình chính của Agent để lập kế hoạch lại.
 
 > **Thử nghiệm 4-4 ★★: Công cụ thực thi máy chủ MCP**
 >
@@ -400,7 +400,7 @@ Giá trị cốt lõi của Agent nằm ở **phân công lao động chuyên bi
 
 **Ranh giới nhiệm vụ phải được xác định rõ ràng**. Điều gì nằm trong phạm vi trách nhiệm và điều gì cần được chuyển giao hoặc báo cáo lên cấp trên.
 
-**Định dạng đầu ra phải được chuẩn hóa**. Cấu trúc JSON hợp nhất giúp giảm gánh nặng phân tích cú pháp của Agent chính và cũng giúp việc xử lý lỗi trở nên đáng tin cậy hơn.
+**Định dạng đầu ra phải được chuẩn hóa.** Dù dùng JSON hay Markdown, định dạng đầu ra của Agent con đều phải được nêu rõ trong prompt. Điều đó bảo đảm Agent con cân nhắc đủ mọi khía cạnh cần cân nhắc, giảm gánh nặng phân tích cho Agent chính, và làm cho việc xử lý lỗi đáng tin cậy hơn.
 
 **Cơ chế cộng tác giữa Agent.**
 
@@ -414,7 +414,7 @@ Bất chấp khả năng ngày càng tăng của AI Agent, sự can thiệp củ
 
 **Chính sách hết thời gian và hạ cấp**. HITL (Human-In-The-Loop, con người trong vòng lặp, tức là thêm đánh giá của con người vào quy trình ra quyết định đối với các yêu cầu Agent) có thể không nhận được phản hồi ngay lập tức. Vì vậy, bạn cần đặt ngưỡng thời gian chờ và hành vi mặc định: "Nếu không có phản hồi trong vòng 5 phút, hãy áp dụng chiến lược thận trọng." Cũng cần đưa ra hàng đợi ưu tiên: “Các yêu cầu khẩn cấp được thông báo qua nhiều kênh, còn các yêu cầu thông thường chỉ được gửi qua email”.
 
-**Thiết lập vòng phản hồi**. HITL không phải là tương tác một lần mà tạo thành một chu trình học tập. Để ghi lại các phán đoán chấp thuận/từ chối của con người và lý do của chúng, mô hình học tập được giới thiệu trong Chương 1 có thể được sử dụng một cách toàn diện (xem Chương 9 để biết chi tiết): **Post-training** xây dựng dữ liệu HITL dưới dạng bộ dữ liệu học tập có giám sát để cho phép mô hình tiếp thu mô hình ra quyết định; **External Learning (học bên ngoài tham số mô hình)** lưu trữ các trường hợp quyết định ở dạng có cấu trúc trong cơ sở kiến thức và Agent truy xuất các trường hợp tương tự để hỗ trợ phán đoán khi phải đối mặt với các quyết định mới. Ưu điểm của cái sau là khả năng diễn giải - Agent có thể trích dẫn "Dựa trên các quyết định dựa trên các tình huống tương tự (ID trường hợp 123), chúng tôi khuyến nghị rằng...".
+**Thiết lập vòng phản hồi**. HITL không nên là một tương tác dùng một lần, mà phải tạo thành vòng học tập. Việc con người chấp thuận, từ chối, cùng lý do của họ, trước hết tạo thành dữ liệu phản hồi có kèm bằng chứng: những nguyên tắc phán đoán quy nạp được thì có thể đi vào cơ sở tri thức hoặc Skill, còn những sở thích nhiều chiều và hàm ẩn thì có thể trở thành dữ liệu hậu huấn luyện. Chương 9 sẽ bàn cách đánh giá loại quỹ đạo này và chọn vật mang cho bản cập nhật.
 
 > **Thử nghiệm 4-5 ★★: Công cụ cộng tác Máy chủ MCP**
 >
@@ -433,7 +433,7 @@ Bất chấp khả năng ngày càng tăng của AI Agent, sự can thiệp củ
 
 ## Tóm tắt chương này
 
-Kết luận cốt lõi của chương này là: chất lượng thiết kế công cụ xác định giới hạn trên về khả năng của Agent. Quyết định đầu tiên là thể hiện năng lực dưới dạng nào—mặc định nghiêng về phía đa năng, và chỉ quay lại công cụ chuyên dụng trong bốn trường hợp: bảo mật và quyền, tham số phức tạp, tần suất sử dụng cực cao, và khác biệt giữa các nền tảng. Quyết định đó độc lập với «mỗi lần cho mô hình thấy bao nhiêu năng lực»: cái trước định chi phí thường trú của từng năng lực, cái sau định có bao nhiêu năng lực được phơi bày cùng lúc.
+Thiết kế công cụ quyết định trần năng lực của Agent. Quyết định đầu tiên là năng lực được biểu đạt dưới hình thức nào: mặc định hãy nghiêng về đầu tổng quát, và chỉ lui về công cụ chuyên dụng trong bốn trường hợp — an toàn và quyền hạn, độ phức tạp của tham số, tần suất dùng cực cao, và khác biệt nền tảng. Đây là quyết định độc lập với chuyện "mỗi lần cho mô hình nhìn thấy bao nhiêu năng lực": cái trước ấn định chi phí thường trú của từng năng lực, cái sau ấn định số lượng phơi ra cùng lúc. Năng lực được phân phối qua hai kênh: giao thức MCP thống nhất cách kết nối các công cụ chuyên dụng, còn Skill Hub dùng trình quản lý gói để phát hành `SKILL.md`. Cả hai kênh đều nén chi phí đưa vào một năng lực xuống còn một câu lệnh, và cả hai cũng đều nới rộng ranh giới tin cậy; vì vậy phải rà soát mô tả và phiên bản, cách ly chứng chỉ, và bảo đảm tham số mà mô hình nhìn thấy trùng khớp với tham số mà công cụ thực sự chạy. Khi số công cụ tăng lên hàng trăm hàng nghìn, tổ chức phân tầng, nạp theo nhu cầu, khám phá chủ động và Skills lần lượt tiếp quản, biến câu hỏi "chọn công cụ nào" thành "tra tài liệu nào".
 
 Chương này triển khai ba trong năm loại công cụ — những loại mà Agent chủ động gọi:
 

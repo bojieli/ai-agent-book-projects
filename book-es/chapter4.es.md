@@ -114,7 +114,7 @@ MCP adopta una arquitectura cliente-servidor: los **servidores MCP (MCP Servers)
 
 El valor del ecosistema MCP radica en **desarrollar una vez, usar en todas partes**. Un servidor MCP puede ser utilizado simultáneamente por cualquier cliente compatible como Cursor, Claude Desktop o OpenClaw, sin que los desarrolladores de herramientas tengan que preocuparse por las diferencias entre los frameworks de Agentes de nivel superior. MCP ha sido adoptado por múltiples frameworks e IDEs principales, convirtiéndose en un estándar importante para la interoperabilidad de herramientas. Todos los experimentos de este capítulo se construyen sobre el protocolo MCP.
 
-**Otra manera de distribuir capacidades: los Skill Hubs**. MCP unificó la forma de conectar un mecanismo de distribución: el de las **herramientas dedicadas**. El lado de las Skills no necesita protocolo: una skill no es más que una carpeta que contiene un `SKILL.md`, de modo que su mecanismo de distribución es un **registro** (registry) y no un protocolo. skills.sh, lanzado por Vercel en enero de 2026, es uno de los más influyentes: se instala con un único comando `npx skills add <owner>/<repo>`[^ch4-skills-sh]. El ecosistema de OpenClaw tiene su propio ClawHub[^ch4-clawhub].
+**Otra manera de distribuir capacidades: los Skill Hubs**. Lo que MCP unificó fue la forma de conectarse de un único mecanismo de distribución: el de las **herramientas dedicadas**. El lado de las Skills no necesita protocolo: una skill no es más que una carpeta que contiene un `SKILL.md`, de modo que su mecanismo de distribución es un **registro** (registry) y no un protocolo. skills.sh, que Vercel puso en marcha en enero de 2026, es uno de los de mayor influencia: basta una orden `npx skills add <owner>/<repo>` para instalar[^ch4-skills-sh]. El ecosistema de OpenClaw tiene su propio ClawHub[^ch4-clawhub].
 
 [^ch4-skills-sh]: Vercel, «Introducing skills, the open agent skills ecosystem», 2026-01-20. https://vercel.com/changelog/introducing-skills-the-open-agent-skills-ecosystem; catálogo y ranking en https://skills.sh
 [^ch4-clawhub]: ClawHub https://clawhub.ai/
@@ -200,8 +200,6 @@ Se observa fácilmente que todo este mecanismo de "declaración activa -> coinci
 
 ### Skills: Convirtiendo el descubrimiento en "consulta bajo demanda"
 
-**Divulgación progresiva.** Al iniciar, una Skill solo muestra un catálogo ligero con su `name` y `description`; el Agente lee la sub-Skill y sus referencias únicamente cuando el contexto lo necesita, como quien consulta un manual o Wikipedia. Que las Skills resulten tan poco costosas de mantener se debe precisamente a que esa jerarquía viene incorporada de fábrica.
-
 Una idea más popular recientemente proviene del mecanismo de Skills. El Capítulo 2 presentó la **revelación progresiva (Progressive Disclosure)** de las Skills desde la perspectiva de la ingeniería de contexto; aquí cambiamos de ángulo para considerarlo como un paradigma de descubrimiento de herramientas, cuya diferencia principal con la sección anterior radica en que ya no requiere la infraestructura de "índice de embeddings + coincidencia semántica".
 
 **No todo de golpe, sino capa a capa.** Protocolos como MCP tienden a poner ante el modelo el schema completo de la herramienta de una sola vez (ya sea inyectándolo todo o preseleccionando un grupo mediante recuperación). Las Skills hacen lo contrario: al arrancar, el Agente ve solo un índice delgado —el `name` y la `description` de cada skill, unos pocos cientos de tokens en total—. Solo cuando el **contexto actual** requiere realmente una capacidad, el modelo lee la sub-skill correspondiente y, siguiendo sus referencias, baja otra capa hasta los scripts o documentos concretos.
@@ -218,9 +216,7 @@ Todo lo anterior son problemas comunes a cualquier herramienta: qué forma darle
 
 ## Herramientas de percepción
 
-Las herramientas de percepción son el canal principal para que el Agente obtenga información externa.
-
-Diseñar un excelente sistema de herramientas de percepción requiere sopesar cuidadosamente múltiples dimensiones como la granularidad, la forma de organización y el formato de salida.
+Las herramientas de percepción son el canal principal por el que el Agente obtiene información externa, y su diseño exige sopesar con cuidado varias dimensiones: la granularidad, la forma de organización y el formato de salida.
 
 Las herramientas de percepción enfrentan a menudo el desafío de que la cantidad de información devuelta supera con creces la capacidad de procesamiento del Agente: una sola búsqueda puede devolver decenas de miles de caracteres, y un documento PDF puede tener más de cien páginas. Introducir todo directamente en el contexto agota el espacio de la ventana y hace que el contenido clave se ahogue en el ruido. La respuesta general consiste en integrar a nivel de herramienta la **compresión consciente del contexto** introducida en el Capítulo 2: cuando la salida supera un umbral (por ejemplo, 10,000 caracteres), se comprime automáticamente en función de la intención de consulta actual del Agente (cuyo principio y efectos de compresión se detallaron en el Capítulo 2 y no se reiteran aquí). Además de este mecanismo general, varias categorías comunes de herramientas de percepción tienen sus propios problemas de diseño específicos.
 
@@ -250,15 +246,19 @@ Para comprender imágenes, vídeo, audio y PDF, un Agente necesita percepción m
 
 #### Procesamiento multimodal nativo
 
-El procesamiento nativo ofrece el techo de capacidad más alto: codificadores como el Vision Transformer asignan cada tipo de dato a un espacio semántico común.
+**El procesamiento multimodal nativo** es la vía técnica con el techo de capacidad más alto. Su avance técnico central consiste en usar codificadores especializados para proyectar datos de tipos distintos a un mismo espacio semántico de alta dimensión. En el caso de las imágenes, los modelos multimodales de arquitectura pública (como Qwen-VL o LLaVA) suelen integrar un codificador visual basado en **Vision Transformer** (ViT). En concreto, ViT divide la imagen en parches (patches) de tamaño fijo y, igual que se procesan las palabras de una frase, serializa cada parche como un vector que convive con los vectores de palabras en un espacio de incrustación multimodal compartido. El mecanismo de autoatención del Transformer trata por igual los tokens de texto y de imagen y puede calcular cualquier correlación intermodal. En un modelo con soporte multimodal nativo, el modelo puede «ver» directamente la maquetación de la página del PDF, los diagramas y el texto, y comprende las relaciones espaciales y semánticas entre imagen y texto.
 
 #### Extracción a texto
 
-La extracción de texto es una alternativa para modelos sin soporte nativo y suele ahorrar tokens en PDF dominados por texto, aunque pierde diseño, gráficos e imágenes.
+Hoy muchos modelos de buena capacidad, como GLM 5.2 o DeepSeek V4 Flash, no admiten procesamiento multimodal nativo. Una vía alternativa en ese caso es **extraer a texto (Extract to Text)** el contenido multimodal. Es un proceso en dos etapas: primero una herramienta especializada (un servicio de OCR, un servicio de transcripción de audio) convierte el contenido no textual en texto plano, y después ese texto se entrega al modelo de lenguaje.
+
+Para documentos PDF y similares, en los que el texto constituye el grueso del contenido, extraer a texto suele ahorrar más tokens que el procesamiento multimodal nativo por conversión a imagen. Una captura de una página de PDF exige a menudo más de mil tokens, mientras que el texto de esa misma página suele ocupar solo unos cientos. Pero la extracción a texto tiene su precio: la pérdida de información. Toda la maquetación, los diagramas y las imágenes se descartan durante la extracción.
 
 #### Análisis multimodal basado en herramientas
 
-Cuando el modelo principal no es multimodal, herramientas como `analyze_image`, `analyze_pdf` y `analyze_audio` pueden enviar el archivo y una pregunta a un modelo especializado y devolver una descripción breve, evitando que los datos multimodales ocupen el contexto.
+Cuando el modelo principal del Agente no admite multimodalidad, **convertir el análisis multimodal en una herramienta** es mejor solución que extraer a texto. Se dota al Agente de herramientas capaces de analizar en profundidad el archivo original (`analyze_image`, `analyze_pdf`, `analyze_audio`); la herramienta recibe como parámetros un archivo multimodal y una pregunta en lenguaje natural, y devuelve el resultado del análisis descrito también en lenguaje natural. Internamente puede implementarse con un modelo multimodal que no necesita grandes capacidades de Agente, lo que amplía el margen de elección técnica.
+
+Frente al procesamiento multimodal nativo, el análisis multimodal como herramienta solo conserva en el contexto la pregunta breve y el resultado del análisis, con lo que evita que la enorme cantidad de tokens de los datos multimodales (imágenes, vídeos, etc.) ocupe el contexto.
 
 > **Experimento 4-3 ★★: extracción de información multimodal: análisis comparativo de tres paradigmas técnicos**
 >
@@ -268,7 +268,7 @@ Cuando el modelo principal no es multimodal, herramientas como `analyze_image`, 
 
 ## Herramientas de ejecución
 
-Si las herramientas de percepción son los "sentidos" del Agente, las herramientas de ejecución son sus "manos y pies". Sin embargo, a diferencia de las herramientas de percepción, el costo de los errores en las herramientas de ejecución puede ser extremadamente alto: los archivos eliminados por error no se pueden recuperar, comandos de sistema incorrectos pueden causar interrupciones en el servicio y llamadas a API indebidas pueden generar pérdidas financieras reales. Por lo tanto, el diseño de las herramientas de ejecución requiere lograr un sutil equilibrio entre la **apertura de capacidades** y las **restricciones de seguridad**.
+El coste de un error en una herramienta de ejecución puede ser altísimo: un archivo borrado por error no se recupera, una orden de sistema equivocada puede interrumpir el servicio, y una llamada a una API indebida puede provocar pérdidas económicas reales. Por eso el diseño de estas herramientas exige un equilibrio delicado entre la **apertura de capacidades** y las **restricciones de seguridad**.
 
 **Diseño en capas de los mecanismos de seguridad.**
 
@@ -306,9 +306,11 @@ La amenaza clave aquí sigue siendo la **inyección de prompts** (discutida en l
 
 El lector podría preguntarse: habiendo enfatizado antes que "la revisión mutua entre modelos con gran diferencia de capacidad no es confiable", ¿por qué se utiliza aquí un modelo ligero para la revisión? La clave reside en que el objeto de revisión es distinto: Proposer-Reviewer revisa pensamientos abiertos, donde el revisor debe seguir el hilo del revisado, requiriendo modelos de capacidad similar; mientras que Sidecar juzga un problema de clasificación sobre datos estructurados (si esta orden sobrepasa los límites), una tarea con una complejidad mucho menor que un modelo ligero puede asumir adecuadamente.
 
-Tanto el mecanismo Sidecar como el Proposer-Reviewer introducen una segunda perspectiva, pero sus momentos de ejecución y objetos de revisión difieren. La Tabla 4-2 compara las diferencias clave entre ambos mecanismos.
+Para el Sidecar de seguridad, se requiere además un **interruptor de rechazo (circuit breaker)**: cuando el clasificador rechaza operaciones de forma consecutiva múltiples veces, el sistema no debe reintentar indefinidamente (lo que desperdiciaría recursos y podría atrapar al usuario en un bucle infinito), sino degradarse solicitando el juicio manual del usuario. Este es precisamente un ejemplo típico de la función de "corrección" del Harness del Capítulo 1.
 
 **Hacer que la comprobación de seguridad sea «invisible» en la capa de experiencia de usuario.** Las comprobaciones de seguridad añaden latencia. Una forma de mejorar la experiencia es separar «mostrar» de «dejar pasar» y ejecutarlos en paralelo: cuando el Agente va a ejecutar una llamada a herramienta, la interfaz muestra ya un indicador de progreso («Leyendo `src/main.py`...») mientras la comprobación de seguridad corre en segundo plano. Es el mayor logro del diseño del Harness: seguridad que no se paga con experiencia de usuario.
+
+Tanto el mecanismo Sidecar como el Proposer-Reviewer introducen una segunda perspectiva, pero sus momentos de ejecución y objetos de revisión difieren. La Tabla 4-2 compara las diferencias clave entre ambos mecanismos.
 
 Tabla 4-2 Comparación entre el mecanismo Proposer-Reviewer y el mecanismo Sidecar
 
@@ -321,8 +323,6 @@ Tabla 4-2 Comparación entre el mecanismo Proposer-Reviewer y el mecanismo Sidec
 | **Usos típicos** | Aprobación de operaciones irreversibles, generación de documentos, modificación de configuración | Clasificación de permisos, juicio de relevancia de memoria, resumen de salidas de herramientas |
 
 Otra aplicación típica del patrón Sidecar es el **enriquecimiento de contexto**: mientras el modelo principal piensa, llamadas secundarias en paralelo filtran la relevancia de las memorias del usuario, resumen salidas grandes de herramientas y prevén los permisos que podrían necesitarse. Estos resultados están listos cuando el modelo principal los requiere, sin que el usuario perciba latencia adicional.
-
-Para el Sidecar de seguridad, se requiere además un **interruptor de rechazo (circuit breaker)**: cuando el clasificador rechaza operaciones de forma consecutiva múltiples veces, el sistema no debe reintentar indefinidamente (lo que desperdiciaría recursos y podría atrapar al usuario en un bucle infinito), sino degradarse solicitando el juicio manual del usuario. Este es precisamente un ejemplo típico de la función de "corrección" del Harness del Capítulo 1.
 
 **Validación automática y bucle de retroalimentación.**
 
@@ -395,7 +395,7 @@ El valor central de los subagentes radica en la **división especializada del tr
 
 **Los límites de la tarea deben estar claramente delimitados**. Qué está dentro del alcance de sus responsabilidades y qué debe transferirse o escalarse.
 
-**El formato de salida debe estar estandarizado**. Una estructura JSON unificada reduce la carga de análisis del Agente principal y hace que el manejo de errores sea más confiable.
+**El formato de salida debe estar estandarizado.** Se use JSON o Markdown, el formato de salida del subagente debe quedar explícito en el prompt. Así se garantiza que el subagente contemple todos los aspectos que debe considerar, se reduce la carga de análisis del Agente principal y el tratamiento de errores resulta más fiable.
 
 **Mecanismos de colaboración entre Agentes.**
 
@@ -428,7 +428,7 @@ A pesar de que las capacidades de los Agentes de IA son cada vez más potentes, 
 
 ## Resumen del capítulo
 
-La conclusión central de este capítulo es que la calidad del diseño de las herramientas determina el límite superior de capacidad del Agente. La primera decisión es en qué forma expresar una capacidad: por defecto, inclinarse hacia el extremo genérico y volver a una herramienta dedicada solo en cuatro casos —seguridad y permisos, parámetros complejos, frecuencia de uso extremadamente alta y diferencias entre plataformas—. Esa decisión es independiente de «cuántas capacidades ve el modelo a la vez»: la primera fija el coste residente de cada capacidad y la segunda, cuántas se exponen simultáneamente.
+El diseño de las herramientas determina el techo de capacidad del Agente. La primera decisión es en qué forma se expresa una capacidad: por defecto inclínate hacia el extremo general y repliégate a una herramienta dedicada solo en los cuatro casos de seguridad y permisos, complejidad de parámetros, frecuencia de uso altísima y diferencias de plataforma; esta decisión es independiente de «cuántas capacidades ve el modelo a la vez»: la primera fija el coste permanente de cada capacidad y la segunda cuántas se exponen simultáneamente. Las capacidades se distribuyen por dos canales: el protocolo MCP unifica la conexión de las herramientas dedicadas, y Skill Hub reparte `SKILL.md` mediante un gestor de paquetes. Ambos canales han reducido a una sola orden el coste de incorporar una capacidad, y ambos amplían la frontera de confianza, así que hay que revisar descripciones y versiones, aislar las credenciales y garantizar que los parámetros que ve el modelo coincidan con los que la herramienta ejecuta realmente. Cuando las herramientas crecen a cientos o miles, la organización jerárquica, la carga bajo demanda, el descubrimiento activo y los Skills toman el relevo sucesivamente, y convierten «qué herramienta elijo» en «qué referencia consulto».
 
 Este capítulo desarrolla las tres de las cinco categorías que el Agente invoca por iniciativa propia:
 

@@ -1,68 +1,76 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 15 880 545" width="880" height="545" style="background:#ffffff">
-<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 512" width="880" height="512" style="background:#ffffff">
+<defs>
+<marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker>
+<marker id="ah-s" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 10 3.5, 0 7" fill="#666666"/></marker>
+<marker id="ah-r" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><polygon points="10 0, 0 3.5, 10 7" fill="#666666"/></marker>
+</defs>
+<style>
+.t{font-family:Arial,'Helvetica Neue',Helvetica,'PingFang SC','Microsoft YaHei',sans-serif;fill:#333333;text-anchor:middle;dominant-baseline:central}
+.l{font-family:Arial,'Helvetica Neue',Helvetica,'PingFang SC','Microsoft YaHei',sans-serif;fill:#333333;text-anchor:start;dominant-baseline:central}
+.h{font-size:17px;font-weight:bold}
+.m{font-size:14px}
+.n{font-size:12.5px;fill:#666666}
+.c{font-size:12.5px;fill:#666666;font-family:'SF Mono',Menlo,Consolas,monospace}
+</style>
 
-<rect x="20" y="70" width="220" height="230" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="130" y="93" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">用户模拟器 (LLM)</text>
-<line x1="30" y1="105" x2="230" y2="105" stroke="#999999" stroke-width="2"/>
-<text x="30" y="115" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">已知信息:</text>
-<text x="35" y="133" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">姓名: Sarah Johnson</text>
-<text x="35" y="151" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">预订: BK-98712</text>
-<text x="30" y="177" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">任务指令:</text>
-<text x="35" y="195" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;航班好像有问题&quot;</text>
-<text x="35" y="213" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">→ 渐进式透露细节</text>
-<text x="35" y="231" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">→ 不主动说出预订号</text>
-<rect x="300" y="70" width="260" height="230" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="430" y="93" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Agent (待评估)</text>
-<line x1="310" y1="105" x2="550" y2="105" stroke="#999999" stroke-width="2"/>
-<rect x="315" y="115" width="230" height="40" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="430" y="135" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">LLM 推理 + 策略选择</text>
-<text x="320" y="175" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">① 请问您的预订号？</text>
-<text x="320" y="197" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">② lookup_booking(BK-98712)</text>
-<text x="320" y="219" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">③ 航班 UA123 已取消</text>
-<text x="320" y="241" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">④ cancel_booking(BK-98712)</text>
-<text x="320" y="263" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">⑤ 退款 $150，3-5工作日</text>
-<rect x="620" y="70" width="240" height="230" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="740" y="93" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">工具 + 数据库</text>
-<line x1="630" y1="105" x2="850" y2="105" stroke="#999999" stroke-width="2"/>
-<text x="635" y="120" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">lookup_booking</text>
-<text x="780" y="120" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">查询预订详情</text>
-<text x="635" y="142" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">modify_booking</text>
-<text x="780" y="142" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">修改预订状态</text>
-<text x="635" y="164" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">cancel_booking</text>
-<text x="780" y="164" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">取消并退款</text>
-<text x="635" y="186" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">search_flights</text>
-<text x="780" y="186" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">搜索替代航班</text>
-<text x="635" y="208" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">send_notification</text>
-<text x="780" y="208" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">发送确认通知</text>
-<rect x="630" y="240" width="220" height="45" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
-<text x="640" y="255" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">DB State:</text>
-<text x="640" y="273" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">bookings, users, flights</text>
-<line x1="240" y1="150" x2="298" y2="150" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<text x="269.0" y="140.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle">对话</text>
-<line x1="300" y1="180" x2="242" y2="180" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<line x1="560" y1="155" x2="618" y2="155" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<text x="589.0" y="145.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle">工具调用</text>
-<line x1="618" y1="185" x2="560" y2="185" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<path d="M 130,68 Q 435,30 740,68" fill="none" stroke="#666666" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#ah-light)"/>
-<text x="435" y="26" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">双控环境：用户模拟器也可直接操作共享环境（工具 + 数据库）</text>
-<line x1="20" y1="320" x2="860" y2="320" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="440.0" y="345" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">任务完成后：多层验证</text>
-<rect x="40" y="365" width="260" height="170" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="170" y="388" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">DB 状态检查</text>
-<line x1="50" y1="400" x2="290" y2="400" stroke="#999999" stroke-width="2"/>
-<text x="55" y="420" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">booking.status == 'cancelled'</text>
-<text x="55" y="444" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">refund_record EXISTS</text>
-<text x="55" y="468" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">refund.amount == 150.00</text>
-<rect x="320" y="365" width="260" height="170" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="450" y="388" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">对话内容验证</text>
-<line x1="330" y1="400" x2="570" y2="400" stroke="#999999" stroke-width="2"/>
-<text x="335" y="420" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">包含 '退款' + 金额</text>
-<text x="335" y="444" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">包含 '到账时间'</text>
-<text x="335" y="468" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">未出现虚假信息</text>
-<rect x="600" y="365" width="260" height="170" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="730" y="388" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">流程合规检查</text>
-<line x1="610" y1="400" x2="850" y2="400" stroke="#999999" stroke-width="2"/>
-<text x="615" y="420" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">修改前获得用户确认</text>
-<text x="615" y="444" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">未越权操作</text>
-<text x="615" y="468" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">未过度转接人工</text>
+<!-- 用户模拟器 -->
+<rect x="40" y="20" width="270" height="86" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text class="t h" x="175" y="40">用户模拟器（LLM）</text>
+<text class="l n" x="56" y="62">known_info：John Smith / 555-123-2002 / 在法国</text>
+<text class="l n" x="56" y="80">task_instructions：渐进透露 · 情绪 · 事实锚定</text>
+<text class="l n" x="56" y="96">验收口径：仅 excellent 算解决</text>
+
+<!-- Agent -->
+<rect x="570" y="20" width="270" height="86" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text class="t h" x="705" y="40">Agent（待评估）</text>
+<text class="l n" x="586" y="62">输入：工单 + 领域政策</text>
+<text class="l n" x="586" y="80">不可见：用户设备的真实状态</text>
+<text class="l n" x="586" y="96">只能引导用户操作，无法代其执行</text>
+
+<!-- 对话 -->
+<line x1="316" y1="63" x2="560" y2="63" stroke="#666666" stroke-width="1.5" marker-end="url(#ah-s)" marker-start="url(#ah-r)"/>
+<text class="t n" x="438" y="50">多轮对话</text>
+<text class="t n" x="438" y="80">渐进式信息透露</text>
+
+<!-- 共享环境 -->
+<rect x="40" y="146" width="800" height="150" rx="6" fill="#f3f0e8" stroke="#333333" stroke-width="2"/>
+<text class="t h" x="440" y="166">共享环境（双控：两侧都能改写状态）</text>
+<rect x="60" y="182" width="370" height="98" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
+<text class="t m" x="245" y="200" font-weight="bold">设备侧状态</text>
+<text class="l n" x="76" y="222">飞行模式 ON · 数据漫游 OFF · 省流模式 · 剩余流量</text>
+<text class="l c" x="76" y="246">用户工具：toggle_airplane_mode / toggle_roaming</text>
+<text class="l c" x="76" y="266">　　　　　check_status_bar / run_speed_test</text>
+<rect x="450" y="182" width="370" height="98" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
+<text class="t m" x="635" y="200" font-weight="bold">运营商侧数据库</text>
+<text class="l n" x="466" y="222">客户 C1001 · 线路 L1001/L1002/L1003 · 套餐 · 账单</text>
+<text class="l c" x="466" y="246">Agent 工具：get_customer_by_phone / get_data_usage</text>
+<text class="l c" x="466" y="266">　　　　　　enable_roaming / refuel_data</text>
+
+<line x1="175" y1="106" x2="175" y2="178" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="705" y1="106" x2="705" y2="178" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+
+<!-- 回读提示 -->
+<rect x="40" y="306" width="800" height="34" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text class="t n" x="440" y="323">用户执行 toggle_roaming 后环境已改变，Agent 必须重新调用工具才能获知结果——验证因此覆盖 “是否读到了用户侧的操作结果”</text>
+
+<!-- 验证 -->
+<rect x="40" y="356" width="800" height="136" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text class="t h" x="440" y="376">任务结束后：四层检查 + 聚合规则</text>
+<rect x="56" y="392" width="182" height="62" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
+<text class="t m" x="147" y="408">env_assertions</text>
+<text class="t n" x="147" y="428">移动数据可用</text>
+<text class="t n" x="147" y="444">测速 ≥ 200 / excellent</text>
+<rect x="254" y="392" width="182" height="62" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
+<text class="t m" x="345" y="408">actions</text>
+<text class="t n" x="345" y="428">toggle_airplane_mode</text>
+<text class="t n" x="345" y="444">requestor 必须为 user</text>
+<rect x="452" y="392" width="182" height="62" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
+<text class="t m" x="543" y="408">communicate_info</text>
+<text class="t n" x="543" y="428">必要信息是否告知</text>
+<text class="t n" x="543" y="444">本题为 null</text>
+<rect x="650" y="392" width="182" height="62" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
+<text class="t m" x="741" y="408">nl_assertions</text>
+<text class="t n" x="741" y="428">自然语言层判定</text>
+<text class="t n" x="741" y="444">本题为 null</text>
+<text class="t n" x="440" y="474">reward_basis = ["ENV_ASSERTION"]　→　仅采信第一层；其余各层照常记录但不计入奖励</text>
 </svg>
