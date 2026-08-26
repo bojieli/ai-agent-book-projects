@@ -215,9 +215,7 @@ All of the above are problems every tool shares: what form a capability takes, h
 
 ## Perception Tools
 
-Perception tools are the primary channel for Agents to obtain external information.
-
-Designing an excellent perception tool system requires careful trade-offs across multiple dimensions, including granularity, organization, and output format.
+Perception tools are the primary channel through which an Agent obtains external information, and their design calls for careful trade-offs across several dimensions: granularity, organization, and output format.
 
 Perception tools often face the challenge of returning far more information than the Agent can process: a single search might return tens of thousands of characters, a PDF might be hundreds of pages long. Dumping everything into the context fills the context window and drowns key content in noise. The general response is to integrate **context-aware compression** (introduced in Chapter 2) at the tool level—when the output exceeds a threshold (e.g., 10,000 characters), automatically compress it based on the Agent's current query intent (the principle and compression effectiveness are detailed in Chapter 2 and not repeated here). Beyond this general mechanism, several common types of perception tools have their own unique design issues.
 
@@ -228,6 +226,23 @@ Perception tools often face the challenge of returning far more information than
 **Engineering benefits of read-only nature**. Perception tools do not change the external world. This read-only characteristic brings two natural advantages: results can be safely cached (identical queries reuse results, saving time and cost), and multiple perception calls can be safely executed in parallel (e.g., reading five files simultaneously, launching three searches concurrently) without worrying about interference. Execution tools do not have this freedom—call order and side effects must be strictly controlled.
 
 **Output form for multimodal perception**. For multimodal inputs like screenshots, charts, or scanned documents, the tool needs to decide what form to present to the model: return the image directly to a model with vision capabilities, or first convert it to text using OCR, chart parsing, etc.? The former preserves layout and visual details but consumes more tokens; the latter is concise and efficient but may lose critical spatial structure (e.g., row-column relationships in a table). In practice, the choice is often based on content type: pure text content uses text extraction; layout-sensitive content (UI interfaces, complex tables, design drafts) retains the image.
+
+> **Experiment 4-2 ★★: Perception Tool MCP Server**
+>
+> This experiment builds a set of perception tool MCP servers, covering the following five categories of perception scenarios:
+>
+> - **Search**: Web search, local knowledge base search, file download
+> - **Multimodal Understanding**: Web page reading, document extraction (PDF/Word/PPT, etc.), image OCR and AI analysis, audio/video transcription and analysis
+> - **File System**: File reading and search, directory browsing, file operations (move/copy/delete, etc. — strictly speaking, these are execution tools, but they are often bundled with file reading in the same MCP server)
+> - **Public Data Sources**: Free APIs for weather, stock prices, exchange rates, Wikipedia, ArXiv papers, etc.
+> - **Private Data Sources**: Personal data requiring authorization, such as calendars and Notion
+> Most of these tools are based on free, open APIs and can be used without registration. There are already many ready-made perception tool servers available in the MCP ecosystem. Chapter 5 will demonstrate that most of these capabilities can be covered by seven core tools combined with Skill documents.
+>
+> **Experiment 4-3 ★★: Multimodal Information Extraction—Comparing Three Technical Paradigms**
+>
+> The `multimodal-agent` project compares and evaluates all three strategies in a common framework. Using `demo.py`, give the same multimodal file (such as a PDF report containing charts) and the same question to each mode and compare their behavior.
+>
+> The results clearly expose the trade-offs. **Native multimodal mode** performs best on chart analysis and document layout because it understands visual and spatial information directly. **Extract-to-text mode** is the most cost-effective for text-heavy documents but cannot answer queries that require visual information. **Tool-based mode** is flexible in interactive settings: it handles most initial queries cheaply and invokes more expensive deep analysis as needed, though it is weaker than native mode when end-to-end deep understanding is required in a single pass.
 
 ### Multimodal Perception
 
@@ -249,22 +264,11 @@ When the Agent's main model is not multimodal, **using multimodal analysis as a 
 
 Compared with native multimodal processing, tool-based analysis keeps only a short question and answer in the context, preventing images, video, and other multimodal data from consuming large numbers of tokens.
 
-> **Experiment 4-2 ★★: Perception Tool MCP Server**
+> **Experiment 4-3 ★★: Multimodal Information Extraction—A Comparative Analysis of Three Technical Paradigms**
 >
-> This experiment builds a set of perception tool MCP servers, covering the following five categories of perception scenarios:
+> The `multimodal-agent` project systematically compares and evaluates the three strategies within one framework. Through `demo.py`, the same multimodal file (for example, a PDF report containing charts) and the same question are handed to each of the three modes in turn, so that the differences in behavior become observable.
 >
-> - **Search**: Web search, local knowledge base search, file download
-> - **Multimodal Understanding**: Web page reading, document extraction (PDF/Word/PPT, etc.), image OCR and AI analysis, audio/video transcription and analysis
-> - **File System**: File reading and search, directory browsing, file operations (move/copy/delete, etc. — strictly speaking, these are execution tools, but they are often bundled with file reading in the same MCP server)
-> - **Public Data Sources**: Free APIs for weather, stock prices, exchange rates, Wikipedia, ArXiv papers, etc.
-> - **Private Data Sources**: Personal data requiring authorization, such as calendars and Notion
-> Most of these tools are based on free, open APIs and can be used without registration. There are already many ready-made perception tool servers available in the MCP ecosystem. Chapter 5 will demonstrate that most of these capabilities can be covered by seven core tools combined with Skill documents.
-
-> **Experiment 4-3 ★★: Multimodal Information Extraction—Comparing Three Technical Paradigms**
->
-> The `multimodal-agent` project compares and evaluates all three strategies in a common framework. Using `demo.py`, give the same multimodal file (such as a PDF report containing charts) and the same question to each mode and compare their behavior.
->
-> The results clearly expose the trade-offs. **Native multimodal mode** performs best on chart analysis and document layout because it understands visual and spatial information directly. **Extract-to-text mode** is the most cost-effective for text-heavy documents but cannot answer queries that require visual information. **Tool-based mode** is flexible in interactive settings: it handles most initial queries cheaply and invokes more expensive deep analysis as needed, though it is weaker than native mode when end-to-end deep understanding is required in a single pass.
+> The results lay out the trade-offs clearly. The **native multimodal mode**, thanks to its deep grasp of visual and spatial information, performs best on tasks such as analyzing charts and understanding document layout. The **extract-to-text mode** is the most cost-effective for documents dominated by plain text, but it is wholly unable to handle queries that require visual information. The **tool-based mode** shows its flexibility in interactive settings: it handles most preliminary queries at low cost and, when necessary, performs an expensive deep analysis by calling a tool—yet it falls short of the native mode when a single end-to-end deep understanding is required.
 
 ## Execution Tools
 
@@ -308,7 +312,7 @@ A reader might object: we just said that review across a large capability gap is
 
 A security Sidecar also needs a **rejection circuit breaker**. If the classifier rejects several operations in a row, the system should not retry forever—wasting resources and potentially trapping the Agent in a loop—but should fall back to asking the user to decide manually. This is a typical instance of the Harness “correction” function from Chapter 1.
 
-Both the Sidecar and the Proposer-Reviewer mechanism introduce a second perspective, but their execution timing and review targets differ. Table 4-2 compares the key differences between these two mechanisms.
+**Make the security check "invisible" at the level of user experience.** Security checks can add latency. To improve the user experience, one approach is to separate "display" from "admission" and run them in parallel: when the Agent is about to execute a tool call, the system shows a progress hint in the interface first (for example, "Reading file `src/main.py`...") while the security check runs in the background at the same time. This way the user perceives no waiting; the check has usually finished by the time the result comes back, and if it fails, the operation is intercepted before any real effect occurs.
 
 **Make the security check invisible at the UX layer.** Security checks add latency. One way to improve the experience is to separate "display" from "admission" and run them in parallel: when the Agent is about to execute a tool call, the interface shows a progress hint ("Reading `src/main.py`...") while the security check runs in the background. This is Harness design at its best: safety not paid for with user experience.
 
@@ -363,7 +367,7 @@ Execution tools change the external world, so they must answer a question that p
 
 The core approach to handling this is **idempotency**: executing the same operation once and executing it multiple times has exactly the same effect on the external world, allowing safe retries. There are two common design methods: first, have the operation carry a **unique identifier** (e.g., a client-generated idempotency key), which the server uses for deduplication, returning the first result for duplicate requests instead of executing again; second, **query before mutation** — before retrying, query the current state of the target resource (whether the order has been created, whether the file has been written), and only execute if the operation has not already completed. Operations with idempotency make handling timeouts and interruptions much simpler.
 
-But not all operations can be made idempotent. Operations like **sending an email, making a phone call, or transferring money** each produce an irreversible real-world event every time they are executed. Furthermore, the server is often outside your control, making it impossible to deduplicate using a unique identifier. For such operations, a **"pre-check then confirm" two-phase** approach should be used: the first phase uses a model from a different model family, paired with a dedicated safety-check prompt, to validate — checking the balance, confirming the recipient, generating the content to be sent; only the second phase actually executes. If the execution phase fails, it must not retry blindly; instead it should return detailed error information to the Agent's main model so that it can re-plan. This is of a piece with the Proposer-Reviewer pre-approval discussed earlier, and with the "initiate/complete" decoupling of asynchronous tool interfaces discussed later.
+But not all operations can be made idempotent. Operations such as **sending an email, placing a phone call, or transferring money out** produce an irreversible real-world event on every execution. For such operations a **"pre-check then confirm" two-phase** approach should be used: the first phase validates with a model from a different model family and a dedicated safety-check prompt—verifying the balance, confirming the recipient, generating the content to be sent; only the second phase actually executes. If the execution phase fails it must not be blindly retried; instead the detailed error must be returned to the Agent's main model for replanning.
 
 > **Experiment 4-4 ★★: Execution Tool MCP Server**
 >
@@ -394,7 +398,7 @@ The core value of sub-agents lies in **specialization through division of labor*
 
 **Task boundaries must be clearly defined.** Define what falls within the scope of responsibility and what needs to be handed off or escalated.
 
-**Output format must be standardized.** Whether JSON or Markdown is used, the prompt should specify the sub-Agent's output format. This ensures that the sub-Agent considers every required aspect, reduces the main Agent's parsing burden, and makes error handling more reliable.
+**Output format must be standardized.** Whether JSON or Markdown is used, the sub-Agent's output format should be stated explicitly in the prompt. This ensures the sub-Agent covers every aspect it needs to consider, lowers the main Agent's parsing burden, and makes error handling more reliable.
 
 **Collaboration Mechanisms Between Agents.**
 
@@ -427,7 +431,7 @@ Although AI Agents are becoming increasingly powerful, human intervention remain
 
 ## Chapter Summary
 
-The core conclusion of this chapter: the quality of tool design sets the ceiling on an Agent's capabilities. The first decision is what form a capability takes—lean toward the general end by default, and fall back to a dedicated tool only in the four cases of security and permissions, complex parameters, very high usage frequency, and platform differences; that decision is independent of “how many capabilities the model sees at once,” the former fixing the resident cost of each capability and the latter how many are exposed together.
+Tool design sets the ceiling on an Agent's capabilities. The first decision is what form a capability takes: lean toward the general end by default, and fall back to a dedicated tool only in the four cases of security and permissions, parameter complexity, extremely high usage frequency, and platform differences. This is independent of the decision about how many capabilities the model sees at once—the former fixes the standing cost of each capability, the latter how many are exposed simultaneously. Capabilities are distributed through two channels: the MCP protocol unifies how dedicated tools are connected, and Skill Hub distributes `SKILL.md` through a package manager. Both channels reduce the cost of bringing in one capability to a single command, and both widen the trust boundary—so descriptions and versions must be reviewed, credentials isolated, and the parameters the model sees kept identical to the parameters the tool actually executes. When tools grow into the hundreds or thousands, hierarchical organization, on-demand loading, active discovery, and Skills take over in turn, turning "which tool do I pick" into "which reference do I look up."
 
 This chapter covered the three of the five tool categories that the Agent invokes on its own initiative:
 
