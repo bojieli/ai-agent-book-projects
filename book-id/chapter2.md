@@ -612,6 +612,29 @@ Large language model modern cukup sensitif terhadap input terstruktur karena ban
 
 Markdown menyediakan struktur ringan yang tetap mudah dibaca. Kombinasi XML dan Markdown membentuk dua lapisan: XML memberikan semantik yang presisi dan dapat diurai mesin, sedangkan Markdown mengatur isinya bagi manusia maupun model.
 
+Sebagai contoh, sebuah system prompt yang memakai keduanya sekaligus:
+
+```text
+# Aturan Penggunaan Tool
+
+## Operasi File
+<file_operation>
+- Sebelum membaca file, periksa dulu apakah path-nya ada
+- Sebelum menulis file, buat cadangan terlebih dahulu
+</file_operation>
+
+## Permintaan Jaringan
+<network_request>
+- Setel timeout ke 30 detik
+- Setelah gagal, coba ulang maksimal 3 kali
+</network_request>
+```
+
+- **Peran Markdown**: judul `#` dan `##` membuat manusia langsung melihat struktur hierarkinya sehingga prompt tetap mudah dibaca.
+- **Peran XML**: tag seperti `<file_operation>` dan `<network_request>` memberi tahu model bahwa “blok ini tentang operasi file” dan “blok ini tentang permintaan jaringan”; semantiknya presisi sehingga model memprosesnya lebih akurat.
+
+Dengan keduanya, prompt terbaca jelas bagi manusia dan dipahami secara akurat oleh model.
+
 ### Berorientasi Proses vs. Menumpuk Aturan: "Organisasi" System Prompt
 
 Metode yang mengurangi beban kognitif manusia juga membantu LLM. Bayangkan anggota tim baru menerima manual berisi ratusan aturan yang tersebar, tanpa alur atau prioritas. Bahkan orang yang sangat cakap akan kesulitan menentukan aturan mana yang berlaku ketika beberapa aturan bertabrakan.

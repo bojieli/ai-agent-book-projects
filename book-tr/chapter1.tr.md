@@ -10,7 +10,7 @@ Bu bölüm pratikten başlayıp bir AI Agent'ın temel bileşenlerine doğru ile
 
 ## Modern Agent = LLM + Context + Tools
 
-Modern bir Agent sisteminin özü, tek ve öz bir formülde toplanır: **Agent = LLM (Büyük Dil Modeli) + Context + Tools**. Bu formül basit ve pratiktir—yeter ki her terim geniş anlamıyla okunsun:
+Modern bir Agent'ın en küçük mühendislik gerçeklemesi tek bir derli toplu formülle ifade edilebilir: **Agent = LLM (büyük dil modeli, Large Language Model) + bağlam + araçlar**. Buradaki artı işaretleri mühendislik bileşenlerinin birleşimini gösterir, pekiştirmeli öğrenmedeki biçimsel tanımı değil; daha da önemlisi bu formül yalnızca Agent'ın sınırı içindeki gerçeklemeyi betimler ve **Agent'ın etkileşimde bulunduğu Environment'ı (ortamı) içermez**. İçindeki her sözcüğü geniş anlamda, ama sınırı belli biçimde anlamak gerekir:
 
 - **LLM, Agent'ın beynidir**: Sadece bir model parametreleri kümesi değil, Agent'ın niyeti anladığı, düşündüğü, plan yaptığı ve karar verdiği bütün karar alma çekirdeğidir. Tıpkı insan beyninin salt nöronlar topluluğundan ibaret olmayıp deneyimle şekillenen düşünme biçimlerini de taşıması gibi, bir LLM'in yeteneği de iki kaynaktan gelir: **pre-training** (ön eğitim) yoluyla biriktirilen dünya bilgisi ve dil yeteneği, ve **post-training** (sonradan eğitim) ile kalıcı hale gelen karar alma stratejileri (denetimli ince ayar ve pekiştirmeli öğrenme gibi teknikleri Bölüm 8'nin konusudur).
 - **Context, Agent'ın gözleridir**: Sadece modele verilen metin değil, Agent'ın her karar noktasında görebildiği her şeydir—ortam, kullanıcı belleği, alan bilgisi, kendi durumu ve görev ilerlemesi. Tıpkı bir kişinin karar verirken durumu değerlendirmesi, ilgili deneyimi hatırlaması ve referanslara başvurması gerektiği gibi, Agent'ın context penceresi de o anda görebildiği her şeydir.
@@ -146,7 +146,7 @@ Context, bir Agent'ın her karar noktasında görebildiği her şeydir. Tıpkı 
 
 İlk iki öğe (system prompt + araç tanımları) static prefix'i oluşturur; son üçü (kullanıcı mesajları + asistan mesajları + araç sonuçları) her etkileşimle büyüyen dinamik mesaj geçmişini oluşturur. Bu beş bölüm birlikte, her bir LLM çıkarımının context'ini oluşturur.
 
-Her bileşen gerçekten vazgeçilmez mi? Bunu öğrenmenin en doğrudan yolu bir **ablation study**dir—nedenleri birer birer eleyen tanı yöntemi: A bileşenini kaldırıp sistemin hâlâ çalışıp çalışmadığına bakın, sonra B bileşenini, ve her bileşenin katkısı netleşene kadar böyle devam edin. Deney 1-1, tam olarak bu yöntemi yukarıdaki beş bileşene uygular. Sonuçlar: araç tanımlarını kaldırınca Agent tamamen eylemsiz kalıyor; araç sonuçlarını kaldırınca bir önceki adımın geri bildirimini göremiyor, bu yüzden aynı aracı tekrar tekrar çağırıp sonsuz bir döngüde sıkışıp kalıyor; asistan mesajlarından reasoning'i çıkarınca ardışık kararlar birbiriyle çelişmeye başlıyor; mesaj geçmişini düşürünce Agent fiilen hafızasını yitiriyor—görevin tamamını baştan başlatıyor, zaten yapılmış adımları tekrarlıyor.
+Her bileşenin gerçekten vazgeçilmez olup olmadığını doğrulamanın en doğrudan yolu bir **ablasyon çalışmasıdır** (Ablation Study): hekimin tanı koyarken nedenleri teker teker elemesi gibi — önce A bileşenini çıkarıp sistemin hâlâ düzgün çalışıp çalışmadığına bakılır, sonra B bileşeni çıkarılır ve böyle sürer; böylece her bileşenin katkısı değerlendirilir. Deney 1-1 tam da bu düşünce çizgisiyle yukarıdaki beş bileşeni sistematik olarak sınamıştır.
 
 > **Deney 1-1 ★★: Context'in Kritik Rolü**
 >
@@ -168,7 +168,7 @@ Somut bir örnek üzerinden—birden fazla para biriminde geliri toplama—bir A
 
 ![Şekil 1-4: Agent trajectory'si—çok para birimli toplama görevi için ReAct döngüsü](images/fig1-4.svg)
 
-Aşağıdaki Python tarzı taslak açıklayıcı pseudocode'dur, çalıştırılabilir SDK kodu değildir; `python` işareti yalnızca sözdizimi vurgulama için kullanılır.
+Önce en küçük çalışma iskeletine bakalım. Gösterdiği şey **mekanizmanın nasıl işlediğidir**: Model yalnızca bir sonraki adıma karar verir, Harness bağlamı bir araya getirir, araçları doğrular ve çalıştırır, Environment ise gerçek durum değişikliklerini ve gözlemleri üretir. Kitabın devamında da Python tarzı sözde kod kullanılır; sözde kod doğrudan çalıştırılamaz ve belirli bir SDK'ya karşılık gelmez. Somut, çalıştırılabilir kod kitabın eşlik eden kod deposundadır.
 
 ```python
 trajectory = [user_request]
@@ -242,7 +242,7 @@ Artık Agent'ın çalışma döngüsünü anladığımıza göre, farklı modell
 > [^ch1-2]: Okuyucu asdlem'e, RL'nin içselleştirdiği şeyin araç yürütme mekanizması değil tool calling karar politikası olduğu ayrımını GitHub Issue #30 üzerinden belirtip netleştirdiği için teşekkürler. Bkz. https://github.com/bojieli/ai-agent-book/issues/30
 >
 > Kimi K3'ün Agent görevlerindeki öne çıkan avantajı **uzun zincirli araç çağrılarının kararlılığıdır**—çoğu modelin birkaç düzine çağrıda bozulmaya başladığı noktanın çok ötesinde, 200-300 ardışık araç çağrısını baştan sona tutarlı bir reasoning ile sürdürebilir. K3, uzun ufuklu programlama ve Agent iş yükleri için optimize edilmiştir ve iki varyantta yayınlanmıştır: K3 Max (diyalog ve Agent görevleri için) ve K3 Swarm Max (büyük ölçekli paralel işleme için). Açık kaynaklı bir model olarak, yazılım mühendisliği ve Agent benchmark'larında en üst düzey kapalı kaynak sistemlerle eşleşir—pekiştirmeli öğrenmenin bir modele yerleşik Agent yeteneği kazandırabileceğinin kanıtıdır.
-
+>
 > **Deney 1-3 ★: GPT-5.6'nın Yerleşik Deep Research Yeteneği**
 >
 > İkinci deney, gelişmiş bir modelin, API düzeyinde yerleşik araçların desteğiyle Deep Research için "ara—oku—analiz et" orkestrasyon döngüsünü sunucu tarafında nasıl kapattığını göstermek için **OpenAI GPT-5.6**'yı kullanır. GPT-5.6'nın kullanışlı bir özelliği **Freeform Tool Calling'dir (Serbest Format Araç Çağırma)**. Geleneksel olarak, bir araç çağıran model her parametreyi katı bir JSON'a (yapılandırılmış bir veri formatı) paketlemek zorundadır—katı biçimlendirme kurallarına sahip bir form doldurmak gibi. Freeform tool calling (API'de `type: "custom"` türünde bir araç olarak tanımlanır), modelin JSON kaçış karakterlerini tamamen atlayarak araca doğrudan ham metin (bir Python kod parçası, bir SQL sorgusu) göndermesine izin verir. Şunu vurgulamakta fayda var: bu, model mimarisinde bir yenilik değil, API'nin parametre formatının bir evrimidir—istemcinin tool calling döngüsü (`tool_calls`'ı algıla → çalıştır → sonucu döndür) aynı kalır; sadece argümanlar bir JSON dizesinden ham metne dönüşür.
@@ -452,8 +452,6 @@ Agent çerçeveleri hızla gelişir. Siz bu kitabı okurken bunların bazıları
 Orkestrasyon kalıpları, Harness içindeki context ve tools'un organizasyonunu çözer—LLM çağrılarının, araçların ve veri akışlarının nasıl bağlandığını. Ama işi yapmak yeterli değildir; aynı zamanda doğru ve güvenli biçimde yapılması gerekir. Bu yüzden şimdi constrain, verify ve correct mekanizmalarının pratikte nasıl hayata geçtiğinin başlıca yolu olan guardrail'lere dönüyoruz.
 
 ### Guardrail'ler ve Güvenlik
-
-Bu bölüm, büyük resmi ortaya koymak için guardrail'lere üst düzey bir genel bakış sunar. Uygulama ayrıntıları ve pratik, Bölüm 2'de (bağlam katmanı: prompt injection koruması), Bölüm 4'te (yürütme katmanı: araç izin kontrolü) ve Bölüm 5'te (yürütme ve veri katmanları: kod yürütme güvenliği ve güven sınırının aşağı indirilmesi) devam eder; ilk kez okuyanların her ayrıntının peşine düşmesine gerek yok.
 
 Guardrail'ler, Harness'in "constrain, verify ve correct" katmanının başlıca uygulanma biçimidir—Agent davranışını güvenli ve kontrol edilebilir tutan katmanlı bir savunma. İyi tasarlanmış **guardrail'ler**, veri gizliliği risklerini (örn. system prompt sızıntısını önlemek) ve itibar risklerini (örn. model davranışını markayla tutarlı tutmak) yönetmeye yardımcı olur. Zaten belirlediğiniz risklere yönelik guardrail'lerle başlayın, yeni zafiyetler ortaya çıktıkça yenilerini ekleyin.
 

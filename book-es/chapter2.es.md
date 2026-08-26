@@ -609,6 +609,29 @@ Los modelos de lenguaje modernos muestran una marcada sensibilidad hacia las ent
 
 Markdown aporta una estructura ligera conservando una alta legibilidad, siendo especialmente adecuado para organizar instrucciones e información jerárquica. La combinación de XML y Markdown crea una estructura de doble capa: XML se encarga de la semántica precisa procesable por máquina, mientras que Markdown asume la lógica organizacional legible para humanos.
 
+Por ejemplo, un prompt del sistema que emplea ambos a la vez:
+
+```text
+# Normas de uso de herramientas
+
+## Operaciones con archivos
+<file_operation>
+- Antes de leer un archivo, comprobar que la ruta existe
+- Antes de escribir un archivo, hacer una copia de seguridad
+</file_operation>
+
+## Peticiones de red
+<network_request>
+- Fijar el tiempo de espera en 30 segundos
+- Reintentar como máximo 3 veces tras un fallo
+</network_request>
+```
+
+- **El papel de Markdown**: los encabezados `#` y `##` permiten que una persona vea la jerarquía de un vistazo, lo que mantiene la legibilidad.
+- **El papel de XML**: etiquetas como `<file_operation>` y `<network_request>` le indican al modelo que «este bloque trata de operaciones con archivos» y que «este bloque trata de peticiones de red»; la semántica es precisa y el modelo lo procesa con mayor exactitud.
+
+Combinados, el prompt resulta claro para las personas y preciso para el modelo.
+
 ### Prompts Orientados a Procesos vs. Apilamiento de Reglas
 
 Los métodos para reducir la carga cognitiva humana son igualmente efectivos para los modelos de lenguaje grandes, dado que estos han aprendido los patrones de lenguaje y pensamiento humanos durante su entrenamiento. Imagina entregar a un nuevo empleado un manual con más de cien reglas dispersas, sin diagramas de flujo ni indicaciones de prioridad: incluso la persona más inteligente se sentirá confundida respecto a cómo elegir cuando se apliquen varias reglas simultáneamente o cómo proceder ante situaciones no cubiertas.
