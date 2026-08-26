@@ -113,7 +113,7 @@ Az MCP kliens-szerver architektúrát használ: az "MCP szerverek" eszközök eg
 
 Az MCP ökoszisztéma-értéke "egyszer fejleszt, mindenhol használ". Egy MCP szervert bármely kompatibilis kliens, például Cursor, Claude Desktop vagy OpenClaw egyidejűleg használhat anélkül, hogy az eszközfejlesztőnek a felsőbb szintű Agent keretrendszerek különbségeivel kellene törődnie. Az MCP-t több jelentős Agent keretrendszer és IDE is átvette, és fontos szabvánnyá válik az eszközök együttműködéséhez. A fejezet összes kísérlete az MCP protokollon alapul.
 
-**A képességterjesztés másik módja: a Skill Hubok**. Az MCP egyetlen terjesztési mechanizmus, a **dedikált eszköz** csatlakozási módját egységesítette. A Skill oldalán nincs szükség protokollra: egy skill mindössze egy `SKILL.md`-t tartalmazó mappa, ezért terjesztési mechanizmusa nem protokoll, hanem **registry**. A Vercel által 2026 januárjában indított skills.sh az egyik legnagyobb hatású: egyetlen `npx skills add <owner>/<repo>` paranccsal telepíthető[^ch4-skills-sh]. Az OpenClaw ökoszisztémának saját ClawHubja van[^ch4-clawhub].
+**A képességek terjesztésének másik módja: a Skill Hub.** Az MCP egyetlen terjesztési mechanizmus, a **dedikált eszközök** becsatlakozását egységesítette. A Skillek oldalán nincs szükség protokollra: egy skill nem más, mint egy `SKILL.md`-t tartalmazó mappa, ezért a skillek terjesztési mechanizmusa **regiszter** (registry), nem protokoll. A Vercel által 2026 januárjában elindított skills.sh az egyik legnagyobb hatású közülük: egyetlen `npx skills add <owner>/<repo>` paranccsal telepíthető[^ch4-skills-sh]. Az OpenClaw ökoszisztémának pedig saját ClawHubja van[^ch4-clawhub].
 
 [^ch4-skills-sh]: Vercel, „Introducing skills, the open agent skills ecosystem”, 2026-01-20. https://vercel.com/changelog/introducing-skills-the-open-agent-skills-ecosystem; katalógus és ranglista: https://skills.sh
 [^ch4-clawhub]: ClawHub https://clawhub.ai/
@@ -199,8 +199,6 @@ A 4-4. ábra mutatja a teljes képet a dinamikus felfedezés több körét köve
 
 ### Skill-ek: Az Eszközfelfedezés Átalakítása "Igény Szerinti Kikereséssé"
 
-**Fokozatos feltárás.** Induláskor az Agent csak egy vékony katalógust lát az egyes Skill-ek `name` és `description` mezőivel, majd csak akkor olvassa be az al-Skillt és a benne hivatkozott fájlokat, amikor az aktuális kontextus megkívánja – ahogy egy kézikönyvben vagy a Wikipédián is csak a kellő szócikket nézzük meg. A Skill épp azért igényel ilyen kevés törődést, mert ez a hierarchia eleve be van építve.
-
 A legújabban teret nyerő gondolatmenet a Skill mechanizmusból származik. A 2. fejezet bevezette a Skill-ek "Progresszív Közzétételét" kontextus-mérnökségként; itt eszközfelfedezési paradigmaként kezeljük – és a meghatározó különbség az előző szakasztól, hogy a "beágyazási index + szemantikai egyeztetés" infrastruktúra teljesen eltűnik.
 
 **Nem mindent egyszerre, hanem rétegről rétegre.** Az olyan protokollok, mint az MCP, hajlamosak az eszköz teljes sémáját egyszerre a modell elé teríteni (vagy mindent injektálva, vagy kereséses előszűréssel kiválasztva egy csoportot). A Skill-ek épp fordítva működnek: induláskor az Agent csak egy vékony tartalomjegyzéket lát – az egyes skillek `name` és `description` mezőit, összesen néhány száz tokent. Csak amikor az **aktuális kontextus** valóban igényel egy képességet, olvassa be a modell a megfelelő sub-skillt, majd a benne lévő hivatkozásokat követve még egy réteggel lejjebb a konkrét szkripteket és aldokumentumokat.
@@ -217,9 +215,7 @@ A fentiek mind olyan kérdések, amelyek minden eszközre közösen vonatkoznak:
 
 ## Észlelő Eszközök
 
-Az észlelő eszközök az elsődleges csatorna az Agentek számára a külső információk megszerzéséhez.
-
-Egy kiváló észlelő eszközrendszer tervezése gondos kompromisszumokat igényel több dimenzió mentén, beleértve a részletességet, a szervezést és a kimeneti formátumot.
+Az észlelő eszközök az elsődleges csatorna, amelyen az Agent külső információhoz jut, és a tervezésük több dimenzió — a granularitás, a szervezési mód és a kimeneti formátum — gondos mérlegelését kívánja.
 
 Az észlelő eszközök gyakran szembesülnek azzal a kihívással, hogy sokkal több információt adnak vissza, mint amennyit az Agent fel tud dolgozni: egyetlen keresés több tízezer karaktert adhat vissza, egy PDF több száz oldalas lehet. Mindent a kontextusba önteni kitölti a kontextusablakot és zajba fojtja a kulcsfontosságú tartalmat. Az általános válasz a "kontextus-tudatos tömörítés" (a 2. fejezetben bemutatva) integrálása az eszköz szintjén – amikor a kimenet meghalad egy küszöbértéket (pl. 10 000 karakter), automatikus tömörítés az Agent aktuális lekérdezési szándéka alapján (az elv és a tömörítés hatékonysága a 2. fejezetben részletezve, itt nem ismételjük). Ezen általános mechanizmuson túl az észlelő eszközök több gyakori típusának megvannak a saját egyedi tervezési kérdései.
 
@@ -249,15 +245,19 @@ Képek, videók, hangok és PDF-ek megértéséhez az Agentnek multimodális és
 
 #### Natív multimodális feldolgozás
 
-A natív feldolgozás adja a legmagasabb képességplafont; a Vision Transformerhez hasonló kódolók közös szemantikai térbe vetítik az adatokat.
+**A natív multimodális feldolgozás** az a technológiai út, amelynek a képességplafonja a legmagasabb. Központi technikai áttörése abban áll, hogy szakosodott kódolók a különböző típusú adatokat mind egyetlen, nagy dimenziós jelentéstérbe képezik le. A képek esetében a nyílt architektúrájú multimodális modellek (például a Qwen-VL vagy a LLaVA) rendszerint **Vision Transformer** (ViT) alapú vizuális kódolót építenek be. Konkrétan a ViT rögzített méretű képfoltokra (patch) darabolja a képet, és — ahogyan a mondat szavait kezeljük — minden foltot vektorrá alakít, amely a szövegvektorokkal együtt egy közös multimodális beágyazási térben él. A Transformer önfigyelmi mechanizmusa egyenrangúan kezeli a szöveg- és a képtokeneket, és tetszőleges modalitásközi összefüggést ki tud számítani. A natívan multimodális modellben a modell közvetlenül „látja” a PDF oldaltördelését, ábráit és szövegét, és érti a kép és a szöveg közti térbeli és jelentésbeli viszonyokat.
 
 #### Szöveggé alakítás
 
-A szövegkinyerés jó megoldás nem multimodális modelleknél és szövegközpontú PDF-eknél takarékosabb, de elveszíti az elrendezést, ábrákat és képeket.
+Ma sok erős modell — például a GLM 5.2 vagy a DeepSeek V4 Flash — nem támogatja a natív multimodális feldolgozást. Ilyenkor kerülő megoldás a multimodális tartalom **szöveggé alakítása (Extract to Text)**. Ez kétlépéses folyamat: előbb egy szakosodott eszköz (OCR-szolgáltatás, hangátírási szolgáltatás) a nem szöveges tartalmat egyszerű szöveggé alakítja, majd ezt adjuk be a nyelvi modellnek.
+
+Az olyan PDF-dokumentumoknál, amelyekben a szöveg teszi ki a java részt, a szöveggé alakítás gyakran több tokent takarít meg, mint a képpé alakításon alapuló natív multimodális feldolgozás. Egy PDF-oldal képernyőképe sokszor több ezer tokent igényel, míg ugyanannak az oldalnak a szövege általában csak néhány százat. A szöveggé alakítás ára viszont az információveszteség: a tördelés, az ábrák és a képek mind elvesznek a kinyerés során.
 
 #### Eszközalapú multimodális elemzés
 
-Ha a fő modell nem multimodális, az `analyze_image`, `analyze_pdf` és `analyze_audio` eszközök egy szakosodott modellnek adhatják át a fájlt és a kérdést, rövid eredményt tartva a kontextusban.
+Ha az Agent fő modellje nem támogatja a multimodalitást, a **multimodális elemzés eszközzé tétele** jobb megoldás a szöveggé alakításnál. Ez olyan eszközöket ad az Agent kezébe, amelyek mélyen elemzik az eredeti fájlt (`analyze_image`, `analyze_pdf`, `analyze_audio`); az eszköz egy multimodális fájlt és egy természetes nyelvű kérdést kap paraméterként, és természetes nyelven megfogalmazott elemzési eredményt ad vissza. Belül multimodális modellel valósítható meg, és ennek a modellnek nem kell feltétlenül erős Agent-képességekkel bírnia, ami tágabb teret hagy a technológiai választásnak.
+
+A natív multimodális feldolgozáshoz képest az eszközzé tett multimodális elemzés csak a rövid kérdést és az elemzés eredményét tartja meg a kontextusban, így elkerülhető, hogy a multimodális adatok (képek, videók stb.) rengeteg tokenje foglalja el a kontextust.
 
 > **4-3. ★★ Kísérlet: Multimodális Információkinyerés — Három Technikai Paradigma Összehasonlító Elemzése**
 >
@@ -295,7 +295,7 @@ A második mechanizmus az "utólagos érvényesítés": a művelet befejezése u
 
 **Sidecar Mechanizmus: Biztonsági Ellenőrzés Párhuzamosan a Fő Gondolkodással.**
 
-A Javasló-Felülvizsgáló mechanizmus a "jóváhagyás a művelet végrehajtása előtt vagy érvényesítés a művelet befejezése után" kérdést kezeli, míg a "Sidecar mechanizmus" egy másik kérdést old meg: "hogyan ellenőrizhető a biztonság és megbízhatóság valós időben a művelet végrehajtása során." Felfogható az 1. fejezet Harness keretrendszerének "ellenőrzés" funkciója egy konkrét megvalósítási formájaként, és ez a szakasz részletesen elmagyarázza.
+A Javasló–Ellenőrző mechanizmus a „jóváhagyás a művelet végrehajtása előtt, vagy érvényesítés a művelet befejezése után” kérdést oldja meg, a **Sidecar mechanizmus** pedig egy másikat: „hogyan ellenőrizhető valós időben a biztonság és a megbízhatóság a művelet végrehajtása közben”.
 
 A Claude Code automatikus módja (Auto Mode) tipikus példa: amikor a fő modell úgy dönt, hogy végrehajt egy eszközhívást, egy önálló, könnyűsúlyú LLM-hívás indul, amely eldönti, hogy „biztonságos-e ez az eszközhívás”. Ez a mellékvágányon futó biztonsági ellenőrző modul minden eszközhívás előtt önállóan méri fel a kockázatot, közben igyekszik nem lassítani a fő Agent gondolkodási ütemét. A Sidecar név a mikroszolgáltatás-architektúra sidecar mintájából származik: mint a motorkerékpár oldalkocsija, önállóan működik, de a fő testtel párhuzamosan halad. A Sidecar a fő Agent gondolkodási körét kísérő, könnyűsúlyú LLM-hívási minta; nem a fő Agent végső kimenetét vizsgálja, hanem a **viselkedéséről** hoz független ítéletet.
 
@@ -305,9 +305,11 @@ A kulcsfontosságú fenyegetés itt továbbra is a "prompt injection" (ahogyan a
 
 Egy olvasó ellenvetheti: az imént mondtuk, hogy a nagy képességkülönbségen átívelő felülvizsgálat megbízhatatlan – akkor miért elfogadható itt egy könnyűsúlyú modell? A válasz abban rejlik, hogy mit vizsgálunk felül. A Javasló-Felülvizsgáló nyitott végű gondolkodást vizsgál, így a felülvizsgálónak lépést kell tartania a javasló érvelésével, ami hasonló képességet igényel; a Sidecar egy osztályozási problémát ítél meg strukturált adatok felett (ezen a parancson kívül esik?), ami egy sokkal egyszerűbb feladat, amelyet egy könnyűsúlyú modell kényelmesen kezel.
 
-Mind a Sidecar, mind a Javasló-Felülvizsgáló mechanizmus bevezet egy második perspektívát, de végrehajtási időzítésük és felülvizsgálati célpontjaik eltérnek. A 4-2. táblázat összehasonlítja a két mechanizmus közötti legfontosabb különbségeket.
+Egy biztonsági Sidecar-nak szüksége van egy "elutasítási megszakítóra" is: amikor az osztályozó egymás után elutasítja a műveleteket, a rendszer nem próbálkozhat a végtelenségig – ez erőforrásokat pazarol, és a felhasználót egy hurokba zárhatja – hanem vissza kell esnie arra, hogy megkérje a felhasználót a kézi ítélethozatalra. Ez az 1. fejezet Harness "korrekció" funkciójának tipikus példája.
 
 **Tegyük a biztonsági ellenőrzést „láthatatlanná” a felhasználói élmény szintjén.** A biztonsági ellenőrzés késleltetést adhat. Az élmény javításának egyik módja, hogy szétválasztjuk a „megjelenítést” és az „átengedést”, és párhuzamosan futtatjuk őket: amikor az Agent egy eszközhívás végrehajtására készül, a felület már mutatja a folyamatjelzést („`src/main.py` olvasása...”), miközben a biztonsági ellenőrzés a háttérben fut. Ez a Harness-tervezés csúcsa: a biztonságért nem a felhasználói élménnyel fizetünk.
+
+Mind a Sidecar, mind a Javasló-Felülvizsgáló mechanizmus bevezet egy második perspektívát, de végrehajtási időzítésük és felülvizsgálati célpontjaik eltérnek. A 4-2. táblázat összehasonlítja a két mechanizmus közötti legfontosabb különbségeket.
 
 4-2. táblázat: A Javasló-Felülvizsgáló Mechanizmus és a Sidecar Mechanizmus Összehasonlítása
 
@@ -320,8 +322,6 @@ Mind a Sidecar, mind a Javasló-Felülvizsgáló mechanizmus bevezet egy másodi
 | "Tipikus Használatok" | Visszafordíthatatlan művelet jóváhagyás, dokumentum generálás, konfiguráció módosítás | Engedély osztályozás, memória relevancia ítélet, eszköz kimenet összefoglalás |
 
 A Sidecar minta másik tipikus alkalmazása a "kontextus gazdagítása": amíg a fő modell gondolkodik, egy sávon kívüli hívás párhuzamosan fut a felhasználói emlékek relevanciájának szűrésére, nagy eszközkimenetek összefoglalására, és engedélykövetelmények előzetes felmérésére – ezek az eredmények készen állnak, amikor a fő modellnek szüksége van rájuk, és a felhasználó nem érzékel további késleltetést.
-
-Egy biztonsági Sidecar-nak szüksége van egy "elutasítási megszakítóra" is: amikor az osztályozó egymás után elutasítja a műveleteket, a rendszer nem próbálkozhat a végtelenségig – ez erőforrásokat pazarol, és a felhasználót egy hurokba zárhatja – hanem vissza kell esnie arra, hogy megkérje a felhasználót a kézi ítélethozatalra. Ez az 1. fejezet Harness "korrekció" funkciójának tipikus példája.
 
 **Automatizált Érvényesítés és Visszacsatolási Hurok.**
 
@@ -363,7 +363,7 @@ A végrehajtó eszközök megváltoztatják a külső világot, ezért meg kell 
 
 A kezelés alapvető megközelítése az "idempotencia": ugyanazon művelet egyszeri és többszöri végrehajtása pontosan ugyanazt a hatást fejti ki a külső világra, lehetővé téve a biztonságos újrapróbálkozásokat. Két gyakori tervezési módszer létezik: először is, a művelet hordozzon egy "egyedi azonosítót" (pl. egy kliens által generált idempotencia kulcsot), amelyet a szerver duplikációk kiszűrésére használ, visszaadva az első eredményt ismételt kérésekre ahelyett, hogy újra végrehajtaná; másodszor, "lekérdezés a mutáció előtt" – az újrapróbálkozás előtt kérdezze le a célerőforrás aktuális állapotát (létrejött-e a rendelés, megíródott-e a fájl), és csak akkor hajtsa végre, ha a művelet még nem fejeződött be. Az idempotens műveletek sokkal egyszerűbbé teszik az időtúllépések és megszakítások kezelését.
 
-De nem minden művelet tehető idempotenssé. Az olyan műveletek, mint **az e-mail küldése, telefonhívás kezdeményezése vagy pénzátutalás**, minden egyes végrehajtással egy visszafordíthatatlan valós eseményt hoznak létre. Ráadásul a szerver gyakran kívül esik az Ön irányításán, így lehetetlen egy egyedi azonosítóval kiszűrni a duplikációkat. Az ilyen műveletekhez egy ""előzetes ellenőrzés, majd megerősítés" kétfázisú" megközelítést kell használni: az első fázis egy másik modellcsaládból származó modellt és egy dedikált biztonsági ellenőrző promptot használ az érvényesítéshez (egyenleg ellenőrzése, címzett megerősítése, elküldendő tartalom generálása); ténylegesen csak a második fázis hajtja végre a műveletet. Ha a végrehajtási fázis meghiúsul, nem szabad vakon újrapróbálkozni, hanem a részletes hibainformációt vissza kell adni az Agent fő modelljének, hogy újratervezhessen. Ez összhangban van a korábban tárgyalt Javasló-Felülvizsgáló előzetes jóváhagyással, és a később tárgyalt "kezdeményezés/befejezés" szétválasztással az aszinkron eszköz interfészeknél.
+Csakhogy nem minden művelet tehető idempotenssé. Az olyan műveletek, mint **e-mail küldése, telefonhívás kezdeményezése vagy kifelé irányuló átutalás**, minden egyes végrehajtáskor visszavonhatatlan valóságos eseményt hoznak létre. Az ilyeneknél kétfázisú, **„előellenőrzés, majd megerősítés”** megközelítést kell alkalmazni: az első fázis egy másik modellcsaládból való modellel és külön biztonsági ellenőrző prompttal validál — ellenőrzi az egyenleget, megerősíti a címzettet, előállítja az elküldendő tartalmat —, és csak a második fázis hajtja végre ténylegesen. Ha a végrehajtási fázis elbukik, nem szabad vakon újrapróbálkozni, hanem a részletes hibát vissza kell adni az Agent fő modelljének újratervezésre.
 
 > **4-4. ★★ Kísérlet: Végrehajtó Eszköz MCP Szerver**
 >
@@ -394,7 +394,7 @@ Az al-Agentek alapvető értéke a "munka megosztásán alapuló specializáció
 
 **A feladathatárokat egyértelműen meg kell határozni.** Határozza meg, mi tartozik a felelősségi körbe, és mit kell átadni vagy eszkalálni.
 
-**A kimeneti formátumnak szabványosnak kell lennie.** Egy egységes JSON struktúra csökkenti a fő Agent feldolgozási terhét, és megbízhatóbbá teszi a hibakezelést.
+**A kimeneti formátumot szabványosítani kell.** Akár JSON-t, akár Markdownt használunk, az al-Agent kimeneti formátumát a promptban egyértelműen meg kell adni. Így az al-Agent minden szükséges szempontot végiggondol, a fő Agent elemzési terhe csökken, és a hibakezelés is megbízhatóbbá válik.
 
 **Az Agentek Közötti Együttműködés Mechanizmusai.**
 
@@ -427,7 +427,7 @@ Bármennyire is erősödnek az AI Agentek képességei, bizonyos kulcsfontosság
 
 ## Fejezet Összefoglaló
 
-Ennek a fejezetnek az alapvető következtetése: az eszköztervezés minősége határozza meg az Agent képességeinek felső határát. Az első döntés, hogy milyen formában fejeződjön ki egy képesség – alapértelmezésben hajoljunk az általános vég felé, és csak négy esetben térjünk vissza dedikált eszközhöz: biztonság és jogosultságok, bonyolult paraméterek, rendkívül magas használati gyakoriság, valamint platformkülönbségek. Ez a döntés független attól, hogy «hány képességet lát a modell egyszerre»: az előbbi az egyes képességek tartós költségét szabja meg, az utóbbi azt, hányat tárunk fel egyszerre.
+Az eszközök tervezése szabja meg az Agent képességeinek plafonját. Az első döntés az, milyen formában fejezünk ki egy képességet: alapértelmezés szerint az általános vég felé hajlunk, és csak négy esetben lépünk vissza dedikált eszközhöz — biztonság és jogosultság, paraméterbonyolultság, rendkívül magas használati gyakoriság, valamint platformkülönbségek. Ez független attól a döntéstől, hogy „egyszerre hány képességet lásson a modell”: az előbbi az egyes képességek állandó költségét szabja meg, az utóbbi azt, hányat mutatunk meg egyszerre. A képességek két csatornán terjednek: az MCP protokoll egységesíti a dedikált eszközök becsatlakozását, a Skill Hub pedig csomagkezelővel osztja szét a `SKILL.md`-t. Mindkét csatorna egyetlen parancsra csökkentette egy képesség behozatalának költségét, és mindkettő kitágította a bizalmi határt is — ezért felül kell vizsgálni a leírásokat és a verziókat, el kell szigetelni a hitelesítő adatokat, és biztosítani kell, hogy a modell által látott paraméterek megegyezzenek azokkal, amelyeket az eszköz ténylegesen végrehajt. Amikor az eszközök száma százakra vagy ezrekre nő, sorra veszi át a stafétát a hierarchikus szervezés, az igény szerinti betöltés, az aktív felfedezés és a Skills, és a „melyik eszközt válasszam” kérdést „melyik segédletet nézzem meg” kérdéssé alakítja.
 
 Ez a fejezet az öt kategória közül azt a hármat fejti ki, amelyet az Agent saját kezdeményezésére hív meg:
 

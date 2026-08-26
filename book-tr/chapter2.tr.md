@@ -611,6 +611,29 @@ Modern büyük dil modelleri, eğitim verilerindeki büyük miktarda yapılandı
 
 Markdown, okunabilirliği korurken hafif bir yapı sağlar, bu da onu hiyerarşik talimatları ve bilgiyi organize etmek için özellikle uygun kılar. XML ve Markdown birlikte iki katmanlı bir yapı oluşturur: XML makine tarafından ayrıştırılabilir kesin semantiği yönetirken, Markdown hem insanlar hem de makineler tarafından okunabilir organizasyonel mantığı yönetir.
 
+Örneğin, ikisini aynı anda kullanan bir system prompt:
+
+```text
+# Araç Kullanım Kuralları
+
+## Dosya İşlemleri
+<file_operation>
+- Bir dosyayı okumadan önce yolun var olup olmadığı denetlenmeli
+- Bir dosyaya yazmadan önce yedek alınmalı
+</file_operation>
+
+## Ağ İstekleri
+<network_request>
+- Zaman aşımı 30 saniye olarak ayarlanmalı
+- Başarısızlık durumunda en fazla 3 kez yeniden denenmeli
+</network_request>
+```
+
+- **Markdown'ın rolü**: `#` ve `##` gibi başlıklar insanın hiyerarşiyi tek bakışta görmesini sağlar, okunabilirliği yüksek tutar.
+- **XML'in rolü**: `<file_operation>` ve `<network_request>` gibi etiketler modele “bu blok dosya işlemleriyle ilgili”, “bu blok ağ istekleriyle ilgili” bilgisini verir; anlam kesindir ve model daha isabetli işler.
+
+İkisi birlikte kullanıldığında prompt insan için açık, model için de anlaşılır olur.
+
 ### Süreç Odaklılık ve Kural Yığma: System Prompt'un "Organizasyonu"
 
 İnsanlar için bilişsel yükü azaltan yöntemler, büyük dil modelleri için de eşit derecede etkilidir—çünkü model eğitim sırasında insan dilini ve düşünme kalıplarını öğrenmiştir. Yeni bir çalışana yüzlerce dağınık kural içeren, akış şeması olmayan, öncelik talimatı olmayan bir el kitabı verdiğinizi hayal edin—en zeki insan bile kafası karışır: birden fazla kural aynı anda geçerli olduğunda hangisi seçilmeli? Ve kurallar tarafından kapsanmayan durumlar ne olacak?

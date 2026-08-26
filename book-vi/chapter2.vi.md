@@ -612,6 +612,29 @@ Các mô hình ngôn ngữ lớn hiện đại thể hiện độ nhạy đáng 
 
 Markdown cung cấp cấu trúc nhẹ trong khi vẫn duy trì khả năng đọc và đặc biệt thích hợp để tổ chức các hướng dẫn và thông tin phân cấp. XML và Markdown phối hợp với nhau để tạo ra cấu trúc hai lớp: XML chịu trách nhiệm về ngữ nghĩa chính xác mà máy có thể phân tích cú pháp và Markdown chịu trách nhiệm về logic tổ chức mà cả con người và máy móc đều có thể đọc được.
 
+Ví dụ, một system prompt dùng cả hai cùng lúc:
+
+```text
+# Quy định sử dụng công cụ
+
+## Thao tác tệp
+<file_operation>
+- Trước khi đọc tệp phải kiểm tra đường dẫn có tồn tại hay không
+- Trước khi ghi tệp phải sao lưu trước
+</file_operation>
+
+## Yêu cầu mạng
+<network_request>
+- Đặt thời gian chờ là 30 giây
+- Sau khi thất bại thì thử lại tối đa 3 lần
+</network_request>
+```
+
+- **Vai trò của Markdown**: các tiêu đề `#`, `##` giúp con người nhìn một cái là thấy ngay cấu trúc phân cấp, dễ đọc.
+- **Vai trò của XML**: các thẻ `<file_operation>`, `<network_request>` cho mô hình biết “khối này nói về thao tác tệp”, “khối này nói về yêu cầu mạng”; ngữ nghĩa chính xác nên mô hình xử lý cũng chuẩn hơn.
+
+Kết hợp cả hai, con người đọc thì rõ ràng, mô hình hiểu cũng chính xác.
+
 ### Điều khiển quy trình và xếp chồng quy tắc: "Phương thức tổ chức" của các system prompt
 
 Các phương pháp làm giảm tải nhận thức cho con người cũng có hiệu quả như nhau đối với các mô hình ngôn ngữ lớn—vì các mô hình này học ngôn ngữ con người và các kiểu suy nghĩ trong quá trình đào tạo. Hãy tưởng tượng đưa cho một nhân viên mới một cuốn sổ tay với hàng trăm quy tắc rải rác, không có sơ đồ và không có hướng dẫn ưu tiên - ngay cả người thông minh nhất cũng sẽ bối rối: Làm thế nào để chọn khi áp dụng nhiều quy tắc cùng một lúc? Làm thế nào để giải quyết những tình huống không nằm trong quy định?

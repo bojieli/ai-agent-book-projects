@@ -613,6 +613,29 @@ Modern large language models show significant sensitivity to structured input, s
 
 Markdown provides lightweight structure while maintaining readability, making it particularly suitable for organizing hierarchical instructions and information. XML and Markdown create a two-layer structure: XML provides precise, machine-parseable semantics, while Markdown organizes the content for human and machine readers.
 
+Here is a system prompt that uses both at once:
+
+```text
+# Tool Usage Guidelines
+
+## File Operations
+<file_operation>
+- Check whether the path exists before reading a file
+- Create a backup before writing a file
+</file_operation>
+
+## Network Requests
+<network_request>
+- Set the timeout to 30 seconds
+- Retry at most 3 times after a failure
+</network_request>
+```
+
+- **What Markdown contributes**: headings such as `#` and `##` let a human take in the hierarchy at a glance, which keeps the prompt readable.
+- **What XML contributes**: tags such as `<file_operation>` and `<network_request>` tell the model "this block is about file operations" and "this block is about network requests"—precise semantics that make the model's handling more accurate.
+
+Used together, the prompt reads clearly for humans and parses precisely for the model.
+
 ### Process-Driven vs. Rule Stacking: The "Organization" of the System Prompt
 
 Methods that reduce cognitive load for humans are equally effective for large language models—because the model has learned human language and reasoning patterns during training. Imagine giving a new team member a manual with hundreds of scattered rules, no flowcharts, and no priority instructions—even a highly capable person would be confused: when multiple rules apply simultaneously, which one should be chosen? And what about situations not covered by the rules?

@@ -10,7 +10,7 @@ This chapter begins with practical examples and works back toward the core compo
 
 ## Modern Agent = LLM + Context + Tools
 
-The essence of a modern Agent system fits into one concise formula: **Agent = LLM (Large Language Model) + Context + Tools**. The formula is simple and practical—provided each term is read broadly:
+The minimal engineering realization of a modern Agent can be expressed in one concise formula: **Agent = LLM (Large Language Model) + Context + Tools**. The plus signs here denote a combination of engineering components, not a formal definition from reinforcement learning; more importantly, the formula describes only what lies inside the Agent's boundary and **does not include the Environment the Agent interacts with**. Each term must be read broadly, but with a clear boundary:
 
 - **The LLM is the Agent's reasoning engine**: It is more than a set of model parameters; it is the Agent's decision-making core, responsible for understanding intent, reasoning, planning, and judgment. An LLM's capabilities come from world knowledge and language ability acquired during **pre-training**, plus decision-making strategies encoded through **post-training** (techniques such as supervised fine-tuning and reinforcement learning are covered in Chapter 8).
 - **Context is the Agent's working set of information**: Not just the text fed into the model, but the working set of information available to the Agent at each decision point—the environment, user memory, domain knowledge, its own state, and task progress. Just as a person making a decision needs to size up the situation, recall relevant experience, and consult references, the Agent's context window contains the information it can use at that moment.
@@ -146,7 +146,7 @@ Context is the working set of information available to an Agent at each decision
 
 The first two items (system prompt + tool definitions) form the static prefix; the last three (user messages + assistant messages + tool results) form the dynamic message history that grows with every interaction. Together, these five parts make up the context of each LLM inference.
 
-Is every component truly indispensable? The most direct way to find out is an **ablation study**—the diagnostic method of ruling out causes one at a time: remove component A and see whether the system still works, then component B, and so on, until each component’s contribution is clear. Experiment 1-1 applies exactly this method to the five components above. The results are direct: without tool definitions, the Agent is completely incapable of action; without tool results, it does not receive feedback from the previous step, so it calls the same tool repeatedly, becoming stuck in an infinite loop; without the reasoning in assistant messages, consecutive decisions start contradicting each other; without message history, the Agent loses task continuity and restarts the whole task from the beginning, repeating steps already done.
+Is every component truly indispensable? The most direct way to find out is an **ablation study**—the diagnostic method of ruling out causes one at a time: remove component A and see whether the system still works, then component B, and so on, until each component's contribution is clear. Experiment 1-1 applies exactly this method to the five components above.
 
 > **Experiment 1-1 ★★: The Critical Role of Context**
 >
@@ -168,7 +168,7 @@ Consider a concrete example—aggregating revenue across multiple currencies—t
 
 ![Figure 1-4: Agent trajectory—ReAct loop for a multi-currency aggregation task](images/fig1-4.svg)
 
-The following Python-style sketch is explanatory pseudocode, not runnable SDK code; the `python` marker is used only for syntax highlighting.
+Start with the minimal running skeleton. It shows **how the mechanism runs**: the Model only decides the next step, the Harness assembles the context and validates and executes the tools, and the Environment produces the actual state changes and observations. The rest of this book also uses Python-style pseudocode; the pseudocode is not runnable and does not correspond to any particular SDK. The concrete executable code lives in this book's companion repository.
 
 ```python
 trajectory = [user_request]
@@ -242,7 +242,7 @@ Now that we understand the Agent's operating loop, we examine two experiments to
 > [^ch1-2]: Thanks to reader asdlem for pointing out and clarifying, via GitHub Issue #30, the distinction that what RL internalizes is the tool-calling decision policy, not the tool execution mechanism. See https://github.com/bojieli/ai-agent-book/issues/30
 >
 > Kimi K3’s notable advantage in Agent tasks is **the stability of long-chain tool calls**—it can sustain 200–300 consecutive tool calls with coherent reasoning throughout, far beyond the few dozen calls at which most models begin to degrade. K3 is optimized for long-horizon programming and Agent workloads, and was released in two variants: K3 Max (for dialogue and Agent tasks) and K3 Swarm Max (for large-scale parallel processing). As an open-source model, it matches top-tier closed-source systems on software engineering and Agent benchmarks—evidence that reinforcement learning can endow a model with native Agent capability.
-
+>
 > **Experiment 1-3 ★: GPT-5.6 Native Deep Research Capability**
 >
 > The second experiment uses **OpenAI GPT-5.6** to show how an advanced model, backed by API-level built-in tools, closes the "search—read—analyze" orchestration loop on the server side for Deep Research. One convenient GPT-5.6 feature is **Freeform Tool Calling**. Traditionally, a model calling a tool must serialize every parameter into strict JSON (a structured data format), much like filling out a form with rigid formatting rules. Freeform tool calling (declared in the API through a tool of `type: "custom"`) lets the model send raw text straight to the tool (a snippet of Python code, a SQL query), avoiding JSON escaping entirely. It is worth stressing that this is an evolution of the API's parameter format, not an innovation in model architecture—the client's tool-calling loop (detect `tool_calls` → execute → return the result) stays the same; only the arguments change from a JSON string to raw text.
@@ -452,8 +452,6 @@ Agent frameworks evolve rapidly. By the time you read this book, some of these f
 Orchestration patterns solve the organization of context and tools within the Harness—how LLM calls, tools, and data flows connect. But task completion is not enough; tasks must also be completed correctly and safely. We therefore turn to the main way constrain, verify, and correct are implemented in practice: guardrails.
 
 ### Guardrails and Safety
-
-This section gives a high-level overview of guardrails to establish the big picture. Implementation details and practice follow in Chapter 2 (the context layer: prompt injection protection), Chapter 4 (the execution layer: tool permission control), and Chapter 5 (the execution and data layers: code execution security and moving the trust boundary down); first-time readers do not need to follow every detail.
 
 Guardrails are how the "constrain, verify, and correct" layer of the Harness is primarily implemented—a layered defense that keeps Agent behavior safe and controllable. Well-designed **guardrails** help manage data privacy risks (for example, preventing system prompt leakage) and reputational risks (for example, keeping model behavior consistent with the brand). Start with guardrails for the risks you have already identified, then add new ones as new vulnerabilities surface.
 
