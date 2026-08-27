@@ -1,53 +1,54 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 490" width="880" height="490" style="background:#ffffff">
-<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 274" width="880" height="274" style="background:#ffffff">
+<defs>
+<marker id="ax" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker>
+<marker id="ah-s" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 10 3.5, 0 7" fill="#666666"/></marker>
+</defs>
+<style>
+.t{font-family:Arial,'Helvetica Neue',Helvetica,'PingFang SC','Microsoft YaHei',sans-serif;fill:#333333;text-anchor:middle;dominant-baseline:central}
+.h{font-size:15px;font-weight:bold}
+.m{font-size:12px;fill:#666666}
+.n{font-size:12px;fill:#333333}
+.a{font-size:13px;fill:#333333}
+</style>
 
-<rect x="30" y="60" width="250" height="150" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="155" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">ルーブリック</text>
-<line x1="40" y1="94" x2="270" y2="94" stroke="#999999" stroke-width="2"/>
-<text x="45" y="115" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">事実の正確性: 必須</text>
-<text x="45" y="137" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">論理的整合性: 重要</text>
-<text x="45" y="159" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">ハルシネーション検出: 拒否権 ⚠</text>
-<text x="45" y="181" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">網羅性: 重要</text>
-<rect x="315" y="60" width="250" height="150" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="440" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">候補回答</text>
-<line x1="325" y1="94" x2="555" y2="94" stroke="#999999" stroke-width="2"/>
-<text x="330" y="115" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">エージェント出力:</text>
-<text x="330" y="137" font-family="'Courier New', Courier, monospace" font-size="7" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;返金処理が完了しました。$150 は次の期間内に</text>
-<text x="330" y="159" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central"> 3〜5 営業日以内に入金されます。&quot;</text>
-<text x="330" y="181" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central"></text>
-<rect x="600" y="60" width="250" height="150" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="725" y="82" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">参照解答（任意）</text>
-<line x1="610" y1="94" x2="840" y2="94" stroke="#999999" stroke-width="2"/>
-<text x="615" y="115" font-family="'Courier New', Courier, monospace" font-size="11.5" fill="#333333" text-anchor="start" dominant-baseline="central">標準解答 / 採点ポイント:</text>
-<text x="615" y="137" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">返金額を含めること</text>
-<text x="615" y="159" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">入金時期を含めること</text>
-<text x="615" y="181" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">具体的な期日を約束しないこと</text>
-<line x1="155" y1="210" x2="440" y2="240" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<line x1="440" y1="210" x2="440" y2="240" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<line x1="725" y1="210" x2="440" y2="240" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<rect x="280" y="245" width="320" height="50" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
-<text x="440" y="262" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">審査モデル（GPT-5 / Gemini 2.5）</text>
-<text x="440" y="282" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#cccccc" text-anchor="middle" dominant-baseline="central" font-weight="normal">同一ソースバイアスを防ぐための多元的な異種評価</text>
-<line x1="440" y1="295" x2="440" y2="325" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<rect x="60" y="328" width="760" height="180" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="440" y="350" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">構造化された評価出力</text>
-<rect x="75" y="370" width="360" height="125" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
-<text x="85" y="390" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">事実の正確性</text>
-<text x="250" y="390" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">4/4</text>
-<text x="300" y="390" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">金額と時期の両方が正確</text>
-<text x="85" y="414" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">網羅性</text>
-<text x="250" y="414" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">3/4</text>
-<text x="300" y="414" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">返金方法の説明が欠落</text>
-<text x="85" y="438" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">ハルシネーション検出</text>
-<text x="250" y="438" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">PASS</text>
-<text x="300" y="438" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">虚偽情報なし</text>
-<text x="85" y="462" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">論理的整合性</text>
-<text x="250" y="462" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">4/4</text>
-<text x="300" y="462" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">因果関係が明確</text>
-<rect x="460" y="370" width="345" height="125" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="632" y="390" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">スコア集約戦略</text>
-<text x="475" y="415" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">加重平均: Σ(重み × 次元スコア)</text>
-<text x="475" y="437" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">拒否権: ハルシネーション=FAIL → 総合スコア=0</text>
-<text x="475" y="459" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">複数審査: 3審査員の中央値</text>
-<text x="475" y="481" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">エッジケースフラグ: 判定の食い違い &gt;2点 → 人間によるレビュー</text>
+<line x1="40" y1="26" x2="846" y2="26" stroke="#333333" stroke-width="2" marker-end="url(#ax)"/>
+<text class="t a" x="130" y="12">タスクの機械的検証可能性：高</text>
+<text class="t a" x="790" y="12">低</text>
+
+<rect x="18" y="52" width="190" height="112" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text class="t h" x="113" y="76">決定的検証器</text>
+<text class="t m" x="113" y="100">最終状態が一意に照会可能</text>
+<text class="t m" x="113" y="120">通過 / 不通過</text>
+<text class="t n" x="113" y="146">SWE-bench はテスト実行</text>
+<line x1="212" y1="108" x2="232" y2="108" stroke="#666666" stroke-width="1.5" marker-end="url(#ah-s)"/>
+
+<rect x="236" y="52" width="190" height="112" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text class="t h" x="331" y="76">検査項目リスト</text>
+<text class="t m" x="331" y="100">複数の決定的検査</text>
+<text class="t m" x="331" y="120">宣言された基準で集約</text>
+<text class="t n" x="331" y="146">τ²-bench の 4 層検証</text>
+<line x1="430" y1="108" x2="450" y2="108" stroke="#666666" stroke-width="1.5" marker-end="url(#ah-s)"/>
+
+<rect x="454" y="52" width="190" height="112" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text class="t h" x="549" y="76">Rubric + LLM 評定</text>
+<text class="t m" x="549" y="100">次元は分けられるが機械判定は不可</text>
+<text class="t m" x="549" y="120">次元ごとに採点し理由を示す</text>
+<text class="t n" x="549" y="146">接客品質、レポート作成</text>
+<line x1="648" y1="108" x2="668" y2="108" stroke="#666666" stroke-width="1.5" marker-end="url(#ah-s)"/>
+
+<rect x="672" y="52" width="190" height="112" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text class="t h" x="767" y="76">配対比較</text>
+<text class="t m" x="767" y="100">次元すら書き出しにくい</text>
+<text class="t m" x="767" y="120">A と B の優劣のみ判定</text>
+<text class="t n" x="767" y="146">Chatbot Arena</text>
+
+<rect x="18" y="192" width="408" height="66" rx="6" fill="#f3f0e8" stroke="#333333" stroke-width="2"/>
+<text class="t h" x="222" y="212">決定的検証</text>
+<text class="t m" x="222" y="234">完全に再現可能、CI に組み込め、低コスト</text>
+<text class="t m" x="222" y="250">代償：正誤のみで、問題の所在は示さない</text>
+
+<rect x="454" y="192" width="408" height="66" rx="6" fill="#f3f0e8" stroke="#333333" stroke-width="2"/>
+<text class="t h" x="658" y="212">モデルによる評定</text>
+<text class="t m" x="658" y="234">診断次元を取り出せ、アサート不能な課題も覆う</text>
+<text class="t m" x="658" y="250">代償：評定のバイアスとばらつき、コスト増</text>
 </svg>

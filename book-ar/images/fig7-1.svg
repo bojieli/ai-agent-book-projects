@@ -1,19 +1,66 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 260" width="820" height="260" style="background:#ffffff">
-<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
-<rect x="30" y="44" width="560" height="64" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="310.0" y="64.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">الطبقة الأولى: تقييم البيئة</text>
-<text x="310.0" y="90.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">"مكان الاختبار" - استدعاء الأدوات / التفاعل بين الإنسان والحاسوب / بيئة المحاكاة</text>
-<line x1="310.0" y1="109" x2="310.0" y2="121" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<rect x="30" y="124" width="560" height="64" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="310.0" y="144.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">الطبقة الثانية: طرق التقييم</text>
-<text x="310.0" y="170.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">"كيفية الحكم" - تصميم مجموعة البيانات · LLM-as-a-Judge · المقارنة والتصنيف الزوجي</text>
-<line x1="310.0" y1="189" x2="310.0" y2="201" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<rect x="30" y="204" width="560" height="64" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="310.0" y="224.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">الطبقة الثالثة: القرارات المبنية على التقييم</text>
-<text x="310.0" y="250.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">"ما يجب فعله بعد الاختبار" — اختيار النموذج · تحسين البنية · التكرار المستمر</text>
-<rect x="620" y="44" width="170" height="224" rx="6" fill="#f3f0e8" stroke="#333333" stroke-width="2"/>
-<text x="705" y="64" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">المواضيع الهندسية في جميع أنحاء الفصل</text>
-<text x="705" y="102" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">• إمكانية الملاحظة</text>
-<text x="705" y="142" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">• بيئة المحاكاة</text>
-<text x="705" y="182" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal" direction="rtl" unicode-bidi="plaintext" style="font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif">• التقييم الداخلي</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 486" width="880" height="486" style="background:#ffffff">
+<defs>
+<marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker>
+<marker id="ah-s" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 10 3.5, 0 7" fill="#666666"/></marker>
+</defs>
+<style>
+.t{font-family:Arial,'Helvetica Neue',Helvetica,'PingFang SC','Microsoft YaHei',sans-serif;fill:#333333;text-anchor:middle;dominant-baseline:central}
+.h{font-size:17px;font-weight:bold}
+.s{font-size:13px;fill:#666666}
+.m{font-size:13px}
+.n{font-size:11px;fill:#666666}
+
+.t,.l{direction:rtl;unicode-bidi:plaintext;font-family:'Noto Sans Arabic','Noto Sans',Arial,sans-serif}
+.c{font-family:'SF Mono',Menlo,Consolas,monospace;direction:ltr;unicode-bidi:plaintext}
+
+</style>
+
+<rect x="100" y="20" width="690" height="56" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text class="t h" x="445" y="40">① تعريف النجاح</text>
+<text class="t s" x="445" y="61">Pass@k يقيس سقف القدرة · Pass^k يقيس الموثوقية</text>
+<line x1="445" y1="76" x2="445" y2="94" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+
+<rect x="100" y="96" width="690" height="102" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text class="t h" x="445" y="116">② مصدر المهام</text>
+<rect x="116" y="130" width="206" height="54" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
+<text class="t m" x="219" y="147">معايير مرجعية عامة</text>
+<text class="t n" x="219" y="167">اقتباس الأساليب · غربلة خشنة</text>
+<rect x="342" y="130" width="206" height="54" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
+<text class="t m" x="445" y="147">مجموعة عمل ذاتية</text>
+<text class="t n" x="445" y="167">توزيع المهام الحقيقي</text>
+<rect x="568" y="130" width="206" height="54" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
+<text class="t m" x="671" y="147">عودة مسارات الإنتاج</text>
+<text class="t n" x="671" y="167">ناتج عزو الإخفاق</text>
+<line x1="445" y1="198" x2="445" y2="216" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+
+<rect x="100" y="218" width="690" height="106" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text class="t h" x="445" y="238">③ أسلوب التحقق</text>
+<text class="t n" x="445" y="257">← بحسب درجة قابلية المهمة للتحقق آليًا →</text>
+<rect x="116" y="268" width="142" height="44" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
+<text class="t m" x="187" y="282">مدقق حتمي</text>
+<text class="t n" x="187" y="300">SWE-bench</text>
+<line x1="262" y1="290" x2="284" y2="290" stroke="#666666" stroke-width="1.5" marker-end="url(#ah-s)"/>
+<rect x="288" y="268" width="142" height="44" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
+<text class="t m" x="359" y="282">قائمة فحوص</text>
+<text class="t n" x="359" y="300">τ²-bench</text>
+<line x1="434" y1="290" x2="456" y2="290" stroke="#666666" stroke-width="1.5" marker-end="url(#ah-s)"/>
+<rect x="460" y="268" width="142" height="44" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
+<text class="t m" x="531" y="282">Rubric + حكم نموذج</text>
+<text class="t n" x="531" y="300">مهام مفتوحة</text>
+<line x1="606" y1="290" x2="628" y2="290" stroke="#666666" stroke-width="1.5" marker-end="url(#ah-s)"/>
+<rect x="632" y="268" width="142" height="44" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
+<text class="t m" x="703" y="282">مقارنة زوجية</text>
+<text class="t n" x="703" y="300">Chatbot Arena</text>
+<line x1="445" y1="324" x2="445" y2="342" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+
+<rect x="100" y="344" width="690" height="62" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text class="t h" x="445" y="364">④ توظيف النتائج</text>
+<text class="t s" x="445" y="388">الدلالة الإحصائية ← عزو الإخفاق ← مهام الانحدار ← اختيار النموذج وتكرار الـHarness</text>
+
+<path d="M100 375 L52 375 L52 147 L96 147" fill="none" stroke="#333333" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#ah)"/>
+<text class="t n" x="52" y="262" transform="rotate(-90 52 262)">مهام الانحدار تصير حالات جديدة</text>
+
+<rect x="100" y="424" width="690" height="46" rx="6" fill="#f3f0e8" stroke="#333333" stroke-width="2"/>
+<text class="t m" x="445" y="440" font-weight="bold">البنية الداعمة</text>
+<text class="t n" x="445" y="458">قابلية الرصد · بنية التقييم الداخلي (الاستئصال / AB / مفاتيح الميزات) · بيئة المحاكاة (الفصل الثامن)</text>
 </svg>

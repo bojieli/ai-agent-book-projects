@@ -17,58 +17,117 @@ Khi xây dựng hệ thống Agent, các nhà phát triển phải đối mặt 
 Từ quan điểm của kỹ thuật Harness được giới thiệu trong Chương 1, việc đánh giá đóng vai trò cốt lõi trong chức năng “xác nhận” trong Harness. Hiểu biết quan trọng là: **Đối tượng đánh giá không chỉ là mô hình mà còn là sự kết hợp giữa mô hình và Harness**. Cùng một mô hình có thể hoạt động rất khác nhau trong các Harness khác nhau - một số nhóm đã cải thiện đáng kể hiệu suất của cùng một mô hình trong các tác vụ đầu cuối chỉ bằng cách tối ưu hóa Harness (xem Chương 5 để biết chi tiết). Điều này có nghĩa là khi Agent hoạt động kém trong quá trình đánh giá, hướng cải tiến có thể không phải là thay đổi mô hình mà là tối ưu hóa một thành phần nhất định của Harness (lời nhắc, thiết kế công cụ, vòng phản hồi). Một hệ thống đánh giá hoàn chỉnh phải có khả năng phân biệt giữa hai loại vấn đề cơ bản khác nhau: "khả năng mô hình không đủ" và "lỗi thiết kế Harness". **Một cách phổ biến để phân biệt giữa hai loại vấn đề này là thử nghiệm hoán đổi mô hình** - giữ nguyên Harness, chỉ thay thế các mô hình mạnh hơn/yếu hơn và quan sát sự thay đổi về điểm số; nếu điểm không tăng khi chuyển sang mẫu mạnh hơn thì có nghĩa nút thắt nằm ở Harness; nếu điểm giảm mạnh khi chuyển sang mô hình yếu và điểm dao động lớn theo khả năng của mô hình, thì cách giải thích trực tiếp nhất là nút thắt cổ chai nằm ở chính khả năng của mô hình và hiệu suất hiện tại chủ yếu được xác định bởi mô hình (về việc liệu điều này là do bản thân nhiệm vụ khó hay Harness quá phụ thuộc vào mô hình trước đó, thì cần phải phân tích thêm). Lưu ý rằng đây là hai phương pháp khác với "thử nghiệm cắt bỏ" được đề cập trước đó: cắt bỏ là **tắt một thành phần của Harness** để xem hiệu suất tổng thể thay đổi như thế nào, trong khi thay thế mô hình là **giữ nguyên Harness và chỉ thay thế mô hình** - phương pháp trước xác định thành phần nào trong Harness là quan trọng và phương pháp sau phân biệt xem nút cổ chai nằm trong mô hình hay trong Harness.
 
 Giá trị của hệ thống đánh giá thậm chí còn nổi bật hơn trong thời đại phát triển mô hình nhanh chóng. Khả năng của mô hình vẫn đang phát triển nhanh chóng, nhưng chỉ vì mô hình mới hoạt động tốt hơn theo điểm chuẩn công khai không có nghĩa là mô hình đó thực hiện tốt hơn nhiệm vụ cụ thể của bạn—ngược lại, có thể xảy ra hiện tượng hồi quy hiệu suất (tức là phiên bản mới không tốt bằng phiên bản cũ ở một số khía cạnh). Các quyết định nâng cấp dựa trên dữ liệu chỉ có thể được đưa ra thông qua thử nghiệm hoàn chỉnh trên tập dữ liệu đánh giá của riêng bạn. Hơn nữa, một hệ thống đánh giá hoàn chỉnh khiến cho việc "phát triển sản phẩm cho các mẫu tương lai" trở thành một chiến lược khả thi - ngay cả khi mô hình hiện tại không đủ để hỗ trợ sử dụng thương mại, trước tiên bạn có thể hoàn thành việc phát triển sản phẩm và thiết lập bộ đánh giá, tiếp tục theo dõi hiệu suất của mô hình mới và khởi chạy nó ngay lập tức khi đạt đến ngưỡng.
+Một hệ thống đánh giá có thể tách thành bốn mắt xích: thế nào là thành công, nhiệm vụ đến từ đâu, ai kiểm chứng, và điểm số được chuyển thành quyết định ra sao. Hình 7-1 minh họa điều này.
 
-> **Giới thiệu về chương này**
->
-> Chương này xây dựng một hệ thống đánh giá hoàn chỉnh từ ba cấp độ. Lớp đầu tiên là **môi trường đánh giá**("nơi kiểm tra"): cách xây dựng môi trường thử nghiệm tự động và có thể tái tạo, bao gồm hai mô hình: loại lệnh gọi công cụ và loại tương tác giữa người và máy tính. Cấp độ thứ hai là **phương pháp đánh giá**("cách đánh giá"): từ nguyên tắc thiết kế tập dữ liệu, hệ thống chỉ số đánh giá (những gì cần đo lường), đến LLM-as-a-Judge (sử dụng mô hình ngôn ngữ lớn làm đánh giá) đánh giá tự động, đến so sánh theo cặp và xếp hạng mô hình. Cấp độ thứ ba là **ra quyết định dựa trên đánh giá**("những gì được đo lường"): kết quả đánh giá được chuyển thành hướng dẫn hành động để lựa chọn mô hình, tối ưu hóa kiến trúc và lặp lại liên tục, đồng thời ý nghĩa thống kê được sử dụng để xác định xem sự khác biệt về điểm số quan sát được có thực tế và đáng tin cậy hay không. Ngoài ra, chương này thảo luận về observability và cơ sở hạ tầng đánh giá nội bộ của Agent cấp sản xuất, đồng thời ở cuối chương giới thiệu môi trường mô phỏng được kết nối với post-training trong Chương 8.
->
-> Khái niệm cốt lõi xuyên suốt toàn bộ chương này là: **Giá trị chính của hệ thống đánh giá không phải là chấm điểm cho hệ thống hiện tại mà là cho phép bạn theo kịp sự phát triển của mô hình một cách nhanh chóng và đáng tin cậy**. Khi một mô hình mạnh hơn hoặc rẻ hơn được phát hành, một nhóm có hệ thống đánh giá được phát triển tốt có thể đưa ra quyết định chuyển đổi trong vòng vài giờ, trong khi nhóm không có hệ thống đánh giá chỉ có thể dựa vào trực giác hoặc chờ phản hồi của cộng đồng - trong thị trường Agent cạnh tranh khốc liệt, sự khác biệt về tốc độ này có thể quyết định thành công hay thất bại.
+![Hình 7-1 Bốn mắt xích của hệ thống đánh giá Agent](images/fig7-1.svg)
 
-![Hình 7-1 Ba cấp độ của hệ thống đánh giá](images/fig7-1.svg)
+## Mổ xẻ một nhiệm vụ đánh giá: miền telecom của τ²-bench
 
-## Ví dụ đánh giá cụ thể
+Trước hết hãy mổ xẻ trọn vẹn một nhiệm vụ thật trong miền telecom của τ²-bench. Mã nguồn nằm ở `chapter7/tau2-bench` trong kho, còn tệp nhiệm vụ là `data/tau2/domains/telecom/tasks_small.json`.
 
-Trước khi đi sâu vào phương pháp luận, hãy xây dựng trực giác thông qua một ví dụ hoàn chỉnh. Giả sử chúng ta xây dựng một dịch vụ khách hàng Agent và cần đánh giá khả năng xử lý các yêu cầu hoàn tiền của nó.
+### Bốn thành phần của định nghĩa nhiệm vụ
 
-**Trường hợp thử nghiệm**: Người dùng đã yêu cầu hủy đơn hàng được thực hiện 3 ngày trước (mã đơn hàng #12345, số tiền ¥299). Chính sách của công ty: Hoàn tiền đầy đủ trong vòng 7 ngày.
+Dưới đây là một nhiệm vụ trong tệp đó, đã lược bớt cho dễ đọc.
 
-**Trajectory của Agent**:
+```jsonc
+{
+  "id": "[mobile_data_issue]airplane_mode_on|user_abroad_roaming_enabled_off",
 
-```text
-Người dùng: Tôi muốn trả lại tai nghe đã mua cách đây 3 ngày, mã đơn hàng 12345. (Hôm nay là 2026-04-10)
+  // Phiếu yêu cầu giao cho Agent
+  "ticket": "Điện thoại của người dùng không vào được internet, thanh trạng thái
+             hiển thị 'No Service'. Khách hàng John Smith, số 555-123-2002, hiện
+             đang ở Pháp. Chỉ khi kiểm tra tốc độ trả về excellent mới coi là đã
+             xử lý xong. Không đổi gói cước, nhưng sẵn sàng nạp thêm 2,0 GB dữ
+             liệu nếu cần.",
 
-Đại lý (suy nghĩ): Nếu người dùng muốn hoàn tiền thì trước tiên cần kiểm tra thông tin đơn hàng.
-Đại lý → Công cụ gọi query_order(order_id="12345")
-Công cụ trả về: {trạng thái: "đã giao", số tiền: 299, ngày: "2026-04-07", mục: "Tai nghe Bluetooth"}
+  // Quy tắc hành vi giao cho bộ mô phỏng người dùng
+  "user_scenario": { "instructions": {
+      "known_info": "You are John Smith with phone number 555-123-2002.
+                     You are currently abroad in France.",
+      "unknown_info": null,
+      "task_instructions":
+        "…express mild frustration after the first unsuccessful attempt.
+         You will consider the issue resolved only when speed test returns
+         excellent internet speed and nothing else. If it returns poor, fair
+         or good, you will not consider the issue resolved.
+         Whenever the agent asks you about your device, always ground your
+         responses on the results of tool calls. …
+         Never make up the results of tool calls."
+  }},
 
-Đại lý (suy nghĩ): Ngày đặt hàng là 2026-04-07, tức là 3 ngày kể từ hôm nay 2026-04-10. Trong thời hạn hoàn tiền 7 ngày, nó đủ điều kiện để được hoàn trả đầy đủ.
-Đại lý → Công cụ gọi process_refund(order_id="12345", money=299)
-Công cụ trả về: {refund_id: "R-98765", trạng thái: "đang xử lý", eta: "3-5 ngày làm việc"}
+  // Trước khi chạy, đưa trạng thái hai phía về cùng một điểm xuất phát
+  "initial_state": { "initialization_actions": [
+      { "env_type": "user",      "func_name": "turn_airplane_mode_on" },
+      { "env_type": "user",      "func_name": "turn_roaming_off" },
+      { "env_type": "assistant", "func_name": "enable_roaming",
+        "arguments": { "customer_id": "C1001", "line_id": "L1002" } }
+  ]},
 
-Đại lý: Khoản hoàn trả đã được thực hiện cho bạn và khoản hoàn trả đầy đủ cho đơn hàng số 12345 (tai nghe Bluetooth, ¥299) đang được xử lý.
-Dự kiến nó sẽ đến sau 3-5 ngày làm việc. Số hoàn tiền R-98765 có thể được sử dụng để kiểm tra tiến độ.
+  // Tiêu chí chấm điểm
+  "evaluation_criteria": {
+      "actions": [
+        { "requestor": "user", "name": "toggle_airplane_mode" },
+        { "requestor": "user", "name": "toggle_roaming" }
+      ],
+      "env_assertions": [
+        { "func_name": "assert_mobile_data_status", "expected_status": true },
+        { "func_name": "assert_internet_speed",
+          "expected_speed": 200, "expected_desc": "excellent" }
+      ],
+      "communicate_info": null,
+      "nl_assertions": null,
+      "reward_basis": ["ENV_ASSERTION"]
+  }
+}
 ```
 
-**Được tính điểm bằng Rubric**(bốn chiều, 1-4 điểm cho mỗi chiều). Bảng 7-1 đưa ra ví dụ về việc chấm điểm nhiệm vụ hoàn tiền dịch vụ khách hàng này để minh họa cách Rubric chia trajectory Agent thành các kích thước đánh giá có thể kiểm tra được.
+Trong định nghĩa này có bốn quyết định thiết kế cần nói rõ.
 
-Bảng 7-1 Ví dụ về tính điểm Rubric cho nhiệm vụ hoàn tiền dịch vụ khách hàng
+**Ranh giới hiểu biết của người dùng được mô hình hóa tường minh.** `known_info` chỉ chứa ba thông tin: tên, số điện thoại và quốc gia đang ở. Hai nguyên nhân thật sự của sự cố — chế độ máy bay đang bật và chuyển vùng dữ liệu đang tắt — không có trong đó. Người dùng không biết nên không thể tự nói ra, và Agent chỉ có thể lấy được bằng cách hỏi và hướng dẫn người dùng kiểm tra. Đây chính là cách **tiết lộ thông tin tuần tự (Progressive Information Disclosure)** được hiện thực hóa ở tầng định nghĩa nhiệm vụ: không phải ràng buộc bộ mô phỏng bằng một câu prompt "đừng nói hết một lúc", mà mô hình hóa phạm vi hiểu biết của người dùng thành một trường riêng. Phần lớn benchmark đưa ra yêu cầu đầy đủ ngay khi bắt đầu, trong khi câu đầu tiên của người dùng thật thường chỉ là "tôi không vào mạng được". Làm rõ yêu cầu đến mức có thể thực thi tự nó đã là một phần năng lực mà Agent phải có.
 
-| Kích thước | Tiêu chí | Điểm | Biện minh |
-|------|------|------|------|
-| Hoạt động đúng đắn | Số tiền hoàn lại và số đơn hàng có chính xác hay không | 4 | Truy vấn chính xác và bắt đầu hoàn lại toàn bộ ¥299 |
-| Tuân thủ chính sách | Liệu chính sách hoàn tiền trong 7 ngày có được tuân thủ hay không | 4 | Đơn hàng đang trong thời gian hoàn tiền và tuân thủ chính sách |
-| Tính toàn vẹn thông tin | Có thông báo số tiền, thời gian đến và mã số hoàn tiền hay không | 4 | Ba thông tin quan trọng đã được thông báo |
-| Phát hiện ảo ảnh (phủ quyết) | Có bịa đặt thông tin không tồn tại hay không | Vượt qua | Tất cả thông tin đều đến từ kết quả trả về công cụ |
+**Bộ mô phỏng nhận quy tắc hành vi chứ không phải lời thoại.** `task_instructions` gộp ba loại ràng buộc: thiết lập cảm xúc (tỏ ra hơi khó chịu sau lần khắc phục đầu tiên thất bại), tiêu chí nghiệm thu (chỉ khi kiểm tra tốc độ trả về excellent mới coi là xong; poor, fair, good đều không chấp nhận), và yêu cầu **neo vào sự kiện (Grounding)**, tức mọi câu trả lời về trạng thái thiết bị đều phải dựa trên giá trị mà công cụ trả về: "Never make up the results of tool calls". Điều thứ ba quan trọng nhất: thiếu ràng buộc neo sự kiện, người dùng mô phỏng sẽ theo sự dẫn dắt của Agent mà xác nhận vấn đề đã xong, và việc đánh giá thoái hóa thành hai mô hình xác nhận lẫn nhau.
 
-Lý do ảo giác được liệt kê là **mục phủ quyết** thay vì khía cạnh xếp hạng là vì nó trực giao với chất lượng - một câu trả lời mượt mà, chi tiết và lịch sự chứa thông tin sai sự thật sẽ có hại cho người dùng hơn nhiều so với một câu trả lời ngắn gọn nhưng chính xác. (Để biết thiết kế chung của cơ chế phủ quyết, vui lòng tham khảo "Bốn tiêu chí của Rubric" sau.)
+**Trạng thái ban đầu được chia theo phía điều khiển.** `env_type` nhận hai giá trị `user` và `assistant`: chế độ máy bay và công tắc chuyển vùng thuộc phía người dùng, còn `enable_roaming` phía nhà mạng thuộc phía Agent. Chính cách chia này quyết định hình dạng của sự cố — phía nhà mạng chuyển vùng đã mở, nhưng trên máy người dùng lại đang tắt, nên Agent tra cơ sở dữ liệu chỉ nhận được kết luận "cấu hình bình thường". Sự cố nằm ở phía mà cơ sở dữ liệu không nhìn thấy, và chỉ lộ ra khi hướng dẫn người dùng tự kiểm tra.
 
-Ca sử dụng này đã thành công. Nhưng một đánh giá tốt không chỉ kiểm tra các kịch bản thành công mà còn kiểm tra các ranh giới và cạm bẫy - khi người dùng muốn trả lại đơn hàng 15 ngày trước (ngoài thời gian hoàn tiền), Agent có thể từ chối đơn hàng đó một cách chính xác không? Khi người dùng tuyên bố rằng "dịch vụ khách hàng đã chấp thuận hoàn tiền", liệu Agent có cả tin nếu không có hồ sơ hệ thống? Các kịch bản ranh giới này là chìa khóa để phân biệt khả năng của Agent.
+**Tiêu chí chấm điểm chia thành bốn tầng, và nhiệm vụ này chỉ dùng một tầng.** `env_assertions` kiểm tra trạng thái cuối (dữ liệu di động dùng được, tốc độ từ 200 Mbps trở lên và xếp hạng excellent), `actions` kiểm tra các hành động then chốt có xảy ra hay không và **do phía nào** thực hiện, còn `communicate_info` và `nl_assertions` kiểm tra thông tin cần thiết đã được báo cho người dùng chưa. `reward_basis` của nhiệm vụ này chỉ khai báo `ENV_ASSERTION`; các tầng còn lại vẫn được tính và ghi nhận nhưng không vào phần thưởng cuối. Căn cứ chấm điểm được khai báo theo từng nhiệm vụ chứ không cố định toàn cục.
 
-Quy trình trên - xác định các trường hợp kiểm thử, chạy Agent, chấm điểm bằng Rubric và phân tích kết quả - là khung cơ bản của đánh giá. Chương này sẽ dần dần mở rộng phương pháp thiết kế của từng liên kết.
+### Trajectory của một lần chạy thật
 
-## Hệ thống chỉ số đánh giá: tiêu chí cập nhật
+Tiếp theo, chúng tôi mời bạn đọc tự chạy các nhiệm vụ đánh giá của miền telecom trong τ²-bench, quan sát thiết kế nhiệm vụ, thiết kế bộ mô phỏng người dùng, logic kiểm chứng quá trình và kết quả, đồng thời xem trajectory thực thi của Agent để phân tích vì sao Agent thất bại.
 
-Trước khi xây dựng môi trường hay tập dữ liệu, cần định nghĩa “thành công”: tìm được một đường đi khả thi một lần có đủ không, hay mọi lần chạy đều phải đúng? Cách định nghĩa khác nhau có thể đảo ngược quyết định kỹ thuật.
+> **Thí nghiệm 7-1 ★: Chạy τ²-bench và so sánh bước tiến so với τ-bench**
+>
+> Thí nghiệm này chạy khung đánh giá τ²-bench để hiểu các điểm mấu chốt trong thiết kế môi trường đánh giá kiểu tương tác người-máy. Trước hết hãy đọc tệp định nghĩa nhiệm vụ theo đúng lộ trình của mục này: mỗi nhiệm vụ gồm bốn phần — thông tin đã biết, chỉ dẫn nhiệm vụ, trạng thái ban đầu và điều kiện thành công. Sau đó chạy trọn quy trình đánh giá, quan sát đối thoại nhiều lượt giữa bộ mô phỏng người dùng và Agent, rồi phân tích các dạng thất bại điển hình (vi phạm chính sách, bỏ sót thông tin, chuyển sang nhân viên quá sớm, v.v.).
+>
+> ![Hình 7-3 Môi trường điều khiển kép và kiểm chứng phân tầng trong τ²-bench](images/fig7-3.svg)
+
+Kho đi kèm có lưu một bản ghi chạy (`chapter7/tau2-bench-eval`). Dưới đây ta phân tích một lần chạy thành công trong đó.
+
+Hơn mười lượt đầu là giai đoạn xác định tài khoản. Agent tra ra khách hàng C1001 từ số điện thoại, rồi lần lượt tra lưu lượng của ba thuê bao L1001, L1002, L1003, và quay lại hỏi người dùng thực tế đang dùng số nào ở Pháp. Ở tin nhắn thứ 17 nó đưa ra một kết luận sai:
+
+> **Agent** (17): số 555-123-2002 không nằm trong các thuê bao đang hoạt động của bạn, gần nhất là 555-123-2001…
+
+Kết luận này chỉ dựa trên kết quả tra một thuê bao L1001. Sau khi người dùng khẳng định số không sai, Agent tra tiếp L1002 và lúc đó mới khớp. Bước ngoặt then chốt xuất hiện ở tin nhắn 30:
+
+> **Người dùng** (30) → gọi `check_network_status()`, `check_status_bar()`
+>
+> **Công cụ trả về** (31): `Airplane Mode: ON | Cellular Connection: no_service | Mobile Data Enabled: Yes | Data Roaming Enabled: No`
+>
+> **Người dùng** (33): tôi thấy điện thoại đang ở chế độ máy bay, nên mới không có sóng. Dữ liệu di động đang bật, nhưng chuyển vùng dữ liệu đang tắt. Tôi tắt chế độ máy bay rồi thử lại nhé?
+
+Bên phát ra lời gọi công cụ là **người dùng**, không phải Agent. Đây chính là cơ chế **điều khiển kép (Dual-Control)**: người dùng mô phỏng có một bộ công cụ riêng như `check_status_bar`, `toggle_airplane_mode`, `reseat_sim_card`, `run_speed_test`.
+
+Việc chẩn đoán sau đó khá trôi chảy: Agent yêu cầu người dùng tắt chế độ máy bay và bật chuyển vùng, người dùng thực hiện (35, 37), thanh trạng thái chuyển sang 5G đầy vạch; Agent yêu cầu đo tốc độ, kết quả trả về 275 Mbps, xếp hạng Excellent (46), và người dùng xác nhận đã xong. Cả hai `env_assertions` đều đạt, `reward = 1.0`.
+
+Trajectory điểm tối đa này còn chứa một vấn đề mà bộ kiểm chứng không bắt được. Ngay đoạn đầu chính sách Agent của telecom đã ghi "You should only make one tool call at a time", nhưng ở tin nhắn thứ 4 Agent phát ra cùng lúc hai lời gọi `get_customer_by_phone` và `get_customer_by_name`. Bộ kiểm chứng không coi đó là lỗi, vì `reward_basis` của nhiệm vụ này chỉ xét trạng thái cuối. Đây không phải sơ suất của τ²-bench mà là cái giá cố hữu của phần thưởng nhị phân: nó đánh đổi độ mịn của quá trình lấy một con số duy nhất có thể so sánh giữa các mô hình. Nhưng hệ thống đánh giá trong môi trường sản xuất thường cần nhiều hơn thế: không chỉ phán đúng sai, mà còn phải chỉ ra vấn đề nằm ở đâu.
+
+Nhiệm vụ thất bại cũng đáng phân tích. Số của người dùng là 555-123-2002, nhưng Agent lại chọn thuê bao L1001 và tiếp tục suy luận dựa trên mức dùng 3,2/5 GB của thuê bao đó. Giữa chừng `get_details_by_id(L1001)` đã trả về rõ ràng rằng số của thuê bao ấy là 555-123-2001; Agent đọc kết quả đó nhưng không sửa lại phán đoán, sau đó tiêu tốn hàng chục tin nhắn cho những kiểm tra không liên quan và cuối cùng chuyển sang nhân viên. Thực ra nó đã làm được một nửa nhiệm vụ — hướng dẫn người dùng tắt chế độ tiết kiệm dữ liệu, và hành động phía người dùng đó đã thực sự xảy ra và được môi trường kiểm chứng. Nhưng chọn sai thuê bao khiến việc nạp 2 GB cần thiết không được thực hiện, và cả ba khẳng định trạng thái cuối đều thất bại. Hình dạng thất bại này rất giống trường hợp AndroidWorld được bàn ở mục "Quy trách nhiệm thất bại" phía sau: bằng chứng cần để sửa phán đoán đã nằm sẵn trong ngữ cảnh, nhưng Agent không dựa vào đó mà quay lại.
+
+Chỉ một nhiệm vụ này đã đặt ra đủ mọi câu hỏi mà một tập đánh giá phải trả lời: thế nào là thành công, nhiệm vụ đến từ đâu, ai kiểm chứng, và điểm số được chuyển thành quyết định ra sao. Các mục sau sẽ lần lượt triển khai.
+
+## Chỉ số đánh giá: định nghĩa thành công
+
+Kết quả đánh giá ở mục trước là bốn trên năm nhiệm vụ đạt. Chỉ với con số 0,8 thì không thể phán đoán hệ thống có dùng được hay không. Nếu đó là Agent chăm sóc khách hàng xử lý hoàn tiền, nghĩa là cứ năm người dùng thì có một người không nhận được khoản hoàn đáng ra thuộc về họ; nếu đó là Agent bảo mật đi tìm lỗ hổng, trúng bốn trên năm đã là khá tốt. Khác biệt nằm ở chỗ bối cảnh nghiệp vụ đòi hỏi tỷ lệ thành công cao đến mức nào.
 
 ### Kỳ quan kỹ thuật: trần năng lực với Pass@k
 
@@ -99,209 +158,151 @@ Ví dụ khi tỉ lệ thành công một lần $p=0.6$ và $k=5$: Pass@5 $=1-0.
 
 Báo cáo đánh giá bắt buộc phải nói rõ $k$ lần thử được hiểu thế nào: là $k$ lần lấy mẫu độc lập của cùng một tác vụ, hay $k$ tác vụ liên tiếp trên dây chuyền production. Với các thao tác có tác dụng phụ, không thể đơn giản "thử lại đến khi thành công", mà phải lấy mẫu trong sandbox hoặc môi trường có thể rollback, và ghi từng lần thất bại vào chỉ số độ tin cậy.
 
-### Chỉ số quy trình: Từ hộp đen đến hộp trắng
+## Môi trường đánh giá
 
-Chỉ tập trung vào kết quả cuối cùng là chưa đủ, Agent quá trình đạt được điều đó cũng quan trọng không kém. **Tỷ lệ hợp pháp của hoạt động** đo lường tỷ lệ các hoạt động hợp lệ và hợp pháp - các hoạt động không hợp lệ bao gồm việc gọi các công cụ không tồn tại và truyền sai loại tham số; hoạt động trái phép đề cập đến các hành vi vượt quá phạm vi thẩm quyền. Tỷ lệ pháp lý cao cho thấy Agent có hiểu biết rõ ràng về hệ sinh thái công cụ. **Độ chính xác của lệnh gọi công cụ** còn yêu cầu các tham số phải hợp lý về mặt ngữ nghĩa: các từ truy vấn của công cụ tìm kiếm phải thể hiện chính xác yêu cầu và đường dẫn thao tác tệp phải trỏ đến đúng mục tiêu.
+Khi đã rõ cách tính chỉ số, câu hỏi tiếp theo là đo ở đâu. Môi trường đánh giá là một bộ máy có thể chạy lặp lại: cho cùng một trạng thái ban đầu, cùng một Agent phải cho ra kết quả so sánh được.
 
-**Hiệu quả của đường dẫn** đo lường tính kinh tế của việc hoàn thành một nhiệm vụ: số bước (số chu kỳ suy nghĩ-hành động-quan sát), hành động dư thừa (tìm kiếm lặp lại cho cùng một từ khóa, đọc lặp lại cùng một tệp), số lần quay lại (tần suất nhận ra lỗi và sửa chúng - việc quay lại không thường xuyên là bình thường, nhưng việc quay lại thường xuyên cho thấy việc lập kế hoạch chuyển tiếp không đủ). Cần phải thiết lập đường cơ sở của các chuyên gia về con người hoặc phương pháp phỏng đoán để xác định “số bước hợp lý”.
+### Năm thành phần cấu thành
 
-**Phạm vi truy xuất** Đối với nhiệm vụ thu thập thông tin: Agent Không gian thông tin đã được khám phá đầy đủ chưa? Bạn có đi đến kết luận ngay sau khi chỉ nhìn vào trang đầu tiên của kết quả tìm kiếm không? **Chi phí và độ trễ** Chú ý đến số lượng yêu cầu, chi phí mã thông báo (cần phân biệt chi phí đầu vào/đầu ra, xem xét việc sử dụng lại KV Cache), thời gian đồng hồ treo tường (bao gồm suy luận mô hình + thực thi công cụ + độ trễ mạng) và cần theo dõi phân bổ thời gian để xác định vị trí tắc nghẽn.
+Hãy quay lại nhiệm vụ telecom vừa mổ xẻ. Lấy nó làm mốc, mọi thứ mà một môi trường đánh giá chạy lặp lại cần đến đều đã đủ.
 
-### An toàn, độ bền và độ bao phủ trajectory
+**Tập dữ liệu (Dataset)** chính là tệp nhiệm vụ: trạng thái ban đầu, phiếu yêu cầu cho Agent, quy tắc hành vi cho bộ mô phỏng và tiêu chí nghiệm thu được gói thành một bản ghi, và một bản ghi là một ca kiểm thử.
 
+**Trạng thái môi trường (Environment State)** là phần thông tin biến động trong lúc chạy nhiệm vụ: khách hàng, thuê bao, gói cước và hóa đơn trong cơ sở dữ liệu, cộng thêm chế độ máy bay, chuyển vùng, công tắc tiết kiệm dữ liệu và dung lượng còn lại ở phía thiết bị. Nó phải khôi phục được, và `initialization_actions` chính là kịch bản khôi phục. Tính chân thực đòi hỏi biến đổi trạng thái tuân theo logic nghiệp vụ; tính kiểm soát đòi hỏi trước mỗi lần chạy đều quay về cùng một điểm xuất phát.
 
-**Chỉ số bảo mật và tuân thủ** rất quan trọng trong quá trình triển khai sản xuất: kích hoạt các hoạt động nhạy cảm (xóa dữ liệu/sửa đổi quyền/gửi thông tin liên lạc bên ngoài), rò rỉ dữ liệu (in mật khẩu trong nhật ký/gửi tài liệu riêng tư ra bên ngoài API) và nội dung bất hợp pháp đều phải tuân theo **nguyên tắc không khoan nhượng** - giống như mục từ chối ảo giác (xem "Bốn tiêu chí của Rubric" bên dưới). Một vi phạm bảo mật nghiêm trọng sẽ phủ quyết việc đánh giá tổng thể và sẽ không được miễn trừ do có thành tích xuất sắc ở các khía cạnh khác.
+**Giao diện công cụ (Tools)** chia về hai phía. Agent gọi được các thao tác phía nhà mạng như tra khách hàng, tra lưu lượng, nạp dữ liệu, chuyển sang nhân viên; người dùng thao tác được các công tắc trên thiết bị. Cả hai bộ công cụ đều là thao tác nguyên tử, không có kiểu trừu tượng cấp cao như "giải quyết vấn đề mạng của người dùng" — mức trừu tượng quá cao sẽ biến việc đánh giá thành kiểm tra một lời gọi hàm duy nhất, còn phần lập kế hoạch và suy luận bị chính công cụ hấp thụ.
 
-**Độ mạnh** đo lường sự ổn định khi đối mặt với tình trạng không chắc chắn: độ nhạy hạt giống ngẫu nhiên (hiệu suất khác nhau như thế nào trong các lần khởi tạo khác nhau), khả năng thích ứng khi thay đổi trang (cập nhật giao diện người dùng trang web không gây ra lỗi hoàn toàn), khả năng chịu rung API (liệu các lỗi tạm thời, thời gian chờ, thay đổi định dạng có thể được xử lý một cách khéo léo hay không), nhiễu bộ nhớ dài hạn (liệu thông tin lỗi thời được tích lũy trong ngữ cảnh có dẫn đến các quyết định không chính xác hay không).
+**Tiêu chí chấm điểm (Rubric)** là bốn tầng kiểm tra trong `evaluation_criteria` cộng với quy tắc tổng hợp `reward_basis`.
 
-**Phạm vi bao phủ kép của trajectory thực hiện và kết quả cuối cùng**. Một điểm khác biệt dễ bị bỏ qua khi đánh giá là: "những gì đã nói và những gì đã làm" trong quá trình thực hiện Agent (tức là trajectory được xác định trong Chương 1) và "cuối cùng hệ thống đã trở thành gì" (kết quả cuối cùng, kết quả) là hai thứ khác nhau. Agent cho biết "việc đặt vé đã hoàn tất" là thông tin cấp độ theo dõi và thực tế là đơn hàng được tạo trong cơ sở dữ liệu là xác minh cấp độ kết quả. Chỉ nhìn vào trajectory sẽ bỏ sót tình trạng “nói mà không làm”, còn chỉ nhìn vào kết quả chưa chắc đã phát hiện ra những bước trung gian đã đi chệch hướng. Anthropic từng đưa ra ví dụ: Agent đã phát hiện ra lỗ hổng trong chính sách của hãng hàng không trong quá trình thực hiện đặt chỗ chuyến bay và tìm ra giải pháp rẻ hơn cho người dùng - nếu điểm chỉ dựa trên đường dẫn thực hiện đặt trước thì thao tác đó sẽ bị đánh giá là thất bại; nhưng đánh giá từ kết quả cuối cùng, người dùng đã có được giải pháp tốt hơn. Vì vậy, cả hai loại đánh giá đều cần được đề cập để tránh những điểm mù mang tính hệ thống.
+**Giao thức thực thi (Interaction Protocol)** quy định thứ tự tương tác và điều kiện kết thúc. Tín hiệu kết thúc bình thường ở đây là người dùng mô phỏng xuất ra `###STOP###`; ngoài ra còn có giới hạn số lượt, và người dùng mô phỏng có thể tự kết thúc cuộc trò chuyện khi hết kiên nhẫn — hiệu quả giao tiếp quá thấp tự nó đã bị tính là thất bại.
 
-### Lấy mẫu thủ công và đánh giá đối kháng
+Thiếu một trong năm thành phần, việc đánh giá không còn tạo thành một vòng lặp lặp lại được. Khi xem xét các benchmark khác ở dưới, chúng ta vẫn lấy năm mục này làm khung đối chiếu.
 
-Ngay cả khi đánh giá tự động là đáng tin cậy trong hầu hết các trường hợp, thì vẫn cần phải có sự kiểm tra đột xuất thường xuyên của con người: bao gồm các loại nhiệm vụ khác nhau, các trường hợp thành công/thất bại và các trường hợp không rõ ràng gần điểm giới hạn, không chỉ để xác minh kết quả mà còn để xem xét tính hợp lý của lý do cho điểm.
+### Môi trường đánh giá kiểu tương tác người-máy và kiểu gọi công cụ
 
-Lấy mẫu thủ công có thể được hệ thống hóa hơn nữa thành **hiệu chuẩn máy đánh giá**: trước khi sử dụng LLM trong đánh giá quy mô lớn, trước tiên hãy xây dựng bộ nhãn vàng được gắn nhãn thủ công (chẳng hạn như các trường hợp 100-200 bao gồm nhiều loại nhiệm vụ và khó khăn khác nhau) và đo lường mô hình đánh giá trên đó (nghĩa là sử dụng LLM làm đánh giá, cơ chế được trình bày chi tiết trong phần tiếp theo về LLM-as-a-Judge) và tỷ lệ nhất quán của các chú thích của con người (tỷ lệ đồng ý đơn giản hoặc hệ số nhất quán như Cohen's kappa, sau này loại bỏ các thành phần đoán ngẫu nhiên), mô hình phán đoán sẽ chỉ được sử dụng để đánh giá quy mô lớn sau khi đạt đến ngưỡng đặt trước (chẳng hạn như kappa cao hơn 0,7); sau đó, bất cứ khi nào mô hình phán đoán hoặc Rubric được cập nhật, nó sẽ được hiệu chỉnh lại trên bộ nhãn vàng. Nếu không có bước này, điểm của giám khảo LLM chỉ là “ý kiến của một mô hình khác” chứ không phải là đại diện đáng tin cậy cho đánh giá của con người.
+Những nhiệm vụ như telecom bắt buộc phải có đối tượng tương tác, nên phần mô phỏng người dùng trong năm thành phần là không thể thiếu. Còn có một lớp nhiệm vụ lớn khác hoàn toàn không có đối tượng đối thoại: trong sinh mã, phân tích dữ liệu, giải toán, Agent từ đầu đến cuối chỉ tương tác với công cụ, tính đúng đắn do việc có vượt qua kiểm chứng thực thi hay không quyết định, và không cần gán nhãn thủ công lẫn phán xét của mô hình. Loại môi trường này lược bỏ bộ mô phỏng người dùng; bốn thành phần còn lại vẫn tồn tại, chỉ đơn giản hơn về hình thức: trạng thái môi trường là hệ thống tệp hoặc cơ sở dữ liệu, tiêu chí chấm điểm là một đoạn mã kiểm thử, còn giao thức thực thi thu lại thành "cứ gọi công cụ cho đến khi đưa ra câu trả lời hoặc hết lượt".
 
-**Đánh giá đối lập** Tích cực xây dựng các trường hợp thử thách thông qua Red Teaming: các câu trả lời có vẻ hoàn hảo nhưng có lỗi ẩn, các câu trả lời được bỏ qua bằng cách nhồi nhét từ khóa và các câu trả lời sử dụng những thành kiến đã biết của mô hình đánh giá để đạt được những câu trả lời không xứng đáng đạt điểm cao. **Cơ chế nhiều người đánh giá** sử dụng nhiều người đánh giá độc lập để chấm điểm riêng biệt và xác định kết quả cuối cùng thông qua kiểm tra tính nhất quán hoặc mức trung bình có trọng số - khi có sự khác biệt nghiêm trọng giữa những người đánh giá, kết quả đó sẽ được đánh dấu là cần xem xét thủ công thêm.
+Khung Verifiers phân tầng loại môi trường này theo hai chiều: nhiệm vụ có cần giữ trạng thái qua các lượt hay không, và có cần cách ly hay không. `SingleTurnEnv` hợp cho việc ra một bài toán rồi kiểm chứng đáp án ngay; `ToolEnv` hợp cho việc tìm nhiều trang web rồi tổng hợp câu trả lời và kiểm chứng kết quả cuối; `StatefulToolEnv` hợp cho việc sửa bản ghi cơ sở dữ liệu rồi kiểm chứng biến đổi trạng thái; `SandboxEnv` hợp cho việc chạy mã trong sandbox rồi kiểm tra tệp kết quả. Bảng 7-1 tổng hợp bốn loại này để tiện chọn theo yêu cầu về trạng thái nhiệm vụ, lời gọi công cụ và cách ly.
 
-## Tự động đánh giá môi trường
+Bảng 7-1 So sánh các loại môi trường Verifiers
 
-Đánh giá Agent yêu cầu một môi trường tự động có thể chạy nhiều lần - một môi trường có thể nhanh chóng kiểm tra tác động của những thay đổi trong giai đoạn phát triển. Việc xây dựng một môi trường như vậy đòi hỏi phải trả lời ba câu hỏi: đánh giá cái gì (xác định nhiệm vụ và tiêu chuẩn xác minh), ai đánh giá (cách mô phỏng các đối tượng tương tác của Agent) và tiêu chuẩn nào được sử dụng để chấm điểm.
-
-### Các thành phần cơ bản của môi trường đánh giá
-
-Môi trường đánh giá bao gồm năm yếu tố - các chương tiếp theo sẽ tập trung vào việc thiết kế bộ dữ liệu và tiêu chí chấm điểm:
-
-**Bộ dữ liệu** xác định một tập hợp các nhiệm vụ, bao gồm trạng thái ban đầu, mô tả mục tiêu và các giải pháp tham chiếu tùy chọn.
-
-**Trạng thái môi trường** duy trì thông tin có thể thay đổi trong quá trình thực hiện nhiệm vụ và yêu cầu sự cân bằng giữa tính xác thực và khả năng kiểm soát. Ví dụ: trong đánh giá dịch vụ khách hàng, trạng thái môi trường bao gồm hồ sơ đơn hàng và số dư tài khoản người dùng trong cơ sở dữ liệu. Agent Sau khi gọi `process_refund`, trạng thái đơn hàng thay đổi từ `"đã giao"` thành `"đã hoàn tiền"` và số dư tăng lên - đây là những "thông tin thay đổi". "Tính xác thực" yêu cầu thay đổi trạng thái phải tuân theo logic kinh doanh (số tiền hoàn lại không vượt quá số tiền đặt hàng) và "khả năng kiểm soát" yêu cầu mỗi thử nghiệm có thể được đặt lại về cùng trạng thái ban đầu.
-
-**Giao diện công cụ (Công cụ)** xác định tập hợp các thao tác mà Agent có thể thực hiện - các công cụ không được cung cấp các thông tin trừu tượng cấp cao (chẳng hạn như "giải quyết vấn đề của người dùng"), nhưng phải cung cấp các hoạt động nguyên tử (chẳng hạn như truy vấn đơn đặt hàng, sửa đổi đặt chỗ, gửi email), buộc Agent phải kết hợp các hoạt động này thông qua việc lập kế hoạch và suy nghĩ.
-
-**Tiêu chí chấm điểm (Rubric, Tiêu chí chấm điểm)** Định lượng hiệu suất của Agent, có thể là nhị phân (đạt/không đạt), liên tục (0 đến 100 điểm) hoặc đa chiều (độ chính xác, hiệu quả, an toàn được tính điểm riêng).
-
-**Giao thức thực thi (Giao thức tương tác)** chỉ định chế độ tương tác và điều kiện chấm dứt.
-
-Năm yếu tố này hợp lại tạo thành một vòng lặp đánh giá có thể lặp lại.
-
-![Hình 7-2 Môi trường gọi công cụ và đánh giá tương tác giữa người và máy tính ](images/fig7-2.svg)
-
-Tuỳ theo tác vụ của Agent, môi trường đánh giá có thể chia đại thể thành loại gọi công cụ và loại tương tác người-máy.
-
-### Môi trường đánh giá loại lệnh gọi công cụ
-
-Đối với các nhiệm vụ như tạo mã và phân tích dữ liệu chủ yếu dựa vào việc sử dụng các công cụ, khung Verifiers sẽ thể hiện các mẫu thiết kế điển hình. Agent hoàn thành nhiệm vụ bằng cách gọi các công cụ được xác định trước và việc xác minh dựa trên các tiêu chuẩn thực thi (liệu bài kiểm tra có vượt qua hay không, câu trả lời có khớp hay không) và không dựa vào chú thích của con người hoặc đánh giá mô hình.
-
-Verifiers giới thiệu thiết kế môi trường phân cấp: `SingleTurnEnv` phù hợp cho các tác vụ một vòng (chẳng hạn như câu hỏi và câu trả lời đơn giản), `ToolEnv` hỗ trợ các vòng lặp tự động của lệnh gọi công cụ nhiều vòng và `StatefulToolEnv` và `SandboxEnv` hỗ trợ các công cụ trạng thái và môi trường hộp cát chạy dài (chẳng hạn như thực thi mã). Ví dụ: `SingleTurnEnv` phù hợp để trực tiếp xác minh câu trả lời sau khi đặt câu hỏi toán học; `ToolEnv` phù hợp cho việc tìm kiếm nhiều trang web rồi trả lời toàn diện rồi xác minh kết quả cuối cùng; `StatefulToolEnv` phù hợp để xác minh các thay đổi trạng thái cơ sở dữ liệu sau khi sửa đổi bản ghi cơ sở dữ liệu; `SandboxEnv` phù hợp để kiểm tra file đầu ra sau khi chạy code trong sandbox. Bảng 7-2 tóm tắt các loại môi trường này để giúp người đọc chọn môi trường đánh giá phù hợp dựa trên trạng thái nhiệm vụ, lệnh gọi công cụ và yêu cầu cách ly.
-
-Bảng 7-2 So sánh các loại môi trường của Verifiers
-
-| Loại môi trường | Duy trì trạng thái | Cuộc gọi công cụ | Các trường hợp sử dụng điển hình |
+| Loại môi trường | Giữ trạng thái | Gọi công cụ | Trường hợp điển hình |
 |---|---|---|---|
-| SingleTurnEnv | Không có | Không có | Đề thi trắc nghiệm một vòng, đề toán |
-| ToolEnv | Không có | Nhiều vòng | Tìm kiếm + tổng hợp thông tin |
-| StatefulToolEnv | Có | Nhiều vòng | Sửa đổi bản ghi cơ sở dữ liệu |
-| SandboxEnv | Có + Cách ly | Nhiều vòng | Thực thi và kiểm tra mã |
+| SingleTurnEnv | Không | Không | Hỏi đáp một lượt, bài toán |
+| ToolEnv | Không | Nhiều lượt | Tìm kiếm + tổng hợp thông tin |
+| StatefulToolEnv | Có | Nhiều lượt | Sửa bản ghi cơ sở dữ liệu |
+| SandboxEnv | Có + cách ly | Nhiều lượt | Chạy mã và kiểm thử |
 
-Khung này hỗ trợ lấy mẫu song song và lưu vào bộ nhớ đệm trajectory, đồng thời trajectory hoàn chỉnh (quan sát, hành động, phần thưởng) của mỗi đánh giá sẽ được lưu lại để tạo điều kiện thuận lợi cho việc phân tích và phát lại tiếp theo.
+Khung này hỗ trợ lấy mẫu song song và bộ nhớ đệm trajectory; trajectory đầy đủ của mỗi lần đánh giá (quan sát, hành động, phần thưởng) đều được lưu, tiện cho phân tích và phát lại về sau. Ngoài ra, hiệu quả thực thi của công cụ phụ thuộc vào trạng thái hiện thời, nên khi thất bại nên trả về thông báo lỗi rõ ràng thay vì một cờ thất bại trơ trọi, để Agent điều chỉnh chiến lược theo đó.
 
-Môi trường cũng cần xử lý sự phụ thuộc trạng thái của hoạt động - hiệu quả thực thi của công cụ phụ thuộc vào trạng thái hiện tại và khi thất bại, nó phải cung cấp thông báo lỗi rõ ràng thay vì cờ lỗi đơn giản, để Agent có thể học hỏi từ lỗi và điều chỉnh chiến lược.
+Đánh giá kiểu gọi công cụ xét tính đúng đắn của các biến đổi trạng thái quan sát được, còn đánh giá kiểu tương tác người-máy xét tính hợp lý của chiến lược giao tiếp — cái trước kiểm chứng hành động, cái sau kiểm chứng khả năng dẫn dắt. So sánh cấu trúc hai loại môi trường xem Hình 7-2.
 
-### Môi trường đánh giá tương tác giữa người và máy tính
+![Hình 7-2 Môi trường đánh giá kiểu gọi công cụ và kiểu tương tác người-máy](images/fig7-2.svg)
 
-Nhiều nhiệm vụ trong thế giới thực không chỉ liên quan đến việc gọi công cụ mà còn liên quan đến các cuộc trò chuyện với người dùng. Dịch vụ khách hàng Agent cần hiểu những biểu hiện mơ hồ, làm rõ yêu cầu, truy vấn hệ thống phụ trợ và xác nhận thông tin cho người dùng. Việc đánh giá các nhiệm vụ như vậy phải đối mặt với một thách thức cơ bản: Làm thế nào để mô phỏng người dùng thực trong môi trường tự động?
+## Thiết kế tập dữ liệu đánh giá
 
-Nguyên tắc thiết kế chính là Tiết lộ thông tin lũy tiến, đây là điểm khác biệt cơ bản giữa đánh giá tương tác giữa người và máy tính và các tiêu chuẩn truyền thống. Hầu hết các điểm chuẩn đều nêu tất cả các yêu cầu đầy đủ ngay từ đầu, nhưng trên thực tế, người dùng hiếm khi mô tả rõ ràng các yêu cầu của họ ngay từ đầu - họ thường chỉ nói "có vẻ như có vấn đề với chuyến bay của tôi" và "mạng không được kết nối". Agent Cần chủ động đặt câu hỏi để làm rõ yêu cầu. Bản thân quá trình này là một biểu hiện quan trọng của khả năng. Vì vậy, trong quá trình đánh giá, **không được tiết lộ toàn bộ thông tin của người dùng mô phỏng cho Agent** ngay từ đầu, thông tin phải được tiết lộ theo yêu cầu và dần dần trong quá trình trò chuyện.
+Nếu môi trường đánh giá là sân khấu thì tập dữ liệu là kịch bản. Vẫn năm thành phần ấy, nhưng đổi sang một lớp nhiệm vụ khác thì cách điền có thể khác hẳn: nhiệm vụ đến từ đâu, bộ kiểm chứng soi được sâu tới mức nào, và làm sao ngăn việc bị ghi nhớ. Mục này khởi đi từ thực tiễn thiết kế của vài benchmark công khai và khép lại bằng một câu hỏi thực tế hơn — nhiệm vụ trong tập đánh giá tự dựng nên đến từ đâu.
 
-Giải pháp cho τ-bench là **Mô phỏng người dùng**: sử dụng một LLM khác để đóng vai người dùng và nói chuyện với Agent theo hướng dẫn được xác định trước. Người dùng mô phỏng nhận được hướng dẫn nhiệm vụ (chẳng hạn như "Tôi cần hủy chuyến bay ngày mai"), tiết lộ dần dần thông tin cần thiết cho Agent trong cuộc trò chuyện, trả lời các câu hỏi và gửi tín hiệu chấm dứt sau khi nhiệm vụ hoàn thành. Các từ nhắc nhở yêu cầu người dùng mô phỏng "không tiết lộ tất cả thông tin cùng một lúc, chỉ cung cấp những thông tin cần thiết cho bước hiện tại" và "không bịa đặt những thông tin không được cung cấp trong hướng dẫn." Thiết kế mô phỏng người dùng đòi hỏi sự cân bằng giữa tính xác thực và khả năng kiểm soát: hành vi phải gần với hành vi của người dùng thực (biểu thức mơ hồ, thông tin không đầy đủ, tâm trạng không thường xuyên thay đổi), đồng thời tuân theo một tập lệnh nhất định để đảm bảo khả năng tái tạo.
+### Đối chiếu ngang các lựa chọn thiết kế giữa các benchmark
 
-Dưới đây là ví dụ về cuộc trò chuyện nhiều lượt với việc tiết lộ thông tin lũy tiến (trình mô phỏng người dùng hoạt động theo một tập lệnh cố định):
+Việc có hay không có đối tượng tương tác, đã phân biệt ở mục trước, chỉ là lớp khác biệt đầu tiên ở tầng môi trường; những chia rẽ ở tầng tập dữ liệu mới phản ánh rõ hơn các đánh đổi thiết kế. Bảng 7-2 đặt cạnh nhau vài benchmark thường được trích dẫn.
 
-> **Người dùng**: "Tôi gặp sự cố với chuyến bay của mình."
-> **Agent**: "Chuyến bay nào?"
-> **Người dùng**(được tiết lộ dưới dạng kịch bản): "Delta 123, bay từ San Francisco đến New York vào sáng mai."
-> **Agent**: "Vấn đề cụ thể là gì?"
-> **Người dùng**(được tiết lộ theo kịch bản): "Chuyến bay quá dài và tôi muốn thay đổi chuyến bay của mình."
-> **Agent**: "Có ưu tiên nào cho chuyến bay mới không?"
-> **Người dùng**(được tiết lộ theo kịch bản): "Chuyến bay buổi chiều nào cũng được."
+Bảng 7-2 Các lựa chọn thiết kế then chốt của một số benchmark cho Agent
 
-Trình mô phỏng người dùng tuân theo một tập lệnh cố định (thông tin đã biết + quy tắc được tiết lộ), đảm bảo rằng đánh giá có thể lặp lại trong khi mô phỏng các biểu thức lũy tiến của người dùng thực. Người dùng mô phỏng thường còn được đặt **mức kiên nhẫn hữu hạn**: nếu Agent giao tiếp kém hiệu quả, người dùng mô phỏng có thể chấm dứt hội thoại, khiến tác vụ thất bại.
+| Benchmark | Năng lực được đo | Nguồn nhiệm vụ | Ai đóng vai môi trường | Bộ kiểm chứng |
+|---|---|---|---|---|
+| τ²-bench | Tương tác người-máy và gọi công cụ trong chăm sóc khách hàng | Viết tay + sinh tổ hợp | Bộ mô phỏng người dùng + CSDL nghiệp vụ | Bốn tầng kiểm tra được `reward_basis` gộp thành nhị phân |
+| SWE-bench Verified | Phát triển phần mềm, coding | Issue thật trên GitHub, sàng lọc thủ công | Kho mã + bộ kiểm thử | Kiểm chứng kép FAIL\_TO\_PASS / PASS\_TO\_PASS |
+| AndroidWorld | Thao tác GUI điện thoại Android | Thực thể hóa mẫu có tham số | Trình giả lập Android thật | Khẳng định trạng thái UI cuối |
+| OSWorld | Thao tác GUI desktop Linux | Khởi động từ trạng thái trung gian dựng sẵn | Máy ảo thật | 134 hàm đánh giá độc lập |
+| Terminal-Bench | Thao tác terminal Linux, coding | Viết tay | Container Docker | Kiểm tra hệ thống tệp + chạy thật |
+| GAIA | Trợ lý AI tổng quát thu thập thông tin | Viết tay + tệp đính kèm riêng | Internet mở | So khớp chuỗi chính xác |
 
-τ-bench là bài kiểm tra điểm chuẩn để đánh giá hiệu suất của Agent trong các quy trình kinh doanh có cấu trúc (chẳng hạn như dịch vụ khách hàng hàng không, dịch vụ khách hàng bán lẻ). Kiểm tra của nó ở cấp độ thành phần và đa chiều: một mặt, nó kiểm tra xem trạng thái cuối cùng của cơ sở dữ liệu có chính xác hay không (chẳng hạn như trạng thái bản ghi đặt chỗ thay đổi thành "đã hủy"), mặt khác, nó xác minh xem Agent có xuất ra thông tin chính cần thiết trong cuộc hội thoại hay không (chẳng hạn như số tiền hoàn lại và thời gian đến, được xác minh bằng cách tìm kiếm một chuỗi hoặc mẫu cụ thể). Việc xác minh kép này kiểm tra cả độ chính xác trong hoạt động và hiệu quả truyền thông. Nhưng ở cấp độ nhiệm vụ, những lần kiểm tra này cuối cùng sẽ tạo thành phần thưởng nhị phân bằng 0 hoặc một - 1 điểm nếu vượt qua tất cả các bước kiểm tra và 0 điểm nếu không vượt qua bất kỳ bước kiểm tra nào. Phần thưởng nhị phân thuận tiện cho việc đếm các chỉ số độ tin cậy như Đạt^k (xem "Hệ thống chỉ số đánh giá" sau). Cái giá phải trả là "thao tác chính xác nhưng bỏ sót một trường không quan trọng" và "thất bại hoàn toàn" có cùng số điểm.
+### Bộ kiểm chứng
 
-Sự gia tăng cốt lõi của phiên bản cải tiến **τ²-bench** không nằm ở mức độ chi tiết của điểm mà ở hai điểm: Thứ nhất, **môi trường điều khiển kép (Dual-Control)** - không còn chỉ Agent có thể gọi công cụ, trình mô phỏng người dùng cũng có thể vận hành cùng một môi trường chia sẻ (chẳng hạn như Agent Hướng dẫn người dùng chuyển đổi chế độ máy bay, thao tác của người dùng thực sự thay đổi trạng thái môi trường), gần hơn với các tình huống thực tế như hỗ trợ kỹ thuật cần có sự hợp tác của người dùng; thứ hai, **thông số kỹ thuật nhiệm vụ chính xác hơn và tạo nhiệm vụ kết hợp** - có ít sự mơ hồ hơn trong các điều kiện thành công và các trường hợp nhiệm vụ cụ thể có thể được tham số hóa và tạo hàng loạt (xem phần "Đảm bảo tính xác minh và khách quan" bên dưới để biết các kích thước xác minh chi tiết).
+Agent rất dễ viết một bản báo cáo dài dòng nói rằng nhiệm vụ đã hoàn tất trọn vẹn, trong khi thực tế chưa hoàn tất gì cả. Khung đánh giá phải kiểm chứng những sự kiện mà máy có thể đối chiếu độc lập, chứ không phải lời tự thuật của Agent.
 
-> **Thử nghiệm 7-1 ★: Chạy τ2-bench và so sánh sự tiến hóa của τ-bench**
+**SWE-bench Verified tách "đã sửa xong" thành hai mệnh đề độc lập.** Một là FAIL\_TO\_PASS: trước khi sửa thì trượt, sau khi sửa thì đạt, chứng minh vấn đề thực sự đã được giải quyết. Hai là PASS\_TO\_PASS: trước và sau khi sửa đều đạt, chứng minh không đưa vào khiếm khuyết mới. Chỉ kiểm cái thứ nhất thì Agent có thể lách bằng cách xóa hoặc sửa những khẳng định gây vướng; chỉ kiểm cái thứ hai thì chẳng khác gì không kiểm. Kiểm cả hai mới biến "đã sửa" và "không làm hỏng" thành hai kết luận chứng minh được riêng rẽ. Nó còn xác nhận tính ổn định của chính các bài kiểm thử, loại bỏ những bài lúc đạt lúc trượt (flaky test).
+
+**Bộ kiểm chứng của OSWorld phát hiện được những tình huống bề ngoài đã xong nhưng thực chất lại sai.** Nó được trang bị 134 hàm đánh giá độc lập và quyền truy cập hệ điều hành đầy đủ, kiểm tra được cấu trúc hệ thống tệp, trạng thái tiến trình, kết nối mạng và trạng thái bên trong ứng dụng. Với nhiệm vụ cơ sở dữ liệu, kịch bản đánh giá không chỉ xác nhận tệp báo cáo tồn tại mà còn kết nối vào cơ sở dữ liệu để đối chiếu SQL có chạy đúng không; với nhiệm vụ trình duyệt thì phân tích cây DOM, xem cookie và localStorage, gửi yêu cầu kiểm chứng tới backend để xác nhận biểu mẫu thực sự có hiệu lực.
+
+**Nhiệm vụ `build-linux-kernel-qemu` của Terminal-Bench** đòi hỏi biên dịch nhân Linux 6.9 từ mã nguồn, thêm một printk tùy chỉnh trong `start_kernel`, tạo initramfs và chạy nó trong QEMU; tiêu chí thành công là dòng thông báo tùy chỉnh đó xuất hiện trong log khởi động. Agent không thể ngụy tạo đầu ra, chỉ còn cách làm thật trọn quy trình.
+
+### Phân tầng độ khó của nhiệm vụ
+
+Tập nhiệm vụ đánh giá cần có nhiệm vụ ở các mức khó khác nhau. Nhờ vậy, khi năng lực mô hình tăng lên, tập nhiệm vụ đánh giá không nhanh chóng lỗi thời.
+
+Toàn bộ 466 câu của GAIA chia thành ba mức khó: Level 1 chỉ cần một hai công cụ (người 93,9%, GPT-4 30,3%), Level 2 cần suy nghĩ nhiều bước (91,8% so với 9,7%), Level 3 cần tổ hợp phức tạp (87,3% so với 0%). Cách phân tầng này không chỉ dán nhãn độ khó mà còn có giá trị chẩn đoán: thất bại ở Level 1 trỏ tới việc dùng công cụ cơ bản, Level 2 trỏ tới lập kế hoạch nhiều bước và tích hợp thông tin, Level 3 trỏ tới tư duy chuỗi dài và quản lý độ phức tạp, và ba mức ứng với ba hướng cải thiện khác nhau.
+
+Terminal-Bench trải từ việc đăng ký mô hình mlflow đơn giản, tới phá mật khẩu 7z ở mức trung bình, tới tích hợp nhiều thành phần máy chủ git và webserver ở mức khó, và cao nhất là phân tích mật mã vi sai FEAL.
+
+τ²-bench còn thiết kế riêng **nhiệm vụ bẫy**: người dùng khẳng định "bộ phận chăm sóc khách hàng đã duyệt hủy" trong khi thực tế không đúng chính sách, nhằm kiểm tra Agent có giữ được phán đoán đúng dưới sức ép và thông tin sai lệch hay không.
+
+### Phòng ngừa rò rỉ dữ liệu
+
+**GAIA làm cho đáp án không thể tra thẳng trên internet.** Nhiệm vụ của nó đơn giản về khái niệm nhưng mở về đường đi: chẳng hạn xuất phát từ Ảnh thiên văn trong ngày của NASA ở một ngày cụ thể, nhận diện phi hành gia trong ảnh, tra ra nhóm phi hành gia mà người đó thuộc về, tính xem ai trong nhóm ở trong vũ trụ ít thời gian nhất, và xuất kết quả đúng định dạng "họ, phân tách bằng dấu chấm phẩy, có dấu phân cách hàng nghìn". Đáp án rất cụ thể và đúng sai được quyết định bằng so khớp chuỗi chính xác. Việc chống rò rỉ dựa vào hai điều: một là câu hỏi phải kết hợp nhiều nguồn thông tin mới trả lời được, không trang web đơn lẻ nào cho ngay đáp án; hai là một phần nhiệm vụ có kèm tệp được làm riêng (PDF, âm thanh, hình ảnh không tồn tại trên internet).
+
+**AndroidWorld sinh ra rất nhiều thực thể từ một mẫu duy nhất.** Nhiệm vụ của nó không phải văn bản tĩnh mà là mẫu có thể thực thể hóa động, ví dụ "đổi số điện thoại của liên hệ `[CONTACT_NAME]` thành `[NEW_PHONE]`", với giá trị tham số sinh ngẫu nhiên ở mỗi lần đánh giá. Điều này mang lại ba lợi ích: tham số mỗi lần một khác nên phát lại một chuỗi thao tác cố định là vô dụng; một mẫu có thể sinh ra gần như vô hạn thực thể; cố định một phần tham số và chỉ đổi phần còn lại thì đo được chính xác ảnh hưởng của một yếu tố cụ thể.
+
+**Terminal-Bench nhúng mã định danh chim hoàng yến vào đề bài.** Mỗi câu mang một canary GUID; nếu mô hình xuất được nội dung chứa GUID đó thì tức là dữ liệu benchmark đã lọt vào tập huấn luyện. Nó không ngăn được rò rỉ nhưng khiến rò rỉ trở nên phát hiện được.
+
+### Kiểm soát chất lượng và bảo trì dài hạn
+
+Làm một tập đánh giá chất lượng cao là việc rất khó. Hình hài hiện nay của phần lớn các benchmark trên là kết quả của nhiều vòng vá lỗi sau khi bản đầu tiên được đưa vào dùng và lộ ra vấn đề. Chẳng hạn từ τ-bench sang τ²-bench có năm chỗ được thiết kế lại.
+
+Thứ nhất, **chỉ dẫn nhiệm vụ quá chung chung khiến đáp án có thể đoán được**. Chỉ dẫn của bản đầu viết rộng, nên mô hình không cần thực sự làm rõ yêu cầu, chỉ cần đoán một quy trình theo lẽ thường cũng qua được. τ²-bench tách kịch bản thành hai cột `known_info` và `task_instructions`: cột trước khoanh vùng những gì người dùng biết, cột sau quy định cách tiết lộ. Những gì người dùng không biết thì Agent không đoán được, chỉ có thể tra ra.
+
+Thứ hai, **điều kiện thành công chưa đủ chính xác khiến kiểm chứng phán sai**. Điều kiện kiểu "mạng đã khôi phục" không có ranh giới đối chiếu được. τ²-bench sửa thành "chỉ khi kiểm tra tốc độ trả về excellent mới coi là xong; poor, fair, good đều không chấp nhận". Thay đổi này nhắm vào **kiểu sửa cho có**, tức dập triệu chứng mà không giải quyết căn nguyên.
+
+Thứ ba, **hành vi của bộ mô phỏng người dùng quá máy móc**. Người dùng mô phỏng ở bản đầu chỉ đáp lại thụ động. τ²-bench bổ sung cảm xúc (tỏ ra không hài lòng sau lần sửa đầu tiên thất bại), giới hạn kiên nhẫn (cắt cuộc trò chuyện khi giao tiếp quá kém hiệu quả) và yêu cầu neo vào sự kiện. Ba thứ cùng tác động khiến bộ mô phỏng vừa gần với người dùng thật vừa giữ được tính tái lập.
+
+Thứ tư, **người dùng không chỉ tham gia đối thoại mà còn tham gia thao tác**. Miền telecom đưa vào môi trường điều khiển kép. Ở các đánh giá trước, chỉ Agent mới thay đổi được môi trường, trong khi ở những bối cảnh như hỗ trợ kỹ thuật thì một phần đáng kể hành động vốn phải do chính người dùng thực hiện trên thiết bị của họ. Điều khiển kép còn thêm một chiều cho việc kiểm chứng: sau khi người dùng đổi trạng thái, Agent phải gọi lại công cụ mới biết kết quả, nên kiểm chứng nay bao trùm cả câu hỏi "Agent có thực sự đọc được kết quả thao tác phía người dùng hay không".
+
+Thứ năm, **thực thể nhiệm vụ được sinh động**. Các thực thể cụ thể của τ²-bench (tên người dùng, số máy, tổ hợp sự cố) có thể tham số hóa và sinh hàng loạt, cải thiện đồng thời độ phủ và khả năng chống rò rỉ.
+
+**SWE-bench Verified: trước khi công bố đã loại bỏ 71% nhiệm vụ gốc.** OpenAI lấy ngẫu nhiên 1.699 trong số 2.294 nhiệm vụ gốc để đánh giá thủ công, tuyển 93 lập trình viên thạo Python soi từng cái một: mô tả vấn đề có rõ không, ca kiểm thử có phủ điều kiện biên không, kiểm thử có ổn định không, patch tham chiếu có đưa vào lỗi mới không, độ khó có hợp lý không. Cuối cùng chỉ 500 cái lọt. Tỷ lệ loại cao đem lại tỷ số tín hiệu trên nhiễu tốt hơn, và chi phí đánh giá cũng giảm khoảng 80%. Nhiệm vụ Agent phức tạp thường mất từ vài phút đến vài giờ, và chạy trọn một tập đánh giá bằng mô hình tiên phong nhiều khi tốn hàng nghìn đô la tiền token, nên giảm chi phí đánh giá là điều rất quan trọng.
+
+**OSWorld: trong 15 tháng sau khi công bố đã lộ ra hơn 300 vấn đề.** Ra mắt tháng 4 năm 2024, nó nhanh chóng trở thành benchmark quan trọng cho đánh giá Agent đa phương thức, nhưng quá trình dùng rộng rãi sau đó phơi bày bốn loại vấn đề: vấn đề môi trường (trang web chặn thu thập, CAPTCHA, nội dung động thay đổi), vấn đề mô tả nhiệm vụ (diễn đạt mơ hồ), vấn đề logic kiểm chứng (quá chặt hoặc quá lỏng) và vấn đề trạng thái ban đầu (cấu hình chưa đủ). Nhóm ở Đại học Hồng Kông lập một tổ khoảng 10 người, phối hợp chặt chẽ suốt hai tháng với MoonShot AI, OpenAI, ByteDance Seed TARS, Anthropic, Simular và những đơn vị khác để sửa một cách hệ thống: vấn đề môi trường được giải quyết bằng khóa phiên bản và sao lưu ngoại tuyến, vấn đề mô tả bằng cách viết lại các diễn đạt mơ hồ, vấn đề kiểm chứng bằng cách dựng thủ công đường cơ sở đúng rồi chỉnh điều kiện, vấn đề trạng thái ban đầu bằng cách bổ sung kiểm tra tính đầy đủ.
+
+> **Thí nghiệm 7-2 ★: Tự tay làm các nhiệm vụ benchmark**
 >
-> Trong thử nghiệm này, bằng cách chạy khung đánh giá τ2-bench, chúng tôi hiểu được các điểm thiết kế của môi trường đánh giá tương tác giữa người và máy tính và bằng cách so sánh sự khác biệt giữa τ-bench và τ2-bench, chúng tôi hiểu được cách cải tiến lặp đi lặp lại của tập dữ liệu đánh giá.
+> Hãy chọn nhiệm vụ từ GAIA, AndroidWorld, SWE-Bench Verified, Terminal-Bench và OSWorld-Verified rồi tự tay hoàn thành; với mỗi tập dữ liệu nên làm một dễ, một trung bình và một khó. Mức "khó" cũng là thử thách với con người.
 >
-> Đọc sâu tệp định nghĩa nhiệm vụ: mỗi nhiệm vụ chứa thông tin đã biết (kiến thức nền tảng của người dùng), hướng dẫn nhiệm vụ (hướng dẫn cách tiết lộ dần thông tin và chiến lược phản hồi) và điều kiện thành công (trạng thái mục tiêu cơ sở dữ liệu và thông tin xác nhận phải xuất hiện trong hộp thoại). Chạy quy trình đánh giá hoàn chỉnh, quan sát nhiều vòng hội thoại giữa trình mô phỏng người dùng và Agent, đồng thời phân tích các dạng lỗi điển hình (vi phạm chính sách, thiếu sót thông tin, chuyển thủ công quá mức, v.v.).
->
->
-> ![Hình 7-3 Kiến trúc đánh giá τ²-bench ](images/fig7-3.svg)
->
->
-> So sánh sự khác biệt về thiết kế giữa τ-bench và τ2-bench: hướng dẫn sử dụng trong phiên bản đầu tiên của τ-bench quá đơn giản (Agent có thể đoán chính xác câu trả lời), điều kiện thành công không đủ chính xác (dẫn đến đánh giá sai) và trình mô phỏng người dùng quá máy móc. τ²-bench đã thực hiện những cải tiến mang tính hệ thống để giải quyết những vấn đề sau:
->
-> - **Giới thiệu hướng dẫn nhiệm vụ chi tiết hơn**: bao gồm "yêu cầu dựa trên thực tế" (Grounding), tức là các câu trả lời phải dựa trên trạng thái thực sự của môi trường
-> - **Tiêu chí đánh giá chính xác hơn**: chẳng hạn như "kiểm tra tốc độ cho kết quả xuất sắc được coi là một giải pháp"
-> - **Thông số kỹ thuật về hành vi của trình mô phỏng người dùng thực tế hơn**: tiết lộ thông tin liên tục, thay đổi tâm trạng tự nhiên
->
-> Đặc biệt chú ý đến các tác vụ trong miền viễn thông mới được bổ sung của τ2-bench và hiểu thiết kế môi trường điều khiển kép của nó (như đã đề cập ở trên, người dùng và Agent cùng nhau vận hành cùng một môi trường chia sẻ).
->
+> Làm xong hãy trả lời hai câu hỏi. Mô tả nhiệm vụ có nhiều cách hiểu hợp lý không, nếu có thì bộ kiểm chứng công nhận cách nào? Nếu định lách để qua mà không làm thật, đường rẻ nhất là gì, và bộ kiểm chứng có chặn được không?
 
-Khác với đánh giá gọi công cụ tập trung vào “liệu các thay đổi trạng thái có thể quan sát được đã được hoàn thành hay chưa”, đánh giá tương tác giữa con người và máy tính tập trung vào “liệu người dùng có được hướng dẫn để hoàn thành các thay đổi về nhận thức hay ra quyết định hay không”. Cái trước kiểm tra tính đúng đắn trong các hành động của Agent, trong khi cái sau kiểm tra tính hợp lý của chiến lược truyền thông của nó.
+### Ba nguồn của tập đánh giá
 
-Việc xây dựng môi trường đánh giá cũng liên quan đến việc thiết kế môi trường mô phỏng—phát triển khi môi trường đánh giá cần hỗ trợ các tương tác lặp lại trên quy mô lớn, được thảo luận ngắn gọn ở cuối chương này.
+Có một quan điểm phổ biến rằng benchmark công khai phục vụ việc xếp hạng mô hình và ít liên quan tới nghiệp vụ thực. Đúng là điểm số benchmark công khai khó trực tiếp dẫn dắt quyết định sản phẩm, nhưng thủ pháp thiết kế của chúng hoàn toàn có thể chuyển giao. Độ sâu kiểm chứng, sinh có tham số, phòng rò rỉ và duy trì chất lượng — những điều bàn ở trên — chính là chỗ dễ bị bỏ sót nhất khi tự dựng tập đánh giá.
 
-## Thiết kế bộ dữ liệu nhiệm vụ đánh giá
+Tập đánh giá trong môi trường sản xuất thường có ba nguồn.
 
-Môi trường đánh giá là "giai đoạn" và tập dữ liệu là "tập lệnh" - chất lượng của thiết kế tập lệnh thường quyết định giá trị của việc đánh giá hơn chính giai đoạn đó. Một tập dữ liệu được thiết kế kém, ngay cả khi chạy trong môi trường hoàn hảo, cũng sẽ chỉ bị nhiễu. Phần này trích xuất một số nguyên tắc đã được xác minh nhiều lần từ thực tiễn thiết kế các điểm chuẩn như GAIA, AndroidWorld, SWE-Bench Verified (Software Engineering Benchmark, điểm chuẩn kỹ thuật phần mềm), τ-bench và τ²-bench, Terminal-Bench, OSWorld và OSWorld-Verified.
+**Benchmark công khai** dùng để sàng lọc thô mô hình và học hỏi thủ pháp thiết kế, thường không dùng cho quyết định sản phẩm. Phân bố nhiệm vụ của chúng không trùng với phân bố nhiệm vụ nghiệp vụ thực; tăng hai điểm phần trăm trên GAIA không có quan hệ tất yếu với tỷ lệ hoàn tiền thành công.
 
-> **Thí nghiệm 7-2 ★: Thực thi thủ công các nhiệm vụ benchmark**
->
-> Chọn các nhiệm vụ từ GAIA, AndroidWorld, SWE-Bench Verified, τ²-bench, Terminal-Bench, OSWorld-Verified để tự mình hoàn thành. Nên hoàn thành một cấp độ dễ, trung bình và khó cho mỗi bộ dữ liệu - cấp độ “khó” cũng là một thử thách đối với con người. So sánh kết quả thực hiện với các câu trả lời tiêu chuẩn và phân tích nguồn gốc của sự khác biệt. Hiểu thông qua trải nghiệm cá nhân: mô tả nhiệm vụ cần cân bằng giữa sự rõ ràng và cởi mở, các tiêu chuẩn xác minh phải khách quan và có thể thực thi được, và hệ thống phân cấp độ khó của nhiệm vụ phải có khả năng phân biệt được các cấp độ khả năng khác nhau.
->
+**Tập nghiệp vụ tự dựng** bao phủ phân bố nhiệm vụ thực và có thể làm căn cứ cho việc chọn mô hình cũng như các quyết định thiết kế Harness. Chẳng hạn τ²-bench có thể dùng ngay làm bộ khung cho bất kỳ hệ thống đánh giá nào cần người dùng mô phỏng; chỉ cần thay dữ liệu miền và bộ công cụ.
 
-### Những thách thức cốt lõi trong thiết kế tập dữ liệu nhiệm vụ
+**Dòng chảy ngược từ trajectory sản xuất** đến từ các thất bại thật trên hệ thống: người dùng đính chính rõ ràng, người dùng bấm không hài lòng, và những ca được phát hiện về sau qua kiểm tra trạng thái, bộ kiểm chứng theo luật hoặc rà soát bằng LLM. Sau khi quy trách nhiệm thất bại, chúng lắng lại thành các ca hồi quy. Cách làm cụ thể xem hai mục "Quy trách nhiệm thất bại" và "Nhiệm vụ hồi quy đầu-cuối và nhiệm vụ hồi quy trajectory prefix" phía sau. Nguồn này tốn kém nhất và cũng chính xác nhất, vì nó đến thẳng từ những vấn đề người dùng thực sự gặp phải.
 
-**Thử thách 1: Sự căng thẳng giữa sự rõ ràng và cởi mở.** Mô tả nhiệm vụ phải đủ rõ ràng để đảm bảo việc đánh giá có thể lặp lại nhưng không quá cứng nhắc đến mức hạn chế khả năng sáng tạo của Agent. GAIA cung cấp một ví dụ: nhiệm vụ "đơn giản về mặt khái niệm" nhưng có lộ trình thực hiện rộng mở - ví dụ: yêu cầu tìm thông tin về phi hành gia trong các bức ảnh thiên văn hàng ngày của NASA. Mục tiêu rất rõ ràng (tìm các phi hành gia cụ thể và thời gian của họ trong không gian), nhưng cách tìm kiếm, lọc và xác minh hoàn toàn do Agent quyết định độc lập.
-
-**Thử thách 2: Cân bằng giữa tính xác thực và khả năng kiểm soát.** Các nhiệm vụ thực tế chứa đựng sự không chắc chắn và nhiễu, cho phép bộc lộ độ bền nhưng cũng đe dọa đến khả năng tái sản xuất. Phiên bản ban đầu của SWE-Bench được lấy trực tiếp từ vấn đề thực tế của GitHub, đảm bảo tính xác thực nhưng cũng dẫn đến mô tả nhiệm vụ mơ hồ, trường hợp thử nghiệm không đầy đủ và tiêu chí đánh giá chủ quan. SWE-Bench Verified giới thiệu các chuyên gia con người để xác minh hệ thống và chọn ra 500 nhiệm vụ chất lượng cao với các vấn đề rõ ràng, thử nghiệm đầy đủ và kế hoạch rõ ràng, giúp cải thiện đáng kể khả năng kiểm soát trong khi vẫn duy trì tính xác thực.
-
-**Thử thách 3: Phối hợp đa dạng và có tính hệ thống.** Một bộ dữ liệu hiệu quả cần bao gồm các tình huống điển hình, điều kiện biên và bẫy lỗi, đồng thời phải được tổ chức một cách có hệ thống để kết quả đánh giá có thể chẩn đoán được những thiếu sót về năng lực cụ thể. 116 nhiệm vụ của AndroidWorld trải rộng trên 20 ứng dụng thực và mỗi nhiệm vụ được đánh dấu bằng các khả năng cốt lõi cần thiết (lập kế hoạch nhiều bước, hiểu trực quan, lý luận theo thời gian), để kết quả đánh giá không chỉ đưa ra tỷ lệ thành công chung mà còn tiết lộ sức mạnh của các khía cạnh khả năng cụ thể. Quan trọng hơn, các biến thể nhiệm vụ gần như không giới hạn có thể được tạo ra thông qua các cơ chế tham số hóa.
-
-**Thử thách thứ 4: Đánh giá chi phí so với phạm vi bảo hiểm.** Các tác vụ Agent phức tạp có thể mất vài phút hoặc thậm chí hàng giờ để hoàn thành và tiêu tốn một lượng lớn mã thông báo. Kích thước của tập dữ liệu cần cân bằng giữa tính toàn diện với tính kinh tế. GAIA chọn 466 câu hỏi, chia thành ba mức độ khó, không chỉ bao gồm nhiều khía cạnh khả năng mà còn có thể hoàn thành bài đánh giá với chi phí hợp lý. SWE-Bench Verified đã được sàng lọc từ 2294 câu hỏi xuống còn 500 câu hỏi (giảm chi phí khoảng 4/5 và cải thiện tỷ lệ tín hiệu trên nhiễu thông qua các tiêu chuẩn chất lượng chặt chẽ hơn).
-
-**Thử thách 5: Ngăn chặn rò rỉ dữ liệu (Data Contamination).** Trong thời đại của các mô hình ngôn ngữ lớn, rò rỉ dữ liệu là một thách thức nghiêm trọng mà việc đánh giá phải đối mặt: khi dữ liệu đánh giá được đưa vào dữ liệu huấn luyện, việc đánh giá sẽ đo lường trí nhớ thay vì khả năng khái quát hóa. Cũng giống như việc ghi nhớ đáp án trước khi thi, dù điểm có tốt đến mấy cũng không thể chỉ ra trình độ thực sự. Mỗi điểm chuẩn áp dụng các chiến lược phòng ngừa khác nhau: GAIA dựa vào tính duy nhất của câu trả lời. Câu hỏi yêu cầu kết hợp nhiều nguồn thông tin để trả lời và một số tác vụ được trang bị các tệp đính kèm được tạo đặc biệt (PDF/âm thanh/hình ảnh không tồn tại trên Internet) và một trang web không thể trực tiếp cung cấp câu trả lời. Bản thân SWE-Bench Verified là một tập hợp con gồm 500 câu hỏi thu được từ quá trình sàng lọc chất lượng thủ công của OpenAI đối với SWE-Bench ban đầu và không bao gồm thiết kế chống rò rỉ theo chiều thời gian; những gì thực sự dựa vào độ mới của thời gian để ngăn chặn rò rỉ là công việc tiếp theo, chẳng hạn như SWE-bench-Live, tiếp tục bao gồm các vấn đề mới được tạo sau thời hạn đào tạo mô hình, để việc đánh giá luôn đi trước kho dữ liệu đào tạo của mô hình. τ²-bench thực hiện các biện pháp phòng ngừa thông qua việc tạo tham số động và các trường hợp tác vụ cụ thể (tên người dùng, số đơn đặt hàng, ngày, v.v.) được tạo ngẫu nhiên mỗi lần. Quá trình tạo tác vụ được tham số hóa của AndroidWorld có khả năng chống rò rỉ một cách tự nhiên vì quá trình xác thực dựa trên trạng thái giao diện người dùng cuối cùng thay vì trình tự thao tác. Terminal-Bench giúp phát hiện rò rỉ bằng cách nhúng GUID canary (mã định danh duy nhất toàn cầu, điểm đánh dấu theo dõi duy nhất): nếu mô hình có thể xuất nội dung chứa GUID, thì dữ liệu điểm chuẩn đã bị rò rỉ vào tập huấn luyện.
-
-### Thiết kế mô tả nhiệm vụ chính xác
-
-GAIA đảm bảo tính duy nhất của câu trả lời thông qua các ràng buộc rõ ràng về nguồn thông tin, phạm vi thời gian, chủ đề và mục tiêu truy vấn. Ví dụ: nhiệm vụ Cấp 3 yêu cầu bắt đầu từ các bức ảnh của NASA về một ngày cụ thể, xác định các phi hành gia thông qua hiểu biết trực quan, truy vấn nhóm phi hành gia mà họ thuộc về, tính toán thời gian ở trong không gian và định dạng chính xác kết quả đầu ra ("họ, phân tách bằng dấu chấm phẩy, dấu phân cách hàng nghìn"). Mọi chi tiết đều được xác minh tự động - chỉ có định dạng và nội dung trùng khớp hoàn toàn mới được coi là đạt.
-
-τ²-bench giới thiệu thiết kế theo ngữ cảnh, với mỗi tác vụ chứa nhiều lớp thông tin: vấn đề bề ngoài ("Di chuyển dữ liệu sẽ không hiệu quả"), kỳ vọng về hiệu suất ("chắc chắn muốn tốc độ cao"), các hạn chế ("không chấp nhận được tốc độ nào khác") và cảm tính ngầm. Cải tiến quan trọng là tách "thông tin đã biết" khỏi "hướng dẫn nhiệm vụ": thông tin đã biết là thông tin mà người dùng hiện đang sở hữu và hướng dẫn nhiệm vụ hướng dẫn trình mô phỏng cách tiết lộ dần dần thông tin, bao gồm "yêu cầu nối đất" (Yêu cầu nối đất, nghĩa là các câu trả lời phải dựa trên kết quả trả về thực tế của các lệnh gọi công cụ và không thể bịa đặt).
-
-SWE-Bench Verified chứa các trường có cấu trúc như mô tả vấn đề, các bước tái tạo, hành vi dự kiến/thực tế, v.v. Trình chú thích sẽ xác minh sự trùng khớp giữa mô tả và trường hợp kiểm thử. Mỗi thành phần trong mô tả nhiệm vụ của Terminal-Bench có thể được xác minh một cách máy móc: đường dẫn tệp có tồn tại hay không, giá trị quyền có chính xác hay không, tham số chứng chỉ, định dạng ngày, v.v. Ví dụ: "build-linux-kernel-qemu" yêu cầu xây dựng nhân Linux 6.9 từ nguồn, thêm bản in tùy chỉnh trong `start_kernel`, tạo initramfs và chạy nó trong QEMU. Tiêu chí thành công là một thông báo tùy chỉnh trong nhật ký khởi động - Agent không thể thoát khỏi đầu ra giả mạo và thực sự phải hoàn thành toàn bộ quá trình.
-
-AndroidWorld được thiết kế bằng cách sử dụng **các mẫu được tham số hóa**. Tác vụ không phải là văn bản tĩnh mà là một mẫu có thể được khởi tạo động (chẳng hạn như "Thay đổi số điện thoại của người liên hệ `[CONTACT_NAME]` thành `[NEW_PHONE]`"), với các giá trị tham số khác nhau được tạo ngẫu nhiên mỗi lần đánh giá. Có ba lợi ích:
-
-- **Ngăn ghi nhớ**: Các giá trị tham số mỗi lần khác nhau và không thể phát lại một chuỗi thao tác cố định
-- **Tăng tính đa dạng của dữ liệu**: Một mẫu có thể tạo ra các phiên bản gần như không giới hạn
-- **Hỗ trợ thí nghiệm so sánh**: cố định một số thông số nhất định và chỉ thay đổi các thông số khác, đo lường chính xác tác động của các yếu tố cụ thể
-
-Việc xác thực dựa trên trạng thái giao diện người dùng cuối cùng (chẳng hạn như liệu trường số điện thoại có chứa giá trị mong đợi hay không) thay vì trình tự thao tác.
-
-Các tác vụ của OSWorld thường không bắt đầu từ trạng thái ban đầu “sạch” mà từ trạng thái trung gian được cấu hình cẩn thận, gần với các tình huống sử dụng thực tế hơn. Mô tả nhiệm vụ cần xử lý nhiều giải pháp ("đặt nền thành màu tím" cần cung cấp mã màu cụ thể để loại bỏ sự mơ hồ, "ghép hai CSV" cần chấp nhận tất cả các cách hợp lý để giữ lại tiêu đề đơn/tiêu đề kép, v.v.) và sự không chắc chắn về môi trường (chống thu thập dữ liệu trang web, phát triển giao diện người dùng ứng dụng, cạnh tranh về thời gian - OSWorld-Verified giảm thiểu thông qua các cơ chế như ảnh chụp nhanh trang ngoại tuyến, khóa phiên bản phụ thuộc, điều kiện chờ rõ ràng, v.v.).
-
-Danh sách này không đầy đủ về ngữ cảnh đánh giá Agent. Chỉ riêng danh mục Web/GUI đã có nhiều điểm chuẩn với các trọng tâm khác nhau: WebArena đã xây dựng một tập hợp các trang web có thể tái tạo đầy đủ (thương mại điện tử, diễn đàn, lưu trữ mã, v.v.) để đưa tính chất không thể kiểm soát của "các trang web thực" vào hộp cát; Mind2Web đi theo hướng ngược lại và trực tiếp kiểm tra khả năng khái quát trên hàng trăm website thực; [ClawBench](https://claw-bench.com/) ([bài báo](https://arxiv.org/abs/2604.08523), [mã nguồn](https://github.com/TIGER-AI-Lab/ClawBench)) cho phép Agent trong các bộ chứa cô lập thực hiện các tác vụ hằng ngày đầu cuối trên website thực. V1 bao phủ 153 nhiệm vụ trên 144 website, V2 bổ sung thêm 130 nhiệm vụ, đồng thời ghi lại năm lớp bằng chứng: bản phát lại phiên, ảnh chụp màn hình từng hành động, lưu lượng HTTP, thao tác trình duyệt và thông điệp của Agent. Nó bổ sung cho các điểm chuẩn hộp cát, giúp phân tích sự biến động của website thực và các lỗi đuôi dài; đổi lại, khả năng tái tạo chịu ảnh hưởng từ những thay đổi ở các website bên thứ ba; DuyệtComp chuyên về truy xuất chuyên sâu - câu trả lời được ẩn sâu và yêu cầu duyệt nhiều bước và xác thực chéo để tìm. Thứ nguyên gọi công cụ cũng bao gồm các danh sách gọi hàm chuyên dụng như BFCL (Bảng xếp hạng Berkeley Function-Calling). Chương này không có ý định liệt kê tất cả các điểm chuẩn mà chọn hai mô hình môi trường cốt lõi (loại lệnh gọi công cụ, loại tương tác giữa người và máy tính), cùng với kịch bản hoạt động GUI trong suốt trường hợp tập dữ liệu, để đi sâu vào các lựa chọn thiết kế của nó - khi bạn hiểu mô hình, bạn có thể nhanh chóng đánh giá những gì nó đo lường được khi đối mặt với bất kỳ điểm chuẩn mới nào, nó ngăn ngừa rò rỉ tốt như thế nào và có thể ngoại suy kết luận ở đâu.
-
-### Thiết kế phân cấp độ phức tạp của nhiệm vụ
-
-GAIA được thiết kế với ba cấp độ khó: Cấp 1 chỉ yêu cầu các công cụ 1-2 (93,9% con người so với GPT-4 30,3%), Cấp 2 yêu cầu tư duy nhiều bước (91,8% so với 9,7%) và Cấp 3 yêu cầu sự kết hợp phức tạp (87,3% so với 0%). Giá trị chẩn đoán của thiết kế phân cấp là: Lỗi cấp độ 1 liên quan đến các vấn đề sử dụng công cụ cơ bản, Cấp độ 2 liên quan đến việc lập kế hoạch nhiều bước và tích hợp thông tin, và Cấp độ 3 liên quan đến tư duy chuỗi dài và quản lý độ phức tạp - mỗi cấp độ tương ứng với một hướng cải tiến khác nhau (kỹ thuật gợi ý, cơ chế lập kế hoạch, kiến trúc phân cấp/post-training).
-
-τ2-bench được phân lớp theo mức độ phức tạp trong kinh doanh: từ truy vấn thông tin đơn giản đến quy trình gồm nhiều bước (sửa đổi truy vấn nhu cầu chuyến bay, hiển thị thay thế, xác nhận, tính toán chênh lệch giá, thanh toán), đến chẩn đoán lỗi (kiểm tra có hệ thống nhiều nguyên nhân có thể và xác minh việc sửa chữa) và cuối cùng là phán đoán chính sách (xử lý các yêu cầu không tuân thủ chính sách).
-
-Terminal-Bench được phân tầng theo chiều kép của lĩnh vực kỹ thuật × độ phức tạp trong vận hành. Sổ đăng ký nhiệm vụ của nó bao gồm hơn 200 nhiệm vụ (các phiên bản khác nhau của bộ đánh giá cốt lõi có tỷ lệ khác nhau. Ví dụ: phiên bản 2.0 đã chọn 89 nhiệm vụ chất lượng cao từ sự đóng góp của cộng đồng), từ đăng ký mô hình mlflow đơn giản, đến bẻ khóa mật khẩu 7z trung bình, đến tích hợp đa thành phần máy chủ git + máy chủ web khó, đến phân tích mật mã vi phân FEAL khó nhất (yêu cầu kiến thức về mật mã + tối ưu hóa thuật toán để đáp ứng giới hạn thời gian 30 giây).
-
-### Đảm bảo tính xác thực và khách quan
-
-Câu trả lời của GAIA rất ngắn gọn và rõ ràng. Định dạng nghiêm ngặt cho phép hoàn thành việc xác minh bằng cách khớp chuỗi chính xác và kết quả nhị phân (khớp hoặc không khớp) đảm bảo khả năng tái tạo khách quan. Sự hiếm có của câu trả lời cũng có tác dụng ngăn chặn hành vi gian lận—các sự kiện có tính cụ thể cao ít có khả năng xuất hiện nguyên trạng trong dữ liệu huấn luyện.
-
-SWE-Bench Verified thực hiện xác minh dựa trên khả năng thực thi của mã, phân biệt FAIL_TO_PASS (không thành công trước khi sửa chữa, đạt sau khi sửa chữa, chứng minh rằng sự cố đã được giải quyết) và PASS_TO_PASS (đã vượt qua trước và sau khi sửa chữa, chứng minh rằng không có lỗi mới nào được đưa ra), đạt được xác minh kép. Phiên bản Verified cũng đảm bảo rằng bản thân các bài kiểm tra có chất lượng đáng tin cậy và không có bài kiểm tra không ổn định nào đôi khi vượt qua và đôi khi thất bại.
-
-Hệ thống xác minh của τ²-bench bao gồm kiểm tra nhiều lớp (kết quả của mỗi lớp kiểm tra vẫn được tóm tắt dưới dạng phần thưởng nhị phân ở cấp độ nhiệm vụ và chỉ đạt được thành công nếu tất cả đều vượt qua):
-
-- **Kiểm tra trạng thái cơ sở dữ liệu**: trạng thái hồ sơ đặt chỗ và liệu hồ sơ hoàn tiền có được tạo hay không
-- **Tìm kiếm từ khóa nội dung hội thoại**: Có xác nhận số tiền hoàn lại và thời gian đến với người dùng hay không
-- **Tuân thủ quy trình**: Phân tích trình tự cuộc gọi công cụ, chẳng hạn như liệu có nhận được xác nhận rõ ràng từ người dùng trước khi sửa đổi đơn hàng hay không
-
-Môi trường điều khiển kép của τ²-bench (xem bài viết trước "Môi trường đánh giá tương tác giữa người và máy tính") có thêm một chiều ở cấp độ xác minh: sau khi trình mô phỏng người dùng thực sự thay đổi trạng thái môi trường, Agent phải quan sát sự thay đổi này thông qua lệnh gọi công cụ và tiếp tục khắc phục sự cố tương ứng. Do đó, việc xác minh bao gồm "liệu Agent có thực sự đọc kết quả hoạt động từ phía người dùng hay không."
-
-OSWorld được trang bị 134 chức năng đánh giá độc lập, có toàn quyền truy cập hệ điều hành và có thể kiểm tra sâu cấu trúc hệ thống tệp, trạng thái quy trình, kết nối mạng và trạng thái nội bộ của ứng dụng. Ví dụ: trong tác vụ vận hành cơ sở dữ liệu, tập lệnh đánh giá không chỉ xác minh xem tệp báo cáo có tồn tại hay không mà còn kết nối trực tiếp với cơ sở dữ liệu để kiểm tra xem SQL có được thực thi chính xác hay không; trong tác vụ trình duyệt, nó phân tích cây DOM, kiểm tra cookie/localStorage và gửi yêu cầu xác minh đến chương trình phụ trợ để xác nhận xem biểu mẫu có thực sự hiệu quả hay không. Kiểu kiểm tra chuyên sâu này có thể phát hiện ra tình huống "hoàn thành bề mặt nhưng có lỗi thực tế" - ví dụ: Agent đã nhấp vào nút gửi nhưng bị máy chủ từ chối vì các trường được điền không chính xác.
-
-Terminal-Bench dựa trên môi trường tiêu chuẩn hóa vùng chứa Docker, kết hợp với kiểm tra trạng thái hệ thống tệp (liệu đường dẫn có tồn tại, giá trị quyền, định dạng nội dung) và xác minh chức năng thực thi chương trình (QEMU thực sự được khởi động trong build-linux-kernel-qemu và tìm kiếm thông báo printk tùy chỉnh) và GUID canary giúp theo dõi rò rỉ.
-
-### Thiết kế hệ thống phân bổ nhiệm vụ
-
-Việc phân bổ nhiệm vụ cần phải bao quát một cách có hệ thống các khía cạnh năng lực, khía cạnh khó khăn, khía cạnh kịch bản và các tình huống ranh giới. GAIA Hướng tới tính tổng quát - hầu hết các tác vụ đều yêu cầu sự kết hợp giữa lý luận, đa phương thức, duyệt và sử dụng công cụ. τ2-bench được thiết kế đặc biệt "nhiệm vụ bẫy" - ví dụ: người dùng cho rằng "dịch vụ khách hàng đã phê duyệt việc hủy" nhưng thực tế không tuân thủ chính sách, để kiểm tra xem Agent có thể duy trì phán đoán chính xác khi đối mặt với áp lực và thông tin sai lệch hay không. OSWorld dựa trên ma trận hai chiều của loại hoạt động (tệp IO/ứng dụng máy tính để bàn/ứng dụng web/quy trình ứng dụng chéo) và trường ứng dụng, trên ba hệ điều hành (nghiên cứu cho thấy rằng các khả năng của nhiều hệ điều hành có mối tương quan chặt chẽ và các khả năng đã học được trên một hệ thống có thể được chuyển sang các hệ thống khác). Terminal-Bench chứa "các tác vụ kết hợp giữa các ngăn xếp công nghệ" để kiểm tra tư duy hệ thống (chẳng hạn như xử lý dữ liệu tổng hợp + thao tác tệp + phân chia lại tác vụ cho dự án Python).
-
-### Kiểm soát chất lượng dữ liệu và cải tiến lặp lại
-
-SWE-Bench Verified là hình ảnh thu nhỏ của việc kiểm soát chất lượng. OpenAI đã chọn ngẫu nhiên 1699 nhiệm vụ từ 2294 nhiệm vụ ban đầu để đánh giá thủ công và tuyển dụng 93 nhà phát triển thành thạo Python. Người chú thích cần phải hoàn thành nhiều bước kiểm tra: liệu mô tả vấn đề có rõ ràng hay không (bạn có hiểu điều gì cần giải quyết hay không), liệu trường hợp kiểm thử đã hoàn thành chưa (bao gồm tất cả các khía cạnh và điều kiện biên), liệu kiểm thử có ổn định hay không (liệu có các kiểm thử không ổn định do môi trường hoặc do ngẫu nhiên gây ra hay không), liệu bản vá có chính xác hay không (liệu có lỗi mới được đưa ra hay không) và liệu độ khó có hợp lý hay không. Sau khi sàng lọc nghiêm ngặt, chỉ có 500 nhiệm vụ đạt (29%) – tỷ lệ loại bỏ cao này là sự đầu tư cần thiết cho chất lượng đánh giá. Họ cũng thiết lập các nguyên tắc chú thích được tiêu chuẩn hóa nhằm xác định các tiêu chí và ví dụ cụ thể cho từng kỳ thi để đảm bảo tính nhất quán giữa các người chú thích khác nhau.
-
-τ²-bench giới thiệu sự tách biệt giữa "thông tin đã biết"/"hướng dẫn nhiệm vụ" (làm cho hoạt động của trình mô phỏng trở nên thực tế hơn) và các điều kiện hoàn thành chặt chẽ hơn (chẳng hạn như "chỉ xuất sắc mới được coi là giải pháp và poor/fair/good sẽ không được chấp nhận") để ngăn chặn "sửa chữa chiếu lệ".
-
-OSWorld-Verified là một ví dụ tuyệt vời về cải tiến lặp đi lặp lại. OSWorld nhanh chóng trở thành tiêu chuẩn quan trọng để đánh giá Agent đa phương thức sau khi phát hành vào tháng 4 năm 2024, nhưng hơn 300 vấn đề đã bộc lộ trong suốt 15 tháng sử dụng rộng rãi. Những vấn đề này được chia thành bốn loại: vấn đề về môi trường (chống thu thập dữ liệu trang web/CAPTCHA/thay đổi nội dung động), vấn đề về mô tả nhiệm vụ (biểu thức không rõ ràng), vấn đề về logic xác minh (quá nghiêm ngặt hoặc quá lỏng lẻo) và vấn đề về trạng thái ban đầu (cấu hình không hoàn chỉnh). Nhóm Đại học Hồng Kông đã thành lập một nhóm khoảng 10 người và làm việc chuyên sâu với MoonShot AI, OpenAI, ByteDance Seed TARS, Anthropic, Simular, v.v. trong hai tháng để thực hiện sửa chữa hệ thống. Policy sửa chữa được xây dựng cho từng loại sự cố: sự cố môi trường được giải quyết bằng cách khóa phiên bản và sao lưu ngoại tuyến, mô tả tác vụ được loại bỏ bằng cách viết lại các biểu thức không rõ ràng, logic xác minh được cân bằng bằng cách thiết lập đường cơ sở chính xác và điều chỉnh các điều kiện theo cách thủ công, đồng thời trạng thái ban đầu được nâng cao bằng cách thêm các kiểm tra tính toàn vẹn.
+Ở giai đoạn khởi đầu thường chỉ có benchmark công khai và một ít tập nghiệp vụ viết tay; sau khi hệ thống chạy sản xuất một thời gian, các ca chảy ngược từ trajectory sản xuất sẽ thành phần chính.
 
 ## Phương pháp đánh giá tự động
 
-Với môi trường đánh giá, bộ dữ liệu và hệ thống chỉ số rõ ràng, câu hỏi cốt lõi tiếp theo là: chấm điểm như thế nào? Đối với các nhiệm vụ có câu trả lời chính xác rõ ràng (chẳng hạn như câu hỏi toán học, truy vấn SQL), các phán đoán nhị phân đơn giản (đúng/sai) là đủ; nhưng đối với những nhiệm vụ mở (chẳng hạn như trò chuyện về dịch vụ khách hàng, viết báo cáo) thì cần có những phương pháp đánh giá phức tạp hơn.
+Các benchmark bàn ở những mục trước có một điểm chung: bộ kiểm chứng của chúng gần như đều tất định. SWE-bench chạy bộ kiểm thử, AndroidWorld khẳng định trạng thái UI cuối, GAIA so khớp chuỗi chính xác, và bốn tầng kiểm tra của τ²-bench cũng đều do mã thực thi. Lựa chọn này có lý do đầy đủ: kiểm chứng tất định không phát sinh thêm chi phí mô hình, kết quả tái lập hoàn toàn, có thể đưa vào tích hợp liên tục như một bài kiểm thử đơn vị, và tiện cho việc xếp hạng giữa các mô hình.
 
-Xác minh mã tự động chỉ bao gồm các tình huống có câu trả lời tiêu chuẩn và việc chấm điểm các nhiệm vụ mở là chủ đề của phần này. Trong số đó, thiết kế mật độ của tín hiệu phần thưởng (từ phần thưởng nhị phân đến phần thưởng xử lý đến phần thưởng tổng hợp) và phương pháp huấn luyện của mô hình phần thưởng sẽ được thảo luận về hệ thống trong phần post-training của Chương 8; Phần này trả lời một câu hỏi cơ bản hơn: cách sử dụng LLM để tự động đánh giá chất lượng đầu ra của các tác vụ đang mở.
+Cái giá là nó chỉ đánh giá được kết quả cuối đúng hay sai, chứ không nêu ra nguyên nhân của lỗi. Nhiệm vụ thất bại của τ²-bench rốt cuộc được 0 điểm, và con số 0 ấy không cho biết Agent sai ở khâu chọn thuê bao hay bỏ sót bước nạp dữ liệu, càng không chỉ ra bước tiếp theo cần sửa gì. Với một benchmark công khai dùng để xếp hạng, đây không phải khiếm khuyết; với một hệ thống sản xuất cần cải tiến liên tục, đó lại đúng là thông tin cần nhất.
+
+Bối cảnh sản xuất còn một khó khăn nữa: rất nhiều phán đoán vốn không thể viết thành khẳng định mà mã kiểm tra được. Một thư trả lời khiếu nại có chừng mực hay không, một báo cáo khảo sát có bỏ sót thông tin then chốt hay không, một lần truy hồi ký ức có nhầm quan hệ giữa các nhân vật hay không — những thứ này không có trạng thái cuối duy nhất để tra, cũng không thể phán bằng so khớp từ khóa.
+
+Vì vậy, khi đi từ benchmark công khai sang đánh giá trong môi trường sản xuất, cách kiểm chứng cần dịch sang phải dọc theo một phổ mà trục hoành là **mức độ kiểm chứng được bằng máy** của nhiệm vụ, như Hình 7-4.
+
+![Hình 7-4 Phổ các cách kiểm chứng: từ kiểm chứng tất định đến phán xét bằng mô hình](images/fig7-4.svg)
+
+Hai công cụ ở nửa phải của phổ vì thế trở thành trụ cột của đánh giá sản xuất: **Rubric** tách câu hỏi mơ hồ "tốt hay không" thành nhiều chiều chấm điểm riêng rẽ, còn **LLM-as-a-Judge** đảm nhận việc chấm khi thiếu tiêu chí tất định. Chỉ khi kết hợp cả hai mới có thể quy một tỷ lệ thất bại mơ hồ trở lại thành những vấn đề cụ thể có thể bắt tay vào sửa; kết hợp thêm **quy trách nhiệm thất bại** ở nửa sau mục này thì tạo thành vòng khép kín đầy đủ của đánh giá Agent sản xuất.
+
+Cần nói rõ, dịch sang phải không có nghĩa là từ bỏ nửa trái. Mọi kiểm tra có thể viết thành khẳng định trong chương trình thì nên giữ nguyên là khẳng định, còn phán xét bằng LLM chỉ dùng cho những chiều thực sự không thể phán bằng máy. Kiểm tra tất định rẻ hơn, ổn định hơn, và cũng hợp hơn để chạy lâu dài như một bài kiểm thử hồi quy.
 
 ### LLM-as-a-Judge: Cốt lõi của đánh giá tự động
 
-![Hình 7-4 Quy trình LLM-as-a-Judge ](images/fig7-4.svg)
+![Hình 7-5 Quy trình LLM-as-a-Judge ](images/fig7-5.svg)
 
 Tại sao bạn cần LLM-as-a-Judge? Đối với các nhiệm vụ mở (chẳng hạn như tạo báo cáo, xử lý khiếu nại của khách hàng, nội dung sáng tạo), không có câu trả lời tiêu chuẩn nào có thể được so sánh tự động và việc đánh giá thủ công rất tốn kém và khó mở rộng quy mô. LLM-as-a-Judge cân bằng quy mô tự động hóa với chuyên môn của con người bằng cách đánh giá các mô hình ngôn ngữ dựa trên tiêu chí chấm điểm do chuyên gia xác định (Rubric). Tuy nhiên, phương pháp này cũng có những hạn chế đã biết: mô hình đánh giá có thể có những thành kiến riêng (điển hình nhất là **thành kiến về độ dài** - có xu hướng cho điểm cao hơn đối với những câu trả lời dài hơn và chi tiết hơn, ngay cả khi nội dung không chính xác hơn) và nhiều đánh giá cho cùng một thông tin đầu vào cũng có thể dao động. Sự thiên vị về chiều dài đặc biệt đáng được đề phòng cho từng cá nhân. Có ba phương pháp thường được sử dụng: xử phạt rõ ràng tính dài dòng trong Rubric và đặt giới hạn trên về độ dài của câu trả lời cho các nhiệm vụ tương tự; khi so sánh cặp đôi, kiểm soát độ dài của hai ứng viên sao cho tương đương nhau trước khi đánh giá; và thường xuyên kiểm tra mối tương quan giữa điểm số và độ dài câu trả lời - nếu điểm cao hầu như luôn đi kèm với câu trả lời dài, điều đó có nghĩa là đánh giá đã bị sai lệch về độ dài và cần phải sửa lại Rubric. Để giải quyết những thách thức này một cách có hệ thống, thiết kế Rubric phải tuân thủ các nguyên tắc sau:
 
@@ -363,7 +364,7 @@ thất bại: "Thông tin bịa đặt không tồn tại trong cuộc trò chuy
 
 Đưa Rubric cùng câu trả lời thực tế của Agent cho mô hình đánh giá để nhận điểm và lý do theo từng tiêu chí. Khi tổng hợp hàng chục ca rồi xem lại các trajectory có điểm thấp, ta có thể biến một nhận xét mơ hồ như “tỷ lệ thành công giảm” thành chẩn đoán cụ thể: không truy xuất được dữ kiện, nối sai quan hệ giữa các nhân vật, hay tự thêm thông tin không có căn cứ. Rubric vì thế không chỉ cho biết hệ thống đạt bao nhiêu điểm, mà còn chỉ ra nên sửa ở đâu.
 
-Dưới đây lấy bộ nhớ người dùng làm một trường hợp cụ thể, để cho thấy cách đưa phương pháp tổng quát này xuống thành tập đánh giá và bộ chấm điểm chạy được.
+Dưới đây lấy bộ nhớ người dùng làm một trường hợp cụ thể, để cho thấy cách đưa phương pháp tổng quát này xuống thành tập đánh giá và bộ kiểm chứng chạy được.
 
 > **Thử nghiệm 7-3 ★★: Xây dựng hệ thống đánh giá bộ nhớ người dùng dựa trên Rubric**
 >
@@ -534,7 +535,7 @@ Trong việc lựa chọn mô hình thực tế, câu hỏi chúng ta thường 
 
 ### So sánh theo cặp và xếp hạng mô hình
 
-![Hình 7-5 Xếp hạng Elo và xếp hạng so sánh ghép đôi ](images/fig7-5.svg)
+![Hình 7-6 Xếp hạng Elo và xếp hạng so sánh ghép đôi ](images/fig7-6.svg)
 
 **Xếp hạng Elo**(một hệ thống xếp hạng ban đầu được sử dụng trong cờ vua) định lượng khả năng tương đối của một mô hình thông qua một số lượng lớn các trận đấu theo cặp: chênh lệch điểm số càng lớn thì tỷ lệ thắng mong đợi của người chơi mạnh hơn càng cao. Ví dụ: nếu mô hình A đạt 1200 và mô hình B đạt 1000, hệ thống Elo sẽ dự đoán tỷ lệ thắng của A là khoảng 76%. Nếu B bất ngờ thắng, B sẽ được nhiều điểm hơn và A sẽ mất nhiều điểm hơn - kết quả ngược lại sẽ mang đến sự điều chỉnh điểm lớn hơn. Cơ chế này cho phép thứ hạng nhanh chóng hội tụ về đúng đẳng cấp. Cơ sở thống kê đằng sau nó là **mô hình Bradley-Terry**: mỗi mô hình được trừu tượng hóa thành một "điểm sức mạnh" tiềm năng. Xác suất thắng hoặc thua một cặp đấu được xác định bằng chênh lệch tỷ số giữa hai trận đấu. Elo là kỹ thuật triển khai hình thức cập nhật trực tuyến của mô hình này.
 
@@ -698,7 +699,7 @@ Khi kiểm chứng song song nhiều giả thuyết còn phải tính tới **so
 
 Các quyết định dựa trên đánh giá, dù là lựa chọn mô hình hay lặp lại liên tục, đều dựa vào dữ liệu vận hành chất lượng cao. Trước tiên, chúng tôi mô tả cách thu thập dữ liệu này một cách có hệ thống (observability được), sau đó thảo luận cách chuyển kết quả đánh giá thành cải tiến hệ thống.
 
-![Hình 7-6 Ngăn xếp công nghệ quan sát ](images/fig7-6.svg)
+![Hình 7-7 Ngăn xếp công nghệ quan sát ](images/fig7-7.svg)
 
 Khái niệm Observability được mượn từ lĩnh vực hệ thống phân tán: bạn không thể trực tiếp mở hệ thống để xem nó đang làm gì. Bạn chỉ có thể suy ra điều gì đang xảy ra thông qua nhật ký, chỉ báo và dữ liệu theo dõi mà nó đưa ra. Cũng giống như bác sĩ không thể nhìn trực tiếp tình trạng cơ thể bệnh nhân mà chỉ có thể chẩn đoán vấn đề thông qua các tín hiệu bên ngoài như nhiệt độ cơ thể, huyết áp, hình ảnh. Hệ thống Agent khiến việc này trở nên khó khăn hơn: cùng một đầu vào có thể tạo ra các đầu ra khác nhau, nhiều vòng lý luận và lệnh gọi công cụ khiến đường dẫn thực thi trở nên cực kỳ phức tạp và quá trình "tư duy" của mô hình hoàn toàn không rõ ràng với thế giới bên ngoài.
 
@@ -718,7 +719,7 @@ Với một hệ thống đánh giá hoàn chỉnh và bộ dữ liệu sẵn c�
 
 Trường hợp sau lấy từ một vòng lặp AndroidWorld có thật nhưng được thu hẹp có chủ đích trong kho đi kèm. Thử nghiệm gồm bốn nhiệm vụ cài đặt Wi-Fi trên trình giả lập API 35, mỗi nhiệm vụ có một cặp chạy đối chứng–thử nghiệm. Đây không phải toàn bộ benchmark 116 nhiệm vụ và cũng không thay thế việc chạy lại trong môi trường tham chiếu API 33. Giá trị của nó nằm ở chuỗi quyết định nối từ kết quả này sang kết quả kế tiếp, không phải ở một điểm số tổng quát.
 
-![Hình 7-7 Điểm chuẩn cho vòng kín cải tiến ](images/fig7-7.svg)
+![Hình 7-8 Điểm chuẩn cho vòng kín cải tiến ](images/fig7-8.svg)
 
 Từ góc độ của kỹ thuật Harness, phần này chủ yếu nói về phương pháp tối ưu hóa lặp lại Harness - xác định các liên kết yếu trong Harness bằng cách đánh giá dữ liệu (không đủ ngữ cảnh? Thiếu các ràng buộc? Xác minh không đầy đủ? Phản hồi không kịp thời?), cải tiến có mục tiêu và sau đó đánh giá lại, tạo thành một vòng khép kín trong quá trình phát triển liên tục của Harness.
 
@@ -827,7 +828,7 @@ Thông điệp cốt lõi của phần này là: **Các phần trước đã hư
 
 Đây là cách nối hai đầu cầu. Tài sản tích lũy ở bên đánh giá có thể được chuyển đổi gần như liền mạch thành tín hiệu đào tạo: một tập hợp Rubric hoặc trình xác thực được xác định rõ ràng về cơ bản là chức năng khen thưởng của RLVR (Học tăng cường với Phần thưởng có thể xác minh) - tập lệnh phán xét trực tiếp là tập lệnh khen thưởng. Bài kiểm tra có đạt hay không và trạng thái có đạt tiêu chuẩn không chỉ là tiêu chí đánh giá mà còn là phần thưởng cho việc học tập củng cố. Nhưng việc đào tạo sẽ tạo ra những yêu cầu mới mà bạn không phải lo lắng trong giai đoạn đánh giá. Một là **ngữ nghĩa thiết lập lại đáng tin cậy**: quá trình đào tạo yêu cầu chạy hàng triệu tập (một tập là một vòng tương tác hoàn chỉnh từ trạng thái ban đầu đến khi kết thúc nhiệm vụ). Mỗi tập phải có khả năng đặt lại môi trường về trạng thái ban đầu nhất định và sạch sẽ, nếu không tín hiệu gradient sẽ bị ảnh hưởng bởi trạng thái dư của vòng trước. Thứ hai là thông lượng cao hơn nhiều so với đánh giá: hàng nghìn đánh giá là đủ để đưa ra kết luận, trong khi quá trình đào tạo yêu cầu cung cấp cho mô hình hàng triệu tương tác trong khoảng thời gian đồng hồ treo tường có thể chấp nhận được. Tính song song của môi trường và chi phí của một phiên bản duy nhất quyết định trực tiếp liệu việc đào tạo có khả thi hay không. Hai điểm này - trình xác thực chức năng khen thưởng, thiết lập lại và thông lượng theo định hướng đào tạo - sẽ được mở rộng trong Chương 8.
 
-![Hình 7-8 Phổ độ trung thực mô phỏng ](images/fig7-8.svg)
+![Hình 7-9 Phổ độ trung thực mô phỏng ](images/fig7-9.svg)
 
 **Về mặt môi trường kỹ thuật số**, khung AWorld đã xây dựng hộp cát máy chủ MCP có thể điều khiển cho nhiệm vụ GAIA, cung cấp 26 máy chủ MCP bao gồm 126 chức năng công cụ để tránh các lệnh cấm và tác dụng phụ không thể kiểm soát do truy cập trực tiếp vào API thực. Tất cả các lệnh gọi công cụ đều có thể phát lại và kiểm tra được. Kiến trúc phân tán của AWorld rút ngắn thời gian thực thi nối tiếp truyền thống từ 7695 giây xuống còn 525 giây (tăng tốc 14,6 lần). Thiết kế không trạng thái của môi trường làm cho mỗi phiên bản hoàn toàn độc lập và hỗ trợ tính song song hiệu quả.
 
@@ -838,7 +839,7 @@ Về mặt **môi trường hiện thân**, RoboTwin2 xây dựng nhiệm vụ v
 > Xây dựng môi trường mô phỏng hoạt động của robot. Đọc tài liệu `ch7/SimpleVLA-RL` và OpenVLA để hiểu kiến trúc của mô hình hành động-ngôn ngữ-tầm nhìn (tích hợp từ đầu đến cuối của bộ mã hóa hình ảnh + mô hình ngôn ngữ + bộ giải mã hành động, chiếu hình ảnh và văn bản vào một không gian ngữ nghĩa chung). Định cấu hình môi trường RoboTwin2 và hiểu không gian quan sát (trạng thái khớp ba chiều RGB + 14 chiều) và không gian hành động (vectơ điều khiển 14 chiều). Nghiên cứu cơ chế ngẫu nhiên hóa môi trường và logic ràng buộc không gian trong move_can_pot. Chạy đánh giá mô hình được đào tạo trước, ghi lại tỷ lệ thành công, thời gian hoàn thành và các chế độ thất bại, tập trung vào tác động của việc phân chia hành động.
 >
 >
-> ![Hình 7-9 OpenVLA và RoboTwin2 thể hiện môi trường thông minh ](images/fig7-9.svg)
+> ![Hình 7-10 OpenVLA và RoboTwin2 thể hiện môi trường thông minh ](images/fig7-10.svg)
 >
 >
 
@@ -850,7 +851,7 @@ Môi trường có độ chính xác cao có thể được chuyển sang thế 
 
 ## Tóm tắt chương này
 
-Chương này xoay quanh một câu hỏi: làm sao biết Agent thực sự đã tốt hơn? Từ môi trường thử nghiệm có thể tái hiện, tập dữ liệu chống rò rỉ, LLM làm giám khảo, cho đến việc dùng kết quả để chọn mô hình và lặp hệ thống — mắt xích nào cũng ảnh hưởng đến độ tin cậy của kết luận. Các thí nghiệm đo được trong chương bổ sung bốn cảnh báo cụ thể: ghép bộ nhớ có cấu trúc với RAG không mặc nhiên tạo ra hiệp lực; mức tiết kiệm từ cache và nén không thể cộng thẳng; lựa chọn âm thanh tham chiếu làm thay đổi ý nghĩa của điểm đa phương thức; và cách Harness biểu diễn đầu vào có thể quyết định cả thành công lẫn chi phí token. Việc chọn mô hình còn phải so sánh đường cong năng lực theo ngân sách tài nguyên, không chỉ nhìn một điểm số. Với Agent cấp sản xuất, đánh giá không phải kỳ thi thỉnh thoảng mới tổ chức mà là cơ chế xác minh liên tục trong mọi quyết định sản phẩm.
+Chương này xoay quanh một câu hỏi: làm sao biết Agent thực sự đã tốt hơn? Chuỗi này gồm bốn mắt xích: trước hết làm rõ thế nào là thành công (khác biệt giữa các căn cứ Pass@k, Best@k và Pass consecutive@k), rồi xác định nhiệm vụ đến từ đâu (ba nguồn: benchmark công khai, tập nghiệp vụ tự dựng và dòng chảy ngược từ trajectory sản xuất), tiếp đó chọn cách kiểm chứng (từ bộ kiểm chứng tất định tới danh mục kiểm tra, Rubric cùng phán xét của LLM, cho tới so sánh cặp), và cuối cùng chuyển điểm số thành quyết định (ý nghĩa thống kê, quy trách nhiệm thất bại, nhiệm vụ hồi quy và chọn mô hình). Mắt xích nào cũng ảnh hưởng đến độ tin cậy của kết luận. Các thí nghiệm đo được trong chương bổ sung bốn cảnh báo cụ thể: ghép bộ nhớ có cấu trúc với RAG không mặc nhiên tạo ra hiệp lực; mức tiết kiệm từ cache và nén không thể cộng thẳng; lựa chọn âm thanh tham chiếu làm thay đổi ý nghĩa của điểm đa phương thức; và cách Harness biểu diễn đầu vào có thể quyết định cả thành công lẫn chi phí token. Việc chọn mô hình còn phải so sánh đường cong năng lực theo ngân sách tài nguyên, không chỉ nhìn một điểm số. Với Agent cấp sản xuất, đánh giá không phải kỳ thi thỉnh thoảng mới tổ chức mà là cơ chế xác minh liên tục trong mọi quyết định sản phẩm.
 
 Xét theo cấu trúc toàn sách, chương này dựng đoạn **chứng cứ** trong vòng lặp khám phá của Chương 1: quy trách nhiệm thất bại quyết định các đề xuất về sau có chỗ vững chắc để dựa vào hay không.
 

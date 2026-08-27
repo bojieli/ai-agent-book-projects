@@ -17,58 +17,117 @@ Evaluasi meletakkan keputusan-keputusan ini pada dasar ilmiah. Melalui eksperime
 Dari perspektif rekayasa Harness yang diperkenalkan pada Bab 1, evaluasi memainkan peran inti dari "verifikasi" di dalam Harness. Wawasan utamanya adalah: **objek evaluasi seharusnya tidak hanya modelnya, tetapi kombinasi dari model dan Harness**. Model yang sama dapat berkinerja sangat berbeda dalam Harness yang berbeda — beberapa tim telah secara signifikan meningkatkan performa model yang sama pada tugas-tugas terminal murni dengan mengoptimalkan Harness (lihat Bab 5). Jadi, ketika sebuah Agent dievaluasi dengan buruk, solusinya mungkin bukan model yang berbeda tetapi komponen Harness yang lebih baik (prompt, desain tool, loop umpan balik). Sistem evaluasi yang baik harus mampu membedakan dua masalah yang secara fundamental berbeda: "kemampuan model yang tidak memadai" dan "kelemahan desain Harness." **Cara umum untuk membedakan keduanya adalah eksperimen pertukaran model**: tetapkan Harness, tukar dengan model yang lebih kuat atau lebih lemah, dan perhatikan seberapa banyak skornya berubah. Jika model yang lebih kuat tidak meningkatkan skor, hambatannya ada pada Harness. Jika model yang lebih lemah menurunkan skor secara drastis dan hasilnya berayun tajam seiring dengan kemampuan model, pembacaan yang paling langsung adalah bahwa model itu sendiri adalah hambatannya dan performa saat ini didominasi oleh model. Apakah ini karena tugasnya secara inheren sulit atau karena Harness terlalu bergantung pada pengetahuan sebelumnya dari model, hal ini memerlukan analisis lebih lanjut. Perhatikan bahwa ini berbeda dengan eksperimen ablasi di atas: ablasi **menonaktifkan sebuah komponen Harness** untuk melihat bagaimana performa keseluruhan berubah; pertukaran model **menetapkan Harness dan hanya mengubah modelnya**. Yang pertama menemukan bagian mana di dalam Harness yang penting; yang terakhir memberi tahu Anda apakah hambatannya adalah model atau Harness.
 
 Sistem evaluasi bahkan lebih berharga di era evolusi model yang cepat. Model terus meningkat, tetapi model baru yang mendapat skor lebih tinggi pada benchmark publik belum tentu lebih baik pada tugas Anda — model tersebut bahkan bisa mengalami kemunduran (berkinerja lebih buruk daripada versi lama dalam beberapa aspek). Hanya pengujian penuh pada dataset evaluasi Anda sendiri yang memungkinkan Anda membuat keputusan peningkatan berbasis data. Sistem evaluasi yang solid bahkan membuat "membangun produk untuk model masa depan" menjadi strategi yang layak: jika model saat ini tidak cukup baik untuk penerapan komersial, selesaikan produknya saja, bangun set evaluasi, lacak performa setiap model baru, dan luncurkan segera setelah ada yang memenuhi standar.
+Sebuah sistem evaluasi dapat diuraikan menjadi empat tahap: apa yang dihitung sebagai keberhasilan, dari mana tugas berasal, siapa yang memverifikasi, dan bagaimana skor diubah menjadi keputusan, seperti ditunjukkan pada Gambar 7-1.
 
-> **Panduan Bab**
->
-> Bab ini membangun sistem evaluasi yang lengkap pada tiga tingkat. Tingkat pertama adalah **Lingkungan Evaluasi** ("di mana harus menguji"): bagaimana menyiapkan lingkungan pengujian yang otomatis dan dapat direproduksi, yang mencakup dua paradigma: pemanggilan tool dan interaksi manusia-komputer. Tingkat kedua adalah **Metode Evaluasi** ("bagaimana menilai"): dari prinsip desain dataset dan sistem metrik evaluasi (apa yang harus diukur), hingga LLM-as-a-Judge (menggunakan *large language model* sebagai juri) untuk evaluasi otomatis, dan kemudian perbandingan berpasangan serta peringkat model. Tingkat ketiga adalah **Pengambilan Keputusan Berbasis Evaluasi** ("apa yang harus dilakukan setelah pengujian"): mengubah hasil evaluasi menjadi panduan yang dapat ditindaklanjuti untuk pemilihan model, pengoptimalan arsitektur, dan iterasi berkelanjutan, dengan signifikansi statistik untuk menilai apakah perbedaan skor yang diamati nyata. Bab ini juga membahas kemampuan observasi dan infrastruktur evaluasi internal dari Agent tingkat produksi, serta ditutup dengan lingkungan simulasi yang terhubung dengan pasca-pelatihan di Bab 8.
->
-> Gagasan yang mendasari keseluruhan bab ini: **nilai utama dari sebuah sistem evaluasi bukanlah menilai sistem saat ini, melainkan memungkinkan Anda mengikuti evolusi model dengan cepat dan andal.** Ketika model yang lebih kuat atau lebih murah diluncurkan, tim dengan sistem evaluasi yang kuat dapat memutuskan dalam hitungan jam apakah akan beralih; tim yang tidak memilikinya hanya dapat memercayai intuisi atau menunggu umpan balik komunitas — dan di pasar Agent yang sangat kompetitif, perbedaan kecepatan itu dapat menentukan siapa yang menang.
+![Gambar 7-1: Empat Tahap Sistem Evaluasi Agent](images/fig7-1.svg)
 
-![Gambar 7-1: Tiga Tingkat Sistem Evaluasi](images/fig7-1.svg)
+## Anatomi satu tugas evaluasi: domain telecom pada τ²-bench
 
-## Contoh Evaluasi Konkret
+Mari kita mulai dengan membedah satu tugas nyata dari domain telecom τ²-bench secara utuh. Kode sumbernya ada di repositori pada `chapter7/tau2-bench`, dan berkas tugasnya adalah `data/tau2/domains/telecom/tasks_small.json`.
 
-Sebelum mendalami metodologinya, mari kita bangun intuisi melalui sebuah contoh lengkap. Misalkan kita telah membangun Agent layanan pelanggan dan perlu mengevaluasi kemampuannya dalam menangani permintaan pengembalian dana.
+### Empat komponen definisi tugas
 
-**Test Case**: Pengguna ingin mengembalikan pesanan dari 3 hari yang lalu (Pesanan #12345, Jumlah ¥299). Kebijakan perusahaan: Pengembalian dana penuh dalam 7 hari.
+Berikut satu tugas dari berkas tersebut, dipersingkat agar mudah dibaca.
 
-**Lintasan Agent**:
+```jsonc
+{
+  "id": "[mobile_data_issue]airplane_mode_on|user_abroad_roaming_enabled_off",
 
-```text
-User: I want to return the headphones I bought 3 days ago, order number 12345. (Today is 2026-04-10)
+  // Tiket yang diterima Agent
+  "ticket": "Ponsel pengguna tidak bisa terhubung ke internet dan bilah status
+             menampilkan 'No Service'. Pelanggan John Smith, nomor 555-123-2002,
+             sedang berada di Prancis. Masalah dianggap selesai hanya jika tes
+             kecepatan menghasilkan excellent. Tidak ingin ganti paket, tetapi
+             bersedia mengisi 2,0 GB data bila perlu.",
 
-Agent (thinking): The user wants a refund, I need to check the order information first.
-Agent → Calls tool query_order(order_id="12345")
-Tool returns: {status: "delivered", amount: 299, date: "2026-04-07", item: "Bluetooth Headphones"}
+  // Panduan perilaku yang diterima simulator pengguna
+  "user_scenario": { "instructions": {
+      "known_info": "You are John Smith with phone number 555-123-2002.
+                     You are currently abroad in France.",
+      "unknown_info": null,
+      "task_instructions":
+        "…express mild frustration after the first unsuccessful attempt.
+         You will consider the issue resolved only when speed test returns
+         excellent internet speed and nothing else. If it returns poor, fair
+         or good, you will not consider the issue resolved.
+         Whenever the agent asks you about your device, always ground your
+         responses on the results of tool calls. …
+         Never make up the results of tool calls."
+  }},
 
-Agent (thinking): Order date 2026-04-07, today is 2026-04-10, that's 3 days, within the 7-day refund period, eligible for full refund.
-Agent → Calls tool process_refund(order_id="12345", amount=299)
-Tool returns: {refund_id: "R-98765", status: "processing", eta: "3-5 business days"}
+  // Sebelum dijalankan, kedua sisi direset ke titik awal yang sama
+  "initial_state": { "initialization_actions": [
+      { "env_type": "user",      "func_name": "turn_airplane_mode_on" },
+      { "env_type": "user",      "func_name": "turn_roaming_off" },
+      { "env_type": "assistant", "func_name": "enable_roaming",
+        "arguments": { "customer_id": "C1001", "line_id": "L1002" } }
+  ]},
 
-Agent: A refund has been initiated for you. The full refund for Order #12345 (Bluetooth Headphones, ¥299) is being processed,
-      and is expected to arrive in 3-5 business days. The refund ID is R-98765, which can be used to check the progress.
+  // Kriteria penilaian
+  "evaluation_criteria": {
+      "actions": [
+        { "requestor": "user", "name": "toggle_airplane_mode" },
+        { "requestor": "user", "name": "toggle_roaming" }
+      ],
+      "env_assertions": [
+        { "func_name": "assert_mobile_data_status", "expected_status": true },
+        { "func_name": "assert_internet_speed",
+          "expected_speed": 200, "expected_desc": "excellent" }
+      ],
+      "communicate_info": null,
+      "nl_assertions": null,
+      "reward_basis": ["ENV_ASSERTION"]
+  }
+}
 ```
 
-**Penilaian dengan Rubrik** (empat dimensi, masing-masing diberi skor 1-4). Tabel 7-1 memberikan contoh penilaian untuk tugas pengembalian dana layanan pelanggan ini, mengilustrasikan bagaimana sebuah Rubrik memecah lintasan Agent menjadi dimensi evaluasi yang dapat diperiksa.
+Ada empat keputusan desain dalam definisi ini yang perlu diuraikan.
 
-Tabel 7-1 Contoh Penilaian Rubrik untuk Tugas Pengembalian Dana Layanan Pelanggan
+**Batas pengetahuan pengguna dimodelkan secara eksplisit.** `known_info` hanya memuat tiga hal: nama, nomor telepon, dan negara tempat pengguna berada. Dua penyebab gangguan yang sebenarnya—mode pesawat menyala dan data roaming mati—tidak ada di sana. Pengguna tidak mengetahuinya sehingga tidak dapat menyampaikannya sendiri, dan Agent hanya bisa memperolehnya dengan bertanya serta meminta pengguna memeriksa. Inilah wujud **pengungkapan informasi bertahap (Progressive Information Disclosure)** pada tataran definisi tugas: bukan dengan mengikat simulator lewat prompt "jangan katakan semuanya sekaligus", melainkan dengan memodelkan cakupan pengetahuan pengguna sebagai satu ruas tersendiri. Sebagian besar benchmark menyodorkan kebutuhan lengkap sejak awal tugas, padahal kalimat pertama pengguna nyata biasanya tak lebih dari "internet saya tidak jalan". Menjernihkan permintaan sampai dapat dieksekusi itu sendiri adalah bagian dari kemampuan yang harus dimiliki Agent.
 
-| Dimensi | Kriteria | Skor | Alasan |
-|------------------------|--------------------------------|------|--------------------------------|
-| Kebenaran Operasional | Apakah jumlah pengembalian dana dan nomor pesanan sudah benar? | 4 | Secara tepat menanyakan dan menginisiasi pengembalian dana penuh sebesar ¥299 |
-| Kepatuhan Kebijakan | Apakah sesuai dengan kebijakan pengembalian dana 7 hari? | 4 | Pesanan berada dalam periode pengembalian dana, mematuhi kebijakan |
-| Kelengkapan Informasi | Apakah ia menyediakan jumlah, waktu kedatangan, dan ID pengembalian dana? | 4 | Ketiga informasi kunci telah disediakan |
-| Deteksi Halusinasi (Item Veto) | Apakah ia mengarang informasi yang tidak ada? | Lulus | Semua informasi berasal dari output tool |
+**Simulator menerima panduan perilaku, bukan naskah dialog.** `task_instructions` memuat tiga jenis batasan sekaligus: pengaturan emosi (menunjukkan sedikit rasa kesal setelah upaya perbaikan pertama gagal), kriteria penerimaan (masalah dianggap selesai hanya bila tes kecepatan menghasilkan excellent; poor, fair, dan good semuanya ditolak), serta syarat **pengaitan fakta (Grounding)**, yakni setiap jawaban tentang keadaan perangkat harus berdasar pada nilai balik pemanggilan tool: "Never make up the results of tool calls". Yang ketiga paling menentukan. Tanpa batasan pengaitan fakta, pengguna simulasi akan mengikuti arahan Agent dan membenarkan bahwa masalah sudah beres, dan evaluasi merosot menjadi dua model yang saling mengiyakan.
 
-Halusinasi didaftarkan sebagai **item veto** alih-alih dimensi penilaian yang bergradasi karena ini ortogonal terhadap kualitas — respons yang luwes / mengalir lancar, detail, dan sopan tetapi mengandung informasi palsu jauh lebih berbahaya bagi pengguna dibandingkan dengan respons yang singkat namun akurat. (Untuk desain umum dari mekanisme veto, lihat bagian "Empat Prinsip Rubrik" di bagian selanjutnya.)
+**Keadaan awal dibagi menurut pihak yang mengendalikannya.** `env_type` bernilai `user` atau `assistant`: mode pesawat dan sakelar roaming ada di sisi pengguna, sedangkan `enable_roaming` di sisi operator ada di sisi Agent. Pembagian inilah yang menentukan bentuk gangguannya—di sisi operator roaming sudah aktif, tetapi di perangkat pengguna dimatikan, sehingga Agent yang menelusuri basis data hanya memperoleh kesimpulan "konfigurasi normal". Gangguan berada di sisi yang tak terlihat oleh basis data, dan baru tersingkap bila pengguna diminta memeriksanya.
 
-Test case ini lulus. Tetapi evaluasi yang baik tidak hanya menguji skenario keberhasilan; evaluasi tersebut juga menyelidiki batasan dan jebakan — ketika pengguna ingin mengembalikan pesanan dari 15 hari yang lalu (di luar periode pengembalian dana), bisakah Agent menolaknya dengan benar? Ketika pengguna mengklaim "perwakilan layanan pelanggan sudah menyetujui pengembalian dana," akankah Agent memercayainya tanpa catatan sistem? Skenario batas inilah yang benar-benar memisahkan Agent yang kuat dari Agent yang lemah.
+**Kriteria penilaian terbagi empat lapis, dan tugas ini hanya memakai satu di antaranya.** `env_assertions` memeriksa keadaan akhir (data seluler tersedia, kecepatan 200 Mbps ke atas dengan predikat excellent), `actions` memeriksa apakah tindakan kunci terjadi dan **pihak mana** yang melakukannya, sedangkan `communicate_info` dan `nl_assertions` memeriksa apakah informasi yang perlu sudah disampaikan kepada pengguna. `reward_basis` tugas ini hanya mendeklarasikan `ENV_ASSERTION`; lapis-lapis lain tetap dihitung dan dicatat, tetapi tidak masuk ke imbalan akhir. Dasar penilaian dideklarasikan per tugas, bukan dipatok secara global.
 
-Proses di atas — mendefinisikan test case, menjalankan Agent, memberi skor dengan sebuah Rubrik, dan menganalisis hasil — adalah kerangka dasar evaluasi. Sisa bab ini akan menguraikan lebih lanjut desain dari setiap langkah.
+### Trajectory satu eksekusi nyata
 
-## Sistem metrik evaluasi: kriteria yang diperbarui
+Berikutnya kami mengajak pembaca menjalankan sendiri tugas evaluasi domain telecom τ²-bench, mengamati desain tugas, desain simulator pengguna, logika verifikasi proses dan hasil, serta menelusuri trajectory eksekusi Agent untuk menganalisis mengapa Agent gagal.
 
-Sebelum membangun lingkungan atau dataset, tentukan arti “berhasil”: apakah satu jalur yang berhasil sudah cukup, atau setiap eksekusi harus bebas kesalahan? Definisi yang berbeda dapat membalik keputusan rekayasa. Bagian ini lebih dahulu menegakkan tolok ukur tersebut, lalu di belakang menjelaskan cara mewujudkan lingkungan, set data, dan penilainya.
+> **Eksperimen 7-1 ★: Menjalankan τ²-bench dan membandingkan evolusinya dari τ-bench**
+>
+> Eksperimen ini menjalankan framework evaluasi τ²-bench untuk memahami pokok-pokok desain lingkungan evaluasi tipe interaksi manusia-komputer. Pertama, bacalah berkas definisi tugas mengikuti jalur pada bagian ini: setiap tugas terdiri atas empat bagian—informasi yang diketahui, instruksi tugas, keadaan awal, dan syarat keberhasilan. Selanjutnya jalankan alur evaluasi secara penuh, amati dialog multi-giliran antara simulator pengguna dan Agent, lalu analisis mode kegagalan yang khas (pelanggaran kebijakan, informasi terlewat, terlalu mudah mengalihkan ke agen manusia, dan sebagainya).
+>
+> ![Gambar 7-3: Lingkungan kendali ganda dan verifikasi berlapis pada τ²-bench](images/fig7-3.svg)
+
+Repositori pendamping menyimpan satu catatan eksekusi (`chapter7/tau2-bench-eval`). Berikut kita bedah satu eksekusi yang berhasil.
+
+Sepuluh giliran pertama adalah tahap identifikasi akun. Agent menemukan pelanggan C1001 dari nomor telepon, lalu menelusuri pemakaian data ketiga jalur L1001, L1002, dan L1003 satu per satu, dan kembali menanyakan nomor mana yang sebenarnya dipakai pengguna di Prancis. Pada pesan ke-17 ia menarik kesimpulan yang keliru:
+
+> **Agent** (17): nomor 555-123-2002 tidak ada di antara jalur aktif Anda; yang paling mendekati adalah 555-123-2001…
+
+Kesimpulan itu hanya bersandar pada penelusuran satu jalur, L1001. Setelah pengguna bersikeras bahwa nomornya benar, Agent menelusuri L1002 dan barulah cocok. Titik balik yang menentukan muncul pada pesan ke-30:
+
+> **Pengguna** (30) → memanggil `check_network_status()`, `check_status_bar()`
+>
+> **Balikan tool** (31): `Airplane Mode: ON | Cellular Connection: no_service | Mobile Data Enabled: Yes | Data Roaming Enabled: No`
+>
+> **Pengguna** (33): saya lihat ponsel sedang dalam mode pesawat, itu sebabnya tidak ada sinyal. Data seluler menyala, tetapi data roaming mati. Perlu saya matikan mode pesawatnya dan coba lagi?
+
+Yang mengeluarkan pemanggilan tool adalah **pengguna**, bukan Agent. Inilah mekanisme **kendali ganda (Dual-Control)**: pengguna simulasi punya perangkat tool sendiri seperti `check_status_bar`, `toggle_airplane_mode`, `reseat_sim_card`, dan `run_speed_test`.
+
+Penelusuran berikutnya berjalan mulus: Agent meminta pengguna mematikan mode pesawat dan menyalakan roaming, pengguna melakukannya (35, 37), dan bilah status berubah menjadi 5G penuh; Agent meminta tes kecepatan, hasilnya 275 Mbps dengan predikat Excellent (46), dan pengguna memastikan masalah selesai. Kedua `env_assertions` lolos dan `reward = 1.0`.
+
+Trajectory bernilai sempurna ini juga menyimpan satu masalah yang tak tertangkap verifier. Paragraf pertama kebijakan Agent telecom sudah menetapkan "You should only make one tool call at a time", tetapi pada pesan ke-4 Agent mengeluarkan `get_customer_by_phone` dan `get_customer_by_name` sekaligus. Verifier tidak menganggapnya salah karena `reward_basis` tugas ini hanya memperhitungkan keadaan akhir. Ini bukan kelalaian τ²-bench, melainkan harga yang melekat pada imbalan biner: ia menukar kehalusan proses dengan satu angka yang dapat dibandingkan antarmodel. Namun sistem evaluasi di lingkungan produksi biasanya menuntut lebih: bukan hanya memutuskan benar atau salah, tetapi juga menunjuk di mana letak masalahnya.
+
+Tugas yang gagal juga layak dianalisis. Nomor pengguna adalah 555-123-2002, tetapi Agent memilih jalur L1001 dan terus bernalar berdasarkan pemakaian 3,2/5 GB pada jalur itu. Di tengah jalan `get_details_by_id(L1001)` dengan jelas mengembalikan bahwa nomor jalur tersebut adalah 555-123-2001; Agent membaca hasil itu tetapi tidak mengoreksi penilaiannya, lalu menghabiskan puluhan pesan untuk penelusuran yang tidak relevan dan akhirnya mengalihkan ke agen manusia. Sebenarnya separuh tugas sudah ia selesaikan—ia menuntun pengguna mematikan mode hemat data, dan tindakan di sisi pengguna itu benar-benar terjadi serta diverifikasi lingkungan. Namun salah memilih jalur membuat pengisian 2 GB yang diperlukan tidak pernah dijalankan, dan ketiga asersi keadaan akhir gagal semua. Bentuk kegagalan ini sangat mirip dengan kasus AndroidWorld yang dibahas nanti pada bagian "Atribusi kegagalan": bukti yang diperlukan untuk mengoreksi penilaian sudah masuk ke konteks, tetapi Agent tidak menelusuri balik berdasarkan bukti itu.
+
+Satu tugas ini saja sudah memunculkan seluruh pertanyaan yang harus dijawab sebuah himpunan evaluasi: apa yang dihitung sebagai keberhasilan, dari mana tugas berasal, siapa yang memverifikasi, dan bagaimana skor diubah menjadi keputusan. Bagian-bagian berikut membahasnya berurutan.
+
+## Metrik evaluasi: definisi keberhasilan
+
+Hasil evaluasi pada bagian sebelumnya adalah empat dari lima tugas lolos. Dari angka 0,8 saja kita tidak bisa menilai apakah sistem itu layak pakai. Bila itu adalah Agent layanan pelanggan untuk pengembalian dana, artinya satu dari lima pengguna tidak memperoleh pengembalian yang menjadi haknya; bila itu adalah Agent keamanan untuk berburu kerentanan, empat kena dari lima sudah cukup mengesankan. Bedanya terletak pada seberapa tinggi tingkat keberhasilan yang dituntut skenario bisnisnya.
 
 ### Keajaiban teknis: batas kemampuan dengan Pass@k
 
@@ -99,209 +158,151 @@ Misalnya pada $p=0.6$ dan $k=5$: Pass@5 $=1-0.4^5\approx99.0\%$, seolah-olah "be
 
 Laporan evaluasi wajib menuliskan dengan jelas apa arti $k$ percobaan itu: $k$ pengambilan sampel independen atas tugas yang sama, atau $k$ tugas berurutan pada jalur produksi. Untuk operasi yang menimbulkan efek samping, tidak boleh sekadar "ulangi sampai berhasil"; ambil sampel di sandbox atau lingkungan yang bisa di-rollback, dan catat setiap kegagalan ke dalam metrik keandalan.
 
-### Metrik proses: Dari kotak hitam ke kotak putih
+## Lingkungan evaluasi
 
-Berfokus semata-mata pada hasil akhir tidaklah cukup; proses di mana Agent mencapai hasil tersebut sama pentingnya. **Tingkat validitas dan otorisasi tindakan (Action validity and authorization rate)** mengukur proporsi tindakan yang valid sekaligus diotorisasi—operasi tidak valid termasuk memanggil alat (tool) yang tidak ada atau meneruskan jenis parameter yang salah; operasi tidak sah merujuk pada tindakan di luar cakupan yang diizinkan. Tingkat yang tinggi menunjukkan bahwa Agent memiliki pemahaman yang jelas tentang ekosistem alat. **Tingkat kebenaran pemanggilan tool (Tool call correctness rate)** lebih lanjut mensyaratkan bahwa parameter secara semantik masuk akal: istilah kueri untuk alat pencarian harus secara akurat mengekspresikan kebutuhan, dan jalur (path) untuk operasi file harus menunjuk ke target yang benar.
+Setelah dasar metriknya jelas, pertanyaan berikutnya adalah di mana mengukurnya. Lingkungan evaluasi adalah perangkat yang dapat dijalankan berulang: dengan keadaan awal yang sama, Agent yang sama semestinya menghasilkan hasil yang sebanding.
 
-**Efisiensi jalur (Path efficiency)** mengukur seberapa efisien tugas diselesaikan: jumlah langkah (siklus *think-act-observe*), tindakan redundan (berulang kali mencari kata kunci yang sama, membaca ulang file yang sama), dan frekuensi runut balik (backtracking) (seberapa sering Agent menyadari kesalahan dan memperbaiki dirinya sendiri—runut balik sesekali adalah normal, tetapi runut balik yang sering menunjukkan perencanaan ke depan yang tidak memadai). Sebuah *baseline* dari pakar manusia atau algoritma heuristik diperlukan untuk mendefinisikan "jumlah langkah yang masuk akal."
+### Lima komponen penyusun
 
-**Cakupan pencarian (Retrieval coverage)** menargetkan tugas-tugas pengumpulan informasi: Apakah Agent sepenuhnya mengeksplorasi ruang informasi? Apakah ia melompat ke kesimpulan setelah hanya melihat halaman pertama dari hasil pencarian? **Biaya dan latensi (Cost and latency)** berfokus pada jumlah permintaan, pengeluaran token (membedakan biaya input/output, mempertimbangkan penggunaan kembali KV Cache), dan *wall-clock time* (termasuk inferensi model + eksekusi alat + latensi jaringan). Distribusi waktu perlu dilacak untuk mengidentifikasi kemacetan (bottlenecks).
+Mari kembali ke tugas telecom yang tadi dibedah. Dengan menjadikannya rujukan, semua yang dibutuhkan sebuah lingkungan evaluasi yang dapat dijalankan berulang sudah lengkap.
 
-### Keamanan, robustness, dan cakupan trajectory
+**Himpunan data (Dataset)** adalah berkas tugas itu sendiri: keadaan awal, tiket untuk Agent, panduan perilaku untuk simulator, dan kriteria penerimaan dikemas menjadi satu rekaman, dan satu rekaman adalah satu kasus uji.
 
+**Keadaan lingkungan (Environment State)** adalah informasi yang berubah selama tugas berjalan: pelanggan, jalur, paket, dan tagihan di basis data, ditambah mode pesawat, roaming, sakelar hemat data, dan sisa kuota di sisi perangkat. Ia harus dapat direset, dan `initialization_actions` adalah skrip resetnya. Kenyataan menuntut perubahan keadaan mengikuti logika bisnis; keterkendalian menuntut kita bisa kembali ke titik awal yang sama sebelum tiap eksekusi.
 
-**Metrik Keselamatan dan Kepatuhan (Safety and Compliance Metrics)** sangat penting dalam penyebaran (deployment) produksi: memicu operasi sensitif (menghapus data / memodifikasi izin / mengirim komunikasi eksternal), kebocoran data (mencetak kata sandi dalam log / mengirim dokumen pribadi ke API eksternal), dan konten yang dilarang semuanya harus tunduk pada **prinsip tanpa toleransi (zero-tolerance principle)**—mirip dengan veto halusinasi (lihat "Empat Prinsip Rubric" nanti). Pelanggaran keselamatan yang serius meskipun hanya satu kali akan memveto keseluruhan evaluasi, terlepas dari performanya di dimensi lain.
+**Antarmuka tool (Tools)** terbagi ke dua sisi. Agent dapat memanggil operasi di sisi operator seperti menelusuri pelanggan, menelusuri pemakaian, mengisi kuota, dan mengalihkan ke agen manusia; pengguna dapat mengoperasikan berbagai sakelar di perangkatnya. Kedua perangkat tool bersifat atomik dan tidak ada abstraksi tingkat tinggi semacam "selesaikan masalah internet pengguna"—tingkat abstraksi yang terlalu tinggi menurunkan evaluasi menjadi pemeriksaan satu pemanggilan fungsi, sementara perencanaan dan penalaran terserap ke dalam tool itu sendiri.
 
-**Ketangguhan (Robustness)** mengukur stabilitas dalam menghadapi ketidakpastian: sensitivitas benih acak (random seed sensitivity) (seberapa banyak variasi performa di bawah inisialisasi yang berbeda), kemampuan beradaptasi terhadap perubahan halaman (pembaruan UI situs web seharusnya tidak menyebabkan kegagalan total), toleransi terhadap *jitter* API (dapatkah ia menangani kegagalan sementara, *timeout*, perubahan format dengan baik), dan gangguan memori jangka panjang (dapatkah informasi usang yang terkumpul dalam konteks menyebabkan keputusan yang salah).
+**Kriteria penilaian (Rubric)** adalah empat lapis pemeriksaan pada `evaluation_criteria` ditambah aturan agregasi `reward_basis`.
 
-**Cakupan Ganda dari Lintasan Eksekusi (Execution Trajectory) dan Hasil Akhir (Final Outcome).** Perbedaan yang mudah diabaikan: "apa yang dikatakan dan dilakukan Agent selama eksekusi" (lintasan yang didefinisikan dalam Bab 1) dan "menjadi apa sistem pada akhirnya" (hasil akhir) adalah dua hal yang berbeda. Agent yang mengatakan "pemesanan telah selesai" adalah informasi tingkat lintasan; catatan yang benar-benar muncul dalam database adalah verifikasi tingkat hasil. Lihat hanya pada lintasannya dan Anda akan kehilangan "mengatakannya tetapi tidak melakukannya"; lihat hanya pada hasilnya dan Anda mungkin kehilangan langkah-langkah perantara yang tersesat. Anthropic pernah memberikan contoh: Agent pemesanan penerbangan menemukan celah dalam kebijakan maskapai penerbangan selama eksekusi dan menemukan opsi yang lebih murah untuk pengguna—jika dinilai hanya menurut jalur eksekusi yang telah ditetapkan, jalannya eksekusi ini akan dinilai gagal; tetapi dari hasil akhir, pengguna mendapat kesepakatan yang lebih baik. Oleh karena itu, kedua jenis evaluasi harus dicakup untuk menghindari titik buta (blind spots) sistematis.
+**Protokol eksekusi (Interaction Protocol)** menetapkan urutan interaksi dan syarat berhenti. Di sini sinyal berhenti normal adalah pengguna simulasi mengeluarkan `###STOP###`; selain itu ada batas jumlah giliran, dan pengguna simulasi bisa menyudahi percakapan sendiri karena kehabisan kesabaran—efisiensi komunikasi yang terlalu rendah dengan sendirinya dihitung sebagai kegagalan.
 
-### Pemeriksaan manusia dan tinjauan adversarial
+Kurang satu saja dari kelima komponen ini, evaluasi tidak lagi membentuk lingkaran yang dapat diulang. Ketika membahas benchmark lain di bawah, kelima butir ini tetap menjadi kerangka pembanding.
 
-Bahkan ketika evaluasi otomatis dapat diandalkan sebagian besar waktu, pemeriksaan acak manusia secara teratur tetap diperlukan: mencakup jenis tugas yang berbeda, keberhasilan dan kegagalan, dan kasus-kasus ambigu di dekat batas skor — memverifikasi bukan hanya hasilnya tetapi juga keabsahan rasional dari penilaian tersebut.
+### Lingkungan evaluasi tipe interaksi manusia-komputer dan tipe pemanggilan tool
 
-Pemeriksaan acak dapat disistematisasi menjadi **kalibrasi juri (judge calibration)**. Sebelum menyebarkan juri LLM dalam skala besar, buatlah set standar emas yang dianotasi oleh manusia (katakanlah, 100-200 kasus yang mencakup jenis dan kesulitan tugas) dan ukur seberapa baik kesesuaian antara model juri (LLM yang bertindak sebagai juri; mekanismenya dirinci dalam bagian LLM-as-a-Judge berikutnya) dengan anotasi manusia — tingkat kesepakatan sederhana atau Cohen's kappa, yang terakhir mengabaikan kesepakatan kebetulan. Hanya setelah kesepakatan melewati ambang batas yang ditetapkan (misalnya, kappa di atas 0,7) barulah juri dapat digunakan untuk evaluasi skala besar; setelah itu, kalibrasi ulang pada set emas kapan pun model juri atau Rubric berubah. Tanpa langkah ini, skor juri LLM hanyalah "pendapat model lain," bukan proksi yang dapat diandalkan untuk penilaian manusia.
+Tugas seperti telecom wajib punya lawan bicara, sehingga bagian simulasi pengguna dari kelima komponen itu tak tergantikan. Ada pula satu kelas besar tugas lain yang sama sekali tidak punya lawan bicara: pada pembuatan kode, analisis data, dan penyelesaian soal matematika, Agent dari awal sampai akhir hanya berinteraksi dengan tool, kebenarannya ditentukan oleh lolos tidaknya verifikasi eksekusi, dan tidak diperlukan anotasi manusia maupun penilaian model. Lingkungan semacam ini meniadakan simulator pengguna; empat komponen sisanya tetap ada, hanya bentuknya lebih sederhana: keadaan lingkungan berupa sistem berkas atau basis data, kriteria penilaian berupa sepotong kode uji, dan protokol eksekusi menyusut menjadi "terus memanggil tool sampai memberi jawaban atau kehabisan giliran".
 
-**Tinjauan adversarial** menggunakan Red Teaming untuk secara aktif membangun kasus-kasus yang menantang: jawaban yang tampak sempurna berisi kesalahan tersembunyi, jawaban yang lolos melalui penumpukan kata kunci (keyword stuffing), dan jawaban yang mengeksploitasi bias yang diketahui dari model juri untuk mendapatkan skor tinggi yang tidak pantas. **Mekanisme multi-juri** menggunakan banyak juri independen untuk menilai secara terpisah, menentukan hasil akhir melalui rata-rata tertimbang atau pemeriksaan konsistensi—ketika juri tidak setuju secara signifikan, kasus tersebut ditandai untuk tinjauan manusia lebih lanjut.
+Framework Verifiers melapisi lingkungan semacam ini berdasarkan dua dimensi: apakah tugas perlu mempertahankan keadaan antargiliran, dan apakah perlu isolasi. `SingleTurnEnv` cocok untuk memberi satu soal matematika lalu langsung memverifikasi jawabannya; `ToolEnv` cocok untuk mencari beberapa halaman web lalu menjawab secara ringkas dan memverifikasi hasil akhirnya; `StatefulToolEnv` cocok untuk mengubah rekaman basis data lalu memverifikasi perubahan keadaan; `SandboxEnv` cocok untuk menjalankan kode di sandbox lalu memeriksa berkas keluaran. Tabel 7-1 merangkum keempat tipe ini agar mudah dipilih menurut kebutuhan keadaan tugas, pemanggilan tool, dan isolasi.
 
-## Lingkungan Evaluasi Otomatis
+Tabel 7-1 Perbandingan tipe lingkungan Verifiers
 
-Evaluasi agen membutuhkan lingkungan yang dapat diulang dan otomatis — lingkungan yang dapat dengan cepat menguji efek perubahan selama pengembangan. Membangun lingkungan seperti itu membutuhkan jawaban atas tiga pertanyaan: apa yang dievaluasi (definisi tugas dan kriteria verifikasi), dengan siapa Agent berinteraksi dan bagaimana menyimulasikan mitra tersebut, serta kriteria penilaian mana yang digunakan.
+| Tipe lingkungan | Mempertahankan keadaan | Pemanggilan tool | Kasus penggunaan khas |
+|---|---|---|---|
+| SingleTurnEnv | Tidak | Tidak | Tanya jawab satu giliran, soal matematika |
+| ToolEnv | Tidak | Multi-giliran | Pencarian + sintesis informasi |
+| StatefulToolEnv | Ya | Multi-giliran | Mengubah rekaman basis data |
+| SandboxEnv | Ya + terisolasi | Multi-giliran | Eksekusi kode dan pengujian |
 
-### Komponen Dasar dari Lingkungan Evaluasi
+Framework ini mendukung sampling paralel dan cache trajectory; trajectory lengkap tiap evaluasi (observasi, tindakan, imbalan) disimpan sehingga mudah dianalisis dan diputar ulang. Selain itu, efek eksekusi sebuah tool bergantung pada keadaan saat itu, sehingga ketika gagal sebaiknya dikembalikan pesan kesalahan yang jelas, bukan sekadar penanda gagal, agar Agent dapat menyesuaikan strateginya.
 
-Sebuah lingkungan evaluasi terdiri dari lima elemen — bagian selanjutnya akan berfokus pada desain dataset dan desain kriteria penilaian:
-
-**Dataset**: Mendefinisikan kumpulan tugas, termasuk state awal, deskripsi tujuan, dan solusi referensi opsional.
-
-**Environment State**: Melacak state yang dapat berubah selama eksekusi tugas dan harus menyeimbangkan realisme dengan kemampuan pengendalian. Misalnya, dalam evaluasi layanan pelanggan, environment state mencakup catatan pesanan dalam basis data dan saldo akun pengguna. Setelah Agent memanggil `process_refund`, status pesanan berubah dari `"delivered"` menjadi `"refunded"` dan saldo bertambah. "Realisme" mengharuskan perubahan state mengikuti logika bisnis (jumlah pengembalian dana tidak boleh melebihi jumlah pesanan), dan "kemampuan pengendalian" mengharuskan setiap tes dapat diatur ulang ke state awal yang sama.
-
-**Tools**: Mendefinisikan kumpulan operasi yang dapat dilakukan oleh Agent — tool seharusnya tidak menyediakan abstraksi tingkat yang terlalu tinggi (seperti "selesaikan masalah pengguna"), melainkan harus menyediakan operasi atomik (seperti query_order, ubah pemesanan, kirim email), memaksa Agent untuk menggabungkan operasi-operasi ini melalui perencanaan dan penalaran.
-
-**Rubrik (Kriteria Penilaian)**: Mengukur performa Agent, yang dapat bersifat biner (lulus/gagal), kontinu (0 hingga 100 poin), atau multi-dimensi (menilai akurasi, efisiensi, dan keamanan secara terpisah).
-
-**Protokol Interaksi**: Menentukan mode interaksi dan kondisi terminasi.
-
-Kelima elemen ini bersama-sama membentuk loop evaluasi yang dapat diulang.
+Evaluasi tipe pemanggilan tool menguji kebenaran perubahan keadaan yang dapat diamati, sedangkan evaluasi tipe interaksi manusia-komputer menguji kelayakan strategi komunikasi—yang pertama memverifikasi tindakan, yang kedua memverifikasi penuntunan. Perbandingan struktur kedua tipe lingkungan dapat dilihat pada Gambar 7-2.
 
 ![Gambar 7-2: Lingkungan Evaluasi Pemanggilan Tool dan Interaksi Manusia-Komputer](images/fig7-2.svg)
 
-Bergantung pada tugas Agent, lingkungan evaluasi dapat dibagi secara kasar menjadi tipe pemanggilan tool dan tipe interaksi manusia-mesin.
+## Desain himpunan data evaluasi
 
-### Lingkungan Evaluasi Pemanggilan Tool
+Jika lingkungan evaluasi adalah panggung, himpunan data adalah naskahnya. Dengan lima komponen yang sama, mengganti kelas tugas bisa membuat cara pengisiannya berbeda sama sekali: dari mana tugas berasal, sedalam apa verifier dapat memeriksa, dan bagaimana mencegahnya dihafal. Bagian ini berangkat dari praktik desain beberapa benchmark publik dan berakhir pada pertanyaan yang lebih praktis—dari mana seharusnya tugas dalam himpunan evaluasi buatan sendiri berasal.
 
-Untuk tugas-tugas yang utamanya bergantung pada penggunaan tool, seperti pembuatan kode dan analisis data, framework Verifiers menunjukkan pola desain yang khas. Agent menyelesaikan tugas dengan memanggil tool yang telah ditentukan sebelumnya, dan verifikasi didasarkan pada kriteria yang dapat dieksekusi (apakah tes lulus, apakah jawaban cocok), tanpa bergantung pada anotasi manusia atau penilaian model.
+### Perbandingan menyilang keputusan desain antarbenchmark
 
-Verifiers memperkenalkan desain lingkungan yang hierarkis: `SingleTurnEnv` cocok untuk tugas giliran tunggal (misalnya, Q&A sederhana), `ToolEnv` mendukung loop otonom dari pemanggilan tool untuk banyak giliran, sedangkan `StatefulToolEnv` dan `SandboxEnv` mendukung tool stateful dan lingkungan sandbox yang berjalan lama (misalnya, eksekusi kode). Sebagai contoh: `SingleTurnEnv` cocok untuk mengajukan pertanyaan matematika dan langsung memeriksa jawabannya; `ToolEnv` cocok untuk mencari beberapa halaman web dan menyintesis jawaban sebelum memverifikasi hasil akhirnya; `StatefulToolEnv` cocok untuk memodifikasi catatan basis data dan memverifikasi perubahan state yang dihasilkan; `SandboxEnv` cocok untuk menjalankan kode dalam sebuah sandbox dan memeriksa file output. Tabel 7-2 merangkum tipe-tipe lingkungan ini agar pembaca dapat memilih lingkungan evaluasi yang tepat berdasarkan state tugas, pemanggilan tool, dan persyaratan isolasi.
+Ada atau tidaknya lawan bicara, yang dibedakan pada bagian sebelumnya, hanyalah lapis perbedaan pertama pada tataran lingkungan; perbedaan pada tataran himpunan data lebih menunjukkan pertukaran desainnya. Tabel 7-2 menyandingkan beberapa benchmark yang sering dikutip.
 
-Tabel 7-2 Perbandingan Tipe Lingkungan Verifiers
+Tabel 7-2 Keputusan desain kunci beberapa benchmark Agent
 
-| Tipe Lingkungan | Persistensi State | Pemanggilan Tool | Penggunaan Khas |
-|---|---|---|---|
-| SingleTurnEnv | Tidak Ada | Tidak Ada | Q&A giliran tunggal, soal matematika |
-| ToolEnv | Tidak Ada | Banyak Giliran | Pencarian + sintesis informasi |
-| StatefulToolEnv | Ya | Banyak Giliran | Memodifikasi catatan basis data |
-| SandboxEnv | Ya + Isolasi | Banyak Giliran | Eksekusi dan pengujian kode |
+| Benchmark | Kemampuan yang diuji | Asal tugas | Pemeran lingkungan | Verifier |
+|---|---|---|---|---|
+| τ²-bench | Interaksi manusia-komputer dan pemanggilan tool pada layanan pelanggan | Ditulis manual + pembangkitan kombinatorial | Simulator pengguna + basis data bisnis | Empat lapis pemeriksaan diagregasi menjadi biner oleh `reward_basis` |
+| SWE-bench Verified | Pengembangan perangkat lunak, coding | Issue nyata GitHub, disaring manual | Repositori kode + suite uji | Verifikasi ganda FAIL\_TO\_PASS / PASS\_TO\_PASS |
+| AndroidWorld | Mengoperasikan GUI ponsel Android | Instansiasi templat berparameter | Emulator Android sungguhan | Asersi keadaan akhir UI |
+| OSWorld | Mengoperasikan GUI desktop Linux | Mulai dari keadaan tengah yang disiapkan | Mesin virtual sungguhan | 134 fungsi evaluasi mandiri |
+| Terminal-Bench | Mengoperasikan terminal Linux, coding | Ditulis manual | Kontainer Docker | Pemeriksaan sistem berkas + eksekusi nyata |
+| GAIA | Asisten AI umum yang mengumpulkan informasi | Ditulis manual + lampiran khusus | Internet terbuka | Pencocokan string persis |
 
-Kerangka kerja ini mendukung *parallel sampling* dan *trajectory caching*. Lintasan lengkap (observasi, tindakan, *reward*) dari setiap evaluasi disimpan untuk analisis dan *replay* selanjutnya.
+### Verifier
 
-Lingkungan juga perlu menangani ketergantungan *state* dari operasi — hasil dari *tool call* bergantung pada *state* saat ini. Saat terjadi kegagalan, ia harus memberikan pesan kesalahan yang jelas daripada sekadar tanda kegagalan sederhana, yang memungkinkan Agent untuk belajar dari kesalahan dan menyesuaikan strateginya.
+Agent dengan mudah menulis laporan panjang lebar yang menyatakan tugas sudah selesai seluruhnya, padahal kenyataannya sama sekali belum. Kerangka evaluasi harus memverifikasi fakta yang bisa diperiksa mesin secara mandiri, bukan pernyataan Agent tentang dirinya sendiri.
 
-### Lingkungan Evaluasi Interaksi Manusia-Komputer
+**SWE-bench Verified menguraikan "perbaikan selesai" menjadi dua proposisi mandiri.** Yang satu adalah FAIL\_TO\_PASS: gagal sebelum diperbaiki dan lolos sesudahnya, yang membuktikan masalahnya memang terselesaikan. Yang lain adalah PASS\_TO\_PASS: lolos baik sebelum maupun sesudah, yang membuktikan tidak ada cacat baru yang masuk. Bila hanya yang pertama diperiksa, Agent bisa lolos dengan menghapus atau mengubah asersi yang menghalangi; bila hanya yang kedua, sama saja dengan tidak memeriksa. Hanya dengan memeriksa keduanya, "sudah diperbaiki" dan "tidak merusak apa pun" menjadi dua kesimpulan yang masing-masing dapat dibuktikan. Ia juga memastikan kestabilan uji itu sendiri, menyingkirkan uji tidak stabil (flaky test) yang kadang lolos kadang gagal.
 
-Banyak tugas dunia nyata tidak hanya melibatkan *tool calls* tetapi juga percakapan dengan pengguna manusia. Agent layanan pelanggan perlu memahami ekspresi ambigu, mengklarifikasi kebutuhan, melakukan kueri ke sistem *backend*, dan mengonfirmasi informasi dengan pengguna. Mengevaluasi tugas-tugas semacam ini menghadapi tantangan mendasar: bagaimana cara menyimulasikan pengguna nyata dalam lingkungan yang otomatis?
+**Verifier OSWorld mampu menemukan keadaan yang tampak selesai tetapi sebenarnya keliru.** Ia dilengkapi 134 fungsi evaluasi mandiri dan hak akses penuh ke sistem operasi, sehingga dapat memeriksa struktur sistem berkas, keadaan proses, koneksi jaringan, dan keadaan internal aplikasi. Pada tugas basis data, skrip evaluasi tidak hanya memastikan berkas laporan ada, tetapi juga menyambung ke basis data untuk memastikan SQL benar-benar dijalankan; pada tugas peramban ia mengurai pohon DOM, memeriksa cookie dan localStorage, serta mengirim permintaan verifikasi ke backend untuk memastikan formulirnya benar-benar berlaku.
 
-Prinsip desain utamanya adalah **Progressive Information Disclosure**, yang merupakan perbedaan mendasar antara evaluasi interaksi manusia-komputer dan *benchmark* tradisional. Kebanyakan *benchmark* mengungkapkan seluruh persyaratan di awal, tetapi pengguna nyata jarang dapat mengartikulasikan kebutuhan mereka dari awal — mereka sering kali hanya mengatakan "sepertinya ada masalah dengan penerbangan saya" atau "internet saya tidak berfungsi." Agent harus mengklarifikasi kebutuhan tersebut dengan mengajukan pertanyaan, dan proses itu sendiri merupakan wujud dari kapabilitas. Oleh karena itu, dalam evaluasi, **informasi pengguna yang disimulasikan tidak boleh diungkapkan kepada Agent sekaligus**; informasi tersebut harus diungkapkan secara progresif, sesuai permintaan, seiring dengan berjalannya percakapan.
+**Tugas `build-linux-kernel-qemu` pada Terminal-Bench** menuntut kernel Linux 6.9 dibangun dari sumber, menambahkan printk kustom di `start_kernel`, membuat initramfs, dan menjalankannya di QEMU; kriteria keberhasilannya adalah munculnya pesan kustom itu di log boot. Agent tidak bisa memalsukan keluaran—ia harus benar-benar menuntaskan seluruh prosesnya.
 
-Solusi τ-bench adalah **User Simulation**: menggunakan LLM lain untuk memainkan peran pengguna, bercakap-cakap dengan Agent berdasarkan instruksi yang telah ditentukan. Pengguna yang disimulasikan menerima instruksi tugas (misalnya, "Saya perlu membatalkan penerbangan besok"), secara bertahap mengungkapkan informasi yang diperlukan kepada Agent selama percakapan, merespons pertanyaan, dan mengirimkan sinyal penghentian saat tugas selesai. *Prompt* mengharuskan pengguna yang disimulasikan untuk "tidak mengungkapkan semua informasi sekaligus, hanya berikan apa yang diperlukan untuk langkah saat ini" dan "tidak merekayasa informasi yang tidak diberikan dalam instruksi." Desain dari *user simulation* memerlukan keseimbangan antara keaslian dan kemampuan pengendalian (*controllability*): perilakunya harus mendekati pengguna nyata (ekspresi ambigu, informasi tidak lengkap, sesekali fluktuasi emosional) sekaligus mengikuti skrip tertentu untuk memastikan reproduktibilitas.
+### Pembagian tingkat kesulitan tugas
 
-Berikut ini adalah contoh percakapan multi-putaran dengan pengungkapan informasi progresif (simulator pengguna bertindak berdasarkan skrip tetap):
+Himpunan tugas evaluasi perlu memuat tugas dengan tingkat kesulitan berbeda. Dengan begitu, ketika kemampuan model meningkat, himpunan tugas evaluasi tidak cepat usang.
 
-> **User**: "Ada masalah dengan penerbangan saya."
-> **Agent**: "Penerbangan yang mana?"
-> **User** (mengungkapkan sesuai skrip): "Delta 123, besok pagi dari San Francisco ke New York."
-> **Agent**: "Apa masalah spesifiknya?"
-> **User** (mengungkapkan sesuai skrip): "Waktu penerbangannya terlalu lama, saya ingin mengubahnya."
-> **Agent**: "Ada preferensi untuk penerbangan baru?"
-> **User** (mengungkapkan sesuai skrip): "Penerbangan sore mana pun boleh."
+Seluruh 466 soal GAIA dibagi menjadi tiga tingkat kesulitan: Level 1 cukup dengan satu atau dua tool (manusia 93,9%, GPT-4 30,3%), Level 2 menuntut penalaran bertahap (91,8% berbanding 9,7%), dan Level 3 menuntut komposisi rumit (87,3% berbanding 0%). Pelapisan ini bukan sekadar menandai kesulitan, tetapi juga bernilai diagnostik: kegagalan di Level 1 menunjuk pada penggunaan tool dasar, Level 2 pada perencanaan bertahap dan pemaduan informasi, dan Level 3 pada penalaran runtun panjang dan pengelolaan kerumitan, dan ketiganya mengarah ke arah perbaikan yang berlainan.
 
-Simulator pengguna mengikuti skrip tetap (informasi yang diketahui + aturan pengungkapan), memastikan reproduktibilitas evaluasi sambil menyimulasikan gaya ekspresi progresif dari pengguna nyata. Pengguna simulasi kerap juga diberi **kesabaran yang terbatas**: bila komunikasi Agent tidak efisien, pengguna simulasi dapat mengakhiri percakapan sehingga tugasnya gagal.
+Terminal-Bench mencakup mulai dari pendaftaran model mlflow yang sederhana, pembobolan kata sandi 7z berkesulitan menengah, integrasi banyak komponen server git dan webserver yang sulit, sampai analisis sandi diferensial FEAL yang paling berat.
 
-τ-bench adalah *benchmark* untuk mengevaluasi kinerja Agent dalam proses bisnis terstruktur (misalnya, layanan pelanggan maskapai, layanan pelanggan ritel). Pemeriksaannya berada pada tingkat komponen dan bersifat multi-dimensi: di satu sisi, ia memeriksa apakah status akhir dari *database* sudah benar (misalnya, status catatan pemesanan berubah menjadi "dibatalkan"); di sisi lain, ia memverifikasi apakah Agent memberikan informasi utama yang diperlukan selama percakapan (misalnya, jumlah pengembalian dana dan waktu kedatangan, diverifikasi dengan mencari string atau pola tertentu). Verifikasi ganda ini secara bersamaan memeriksa akurasi operasional dan efektivitas komunikasi. Namun, di tingkat tugas, semua pemeriksaan ini pada akhirnya mengerucut menjadi **binary reward nol atau satu** — semua pemeriksaan harus lulus untuk mendapatkan skor 1; satu kegagalan saja menghasilkan skor 0. *Binary rewards* membuat metrik keandalan seperti Pass^k mudah dihitung (lihat bagian "Sistem Metrik Evaluasi" nanti), dengan konsekuensi menilai "akurat secara operasional namun melewatkan satu bidang non-kritis" sama seperti "kegagalan total."
+τ²-bench bahkan merancang khusus **tugas jebakan**: pengguna mengaku "layanan pelanggan sudah menyetujui pembatalan" padahal sebenarnya tidak sesuai kebijakan, untuk menguji apakah Agent tetap menjaga penilaian yang benar di bawah tekanan dan penyesatan.
 
-**τ²-bench** yang ditingkatkan pada dasarnya tidak memperbaiki granularitas penilaian; sebaliknya, ia memajukan *benchmark* dalam dua area lainnya. Pertama, **Dual-Control Environment**: Agent bukan lagi satu-satunya pihak yang dapat melakukan *tool calls* — simulator pengguna dapat beroperasi pada lingkungan bersama yang sama (Agent menginstruksikan pengguna untuk beralih ke mode pesawat, dan tindakan pengguna tersebut benar-benar mengubah *state* lingkungan), yang mana lebih sesuai dengan skenario nyata seperti dukungan teknis, di mana pengguna harus ikut membantu. Kedua, **spesifikasi tugas yang lebih presisi dan kemampuan komposisi pembuatan tugas**: lebih sedikit ambiguitas dalam kondisi keberhasilan, dan instansiasi tugas dapat diparameterisasi serta dibuat secara massal (lihat bagian "Jaminan Verifiabilitas dan Objektivitas" nanti untuk dimensi verifikasi mendetail).
+### Pencegahan kebocoran data
 
-> **Eksperimen 7-1 ★: Jalankan τ²-bench dan Bandingkan Evolusinya dari τ-bench**
+**GAIA membuat jawabannya tidak dapat dicari langsung di internet.** Tugasnya sederhana secara konsep tetapi jalannya terbuka: misalnya, berangkat dari Astronomy Picture of the Day NASA pada tanggal tertentu, mengenali astronaut dalam foto, mencari kelompok astronaut tempatnya bernaung, menghitung siapa dari kelompok itu yang paling singkat berada di antariksa, dan mengeluarkannya persis dalam format "nama belakang, dipisahkan titik koma, dengan pemisah ribuan". Jawabannya sangat spesifik dan benar tidaknya ditentukan oleh pencocokan string persis. Pencegahan kebocoran bersandar pada dua hal: pertama, pertanyaannya hanya terjawab bila beberapa sumber informasi dipadukan sehingga tak ada satu halaman web pun yang langsung memberi jawaban; kedua, sebagian tugas disertai lampiran yang dibuat khusus (PDF, audio, dan gambar yang tidak ada di internet).
+
+**AndroidWorld menurunkan banyak instansi dari satu templat.** Tugasnya bukan teks statis melainkan templat yang dapat diinstansiasi secara dinamis, misalnya "ubah nomor telepon kontak `[CONTACT_NAME]` menjadi `[NEW_PHONE]`", dengan nilai parameter dibangkitkan acak pada tiap evaluasi. Ini memberi tiga keuntungan: parameter selalu berbeda sehingga memutar ulang urutan operasi yang tetap menjadi sia-sia; satu templat dapat melahirkan instansi yang nyaris tak terbatas; dan dengan mengunci sebagian parameter serta mengubah sisanya, pengaruh satu faktor tertentu dapat diukur dengan tepat.
+
+**Terminal-Bench menyisipkan penanda kenari pada teks soal.** Tiap soal membawa canary GUID; bila sebuah model mampu mengeluarkan isi yang memuat GUID itu, berarti data benchmark sudah masuk ke himpunan latih. Ini tidak mencegah kebocoran, tetapi membuatnya dapat dideteksi.
+
+### Kendali mutu dan pemeliharaan jangka panjang
+
+Membuat himpunan evaluasi bermutu tinggi sangatlah sulit. Bentuk sekarang dari sebagian besar benchmark di atas adalah hasil perbaikan berulang setelah versi pertamanya dipakai dan masalahnya tersingkap. Dari τ-bench ke τ²-bench, misalnya, ada lima tempat yang dirancang ulang.
+
+Pertama, **instruksi tugas terlalu umum sehingga jawabannya bisa ditebak**. Instruksi versi pertama ditulis luas, sehingga model tak perlu benar-benar menjernihkan permintaan—menebak satu prosedur dari akal sehat saja sudah cukup untuk lolos. τ²-bench membelah naskah menjadi dua ruas, `known_info` dan `task_instructions`: yang pertama membatasi apa yang diketahui pengguna, yang kedua mengatur cara pengungkapannya. Apa yang tidak diketahui pengguna tak bisa ditebak Agent dan hanya bisa diperoleh dengan menelusuri.
+
+Kedua, **syarat keberhasilan kurang cermat sehingga verifikasi salah menilai**. Syarat semacam "jaringan sudah pulih" tidak punya batas yang dapat diperiksa. τ²-bench mengubahnya menjadi "dianggap selesai hanya bila hasil tes kecepatan excellent; poor, fair, dan good semuanya tidak diterima". Perubahan ini menyasar **perbaikan asal jadi**, yaitu menekan gejala tanpa menuntaskan akar masalah.
+
+Ketiga, **perilaku simulator pengguna terlalu mekanis**. Pengguna simulasi versi pertama hanya menjawab secara pasif. τ²-bench menambahkan emosi (menunjukkan ketidakpuasan setelah perbaikan pertama gagal), batas kesabaran (memutus percakapan bila komunikasi terlalu tidak efisien), dan syarat pengaitan fakta. Ketiganya bekerja bersama sehingga simulator mendekati pengguna nyata sambil tetap dapat direproduksi.
+
+Keempat, **pengguna tidak hanya terlibat dalam percakapan, tetapi juga dalam pengoperasian**. Domain telecom memperkenalkan lingkungan kendali ganda. Pada evaluasi sebelumnya hanya Agent yang dapat mengubah lingkungan, padahal pada skenario dukungan teknis sebagian besar tindakan semestinya dilakukan pengguna sendiri di perangkatnya. Kendali ganda juga menambah satu dimensi pada verifikasi: setelah pengguna mengubah keadaan, Agent harus memanggil tool lagi untuk mengetahui hasilnya, sehingga verifikasi kini mencakup "apakah Agent benar-benar membaca hasil tindakan di sisi pengguna".
+
+Kelima, **instansi tugas dibangkitkan secara dinamis**. Instansi konkret τ²-bench (nama pengguna, nomor, kombinasi gangguan) dapat diparameterkan dan dibangkitkan secara massal, yang sekaligus memperbaiki cakupan dan ketahanan terhadap kebocoran.
+
+**SWE-bench Verified: sebelum dirilis, 71% tugas aslinya disingkirkan.** OpenAI mengambil acak 1.699 dari 2.294 tugas asli untuk dievaluasi manusia, dan merekrut 93 pengembang yang mahir Python untuk memeriksanya satu per satu: apakah deskripsi masalahnya jelas, apakah kasus ujinya mencakup kondisi batas, apakah ujinya stabil, apakah patch rujukan memasukkan kesalahan baru, dan apakah kesulitannya wajar. Pada akhirnya hanya 500 yang lolos. Tingkat penyingkiran yang tinggi menghasilkan rasio sinyal terhadap derau yang lebih baik, dan biaya evaluasi pun turun sekitar 80%. Tugas Agent yang rumit lazimnya butuh beberapa menit sampai beberapa jam, dan menjalankan satu himpunan evaluasi secara penuh dengan model terdepan kerap menelan ribuan dolar biaya token, sehingga menekan biaya evaluasi sangatlah penting.
+
+**OSWorld: dalam 15 bulan setelah dirilis muncul lebih dari 300 masalah.** Dirilis pada April 2024, ia cepat menjadi benchmark penting bagi evaluasi Agent multimodal, tetapi pemakaian luas berikutnya menyingkap empat jenis masalah: masalah lingkungan (situs yang menangkal scraping, CAPTCHA, perubahan konten dinamis), masalah deskripsi tugas (rumusan yang bermakna ganda), masalah logika verifikasi (terlalu ketat atau terlalu longgar), dan masalah keadaan awal (konfigurasi tidak lengkap). Tim dari Universitas Hong Kong membentuk kelompok sekitar 10 orang dan selama dua bulan bekerja erat dengan MoonShot AI, OpenAI, ByteDance Seed TARS, Anthropic, Simular, dan lainnya untuk memperbaikinya secara sistematis: masalah lingkungan diatasi dengan mengunci versi dan cadangan offline, masalah deskripsi dengan menulis ulang rumusan yang bermakna ganda, masalah verifikasi dengan membangun garis dasar yang benar secara manual lalu menyetel syaratnya, dan masalah keadaan awal dengan menambah pemeriksaan kelengkapan.
+
+> **Eksperimen 7-2 ★: Mengerjakan tugas benchmark secara manual**
 >
-> Eksperimen ini menjalankan kerangka kerja evaluasi τ²-bench untuk memahami prinsip desain dari lingkungan evaluasi interaksi manusia-komputer. Dengan membandingkan τ-bench dan τ²-bench, kita dapat melihat bagaimana dataset evaluasi ditingkatkan secara iteratif.
+> Pilih tugas dari GAIA, AndroidWorld, SWE-Bench Verified, Terminal-Bench, dan OSWorld-Verified lalu kerjakan sendiri; disarankan satu mudah, satu sedang, dan satu sulit untuk tiap himpunan data. Tingkat "sulit" pun menantang bagi manusia.
 >
-> Baca file definisi tugas secara mendalam: setiap tugas berisi informasi yang diketahui pengguna, instruksi tugas yang mengatur pengungkapan progresif dan strategi respons, serta kondisi keberhasilan (status target *database* dan informasi konfirmasi yang harus muncul dalam dialog). Jalankan proses evaluasi secara lengkap, amati dialog multi-putaran antara simulator pengguna dan Agent, lalu analisis mode kegagalan yang umum (pelanggaran kebijakan, penghilangan informasi, pengalihan yang berlebihan ke agen manusia, dll.).
->
->
-> ![Gambar 7-3: Arsitektur Evaluasi τ²-bench](images/fig7-3.svg)
->
->
-> Bandingkan perbedaan desain antara τ-bench dan τ²-bench: Versi awal τ-bench memiliki instruksi pengguna yang terlalu sederhana (Agent dapat menebak jawabannya), kondisi keberhasilan yang kurang presisi (menyebabkan salah penilaian), dan simulator pengguna yang mekanis. τ²-bench membuat peningkatan sistematis untuk mengatasi masalah ini:
->
-> - **Memperkenalkan instruksi tugas yang lebih mendetail**: Termasuk "Grounding Requirements," yang berarti respons harus didasarkan pada *state* lingkungan yang sebenarnya
-> - **Kriteria evaluasi yang lebih presisi**: Misalnya, "uji kecepatan harus mengembalikan 'excellent' agar dianggap terselesaikan"
-> - **Spesifikasi perilaku simulator pengguna yang lebih realistis**: Pengungkapan informasi progresif, fluktuasi emosional alami
->
-> Berikan perhatian khusus pada tugas domain telekomunikasi yang baru ditambahkan di τ²-bench, dan pahami desain *dual-control environment* milik τ²-bench (seperti yang disebutkan sebelumnya, pengguna dan Agent secara bersama-sama mengoperasikan lingkungan bersama yang sama).
->
+> Setelah selesai, jawab dua pertanyaan. Apakah deskripsi tugas itu memuat lebih dari satu tafsir yang masuk akal, dan bila ya, tafsir mana yang diakui verifier? Jika Anda mencoba lolos tanpa benar-benar mengerjakannya, apa jalur termurahnya, dan mampukah verifier menghadangnya?
 
-Evaluasi *tool calling* menanyakan apakah perubahan *state* yang dapat diobservasi telah diselesaikan; evaluasi interaksi manusia-komputer menanyakan apakah Agent telah membantu pengguna mencapai pemahaman baru atau membuat keputusan. Yang pertama menguji kebenaran tindakan Agent; yang kedua menguji keandalan dari strategi komunikasinya.
+### Tiga asal himpunan evaluasi
 
-Membangun lingkungan evaluasi juga menyinggung tentang lingkungan simulasi—ketika lingkungan evaluasi harus mendukung interaksi berulang dalam skala besar, itu menjadi lingkungan simulasi. Bagian akhir bab ini akan membahas hal ini secara singkat.
+Ada pandangan umum bahwa benchmark publik hanya melayani pemeringkatan model dan sedikit kaitannya dengan bisnis nyata. Memang benar skor benchmark publik sulit langsung memandu keputusan produk, tetapi teknik desainnya sangat mudah dipindahkan. Kedalaman verifikasi, pembangkitan berparameter, pencegahan kebocoran, dan pemeliharaan mutu—yang dibahas di atas—justru merupakan bagian yang paling mudah terlewat dalam himpunan evaluasi buatan sendiri.
 
-## Desain Dataset Tugas Evaluasi
+Himpunan evaluasi di lingkungan produksi biasanya punya tiga asal.
 
-Lingkungan evaluasi adalah "panggung," dan dataset adalah "skrip." Kualitas skrip sering kali lebih menentukan nilai dari evaluasi daripada panggungnya sendiri. Dataset yang dirancang dengan buruk, bahkan ketika dijalankan di lingkungan yang sempurna, hanya akan menghasilkan *noise*. Bagian ini menyarikan beberapa prinsip yang tervalidasi secara berulang dari praktik desain berbagai *benchmark* seperti GAIA, AndroidWorld, SWE-Bench Verified, τ-bench dan τ²-bench, Terminal-Bench, OSWorld, dan OSWorld-Verified.
+**Benchmark publik** dipakai untuk penyaringan kasar model dan untuk meminjam teknik desain, dan umumnya bukan untuk keputusan produk. Distribusi tugasnya tidak sama dengan distribusi tugas bisnis nyata; naik dua poin persentase di GAIA tidak berhubungan secara niscaya dengan tingkat keberhasilan pengembalian dana.
 
-> **Eksperimen 7-2 ★: Jalankan Tugas Benchmark Secara Manual**
->
-> Pilih beberapa tugas dari masing-masing GAIA, AndroidWorld, SWE-Bench Verified, τ²-bench, Terminal-Bench, dan OSWorld-Verified, lalu selesaikan secara manual. Disarankan untuk menyelesaikan satu tugas sederhana, satu sedang, dan satu sulit dari setiap dataset—tingkat "sulit" seharusnya menantang bahkan bagi manusia. Bandingkan hasil eksekusi Anda dengan jawaban standar dan analisis sumber perbedaannya. Melalui pengalaman langsung ini, pahamilah: deskripsi tugas perlu menyeimbangkan antara kejelasan dan keterbukaan, standar verifikasi harus objektif dan dapat dieksekusi, serta tingkat kesulitan hierarkis dari tugas harus mampu membedakan tingkat kapabilitas yang berbeda.
->
+**Himpunan bisnis buatan sendiri** mencakup distribusi tugas yang sebenarnya dan dapat menjadi dasar pemilihan model serta keputusan desain Harness. Misalnya, τ²-bench dapat langsung dipakai sebagai kerangka bagi sistem evaluasi mana pun yang memerlukan pengguna simulasi; cukup ganti data domain dan perangkat toolnya.
 
-### Tantangan Inti dalam Desain Dataset Tugas
+**Aliran balik trajectory produksi** berasal dari kegagalan nyata di lapangan: koreksi eksplisit dari pengguna, penilaian buruk dari pengguna, serta kasus yang ditemukan belakangan lewat pemeriksaan keadaan, verifier berbasis aturan, atau tinjauan LLM. Setelah melalui atribusi kegagalan, semuanya mengendap menjadi kasus regresi. Caranya diuraikan nanti pada bagian "Atribusi kegagalan" dan "Tugas regresi ujung ke ujung dan tugas regresi trajectory prefix". Asal ini paling mahal sekaligus paling akurat, karena datang langsung dari masalah yang benar-benar dialami pengguna.
 
-**Tantangan Pertama: Ketegangan Antara Kejelasan dan Keterbukaan.** Deskripsi tugas harus cukup jelas untuk memastikan evaluasi yang dapat direproduksi, namun tidak terlalu kaku sehingga melumpuhkan kreativitas Agent. GAIA memberikan sebuah contoh: tugas-tugasnya "secara konseptual sederhana" tetapi memiliki jalur implementasi yang terbuka—misalnya, sebuah tugas mungkin mengharuskan Agent untuk mengidentifikasi seorang astronaut dari NASA Astronomy Picture of the Day dan menentukan berapa lama mereka berada di luar angkasa. Tujuannya jelas, tetapi bagaimana cara mencari, memfilter, dan memverifikasi sepenuhnya bergantung pada pengambilan keputusan otonom dari Agent.
+Pada tahap awal biasanya hanya ada benchmark publik dan sedikit himpunan bisnis yang ditulis tangan; setelah sistem berjalan beberapa lama di produksi, kasus yang mengalir balik dari trajectory produksi menjadi bagian terbesar.
 
-**Tantangan Kedua: Menyeimbangkan Keaslian dan Kemampuan Pengendalian.** Tugas dunia nyata mengandung ketidakpastian dan *noise*, yang dapat mengungkapkan *robustness* namun juga mengancam reproduktibilitas. Versi awal SWE-Bench secara langsung menggunakan *GitHub issues* nyata, yang memastikan keaslian tetapi juga mengarah pada deskripsi tugas yang ambigu, *test cases* yang tidak lengkap, dan kriteria evaluasi yang subjektif. SWE-Bench Verified memperkenalkan validasi sistematis oleh pakar manusia, memilih 500 tugas berkualitas tinggi dengan masalah yang terdefinisi secara jelas, pengujian yang memadai, dan solusi yang terang, secara signifikan meningkatkan kemampuan pengendalian sambil tetap mempertahankan keaslian.
+## Metode evaluasi otomatis
 
-**Tantangan Ketiga: Mengoordinasikan Keberagaman dan Sistematisasi.** Dataset yang efektif perlu mencakup skenario tipikal, *edge cases*, dan jebakan kesalahan, sekaligus memiliki organisasi yang sistematis sehingga hasil evaluasi dapat mendiagnosis kelemahan kapabilitas spesifik. 116 tugas di AndroidWorld tersebar di 20 aplikasi nyata, masing-masing dianotasi dengan kapabilitas inti yang dibutuhkannya (perencanaan multi-langkah, pemahaman visual, penalaran temporal) — sehingga hasil tidak hanya memberikan tingkat keberhasilan secara keseluruhan tetapi juga profil kekuatan dan kelemahan di sepanjang dimensi kapabilitas yang spesifik. Yang lebih penting, mekanisme parameterisasi dapat menghasilkan varian tugas dalam jumlah yang nyaris tak terbatas.
+Benchmark yang dibahas pada bagian-bagian sebelumnya punya satu kesamaan: verifier-nya hampir semuanya deterministik. SWE-bench menjalankan suite uji, AndroidWorld mengasersi keadaan akhir UI, GAIA melakukan pencocokan string persis, dan empat lapis pemeriksaan τ²-bench pun seluruhnya dijalankan oleh kode. Pilihan ini punya alasan kuat: verifikasi deterministik tidak menambah ongkos model, hasilnya sepenuhnya dapat direproduksi, dapat dimasukkan ke integrasi berkelanjutan seperti uji unit, dan memudahkan pemeringkatan antarmodel.
 
-**Tantangan Keempat: Biaya Evaluasi vs. Cakupan.** Tugas Agent yang kompleks dapat memakan waktu beberapa menit atau bahkan berjam-jam untuk diselesaikan, sehingga menghabiskan sejumlah besar token. Ukuran dataset perlu menyeimbangkan antara kelengkapan dan nilai ekonomi. GAIA secara cermat memilih 466 tugas di tiga tingkat kesulitan, yang mencakup berbagai dimensi kapabilitas sambil tetap memungkinkan evaluasi dengan biaya yang wajar. SWE-Bench Verified memangkas jumlahnya dari 2.294 tugas menjadi 500 (mengurangi biaya hingga sekitar empat perlima sambil meningkatkan *signal-to-noise ratio* melalui standar kualitas yang lebih ketat).
+Harganya, ia hanya dapat menilai benar tidaknya hasil akhir, tetapi tidak dapat memberi sebab kesalahannya. Tugas τ²-bench yang gagal berakhir dengan nilai 0, dan angka 0 itu tidak menjelaskan apakah Agent salah pada tahap pemilihan jalur atau melewatkan langkah pengisian kuota, apalagi menunjukkan apa yang harus diubah berikutnya. Bagi benchmark publik yang dipakai untuk pemeringkatan, ini bukan cacat; bagi sistem produksi yang perlu perbaikan berkelanjutan, justru itulah informasi yang paling dibutuhkan.
 
-**Tantangan Kelima: Mencegah Kontaminasi Data.** Di era model bahasa besar, kontaminasi data menjadi tantangan serius bagi evaluasi: saat data evaluasi disertakan dalam data pelatihan, maka evaluasi akan mengukur hafalan dan bukan generalisasi. Ini seperti menghafal jawaban sebelum ujian—nilai bagus tidak mencerminkan kemampuan sebenarnya. Berbagai *benchmark* mengadopsi strategi pencegahan yang berbeda: GAIA bergantung pada keunikan jawabannya; pertanyaan memerlukan penggabungan informasi dari berbagai sumber untuk dijawab, dan beberapa tugas dilengkapi dengan file lampiran yang dibuat secara khusus (PDF/audio/gambar yang tidak ada di internet), sehingga satu halaman web tidak dapat secara langsung memberikan jawaban. SWE-Bench Verified sendiri merupakan subset berisi 500 tugas yang diperoleh oleh OpenAI melalui penyaringan kualitas manual dari SWE-Bench orisinal, dan tidak menyertakan desain pencegahan kebocoran berbasis waktu. Justru karya lanjutan seperti SWE-bench-Live yang benar-benar menggunakan kebaruan temporal untuk mencegah kebocoran, dengan terus-menerus memasukkan *issues* yang dibuat setelah tanggal batas pelatihan model (*training cutoff*), sehingga menjaga evaluasi agar selalu berada di depan korpus pelatihan model. τ²-bench mencegah kebocoran melalui pembuatan parameter yang dinamis, di mana instansiasi tugas spesifik (nama pengguna, nomor pesanan, tanggal, dll.) dibuat secara acak setiap saat. Pembuatan tugas terparameter dari AndroidWorld secara alami membantu mencegah kebocoran karena verifikasi didasarkan pada status UI akhir, bukan urutan operasi. Terminal-Bench membuat kebocoran dapat dideteksi dengan menyematkan GUID *canary* (pengidentifikasi unik global yang digunakan sebagai penanda pelacakan): jika model dapat menghasilkan keluaran yang mengandung GUID ini, hal tersebut mengindikasikan bahwa data *benchmark* telah bocor ke set pelatihan.
+Skenario produksi punya kesulitan kedua: banyak penilaian sama sekali tidak dapat ditulis sebagai asersi yang bisa diperiksa kode. Apakah balasan atas keluhan sudah pantas, apakah sebuah laporan riset melewatkan informasi kunci, apakah penelusuran memori salah mengaitkan hubungan antarorang—semua ini tidak punya satu keadaan akhir yang bisa ditelusuri, dan juga tak bisa diputuskan dengan pencocokan kata kunci.
 
-### Desain Presisi dari Deskripsi Tugas
+Karena itu, dalam beranjak dari benchmark publik ke evaluasi di lingkungan produksi, cara verifikasi perlu bergeser ke kanan sepanjang satu spektrum yang sumbu mendatarnya adalah **derajat keterverifikasian mekanis** sebuah tugas, seperti pada Gambar 7-4.
 
-GAIA memastikan keunikan jawaban melalui batasan sumber informasi yang jelas, rentang waktu, topik, dan target kueri. Misalnya, tugas Level 3 mengharuskan memulai dari gambar NASA pada tanggal tertentu, mengidentifikasi astronaut tersebut melalui pemahaman visual, mencari grup astronaut tempat mereka bergabung, menghitung waktu mereka di luar angkasa, dan memformat keluarannya secara presisi ("nama belakang; kolom dipisahkan oleh titik koma; angka diformat dengan pemisah ribuan"). Setiap detail mendukung verifikasi otomatis—hanya kecocokan persis pada format dan konten yang dihitung sebagai lulus.
+![Gambar 7-4: Spektrum cara verifikasi—dari verifikasi deterministik ke penilaian model](images/fig7-4.svg)
 
-τ²-bench memperkenalkan desain kontekstual, dengan setiap tugas yang berisi beberapa lapisan informasi: masalah permukaan ("data seluler tidak berfungsi"), ekspektasi kinerja ("memerlukan peringkat kecepatan excellent"), batasan ("tidak akan menerima peringkat lainnya"), dan emosi yang tersirat. Peningkatan utamanya adalah memisahkan "informasi yang diketahui" dari "instruksi tugas": informasi yang diketahui adalah apa yang saat ini diketahui oleh pengguna, sementara instruksi tugas memandu simulator tentang bagaimana cara mengungkapkan informasi secara progresif, termasuk "Grounding Requirements" (respons harus didasarkan pada hasil aktual yang dikembalikan oleh *tool calls*, bukan direkayasa).
+Dua perkakas di sisi kanan spektrum itulah yang kemudian menjadi tumpuan evaluasi produksi: **Rubric** memecah "bagus atau tidak" yang kabur menjadi beberapa dimensi yang dapat dinilai terpisah, dan **LLM-as-a-Judge** memberi nilai ketika tidak ada patokan deterministik. Hanya bila keduanya digabung, tingkat kegagalan yang kabur dapat dikembalikan menjadi masalah konkret yang bisa ditangani; dipadukan dengan **atribusi kegagalan** pada paruh kedua bagian ini, terbentuklah lingkar tertutup evaluasi Agent produksi yang lengkap.
 
-SWE-Bench Verified mencakup bidang-bidang terstruktur seperti deskripsi masalah, langkah-langkah reproduksi, dan perilaku yang diharapkan/aktual, dengan anotorator yang memverifikasi kecocokan antara deskripsi dan *test cases*. Setiap elemen dalam deskripsi tugas Terminal-Bench dapat diverifikasi secara mekanis: apakah jalur file ada, nilai izin sudah benar, parameter sertifikat valid, dan format tanggal sudah benar. Misalnya, "build-linux-kernel-qemu" mengharuskan pembuatan kernel Linux 6.9 dari sumber, menambahkan `printk` kustom di `start_kernel`, menghasilkan `initramfs`, dan menjalankannya di QEMU. Kriteria keberhasilannya adalah kemunculan pesan kustom pada log *boot*—Agent tidak bisa memalsukan keluarannya; ia harus benar-benar menyelesaikan seluruh proses.
-
-AndroidWorld menggunakan desain **parameterized template**. Sebuah tugas bukanlah teks statis, melainkan templat yang dapat diinstansiasi secara dinamis (misalnya, "Ubah nomor telepon dari kontak `[CONTACT_NAME]` menjadi `[NEW_PHONE]`), dengan nilai parameter berbeda yang dihasilkan secara acak untuk setiap evaluasi. Ini memiliki tiga manfaat:
-
-- **Mencegah hafalan**: Nilai parameter berbeda setiap saat, mencegah terulangnya urutan operasi yang tetap
-- **Meningkatkan keberagaman data**: Satu templat dapat menghasilkan instansiasi dalam jumlah yang nyaris tak terbatas
-- **Mendukung eksperimen komparatif**: Menetapkan parameter tertentu sambil memvariasikan yang lain memungkinkan pengukuran yang presisi atas efek dari faktor-faktor spesifik
-
-Verifikasi didasarkan pada status UI akhir (misalnya, apakah kolom nomor telepon berisi nilai yang diharapkan), bukan urutan operasi.
-
-Tugas OSWorld sering kali tidak dimulai dari *state* awal yang "bersih," melainkan dari *state* perantara yang dikonfigurasi dengan hati-hati, yang lebih menyerupai skenario penggunaan dunia nyata. Deskripsi tugas perlu menangani banyak solusi ("atur latar belakang menjadi ungu" memerlukan kode warna spesifik untuk disambiguasi; "gabungkan dua CSV" harus menerima semua metode yang masuk akal seperti mempertahankan satu baris tajuk (*header*) atau keduanya) dan ketidakpastian lingkungan (langkah anti-pengikisan di situs web, UI aplikasi yang terus berkembang, dan *race conditions*—OSWorld-Verified memitigasi hal ini melalui *snapshot* halaman *offline*, mengunci versi dependensi, kondisi tunggu eksplisit, dll.).
-
-Daftar ini tidak mencakup seluruh lanskap evaluasi Agent. Bahkan di dalam kategori Web/GUI, terdapat beberapa *benchmark* dengan penekanan yang berbeda: WebArena membangun situs web yang sepenuhnya dapat direproduksi (*e-commerce*, forum, *code hosting*, dll.), yang mewadahi ketidakpastian halaman web nyata di dalam sebuah *sandbox*; Mind2Web menempuh jalur yang berlawanan, menguji generalisasi secara langsung di ratusan situs web nyata; [ClawBench](https://claw-bench.com/) ([makalah](https://arxiv.org/abs/2604.08523), [kode](https://github.com/TIGER-AI-Lab/ClawBench)) membiarkan Agent yang berjalan di dalam kontainer terisolasi melakukan tugas sehari-hari *end-to-end* di situs web yang *live*. V1 mencakup 153 tugas di 144 situs web, V2 menambahkan 130 lagi, dan ia mencatat lima lapisan bukti secara paralel: *session replays*, tangkapan layar tindakan, lalu lintas HTTP, tindakan *browser*, dan pesan Agent. Ini melengkapi *benchmark sandboxed* dengan membuat *live-site drift* dan *long-tail failures* lebih mudah dianalisis, dengan konsekuensi reproduktibilitas yang tunduk pada perubahan di situs web pihak ketiga; BrowseComp mengkhususkan diri pada pencarian mendalam — jawaban yang terkubur begitu dalam sehingga hanya penelusuran *multi-hop* dan *cross-checking* yang dapat memunculkannya. Di sisi *tool calling*, terdapat *leaderboard function-calling* khusus seperti BFCL (Berkeley Function-Calling Leaderboard). Bab ini tidak bermaksud untuk mendaftar semuanya. Alih-alih, bab ini mengambil dua paradigma lingkungan inti (*tool calling* dan interaksi manusia-komputer), ditambah skenario operasi GUI yang ada di sepanjang studi kasus dataset, dan menggali *trade-off* desain dari semuanya. Setelah Anda memahami paradigma tersebut, Anda dapat dengan cepat menilai apa yang diukur oleh *benchmark* baru apa pun, seberapa baik ia mencegah kebocoran data, dan seberapa jauh kesimpulannya dapat diekstrapolasi.
-
-### Desain Hierarkis dari Kompleksitas Tugas
-
-GAIA merancang tiga tingkat kesulitan: Level 1 hanya memerlukan 1-2 *tools* (manusia 93,9% vs GPT-4 30,3%), Level 2 memerlukan penalaran multi-langkah (91,8% vs 9,7%), dan Level 3 memerlukan kombinasi yang kompleks (87,3% vs 0%). Nilai diagnostik dari desain hierarkis ini adalah: kegagalan di Level 1 menunjuk pada masalah penggunaan *tool* dasar, Level 2 menunjuk pada perencanaan multi-langkah dan integrasi informasi, dan Level 3 menunjuk pada penalaran urutan panjang dan manajemen kompleksitas. Setiap tingkat sesuai dengan arah peningkatan yang berbeda (*prompt engineering* vs. mekanisme perencanaan vs. arsitektur hierarkis/*post-training*).
-
-τ²-bench menyusun kompleksitas berdasarkan proses bisnis: mulai dari kueri informasi sederhana, menuju proses multi-langkah (mengubah pemesanan penerbangan memerlukan kueri, menyajikan alternatif, mendapatkan konfirmasi, menghitung selisih tarif, dan memproses pembayaran), ke diagnosis kesalahan (memeriksa secara sistematis berbagai kemungkinan penyebab dan memverifikasi perbaikan), dan terakhir ke penilaian strategis (menangani permintaan yang tidak mematuhi kebijakan).
-
-Terminal-Bench menyusun kompleksitas berdasarkan dimensi ganda yaitu domain teknis × kompleksitas operasional. Registri tugasnya telah mengumpulkan lebih dari 200 tugas (ukuran set evaluasi intinya bervariasi bergantung pada versi; misalnya, versi 2.0 memilih 89 tugas berkualitas tinggi dari kontribusi komunitas), mulai dari registrasi model MLflow sederhana, ke pemecahan kata sandi 7-Zip dengan kesulitan sedang, ke integrasi server Git dan server web yang sulit, hingga kriptanalisis diferensial FEAL yang paling sulit (memerlukan pengetahuan kriptografi + optimasi algoritma untuk memenuhi batasan waktu 30 detik).
-
-### Memastikan Verifiabilitas dan Objektivitas
-
-Jawaban GAIA ringkas dan jelas. Aturan format yang ketat memungkinkan verifikasi melalui pencocokan string yang persis. Hasil biner (cocok atau tidak cocok) memastikan reproduktibilitas yang objektif. Kelangkaan jawaban juga berfungsi sebagai langkah anti-kecurangan—fakta yang sangat spesifik kecil kemungkinannya muncul secara harfiah (verbatim) dalam data pelatihan.
-
-SWE-Bench Verified menggunakan pemeriksaan berbasis kode yang dapat dieksekusi, membedakan antara FAIL_TO_PASS (gagal sebelum perbaikan, lulus setelah perbaikan, membuktikan masalah telah terpecahkan) dan PASS_TO_PASS (lulus baik sebelum maupun sesudah perbaikan, membuktikan tidak ada bug baru yang dimasukkan), mencapai verifikasi ganda. Versi Verified juga memastikan bahwa pengujiannya sendiri dapat diandalkan, tanpa *flaky tests* (pengujian tidak stabil) yang kadang lulus dan kadang gagal.
-
-Sistem verifikasi τ²-bench mencakup beberapa lapisan pemeriksaan (hasil setiap lapisan tetap diagregasikan ke dalam *reward* biner pada tingkat tugas; semuanya harus lulus untuk mencapai kesuksesan):
-
-- **Pemeriksaan status database**: Status catatan pemesanan, apakah catatan pengembalian dana (refund) telah dibuat
-- **Pencarian kata kunci konten dialog**: Apakah Agent secara eksplisit mengonfirmasi jumlah pengembalian dana dan perkiraan waktu tiba kepada pengguna
-- **Kepatuhan proses**: Analisis urutan pemanggilan tool (tool call), misalnya, apakah konfirmasi eksplisit dari pengguna telah diperoleh sebelum memodifikasi pesanan
-
-Lingkungan kontrol ganda (dual-control) dari τ²-bench (lihat bagian sebelumnya "Lingkungan Evaluasi Interaksi Manusia-Komputer") menambahkan dimensi lain pada verifikasi: setelah simulator pengguna benar-benar mengubah keadaan lingkungan, Agent harus mengamati perubahan ini melalui pemanggilan tool (tool call) dan melanjutkan dengan pemecahan masalah yang sesuai. Oleh karena itu, verifikasi mencakup apakah Agent benar-benar mengamati hasil dari tindakan pengguna.
-
-OSWorld menyediakan 134 fungsi evaluasi independen dengan akses OS penuh, memungkinkan inspeksi mendalam terhadap struktur sistem file, status proses, koneksi jaringan, dan internal aplikasi. Misalnya, dalam tugas operasi database, skrip evaluasi tidak hanya memverifikasi bahwa file laporan ada tetapi juga langsung terhubung ke database untuk memeriksa apakah SQL dieksekusi dengan benar. Dalam tugas browser, ia menganalisis pohon DOM, memeriksa cookies/localStorage, dan mengirimkan permintaan verifikasi ke backend untuk mengonfirmasi apakah pengiriman formulir benar-benar berhasil. Inspeksi mendalam ini dapat mendeteksi kasus "penyelesaian dangkal tetapi kesalahan substantif"—misalnya, Agent mengklik tombol kirim, tetapi permintaan ditolak oleh server karena isian bidang yang salah.
-
-Terminal-Bench didasarkan pada lingkungan kontainer Docker standar, menggabungkan pemeriksaan status sistem file (keberadaan jalur, nilai izin, format konten) dengan verifikasi fungsional eksekusi program (dalam build-linux-kernel-qemu, benar-benar memulai QEMU dan mencari pesan printk khusus). Canary GUID membuat kebocoran (leakage) dapat dilacak.
-
-### Desain Sistematis Distribusi Tugas
-
-Distribusi tugas perlu secara sistematis mencakup dimensi kemampuan, dimensi kesulitan, dimensi skenario, dan kasus ekstrem (edge cases). GAIA mengejar generalitas—sebagian besar tugas membutuhkan kombinasi penalaran, multimodalitas, penjelajahan (browsing), dan penggunaan alat (tool use). τ²-bench secara sengaja merancang "tugas jebakan"—pengguna mengklaim "layanan pelanggan telah menyetujui pembatalan" ketika pembatalan tersebut sebenarnya tidak sesuai dengan kebijakan—untuk menguji apakah Agent mempertahankan penilaiannya di bawah tekanan dan penyesatan. OSWorld didasarkan pada matriks dimensi ganda dari tipe operasi (file IO / aplikasi desktop / aplikasi web / alur kerja lintas aplikasi) dan domain aplikasi, yang mencakup tiga sistem operasi (penelitian menunjukkan korelasi lintas OS yang kuat; keterampilan yang dipelajari pada satu sistem dapat ditransfer ke sistem lain). Terminal-Bench mencakup "tugas kombinasi tumpukan teknologi lintas (cross-technology stack)" untuk menguji pemikiran sistem (misalnya, tugas *resharding* yang menggabungkan pemrosesan data + operasi file + rekayasa Python).
-
-### Kontrol Kualitas Data dan Peningkatan Iteratif
-
-SWE-Bench Verified adalah model kontrol kualitas. OpenAI secara acak memilih 1.699 tugas dari 2.294 tugas asli untuk evaluasi manusia, merekrut 93 pengembang yang mahir Python. Para anotator harus melakukan beberapa pemeriksaan: apakah deskripsi masalahnya jelas (dapatkah mereka memahami apa yang perlu dipecahkan), apakah test case-nya lengkap (mencakup semua aspek dan kasus ekstrem), apakah pengujiannya stabil (tidak ada *flaky tests* karena lingkungan atau keacakan), apakah patch-nya benar (apakah itu memasukkan kesalahan baru), dan apakah tingkat kesulitannya masuk akal. Setelah penyaringan yang ketat, hanya 500 yang lulus (29%)—tingkat penolakan yang tinggi ini merupakan investasi yang diperlukan dalam kualitas evaluasi. Mereka juga menetapkan pedoman anotasi standar, mendefinisikan kriteria dan contoh spesifik untuk setiap pemeriksaan guna memastikan konsistensi di antara anotator yang berbeda.
-
-τ²-bench memperkenalkan pemisahan "informasi yang diketahui" / "instruksi tugas" (membuat perilaku simulator lebih realistis) dan kondisi penyelesaian yang lebih ketat (misalnya, "hanya *excellent* yang dihitung sebagai selesai; *poor*/*fair*/*good* tidak diterima"), mencegah "perbaikan dangkal."
-
-OSWorld-Verified adalah model peningkatan iteratif. Setelah dirilis pada bulan April 2024, OSWorld dengan cepat menjadi benchmark penting untuk evaluasi Agent multimodal, tetapi selama lebih dari 15 bulan penggunaan luas, lebih dari 300 masalah terungkap. Masalah-masalah ini terbagi dalam empat kategori: masalah lingkungan (tindakan anti-scraping di situs web, CAPTCHA, dan perubahan konten dinamis), masalah deskripsi tugas (kalimat yang ambigu), masalah logika verifikasi (terlalu ketat atau terlalu longgar), dan masalah keadaan awal (konfigurasi yang tidak lengkap). Sebuah tim yang terdiri dari sekitar 10 orang dari University of Hong Kong bekerja sama dengan MoonShot AI, OpenAI, ByteDance Seed TARS, Anthropic, Simular, dan lainnya selama dua bulan untuk secara sistematis memperbaiki masalah-masalah ini. Strategi perbaikan dirumuskan untuk setiap kategori: masalah lingkungan diselesaikan dengan mengunci versi dan cadangan offline, deskripsi tugas diperjelas dengan menulis ulang kalimat yang ambigu, logika verifikasi diseimbangkan dengan menetapkan *baseline* yang benar secara manual dan menyesuaikan kondisi, dan keadaan awal ditingkatkan dengan menambahkan pemeriksaan kelengkapan.
-
-## Metode Evaluasi Otomatis
-
-Dengan lingkungan evaluasi, dataset, dan sistem metrik yang jelas, pertanyaan intinya menjadi: bagaimana cara menilai? Untuk tugas-tugas dengan jawaban benar yang jelas (misalnya, soal matematika, kueri SQL), penilaian biner sederhana (benar/salah) sudah cukup; tetapi untuk tugas-tugas terbuka (misalnya, dialog layanan pelanggan, penulisan laporan), metode evaluasi yang lebih disempurnakan diperlukan.
-
-Verifikasi otomatis berbasis kode hanya mencakup skenario dengan jawaban standar; penilaian tugas-tugas terbuka adalah topik utama dari bagian ini. Di antaranya, desain kepadatan sinyal reward (dari reward biner ke reward proses hingga reward generatif) dan metode pelatihan untuk model reward dibiarkan untuk diskusi sistematis di bagian pasca-pelatihan (post-training) pada Bab 8; bagian ini menjawab pertanyaan yang lebih mendasar: bagaimana menggunakan LLM untuk secara otomatis menilai kualitas output dari tugas-tugas terbuka.
+Perlu ditegaskan, bergeser ke kanan tidak berarti meninggalkan sisi kiri. Setiap pemeriksaan yang dapat ditulis sebagai asersi program sebaiknya tetap berupa asersi, dan penilaian LLM hanya dipakai untuk dimensi yang memang tak dapat diputuskan secara mekanis. Pemeriksaan deterministik lebih murah dan lebih stabil, serta lebih cocok dijalankan jangka panjang sebagai uji regresi.
 
 ### LLM-as-a-Judge: Inti dari Evaluasi Otomatis
 
-![Gambar 7-4: Pipeline LLM-as-a-Judge](images/fig7-4.svg)
+![Gambar 7-5: Pipeline LLM-as-a-Judge](images/fig7-5.svg)
 
 Mengapa LLM-as-a-Judge dibutuhkan? Untuk tugas terbuka (misalnya, membuat laporan, menangani keluhan pelanggan, konten kreatif), tidak ada jawaban standar untuk perbandingan otomatis, dan evaluasi manusia memakan biaya besar serta sulit untuk diskalakan. LLM-as-a-Judge menyeimbangkan skalabilitas otomatisasi dengan penilaian pakar manusia dengan menyuruh model bahasa mengevaluasi output terhadap kriteria penilaian yang ditentukan pakar (sebuah Rubric). Meski begitu, metode ini memiliki keterbatasan yang diketahui: model juri membawa biasnya sendiri (paling umum **bias panjang (length bias)**—kecenderungan untuk memberi skor lebih tinggi pada tanggapan yang lebih panjang dan lebih detail bahkan ketika mereka tidak lebih benar), dan penilaian berulang dari input yang sama dapat bervariasi. Bias panjang secara khusus memerlukan tindakan pencegahan khusus. Tiga pertahanan umum adalah: hukum (penalize) kata-kata yang berlebihan (verbosity) secara eksplisit dalam Rubric dan batasi panjang tanggapan per jenis tugas; dalam perbandingan berpasangan (pairwise), bawa kedua kandidat ke panjang yang sama sebelum menilai; dan secara teratur mengaudit korelasi antara skor dan panjang tanggapan—jika skor tinggi hampir selalu diberikan pada tanggapan yang panjang, juri telah terpengaruh oleh panjang dan Rubric tersebut memerlukan revisi. Untuk mengatasi tantangan ini secara sistematis, desain Rubric harus mengikuti prinsip-prinsip di bawah ini:
 
@@ -363,7 +364,7 @@ rubric:
 
 Kirim Rubric bersama respons aktual Agent ke model penilai untuk memperoleh skor dan alasan per dimensi. Setelah puluhan hasil dikumpulkan, putar ulang jejak yang nilainya rendah. Penurunan tingkat keberhasilan yang semula samar lalu dapat dipecah menjadi diagnosis konkret: informasi tidak ditemukan, hubungan antartokoh keliru, atau jawaban menambahkan hal yang tidak didukung data. Dengan demikian Rubric bukan hanya memberi nilai, tetapi juga menunjukkan bagian yang perlu diperbaiki.
 
-Berikut ini memakai memori pengguna sebagai kasus konkret, untuk menunjukkan bagaimana metode umum ini diturunkan menjadi set evaluasi dan penilai yang dapat dijalankan.
+Berikut ini memakai memori pengguna sebagai kasus konkret, untuk menunjukkan bagaimana metode umum ini diturunkan menjadi set evaluasi dan verifier yang dapat dijalankan.
 
 > **Eksperimen 7-3 ★★: Membangun Sistem Evaluasi User Memory Berbasis Rubric**
 >
@@ -532,7 +533,7 @@ Dalam pemilihan model secara praktis, kita sering menghadapi pertanyaan: "Mana y
 
 ### Pairwise Comparison dan Peringkat Model
 
-![Gambar 7-5: Peringkat Elo dan Peringkat Pairwise Comparison](images/fig7-5.svg)
+![Gambar 7-6: Peringkat Elo dan Peringkat Pairwise Comparison](images/fig7-6.svg)
 
 **Elo Rating** (sebuah sistem peringkat yang awalnya dirancang untuk catur) mengukur kemampuan relatif model melalui sejumlah besar pertandingan berpasangan (pairwise matchups): semakin besar perbedaan peringkat, semakin tinggi tingkat kemenangan yang diharapkan untuk model yang lebih kuat. Misalnya, jika Model A memiliki peringkat 1200 dan Model B memiliki peringkat 1000, sistem Elo akan memprediksi tingkat kemenangan A sekitar 76%. Jika B secara tak terduga menang, B mendapatkan lebih banyak poin dan A kehilangan lebih banyak—sebuah kejutan (upset) memicu koreksi yang lebih besar, yang memungkinkan peringkat konvergen dengan cepat pada kemampuan sebenarnya. Fondasi statistik ini adalah **Bradley-Terry model**: setiap model diabstraksikan sebagai "skor kekuatan" laten, dan probabilitas satu model mengalahkan model lain dalam sebuah pertandingan ditentukan oleh perbedaan antara skor mereka. Elo adalah implementasi rekayasa dari model ini dalam bentuk pembaruan online.
 
@@ -694,7 +695,7 @@ Ketika memverifikasi beberapa hipotesis secara paralel, pertimbangkan pula **per
 
 Keputusan yang didorong oleh evaluasi (baik untuk pemilihan model atau iterasi berkelanjutan) bergantung pada data operasional berkualitas tinggi. Di bawah ini, pertama-tama kita akan memperkenalkan cara mengumpulkan data ini secara sistematis (observabilitas), dan kemudian mendiskusikan cara menerjemahkan hasil evaluasi menjadi perbaikan sistem.
 
-![Gambar 7-6: Tumpukan Teknologi Observabilitas](images/fig7-6.svg)
+![Gambar 7-7: Tumpukan Teknologi Observabilitas](images/fig7-7.svg)
 
 Observabilitas adalah konsep yang dipinjam dari sistem terdistribusi: Anda tidak dapat membuka sistem dan melihatnya bekerja; Anda menyimpulkan apa yang terjadi dari log, metrik, dan jejak (traces) yang dipancarkannya—cara seorang dokter, tidak dapat melihat ke dalam diri seorang pasien, mendiagnosis dari suhu tubuh, tekanan darah, dan pencitraan medis. Sistem Agent membuat hal ini menjadi lebih sulit: input yang sama dapat menghasilkan output yang berbeda, penalaran multi-ronde dan pemanggilan tool membuat alur eksekusi menjadi sangat kompleks, dan "thinking" (pemikiran) model sepenuhnya buram dari luar.
 
@@ -714,7 +715,7 @@ Dengan sistem evaluasi dan dataset yang komprehensif, kuncinya adalah menerjemah
 
 Berikut adalah proses tuning AndroidWorld nyata yang tersimpan di repositori pendamping. Pilot ini hanya mencakup empat tugas pengaturan Wi-Fi pada emulator API 35, dengan satu eksekusi berpasangan per tugas. Ini bukan benchmark lengkap 116 tugas dan bukan pengganti pengujian ulang pada lingkungan standar API 33. Nilainya adalah menunjukkan bagaimana hasil satu putaran menentukan satu perubahan pada putaran berikutnya, bukan membuktikan peningkatan sistem secara keseluruhan.
 
-![Gambar 7-7: Lingkaran Benchmark ke Perbaikan](images/fig7-7.svg)
+![Gambar 7-8: Lingkaran Benchmark ke Perbaikan](images/fig7-8.svg)
 
 Dari sudut pandang rekayasa Harness, bagian ini pada dasarnya adalah tentang metodologi untuk optimisasi Harness berulang (iterative Harness optimization)—menggunakan data evaluasi untuk mengidentifikasi titik lemah di Harness (konteks tidak cukup? kurang batasan? validasi tidak memadai? umpan balik (feedback) tidak tepat waktu?), membuat perbaikan yang ditargetkan, dan kemudian mengevaluasi kembali, membentuk putaran tertutup (closed loop) untuk evolusi Harness yang berkelanjutan.
 
@@ -823,7 +824,7 @@ Titik akhir dari evaluasi bukanlah penskoran, melainkan perbaikan. Bab ini telah
 
 Beginilah cara dua ujung jembatan ini bertemu. Aset-aset yang terakumulasi di sisi evaluasi dikonversi hampir tanpa hambatan menjadi sinyal pelatihan: Rubric atau validator yang terdefinisi dengan baik pada dasarnya adalah fungsi *reward* untuk **Reinforcement Learning with Verifiable Rewards (RLVR)**—skrip penskoran menjadi skrip *reward*; apakah sebuah pengujian lulus atau suatu *state* memenuhi standar, berfungsi baik sebagai kriteria evaluasi maupun sebagai *reward* untuk *reinforcement learning*. Namun pelatihan membawa tuntutan yang tidak pernah perlu dikhawatirkan oleh evaluasi. Yang pertama adalah **semantik reset yang andal (*reliable reset semantics*)**: pelatihan menjalankan jutaan *episode* (sebuah episode adalah satu ronde interaksi yang lengkap dari status awal hingga penyelesaian tugas), dan setiap episode harus mampu me-reset lingkungan ke kondisi awal yang bersih dan deterministik; jika tidak, sinyal gradien akan terkontaminasi oleh status sisa dari episode sebelumnya. Yang kedua adalah ***throughput* yang jauh melebihi evaluasi**: beberapa ribu evaluasi sudah cukup untuk menarik kesimpulan, tetapi pelatihan memerlukan model untuk diumpankan jutaan interaksi dalam *wall-clock time* yang dapat diterima; tingkat paralelisme lingkungan dan *overhead* per *instance* secara langsung menentukan apakah pelatihan tersebut layak. Kedua hal ini—validator yang diubah menjadi *reward function*, serta *reset* dan *throughput* tingkat pelatihan (*training-grade*)—akan diuraikan di Bab 8.
 
-![Gambar 7-8: Spektrum Fidelitas Simulasi](images/fig7-8.svg)
+![Gambar 7-9: Spektrum Fidelitas Simulasi](images/fig7-9.svg)
 
 Di sisi **lingkungan digital**, *framework* AWorld membangun *sandbox* MCP server yang dapat dikontrol untuk tugas-tugas GAIA, menyediakan 26 MCP server yang mencakup 126 fungsi *tool*, menghindari larangan akses (*bans*) dan efek samping yang tidak dapat dikontrol dari mengakses API nyata secara langsung. Semua pemanggilan *tool* bersifat *replayable* dan dapat diaudit. Arsitektur terdistribusi AWorld mengurangi waktu eksekusi serial tradisional dari 7695 detik menjadi 525 detik (percepatan 14.6x), dan desain *stateless* pada lingkungan tersebut membuat setiap *instance* sepenuhnya independen, mendukung paralelisme yang efisien.
 
@@ -833,7 +834,7 @@ Di sisi **lingkungan berwujud fisik (*embodied environment*)**, RoboTwin2 memban
 >
 > Siapkan lingkungan simulasi untuk manipulasi robot. Baca `ch7/SimpleVLA-RL` dan dokumentasi OpenVLA untuk memahami arsitektur dari model Vision-Language-Action (integrasi *end-to-end* dari *vision encoder*, *language model*, dan *action decoder*, yang memproyeksikan gambar dan teks ke dalam ruang semantik bersama). Konfigurasikan lingkungan RoboTwin2, pahami *observation space* (tiga pandangan RGB + 14-dimensi *joint state*) dan *action space* (14-dimensi vektor kontrol). Pelajari mekanisme pengacakan lingkungan dan logika batasan spasial dalam `move_can_pot`. Evaluasi model prapelatihan (*pretrained model*), catat tingkat keberhasilannya, waktu penyelesaian, dan mode kegagalan, dengan fokus pada dampak dari mekanisme *action chunking*.
 >
-> ![Gambar 7-9: Lingkungan Kecerdasan Terwujud OpenVLA dan RoboTwin2](images/fig7-9.svg)
+> ![Gambar 7-10: Lingkungan Kecerdasan Terwujud OpenVLA dan RoboTwin2](images/fig7-10.svg)
 
 ### Pertukaran Fidelity dan Domain Randomization
 
@@ -843,7 +844,7 @@ Lingkungan high-fidelity mendukung transfer yang lebih baik ke dunia nyata tetap
 
 ## Ringkasan Bab
 
-Bab ini berpusat pada satu pertanyaan: bagaimana kita tahu bahwa Agent benar-benar membaik? Lingkungan yang dapat direproduksi, dataset tahan leakage, LLM sebagai penilai, serta model selection dan iterasi berbasis hasil semuanya menentukan keandalan kesimpulan. Eksperimen nyata memberi empat peringatan tambahan: menggabungkan memori terstruktur dan RAG tidak menjamin sinergi; penghematan cache dan kompresi tidak dapat dijumlahkan; pilihan audio referensi mengubah makna skor multimodal; dan kemampuan Agent membaca UI beserta biaya token-nya bergantung pada cara Harness menyajikan input. Model selection harus membandingkan kurva kemampuan pada berbagai anggaran, bukan satu titik. Evaluasi produksi adalah validasi berkelanjutan yang tertanam dalam keputusan produk.
+Bab ini berpusat pada satu pertanyaan: bagaimana kita tahu bahwa Agent benar-benar membaik? Rantainya terdiri atas empat tahap: pertama menjernihkan apa yang dihitung sebagai keberhasilan (perbedaan basis Pass@k, Best@k, dan Pass consecutive@k), lalu menetapkan dari mana tugas berasal (benchmark publik, himpunan bisnis buatan sendiri, dan aliran balik trajectory produksi), kemudian memilih cara verifikasi (dari verifier deterministik ke daftar pemeriksaan, Rubric dengan penilaian LLM, hingga perbandingan berpasangan), dan akhirnya mengubah skor menjadi keputusan (signifikansi statistik, atribusi kegagalan, tugas regresi, dan pemilihan model). Setiap tahap menentukan keandalan kesimpulan. Eksperimen nyata memberi empat peringatan tambahan: menggabungkan memori terstruktur dan RAG tidak menjamin sinergi; penghematan cache dan kompresi tidak dapat dijumlahkan; pilihan audio referensi mengubah makna skor multimodal; dan kemampuan Agent membaca UI beserta biaya token-nya bergantung pada cara Harness menyajikan input. Model selection harus membandingkan kurva kemampuan pada berbagai anggaran, bukan satu titik. Evaluasi produksi adalah validasi berkelanjutan yang tertanam dalam keputusan produk.
 
 Dilihat dari struktur buku secara keseluruhan, bab ini membangun ruas **bukti** dalam lingkar penemuan Bab 1: atribusi kegagalan menentukan apakah usulan berikutnya punya pijakan yang kukuh.
 
