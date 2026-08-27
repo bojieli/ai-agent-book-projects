@@ -17,57 +17,117 @@ La evaluación nos proporciona una base científica para la toma de decisiones: 
 Desde la perspectiva de ingeniería del Harness introducida en el Capítulo 1, la evaluación desempeña el papel central de "verificación" dentro del Harness. Una noción fundamental es: **el objeto de evaluación no debe ser únicamente el modelo, sino la combinación del modelo y el Harness**. Un mismo modelo puede tener un rendimiento drásticamente diferente en distintos Harnesses (algunos equipos han logrado mejorar significativamente el rendimiento del mismo modelo en tareas de terminal optimizando únicamente el Harness, como se detalla en el Capítulo 5). Esto significa que cuando un Agente funciona mal en una evaluación, la dirección de mejora podría no ser cambiar de modelo, sino optimizar un componente específico del Harness (prompts, diseño de herramientas, bucles de retroalimentación). Un sistema de evaluación maduro debe ser capaz de distinguir entre dos tipos de problemas fundamentalmente diferentes: "capacidad insuficiente del modelo" y "defectos de diseño del Harness". **El método habitual para distinguir ambos problemas es el experimento de reemplazo de modelo (model swap)**: fijar el Harness y cambiar únicamente a un modelo más fuerte o más débil, observando la magnitud del cambio en la puntuación. Si al cambiar a un modelo más fuerte la puntuación no sube, el cuello de botella está en el Harness; si al cambiar a un modelo más débil la puntuación cae drásticamente y fluctúa según la capacidad del modelo, la interpretación más directa es que el cuello de botella es la capacidad propia del modelo y el rendimiento actual está determinado principalmente por él (en cuanto a si esto se debe a que la tarea en sí es difícil o a que el Harness depende en exceso de las a priori del modelo, se requiere un análisis posterior). Nótese que esto es diferente de los "experimentos de ablación" mencionados anteriormente: la ablación consiste en **desactivar un componente del Harness** para ver cómo cambia el rendimiento general, mientras que el reemplazo de modelo consiste en **fijar el Harness y cambiar solo el modelo**: la primera técnica ubica qué componente interno del Harness es importante, mientras que la segunda distingue si el cuello de botella está en el modelo o en el Harness.
 
 El valor del sistema de evaluación se vuelve aún más evidente en una era de rápida evolución de los modelos. La capacidad de los modelos continúa evolucionando rápidamente, pero que un nuevo modelo obtenga mejores puntuaciones en benchmarks públicos no significa que vaya a funcionar mejor en tu tarea específica; de hecho, puede sufrir regresiones de rendimiento —es decir, que la nueva versión sea peor en ciertos aspectos que la versión anterior). Solo probando exhaustivamente en tu propio conjunto de datos de evaluación podrás tomar decisiones de actualización impulsadas por datos. Más aún, un sistema de evaluación completo hace que "desarrollar productos para los modelos del futuro" sea una estrategia viable: incluso si el modelo actual no es suficiente para sustentar el uso comercial, se puede completar primero el desarrollo del producto y establecer un conjunto de datos de evaluación, rastreando continuamente el rendimiento de los nuevos modelos para salir al mercado tan pronto como se alcance el umbral.
+Un sistema de evaluación puede descomponerse en cuatro etapas: qué cuenta como éxito, de dónde salen las tareas, quién verifica y cómo se convierte una puntuación en una decisión, tal como muestra la Figura 7-1.
 
-> **Guía del Capítulo**
->
-> Este capítulo construye un sistema de evaluación completo en tres niveles. El primer nivel es el **entorno de evaluación** ("dónde probar"): cómo construir un entorno de pruebas automatizado y reproducible, incluyendo tanto el paradigma de llamada a herramientas como el de interacción humano-computadora. El segundo nivel abarca los **métodos de evaluación** ("cómo juzgar"): desde los principios de diseño de conjuntos de datos y la arquitectura de métricas (qué medir), pasando por la evaluación automatizada mediante LLM-as-a-Judge (utilizando modelos de lenguaje como jueces), hasta la comparación por pares y el ranking de modelos. El tercer nivel es la **toma de decisiones impulsada por la evaluación** ("qué hacer tras medir"): transformar los resultados de evaluación en guías de acción para la selección de modelos, la optimización de arquitectura y la iteración continua, utilizando la significatividad estadística para determinar si las diferencias observadas son reales y confiables. Además, este capítulo analiza la observabilidad y la infraestructura interna de evaluación para Agentes en producción, concluyendo con la presentación de entornos de simulación que conectan con el post-entrenamiento del Capítulo 8.
->
-> El concepto central a lo largo de todo el capítulo es: **el valor primario de un sistema de evaluación no es calificar al sistema actual, sino permitirte seguir el ritmo de la evolución de los modelos de forma rápida y confiable**. Cuando se lanza un modelo más potente o más económico, un equipo con un sistema de evaluación completo puede tomar decisiones de migración en cuestión de horas, mientras que un equipo sin evaluación solo puede actuar por intuición o esperar el feedback de la comunidad (en el competitivo mercado de los Agentes, esta brecha de velocidad puede determinar el éxito o el fracaso).
+![Figura 7-1 Las Cuatro Etapas del Sistema de Evaluación de un Agent](images/fig7-1.svg)
 
-![Figura 7-1 Tres Niveles del Sistema de Evaluación](images/fig7-1.svg)
+## Anatomía de una tarea de evaluación: el dominio telecom de τ²-bench
 
-## Un Ejemplo Concreto de Evaluación
+Empecemos por diseccionar por completo una tarea real del dominio telecom de τ²-bench. El código fuente está en el repositorio, en `chapter7/tau2-bench`, y el fichero de tareas es `data/tau2/domains/telecom/tasks_small.json`.
 
-Antes de profundizar en la metodología, construyamos intuición a través de un ejemplo completo. Supongamos que hemos construido un Agente de atención al cliente y necesitamos evaluar su capacidad para manejar solicitudes de reembolso.
+### Los cuatro componentes de la definición de una tarea
 
-**Caso de prueba**: El usuario solicita devolver un pedido realizado hace 3 días (número de pedido #12345, monto ¥299). Política de la empresa: reembolso completo dentro de los 7 días.
+A continuación se muestra una de las tareas de ese fichero, abreviada para facilitar la lectura.
 
-**Trayectoria del Agente**:
+```jsonc
+{
+  "id": "[mobile_data_issue]airplane_mode_on|user_abroad_roaming_enabled_off",
 
-```text
-Usuario: Quiero devolver los auriculares que compré hace 3 días, número de pedido 12345. (Hoy es 2026-04-10)
+  // El ticket que recibe el Agent
+  "ticket": "El móvil del usuario no consigue conectarse a internet y la barra de
+             estado muestra 'No Service'. Cliente John Smith, número 555-123-2002,
+             actualmente en Francia. Solo se considera resuelto si el test de
+             velocidad devuelve excellent. No quiere cambiar de tarifa, pero
+             aceptaría recargar 2,0 GB de datos si hiciera falta.",
 
-Agente (pensando): El usuario quiere solicitar un reembolso, primero debo consultar la información del pedido.
-Agente → Llama a la herramienta query_order(order_id="12345")
-Herramienta devuelve: {status: "delivered", amount: 299, date: "2026-04-07", item: "Auriculares Bluetooth"}
+  // La pauta de comportamiento que recibe el simulador de usuario
+  "user_scenario": { "instructions": {
+      "known_info": "You are John Smith with phone number 555-123-2002.
+                     You are currently abroad in France.",
+      "unknown_info": null,
+      "task_instructions":
+        "…express mild frustration after the first unsuccessful attempt.
+         You will consider the issue resolved only when speed test returns
+         excellent internet speed and nothing else. If it returns poor, fair
+         or good, you will not consider the issue resolved.
+         Whenever the agent asks you about your device, always ground your
+         responses on the results of tool calls. …
+         Never make up the results of tool calls."
+  }},
 
-Agente (pensando): La fecha de pedido es 2026-04-07, a 2026-04-10 han pasado 3 días, dentro del plazo de reembolso de 7 días, cumple las condiciones para reembolso completo.
-Agente → Llama a la herramienta process_refund(order_id="12345", amount=299)
-Herramienta devuelve: {refund_id: "R-98765", status: "processing", eta: "3-5 días hábiles"}
+  // Antes de ejecutar, ambos lados se reinician al mismo punto de partida
+  "initial_state": { "initialization_actions": [
+      { "env_type": "user",      "func_name": "turn_airplane_mode_on" },
+      { "env_type": "user",      "func_name": "turn_roaming_off" },
+      { "env_type": "assistant", "func_name": "enable_roaming",
+        "arguments": { "customer_id": "C1001", "line_id": "L1002" } }
+  ]},
 
-Agente: Se ha iniciado la solicitud de reembolso para el pedido #12345 (Auriculares Bluetooth, ¥299). El reembolso completo está en proceso y se estima que llegará en 3 a 5 días hábiles. El número de seguimiento del reembolso es R-98765, el cual puede utilizar para consultar el estado.
+  // Criterios de puntuación
+  "evaluation_criteria": {
+      "actions": [
+        { "requestor": "user", "name": "toggle_airplane_mode" },
+        { "requestor": "user", "name": "toggle_roaming" }
+      ],
+      "env_assertions": [
+        { "func_name": "assert_mobile_data_status", "expected_status": true },
+        { "func_name": "assert_internet_speed",
+          "expected_speed": 200, "expected_desc": "excellent" }
+      ],
+      "communicate_info": null,
+      "nl_assertions": null,
+      "reward_basis": ["ENV_ASSERTION"]
+  }
+}
 ```
 
-**Puntuación con Rúbrica** (cuatro dimensiones, de 1 a 4 puntos por dimensión). La Tabla 7-1 muestra un ejemplo de puntuación para esta tarea de reembolso de atención al cliente, ilustrando cómo una Rúbrica desglosa una trayectoria de Agente en dimensiones evaluables.
+Hay cuatro decisiones de diseño en esta definición que conviene desarrollar.
 
-Tabla 7-1 Ejemplo de Puntuación con Rúbrica para Tarea de Reembolso de Atención al Cliente
+**El límite del conocimiento del usuario está modelado de forma explícita.** `known_info` contiene únicamente tres datos: nombre, número de teléfono y país de estancia. Las dos causas reales de la avería —el modo avión activado y la itinerancia de datos desactivada— no están ahí. El usuario no lo sabe, de modo que no puede decirlo por su cuenta, y el Agent solo puede obtenerlo preguntando y pidiéndole que lo compruebe. Así se implementa la **divulgación progresiva de información (Progressive Information Disclosure)** en el nivel de la definición de la tarea: no atando al simulador con un prompt del tipo «no lo cuentes todo de golpe», sino modelando el alcance del conocimiento del usuario como un campo propio. La mayoría de los benchmarks presentan el requisito completo al empezar la tarea, mientras que la primera frase de un usuario real suele ser poco más que «no me funciona internet». Aclarar la petición hasta hacerla ejecutable forma parte, en sí misma, de lo que un Agent debe saber hacer.
 
-| Dimensión | Criterio | Puntuación | Razón |
-|--------------------|-----------------------------------|---------|-------------------------------|
-| Corrección operativa | ¿El monto del reembolso y el número de pedido son correctos? | 4 | Consultó e inició correctamente el reembolso completo de ¥299 |
-| Cumplimiento de políticas | ¿Respeta la política de reembolso de 7 días? | 4 | El pedido está dentro del plazo de reembolso, cumple la política |
-| Completitud de la información | ¿Informa del monto, tiempo de acreditación y número de reembolso? | 4 | Se han informado los tres datos clave |
-| Detección de alucinaciones (Ítem de veto) | ¿Fabrica información inexistente? | Aprobado | Toda la información proviene de los resultados de las herramientas |
+**El simulador recibe una pauta de comportamiento, no un guion de frases.** `task_instructions` mezcla tres tipos de restricción: el ajuste emocional (mostrar una leve frustración tras el primer intento fallido), el criterio de aceptación (solo se considera resuelto cuando el test de velocidad devuelve excellent; poor, fair y good se rechazan) y el requisito de **anclaje factual (Grounding)**: cualquier respuesta sobre el estado del dispositivo debe basarse en el valor devuelto por una herramienta, «Never make up the results of tool calls». El tercero es el más decisivo: sin la restricción de anclaje, el usuario simulado seguirá la conducción del Agent y confirmará que el problema está resuelto, y la evaluación degenerará en dos modelos ratificándose mutuamente.
 
-La alucinación se clasifica como un **ítem de veto** en lugar de una dimensión de puntuación graduada porque es ortogonal a la calidad: una respuesta fluida, detallada y educada que contenga hechos falsos causa mucho más daño al usuario que una respuesta breve pero precisa. (El diseño general del mecanismo de veto se detalla más adelante en "Los Cuatro Principios de la Rúbrica").
+**El estado inicial está dividido según quién lo controla.** `env_type` toma dos valores, `user` y `assistant`: el modo avión y el interruptor de itinerancia pertenecen al lado del usuario, mientras que `enable_roaming` en el lado del operador pertenece al lado del Agent. Esa división determina la forma de la avería: en el lado del operador la itinerancia está dada de alta, pero en el terminal del usuario está apagada, así que si el Agent consulta la base de datos solo obtiene la conclusión «configuración correcta». La avería está en el lado que la base de datos no ve, y solo aflora pidiendo al usuario que lo compruebe.
 
-Este caso de prueba se ha aprobado. Sin embargo, una buena evaluación no solo prueba escenarios de éxito, sino que debe poner a prueba los límites y las trampas: cuando un usuario quiere devolver un pedido de hace 15 días (fuera del plazo de reembolso), ¿puede el Agente rechazarlo correctamente? Cuando el usuario afirma que "el servicio de atención al cliente ya aprobó el reembolso", ¿confiará a ciegas el Agente sin registros en el sistema? Estos escenarios límite son la clave para distinguir entre niveles altos y bajos de capacidad en los Agentes.
+**Los criterios de puntuación se dividen en cuatro capas, y esta tarea solo utiliza una de ellas.** `env_assertions` verifica el estado final (datos móviles disponibles, velocidad de 200 Mbps o más y calificación excellent), `actions` verifica si ocurrieron las acciones clave y **qué lado las ejecutó**, y `communicate_info` y `nl_assertions` verifican si se comunicó al usuario la información necesaria. El `reward_basis` de esta tarea declara únicamente `ENV_ASSERTION`; las demás capas se calculan y registran como siempre, pero no entran en la recompensa final. La base de puntuación se declara tarea por tarea, no queda fijada globalmente.
 
-El flujo anterior (definir el caso de prueba, ejecutar el Agente, puntuar con Rúbrica y analizar los resultados) constituye la estructura básica de la evaluación. A continuación, este capítulo desplegará gradualmente los métodos de diseño para cada una de sus etapas.
+### La trayectoria de una ejecución real
 
-## Sistema de métricas de evaluación: nuevos criterios
+A continuación invitamos al lector a ejecutar las tareas de evaluación del dominio telecom de τ²-bench, observar el diseño de las tareas, el simulador de usuario y la lógica de verificación del proceso y del resultado, y examinar la trayectoria de ejecución del Agent para analizar por qué falla.
 
-Antes de construir el entorno o el dataset hay que definir qué significa «éxito»: ¿basta con encontrar un camino viable una vez o cada ejecución debe ser correcta? Las dos respuestas producen decisiones de ingeniería distintas. Esta sección establece primero ese criterio y más adelante explica cómo implementar el entorno, el conjunto de datos y el evaluador.
+> **Experimento 7-1 ★: Ejecutar τ²-bench y comparar su evolución respecto a τ-bench**
+>
+> Este experimento ejecuta el framework de evaluación τ²-bench para comprender los puntos clave del diseño de un entorno de evaluación de interacción humano-computadora. Primero, lea el fichero de definición de tareas siguiendo el mismo recorrido de esta sección: cada tarea consta de cuatro partes —información conocida, instrucciones de la tarea, estado inicial y condiciones de éxito—. Después ejecute el flujo completo de evaluación, observe el diálogo multiturno entre el simulador de usuario y el Agent, y analice los modos de fallo típicos (violación de políticas, omisión de información, derivación excesiva a un agente humano, etc.).
+>
+> ![Figura 7-3 Entorno de doble control y verificación por capas en τ²-bench](images/fig7-3.svg)
+
+El repositorio complementario conserva el registro de una ejecución (`chapter7/tau2-bench-eval`). Analizamos a continuación una de las ejecuciones que tuvieron éxito.
+
+Los primeros diez y pico turnos son la fase de identificación de la cuenta. El Agent localiza al cliente C1001 por el número, consulta uno a uno el consumo de datos de las tres líneas L1001, L1002 y L1003, y vuelve a preguntar qué número usa realmente el usuario en Francia. En el mensaje 17 llega a una conclusión errónea:
+
+> **Agent** (17): el número 555-123-2002 no figura entre sus líneas activas; el más parecido es 555-123-2001…
+
+Esa conclusión se apoya en la consulta de una sola línea, L1001. Después de que el usuario insista en que el número es correcto, el Agent consulta L1002 y solo entonces encuentra la correspondencia. El giro decisivo llega en el mensaje 30:
+
+> **Usuario** (30) → llama a `check_network_status()`, `check_status_bar()`
+>
+> **Retorno de la herramienta** (31): `Airplane Mode: ON | Cellular Connection: no_service | Mobile Data Enabled: Yes | Data Roaming Enabled: No`
+>
+> **Usuario** (33): veo que el móvil está ahora en modo avión, por eso no hay señal. Los datos móviles están activados, pero la itinerancia de datos está desactivada. ¿Quiere que desactive el modo avión y lo intente?
+
+Quien emite la llamada a la herramienta es el **usuario**, no el Agent. Este es el mecanismo de **doble control (Dual-Control)**: el usuario simulado dispone de su propio conjunto de herramientas, como `check_status_bar`, `toggle_airplane_mode`, `reseat_sim_card` y `run_speed_test`.
+
+El diagnóstico posterior va sobre ruedas: el Agent pide al usuario que desactive el modo avión y active la itinerancia, el usuario ejecuta ambas acciones (35, 37) y la barra de estado pasa a 5G con cobertura completa; el Agent pide un test de velocidad, que devuelve 275 Mbps con calificación Excellent (46), y el usuario confirma que el problema está resuelto. Las dos `env_assertions` pasan y `reward = 1.0`.
+
+Esta trayectoria de puntuación perfecta contiene además un problema que el verificador no llegó a detectar. El primer párrafo de la política del Agent de telecom establece «You should only make one tool call at a time», y sin embargo en el mensaje 4 el Agent emitió de una vez `get_customer_by_phone` y `get_customer_by_name`. El verificador no lo consideró un error porque el `reward_basis` de esta tarea solo tiene en cuenta el estado final. No es un descuido de τ²-bench, sino el precio inherente de una recompensa binaria: cambia granularidad de proceso por un único número comparable entre modelos. Pero un sistema de evaluación en producción suele necesitar algo más: no solo dictaminar si el resultado es correcto, sino señalar dónde está el problema.
+
+La tarea que falló también merece análisis. El número del usuario es 555-123-2002, pero el Agent eligió la línea L1001 y siguió razonando a partir de su consumo de 3,2/5 GB. Por el camino, `get_details_by_id(L1001)` devolvió con claridad que el número de esa línea era 555-123-2001; el Agent leyó el resultado pero no corrigió su juicio, gastó luego decenas de mensajes en diagnósticos irrelevantes y acabó derivando a un agente humano. En realidad completó la mitad de la tarea: consiguió que el usuario desactivara el modo de ahorro de datos, y esa acción del lado del usuario ocurrió de verdad y fue verificada por el entorno. Pero el error en la elección de línea impidió que se ejecutara la recarga de 2 GB necesaria, y las tres aserciones de estado final fallaron. La forma de este fallo se parece mucho al caso de AndroidWorld que se analiza más adelante en «Atribución de fallos»: la evidencia necesaria para corregir el juicio ya estaba en el contexto y el Agent no volvió sobre sus pasos.
+
+Esta única tarea ya plantea todas las preguntas que un conjunto de evaluación debe responder: qué cuenta como éxito, de dónde salen las tareas, quién verifica y cómo se convierte una puntuación en una decisión. Las secciones siguientes las abordan por orden.
+
+## Métricas de evaluación: la definición de éxito
+
+El resultado de evaluación de la sección anterior fue cuatro tareas superadas de cinco. Solo con el número 0,8 no se puede juzgar si el sistema es utilizable. Si corresponde a un Agent de atención al cliente para devoluciones, significa que uno de cada cinco usuarios no recibe el reembolso que le corresponde; si corresponde a un Agent de seguridad dedicado a encontrar vulnerabilidades, acertar cuatro de cada cinco es bastante notable. La diferencia está en qué tasa de éxito exige el escenario de negocio.
 
 ### Maravilla técnica: el techo de capacidad con Pass@k
 
@@ -98,205 +158,151 @@ Por ejemplo, con $p=0.6$ y $k=5$: Pass@5 $=1-0.4^5\approx99.0\%$, y parece que c
 
 El informe de evaluación debe dejar claro qué son los $k$ intentos: $k$ muestreos independientes de la misma tarea o $k$ tareas consecutivas en una tubería de producción. En operaciones con efectos secundarios no vale «reintentar hasta que salga»; hay que muestrear en un entorno aislado o reversible y anotar cada fallo en la métrica de fiabilidad.
 
-### Del proceso de caja negra a caja blanca
+## El entorno de evaluación
 
-No basta con fijarse únicamente en el resultado final; el proceso mediante el cual el Agente alcanza el resultado es igualmente relevante. La **tasa de validez de acciones** mide la proporción de operaciones válidas y legítimas dentro de las ejecutadas: las operaciones inválidas incluyen llamar a herramientas inexistentes o pasar tipos de parámetros incorrectos; las operaciones no autorizadas se refieren a comportamientos que exceden los límites de permisos. Una alta tasa de validez indica que el Agente comprende con claridad el ecosistema de herramientas. La **tasa de corrección en llamadas a herramientas** requiere además que los parámetros sean semánticamente razonables: las palabras de búsqueda deben expresar la necesidad con precisión y las rutas de operación sobre archivos deben apuntar a los objetivos correctos.
+Una vez fijada la base de la métrica, la siguiente pregunta es dónde medir. Un entorno de evaluación es un dispositivo que puede ejecutarse repetidamente: dado el mismo estado inicial, el mismo Agent debería producir resultados comparables.
 
-La **eficiencia de la ruta** mide la economía para completar la tarea: número de pasos (ciclos de pensamiento-acción-observación), acciones redundantes (buscar repetidamente las mismas palabras clave, leer el mismo archivo múltiples veces) y frecuencia de retrocesos (frecuencia con la que se detectan errores y se corrigen: los retrocesos ocasionales son normales, pero los retrocesos frecuentes denotan falta de planificación prospectiva). Es necesario establecer líneas base mediante expertos humanos o algoritmos heurísticos para definir el "número de pasos razonable".
+### Los cinco componentes
 
-La **cobertura de recuperación** se orienta a tareas de recolección de información: ¿exploró el Agente el espacio de información de forma suficiente? ¿Concluyó apresuradamente tras mirar solo la primera página de resultados? El **costo y latencia** se centran en el número de solicitudes, el gasto de tokens (distinguiendo entre costos de entrada y salida, y considerando la reutilización de KV Cache) y el tiempo de reloj (incluyendo inferencia del modelo + ejecución de herramientas + latencia de red), requiriendo rastrear la distribución temporal para localizar cuellos de botella.
+Volvamos a la tarea de telecom diseccionada antes. Tomándola como referencia, ya está presente todo lo que necesita un entorno de evaluación ejecutable de forma repetida.
 
-### Seguridad, robustez y cobertura doble
+**Conjunto de datos (Dataset)**: es el propio fichero de tareas. Estado inicial, ticket para el Agent, pauta de comportamiento para el simulador y criterios de aceptación se empaquetan en un registro, y un registro es un caso de prueba.
 
+**Estado del entorno (Environment State)**: es la información mutable durante la ejecución de la tarea: clientes, líneas, tarifas y facturas en la base de datos, más el modo avión, la itinerancia, el interruptor de ahorro de datos y los datos restantes en el lado del dispositivo. Debe poder reiniciarse, y `initialization_actions` es precisamente ese script de reinicio. El realismo exige que los cambios de estado sigan la lógica de negocio; la controlabilidad exige poder volver al mismo punto de partida antes de cada ejecución.
 
-Las **métricas de seguridad y cumplimiento** son vitales en el despliegue en producción: activar operaciones sensibles (eliminar datos / modificar permisos / enviar comunicaciones externas), fugas de datos (imprimir contraseñas en logs / enviar documentos privados a APIs externas) o contenidos inapropiados deben seguir un **principio de tolerancia cero**, aplicando la misma lógica que los ítems de veto en alucinaciones (véase más adelante "Los Cuatro Principios de la Rúbrica"): una sola violación grave de seguridad invalida la evaluación global, sin exención por un rendimiento excelente en otras dimensiones.
+**Interfaz de herramientas (Tools)**: se reparte entre dos lados. El Agent puede invocar operaciones del lado del operador —consultar cliente, consultar consumo, recargar datos, derivar a un agente humano—; el usuario puede accionar los interruptores del dispositivo. Ambos conjuntos son operaciones atómicas y no existe una abstracción de alto nivel del tipo «resolver el problema de conexión del usuario»: un nivel de abstracción demasiado alto degrada la evaluación a examinar una única llamada de función, y la planificación y el razonamiento quedan absorbidos por la propia herramienta.
 
-La **robustez** mide la estabilidad ante la incertidumbre: sensibilidad a semillas aleatorias (diferencias de comportamiento bajo distintas inicializaciones), adaptabilidad a cambios en páginas web (las actualizaciones de UI no deben causar fallos totales), tolerancia a fluctuaciones en APIs (capacidad para gestionar con elegancia fallos temporales, timeouts o cambios de formato) y la interferencia de memoria a largo plazo (si la información obsoleta acumulada en el contexto provoca decisiones erróneas).
+**Criterio de puntuación (Rubric)**: son las cuatro capas de comprobaciones de `evaluation_criteria` más la regla de agregación `reward_basis`.
 
-**Cobertura dual de la trayectoria de ejecución y el resultado final.** Un aspecto fácil de descuidar en la evaluación es la diferencia entre "lo que el Agente dijo e hizo durante la ejecución" (la trayectoria, trajectory, definida en el Capítulo 1) y "cómo quedó finalmente el sistema" (el resultado final, outcome). Que el Agente diga "reserva completada" es información a nivel de trayectoria, mientras que la generación real de un registro de pedido en la base de datos es la verificación a nivel de resultado. Mirar únicamente la trayectoria omitirá casos de "prometió pero no lo hizo", mientras que mirar solo el resultado impedirá detectar desviaciones en los pasos intermedios. Anthropic citó un ejemplo ilustrativo: un Agente de reserva de billetes descubrió una brecha en la política de la aerolínea durante la ejecución, encontrando una opción más económica para el usuario; si se puntuara solo según la ruta de ejecución predefinida, esta carrera se habría considerado un fallo, pero desde el punto de vista del resultado final, el usuario obtuvo una solución mejor. Por lo tanto, ambos tipos de evaluación deben cubrirse para evitar puntos ciegos sistemáticos.
+**Protocolo de ejecución (Interaction Protocol)**: fija el orden de la interacción y las condiciones de terminación. Aquí la señal normal de terminación es que el usuario simulado emita `###STOP###`; además hay un límite de turnos, y el usuario simulado puede dar por terminada la conversación por su cuenta al agotársele la paciencia: una eficiencia de comunicación demasiado baja cuenta por sí sola como fallo.
 
-### Muestreo humano y revisión adversarial
+Si falta cualquiera de los cinco componentes, la evaluación deja de constituir un bucle repetible. Al examinar más adelante otros benchmarks seguiremos usando estos cinco puntos como marco de comparación.
 
-Aunque la evaluación automatizada sea confiable en la mayoría de los casos, requiere muestreos manuales periódicos: cubriendo diferentes tipos de tareas, casos de éxito/fracaso y casos ambiguos cerca de los límites de puntuación, verificando no solo los resultados sino la razonabilidad de los argumentos de puntuación.
+### Entornos de evaluación de interacción humano-computadora y de llamada a herramientas
 
-El muestreo manual se puede sistematizar como **calibración del evaluador**: antes de usar masivamente la evaluación por LLM, se construye un conjunto dorado (golden set) anotado por humanos (por ejemplo, 100-200 casos que cubran distintos tipos de tareas y dificultades), sobre el cual se mide la tasa de coincidencia entre el modelo evaluador —es decir, el uso de LLM como juez, cuyo mecanismo se detalla en la siguiente sección) y las anotaciones humanas (tasa de coincidencia simple o coeficientes de consistencia como Cohen's kappa, eliminando este último la proporción de acierto por azar). Una vez alcanzado un umbral predefinido (como un kappa superior a 0,7), se aplica el modelo evaluador a la evaluación a gran escala; posteriormente, cada vez que se actualicen el modelo evaluador o la Rúbrica, se debe recalibrar sobre el conjunto dorado. Sin este paso, las puntuaciones del LLM evaluador son simplemente "la opinión de otro modelo" en lugar de un sustituto confiable del juicio humano.
+Tareas como las de telecom necesitan obligatoriamente un interlocutor, y la parte de simulación de usuario de los cinco componentes resulta imprescindible. Existe además otra gran clase de tareas que carece por completo de interlocutor: en generación de código, análisis de datos o resolución de problemas matemáticos, el Agent interactúa de principio a fin solo con herramientas, la corrección se decide por si supera la verificación por ejecución, y no hacen falta ni anotación humana ni juicio de un modelo. Este tipo de entorno prescinde del simulador de usuario; los otros cuatro componentes siguen existiendo, solo que en una forma más simple: el estado del entorno es un sistema de ficheros o una base de datos, el criterio de puntuación es un fragmento de código de test, y el protocolo de ejecución degenera en «seguir llamando herramientas hasta dar una respuesta o agotar los turnos».
 
-La **revisión adversarial** utiliza Red Teaming para construir casos desafiantes de forma proactiva: respuestas en apariencia perfectas pero con errores ocultos, respuestas que intentan aprobar acumulando palabras clave, o respuestas que aprovechan sesgos conocidos del modelo evaluador para obtener puntuaciones altas inmerecidas. El **mecanismo de múltiples jueces** utiliza varios evaluadores independientes para puntuar por separado, determinando el resultado final mediante promedios ponderados o verificaciones de consistencia: cuando surgen discrepancias graves entre evaluadores, el caso se marca para revisión manual.
+El framework Verifiers estratifica estos entornos según dos dimensiones: si la tarea necesita mantener estado entre turnos y si necesita aislamiento. `SingleTurnEnv` sirve para plantear un problema de matemáticas y verificar la respuesta directamente; `ToolEnv`, para buscar en varias páginas web, responder de forma sintética y verificar el resultado final; `StatefulToolEnv`, para modificar un registro de base de datos y verificar el cambio de estado; `SandboxEnv`, para ejecutar código en un sandbox y comprobar los ficheros de salida. La Tabla 7-1 resume estos cuatro tipos, de modo que se pueda elegir según los requisitos de estado, llamada a herramientas y aislamiento.
 
-## Entornos de Evaluación Automatizados
+Tabla 7-1 Comparación de los tipos de entorno de Verifiers
 
-La evaluación de Agentes requiere un entorno automatizado y ejecutable de forma repetible para evaluar rápidamente el impacto de las modificaciones durante la fase de desarrollo. Construir dicho entorno requiere responder a tres preguntas: qué evaluar (definición de tareas y criterios de verificación), contra quién evaluar (cómo simular los objetos con los que interactúa el Agente) y qué criterios utilizar para puntuar.
+| Tipo de entorno | Persistencia de estado | Llamadas a herramientas | Caso de uso típico |
+|---|---|---|---|
+| SingleTurnEnv | Ninguna | Ninguna | Preguntas de un turno, matemáticas |
+| ToolEnv | Ninguna | Multiturno | Búsqueda + síntesis de información |
+| StatefulToolEnv | Sí | Multiturno | Modificar registros de base de datos |
+| SandboxEnv | Sí + aislamiento | Multiturno | Ejecución de código y pruebas |
 
-### Componentes Básicos de un Entorno de Evaluación
+El framework admite muestreo en paralelo y caché de trayectorias; la trayectoria completa de cada evaluación (observaciones, acciones, recompensas) se guarda, lo que facilita el análisis y la reproducción posteriores. Además, el efecto de ejecutar una herramienta depende del estado actual, de modo que ante un fallo conviene devolver un mensaje de error claro y no un simple indicador de fracaso, para que el Agent pueda ajustar su estrategia a partir de él.
 
-Un entorno de evaluación consta de cinco elementos (las secciones posteriores profundizarán especialmente en el diseño de datasets y criterios de puntuación):
-
-**Conjunto de datos (Dataset)**: Define el conjunto de tareas, incluyendo el estado inicial, la descripción del objetivo y soluciones de referencia opcionales.
-
-**Estado del entorno (Environment State)**: Mantiene la información mutable durante la ejecución de la tarea, necesitando encontrar un equilibrio entre realismo y controlabilidad. Por ejemplo, en la evaluación de atención al cliente, el estado del entorno incluye los registros de pedidos en la base de datos y el saldo de la cuenta del usuario. Tras llamar el Agente a `process_refund`, el estado del pedido cambia de `"delivered"` a `"refunded"` y el saldo se incrementa; estos son "información mutable". El "realismo" requiere que los cambios de estado sigan la lógica de negocio (el reembolso no supera el monto del pedido), mientras que la "controlabilidad" exige que cada prueba se pueda restablecer al mismo estado inicial.
-
-**Interfaz de herramientas (Tools)**: Define el conjunto de operaciones ejecutables por el Agente. Las herramientas no deben proporcionar abstracciones de demasiado alto nivel (como "resolver el problema del usuario"), sino operaciones atómicas (como consultar pedidos, modificar reservas, enviar correos), obligando al Agente a combinar estas operaciones mediante planificación y razonamiento.
-
-**Criterios de puntuación (Rubric, pautas de evaluación)**: Cuantifican el rendimiento del Agente, pudiendo ser binarios (aprobado/no aprobado), continuos (de 0 a 100 puntos) o multidimensionales (puntuando por separado precisión, eficiencia y seguridad).
-
-**Protocolo de interacción (Interaction Protocol)**: Establece el modo de interacción y las condiciones de terminación.
-
-Los cinco elementos en conjunto forman un bucle de evaluación reproducible.
+La evaluación de tipo llamada a herramientas examina la corrección de los cambios de estado observables, mientras que la de interacción humano-computadora examina la solidez de la estrategia de comunicación: la primera verifica la acción, la segunda la conducción del diálogo. La comparación estructural de ambos tipos de entorno aparece en la Figura 7-2.
 
 ![Figura 7-2 Entornos de Evaluación de Llamada a Herramientas e Interacción Humano-Computadora](images/fig7-2.svg)
 
-Según la tarea del Agente, los entornos de evaluación pueden dividirse a grandes rasgos en dos tipos: de llamada a herramientas y de interacción persona-máquina.
+## Diseño del conjunto de datos de evaluación
 
-### Entornos de Evaluación Basados en Llamadas a Herramientas
+Si el entorno de evaluación es el escenario, el conjunto de datos es el guion. Con los mismos cinco componentes, al cambiar de clase de tarea la forma de rellenarlos puede ser completamente distinta: de dónde salen las tareas, hasta qué profundidad puede comprobar el verificador y cómo evitar que se memoricen. Esta sección parte de la práctica de diseño de varios benchmarks públicos y termina con una pregunta más práctica: de dónde deben salir las tareas de un conjunto de evaluación propio.
 
-Para tareas que dependen principalmente del uso de herramientas, como la generación de código y el análisis de datos, el framework Verifiers ilustra un patrón de diseño típico. El Agente completa la tarea llamando a herramientas predefinidas, y la verificación se basa en criterios ejecutables (si pasan las pruebas o si la respuesta coincide), sin depender de anotaciones humanas ni evaluaciones de modelos.
+### Comparación transversal de decisiones de diseño entre benchmarks
 
-Verifiers introduce un diseño de entornos jerárquico: `SingleTurnEnv` es adecuado para tareas de un solo turno (como preguntas y respuestas simples); `ToolEnv` admite un bucle autónomo de llamadas a herramientas multiturno; `StatefulToolEnv` y `SandboxEnv` admiten herramientas con estado y entornos sandbox de larga ejecución (como la ejecución de código). Por ejemplo, `SingleTurnEnv` se aplica a verificar directamente la respuesta tras plantear un problema matemático; `ToolEnv` se aplica a responder tras buscar en múltiples páginas web y sintetizar información; `StatefulToolEnv` se aplica a verificar cambios de estado en la base de datos tras modificar registros; y `SandboxEnv` se aplica a comprobar archivos de salida tras ejecutar código en un sandbox. La Tabla 7-2 resume estos tipos de entornos para facilitar la elección del entorno adecuado según el estado de la tarea, las llamadas a herramientas y los requisitos de aislamiento.
+La presencia o ausencia de interlocutor, distinguida en la sección anterior, es solo la primera capa de diferencias en el plano del entorno; las divergencias en el plano del conjunto de datos reflejan mejor los compromisos de diseño. La Tabla 7-2 pone en paralelo varios benchmarks citados con frecuencia.
 
-Tabla 7-2 Comparación de Tipos de Entornos en Verifiers
+Tabla 7-2 Decisiones clave de diseño de varios benchmarks para Agent
 
-| Tipo de entorno | Mantenimiento de estado | Llamada a herramientas | Caso de uso típico |
-|---|---|---|---|
-| SingleTurnEnv | Ninguno | Ninguno | Preguntas y respuestas de un solo turno, problemas matemáticos |
-| ToolEnv | Ninguno | Multiturno | Búsqueda y síntesis de información |
-| StatefulToolEnv | Sí | Multiturno | Modificación de registros en base de datos |
-| SandboxEnv | Sí + Aislamiento | Multiturno | Ejecución y prueba de código |
+| Benchmark | Capacidad evaluada | Origen de las tareas | Quién hace de entorno | Verificador |
+|---|---|---|---|---|
+| τ²-bench | Interacción humano-computadora y llamada a herramientas en atención al cliente | Redacción manual + generación combinatoria | Simulador de usuario + BD de negocio | Cuatro capas de comprobaciones agregadas a binario por `reward_basis` |
+| SWE-bench Verified | Desarrollo de software, coding | Issues reales de GitHub, cribados a mano | Repositorio de código + suite de tests | Doble verificación FAIL\_TO\_PASS / PASS\_TO\_PASS |
+| AndroidWorld | Manejo de la GUI de un móvil Android | Instanciación de plantillas parametrizadas | Emulador Android real | Aserciones sobre el estado final de la UI |
+| OSWorld | Manejo de la GUI de escritorio de Linux | Arranque desde un estado intermedio preconfigurado | Máquina virtual real | 134 funciones de evaluación independientes |
+| Terminal-Bench | Manejo del terminal de Linux, coding | Redacción manual | Contenedor Docker | Comprobación del sistema de ficheros + ejecución real |
+| GAIA | Asistente de IA general que recopila información | Redacción manual + adjuntos propios | Internet abierto | Coincidencia exacta de cadenas |
 
-El framework admite el muestreo en paralelo y el almacenamiento en caché de trayectorias. La trayectoria completa de cada evaluación (observación, acción, recompensa) se guarda para facilitar su posterior análisis y reproducción.
+### Verificadores
 
-El entorno también debe gestionar la dependencia de estado de las operaciones: el efecto de ejecución de una herramienta depende del estado actual; en caso de fallo, se debe ofrecer información de error clara en lugar de una simple señal de fracaso, permitiendo al Agente aprender del error y ajustar su estrategia.
+A un Agent le resulta fácil escribir un informe extenso afirmando que ha completado toda la tarea cuando en realidad no ha completado nada. Un framework de evaluación debe verificar hechos que una máquina pueda contrastar de forma independiente, no la declaración del propio Agent.
 
-### Entornos de Evaluación de Interacción Humano-Computadora
+**SWE-bench Verified descompone «reparación completada» en dos proposiciones independientes.** Una es FAIL\_TO\_PASS: falla antes del arreglo y pasa después, lo que demuestra que el problema quedó realmente resuelto. La otra es PASS\_TO\_PASS: pasa antes y después, lo que demuestra que no se introdujeron defectos nuevos. Comprobando solo la primera, el Agent puede colarse borrando o alterando las aserciones que le estorban; comprobando solo la segunda, es como no comprobar nada. Solo comprobando ambas se convierten «arreglado» y «no roto» en dos conclusiones demostrables por separado. Además confirma la estabilidad de los propios tests, excluyendo los inestables (flaky test) que unas veces pasan y otras fallan.
 
-Muchas tareas del mundo real no solo implican llamadas a herramientas, sino que requieren dialogar con usuarios humanos. Un Agente de atención al cliente necesita entender expresiones ambiguas, aclarar necesidades, consultar sistemas internos y confirmar información con el usuario. La evaluación de este tipo de tareas se enfrenta a un desafío fundamental: ¿cómo simular usuarios reales en un entorno automatizado?
+**El verificador de OSWorld es capaz de detectar los casos en que algo parece completado pero en el fondo está mal.** Cuenta con 134 funciones de evaluación independientes y acceso completo al sistema operativo, lo que le permite inspeccionar la estructura del sistema de ficheros, el estado de los procesos, las conexiones de red y el estado interno de las aplicaciones. En tareas de base de datos, el script de evaluación no solo confirma que existe el fichero de informe, sino que se conecta a la base de datos para contrastar si el SQL se ejecutó correctamente; en tareas de navegador analiza el árbol DOM, revisa cookies y localStorage y envía peticiones de verificación al backend para confirmar que el formulario surtió efecto de verdad.
 
-El principio de diseño clave es la **divulgación progresiva de información (Progressive Information Disclosure)**, que constituye la diferencia fundamental entre la evaluación de interacción humano-computadora y los benchmarks tradicionales. La mayoría de los benchmarks exponen todos los requisitos completos desde el principio; sin embargo, en la realidad es raro que los usuarios describan con claridad sus necesidades desde el primer momento (a menudo solo dicen "parece que hay un problema con mi vuelo" o "no puedo conectarme a Internet"). El Agente necesita aclarar los requisitos mediante preguntas activas, proceso que en sí mismo representa una manifestación crucial de sus capacidades. Por lo tanto, en la evaluación **nunca se debe exponer de entrada toda la información del usuario simulado al Agente**, sino que la información debe revelarse de manera progresiva y según la necesidad a lo largo del diálogo.
+**La tarea `build-linux-kernel-qemu` de Terminal-Bench** exige compilar el kernel de Linux 6.9 desde el código fuente, añadir un printk propio en `start_kernel`, generar un initramfs y arrancarlo en QEMU; el criterio de éxito es que ese mensaje propio aparezca en el log de arranque. El Agent no puede falsificar la salida: no le queda más remedio que recorrer todo el proceso de verdad.
 
-La solución de τ-bench es la **simulación de usuario (User Simulation)**: utilizar otro LLM para asumir el papel del usuario, dialogando con el Agente según instrucciones predefinidas. El usuario simulado recibe instrucciones de tarea (como "necesito cancelar mi vuelo de mañana") y, durante la conversación, revela paulatinamente al Agente la información necesaria, responde a sus preguntas y emite una señal de terminación al finalizar la tarea. Los prompts exigen que el usuario simulado "no revele toda la información de una vez, proporcionando solo el contenido necesario para el paso actual" y "no invente información no proporcionada en las instrucciones". El diseño de la simulación de usuario requiere equilibrar el realismo con la controlabilidad: el comportamiento debe aproximarse al de un usuario real (expresión ambigua, información incompleta, fluctuaciones emocionales ocasionales), mientras sigue un guion determinado para garantizar la reproducibilidad.
+### Clasificación de las tareas por dificultad
 
-A continuación se presenta un ejemplo de diálogo multiturno con divulgación progresiva de información (donde el simulador de usuario actúa según un guion fijo):
+Un conjunto de tareas de evaluación debe incluir tareas de distintas dificultades. Así, cuando mejore la capacidad de los modelos, el conjunto no quedará obsoleto enseguida.
 
-> **Usuario**: "Tengo un problema con mi vuelo."
-> **Agente**: "¿Podría decirme qué vuelo es?"
-> **Usuario** (revelando según guion): "Delta 123, mañana por la mañana de San Francisco a Nueva York."
-> **Agente**: "¿Cuál es exactamente el problema?"
-> **Usuario** (revelando según guion): "El tiempo de vuelo es demasiado largo, quiero cambiar de billete."
-> **Agente**: "¿Tiene alguna preferencia para el nuevo vuelo?"
-> **Usuario** (revelando según guion): "Cualquier vuelo por la tarde estará bien."
+Las 466 preguntas de GAIA se dividen en tres niveles de dificultad: el Level 1 requiere solo una o dos herramientas (humanos 93,9%, GPT-4 30,3%), el Level 2 exige razonamiento en varios pasos (91,8% frente a 9,7%) y el Level 3 exige composiciones complejas (87,3% frente a 0%). Esta estratificación no se limita a marcar la dificultad: tiene valor diagnóstico. Un fallo en Level 1 apunta al uso básico de herramientas, el Level 2 a la planificación en varios pasos y la integración de información, y el Level 3 al razonamiento en secuencias largas y a la gestión de la complejidad, y cada uno corresponde a direcciones de mejora distintas.
 
-El simulador de usuario sigue un guion fijo (información conocida + reglas de divulgación), asegurando que la evaluación sea reproducible al tiempo que simula la forma progresiva de expresión de un usuario real. El usuario simulado suele tener además **una paciencia limitada**: si el Agente se comunica de forma poco eficiente, el usuario simulado puede dar por terminada la conversación y hacer que la tarea fracase.
+Terminal-Bench abarca desde el sencillo registro de un modelo en mlflow hasta el crackeo de una contraseña 7z de dificultad media, la difícil integración multicomponente de un servidor git con un servidor web y, en el nivel más alto, el criptoanálisis diferencial de FEAL.
 
-τ-bench es un benchmark para evaluar el rendimiento de Agentes en procesos de negocio estructurados (como atención al cliente en aerolíneas o comercio minorista). Sus comprobaciones son a nivel de componentes y multidimensionales: por un lado, comprueba si el estado final de la base de datos es correcto (por ejemplo, si el registro de reserva pasa a estar "cancelado"); por otro lado, verifica si el Agente ha emitido información clave necesaria en el diálogo (como el monto del reembolso y el tiempo de acreditación, mediante búsqueda de cadenas de texto o patrones específicos). Esta verificación dual evalúa simultáneamente la precisión operativa y la efectividad comunicativa. Sin embargo, a nivel de tarea, estas comprobaciones se consolidan finalmente en una **recompensa binaria de cero o uno**: solo se obtiene 1 punto si se pasan todas las comprobaciones, y cualquier fallo supone 0 puntos. Las recompensas binarias facilitan el cálculo de métricas de confiabilidad como Pass^k (véase más adelante "Sistema de Métricas de Evaluación"), a costa de dar la misma puntuación a "operación correcta pero omisión de un campo no crítico" que a un "fracaso absoluto".
+τ²-bench diseña además **tareas trampa**: el usuario afirma que «atención al cliente ya ha aprobado la cancelación» cuando en realidad no cumple la política, para comprobar si el Agent mantiene el juicio correcto bajo presión y desinformación.
 
-La versión mejorada **τ²-bench** no centra su incremento básico en la granularidad de puntuación, sino en dos puntos: en primer lugar, el **entorno de control dual (Dual-Control)** (ya no solo el Agente puede llamar a herramientas, sino que el simulador de usuario también puede operar en el mismo entorno compartido, como cuando el Agente instruye al usuario para cambiar al modo avión y la operación del usuario modifica realmente el estado del entorno), lo que se ajusta más a escenarios reales de soporte técnico que requieren cooperación del usuario; en segundo lugar, **especificaciones de tareas más precisas y generación de tareas composicionales** (menos ambigüedad en las condiciones de éxito, permitiendo generar instancias de tareas parametrizadas en lote; las dimensiones de verificación detalladas se analizan más adelante en la sección "Garantía de Verificabilidad y Objetividad").
+### Prevención de la fuga de datos
 
-> **Experimento 7-1 ★: Ejecutar τ²-bench y Comparar la Evolución desde τ-bench**
+**GAIA hace que sus respuestas no se puedan buscar directamente en internet.** Sus tareas son conceptualmente sencillas pero de camino abierto: por ejemplo, partiendo de la Imagen Astronómica del Día de la NASA de una fecha concreta, identificar al astronauta de la foto, averiguar a qué grupo de astronautas pertenecía, calcular quién de ese grupo pasó menos tiempo en el espacio y devolver el resultado con un formato estricto de «apellido, separado por punto y coma, con separadores de millares». La respuesta es enormemente específica y la corrección se decide por coincidencia exacta de cadenas. La prevención de fugas se apoya en dos cosas: primera, la pregunta solo puede responderse combinando varias fuentes y ninguna página web aislada da la respuesta; segunda, algunas tareas llevan adjuntos elaborados expresamente (PDF, audio e imágenes que no existen en internet).
+
+**AndroidWorld deriva un gran número de instancias de una sola plantilla.** Sus tareas no son texto estático, sino plantillas instanciables dinámicamente como «cambiar el teléfono del contacto `[CONTACT_NAME]` a `[NEW_PHONE]`», con valores de parámetros generados al azar en cada evaluación. Esto aporta tres ventajas: los parámetros cambian cada vez, con lo que reproducir una secuencia fija de acciones deja de servir; una sola plantilla puede generar instancias casi ilimitadas; y fijando unos parámetros y variando el resto se puede medir con precisión el efecto de un factor concreto.
+
+**Terminal-Bench incrusta un identificador canario en el enunciado.** Cada tarea lleva un canary GUID; si un modelo es capaz de producir contenido que lo contenga, es que los datos del benchmark han entrado en el conjunto de entrenamiento. No impide la fuga, pero la hace detectable.
+
+### Control de calidad y mantenimiento a largo plazo
+
+Construir un conjunto de evaluación de calidad es muy difícil. La forma actual de la mayoría de los benchmarks anteriores es el resultado de rondas sucesivas de reparación después de que la primera versión se pusiera en uso y afloraran los problemas. De τ-bench a τ²-bench, por ejemplo, hay cinco puntos rediseñados.
+
+Primero, **las instrucciones de la tarea eran demasiado vagas y permitían adivinar la respuesta**. Las instrucciones de la primera versión estaban redactadas de forma amplia, así que el modelo no necesitaba aclarar de verdad la petición: bastaba con deducir un procedimiento por sentido común para aprobar. τ²-bench dividió el guion en dos campos, `known_info` y `task_instructions`: el primero delimita lo que el usuario sabe y el segundo regula cómo se revela. Lo que el usuario no sabe el Agent no puede adivinarlo y solo puede obtenerlo consultando.
+
+Segundo, **las condiciones de éxito no eran lo bastante precisas y provocaban errores de verificación**. Una condición como «la red ya funciona» carece de frontera contrastable. τ²-bench la cambió por «solo se considera resuelto si el test de velocidad devuelve excellent; poor, fair y good no se aceptan». Este cambio apunta a las **reparaciones de compromiso**, que acallan el síntoma sin resolver la causa raíz.
+
+Tercero, **el comportamiento del simulador de usuario era demasiado mecánico**. El usuario simulado de la primera versión se limitaba a responder de forma pasiva. τ²-bench le añadió emoción (mostrar disgusto tras la primera reparación fallida), un límite de paciencia (cortar la conversación si la comunicación es demasiado ineficiente) y el requisito de anclaje factual. Los tres actúan juntos para que el simulador se acerque a un usuario real sin dejar de ser reproducible.
+
+Cuarto, **el usuario no solo participa en la conversación, también en la operación**. El dominio telecom introdujo el entorno de doble control. En las evaluaciones anteriores solo el Agent podía alterar el entorno, mientras que en escenarios de soporte técnico buena parte de las acciones deberían realizarlas los propios usuarios en su dispositivo. El doble control añade además una dimensión a la verificación: después de que el usuario cambia el estado, el Agent debe volver a llamar a una herramienta para enterarse del resultado, de modo que la verificación pasa a cubrir «si el Agent leyó realmente el resultado de las acciones del lado del usuario».
+
+Quinto, **las instancias de tarea se generan dinámicamente**. Las instancias concretas de τ²-bench (nombres de usuario, números, combinaciones de averías) pueden parametrizarse y generarse por lotes, lo que mejora a la vez la cobertura y la resistencia a las fugas.
+
+**SWE-bench Verified: antes de publicarse descartó el 71% de las tareas originales.** OpenAI tomó al azar 1.699 de las 2.294 tareas originales para evaluación humana y reclutó a 93 desarrolladores competentes en Python para revisarlas una a una: si la descripción del problema era clara, si los casos de prueba cubrían las condiciones límite, si los tests eran estables, si el patch de referencia introducía errores nuevos y si la dificultad era razonable. Al final solo pasaron 500. Esa alta tasa de descarte se traduce en una mejor relación señal-ruido, y el coste de evaluación baja alrededor de un 80%. Las tareas complejas de Agent llevan a menudo de minutos a horas, y ejecutar de principio a fin un conjunto de evaluación con un modelo de frontera suele costar miles de dólares en tokens, así que reducir el coste de evaluación es muy importante.
+
+**OSWorld: en los 15 meses posteriores a su publicación afloraron más de 300 problemas.** Publicado en abril de 2024, se convirtió rápidamente en un benchmark importante para la evaluación de Agents multimodales, pero su amplio uso posterior sacó a la luz cuatro categorías de problemas: problemas del entorno (medidas anti-scraping de los sitios, CAPTCHAs, cambios de contenido dinámico), problemas de descripción de tareas (formulaciones ambiguas), problemas de lógica de verificación (demasiado estricta o demasiado laxa) y problemas de estado inicial (configuración incompleta). Un equipo de unas 10 personas de la Universidad de Hong Kong colaboró estrechamente durante dos meses con MoonShot AI, OpenAI, ByteDance Seed TARS, Anthropic, Simular y otros en una reparación sistemática: los problemas de entorno se resolvieron fijando versiones y con copias offline, los de descripción reescribiendo las formulaciones ambiguas, los de verificación estableciendo a mano una línea base correcta y ajustando las condiciones, y los de estado inicial añadiendo comprobaciones de completitud.
+
+> **Experimento 7-2 ★: Ejecutar manualmente tareas de benchmark**
 >
-> Este experimento permite comprender los puntos clave del diseño de entornos de evaluación de interacción humano-computadora ejecutando el framework τ²-bench, apreciando cómo iteran y mejoran los datasets de evaluación mediante la comparación de diferencias entre τ-bench y τ²-bench.
+> Elija tareas de GAIA, AndroidWorld, SWE-Bench Verified, Terminal-Bench y OSWorld-Verified y complétenlas con sus propias manos; se recomienda hacer una fácil, una media y una difícil por cada conjunto. El nivel «difícil» también supone un reto para una persona.
 >
-> Lectura detallada de los archivos de definición de tareas: cada tarea contiene información conocida (conocimiento de fondo del usuario), instrucciones de tarea (guía sobre cómo revelar información progresivamente y estrategias de respuesta) y condiciones de éxito (estado objetivo de la base de datos e información de confirmación requerida en el diálogo). Ejecutar el flujo de evaluación completo, observar el diálogo multiturno entre el simulador de usuario y el Agente, y analizar patrones de fallo típicos (violaciones de política, omisión de información, transferencia excesiva a operadores humanos, etc.).
->
-> ![Figura 7-3 Arquitectura de Evaluación de τ²-bench](images/fig7-3.svg)
->
-> Comparación entre las diferencias de diseño de τ-bench y τ²-bench: las versiones iniciales de τ-bench tenían instrucciones de usuario demasiado simples (el Agente podía adivinar las respuestas), condiciones de éxito poco precisas (generando falsas evaluaciones) y un simulador de usuario demasiado mecánico. τ²-bench resolvió estos problemas sistemáticamente:
->
-> - **Introducción de instrucciones de tarea más detalladas**: incluyendo "requisitos de anclaje de hechos" (Grounding Requirement), es decir, responder obligatoriamente con base en el estado real del entorno.
-> - **Criterios de evaluación más precisos**: como "solo se considera resuelto si la prueba de velocidad devuelve excelentes resultados".
-> - **Especificaciones de comportamiento más reales para el simulador de usuario**: divulgación progresiva de información y fluctuaciones emocionales naturales.
->
-> Prestar especial atención a las nuevas tareas del dominio telecom en τ²-bench para comprender su diseño de entorno de control dual (donde, como se mencionó anteriormente, el usuario y el Agente operan de forma conjunta sobre un mismo entorno compartido).
+> Al terminar, responda a dos preguntas. ¿Admite la descripción de la tarea varias interpretaciones razonables y, en caso afirmativo, cuál reconoce el verificador? Si intentara colarse sin hacer el trabajo, ¿cuál sería el camino más barato y podría el verificador impedirlo?
 
-A diferencia de la evaluación basada en llamadas a herramientas, que se enfoca en "si se completó un cambio de estado observable", la evaluación de interacción humano-computadora se centra en "si se guio al usuario a completar un cambio cognitivo o de decisión": la primera examina la corrección de las acciones del Agente, mientras que la segunda examina la racionalidad de su estrategia de comunicación.
+### Las tres fuentes de un conjunto de evaluación
 
-La construcción de entornos de evaluación también involucra el diseño de entornos de simulación: cuando un entorno de evaluación necesita admitir interacciones repetidas a gran escala, evoluciona hacia un entorno de simulación, aspecto que se discutirá brevemente al final de este capítulo.
+Existe la idea extendida de que los benchmarks públicos sirven para rankings de modelos y guardan poca relación con el negocio real. Es cierto que las puntuaciones de los benchmarks públicos difícilmente guían de forma directa las decisiones de producto, pero sus técnicas de diseño son perfectamente trasladables. La profundidad de verificación, la generación parametrizada, la prevención de fugas y el mantenimiento de la calidad —lo tratado más arriba— son justamente los puntos que un conjunto de evaluación propio pasa por alto con más facilidad.
 
-## Diseño de Datasets de Tareas de Evaluación
+Un conjunto de evaluación en producción suele tener tres fuentes.
 
-El entorno de evaluación es el "escenario" y el conjunto de datos es el "guion": la calidad del diseño del guion suele determinar el valor de la evaluación mucho más que el escenario mismo. Un dataset mal diseñado, incluso si se ejecuta en un entorno perfecto, solo producirá ruido. Esta sección sintetiza principios validados repetidamente a partir de prácticas de diseño en benchmarks como GAIA, AndroidWorld, SWE-Bench Verified (Software Engineering Benchmark), τ-bench y τ²-bench, Terminal-Bench, OSWorld y OSWorld-Verified.
+**Los benchmarks públicos** sirven para el cribado grueso de modelos y para tomar prestadas técnicas de diseño, y por lo general no para decisiones de producto. Su distribución de tareas no coincide con la del negocio real: subir dos puntos porcentuales en GAIA no guarda relación necesaria con la tasa de éxito de las devoluciones.
 
-> **Experimento 7-2 ★: Ejecución Manual de Tareas de Benchmark**
->
-> Seleccionar y completar manualmente tareas de GAIA, AndroidWorld, SWE-Bench Verified, τ²-bench, Terminal-Bench y OSWorld-Verified. Se recomienda completar una tarea fácil, una media y una difícil de cada dataset (el nivel "difícil" resulta desafiante incluso para humanos). Comparar los resultados con las respuestas estándar y analizar las fuentes de discrepancia. A través de la experiencia directa, comprender que la descripción de tareas debe equilibrar la claridad con la apertura, los criterios de verificación deben ser objetivos y ejecutables, y la jerarquización de dificultad de las tareas debe ser capaz de distinguir diferentes niveles de capacidad.
+**El conjunto de negocio propio** cubre la distribución real de tareas y puede servir de base para la elección de modelo y para las decisiones de diseño del Harness. Por ejemplo, τ²-bench puede usarse tal cual como esqueleto de cualquier sistema de evaluación que necesite un usuario simulado: basta con sustituir los datos del dominio y el conjunto de herramientas.
 
-### Desafíos Centrales en el Diseño de Datasets de Tareas
+**El retorno de trayectorias de producción** procede de fallos reales en explotación: correcciones explícitas del usuario, votos negativos del usuario y casos detectados a posteriori mediante comprobaciones de estado, verificadores basados en reglas o revisión con LLM. Tras la atribución de fallos, se decantan en casos de regresión. El procedimiento concreto se describe más adelante en «Atribución de fallos» y «Tareas de regresión de extremo a extremo y de prefijo de trayectoria». Esta fuente es la más cara y también la más exacta, porque procede directamente de lo que los usuarios encontraron en la práctica.
 
-**Desafío 1: La tensión entre claridad y apertura.** La descripción de las tareas debe ser lo suficientemente clara para garantizar la reproducibilidad de la evaluación, pero no tan rígida que limite la creatividad del Agente. GAIA ofrece un ejemplo: las tareas son "conceptualmente simples" pero tienen rutas de implementación abiertas (por ejemplo, solicitar información sobre un astronauta en la foto astronómica del día de la NASA presenta un objetivo claro [identificar al astronauta específico y su tiempo en el espacio], pero cómo buscar, filtrar y verificar queda a decisión autónoma del Agente).
+En la fase inicial suele haber solo benchmarks públicos y un pequeño conjunto de negocio escrito a mano; una vez que el sistema lleva un tiempo en producción, los casos devueltos desde las trayectorias de producción pasan a ser el grueso.
 
-**Desafío 2: El equilibrio entre realismo y controlabilidad.** Las tareas reales contienen incertidumbre y ruido, lo que permite evidenciar la robustez, pero también amenaza la reproducibilidad. La versión inicial de SWE-Bench se tomó directamente de issues reales de GitHub, garantizando el realismo, pero provocó descripciones ambiguas, casos de prueba incompletos y criterios de evaluación subjetivos. SWE-Bench Verified introdujo expertos humanos para realizar verificaciones sistemáticas, filtrando 500 tareas de alta calidad con problemas claros, pruebas suficientes y soluciones definidas, aumentando significativamente la controlabilidad mientras mantenía el realismo.
+## Métodos de evaluación automatizada
 
-**Desafío 3: Coordinación entre diversidad y sistematización.** Un conjunto de datos efectivo debe cubrir casos típicos, condiciones límite y trampas de error, contando al mismo tiempo con una organización sistemática para que los resultados de la evaluación puedan diagnosticar deficiencias específicas de capacidad. Las 116 tareas de AndroidWorld abarcan 20 aplicaciones reales, etiquetando en cada tarea las capacidades nucleares requeridas (planificación multipasos, comprensión visual, razonamiento temporal), permitiendo que la evaluación no solo entregue una tasa de éxito global, sino que revele fortalezas y debilidades en dimensiones de capacidad específicas. Más aún, mediante mecanismos parametrizados se pueden generar variantes de tareas casi ilimitadas.
+Los benchmarks tratados en las secciones anteriores tienen un rasgo común: sus verificadores son casi todos deterministas. SWE-bench ejecuta una suite de tests, AndroidWorld hace aserciones sobre el estado final de la UI, GAIA compara cadenas de forma exacta, y las cuatro capas de comprobación de τ²-bench se ejecutan igualmente por completo en código. Esta elección tiene buenas razones: la verificación determinista no añade coste de modelo, el resultado es plenamente reproducible, puede integrarse en la integración continua como un test unitario y facilita ordenar modelos entre sí.
 
-**Desafío 4: Costo de evaluación frente a cobertura.** Las tareas complejas de Agentes pueden requerir minutos o incluso horas para completarse, implicando un consumo masivo de tokens. La escala del dataset debe equilibrar la exhaustividad y la economía. GAIA selecciona 466 preguntas divididas en tres niveles de dificultad, cubriendo múltiples dimensiones de capacidad a un costo razonable. SWE-Bench Verified redujo de 2.294 a 500 tareas (disminuyendo el costo aproximadamente en cuatro quintas partes y elevando la relación señal-ruido mediante criterios de calidad más estrictos).
+El precio es que solo puede evaluar si el resultado final es correcto, pero no dar la causa del error. La tarea fallida de τ²-bench acabó con 0 puntos, y ese 0 no dice si el Agent se equivocó en la elección de línea o si se saltó el paso de recarga de datos, y menos aún apunta qué habría que cambiar a continuación. Para un benchmark público destinado a rankings esto no es un defecto; para un sistema en producción que necesita mejorar de forma continua, es justo la información más necesaria.
 
-**Desafío 5: Prevención de contaminación de datos (Data Contamination).** En la era de los grandes modelos de lenguaje, la fuga de datos es un desafío severo para la evaluación: cuando los datos de evaluación se incluyen en el entrenamiento, la evaluación mide la memoria y no la capacidad de generalización, del mismo modo que memorizar las respuestas antes de un examen no demuestra el nivel real. Diversos benchmarks emplean distintas estrategias de prevención: GAIA confía en la singularidad de las respuestas, requiriendo combinar múltiples fuentes de información, y algunas tareas incluyen adjuntos creados específicamente (PDF/audio/imágenes no existentes en Internet) que imposibilitan responder desde una sola página web. SWE-Bench Verified es en sí mismo un subconjunto de 500 tareas filtrado manualmente por OpenAI a partir del SWE-Bench original, sin incluir un diseño de prevención de fugas basado en el tiempo; son trabajos posteriores como SWE-bench-Live los que previenen fugas por frescura temporal, incorporando continuamente nuevos issues creados tras la fecha de corte de entrenamiento de los modelos para mantener la evaluación por delante del corpus de entrenamiento. τ²-bench utiliza la generación dinámica de parámetros, generando aleatoriamente instancias específicas de tareas (nombres de usuario, números de pedido, fechas) en cada ejecución. La generación de tareas parametrizadas en AndroidWorld posee una capacidad inherente contra las fugas, ya que la verificación se basa en el estado final de la UI y no en la secuencia de operaciones. Terminal-Bench utiliza identificadores canario (canary GUID, un identificador único global) para hacer detectable la fuga: si el modelo emite contenidos con dicho GUID, indica que los datos del benchmark se han filtrado al conjunto de entrenamiento.
+En producción hay además una segunda dificultad: muchos juicios sencillamente no pueden escribirse como aserciones comprobables por código. Si una respuesta a una reclamación está bien planteada, si un informe omite información clave, si una recuperación de memoria confundió la relación entre personas: nada de esto tiene un estado final único que consultar, ni puede decidirse por coincidencia de palabras clave.
 
-### Diseño de Precisión en las Descripciones de Tareas
+Por eso, al pasar de los benchmarks públicos a la evaluación en producción, el modo de verificación tiene que desplazarse hacia la derecha a lo largo de un espectro cuyo eje horizontal es el **grado de verificabilidad mecánica** de la tarea, tal como muestra la Figura 7-4.
 
-GAIA garantiza la singularidad de las respuestas mediante restricciones claras de fuentes de información, rangos temporales, temas y objetivos de consulta. Por ejemplo, las tareas de Nivel 3 requieren partir de una imagen de la NASA en una fecha específica, identificar al astronauta mediante comprensión visual, consultar su grupo de astronautas, calcular el tiempo de permanencia en el espacio y formatear el resultado con precisión ("apellido, separado por punto y coma, separador de miles"), donde cada detalle sirve a la verificación automática (solo si el formato y el contenido coinciden exactamente se considera aprobado).
+![Figura 7-4 Espectro de modos de verificación: de la verificación determinista al juicio del modelo](images/fig7-4.svg)
 
-τ²-bench introduce un diseño contextualizado donde cada tarea contiene múltiples capas de información: el problema superficial ("los datos móviles no funcionan"), expectativas de rendimiento ("desea absolutamente una velocidad excelente"), restricciones ("no se aceptan otras velocidades") y emociones implícitas. La mejora clave es separar la "información conocida" de la "instrucción de la tarea": la información conocida son los hechos que posee el usuario, mientras que las instrucciones de la tarea guían al simulador sobre cómo revelar información progresivamente, incluyendo un "requisito de anclaje de hechos" (Grounding Requirement, es decir, responder obligatoriamente con base en los resultados reales devueltos por las llamadas a herramientas, sin inventar nada).
+Las dos herramientas del lado derecho del espectro se convierten así en el grueso de la evaluación en producción: el **Rubric** descompone el difuso «qué tal está» en varias dimensiones puntuables por separado, y **LLM-as-a-Judge** puntúa allí donde no existe un criterio determinista. Solo juntas permiten reducir una tasa de fallo genérica a problemas concretos sobre los que actuar; combinadas con la **atribución de fallos** de la segunda mitad de esta sección, forman el bucle cerrado completo de la evaluación de un Agent en producción.
 
-SWE-Bench Verified incluye campos estructurados como la descripción del problema, pasos de reproducción y comportamientos esperados/reales, donde los anotadores verifican la correspondencia entre la descripción y los casos de prueba. En Terminal-Bench, cada elemento de la descripción de la tarea se puede verificar mecánicamente: si la ruta del archivo existe, si el valor de permisos es correcto, parámetros de certificados, formatos de fecha, etc. Por ejemplo, "build-linux-kernel-qemu" exige compilar el núcleo Linux 6.9 desde el código fuente, añadir un printk personalizado en `start_kernel`, generar un initramfs y ejecutarlo en QEMU, siendo el criterio de éxito la aparición del mensaje personalizado en el registro de inicio: el Agente no puede falsificar la salida para aprobar, sino que debe completar realmente todo el proceso.
-
-AndroidWorld adopta un diseño de **plantillas parametrizadas**. Una tarea no es un texto estático, sino una plantilla instanciable dinámicamente (como "cambiar el teléfono del contacto `[CONTACT_NAME]` a `[NEW_PHONE]`"), generando valores de parámetros aleatorios en cada evaluación. Esto ofrece tres ventajas:
-
-- **Evita la memorización**: los valores de los parámetros cambian cada vez, impidiendo reproducir secuencias fijas de operaciones.
-- **Aumenta la diversidad de datos**: una plantilla puede generar instancias casi ilimitadas.
-- **Permite experimentos comparativos**: fijar ciertos parámetros y variar otros permite medir con precisión el impacto de factores específicos.
-
-La verificación se basa en el estado final de la UI (por ejemplo, si el campo del número de teléfono contiene el valor esperado) y no en la secuencia de operaciones.
-
-Las tareas de OSWorld a menudo no comienzan desde un estado inicial "limpio", sino desde estados intermedios cuidadosamente configurados, aproximándose más a escenarios de uso reales. Las descripciones de las tareas deben gestionar la multisolución (definir "cambiar el fondo a morado" requiere proporcionar un código de color específico para eliminar la ambigüedad, y "unir dos CSV" debe aceptar la conservación de encabezados simples o dobles como formas razonables) y la incertidumbre del entorno (anti-crawling en sitios web, evolución de UI en aplicaciones, competencias temporales, mitigadas en OSWorld-Verified mediante capturas de páginas offline, congelamiento de versiones de dependencias y condiciones de espera explícitas).
-
-Esta lista no agota todo el panorama de evaluación de Agentes. Solo la categoría Web/GUI cuenta con múltiples benchmarks con distintos enfoques: WebArena construyó un conjunto de sitios web totalmente reproducibles (comercio electrónico, foros, alojamiento de código), encerrando la impredecibilidad de las páginas web reales en un sandbox; Mind2Web hizo lo contrario, evaluando la capacidad de generalización directamente sobre cientos de sitios web reales; [ClawBench](https://claw-bench.com/) ([artículo](https://arxiv.org/abs/2604.08523), [código](https://github.com/TIGER-AI-Lab/ClawBench)) permite a los Agentes ejecutar tareas cotidianas de extremo a extremo en sitios web reales dentro de contenedores aislados (V1 cubre 153 tareas en 144 sitios web, y V2 añade 130 tareas más), registrando simultáneamente evidencia en cinco capas: reproducción de sesiones, capturas de pantalla de acciones, tráfico HTTP, acciones de navegador y mensajes del Agente. Este complementa a los benchmarks sandbox facilitando el análisis del comportamiento en sitios reales y fallos de larga cola, a costa de que la reproducibilidad se ve afectada por cambios en sitios de terceros; BrowseComp se enfoca en la recuperación profunda, donde las respuestas están ocultas y requieren navegación multisalto y verificación cruzada. En la dimensión de llamadas a herramientas, existen tablas especializadas como BFCL (Berkeley Function-Calling Leaderboard). En lugar de listar todos los benchmarks, este capítulo selecciona dos paradigmas de entorno fundamentales (llamada a herramientas e interacción humano-computadora), complementados con escenarios de operaciones GUI a lo largo de los casos de estudio, para profundizar en sus compensaciones de diseño: comprendidos los paradigmas, ante cualquier nuevo benchmark se podrá juzgar rápidamente qué mide, cómo previene fugas y hasta dónde se pueden extrapolar sus conclusiones.
-
-### Diseño Jerárquico de la Complejidad de las Tareas
-
-GAIA diseña tres niveles de dificultad: Nivel 1 requiere solo 1 o 2 herramientas (humanos 93,9% vs GPT-4 30,3%), Nivel 2 requiere razonamiento en múltiples pasos (91,8% vs 9,7%), y Nivel 3 exige combinaciones complejas (87,3% vs 0%). El valor diagnóstico del diseño jerárquico radica en que los fallos en el Nivel 1 apuntan a problemas básicos en el uso de herramientas, el Nivel 2 apunta a la planificación multipasos y la integración de información, y el Nivel 3 apunta al pensamiento en secuencias largas y la gestión de complejidad, correspondiendo cada nivel a diferentes direcciones de mejora (ingeniería de prompts vs mecanismos de planificación vs arquitectura jerárquica/post-entrenamiento).
-
-τ²-bench realiza la jerarquización mediante la complejidad del negocio: desde consultas simples de información, pasando por procesos multipasos (modificar un vuelo requiere consultar, mostrar alternativas, confirmar, calcular diferencia de precio y pagar), hasta el diagnóstico de fallos (inspeccionar sistemáticamente múltiples causas posibles y verificar la reparación) y el juicio de políticas (gestionar solicitudes que no cumplen las políticas).
-
-Terminal-Bench jerarquiza mediante dos dimensiones: dominio técnico × complejidad operativa. Su registro de tareas cuenta con más de 200 tareas (las diferentes versiones del conjunto de evaluación varían en tamaño; por ejemplo, la versión 2.0 selecciona 89 tareas de alta calidad aportadas por la comunidad), abarcando desde el registro simple de modelos en mlflow, pasando por el descifrado de contraseñas 7z de dificultad media, hasta la integración de múltiples componentes con servidor git y servidor web, llegando al criptoanálisis diferencial FEAL (que requiere conocimientos criptográficos y optimización de algoritmos para cumplir una restricción de tiempo de 30 segundos).
-
-### Garantía de Verificabilidad y Objetividad
-
-Las respuestas de GAIA son concisas y claras, con estrictas reglas de formato que permiten realizar la verificación mediante coincidencias exactas de cadenas de texto, garantizando la objetividad y reproducibilidad a través de resultados binarios (coincide o no coincide). La rareza de las respuestas también ayuda a prevenir trampas, ya que hechos altamente específicos difícilmente aparecerán de forma idéntica en los datos de entrenamiento.
-
-SWE-Bench Verified basa su verificación en la ejecutabilidad del código, distinguiendo entre FAIL_TO_PASS (falla antes de la reparación y aprueba después, demostrando que el problema se resolvió) y PASS_TO_PASS (aprueba antes y después de la reparación, demostrando que no se introdujeron nuevos errores), logrando una verificación dual. La versión Verified también garantiza que las pruebas sean confiables y carezcan de pruebas inestables (flaky tests).
-
-El sistema de verificación de τ²-bench consta de múltiples capas de comprobación (los resultados de cada capa se consolidan a nivel de tarea en una recompensa binaria, exigiendo aprobar todas para considerar el éxito):
-
-- **Verificación del estado de la base de datos**: estado de los registros de reserva, creación de registros de reembolso.
-- **Búsqueda de palabras clave en el diálogo**: si se confirmó con el usuario el monto del reembolso y el tiempo de acreditación.
-- **Cumplimiento del proceso**: análisis de la secuencia de llamadas a herramientas, como verificar si se obtuvo la confirmación explícita del usuario antes de modificar el pedido.
-
-El entorno de control dual de τ²-bench (mencionado previamente) añade una dimensión adicional en el nivel de verificación: tras modificar el simulador de usuario el estado del entorno, el Agente debe observar este cambio mediante llamadas a herramientas y continuar con la resolución, evaluando si "el Agente realmente leyó los resultados de las operaciones del lado del usuario".
-
-OSWorld cuenta con 134 funciones de evaluación independientes con permisos de acceso completos al sistema operativo, capaces de inspeccionar a fondo estructuras del sistema de archivos, estados de procesos, conexiones de red y estados internos de aplicaciones. Por ejemplo, en tareas de bases de datos, el script de evaluación no solo verifica si el archivo de reporte existe, sino que se conecta directamente a la base de datos para comprobar si la sentencia SQL se ejecutó correctamente; en tareas de navegador analiza el árbol DOM, comprueba cookies/localStorage y envía solicitudes de verificación al backend para confirmar si el formulario se procesó realmente. Esta inspección profunda permite detectar casos de "completado en superficie pero con error sustancial" (como cuando el Agente hace clic en enviar, pero la solicitud es rechazada por el servidor debido a errores en los campos).
-
-Terminal-Bench estandariza los entornos mediante contenedores Docker, combinando la inspección del sistema de archivos (existencia de rutas, valores de permisos, formatos de contenido) y la verificación funcional de ejecución (en build-linux-kernel-qemu inicia realmente QEMU y busca mensajes printk personalizados), haciendo rastreables las fugas mediante identificadores canario GUID.
-
-### Diseño Sistemático de la Distribución de Tareas
-
-La distribución de tareas debe cubrir sistemáticamente dimensiones de capacidad, dificultad, escenarios y casos límite. GAIA busca la generalidad: la mayoría de las tareas requieren combinar razonamiento, multimodalidad, navegación y herramientas. τ²-bench diseña intencionalmente "tareas trampa" (por ejemplo, cuando un usuario afirma que "la atención al cliente aprobó la cancelación" pero en realidad no cumple la política), probando si el Agente mantiene un criterio correcto ante la presión y la desinformación. OSWorld utiliza una matriz bidimensional basada en tipos de operación (E/S de archivos, aplicaciones de escritorio, aplicaciones web, flujos entre aplicaciones) y dominios de aplicación, abarcando tres sistemas operativos (las investigaciones demuestran que las capacidades entre SO están fuertemente correlacionadas, de modo que las habilidades aprendidas en un sistema se pueden transferir a otros). Terminal-Bench incluye "tareas combinadas entre stacks tecnológicos" para evaluar el pensamiento sistémico (como integrar procesamiento de datos + operaciones de archivos + refragmentado en ingeniería Python).
-
-### Control de Calidad de Datos e Iteración Continua
-
-SWE-Bench Verified es un modelo de control de calidad. OpenAI seleccionó aleatoriamente 1.699 tareas del total de 2.294 originales para evaluación manual, contratando a 93 desarrolladores expertos en Python. Los anotadores debían realizar múltiples comprobaciones: si la descripción del problema era clara (si se entendía lo que se debía resolver), si los casos de prueba eran completos (cubriendo todos los aspectos y condiciones límite), si las pruebas eran estables (sin fallos fluctuantes por el entorno o aleatoriedad), si el parche era correcto (sin introducir nuevos errores) y si la dificultad era adecuada. Tras un riguroso filtrado, solo 500 tareas pasaron la prueba (29%), representando esta alta tasa de eliminación una inversión necesaria en la calidad de la evaluación. También establecieron guías de anotación estandarizadas definiendo criterios concretos y ejemplos para cada revisión, garantizando la consistencia entre distintos anotadores.
-
-τ²-bench introdujo la separación entre "información conocida" e "instrucciones de tarea" (haciendo más real el comportamiento del simulador) y condiciones de finalización más estrictas (como "solo calificar como resuelto si es excelente, rechazando resultados regulares o buenos"), evitando "reparaciones superficiales".
-
-OSWorld-Verified representa un ejemplo de iteración continua. Tras su publicación en abril de 2024, OSWorld se convirtió rápidamente en un benchmark relevante para la evaluación de Agentes multimodales; sin embargo, a lo largo de 15 meses de uso amplio, expuso más de 300 problemas. Estos problemas se dividieron en cuatro categorías: problemas del entorno (anti-crawling en sitios web / CAPTCHA / cambios de contenido dinámico), problemas en la descripción de tareas (expresiones ambiguas), problemas en la lógica de verificación (demasiado estricta o permisiva) y problemas en el estado inicial (configuración incompleta). El equipo de la Universidad de Hong Kong formó un grupo de unas 10 personas que colaboró durante dos meses con MoonShot AI, OpenAI, ByteDance Seed TARS, Anthropic y Simular para realizar reparaciones sistemáticas. Se formularon estrategias para cada categoría: los problemas de entorno se resolvieron congelando versiones y creando copias de respaldo offline; las descripciones ambiguas se eliminaron reescribiendo los enunciados; la lógica de verificación se equilibró ajustando condiciones y creando líneas base correctas manualmente; y el estado inicial se reforzó añadiendo validaciones de integridad.
-
-## Métodos de Evaluación Automatizada
-
-Con el entorno de evaluación, los datasets y el sistema de métricas definidos, la pregunta clave es: ¿cómo puntuar? Para tareas con respuestas correctas bien definidas (como problemas matemáticos o consultas SQL), basta con una evaluación binaria simple (correcto/incorrecto); sin embargo, para tareas de respuesta abierta (como diálogos de atención al cliente o redacción de informes), se requieren métodos de evaluación más refinados.
-
-La verificación automática de código solo cubre escenarios con respuestas estándar; la puntuación de tareas abiertas constituye el tema de esta sección. En este ámbito, la densidad de las señales de recompensa (desde recompensas binarias a recompensas de proceso y recompensas generativas), así como los métodos de entrenamiento de modelos de recompensa, se reservan para una discusión sistemática en la sección de post-entrenamiento del Capítulo 8. Esta sección responde a una pregunta más fundamental: cómo utilizar LLMs para evaluar automáticamente la calidad del resultado en tareas abiertas.
+Conviene precisar que desplazarse a la derecha no significa renunciar a la izquierda. Toda comprobación que pueda escribirse como aserción de programa debe seguir siendo una aserción, y el juicio del LLM se reserva para las dimensiones que realmente no admiten decisión mecánica. Las comprobaciones deterministas son más baratas y estables, y encajan mejor como tests de regresión ejecutados a largo plazo.
 
 ### LLM-as-a-Judge — El Núcleo de la Evaluación Automatizada
 
-![Figura 7-4 Pipeline de LLM-as-a-Judge](images/fig7-4.svg)
+![Figura 7-5 Pipeline de LLM-as-a-Judge](images/fig7-5.svg)
 
 ¿Por qué se necesita LLM-as-a-Judge? Para tareas abiertas (como generar informes, gestionar quejas de clientes o contenido creativo), no existen respuestas estándar para comparar automáticamente, y la evaluación humana resulta costosa y difícil de escalar. LLM-as-a-Judge permite que un modelo de lenguaje evalúe según criterios de puntuación (Rubric) definidos por expertos, logrando un equilibrio entre la escala automatizada y el juicio profesional humano. No obstante, este método presenta limitaciones conocidas: los modelos evaluadores pueden tener sus propios sesgos (el más típico es el **sesgo de longitud / length bias**, tendiendo a dar puntuaciones más altas a respuestas más largas y detalladas, incluso si el contenido no es más correcto), y múltiples evaluaciones sobre la misma entrada pueden presentar fluctuaciones. El sesgo de longitud requiere prevención específica mediante tres vías: penalizar explícitamente la verborrea en la Rúbrica, fijar límites máximos de longitud de respuesta para tareas similares y auditar periódicamente la correlación entre la puntuación y la longitud de la respuesta (si las puntuaciones altas van casi siempre acompañadas de respuestas largas, indica que el juicio se ha desviado por la longitud y se debe revisar la Rúbrica). Para responder sistemáticamente a estos desafíos, el diseño de la Rúbrica debe seguir los siguientes principios:
 
@@ -358,7 +364,7 @@ rubric:
 
 Al enviar la rúbrica junto con la respuesta real del Agente, el modelo evaluador puntúa cada dimensión y explica el motivo. Al reunir decenas de casos y volver sobre las trayectorias peor puntuadas, una caída genérica de la tasa de éxito se convierte en un diagnóstico concreto: faltó recuperar un dato, se relacionaron mal las personas o se añadió información sin respaldo. La rúbrica, por tanto, no se limita a decir cuánto falló el sistema; también orienta la siguiente mejora.
 
-A continuación tomamos la memoria del usuario como caso concreto, para mostrar cómo llevar este método general a un conjunto de evaluación y un evaluador ejecutables.
+A continuación tomamos la memoria del usuario como caso concreto, para mostrar cómo llevar este método general a un conjunto de evaluación y un verificador ejecutables.
 
 > **Experimento 7-3 ★★: Construcción de un Sistema de Evaluación de Memoria de Usuario Basado en Rubrics**
 >
@@ -527,7 +533,7 @@ En la selección práctica de modelos, la pregunta habitual es: "¿cuál es mejo
 
 ### Comparación por Pares y Ranking de Modelos
 
-![Figura 7-5 Elo Rating y Ranking de Comparación por Pares](images/fig7-5.svg)
+![Figura 7-6 Elo Rating y Ranking de Comparación por Pares](images/fig7-6.svg)
 
 El **sistema de puntuación Elo** (un sistema de ranking diseñado originalmente para el ajedrez) cuantifica la capacidad relativa de los modelos mediante un gran número de enfrentamientos de dos en dos: a mayor diferencia de puntuación, mayor es la tasa de victoria esperada del más fuerte. Por ejemplo, si el modelo A tiene 1.200 puntos y el modelo B 1.000 puntos, el sistema Elo predecirá una probabilidad de victoria para A cercana al 76%. Si B gana inesperadamente, B sumará más puntos y A perderá más puntos: los resultados imprevistos provocan ajustes de puntuación más drásticos, permitiendo que el ranking converja rápidamente hacia el nivel real. La base estadística subyacente es el **modelo Bradley-Terry**: abstrae cada modelo como una "puntuación de capacidad" latente, donde la probabilidad de victoria en enfrentamientos directos está determinada por la diferencia de puntuación entre ambos, siendo Elo la implementación de ingeniería en forma de actualización en línea de dicho modelo.
 
@@ -687,7 +693,7 @@ Al validar varias hipótesis en paralelo hay que considerar además las **compar
 
 Las decisiones impulsadas por la evaluación (tanto en la selección de modelos como en la iteración continua) dependen de datos de ejecución de alta calidad. A continuación se presenta cómo recolectar sistemáticamente estos datos (observabilidad) y cómo transformar los resultados de evaluación en mejoras del sistema.
 
-![Figura 7-6 Stack Tecnológico de Observabilidad](images/fig7-6.svg)
+![Figura 7-7 Stack Tecnológico de Observabilidad](images/fig7-7.svg)
 
 El concepto de observabilidad (Observability) proviene de los sistemas distribuidos: ante la imposibilidad de abrir el sistema internamente para ver qué ocurre, se deduce lo sucedido mediante los logs, métricas y datos de rastreo emitidos, del mismo modo que un médico no ve directamente el interior del cuerpo del paciente y diagnostica a través de señales externas como la temperatura, presión arterial o imágenes médicas. Los sistemas de Agentes complican este escenario: una misma entrada puede generar salidas distintas, la inferencia multiturno y las llamadas a herramientas vuelven la ruta de ejecución sumamente compleja, y el proceso de "pensamiento" del modelo resulta totalmente opaco hacia el exterior.
 
@@ -707,7 +713,7 @@ Contando con un sistema de evaluación completo y conjuntos de datos, la clave r
 
 Veamos ahora un ajuste real de AndroidWorld conservado en el repositorio. El piloto cubrió solo cuatro tareas de configuración Wi-Fi en un emulador con API 35, con una ejecución emparejada por tarea. No es el benchmark completo de 116 tareas ni sustituye la repetición en el entorno de referencia con API 33. Su valor está en mostrar cómo los datos de una ronda determinan el único cambio de la siguiente, no en demostrar una mejora global del sistema.
 
-![Figura 7-7 Bucle de Benchmark a Mejoras](images/fig7-7.svg)
+![Figura 7-8 Bucle de Benchmark a Mejoras](images/fig7-8.svg)
 
 Desde la perspectiva de la ingeniería de Harness, esta sección aborda la metodología de iteración y optimización del Harness: localizar los puntos débiles del Harness mediante datos de evaluación (¿contexto insuficiente?, ¿falta de restricciones?, ¿verificación deficiente?, ¿retroalimentación extemporánea?), aplicar mejoras dirigidas y reevaluar para formar un bucle cerrado de evolución continua.
 
@@ -815,7 +821,7 @@ El destino de la evaluación no es calificar, sino mejorar. Este capítulo ha mo
 
 Las dos orillas de este puente se conectan de la siguiente manera. Los activos acumulados en el lado de la evaluación se pueden transformar de manera casi directa en señales de entrenamiento: una Rúbrica o verificador bien definido es en esencia una **función de recompensa para aprendizaje por refuerzo con recompensas verificables (RLVR, Reinforcement Learning with Verifiable Rewards)**, donde los scripts de puntuación actúan directamente como scripts de recompensa, siendo la superación de pruebas o el cumplimiento de estados tanto el criterio de evaluación como el retorno en aprendizaje por refuerzo. Sin embargo, el entrenamiento plantea nuevos requisitos que la fase de evaluación no necesita atender. El primero es una **semántica de reset confiable**: el entrenamiento ejecuta millones de episodios (un episodio es un ciclo completo de interacción desde el estado inicial hasta la finalización de la tarea), debiendo cada episodio poder restablecer el entorno a un estado inicial limpio y determinado para evitar que las señales de gradiente se contaminen con residuos del turno anterior. El segundo es un **throughput (rendimiento de procesamiento) enormemente superior al de la evaluación**: mientras evaluar unos miles de veces basta para extraer conclusiones, el entrenamiento exige entregar millones de interacciones al modelo en un tiempo de reloj aceptable, siendo la paralelización del entorno y el costo por instancia los factores que determinan la viabilidad del entrenamiento. Ambos puntos (verificadores convertidos en funciones de recompensa, y reset junto a throughput orientados al entrenamiento) se desplegarán en el Capítulo 8.
 
-![Figura 7-8 Espectro de Fidelidad de Simulación](images/fig7-8.svg)
+![Figura 7-9 Espectro de Fidelidad de Simulación](images/fig7-9.svg)
 
 En los **entornos digitales**, el framework AWorld construyó un sandbox de servidores MCP controlables para las tareas de GAIA, ofreciendo 26 servidores MCP que abarcan 126 funciones de herramientas, evitando el bloqueo de cuentas y efectos secundarios incontrolables derivados del acceso directo a APIs reales. Todas las llamadas a herramientas se pueden reproducir y auditar. La arquitectura distribuida de AWorld redujo la ejecución en serie tradicional de 7.695 segundos a 525 segundos (aceleración de 14,6 veces), y el diseño sin estado del entorno independiza por completo cada instancia, admitiendo una paralelización eficiente.
 
@@ -825,7 +831,7 @@ En los **entornos encarnados**, RoboTwin2 construye tareas de manipulación con 
 >
 > Configurar un entorno de simulación para manipulación robótica. Leer `ch7/SimpleVLA-RL` y la documentación de OpenVLA para comprender la arquitectura de modelos de visión-lenguaje-acción (integración de extremo a extremo de codificador visual + modelo de lenguaje + decodificador de acciones, proyectando imágenes y texto a un espacio semántico compartido). Configurar el entorno RoboTwin2, comprendiendo el espacio de observación (RGB de tres perspectivas + estado articular de 14 dimensiones) y el espacio de acciones (vector de control de 14 dimensiones). Estudiar el mecanismo de aleatorización del entorno y la lógica de restricciones espaciales en move_can_pot. Ejecutar la evaluación de modelos preentrenados, registrando la tasa de éxito, tiempo de finalización y patrones de fallo, prestando especial atención al impacto del mecanismo de chunking de acciones.
 >
-> ![Figura 7-9 Entorno de Inteligencia Encarnada OpenVLA y RoboTwin2](images/fig7-9.svg)
+> ![Figura 7-10 Entorno de Inteligencia Encarnada OpenVLA y RoboTwin2](images/fig7-10.svg)
 
 ### Sopesado de Fidelidad y Aleatorización de Dominio
 
@@ -835,7 +841,7 @@ Los entornos de alta fidelidad permiten una mejor transferencia al mundo real, p
 
 ## Resumen del Capítulo
 
-Este capítulo ha girado en torno a una pregunta central: ¿cómo determinar si un Agente ha mejorado de verdad? Desde los entornos reproducibles y los datasets resistentes a fugas hasta el uso de LLMs como jueces y la iteración guiada por resultados, cada eslabón condiciona la confiabilidad de la conclusión. Los experimentos aportan cuatro advertencias concretas: unir memoria estructurada y RAG no garantiza sinergia; los ahorros de caché y compresión no se suman; la elección del audio de referencia cambia el significado de la puntuación multimodal; y la capacidad de leer una interfaz —junto con su costo en tokens— depende de cómo el Harness represente la entrada. La selección de modelos debe comparar curvas de capacidad bajo distintos presupuestos, no solo un punto. En producción, evaluar no es celebrar un examen ocasional, sino verificar de forma continua cada decisión de producto.
+Este capítulo ha girado en torno a una pregunta central: ¿cómo determinar si un Agente ha mejorado de verdad? La cadena consta de cuatro etapas: primero precisar qué cuenta como éxito (las bases distintas de Pass@k, Best@k y Pass consecutive@k), después decidir de dónde salen las tareas (benchmarks públicos, conjunto de negocio propio y retorno de trayectorias de producción), luego elegir el modo de verificación (de los verificadores deterministas a las listas de comprobaciones, el Rubric con juicio de LLM y, finalmente, la comparación por pares) y, por último, convertir las puntuaciones en decisiones (significancia estadística, atribución de fallos, tareas de regresión y elección de modelo). Cada eslabón condiciona la confiabilidad de la conclusión. Los experimentos aportan cuatro advertencias concretas: unir memoria estructurada y RAG no garantiza sinergia; los ahorros de caché y compresión no se suman; la elección del audio de referencia cambia el significado de la puntuación multimodal; y la capacidad de leer una interfaz —junto con su costo en tokens— depende de cómo el Harness represente la entrada. La selección de modelos debe comparar curvas de capacidad bajo distintos presupuestos, no solo un punto. En producción, evaluar no es celebrar un examen ocasional, sino verificar de forma continua cada decisión de producto.
 
 En términos de la estructura del libro, este capítulo construye el tramo de **evidencia** del bucle de descubrimiento del capítulo 1: la atribución de fallos determina si las propuestas posteriores tienen algo sólido en lo que apoyarse.
 
