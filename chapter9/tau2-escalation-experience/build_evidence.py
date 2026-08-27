@@ -33,9 +33,10 @@ def arm_stats(name):
         d["per_task"][s["task_id"]] = int(ok)
         esc = False
         for m in s["messages"]:
+            # 调用方看 role：tau2 的 requestor 字段恒为 None，不能用来区分。
             for t in (m.get("tool_calls") or []):
                 if t["name"] == "transfer_to_human_agents": esc = True
-                if t["name"] in USER_TOOLS and m.get("requestor") != "user":
+                if t["name"] in USER_TOOLS and m.get("role") != "user":
                     d["misdirected_user_tool_calls"] += 1
                 if any(v == "" for v in (t.get("arguments") or {}).values()):
                     d["empty_arg_calls"] += 1

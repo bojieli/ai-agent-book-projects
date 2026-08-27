@@ -9,13 +9,11 @@ from pathlib import Path
 from collections import Counter
 
 SIM = Path("/Users/boj/book/ai-agent-book/chapter7/tau2-bench/data/simulations")
-USER_TOOLS = set("""can_send_mms check_apn_settings check_app_permissions check_app_status
-check_data_restriction_status check_installed_apps check_network_mode_preference
-check_network_status check_payment_request check_sim_status check_status_bar
-check_vpn_status check_wifi_calling_status check_wifi_status connect_vpn disconnect_vpn
-grant_app_permission make_payment reboot_device reseat_sim_card reset_apn_settings
-run_speed_test set_apn_settings set_network_mode_preference toggle_airplane_mode
-toggle_data toggle_data_saver_mode toggle_roaming toggle_wifi toggle_wifi_call""".split())
+USER_TOOLS = set(
+    (Path(__file__).resolve().parent / "tool_inventory.txt")
+    .read_text(encoding="utf-8").split("USER_TOOLS:")[1]
+    .replace(chr(10), " ").replace(",", " ").split()
+)
 
 def stats(name):
     f = SIM / f"{name}.json"
@@ -29,10 +27,11 @@ def stats(name):
         out["pass"] += int(r == 1.0)
         out["by_task"][s["task_id"]] = int(r == 1.0)
         for m in s["messages"]:
+            # tau2 的消息里 requestor 恒为 None，调用方要看 role：
+            # role == "user" 是用户在自己设备上执行，属于双控的正常行为；
+            # role == "assistant" 调用用户侧工具才是 Agent 越界。
             for t in (m.get("tool_calls") or []):
-                if t["name"] == "transfer_to_human_agents":
-                    pass
-                if t["name"] in USER_TOOLS and m.get("requestor") != "user":
+                if t["name"] in USER_TOOLS and m.get("role") != "user":
                     out["misdirected_user_tool_calls"] += 1
                 if any(v == "" for v in (t.get("arguments") or {}).values()):
                     out["empty_arg_calls"] += 1

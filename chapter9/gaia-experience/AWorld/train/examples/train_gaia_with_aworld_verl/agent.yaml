@@ -1,2 +1,0 @@
-- name: gaia_agent
-  _target_: train.examples.train_gaia_with_aworld_verl.custom_agent_loop.GaiaAgentLoop

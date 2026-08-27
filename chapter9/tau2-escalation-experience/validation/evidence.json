@@ -2,8 +2,8 @@
  "schema_version": 1,
  "experiment_id": "9-2",
  "title": "从 τ²-bench 失败轨迹提炼转人工与工具使用规则",
- "created_at": "2026-08-27T04:01:00.538150+00:00",
- "repository_revision": "70f57f10417b51dd98ad27d2ad3a780d0a55ed94",
+ "created_at": "2026-08-27T04:46:37.762550+00:00",
+ "repository_revision": "ba2e965f5f9d4c439f35dbefb82952c2601a36bc",
  "host": {
   "python": "3.11.4",
   "platform": "macOS-26.6.2-arm64-arm-64bit"
@@ -30,7 +30,7 @@
    "n": 114,
    "passed": 14,
    "escalated": 104,
-   "misdirected_user_tool_calls": 1056,
+   "misdirected_user_tool_calls": 1049,
    "empty_arg_calls": 904,
    "tool_errors": 1392,
    "per_task": {
@@ -160,7 +160,7 @@
    "n": 114,
    "passed": 20,
    "escalated": 114,
-   "misdirected_user_tool_calls": 221,
+   "misdirected_user_tool_calls": 205,
    "empty_arg_calls": 256,
    "tool_errors": 303,
    "per_task": {
@@ -290,7 +290,7 @@
    "n": 114,
    "passed": 22,
    "escalated": 111,
-   "misdirected_user_tool_calls": 293,
+   "misdirected_user_tool_calls": 163,
    "empty_arg_calls": 174,
    "tool_errors": 254,
    "per_task": {

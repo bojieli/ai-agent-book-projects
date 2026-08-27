@@ -1,8 +1,0 @@
-avd_name:
-adb_path:
-emulator_path:
-headless: False
-custom_executor: True
-enable_recording: False
-working_dir:
-max_retry: 3

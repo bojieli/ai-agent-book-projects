@@ -4,7 +4,7 @@
   "n": 114,
   "pass": 14,
   "escalated": 104,
-  "misdirected_user_tool_calls": 1056,
+  "misdirected_user_tool_calls": 1049,
   "empty_arg_calls": 904,
   "tool_errors": 1392,
   "by_task": {
@@ -129,7 +129,7 @@
   "n": 114,
   "pass": 20,
   "escalated": 114,
-  "misdirected_user_tool_calls": 221,
+  "misdirected_user_tool_calls": 205,
   "empty_arg_calls": 256,
   "tool_errors": 303,
   "by_task": {
@@ -254,7 +254,7 @@
   "n": 114,
   "pass": 22,
   "escalated": 111,
-  "misdirected_user_tool_calls": 293,
+  "misdirected_user_tool_calls": 163,
   "empty_arg_calls": 174,
   "tool_errors": 254,
   "by_task": {
