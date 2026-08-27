@@ -19,7 +19,7 @@ Első olvasáskor átugorható a hitelesítő adatok betöltése, a megjelenít�
 | Kísérlet | Projekt | Típus | Leírás |
 | :--: | --- | :--: | --- |
 | 9-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | A környezeti eredményeket, folyamatszabályokat és rubrikákat bizonyítékalapú diagnózissá egyesíti. |
-| 9-2 | [gaia-experience](gaia-experience/) | ✅ | Sikeres, részben sikeres és sikertelen nyomvonalakból tapasztalati dokumentumot készít. |
+| 9-2 | [tau2-escalation-experience](tau2-escalation-experience/) | ✅ | 9-2. kísérlet: a τ²-bench telecom tartományában egy modell 19 sikertelen trajectoryból vezet le átadási és eszközhasználati szabályokat; a 114 feladatos átviteli halmazon a sikerarány 12,3%-ról 19,3%-ra nő, regresszió nélkül; a [bizonyíték](tau2-escalation-experience/validation/evidence.json) megőrzi a levezetési nyugtát, a karonkénti házirend-hasheket és a viselkedési metrikákat |
 | 9-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | Minimális promptjavítást készít, és határ- valamint megtartási készlettel vezérli a kiadást. |
 | 9-4 | Törzsszövegbeli kísérlet | 🚧 | 9-4. kísérlet: felhasználói visszajelzésekből fejleszt ki egy „követelménytisztázás + Spec-megerősítés” Skillt; a szöveg háromkarú A/B tervet, metrikákat és kiadási kapukat ad meg, a hozzá tartozó implementáció még hiányzik |
 | 9-5 | [browser-use-rpa](browser-use-rpa/) | ✅ | Böngészőnyomvonalakat fordít reset és visszajátszás segítségével ellenőrzött munkafolyamattá. |
