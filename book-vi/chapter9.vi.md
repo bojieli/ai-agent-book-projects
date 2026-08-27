@@ -83,18 +83,6 @@ Một đường ống chắt lọc tri thức hoàn chỉnh có thể chia thàn
 
 Học kinh nghiệm GAIA cung cấp một ví dụ trực quan. GAIA[^gaia-2023] gồm các câu hỏi nhiều bước cần kết hợp tìm kiếm, đọc trang web, xử lý tệp và tính toán; AWorld[^aworld-2025] cung cấp môi trường thực thi để chạy Agent, gọi các công cụ đó và lưu quỹ đạo. Nếu cái trước giống đề thi thì cái sau giống phòng thi và hệ thống ghi chép thí nghiệm. Cách cũ tạo ngay bản tóm tắt chiến lược sau một lần thành công rồi vector hóa và đưa vào kho. Cách nghiêm ngặt hơn trước tiên dùng bộ kiểm tra đáp án GAIA hoặc bộ xác minh môi trường khác để gắn nhãn thành công, thành công một phần và thất bại, sau đó so sánh nhiều lộ trình trong cùng họ nhiệm vụ. Quỹ đạo thành công cung cấp chiến lược ứng viên; quỹ đạo thất bại cung cấp tri thức loại trừ; quỹ đạo thành công một phần giúp xác định “đoạn nào hiệu quả, đoạn nào vẫn có vấn đề”. Phản tư bằng ngôn ngữ tự nhiên do Reflexion[^reflexion-2023] đề xuất có thể tham gia tạo bài học ứng viên, nhưng bản thân phản tư không phải bằng chứng. Chỉ nội dung phù hợp với kết quả môi trường, được nhiều quỹ đạo ủng hộ và thể hiện chuyển giao tích cực trên nhiệm vụ mới mới nên đi vào tài liệu kinh nghiệm chính thức.
 
-> **Thí nghiệm 9-2 ★★: Chắt lọc tài liệu tri thức kinh nghiệm từ quỹ đạo GAIA**
->
-> **Mục tiêu thí nghiệm**: Kiểm tra liệu “tài liệu tri thức xuyên quỹ đạo” có dễ chuyển giao hơn “ghi nhớ bản tóm tắt của một lần thành công”, đồng thời giảm chuyển giao tiêu cực do thành công ngẫu nhiên và kinh nghiệm sai hay không.
->
-> **Dữ liệu và quy trình**: `gaia-experience` trước tiên lưu toàn bộ quỹ đạo và `environment_score` bên ngoài của mỗi lần chạy, rồi chuyển chúng thành bản ghi học tập tối thiểu gồm `task_family`, `capabilities` cần thiết, `applies_when`, chiến lược quan sát được, sai sót, ngoại lệ và ID quỹ đạo nguồn. Bộ xác minh kết quả phân loại lần chạy thành thành công, thành công một phần hoặc thất bại. Mô-đun học tập so sánh các lộ trình trong cùng họ nhiệm vụ; LLM có thể đề xuất quy nạp ứng viên, nhưng một chiến lược đề xuất phải được ít nhất hai quỹ đạo không thất bại ủng hộ. Tài liệu Markdown cuối cùng gồm bối cảnh áp dụng, chiến lược đề xuất, sai lầm thường gặp, điều kiện ngoại lệ, nguồn và thời điểm xác minh gần nhất. Giai đoạn áp dụng chỉ truy xuất các tài liệu này, không nhét quỹ đạo gốc dài vào ngữ cảnh.
->
-> **Ba nhóm đối chứng**: Nhóm một không dùng kinh nghiệm lịch sử. Nhóm hai truy xuất bản tóm tắt của một quỹ đạo giống nhiệm vụ hiện tại nhất. Nhóm ba truy xuất tài liệu tri thức được nhiều quỹ đạo cùng ủng hộ. Tập học và tập chuyển giao phải không giao nhau, tránh để đáp án của cùng một câu GAIA bị rò rỉ vào đánh giá dưới tên “kinh nghiệm”.
->
-> **Chỉ số và nghiệm thu**: Đồng thời báo cáo tỷ lệ thành công của nhiệm vụ chuyển giao, số ký tự hoặc Token truy xuất trung bình và tỷ lệ chuyển giao tiêu cực; kiểm tra mỗi kết luận chính thức có liệt kê quỹ đạo nguồn hay không. Nếu tài liệu xuyên quỹ đạo chỉ rút ngắn ngữ cảnh mà không cải thiện nhiệm vụ mới, không thể kết luận hệ thống đã học từ kinh nghiệm. Nếu một thành công ngẫu nhiên có thể được nâng thẳng thành tri thức chính thức, hoặc tài liệu không truy vết được về quỹ đạo gốc, thí nghiệm cũng không đạt.
->
-> Phần triển khai đi kèm nằm tại [`gaia-experience`](../chapter9/gaia-experience/). `demo_documents.py` mặc định chạy ngoại tuyến; dùng `--extractor llm` để LLM thực đề xuất các ứng viên kinh nghiệm xuyên quỹ đạo.
-
 [^reflexion-2023]: Shinn, N., et al. *Reflexion: Language Agents with Verbal Reinforcement Learning.* arXiv:2303.11366, 2023.
 
 [^gaia-2023]: Mialon, G., et al. *GAIA: a benchmark for General AI Assistants.* arXiv:2311.12983, 2023.
@@ -109,13 +97,27 @@ Andrej Karpathy gọi cách làm này là **học Prompt hệ thống** (System 
 
 Học Prompt hệ thống không phải là kỹ thuật prompt ở chương 2. Chương 2 bàn cách tổ chức một Prompt tốt; mục này bàn xem phản hồi thế nào thì đủ để kích hoạt việc sửa, và đề xuất cập nhật được phát hành an toàn ra sao. Sửa đổi phải là một diff tối thiểu có nguồn gốc, chứ không phải mỗi lần đều để mô hình viết lại toàn bộ Prompt — đây chính là mô thức "diff tối thiểu + có thể quay lui" đã được đặt tên ở chương 1. Phiên bản chờ kiểm chứng bắt buộc phải được thử đồng thời trên **tập biên đã gây ra thất bại** và **tập giữ lại vốn đang chạy tốt**: tập trước phải cải thiện, tập sau không được thoái lui.
 
-#### Ví dụ 1: Tối ưu hóa quy tắc trong prompt dựa trên quỹ đạo thất bại
+#### Ví dụ 1: quy tắc hóa ranh giới chuyển tiếp
 
-Chương 7 đã dùng τ-bench/τ²-bench để nói về cách đánh giá Agent chăm sóc khách hàng hàng không: người dùng hé lộ nhu cầu từng bước, hệ thống vừa kiểm tra trạng thái môi trường như đơn đặt chỗ, vừa kiểm tra xem trong hội thoại đã đưa ra thông tin cần thiết hay chưa. Phần quy trách thất bại của chương đó còn nhấn mạnh rằng không thể chỉ ghi "thất bại", mà phải tìm ra **bước sai đầu tiên**.
+Trong chính sách telecom của τ²-bench, việc chuyển sang nhân viên chỉ được quy định bằng hai câu mang tính nguyên tắc: chỉ chuyển khi yêu cầu vượt quá phạm vi hành động của Agent, và trước khi chuyển hãy cố hết sức giải quyết. Khi chương 7 mổ xẻ môi trường này, hai dòng ấy không bộc lộ vấn đề gì; chạy cùng môi trường với một mô hình yếu hơn thì khiếm khuyết lộ ra ngay — sau khi công cụ trả về lỗi, Agent lặp đi lặp lại việc thử lại rồi kết thúc bằng chuyển cho nhân viên. Đó chính là cách 19 trong 20 nhiệm vụ của tập chắt lọc kết thúc.
 
-Ca xấu trong ví dụ này là: người dùng không hài lòng về hoàn vé, phí đổi vé hay chính sách hành lý, còn Agent thì gọi `transfer_to_human` mà không tra chính sách, không giải thích quy định, cũng không tìm phương án thay thế được phép. Tranh cãi chính sách thông thường không cần chuyển tiếp; **chỉ khi người dùng yêu cầu rõ ràng gặp nhân viên, hoặc xuất hiện rủi ro an toàn/thân thể, thì mới bắt buộc chuyển tiếp**. Vậy nên vấn đề không phải là "Agent chưa đủ lễ độ", mà là Prompt chưa viết rõ ranh giới chuyển tiếp.
+Giao 19 quỹ đạo thất bại ấy cho mô hình, để nó tự quy nạp ra vài quy tắc khả thi rồi bổ sung vào cuối chính sách; sau đó chạy lại trên một tập nhiệm vụ chưa từng tham gia quá trình chắt lọc. Tỷ lệ vượt qua tăng từ 12,3% lên 19,3%, và không một nhiệm vụ vốn đã vượt qua nào bị làm hỏng.
 
-Chẩn đoán này chuyển thẳng thành một quy tắc trong prompt: trước hết tra cứu và giải thích chính sách, nhận ra mục tiêu mà người dùng thực sự muốn giải quyết, đưa ra phương án thay thế hợp quy; chỉ chuyển tiếp khi được yêu cầu rõ ràng gặp nhân viên, hoặc khi vượt quá thẩm quyền/liên quan đến an toàn.
+**Cho bộ chắt lọc xem gì sẽ quyết định nó quy nạp được gì.** Vẫn 19 quỹ đạo ấy, nếu chỉ cung cấp bản tóm tắt thất bại và văn bản lỗi thì thứ nó rút ra là "cùng một công cụ đã báo lỗi nhiều lần thì đừng gọi tiếp"; bổ sung thêm danh sách công cụ mà Agent và người dùng mỗi bên có thể gọi thì kết quả đổi thành "kiểm tra trạng thái mạng, SIM, APN thuộc về thiết bị của người dùng, phải hướng dẫn người dùng tự thao tác chứ không gọi trực tiếp". Cái trước ghi lại một bài học, cái sau nắm được trách nhiệm thuộc về ai.
+
+**Mô hình coi hành vi quan sát được là hành vi đáng phải làm.** Trong bản quy tắc đầu tiên có hai điều: "ba lần gọi thất bại liên tiếp thì chuyển cho nhân viên" và "người dùng hai lần không cung cấp số thì chuyển cho nhân viên" — thứ xuất hiện nhiều nhất trong các quỹ đạo chính là việc chuyển cho nhân viên, nên mô hình xem đó là phương án dự phòng hợp lý. Nhưng trong bộ đánh giá này, chuyển cho nhân viên tất yếu bị phán là thất bại; hai điều ấy chẳng khác nào viết thất bại vào chính quy phạm. Vì vậy sản phẩm chắt lọc không thể phát hành thẳng, phải qua một khâu kiểm chứng độc lập với thứ đã sinh ra nó.
+
+**Chỗ được sửa thường là điều hết sức mộc mạc.** Trong nhánh cơ sở có một quỹ đạo điển hình: Agent cần số điện thoại của người dùng, bèn gọi công cụ tra cứu và điền vào tham số dòng chữ "Xin vui lòng cho biết số điện thoại của bạn" — năm lần liên tiếp, năm lần báo lỗi, rồi chuyển cho nhân viên. Nó đã suy ra rằng phải hỏi người dùng, chỉ có điều nó nói câu ấy với công cụ. Sau khi quy tắc có hiệu lực, nó hỏi trong hội thoại trước, lấy được số rồi mới tra; về sau khi ý định kiểm tra trạng thái SIM bị tầng công cụ từ chối, nó chuyển sang hướng dẫn người dùng tự tháo lắp lại SIM, và nhiệm vụ vượt qua.
+
+> **Thí nghiệm 9-2 ★★: Chắt lọc quy tắc chuyển tiếp và sử dụng công cụ từ quỹ đạo thất bại của τ²-bench**
+>
+> Dùng lại môi trường τ²-bench telecom của chương 7. Tập chắt lọc và tập chuyển giao vốn đã là hai tập nhiệm vụ không giao nhau trong kho thượng nguồn, nên quá trình chắt lọc không hề chạm tới tập chuyển giao.
+>
+> Trước hết chạy tập chắt lọc bằng mô hình yếu và lưu lại các quỹ đạo thất bại; quy tắc do mô hình quy nạp chứ không do người viết, sinh xong thì bổ sung vào cuối chính sách gốc; sau đó trên tập chuyển giao hãy đối chiếu chính sách gốc với hai bản tiến hóa. Giữa ba nhánh chỉ thay tệp chính sách, bộ mô phỏng người dùng giữ nguyên.
+>
+> Ngoài tỷ lệ vượt qua, cần ghi lại ba chỉ số hành vi tương ứng trực tiếp với các quy tắc: tỷ lệ chuyển cho nhân viên, số lần Agent vượt quyền gọi công cụ phía người dùng, và số lần phát ra lời gọi khi còn thiếu tham số. Hai chỉ số sau đều giảm khoảng 80% ở các bản tiến hóa, cho thấy mức tăng của tỷ lệ vượt qua đến từ việc quy tắc đã sửa được những hành động cụ thể.
+
+Cách làm tương tự có thể chuyển sang lĩnh vực khác. Ca lỗi điển hình của Agent chăm sóc khách hàng hàng không là thế này: người dùng phản đối phí hoàn vé, phí đổi vé hoặc quy định hành lý, còn Agent thì không tra chính sách, không giải thích quy định, cũng không tìm phương án thay thế hợp lệ, mà gọi thẳng `transfer_to_human`. Tranh chấp chính sách thông thường không cần chuyển tiếp; **chỉ khi người dùng nêu rõ muốn gặp nhân viên, hoặc xuất hiện tình huống liên quan đến an toàn, thì mới bắt buộc phải chuyển**. Chẩn đoán vẫn chỉ về chỗ ranh giới chuyển tiếp chưa được viết rõ, và cách sửa vẫn là biến nó thành một quy tắc tối thiểu có ghi xuất xứ.
 
 > **Thí nghiệm 9-3 ★★: Tối ưu hóa Prompt hệ thống của chăm sóc khách hàng hàng không từ quỹ đạo thất bại**
 >
