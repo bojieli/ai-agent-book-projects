@@ -19,7 +19,7 @@
 | 編號 | 專案 | 型別 | 一句話說明 |
 | :--: | --- | :--: | --- |
 | 9-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | 實驗 9-1：用環境結果、過程規則和語言 Rubric 形成帶證據的客服軌跡診斷 |
-| 9-2 | [gaia-experience](gaia-experience/) | ✅ | 基於 AWorld + GAIA 的「學習-應用」閉環：自動總結成功軌跡為結構化經驗，在新任務中檢索應用 |
+| 9-2 | [tau2-escalation-experience](tau2-escalation-experience/) | ✅ | 實驗 9-2：τ²-bench telecom 上由模型從 19 條失敗軌跡提煉轉接與工具使用規則；遷移集 114 條通過率 12.3% → 19.3%，零回歸；[證據](tau2-escalation-experience/validation/evidence.json)保留提煉回執、三臂策略雜湊與行為指標 |
 | 9-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | 以 tau-bench 航空客服「過度轉接」為例，Coding Agent 讀/改 prompt 檔案 → 重新評測 → 驗證閉環 |
 | 9-4 | 正文實驗 | 🚧 | 實驗 9-4：從使用者回饋進化「需求澄清 + Spec 確認」Skill，正文提供三臂 A/B 設計與發布門檻 |
 | 9-5 | [browser-use-rpa](browser-use-rpa/) | ✅ | 實驗 9-5：瀏覽器工作流錄製系統，把重複操作封裝為參數化工具，透過重置與回放驗證 |

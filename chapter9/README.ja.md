@@ -19,7 +19,7 @@
 | 実験 | プロジェクト | 種類 | 説明 |
 | :--: | --- | :--: | --- |
 | 9-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | 実験 9-1：環境の結果・プロセスルール・言語 Rubric を組み合わせ、証拠付きのカスタマーサービス軌跡診断を形成する |
-| 9-2 | [gaia-experience](gaia-experience/) | ✅ | 実験 9-2：成功・部分成功・失敗の軌跡を比較し、軌跡横断の Markdown 経験ドキュメントを生成する |
+| 9-2 | [tau2-escalation-experience](tau2-escalation-experience/) | ✅ | 実験 9-2：τ²-bench telecom で、モデルが 19 本の失敗トラジェクトリから転送とツール利用のルールを導出；114 タスクの移行セットで通過率 12.3% → 19.3%、リグレッションはゼロ；[証拠](tau2-escalation-experience/validation/evidence.json)に導出レシート、各アームのポリシーハッシュ、行動指標を保存 |
 | 9-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | 実験 9-3：失敗軌跡から最小の Prompt パッチを生成し、境界セットと保持セットでリリースを制御する |
 | 9-4 | 本文の対照実験 | 🚧 | 実験 9-4：ユーザーフィードバックから「要件明確化 + Spec 確認」Skill を進化させる。本文は三アームの A/B 設計、指標、リリース基準を示すが、付随する実装は未提供 |
 | 9-5 | [browser-use-rpa](browser-use-rpa/) | ✅ | 実験 9-5：ブラウザ軌跡を状態述語付きのワークフローにコンパイルし、リセット再生で検証する |

@@ -19,7 +19,7 @@ En la primera pasada puedes omitir credenciales, presentación y compatibilidad 
 | Exp. | Proyecto | Tipo | Descripción |
 | :--: | --- | :--: | --- |
 | 9-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | Diagnóstico de trayectorias con evidencias basadas en resultados del entorno y reglas |
-| 9-2 | [gaia-experience](gaia-experience/) | ✅ | Comparación de trayectorias exitosas y fallidas para generar documentación de experiencia |
+| 9-2 | [tau2-escalation-experience](tau2-escalation-experience/) | ✅ | Experimento 9-2: en τ²-bench telecom, un modelo deriva reglas de escalado y uso de herramientas a partir de 19 trayectorias fallidas; la tasa de éxito en el conjunto de transferencia de 114 tareas pasa de 12,3% a 19,3% sin regresiones; la [evidencia](tau2-escalation-experience/validation/evidence.json) conserva el recibo de derivación, los hashes de política por brazo y las métricas de comportamiento |
 | 9-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | Generación de parches mínimos de prompts a partir de trayectorias fallidas con control de versión |
 | 9-4 | Experimento del texto | 🚧 | Experimento 9-4: hace evolucionar un Skill de «clarificación de requisitos + confirmación de Spec» a partir de los comentarios de los usuarios; el texto presenta un diseño A/B de tres brazos, las métricas y las puertas de publicación, y la implementación está pendiente |
 | 9-5 | [browser-use-rpa](browser-use-rpa/) | ✅ | Compilación de trayectorias de navegador en flujos de trabajo con predicados de estado |

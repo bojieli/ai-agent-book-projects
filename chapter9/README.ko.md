@@ -19,7 +19,7 @@
 | 실험 | 프로젝트 | 유형 | 설명 |
 | :--: | --- | :--: | --- |
 | 9-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | 실제 고객 서비스 호출 28건, Judge 호출 8건, 전문가 표본 8건을 검수했습니다. [증거](trajectory-verifier/validation/real_20260729T165247Z/evidence.json)에는 핵심 위반의 안정성 주장이 재현되지 않은 사실도 함께 기록돼 있습니다. |
-| 9-2 | [gaia-experience](gaia-experience/) | ✅ | 실제 GAIA 궤적 세 그룹과 지식 문서 대조를 검수했습니다. [증거](gaia-experience/validation/real_20260729T164012Z/evidence.json)에는 지식 문서 그룹이 25%, 두 대조군이 각각 50%였던 부정적 결과가 기록돼 있습니다. |
+| 9-2 | [tau2-escalation-experience](tau2-escalation-experience/) | ✅ | 실험 9-2: τ²-bench telecom에서 모델이 실패 궤적 19건으로부터 이관·도구 사용 규칙을 도출; 114개 과제 이전 세트 통과율 12.3% → 19.3%, 회귀 없음; [증거](tau2-escalation-experience/validation/evidence.json)에 도출 영수증, 각 팔의 정책 해시, 행동 지표 보관 |
 | 9-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | 실제 작업 에이전트, LLM Judge, 코딩 에이전트로 초기·자동·수동 세 그룹의 전체 보존 세트와 경계 세트를 실행했으며, 원본 응답과 배포 기준을 보존했습니다. |
 | 9-4 | 본문 대조 실험 | 🚧 | 실험 9-4: 사용자 피드백에서 ‘요구사항 명확화 + Spec 확인’ Skill을 진화시킵니다. 본문은 3암 A/B 설계와 지표, 릴리스 게이트를 제시하지만 구현은 아직 제공되지 않습니다. |
 | 9-5 | [browser-use-rpa](browser-use-rpa/) | ✅ | 실제 ARK 에이전트와 Chromium이 초기화 가능한 로컬 메시지 사이트에서 탐색, 독립 검증, 매개변수화된 재실행, 거짓 성공 대조, 페이지 변경에 따른 무효화를 완료했습니다. |

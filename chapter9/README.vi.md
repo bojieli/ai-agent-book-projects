@@ -19,7 +19,7 @@ Lần đầu có thể bỏ qua credential, lớp trình bày và tương thích
 | Thí nghiệm | Project | Type | Description |
 | :--: | --- | :--: | --- |
 | 9-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | Thí nghiệm 9-1: kết hợp kết quả môi trường, quy tắc quá trình và rubric ngôn ngữ thành chẩn đoán trajectory chăm sóc khách hàng có bằng chứng |
-| 9-2 | [gaia-experience](gaia-experience/) | ✅ | Thí nghiệm 9-2: so sánh trajectory thành công, thành công một phần và thất bại để sinh tài liệu kinh nghiệm Markdown xuyên trajectory |
+| 9-2 | [tau2-escalation-experience](tau2-escalation-experience/) | ✅ | Thí nghiệm 9-2: trên τ²-bench telecom, một mô hình rút ra các quy tắc chuyển tiếp và sử dụng công cụ từ 19 trajectory thất bại; tỷ lệ vượt qua trên tập chuyển giao 114 nhiệm vụ tăng từ 12,3% lên 19,3%, không có hồi quy; [bằng chứng](tau2-escalation-experience/validation/evidence.json) lưu biên nhận rút trích, hash chính sách từng nhánh và các chỉ số hành vi |
 | 9-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | Thí nghiệm 9-3: sinh bản vá prompt tối thiểu từ trajectory thất bại, kiểm soát phát hành bằng tập biên và tập giữ lại |
 | 9-4 | Thí nghiệm trong sách | 🚧 | Thí nghiệm 9-4: tiến hóa Skill "làm rõ yêu cầu + xác nhận Spec" từ phản hồi người dùng; phần chính đưa ra thiết kế A/B ba nhánh, các chỉ số và cổng phát hành, phần triển khai đi kèm còn thiếu |
 | 9-5 | [browser-use-rpa](browser-use-rpa/) | ✅ | Thí nghiệm 9-5: biên dịch trajectory trình duyệt thành workflow có vị từ trạng thái (state predicates), được kiểm chứng bằng phát lại sau reset |

@@ -19,7 +19,7 @@ On a first pass, skip credential loading, presentation code, and provider-compat
 | Exp. | Project | Type | Description |
 | :--: | --- | :--: | --- |
 | 9-1 | [trajectory-verifier](trajectory-verifier/) | ✅ | Experiment 9-1: combines environment outcomes, process rules, and language rubrics into evidence-backed diagnoses of customer-service trajectories |
-| 9-2 | [gaia-experience](gaia-experience/) | ✅ | Experiment 9-2: compares successful, partially successful, and failed trajectories to generate cross-trajectory Markdown experience documents |
+| 9-2 | [tau2-escalation-experience](tau2-escalation-experience/) | ✅ | Experiment 9-2: on τ²-bench telecom, a model derives escalation and tool-use rules from 19 failed trajectories; pass rate on the 114-task transfer set goes 12.3% → 19.3% with zero regressions; [evidence](tau2-escalation-experience/validation/evidence.json) keeps the derivation receipt, per-arm policy hashes and behavioral metrics |
 | 9-3 | [prompt-auto-optimization](prompt-auto-optimization/) | ✅ | Experiment 9-3: generates minimal prompt patches from failed trajectories, controlling release with a boundary set and a retention set |
 | 9-4 | Text experiment | 🚧 | Experiment 9-4: evolves a requirements-clarification and Spec-confirmation Skill from user feedback, with a three-arm A/B design and release gates |
 | 9-5 | [browser-use-rpa](browser-use-rpa/) | ✅ | Experiment 9-5: compiles browser trajectories into workflows with state predicates, verified by reset-and-replay |
