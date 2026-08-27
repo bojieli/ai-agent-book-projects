@@ -18,57 +18,117 @@ From the perspective of Harness engineering introduced in Chapter 1, evaluation 
 
 An evaluation system is worth even more in an era of rapid model evolution. Models keep improving, but a new model that scores higher on public benchmarks will not necessarily do better on your task—it may even regress (perform worse than the old version in some respects). Only a full run on your own evaluation dataset lets you make a data-driven upgrade decision. A solid evaluation system even makes **"building products for future models"** a viable strategy: if the current model isn't good enough for commercial deployment, finish the product anyway, build the evaluation set, track each new model's performance, and launch the moment one clears the bar.
 
-> **Chapter Guide**
->
-> This chapter builds a complete evaluation system on three levels. The first level is **Evaluation Design**: to avoid discussing tools and data first and defining "success" last, the chapter starts by defining what counts as success, distinguishing the capability ceiling of technical wonders from the consecutive reliability required by business scenarios; it then develops evaluation environments and datasets (where to test and what to test). The second level is **Evaluation Methods** (how to judge): LLM-as-a-Judge, pairwise comparison, and model ranking. The third level is **Evaluation-Driven Decision Making** (what to do after testing): turning results into actionable guidance for model selection, architecture optimization, and continuous iteration, with statistical significance to judge whether an observed score difference is real. The chapter also covers observability and the internal evaluation infrastructure of production-grade Agents, and closes with the simulation environments that connect to post-training in Chapter 8.
->
-> The idea running through the whole chapter: **an evaluation system's primary value is not scoring the current system, but letting you keep up with model evolution quickly and reliably.** When a stronger or cheaper model ships, a team with a robust evaluation system can decide within hours whether to switch; a team without one can only trust intuition or wait for community feedback. In the fiercely competitive Agent market, that difference in speed can decide who wins.
+A complete evaluation system decomposes into four stages: what counts as success, where the tasks come from, who verifies, and how a score turns into a decision, as shown in Figure 7-1.
 
-![Figure 7-1: Three Levels of the Evaluation System](images/fig7-1.svg)
+![Figure 7-1: The Four Stages of an Agent Evaluation System](images/fig7-1.svg)
 
-## A Concrete Evaluation Example
+## Anatomy of an Evaluation Task: The telecom Domain of τ²-bench
 
-Before diving into the methodology, let's build intuition through a complete example. Suppose we have built a customer service Agent and need to evaluate its ability to handle refund requests.
+Let us begin by dissecting one real task from the telecom domain of τ²-bench in full. The source lives at `chapter7/tau2-bench` in the companion repository, and the task file is `data/tau2/domains/telecom/tasks_small.json`.
 
-**Test Case**: The user wants to return an order from 3 days ago (Order #12345, Amount ¥299). Company policy: Full refund within 7 days.
+### The Four Components of a Task Definition
 
-**Agent Trajectory**:
+Below is one task from that file, abridged for readability.
 
-```text
-User: I want to return the headphones I bought 3 days ago, order number 12345. (Today is 2026-04-10)
+```jsonc
+{
+  "id": "[mobile_data_issue]airplane_mode_on|user_abroad_roaming_enabled_off",
 
-Agent (thinking): The user wants a refund, I need to check the order information first.
-Agent → Calls tool query_order(order_id="12345")
-Tool returns: {status: "delivered", amount: 299, date: "2026-04-07", item: "Bluetooth Headphones"}
+  // The ticket handed to the Agent
+  "ticket": "The user is unable to browse the internet and the status bar shows
+             'No Service'. Customer John Smith, phone 555-123-2002, currently
+             abroad in France. They will consider the issue resolved when the
+             speed test returns excellent. They will not change their data plan
+             but will refuel 2.0 GB of data if necessary.",
 
-Agent (thinking): Order date 2026-04-07, today is 2026-04-10, that's 3 days, within the 7-day refund period, eligible for full refund.
-Agent → Calls tool process_refund(order_id="12345", amount=299)
-Tool returns: {refund_id: "R-98765", status: "processing", eta: "3-5 business days"}
+  // The behavioral spec handed to the user simulator
+  "user_scenario": { "instructions": {
+      "known_info": "You are John Smith with phone number 555-123-2002.
+                     You are currently abroad in France.",
+      "unknown_info": null,
+      "task_instructions":
+        "…express mild frustration after the first unsuccessful attempt.
+         You will consider the issue resolved only when speed test returns
+         excellent internet speed and nothing else. If it returns poor, fair
+         or good, you will not consider the issue resolved.
+         Whenever the agent asks you about your device, always ground your
+         responses on the results of tool calls. …
+         Never make up the results of tool calls."
+  }},
 
-Agent: A refund has been initiated for you. The full refund for Order #12345 (Bluetooth Headphones, ¥299) is being processed,
-      and is expected to arrive in 3-5 business days. The refund ID is R-98765, which can be used to check the progress.
+  // Reset both sides to the same starting point before the run
+  "initial_state": { "initialization_actions": [
+      { "env_type": "user",      "func_name": "turn_airplane_mode_on" },
+      { "env_type": "user",      "func_name": "turn_roaming_off" },
+      { "env_type": "assistant", "func_name": "enable_roaming",
+        "arguments": { "customer_id": "C1001", "line_id": "L1002" } }
+  ]},
+
+  // Scoring criteria
+  "evaluation_criteria": {
+      "actions": [
+        { "requestor": "user", "name": "toggle_airplane_mode" },
+        { "requestor": "user", "name": "toggle_roaming" }
+      ],
+      "env_assertions": [
+        { "func_name": "assert_mobile_data_status", "expected_status": true },
+        { "func_name": "assert_internet_speed",
+          "expected_speed": 200, "expected_desc": "excellent" }
+      ],
+      "communicate_info": null,
+      "nl_assertions": null,
+      "reward_basis": ["ENV_ASSERTION"]
+  }
+}
 ```
 
-**Scoring with a Rubric** (four dimensions, each scored 1-4). Table 7-1 provides a scoring example for this customer service refund task, illustrating how a Rubric breaks down an Agent trajectory into checkable evaluation dimensions.
+Four design decisions in this definition deserve elaboration.
 
-Table 7-1 Rubric Scoring Example for Customer Service Refund Task
+**The user's knowledge boundary is modeled explicitly.** `known_info` contains only three facts: name, phone number, and country. The two actual causes of the fault — airplane mode is on, data roaming is off — are not among them. The user does not know, and therefore cannot volunteer them; the Agent can only obtain them by asking questions and guiding the user to check. This is how **progressive information disclosure** is implemented at the level of the task definition: not by constraining the simulator with a prompt that says "don't reveal everything at once," but by modeling the user's knowledge as a field of its own. Most benchmarks state the complete requirement at the start of the task, whereas a real user's opening line is often no more than "I can't get online." Clarifying a request until it is actionable is itself part of what an Agent must be able to do.
 
-| Dimension | Criteria | Score | Reason |
-|------------------------|--------------------------------|------|--------------------------------|
-| Operational Correctness | Is the refund amount and order number correct? | 4 | Correctly queried and initiated a ¥299 full refund |
-| Policy Compliance | Does it follow the 7-day refund policy? | 4 | Order is within the refund period, complies with policy |
-| Information Completeness | Does it provide the amount, arrival time, and refund ID? | 4 | All three key pieces of information were provided |
-| Hallucination Detection (Veto) | Does it fabricate non-existent information? | Pass | All information comes from tool outputs |
+**The simulator receives a behavioral spec, not a script of lines.** `task_instructions` carries three kinds of constraint: an emotional setting (show mild frustration after the first unsuccessful attempt), an acceptance criterion (the issue counts as resolved only when the speed test returns excellent; poor, fair, and good are all rejected), and a **grounding** requirement — every answer about the device state must be based on the result of a tool call, "Never make up the results of tool calls." The third is the most consequential: without a grounding constraint, the simulated user will follow the Agent's lead and confirm that the problem is fixed, and the evaluation degenerates into two models agreeing with each other.
 
-Hallucination is listed as a **veto** rather than a graded scoring dimension because it is orthogonal to quality. A fluent, detailed, and polite response containing false information is far more harmful to the user than a brief but accurate one.
+**The initial state is partitioned by which side controls it.** `env_type` takes two values, `user` and `assistant`: airplane mode and the roaming switch belong to the user's side, while the carrier-side `enable_roaming` belongs to the Agent's side. This partition determines the shape of the fault — roaming is provisioned on the carrier side but switched off on the user's handset, so an Agent querying the database sees nothing but "configuration normal." The fault sits on the side the database cannot see, and only guiding the user to check will surface it.
 
-This test case passed. But a good evaluation doesn't just test success scenarios; it also probes boundaries and traps—when a user wants to return an order from 15 days ago (beyond the refund period), can the Agent correctly refuse? When a user claims "a customer service representative already approved the refund," will the Agent believe it without a system record? These boundary scenarios are what truly separate strong Agents from weak ones.
+**Scoring is defined in four layers, and this task uses only one of them.** `env_assertions` checks the final state (mobile data available, speed test at or above 200 Mbps and rated excellent), `actions` checks whether the key actions occurred and **which side performed them**, and `communicate_info` and `nl_assertions` check whether the necessary information was conveyed to the user. This task's `reward_basis` declares only `ENV_ASSERTION`; the remaining layers are still computed and recorded but do not enter the final reward. The scoring basis is declared per task rather than fixed globally.
 
-The process above — defining test cases, running the Agent, scoring with a Rubric, and analyzing results — is the basic skeleton of evaluation. The rest of this chapter fleshes out the design of each step.
+### The Trajectory of a Real Run
 
-## Evaluation Metrics System
+We now ask the reader to run the evaluation tasks of the τ²-bench telecom domain, observe the task design, the user simulator, the process and outcome verification logic, and the Agent's execution trajectory, and analyze why the Agent fails.
 
-Before building an environment or dataset, define what "success" means: is one workable path enough, or must every run be correct? Different definitions can reverse the engineering decision. This section establishes the vocabulary used by the rest of the chapter.
+> **Experiment 7-1 ★: Run τ²-bench and Compare It with τ-bench**
+>
+> This experiment runs the τ²-bench evaluation framework to understand the design points of a human-computer interaction evaluation environment. First, read the task definition file along the path taken in this section: each task consists of four parts — known information, task instructions, initial state, and success conditions. Then run the full evaluation flow, observe the multi-turn dialogue between the user simulator and the Agent, and analyze typical failure modes (policy violations, omitted information, excessive escalation to a human agent, and so on).
+>
+> ![Figure 7-3: Dual-Control Environment and Layered Verification in τ²-bench](images/fig7-3.svg)
+
+The companion repository retains one run record (`chapter7/tau2-bench-eval`). Below we analyze one successful run from it.
+
+The first dozen or so turns are the account identification phase. The Agent looks up customer C1001 by phone number, then queries the data usage of all three lines L1001, L1002, and L1003 one by one, and finally circles back to ask which number the user is actually using in France. In message 17 it reaches an incorrect conclusion:
+
+> **Agent** (17): The number 555-123-2002 is not among your active lines. The closest match is 555-123-2001…
+
+That conclusion rests on a query of line L1001 alone. After the user insists the number is correct, the Agent goes on to query L1002 and finally matches it. The pivotal moment comes at message 30:
+
+> **User** (30) → calls `check_network_status()`, `check_status_bar()`
+>
+> **Tool returns** (31): `Airplane Mode: ON | Cellular Connection: no_service | Mobile Data Enabled: Yes | Data Roaming Enabled: No`
+>
+> **User** (33): I see my phone is currently in Airplane Mode, which is why there is no signal. Mobile data is enabled, but data roaming is off. Should I turn off Airplane Mode and try again?
+
+The party issuing the tool call is the **user**, not the Agent. This is the **dual-control** mechanism: the simulated user owns an independent tool set of its own, including `check_status_bar`, `toggle_airplane_mode`, `reseat_sim_card`, and `run_speed_test`.
+
+The remaining troubleshooting goes smoothly: the Agent asks the user to turn off airplane mode and turn on roaming, the user performs both actions (35, 37), and the status bar switches to full-bar 5G; the Agent asks for a speed test, which returns 275 Mbps rated Excellent (46), and the user confirms the issue is resolved. Both `env_assertions` pass and `reward = 1.0`.
+
+This full-marks trajectory also contains a problem the verifier never caught. The opening paragraph of the telecom Agent policy states "You should only make one tool call at a time," yet in message 4 the Agent issued `get_customer_by_phone` and `get_customer_by_name` in a single turn. The verifier did not mark this as an error, because this task's `reward_basis` considers only the final state. This is not an oversight in τ²-bench but the inherent price of a binary reward: it trades process granularity for a single number that is comparable across models. Production evaluation systems, however, usually need more: not only a verdict on whether the outcome is right, but an indication of where the problem lies.
+
+The failed task is equally worth analyzing. The user's number is 555-123-2002, yet the Agent settled on line L1001 and kept reasoning from its 3.2/5 GB usage figure. Along the way, `get_details_by_id(L1001)` explicitly returned 555-123-2001 as that line's number; the Agent read the result but did not revise its judgment, then spent dozens of messages on unrelated diagnostics and finally escalated to a human agent. It did in fact complete half the task — it guided the user to turn off data saver mode, and that user-side action genuinely occurred and was verified by the environment — but the wrong line selection meant the required 2 GB data refuel was never performed, and all three final-state assertions failed. This failure shape closely resembles the AndroidWorld case discussed later in "Failure Attribution": the evidence needed to correct the judgment had already entered the context, and the Agent did not go back on the strength of it.
+
+This one task already poses every question an evaluation set has to answer: what counts as success, where tasks come from, who verifies, and how a score turns into a decision. The following sections take them in turn.
+
+## Evaluation Metrics: Defining Success
+
+The evaluation result in the previous section was four of five tasks passed. The number 0.8 by itself says nothing about whether the system is usable. If it belongs to a refund customer service Agent, it means one user in five does not get the refund they are owed; if it belongs to a security Agent used to hunt for vulnerabilities, hitting four out of five is quite respectable. The difference lies in how high a success rate the business scenario demands.
 
 ### Technical Wonders: Capability Ceilings with Pass@k
 
@@ -99,212 +159,155 @@ At $p=0.6$ and $k=5$, for instance, Pass@5 $=1-0.4^5\approx99.0\%$ — it looks 
 
 An evaluation report must state exactly what the $k$ attempts are: $k$ independent samples of the same task, or $k$ consecutive tasks on a production pipeline. For operations with side effects you cannot simply "retry until it works"; sample in a sandbox or a rollback-capable environment instead, and record every failure in the reliability metric.
 
-### Process Metrics: From Black Box to White Box
+## The Evaluation Environment
 
-Focusing solely on the final outcome is insufficient; the process by which the Agent achieves the outcome is equally important. **Action validity and authorization rate** measures the proportion of actions that are both valid and authorized—invalid operations include calling non-existent tools or passing incorrect parameter types; unauthorized operations refer to actions beyond the permitted scope. A high rate indicates the Agent has a clear understanding of the tool ecosystem. **Tool call correctness rate** further requires that parameters are semantically reasonable: the query terms for a search tool should accurately express the need, and the path for a file operation should point to the correct target.
+Once the metric is settled, the next question is where to test. An evaluation environment is an apparatus that can be run repeatedly: given the same initial state, the same Agent should produce comparable results.
 
-**Path efficiency** measures how efficiently the task is completed: number of steps (think-act-observe cycles), redundant actions (repeatedly searching for the same keyword, re-reading the same file), and backtracking frequency (how often the Agent realizes an error and corrects itself—occasional backtracking is normal, but frequent backtracking indicates insufficient forward planning). A baseline from human experts or heuristic algorithms is needed to define a "reasonable number of steps."
+### The Five Components
 
-**Retrieval coverage** targets information-gathering tasks: Did the Agent fully explore the information space? Did it jump to conclusions after only looking at the first page of search results? **Cost and latency** focus on request count, token expenditure (distinguishing input/output costs, considering KV Cache reuse), and wall-clock time (including model inference + tool execution + network latency). Time distribution needs to be tracked to identify bottlenecks.
+Return to the telecom task dissected above. Taking it as the reference, everything a repeatable evaluation environment requires is already present.
 
-### Safety, Robustness, and Trajectory Coverage
+**Dataset** is the task file itself: the initial state, the ticket for the Agent, the behavioral spec for the simulator, and the acceptance criteria are packaged into a single record, and one record is one test case.
 
-**Safety and Compliance Metrics** are crucial in production deployment: triggering sensitive operations (deleting data / modifying permissions / sending external communications), data leakage (printing passwords in logs / sending private documents to external APIs), and prohibited content should all be subject to a **zero-tolerance principle**—similar to the hallucination veto (see the "Four Rubric Principles" later). A single serious safety violation vetoes the overall evaluation, regardless of performance in other dimensions.
+**Environment State** is the mutable information during task execution: customers, lines, plans, and bills in the database, plus airplane mode, roaming, the data saver switch, and the remaining data allowance on the device side. It must be resettable, and `initialization_actions` is the reset script. Realism requires state changes to follow business logic; controllability requires that every run start from the same point.
 
-**Robustness** measures stability in the face of uncertainty: random seed sensitivity (how much performance varies under different initializations), adaptability to page changes (a website UI update should not cause complete failure), tolerance for API jitter (can it gracefully handle temporary failures, timeouts, format changes), and long-term memory interference (can outdated information accumulated in the context lead to incorrect decisions).
+**Tools** belong to two sides. The Agent can call carrier-side operations such as looking up a customer, checking usage, refueling data, and transferring to a human agent; the user can operate the switches on the device. Both tool sets are atomic operations — there is no high-level abstraction such as "solve the user's connectivity problem." Too high a level of abstraction reduces the evaluation to a test of a single function call, with the planning and reasoning absorbed into the tool itself.
 
-**Dual Coverage of Execution Trajectory and Final Outcome.** An easily overlooked distinction: "what the Agent said and did during execution" (the trajectory defined in Chapter 1) and "what the system ultimately became" (the final outcome) are two different things. The Agent saying "the booking is complete" is trajectory-level information; a record actually appearing in the database is outcome-level verification. Look only at the trajectory and you miss "said it but didn't do it"; look only at the outcome and you may miss intermediate steps that went astray. Anthropic once gave an example: a flight booking Agent discovered a loophole in the airline's policy during execution and found a cheaper option for the user—if scored only according to the preset execution path, this run would be judged a failure; but from the final outcome, the user got a better deal. Therefore, both types of evaluation should be covered to avoid systematic blind spots.
+**Rubric** is the four layers of checks in `evaluation_criteria`, plus the aggregation rule in `reward_basis`.
 
-### Human Spot Checks and Adversarial Review
+**Interaction Protocol** specifies the order of interaction and the termination conditions. Here the normal termination signal is the simulated user emitting `###STOP###`; there is also a turn limit, and the simulated user may end the conversation on its own once its patience runs out — poor communication efficiency counts as a failure in itself.
 
-Even when automated evaluation is reliable most of the time, regular human spot checks are still needed: cover different task types, successes and failures, and ambiguous cases near score boundaries — verifying not just the results but the soundness of the scoring rationale.
+Remove any one of the five and the evaluation no longer forms a repeatable loop. The same five serve as the reference frame when we examine other benchmarks below.
 
-Spot checks can be systematized into **judge calibration**. Before deploying LLM judges at scale, build a human-annotated gold standard set (say, 100-200 cases spanning task types and difficulties) and measure how well the judge model (an LLM acting as judge; the mechanism is detailed in the LLM-as-a-Judge section next) agrees with human annotations — simple agreement rate or Cohen's kappa, the latter discounting chance agreement. Only once agreement clears a preset threshold (e.g., kappa above 0.7) should the judge be used for large-scale evaluation; thereafter, recalibrate on the gold set whenever the judge model or Rubric changes. Without this step, an LLM judge's scores are just "another model's opinion," not a reliable proxy for human judgment.
+### Human-Computer Interaction and Tool-Calling Evaluation Environments
 
-**Adversarial review** uses Red Teaming to actively construct challenging cases: seemingly perfect answers containing hidden errors, answers that get by through keyword stuffing, and answers that exploit known biases of the judge model to obtain undeservedly high scores. **Multi-judge mechanisms** use multiple independent judges to score separately, determining the final result through weighted averaging or consistency checks—when judges disagree significantly, the case is flagged for further human review.
+Tasks like telecom must have a counterpart to interact with, so the user simulation among the five components is indispensable. Another large class of tasks has no conversational counterpart at all: in code generation, data analysis, and mathematical problem solving, the Agent interacts only with tools from start to finish, correctness is decided by whether execution verification passes, and neither human annotation nor model judgment is required. Such environments dispense with the user simulator; the other four components remain but take simpler forms — the environment state is a file system or a database, the rubric is a piece of test code, and the interaction protocol degenerates into "keep calling tools until an answer is produced or the turn budget is exhausted."
 
-## Automated Evaluation Environment
+The Verifiers framework stratifies these environments along two dimensions: whether the task needs to maintain state across turns, and whether it needs isolation. `SingleTurnEnv` suits asking a math question and verifying the answer directly; `ToolEnv` suits searching several web pages, synthesizing an answer, and then verifying the final result; `StatefulToolEnv` suits modifying a database record and then verifying the state change; `SandboxEnv` suits running code in a sandbox and then checking the output files. Table 7-1 summarizes these four environment types, making it easy to choose based on task state, tool calling, and isolation requirements.
 
-Agent evaluation requires a repeatable, automated environment — one that can quickly test the effects of changes during development. Building such an environment requires answering three questions: what to evaluate (task definition and verification criteria), whom the Agent interacts with and how to simulate that counterpart, and which scoring criteria to use.
-
-### Basic Components of an Evaluation Environment
-
-An evaluation environment consists of five elements — the following sections will focus on dataset design and scoring criteria design:
-
-**Dataset**: Defines the task set, including initial state, goal description, and optional reference solutions.
-
-**Environment State**: Tracks mutable state during task execution and must balance realism with controllability. For example, in a customer service evaluation, the environment state includes order records in the database and user account balances. After the Agent calls `process_refund`, the order status changes from `"delivered"` to `"refunded"` and the balance increases. "Realism" requires that state changes follow business logic (refund amount cannot exceed the order amount), and "controllability" requires that each test can be reset to the same initial state.
-
-**Tools**: Defines the set of operations the Agent can perform — tools should not provide overly high-level abstractions (like "solve user problem"), but should provide atomic operations (like query order, modify booking, send email), forcing the Agent to combine these operations through planning and reasoning.
-
-**Rubric (Scoring Criteria)**: Quantifies the Agent's performance, which can be binary (pass/fail), continuous (0 to 100 points), or multi-dimensional (scoring accuracy, efficiency, and safety separately).
-
-**Interaction Protocol**: Specifies the interaction mode and termination conditions.
-
-Together, these five elements form a repeatable evaluation loop.
-
-![Figure 7-2: Tool-Calling and Human-Computer Interaction Evaluation Environments](images/fig7-2.svg)
-
-Depending on the task, evaluation environments can be roughly divided into tool-calling and human-computer interaction types.
-
-### Tool-Calling Evaluation Environment
-
-For tasks that primarily rely on tool usage, such as code generation and data analysis, the Verifiers framework demonstrates a typical design pattern. The Agent completes the task by calling predefined tools, and verification is based on executable criteria (whether tests pass, whether answers match), without relying on human annotation or model judgment.
-
-Verifiers introduces a hierarchical environment design: `SingleTurnEnv` is suitable for single-turn tasks (e.g., simple Q&A), `ToolEnv` supports multi-turn autonomous loops of tool calls, and `StatefulToolEnv` and `SandboxEnv` support stateful tools and long-running sandbox environments (e.g., code execution). For example: `SingleTurnEnv` is suitable for posing a math question and checking the answer directly; `ToolEnv` fits searching several web pages and synthesizing an answer before verifying the final result; `StatefulToolEnv` fits modifying database records and verifying the resulting state change; `SandboxEnv` fits running code in a sandbox and checking the output files. Table 7-2 summarizes these environment types for readers to choose the appropriate evaluation environment based on task state, tool calls, and isolation requirements.
-
-Table 7-2 Verifiers Environment Type Comparison
+Table 7-1 Comparison of Verifiers Environment Types
 
 | Environment Type | State Persistence | Tool Calls | Typical Use Case |
 |---|---|---|---|
 | SingleTurnEnv | None | None | Single-turn Q&A, math problems |
 | ToolEnv | None | Multi-turn | Search + information synthesis |
 | StatefulToolEnv | Yes | Multi-turn | Modifying database records |
-| SandboxEnv | Yes + Isolation | Multi-turn | Code execution and testing |
+| SandboxEnv | Yes + isolated | Multi-turn | Code execution and testing |
 
-The framework supports parallel sampling and trajectory caching. The complete trajectory (observations, actions, rewards) from each evaluation is saved for subsequent analysis and replay.
+The framework supports parallel sampling and trajectory caching; the complete trajectory of every evaluation (observations, actions, rewards) is saved for later analysis and replay. In addition, a tool's effect depends on the current state, so on failure it should return a clear error message rather than a bare failure flag, allowing the Agent to adjust its strategy accordingly.
 
-The environment also needs to handle the state dependency of operations — the outcome of a tool call depends on the current state. On failure, it should provide clear error messages rather than simple failure flags, allowing the Agent to learn from errors and adjust its strategy.
+Tool-calling evaluation examines the correctness of observable state changes, while human-computer interaction evaluation examines the soundness of the communication strategy — the former verifies action, the latter verifies guidance. Figure 7-2 contrasts the structure of the two environment types.
 
-### Human-Computer Interaction Evaluation Environment
+![Figure 7-2: Tool-Calling and Human-Computer Interaction Evaluation Environments](images/fig7-2.svg)
 
-Many real-world tasks involve not only tool calls but also conversations with human users. A customer service Agent needs to understand vague expressions, clarify needs, query backend systems, and confirm information with the user. Evaluating such tasks faces a fundamental challenge: how to simulate real users in an automated environment?
+## Design of the Evaluation Dataset
 
-The key design principle is **Progressive Information Disclosure**, which is the fundamental difference between human-computer interaction evaluation and traditional benchmarks. Most benchmarks reveal the complete requirements upfront, but real users can rarely articulate their needs from the start — they often just say "there seems to be a problem with my flight" or "the internet isn't working." The Agent must clarify the need by asking questions, and that process is itself a display of capability. In evaluation, therefore, **the simulated user's information must not be revealed to the Agent all at once**; it should be disclosed progressively, on demand, as the conversation unfolds.
+The evaluation environment is the stage and the dataset is the script. The same five components, applied to a different class of task, may be filled in entirely differently: where the tasks come from, how deeply the verifier can check, and how memorization is prevented. This section starts from the design practice of several public benchmarks and ends with a more practical question — where the tasks in a self-built evaluation set should come from.
 
-τ-bench's solution is **User Simulation**: using another LLM to play the user role, conversing with the Agent according to predefined instructions. The simulated user receives task instructions (e.g., "I need to cancel tomorrow's flight"), gradually reveals necessary information to the Agent during the conversation, responds to inquiries, and sends a termination signal when the task is complete. The prompt requires the simulated user to "not reveal all information at once, only provide what is necessary for the current step" and "not fabricate information not provided in the instructions." The design of user simulation requires a trade-off between authenticity and controllability: behavior should be close to a real user (vague expressions, incomplete information, occasional emotional fluctuations) while following a certain script to ensure reproducibility.
+### A Cross-Benchmark Comparison of Design Choices
 
-The following is an example of a multi-turn conversation with progressive information disclosure (the user simulator acts according to a fixed script):
+The presence or absence of an interactive counterpart, distinguished in the previous section, is only the first-order difference at the environment level; the divergences at the dataset level reveal the design trade-offs more clearly. Table 7-2 places several frequently cited benchmarks side by side.
 
-> **User**: "There's a problem with my flight."
-> **Agent**: "Which flight is it?"
-> **User** (revealing per script): "Delta 123, tomorrow morning from San Francisco to New York."
-> **Agent**: "What's the specific problem?"
-> **User** (revealing per script): "The flight time is too long, I want to change it."
-> **Agent**: "Any preferences for the new flight?"
-> **User** (revealing per script): "Any afternoon flight is fine."
+Table 7-2 Key Design Choices of Several Agent Benchmarks
 
-The user simulator follows a fixed script (known information + disclosure rules), ensuring evaluation reproducibility while simulating the progressive expression style of a real user.
+| Benchmark | Capability Tested | Task Source | Environment Played By | Verifier |
+|---|---|---|---|---|
+| τ²-bench | Human-computer interaction and tool calling in customer service | Hand-written + combinatorial generation | User simulator + business database | Four layers of checks aggregated to binary by `reward_basis` |
+| SWE-bench Verified | Software development, coding | Real GitHub issues, manually screened | Code repository + test suite | FAIL\_TO\_PASS / PASS\_TO\_PASS dual verification |
+| AndroidWorld | Operating the Android phone GUI | Parameterized template instantiation | Real Android emulator | Final UI state assertions |
+| OSWorld | Operating the Linux desktop GUI | Started from a preconfigured intermediate state | Real virtual machine | 134 independent evaluation functions |
+| Terminal-Bench | Operating the Linux terminal, coding | Hand-written | Docker container | File system checks + real execution |
+| GAIA | General-purpose AI assistant gathering information | Hand-written + proprietary attachments | The open internet | Exact string matching |
 
-τ-bench is a benchmark for evaluating Agent performance in structured business processes (e.g., airline customer service, retail customer service). Its checks are component-level and multi-dimensional: on one hand, it checks whether the final database state is correct (e.g., the booking record status changes to "cancelled"); on the other hand, it verifies whether the Agent provided the necessary key information during the conversation (e.g., refund amount and arrival time, verified by searching for specific strings or patterns). This dual verification simultaneously examines operational accuracy and communication effectiveness. At the task level, however, these checks ultimately collapse into a **binary reward of zero or one** — all checks must pass to score 1; any single failure scores 0. Binary rewards make reliability metrics like Pass^k easy to compute (see the "Evaluation Metrics System" section later), at the cost of scoring "operationally accurate but missing one non-critical field" the same as "complete failure."
+### Verifiers
 
-The enhanced **τ²-bench** does not primarily improve scoring granularity; instead, it advances the benchmark in two other areas. First, the **Dual-Control Environment**: the Agent is no longer the only party that can call tools — the user simulator can operate on the same shared environment (the Agent instructs the user to switch to airplane mode, and the user's action actually changes the environment state), which better matches real scenarios like technical support, where the user must lend a hand. Second, **more precise task specifications and compositional task generation**: fewer ambiguities in success conditions, and task instances that can be parameterized and generated in batches (see the "Verifiability and Objectivity Assurance" section later for detailed verification dimensions).
+An Agent can easily write an expansive report claiming the task is fully complete when in fact nothing of the sort happened. An evaluation framework must verify facts that a machine can check independently, not the Agent's own account of itself.
 
-> **Experiment 7-1 ★: Run τ²-bench and Compare Its Evolution from τ-bench**
->
-> This experiment runs the τ²-bench evaluation framework to understand the design principles of human-computer interaction evaluation environments. By comparing τ-bench with τ²-bench, we can see how evaluation datasets are iteratively improved.
->
-> Read the task definition files in depth: each task contains information known to the user, task instructions governing progressive disclosure and response strategies, and success conditions (the target state of the database and confirmation information that must appear in the dialogue). Run the complete evaluation process, observe the multi-turn dialogue between the user simulator and the Agent, and analyze typical failure modes (policy violations, information omissions, excessive handoffs to human agents, etc.).
->
->
-> ![Figure 7-3: τ²-bench Evaluation Architecture](images/fig7-3.svg)
->
->
-> Compare the design differences between τ-bench and τ²-bench: The initial version of τ-bench had overly simple user instructions (the Agent could guess the answer), imprecise success conditions (leading to misjudgments), and a mechanical user simulator. τ²-bench made systematic improvements to address these issues:
->
-> - **Introduced more detailed task instructions**: Including "Grounding Requirements," meaning responses must be based on the actual state of the environment
-> - **More precise evaluation criteria**: For example, "a speed test must return 'excellent' to be considered resolved"
-> - **More realistic user simulator behavior specifications**: Progressive information disclosure, natural emotional fluctuations
->
-> Pay special attention to the newly added telecom domain tasks in τ²-bench, and understand τ²-bench's dual-control environment design (as mentioned earlier, the user and the Agent jointly operate the same shared environment).
->
+**SWE-bench Verified decomposes "the fix is complete" into two independent propositions.** One set is FAIL\_TO\_PASS: failing before the fix and passing after it, proving the problem really was solved. The other is PASS\_TO\_PASS: passing both before and after, proving no new defect was introduced. Check only the first and an Agent can slip through by deleting or rewriting the assertions that stand in its way; check only the second and you have checked nothing at all. Only checking both makes "fixed" and "did not break anything" two separately provable conclusions. It additionally confirms the stability of the tests themselves, excluding flaky tests that sometimes pass and sometimes fail.
 
-Tool-calling evaluation asks whether an observable state change was completed; human-computer interaction evaluation asks whether the Agent helped the user reach a new understanding or make a decision. The former tests the correctness of the Agent's actions; the latter tests the soundness of its communication strategy.
+**OSWorld's verifier can detect cases of superficial completion but substantive error.** It is equipped with 134 independent evaluation functions and full operating system access, able to inspect file system structure, process state, network connections, and application internals. In a database task, the evaluation script not only confirms that the report file exists but also connects to the database to verify that the SQL actually executed; in a browser task it analyzes the DOM tree, inspects cookies and localStorage, and sends verification requests to the backend to confirm that the form really took effect.
 
-Building evaluation environments also touches on simulation environments—when an evaluation environment must support repeated interactions at scale, it becomes a simulation environment. The end of this chapter takes this up briefly.
+**Terminal-Bench**'s task `build-linux-kernel-qemu` requires building Linux kernel 6.9 from source, adding a custom printk in `start_kernel`, generating an initramfs, and running it under QEMU; success is defined as the custom message appearing in the boot log. The Agent cannot fabricate the output — it has to complete the whole process for real.
 
-## Design of Evaluation Task Datasets
+### Difficulty Stratification of Tasks
 
-The evaluation environment is the "stage," and the dataset is the "script." The quality of the script often determines the value of the evaluation more than the stage itself. A poorly designed dataset, even when run in a perfect environment, only yields noise. This section distills several repeatedly validated principles from the design practices of benchmarks such as GAIA, AndroidWorld, SWE-Bench Verified, τ-bench and τ²-bench, Terminal-Bench, OSWorld, and OSWorld-Verified.
+An evaluation task set needs tasks at different difficulty levels. That way the set does not go stale quickly as model capability improves.
 
-This list does not exhaust the Agent evaluation landscape. Even within the Web/GUI category there are several benchmarks with different emphases: WebArena builds fully reproducible websites (e-commerce, forums, code hosting, etc.), containing the unpredictability of real web pages within a sandbox; Mind2Web goes the opposite way, testing generalization directly on hundreds of real websites; [ClawBench](https://claw-bench.com/) ([paper](https://arxiv.org/abs/2604.08523), [code](https://github.com/TIGER-AI-Lab/ClawBench)) lets an Agent running in an isolated container perform end-to-end everyday tasks on live websites. V1 covers 153 tasks across 144 websites, V2 adds another 130, and it records five layers of evidence in parallel: session replays, action screenshots, HTTP traffic, browser actions, and Agent messages. It complements sandboxed benchmarks by making live-site drift and long-tail failures easier to analyze, at the cost of reproducibility that is subject to changes on third-party websites; BrowseComp specializes in deep retrieval — answers buried so deep that only multi-hop browsing and cross-checking can surface them. On the tool-calling side there are dedicated function-calling leaderboards like BFCL (Berkeley Function-Calling Leaderboard). This chapter makes no attempt to catalog them all. Instead it takes the two core environment paradigms (tool calling and human-computer interaction), plus the GUI operation scenarios that run through the dataset case studies, and digs into their design trade-offs. Once you understand the paradigms, you can quickly judge what any new benchmark measures, how well it prevents data leakage, and how far its conclusions can be extrapolated.
+The full GAIA set of 466 questions is divided into three difficulty levels: Level 1 requires only one or two tools (humans 93.9%, GPT-4 30.3%), Level 2 requires multi-step reasoning (91.8% versus 9.7%), and Level 3 requires complex composition (87.3% versus 0%). This stratification does more than label difficulty; it has diagnostic value. A Level 1 failure points to basic tool use, Level 2 to multi-step planning and information integration, and Level 3 to long-sequence reasoning and complexity management, and the three imply different directions for improvement.
+
+Terminal-Bench spans everything from simple MLflow model registration, to medium-difficulty 7-Zip password cracking, to difficult multi-component integration of a Git server and a web server, up to the hardest FEAL differential cryptanalysis.
+
+τ²-bench additionally designs **trap tasks**, in which the user claims "customer service has already approved the cancellation" when it does not in fact comply with policy, testing whether the Agent holds its judgment under pressure and misdirection.
+
+### Preventing Data Contamination
+
+**GAIA makes its answers impossible to retrieve directly from the internet.** Its tasks are conceptually simple with open paths — for example, starting from NASA's Astronomy Picture of the Day for a given date, identifying the astronaut in the image, finding the astronaut group they belonged to, computing which member of that group spent the least time in space, and formatting the output strictly as "last name; semicolon-separated; thousands separators." The answer is highly specific, and correctness is decided by exact string matching. Leakage prevention rests on two things: first, the question can only be answered by combining several information sources, so no single web page gives the answer directly; second, some tasks come with specially produced attachments (PDFs, audio, and images that do not exist on the internet).
+
+**AndroidWorld derives a large number of instances from a single template.** Its tasks are not static text but dynamically instantiable templates such as "change the phone number of contact `[CONTACT_NAME]` to `[NEW_PHONE]`," with parameter values generated randomly for each evaluation. This yields three benefits: parameters differ each time, so replaying a fixed action sequence is useless; a single template can generate a nearly unlimited number of instances; and fixing some parameters while varying others allows the effect of a specific factor to be measured precisely.
+
+**Terminal-Bench embeds a canary identifier in the task statement.** Every task carries a canary GUID; if a model can output content containing that GUID, the benchmark data has entered the training set. It does not prevent leakage, but it makes leakage detectable.
+
+### Quality Control and Long-Term Maintenance
+
+Building a high-quality evaluation set is very hard. The present form of most of the benchmarks above is the result of round after round of repair once the first version was put to use and its problems surfaced. From τ-bench to τ²-bench, for instance, there are five places where the design was reworked.
+
+First, **task instructions were too vague, letting the answer be guessed**. The first version's task instructions were written broadly, so the model did not need to genuinely clarify the requirement — guessing a plausible workflow from common sense was enough to pass. τ²-bench split the script into two fields, `known_info` and `task_instructions`: the former delimits what the user knows, the latter prescribes how it is disclosed. What the user does not know, the Agent cannot guess and can obtain only by querying.
+
+Second, **success conditions were not precise enough, causing verification errors**. A condition such as "the network is back" has no checkable boundary. τ²-bench changed it to "the issue counts as resolved only when the speed test returns excellent; poor, fair, and good are all rejected." This change targets **perfunctory fixes**, which suppress the symptom without addressing the root cause.
+
+Third, **the user simulator behaved too mechanically**. The first version's simulated user only responded passively. τ²-bench added emotion (showing displeasure after the first failed fix), a patience limit (ending the conversation when communication efficiency is too low), and the grounding requirement. Together these make the simulator approximate a real user while remaining reproducible.
+
+Fourth, **the user participates not only in the conversation but also in the operation**. The telecom domain introduced a dual-control environment. In earlier evaluations only the Agent could change the environment, whereas in technical support scenarios a substantial share of the actions ought to be performed by the user on their own device. Dual control also adds a dimension to verification: after the user changes the state, the Agent must call a tool again to learn the result, so verification now covers whether the Agent actually read the outcome of the user's actions.
+
+Fifth, **task instances are generated dynamically**. τ²-bench's concrete instances (user names, phone numbers, fault combinations) can be generated in bulk from parameters, which improves both coverage and resistance to leakage.
+
+**SWE-bench Verified: 71% of the original tasks were eliminated before release.** OpenAI randomly sampled 1,699 of the original 2,294 tasks for human evaluation, recruiting 93 developers proficient in Python to check each one: whether the problem description was clear, whether the test cases covered edge conditions, whether the tests were stable, whether the reference patch introduced new errors, and whether the difficulty was reasonable. In the end only 500 passed. The high elimination rate buys a better signal-to-noise ratio, and evaluation cost drops by roughly 80% as well. Complex Agent tasks routinely take minutes to hours, and running a full evaluation dataset with a frontier model often costs thousands of dollars in tokens, so reducing evaluation cost matters a great deal.
+
+**OSWorld: more than 300 issues surfaced in the 15 months after release.** Released in April 2024, it quickly became an important benchmark for multimodal Agent evaluation, and widespread use then exposed four categories of problems: environment issues (anti-scraping measures, CAPTCHAs, dynamic content changes), task description issues (ambiguous phrasing), verification logic issues (too strict or too lenient), and initial state issues (incomplete configuration). A team of about ten people from the University of Hong Kong worked closely with MoonShot AI, OpenAI, ByteDance Seed TARS, Anthropic, Simular, and others for two months on a systematic repair: environment issues were resolved by locking versions and keeping offline backups, description issues by rewriting ambiguous phrasing, verification issues by manually establishing correct baselines and adjusting conditions, and initial state issues by adding completeness checks.
 
 > **Experiment 7-2 ★: Manually Execute Benchmark Tasks**
 >
-> Select tasks from each of GAIA, AndroidWorld, SWE-Bench Verified, τ²-bench, Terminal-Bench, and OSWorld-Verified and complete them manually. It is recommended to complete one simple, one medium, and one difficult task from each dataset—the "difficult" level should be challenging even for humans. Compare your execution results with the standard answers and analyze the sources of discrepancies. Through this hands-on experience, understand: task descriptions need to balance clarity and openness, verification standards must be objective and executable, and the hierarchical difficulty of tasks must be able to distinguish different capability levels.
+> Select tasks from GAIA, AndroidWorld, SWE-Bench Verified, Terminal-Bench, and OSWorld-Verified and complete them by hand; one easy, one medium, and one difficult task per dataset is recommended. The "difficult" level is challenging for humans too.
 >
+> Afterwards, answer two questions. Does the task description admit more than one reasonable interpretation, and if so, which one does the verifier accept? If you tried to slip through without doing the work, what would the cheapest path be, and could the verifier stop it?
 
-### Core Challenges in Task Dataset Design
+### Three Sources of an Evaluation Set
 
-**Challenge One: The Tension Between Clarity and Openness.** Task descriptions must be clear enough to ensure reproducible evaluation, yet not so rigid as to stifle the Agent's creativity. GAIA provides an example: tasks are "conceptually simple" but have open implementation paths—for instance, a task may require the Agent to identify an astronaut from NASA's Astronomy Picture of the Day and determine how long they spent in space. The goal is clear, but how to search, filter, and verify is entirely up to the Agent's autonomous decision-making.
+A common view holds that public benchmarks serve model ranking and have limited bearing on real business. It is true that public benchmark scores are hard to translate directly into product decisions, but their design techniques transfer perfectly well. Verification depth, parameterized generation, leakage prevention, and quality maintenance — the topics discussed above — are precisely the places a self-built evaluation set is most likely to neglect.
 
-**Challenge Two: Balancing Authenticity and Controllability.** Real-world tasks contain uncertainty and noise, which can reveal robustness but also threaten reproducibility. The initial version of SWE-Bench directly used real GitHub issues, ensuring authenticity but also leading to vague task descriptions, incomplete test cases, and subjective evaluation criteria. SWE-Bench Verified introduced systematic validation by human experts, selecting 500 high-quality tasks with clearly defined problems, sufficient tests, and clear solutions, significantly improving controllability while maintaining authenticity.
+An evaluation set in production usually has three sources.
 
-**Challenge Three: Coordinating Diversity and Systematization.** An effective dataset needs to cover typical scenarios, edge cases, and error traps, while also having a systematic organization so that evaluation results can diagnose specific capability weaknesses. AndroidWorld's 116 tasks span 20 real applications, each annotated with the core capabilities it requires (multi-step planning, visual understanding, temporal reasoning) — so results yield not just an overall success rate but a profile of strengths and weaknesses along specific capability dimensions. More critically, a parameterization mechanism can generate almost unlimited task variants.
+**Public benchmarks** are used for coarse model screening and for borrowing design techniques, and generally not for product decisions. Their task distribution does not match that of your business; gaining two percentage points on GAIA bears no necessary relation to your refund success rate.
 
-**Challenge Four: Evaluation Cost vs. Coverage.** Complex Agent tasks can take minutes or even hours to complete, consuming a large number of tokens. The size of the dataset needs to balance comprehensiveness and economy. GAIA carefully selects 466 tasks across three difficulty levels, covering multiple capability dimensions while allowing evaluation at a reasonable cost. SWE-Bench Verified reduced its set from 2,294 tasks to 500 (reducing costs by about four-fifths while improving the signal-to-noise ratio through stricter quality standards).
+**A self-built business set** covers the real task distribution and can serve as the basis for model selection and Harness design decisions. τ²-bench, for example, can serve as the skeleton for any evaluation system that needs a simulated user; you only have to substitute your own domain data and tool set.
 
-**Challenge Five: Preventing Data Contamination.** In the era of large language models, data contamination is a serious challenge for evaluation: when evaluation data is included in the training data, the evaluation measures memorization rather than generalization. It's like memorizing the answers before an exam—good scores don't reflect true ability. Different benchmarks adopt different prevention strategies: GAIA relies on the uniqueness of its answers; questions require combining information from multiple sources to answer, and some tasks come with specially created attachment files (PDFs/audio/images that don't exist on the internet), so a single web page cannot directly provide the answer. SWE-Bench Verified itself is a 500-task subset obtained by OpenAI through manual quality screening of the original SWE-Bench, and does not include time-based leakage-prevention design. It is subsequent works like SWE-bench-Live that truly use temporal freshness to prevent leakage, continuously incorporating issues created after the model's training cutoff date, keeping the evaluation ahead of the model's training corpus. τ²-bench prevents leakage through dynamic parameter generation, where specific task instances (user names, order numbers, dates, etc.) are randomly generated each time. AndroidWorld's parameterized task generation naturally helps prevent leakage because verification is based on the final UI state, not the sequence of operations. Terminal-Bench makes leakage detectable by embedding canary GUIDs (globally unique identifiers used as tracking markers): if a model can output content containing this GUID, it indicates that the benchmark data has leaked into the training set.
+**Production trajectory feedback** comes from real failures in the field: cases where the user explicitly corrected the Agent, where the user gave a thumbs-down, and where a subsequent state check, rule-based verifier, or LLM review found a problem. After failure attribution, these settle into regression cases. The concrete method is described later in "Failure Attribution" and "End-to-End and Trajectory-Prefix Regression Tasks." This source is the most expensive and also the most accurate, because it comes directly from what users actually encountered.
 
-### Precision Design of Task Descriptions
-
-GAIA ensures answer uniqueness through clear information source constraints, time ranges, topics, and query targets. For example, a Level 3 task requires starting from a specific date's NASA image, identifying the astronaut through visual understanding, looking up the astronaut group to which they belong, calculating their time in space, and formatting the output precisely ("last name; fields separated by semicolons; numbers formatted with thousands separators"). Every detail serves automatic verification—only an exact match in format and content counts as a pass.
-
-τ²-bench introduces contextualized design, with each task containing multiple layers of information: the surface problem ("mobile data isn't working"), the performance expectation ("requires an excellent speed rating"), the constraint ("will not accept any other rating"), and the implied emotion. A key improvement is separating "known information" from "task instructions": known information is what the user currently knows, while task instructions guide the simulator on how to progressively reveal information, including "Grounding Requirements" (responses must be based on the actual results returned by tool calls, not fabricated).
-
-SWE-Bench Verified includes structured fields like problem description, reproduction steps, and expected/actual behavior, with annotators verifying the match between the description and the test cases. Every element in Terminal-Bench's task descriptions can be mechanically verified: whether file paths exist, permission values are correct, certificate parameters are valid, and date formats are correct. For example, "build-linux-kernel-qemu" requires building the Linux kernel 6.9 from source, adding a custom printk in `start_kernel`, generating an initramfs, and running it in QEMU. The success criterion is the appearance of the custom message in the boot log—the Agent cannot fake the output; it must truly complete the entire process.
-
-AndroidWorld uses a **parameterized template** design. A task is not static text but a dynamically instantiable template (e.g., "Change the phone number of contact `[CONTACT_NAME]` to `[NEW_PHONE]`"), with different parameter values randomly generated for each evaluation. This has three benefits:
-
-- **Prevents memorization**: Parameter values differ each time, preventing the replay of a fixed sequence of operations
-- **Increases data diversity**: One template can generate almost unlimited instances
-- **Supports comparative experiments**: Fixing certain parameters while varying others allows precise measurement of specific factors' effects
-
-Verification is based on the final UI state (e.g., whether the phone number field contains the expected value), not the sequence of operations.
-
-OSWorld tasks often do not start from a "clean" initial state but from carefully configured intermediate states, more closely resembling real-world usage scenarios. Task descriptions need to handle multiple solutions ("set the background to purple" requires a specific color code to disambiguate; "concatenate two CSVs" must accept all reasonable methods like keeping one header or both headers) and environmental uncertainty (anti-scraping measures on websites, evolving application UIs, and race conditions—OSWorld-Verified mitigates these through offline page snapshots, locked dependency versions, explicit wait conditions, etc.).
-
-### Hierarchical Design of Task Complexity
-
-GAIA designs three difficulty levels: Level 1 requires only 1-2 tools (humans 93.9% vs GPT-4 30.3%), Level 2 requires multi-step reasoning (91.8% vs 9.7%), and Level 3 requires complex combinations (87.3% vs 0%). The diagnostic value of this hierarchical design is: failure at Level 1 points to basic tool usage issues, Level 2 points to multi-step planning and information integration, and Level 3 points to long-sequence reasoning and complexity management. Each level corresponds to different improvement directions (prompt engineering vs. planning mechanisms vs. hierarchical architecture/post-training).
-
-τ²-bench layers complexity by business process: from simple information queries, to multi-step processes (changing a flight booking requires querying, presenting alternatives, obtaining confirmation, calculating the fare difference, and processing payment), to fault diagnosis (systematically checking multiple possible causes and verifying fixes), and finally to strategic judgment (handling requests that don't comply with policy).
-
-Terminal-Bench layers complexity along the dual dimensions of technical domain × operational complexity. Its task registry has collected over 200 tasks (the size of the core evaluation set varies by version; for example, version 2.0 selected 89 high-quality tasks from community contributions), ranging from simple MLflow model registration, to medium-difficulty 7-Zip password cracking, to difficult Git server and web server integration, to the most difficult FEAL differential cryptanalysis (requiring cryptography knowledge + algorithm optimization to meet the 30-second time constraint).
-
-### Ensuring Verifiability and Objectivity
-
-GAIA's answers are concise and clear. Strict formatting rules allow verification through exact string matching. The binary result (match or no match) ensures objective reproducibility. The rarity of the answers also serves as an anti-cheating measure—highly specific facts are unlikely to appear verbatim in training data.
-
-SWE-Bench Verified uses executable code-based checks, distinguishing between FAIL_TO_PASS (fails before fix, passes after fix, proving the problem is solved) and PASS_TO_PASS (passes both before and after fix, proving no new bugs were introduced), achieving dual verification. The Verified version also ensures the tests themselves are reliable, without flaky tests that sometimes pass and sometimes fail.
-
-τ²-bench's verification system includes multiple layers of checks (the results of each layer are still aggregated into a binary reward at the task level; all must pass for success):
-
-- **Database state check**: Booking record status, whether a refund record was created
-- **Dialogue content keyword search**: Whether the Agent explicitly confirms the refund amount and expected arrival time to the user
-- **Process compliance**: Analysis of the tool call sequence, e.g., whether the user's explicit confirmation was obtained before modifying an order
-
-The dual-control environment of τ²-bench (see the earlier section "Human-Computer Interaction Evaluation Environment") adds another dimension to verification: after the user simulator actually changes the environment state, the Agent must observe this change through tool calls and proceed with troubleshooting accordingly. Verification therefore covers whether the Agent actually observed the outcome of the user's actions.
-
-OSWorld provides 134 independent evaluation functions with full OS access, enabling deep inspection of file system structures, process states, network connections, and application internals. For example, in a database operation task, the evaluation script not only verifies that the report file exists but also directly connects to the database to check if the SQL was executed correctly. In browser tasks, it analyzes the DOM tree, checks cookies/localStorage, and sends verification requests to the backend to confirm whether the form submission actually took effect. This deep inspection can detect cases of "superficial completion but substantive error"—for instance, the Agent clicked the submit button, but the request was rejected by the server due to incorrect field entries.
-
-Terminal-Bench is based on a standardized Docker container environment, combining file system state checks (path existence, permission values, content format) with program execution functional verification (in build-linux-kernel-qemu, actually starting QEMU and searching for the custom printk message). The canary GUID makes leakage traceable.
-
-### Systematic Design of Task Distribution
-
-Task distribution needs to systematically cover capability dimensions, difficulty dimensions, scenario dimensions, and edge cases. GAIA pursues generality—most tasks require a combination of reasoning, multimodality, browsing, and tool use. τ²-bench deliberately designs "trap tasks"—a user claims "customer service has approved the cancellation" when the cancellation doesn't actually comply with policy—to test whether the Agent holds its judgment under pressure and misdirection. OSWorld is based on a dual-dimension matrix of operation type (file IO / desktop application / web application / cross-application workflow) and application domain, spanning three operating systems (research shows strong cross-OS correlation; skills learned on one system can transfer to others). Terminal-Bench includes "cross-technology stack combination tasks" to test systems thinking (e.g., a resharding task combining data processing + file operations + Python engineering).
-
-### Data Quality Control and Iterative Improvement
-
-SWE-Bench Verified is a model of quality control. OpenAI randomly selected 1,699 tasks from the original 2,294 for human evaluation, recruiting 93 Python-proficient developers. Annotators had to perform multiple checks: whether the problem description was clear (could they understand what needed to be solved), whether the test cases were complete (covering all aspects and edge cases), whether the tests were stable (no flaky tests due to environment or randomness), whether the patch was correct (did it introduce new errors), and whether the difficulty was reasonable. After rigorous screening, only 500 passed (29%)—this high rejection rate is a necessary investment in evaluation quality. They also established standardized annotation guidelines, defining specific criteria and examples for each check to ensure consistency among different annotators.
-
-τ²-bench introduces a separation of "known information" / "task instructions" (making the simulator behavior more realistic) and stricter completion conditions (e.g., "only excellent counts as solved; poor/fair/good are not accepted"), preventing "superficial fixes."
-
-OSWorld-Verified is a model of iterative improvement. After its release in April 2024, OSWorld quickly became an important benchmark for multimodal Agent evaluation, but over 15 months of widespread use, more than 300 issues were uncovered. These issues fall into four categories: environment issues (anti-scraping measures on websites, CAPTCHAs, and dynamic content changes), task description issues (ambiguous phrasing), verification logic issues (too strict or too lenient), and initial state issues (incomplete configuration). A team of about 10 people from the University of Hong Kong worked closely with MoonShot AI, OpenAI, ByteDance Seed TARS, Anthropic, Simular, and others for two months to systematically fix these issues. Repair strategies were formulated for each category: environment issues were resolved by locking versions and offline backups, task descriptions were clarified by rewriting ambiguous phrasing, verification logic was balanced by manually establishing correct baselines and adjusting conditions, and initial states were enhanced by adding completeness checks.
-
-Evaluation environments and post-training environments often share the same origin: a well-designed evaluation environment can be adapted into a training environment with little effort—SWE-Gym is a representative example of building training tasks based on SWE-bench, while the parameterized templates of τ²-bench and AndroidWorld can generate massive training instances in batches. But one red line must be drawn: what can be reused is the environment's **construction mechanism**; the evaluation set's specific tasks must stay strictly isolated from the training data—once an evaluation task enters the training set, it tests memory, not ability (see Chapter 8 for details).
+In the early stage there are usually only public benchmarks and a small hand-written business set; once the system has been running in production for a while, cases fed back from production trajectories become the main body.
 
 ## Automated Evaluation Methods
 
-With the evaluation environment, dataset, and clear metrics system in place, the core question becomes: how to score? For tasks with clear correct answers (e.g., math problems, SQL queries), simple binary judgment (correct/incorrect) is sufficient; but for open-ended tasks (e.g., customer service dialogues, report writing), more refined evaluation methods are needed.
+The benchmarks discussed in the preceding sections have one thing in common: their verifiers are almost all deterministic. SWE-bench runs a test suite, AndroidWorld asserts the final UI state, GAIA does exact string matching, and τ²-bench's four layers of checks are likewise executed entirely in code. There are good reasons for this choice: deterministic verification adds no model overhead, results are fully reproducible, it can be folded into continuous integration like a unit test, and it makes ranking across models straightforward.
 
-Code-based automatic verification only covers scenarios with standard answers; scoring open-ended tasks is the main topic of this section. Among these, the design of reward signal density (from binary rewards to process rewards to generative rewards) and training methods for reward models are left for systematic discussion in the post-training section of Chapter 8; this section answers a more fundamental question: how to use LLMs to automatically judge the output quality of open-ended tasks.
+The price is that it can only judge whether the final outcome is right; it cannot give the reason for an error. The failed τ²-bench task above scored 0, and that 0 says nothing about whether the Agent went wrong at line selection or skipped the data refuel step, still less about what to change next. For a public benchmark used for ranking, this is not a defect; for a production system that needs continuous improvement, it is exactly the information most needed.
+
+Production scenarios face a second difficulty: many judgments simply cannot be written as assertions that code can check. Whether a complaint response is appropriately worded, whether a research report omits a critical piece of information, whether a memory retrieval got a relationship between people wrong — none of these has a unique final state to query, nor can they be decided by keyword matching.
+
+Moving from public benchmarks to evaluation in production therefore requires the mode of verification to shift rightward along a spectrum whose horizontal axis is the **degree to which a task is mechanically verifiable**, as shown in Figure 7-4.
+
+![Figure 7-4: A Spectrum of Verification Modes, from Deterministic Verification to Model Judgment](images/fig7-4.svg)
+
+The two instruments on the right of the spectrum consequently become the mainstay of production evaluation: a **Rubric** that breaks the vague question of "how good is it" into several separately scorable dimensions, and **LLM-as-a-Judge** that produces the score where no deterministic criterion exists. Only together can they turn a blanket failure rate back into concrete, fixable problems; combined with **failure attribution** in the second half of this section, they form the complete evaluation loop for a production Agent.
+
+It should be said that moving rightward does not mean abandoning the left. Every check that can be written as a programmatic assertion should stay an assertion, and LLM judgment should be reserved for the dimensions that genuinely cannot be decided mechanically. Deterministic checks are cheaper and more stable, and they are far better suited to running as regression tests over the long term.
 
 ### LLM-as-a-Judge: The Core of Automated Evaluation
 
-![Figure 7-4: LLM-as-a-Judge Pipeline](images/fig7-4.svg)
+![Figure 7-5: LLM-as-a-Judge Pipeline](images/fig7-5.svg)
 
-Why is LLM-as-a-Judge needed? For open-ended tasks (e.g., generating reports, handling customer complaints, creative content), there are no standard answers for automatic comparison, and human evaluation is costly and difficult to scale. LLM-as-a-Judge balances the scalability of automation with human expert judgment by having a language model evaluate outputs against expert-defined scoring criteria (a Rubric). The method has known limitations, though: the judge model carries its own biases (most typically **length bias**—a tendency to score longer, more detailed responses higher even when they are no more correct), and repeated judgments of the same input can vary. Length bias in particular warrants specific countermeasures. Three common defenses are: penalize verbosity explicitly in the Rubric and cap response length per task type; in pairwise comparisons, bring the two candidates to similar lengths before judging; and regularly audit the correlation between scores and response length—if high scores almost always go to long responses, the judge has been swayed by length and the Rubric needs revision. To address these challenges systematically, Rubric design must follow the principles below:
+Why is LLM-as-a-Judge needed? For open-ended tasks (e.g., generating reports, handling customer complaints, creative content), there are no standard answers for automatic comparison, and human evaluation is costly and difficult to scale. LLM-as-a-Judge balances the scalability of automation with human expert judgment by having a language model evaluate outputs against expert-defined scoring criteria (a Rubric).
+
+The method has known limitations, though: the judge model carries its own biases, and repeated judgments of the same input can vary. The most typical is **length bias**, a tendency to score longer, more detailed responses higher even when they are no more correct — much as a human sitting an exam will pad out an answer they do not know, hoping to stumble onto a point or two. Three defenses are common: penalize verbosity explicitly in the Rubric and cap response length per task type; in pairwise comparisons, bring the two candidates to similar lengths before judging; and regularly audit the correlation between scores and response length — if high scores almost always go to long responses, the judge has been swayed by length and the Rubric needs revision. To address these challenges systematically, Rubric design must follow the principles below:
 
 **Rubric (Scoring Criteria): The Basis for LLM Judgment.**
 
@@ -364,6 +367,8 @@ rubric:
 
 Give the judge both the Rubric and the Agent's response. It will score each dimension and explain why. Once results from dozens of cases are grouped by dimension and the low-scoring traces are replayed, a vague drop in success rate becomes a concrete diagnosis: retrieval missed a fact, the model linked the wrong people or events, or it added an unsupported claim. A useful Rubric tells the team not only how the system scored, but where to look next.
 
+The following takes user memory as a concrete case, showing how to bring this general method down to an executable evaluation set and verifier.
+
 > **Experiment 7-3 ★★: Building a Rubric-Based User Memory Evaluation System**
 >
 > **Prerequisites**: Must complete the Chapter 3 User Memory Experiment (`chapter3/user-memory-evaluation`).
@@ -393,11 +398,7 @@ Table 7-3 Success Rate by Memory System and Task Level
 | RAG | 90% | 40% | 15% | 48.3% (29/60) |
 | Hybrid | 80% | 70% | 50% | 66.7% (40/60) |
 
-The hybrid did not win by default. It uniquely solved three cases that neither single approach solved, but regressed on eight cases relative to the better single approach; its mean reward was 0.092 below the per-case best single system. Pure RAG nearly matched structured cards on basic recall, then fell to 15% on hidden cross-session links. Retrieving a relevant passage is only the first step—the Agent still has to reconstruct the right relationships among people, events, and time.
-
-The hallucination veto also fired in 28 of 180 judgments. It was not a decorative safety clause; it materially changed the results.
-
-That conclusion, in turn, depends on the judge being trustworthy. If the Agent and judge come from the same model family, they may share exactly the same preferences and blind spots.
+Most notably, the hybrid did not win by default. It did on 3 questions what neither single approach managed, yet fell short of the better single approach on 8 others; compared with the best single approach on each question, its average success rate was in fact lower. Pure RAG was not far from structured cards on basic-recall questions, but on cross-session association questions its success rate dropped to 15%. Another easily overlooked figure: across 180 judgments, the hallucination veto fired 28 times—evidence of how much a single veto item matters.
 
 **The Same-Family Model Problem and Multi-Source Judging.**
 
@@ -434,6 +435,8 @@ The companion repository preserves a small direct-listening run. OpenAI and Fish
 Those scores do not establish a provider winner. There were only four clips per provider, and the fixed reference clip came from Fish S1, which naturally favors Fish Audio on voice similarity. A general TTS comparison should remove that dimension or give every candidate an appropriate target speaker. A voice-cloning comparison should ask every system to imitate the same speaker and calibrate the model judge against blinded human listening. **Choosing the reference answer, image, or audio is part of evaluation design, not neutral setup work.**
 
 Handwritten Rubrics are a fast way to establish diagnostic dimensions like these. At larger scale, a specialized **generative reward model** can automate the judging; Chapter 8 covers how such reward models are trained.
+
+The score a judge model gives says only whether the outcome was good or bad; to turn that outcome into a fixable problem, you still have to locate the step at which the failure actually began.
 
 ### Failure Attribution: Locate the First Error in a Trajectory
 
@@ -521,7 +524,7 @@ Once the first error is known, turn the repair target into a repeatable **regres
 
 **Trajectory-prefix regression tasks** freeze the existing context, dialogue, tool returns, and environment state, and ask the Agent only to think and take the next observable action or few actions. They cost less and isolate a single policy or tool problem. For a production Agent that needs high reliability, building the trajectory-prefix regression set often matters more than the end-to-end one — and it requires the developer to patiently build the failure taxonomy and attribution system described in the previous section.
 
-Prefix tasks should define an **acceptable action set**, not one canonical answer: reading repository rules, asking the user, or refusing a dangerous operation may all be valid, while prohibited actions are listed explicitly. Process omissions become end-to-end tasks with Plans, required documents, and acceptance tests; tool errors become prefix tasks that test formatting, escaping, or tool choice; abnormal execution becomes truncation, timeout, and tool-failure recovery; and completion or logic errors become multi-goal and "not yet proved impossible" cases. The first error is also a possible process-supervision signal for Chapter 8, but evaluation and training data must remain isolated.
+The answer to a trajectory-prefix regression task should be defined as an **acceptable action set** rather than a single canonical action or answer: it may require "read the repository rules first," "ask the user first," or "refuse the dangerous operation," while also listing the prohibited actions.
 
 **Once failure attribution is done, an evaluation dataset of both end-to-end and trajectory-prefix regression tasks can be constructed.** For a Coding Agent: a missing process should yield an end-to-end regression task carrying a plan document and test acceptance conditions; a tool-call error should have its failing prefix truncated and edited into a boundary task that tests whether the model can fix the format, escape special characters, or switch to a suitable tool; abnormal termination should add recovery scenarios for truncation, timeout, and tool failure; completion and logic errors should add multi-goal checklists, reminders of remaining work, and the "not yet proven impossible" boundary; requirement-understanding and ambiguity cases should freeze tasks with several reasonable readings into prefixes and put "clarify first" in the acceptable-action set; symptom-fix and faked-verification cases should add two hard constraints to acceptance — "test assertions may not be modified" and "a completion claim must carry the output of a command that really ran"; and information-reporting cases should assert on the content of the reply itself, not only on the environment state.
 
@@ -537,15 +540,13 @@ In practical model selection, we often face the question: "Which is better, A or
 
 ### Pairwise Comparison and Model Ranking
 
-![Figure 7-5: Elo Rating and Pairwise Comparison Ranking](images/fig7-5.svg)
+![Figure 7-6: Elo Rating and Pairwise Comparison Ranking](images/fig7-6.svg)
 
 **Elo Rating** (a ranking system originally designed for chess) quantifies the relative ability of models through a large number of pairwise matchups: the larger the rating difference, the higher the expected win rate for the stronger model. For example, if Model A has a rating of 1200 and Model B has a rating of 1000, the Elo system would predict A's win rate to be approximately 76%. If B unexpectedly wins, B gains more points and A loses more—an upset triggers a larger correction, which is what lets rankings converge quickly on true ability. The statistical foundation is the **Bradley-Terry model**: each model is abstracted as a latent "strength score," and the probability of one beating another in a matchup is determined by the difference between their scores. Elo is the engineering implementation of this model in online-update form.
 
 Chatbot Arena uses anonymous random matchups—users blindly choose the better response without knowing the model's identity, and rankings are derived from millions of votes. The advantage is that no "absolute standard" needs defining; all that is required is human judgment on "which is better, A or B." The limitation: rankings depend on what users happen to ask. If a flood of users ask programming questions, models strong at programming rank higher—which may say little about their level on other tasks.
 
 When pairwise judging is performed by an LLM rather than human voting, one must also guard against **Position Bias**—the judging model systematically favors the candidate appearing in a certain position (usually the first), and the judgment may remain unchanged even if the content of the two candidates is completely swapped. The standard mitigation method is to **evaluate each pair twice with swapped order**: once with A first, once with B first, and average the two results; a stricter approach is to only count cases where the two judgments are consistent, and treat inconsistencies as ties or send them for human review. Chatbot Arena's approach is essentially the same—randomizing the display positions of the two responses so that position bias cancels out over a large sample.
-
-**From Evaluation to Training: Transfer of Pairwise Comparison Signals.** Pairwise comparison is not only an evaluation tool but also an important source of signals for post-training. The **GRPO** (Group Relative Policy Optimization) algorithm, which will be introduced in Chapter 8, incorporates the "compare which is better" judging approach into model training—its core idea is to sample multiple candidate answers for the same question and estimate advantages from their relative merits (rather than absolute scores), thereby avoiding the need for the extra value network (critic, used to estimate baselines) that PPO must train. Note that GRPO drops the value network, not the reward signal: it still relies on a reward model or verifiable reward rules to judge each candidate. This is only a foreshadowing—the full derivation, the comparison with PPO/DPO, and the implementation details for Agent post-training all come in Chapter 8.
 
 > **Experiment 7-8 ★★: Building a Model Leaderboard from Pairwise Comparison Data**
 >
@@ -579,15 +580,13 @@ Around these two stages, the main throughput and latency metrics are as follows:
 
 **Budget–capability curves**: A single score at a fixed budget is not enough to determine whether an Agent can handle long-horizon work. In addition to success rate, report how performance changes with wall-clock time, tokens, tool calls, or compute budget. RE-Bench makes the problem concrete: with a total budget of two hours per environment, the best Agent scored about four times as high as human experts; humans, however, benefited more from additional time, narrowly surpassed the best Agent at eight hours, and scored about twice as high when multiple attempts were given 32 total hours[^re-bench-2025]. Short-budget leadership therefore cannot be extrapolated directly to long-running capability. Model selection should compare several budget points close to the duration of the real workload.
 
-In practice you can mix models: lightweight models on simple requests to cut costs, powerful models on complex tasks to protect quality; or specialist models on particular sub-tasks (image understanding, code generation), collaborating through sub-agent mechanisms. Any such heterogeneous combination must itself be validated by evaluation, to confirm the overall benefit outweighs the added system complexity.
+In practice you can mix models: lightweight models on simple requests to cut costs, powerful models on complex tasks to protect quality; or specialist models on particular sub-tasks (image understanding, code generation), collaborating through sub-agent mechanisms. Any such heterogeneous combination must itself be validated by evaluation, to confirm the overall benefit outweighs the added system complexity (for example, treating questions like "which is larger, 9.9 or 9.11?" or "I want to wash the car; the car wash is 50 meters from home—should I walk or drive?" as simple ones and handing them to a lightweight model, leading to wrong decisions).
 
 ### Model Behavior: When to Stop Reading and Start Editing
 
 Model selection compares not only whether a model can finish a task, but also **how it behaves by default**. One readily observable difference in Coding Agents is the action threshold. Given the same coding task, some models explore the repository broadly and confirm the architecture, callers, and tests before editing. Others localize from less evidence, edit early, and use test feedback to complete their understanding. The former assigns a higher cost to premature edits; the latter assigns a higher opportunity cost to reading one more file.
 
-When a tendency continues to follow the model across harnesses, and changes when only the model is swapped inside a fixed harness, the primary explanation should be **model behavior**. Post-training is a likely source: SFT trajectories demonstrate how much to read before acting, process rewards reinforce or penalize particular tool paths, and outcome rewards strengthen the whole strategy that led to success. The model consequently learns not only how to write code, but also when it has enough evidence. Exact datasets and reward recipes are usually private, so controlled model swaps can locate the behavior on the model side without revealing a vendor's precise training recipe. A harness can still shift the threshold through its system prompt, tool descriptions, and budget; in the absence of an enforced workflow, however, it should be treated as a modifier rather than the default root cause.
-
-The accompanying experiment compares `openai/gpt-5.6-sol` and `anthropic/claude-sonnet-5` in one **neutral, fixed harness**. Both models use the same OpenRouter endpoint and receive the same system prompt, task, repository, tool names, JSON Schemas, and results. The harness requires neither exploration nor early editing. Three miniature repositories cover a localized bug, cross-module identity normalization, and a cache fix sensitive to a public contract. Each model runs each task independently three times, producing 18 trajectories. GPT-5.6-sol averaged 6.89 tool calls and 4.67 files read before its first edit; Claude Sonnet 5 averaged 4.56 calls and 3.56 files. The gap was largest on localized tasks and nearly vanished on the explicitly cross-cutting task (7.00 versus 6.67 files). Both models achieved 100% first-tested-patch and final-test success, so this small experiment supports “the action policy changes with the model,” not “reading more” or “editing earlier” as universally better. Time to first edit was also nearly identical (15.01 versus 14.48 seconds), a reminder to separate tool steps, parallel calls, and model latency.
+This tendency in an Agent has two sources: the system prompt in the harness, and the model's behavioral policy. Post-training is a key source of that behavioral policy: SFT trajectories demonstrate "how much to read before acting," process rewards reward or penalize particular tool paths, and outcome rewards reinforce the entire policy that ended in success. Over time, what the model learns is not only how to write code, but also engineering habits.
 
 > **Experiment 7-9 ★★: Measuring Model Action Thresholds in a Fixed Coding Harness**
 >
@@ -600,8 +599,6 @@ The accompanying experiment compares `openai/gpt-5.6-sol` and `anthropic/claude-
 > **Acceptance criteria**: All offline unit tests pass; every task fixture is first confirmed to fail its tests; the formal result contains every `model × task × trial` cell, zero API errors, an independent final test, and auditable trajectories; and `manifest.json` verifies the hashes of the configuration, observations, and summary. The project directory includes one complete 18/18-cell run. Readers should rerun it on the model versions and real workloads they care about rather than treating these miniature-repository numbers as a permanent leaderboard.
 
 ### Cost Analysis of Agent Systems
-
-Cost is the most easily underestimated dimension of model selection. If your Agent is in production or headed there, do not skip this section.
 
 The previous section listed cost among the key selection dimensions, but Agent costs are far more complex than simple token pricing—multi-turn reasoning, tool calls, and context accumulation make costs grow non-linearly. Systematic cost analysis is an indispensable part of the evaluation system and a prerequisite for production deployment.
 
@@ -679,19 +676,15 @@ A team with a solid evaluation system can answer this in hours: run the new mode
 
 ## Statistical Significance of Evaluation Results
 
-"A switching decision within hours" rests on an implicit premise: the score difference you observed is real signal, not sampling noise. With a limited evaluation set and non-deterministic model outputs, that premise does not hold automatically.
+The evaluation set is finite and model outputs are stochastic, so a score difference may be nothing but sampling noise. If you measure a success rate $p$ over $n$ cases, the standard error can be roughly estimated as:
 
-A rough estimate of this sampling noise is the **standard error of a binomial proportion** (which characterizes the fluctuation of the success rate due to sampling randomness; the larger the value, the less reliable the success rate). If the success rate p is measured on n test cases, the standard error is approximately √(p(1-p)/n). For a concrete example: 100 cases, success rate 70%, standard error ≈ √(0.7×0.3/100) ≈ 4.6%. An approximate 95% confidence interval is p ± 2 standard errors, meaning an interval that would contain the true rate in about 95% of repeated samples, i.e., 70% ± 9 percentage points. A three-percentage-point difference like "new model 73% vs. old model 70%" therefore sits entirely inside the noise band—treating the two success rates as independent, the standard error of their difference is about √2 times the individual standard error (here about 6.5 percentage points). One caveat: that √2 assumes the two measurements are independent, whereas in practice both configurations usually run on the **same set of tasks**, so the samples are not independent. The independence assumption is merely a conservative upper bound for a quick check on whether a small difference deserves attention at all. Even by that conservative yardstick, a three-percentage-point gap falls far short of the 6.5-percentage-point standard error—switching models on such evidence is little better than a coin flip.
+$$
+\mathrm{SE}(p)\approx\sqrt{\frac{p(1-p)}{n}}
+$$
 
-Agent evaluation adds another layer of non-determinism: the same model and dataset can still produce different results across runs because temperature sampling, tool-return variance, and environmental timing all inject randomness. A single run should therefore never justify deployment. **Run multiple times and average**—say, 3-5 runs per configuration—and report both the mean and the spread. The small AndroidWorld pilot later in this chapter uses only one paired run per task, so it can screen ideas for a larger test but cannot support deployment. That decision requires the planned multi-seed run on the full task set.
+For example, with 100 cases and a 70% success rate, the 95% confidence interval is about $70\%\pm9$ percentage points; "the new model gets 73% versus the old model's 70%" is not enough to justify switching.
 
-Hence a practical principle: **when the score difference is smaller than the estimated sampling noise, do not make a switching decision.** But before settling on "don't switch," reach for a more sensitive—and more correct—analysis. When two configurations run on the same set of tasks, the right default is **paired analysis**: compare win/loss task by task, look only at the cases where the two disagree (one correct, one wrong), and apply something like McNemar's test to judge significance. Pairing subtracts out the shared noise of task difficulty, making it far more sensitive at the same sample size than differencing two independent success rates—the earlier √2 estimate is just a conservative, mental-math sieve for ruling out differences that obviously fall short. If paired analysis still leaves the difference uncertain, only then consider growing the sample—and note that the standard error scales as 1/√n, so going from 100 to 400 cases merely halves the estimated sampling noise. Expansion is expensive. Read the other way: if an improvement's expected benefit is only 2-3 percentage points and your evaluation set has a few dozen cases, the evaluation simply cannot tell whether the improvement works—the priority is to grow the evaluation set, not to keep iterating the Agent.
-
-One more easily overlooked pitfall is **multiple comparisons**. Test a batch of hypotheses in parallel and the probability that at least one conclusion is a false positive climbs fast—even at a 95% confidence level per conclusion, across 6 hypotheses the chance of hitting at least one false positive is 1 − 0.95^6 ≈ 26%. The more hypotheses you run in parallel, the harder it becomes to avoid one that merely looks significant. Countermeasures come in two kinds: tighten the significance threshold for each conclusion as the number of hypotheses grows, using a Bonferroni-style correction, or rerun every positive result in an independent confirmatory pass and accept it only if it replicates. The AndroidWorld case later changes one variable at a time across successive rounds, avoiding the temptation to try a large batch of changes and report only the winner. If several prompts or observation formats are screened in parallel, multiple comparisons must be reflected in the conclusion.
-
-Evaluation-driven decisions rely on high-quality data, which comes from the systematic recording of the Agent's operational process—this is what observability addresses.
-
-**Paired comparison:**
+When comparing two configurations on the same batch of tasks, prefer **paired analysis**: record per task which one wins, and judge the difference with McNemar's test or a paired bootstrap, rather than subtracting two independent success rates. Because each Agent run may also differ, it is best to run each configuration with several random seeds (say 3–5) and report the mean along with the spread; a single run is only good for screening a direction. If the expected gain is only 2–3 percentage points and the evaluation set has only a few dozen tasks, enlarge the sample first—the standard error shrinks as $1/\sqrt{n}$.
 
 ```python
 for task in paired_tasks:
@@ -703,11 +696,15 @@ for task in paired_tasks:
 return paired_bootstrap_or_mcnemar(all_deltas)
 ```
 
+Pairing means that both groups share the same tasks and random conditions, not that you draw two separate samples and compare their averages.
+
+When validating several hypotheses in parallel, also account for **multiple comparisons**: tighten the significance threshold, or re-run positive results independently. The practical criterion is simple: a score gap is worth acting on—switching models or shipping a change—only if it exceeds the noise, holds up under paired analysis, and can be reproduced.
+
 ## Agent Observability
 
 Evaluation-driven decisions (whether for model selection or continuous iteration) rely on high-quality operational data. Below, we first introduce how to systematically collect this data (observability), and then discuss how to translate evaluation results into system improvements.
 
-![Figure 7-6: Observability Technology Stack](images/fig7-6.svg)
+![Figure 7-7: Observability Technology Stack](images/fig7-7.svg)
 
 Observability is a concept borrowed from distributed systems: you cannot open the system and watch it work; you infer what is happening from the logs, metrics, and traces it emits—the way a doctor, unable to see inside a patient, diagnoses from temperature, blood pressure, and imaging. Agent systems make this harder still: the same input can produce different outputs, multi-round reasoning and tool calls make execution paths extremely complex, and the model's "thinking" is completely opaque from outside.
 
@@ -727,11 +724,11 @@ With a comprehensive evaluation system and dataset in place, the key is to trans
 
 The following case comes from a real, deliberately narrow AndroidWorld iteration in the companion repository. It covers four Wi-Fi settings tasks on an API 35 emulator, with one matched run per task. It is not the full 116-task benchmark and does not replace a rerun in the reference API 33 environment. Its value is not an overall score; it is the sequence of decisions from one result to the next.
 
-![Figure 7-7: Benchmark to Improvement Loop](images/fig7-7.svg)
+![Figure 7-8: Benchmark to Improvement Loop](images/fig7-8.svg)
 
 From the perspective of Harness engineering, this section is essentially about the methodology for iterative Harness optimization—using evaluation data to identify weak points in the Harness (insufficient context? missing constraints? inadequate validation? untimely feedback?), making targeted improvements, and then re-evaluating, forming a closed loop for the Harness's continuous evolution.
 
-Before analyzing any benchmark report, note an easily overlooked principle: **when Agent performance drops, check the evaluation system first, then the Agent**. The common mistake is to start editing Agent code the moment a score falls, ignoring the possibility that the evaluation system broke first—steer by a distorted signal and the correction is wrong from the very first step. Typical evaluation-side failures include: the runtime environment running out of resources and killing processes (which shows up as random failures), bugs in the scorer that mark correct answers as failures, and test cases drifting out of sync with production scenarios. In the headline numbers, all of these look identical to model degradation; only a review of the full traces can tell them apart.
+Before analyzing any benchmark report, note an easily overlooked principle: **when Agent performance drops, check the evaluation system first, then the Agent**. The common mistake is to start editing Agent code the moment a score falls, ignoring the possibility that the evaluation system broke first—steer by a distorted signal and the correction is wrong from the very first step. Typical evaluation-side failures include: the runtime environment running out of resources and killing processes (which shows up as random failures), bugs in the verifier that mark correct answers as failures, and test cases drifting out of sync with production scenarios. In the headline numbers, all of these look identical to model degradation; only a review of the full traces can tell them apart.
 
 ### Reading a Benchmark Report: The Art of Problem Discovery
 
@@ -836,7 +833,7 @@ The endpoint of evaluation is not scoring, but improvement. This chapter has alr
 
 Here is how the two ends of the bridge meet. Assets accumulated on the evaluation side convert almost seamlessly into training signals: a well-defined Rubric or validator is essentially a reward function for **Reinforcement Learning with Verifiable Rewards (RLVR)**—the scoring script becomes the reward script; whether a test passes or a state meets the standard serves both as an evaluation criterion and as a reinforcement learning reward. But training brings demands evaluation never had to worry about. The first is **reliable reset semantics**: training runs millions of episodes (an episode is one complete interaction round from an initial state to task completion), and each episode must be able to reset the environment to a deterministic, clean initial state; otherwise, the gradient signal will be contaminated by residual states from the previous episode. The second is **throughput far exceeding evaluation**: a few thousand evaluations are enough to draw conclusions, but training requires feeding the model millions of interactions within an acceptable wall-clock time; the degree of environment parallelism and per-instance overhead directly determine whether training is feasible. These two points—validators turned into reward functions, and training-grade reset and throughput—will be elaborated in Chapter 8.
 
-![Figure 7-8: Simulation Fidelity Spectrum](images/fig7-8.svg)
+![Figure 7-9: Simulation Fidelity Spectrum](images/fig7-9.svg)
 
 On the **digital environment** side, the AWorld framework builds a controllable MCP server sandbox for GAIA tasks, providing 26 MCP servers covering 126 tool functions, avoiding the bans and uncontrollable side effects of directly accessing real APIs. All tool calls are replayable and auditable. AWorld's distributed architecture reduces the traditional serial execution time from 7695 seconds to 525 seconds (a 14.6x speedup), and the environment's stateless design makes each instance completely independent, supporting efficient parallelism.
 
@@ -847,7 +844,7 @@ On the **embodied environment** side, RoboTwin2 builds dual-arm manipulation tas
 > Set up a simulation environment for robot manipulation. Read `ch7/SimpleVLA-RL` and the OpenVLA documentation to understand the architecture of the Vision-Language-Action model (end-to-end integration of a vision encoder, language model, and action decoder, projecting images and text into a shared semantic space). Configure the RoboTwin2 environment, understanding the observation space (three-view RGB + 14-dimensional joint state) and action space (14-dimensional control vector). Study the environment randomization mechanism and spatial constraint logic in `move_can_pot`. Evaluate the pretrained model, recording its success rate, completion time, and failure modes, with a focus on the impact of the action chunking mechanism.
 >
 >
-> ![Figure 7-9: OpenVLA and RoboTwin2 Embodied Intelligence Environment](images/fig7-9.svg)
+> ![Figure 7-10: OpenVLA and RoboTwin2 Embodied Intelligence Environment](images/fig7-10.svg)
 >
 >
 
@@ -855,23 +852,21 @@ On the **embodied environment** side, RoboTwin2 builds dual-arm manipulation tas
 
 High-fidelity environments support better transfer to the real world but have high computational costs. Another dimension of fidelity is the degree of randomization: moderate randomization improves generalization, while excessive randomization can make tasks too difficult. **Domain Randomization** is a key technique for narrowing the sim-to-real gap: introducing a wide range of random variations in physical parameters, visual appearance, sensor noise, etc.—just like practicing grasping under various lighting and angles, so you won't fail in the real world just because the light changes. In digital environments, sim-to-real manifests as differences in interface rendering, response times, etc., which can be mitigated by introducing randomization in latency and failures.
 
-With that, the evaluation environment completes its final evolution: from an exam hall that measures ability into a training ground that builds it. Chapter 8 will show how AWorld-train turns such simulation environments into trainable arenas, and the engineering challenges involved—the evaluation system and simulation environments established in this chapter are the two cornerstones of post-training.
-
 [^re-bench-2025]: Wijk, Hjalmar, et al. *RE-Bench: Evaluating Frontier AI R&D Capabilities of Language Model Agents against Human Experts.* arXiv:2411.15114, 2025.
 
 ## Chapter Summary
 
-This chapter has revolved around one question: how do you know an Agent has actually improved? From building reproducible test environments, to designing datasets that withstand leakage, to using LLMs as judges, to letting evaluation results drive model selection and iteration—every link in this chain bears on how much the conclusions can be trusted. The measured cases add four concrete cautions: combining structured memory with RAG does not guarantee synergy; cache and compression savings cannot be added; the choice of reference audio changes what a multimodal score means; and the Harness's input representation can determine both task success and token cost. Model selection should also compare capability-growth curves across resource budgets rather than relying on a single operating point. For production-grade Agents, evaluation is not an occasional exam but continuous validation embedded in every product decision.
+This chapter has revolved around one core question: how do you tell whether an Agent has gotten better or worse? The chain has four stages — first pin down what counts as success (the differing bases of Pass@k, Best@k, and Pass consecutive@k), then settle where the tasks come from (public benchmarks, a self-built business set, and production trajectory feedback), then choose how verification is done (from deterministic verifiers to checklists, Rubric plus LLM judgment, and finally pairwise comparison), and finally turn scores into decisions (statistical significance, failure attribution, regression tasks, and model selection). Every stage affects how much you can trust the conclusion.
 
 In terms of the book's larger structure, this chapter builds the **evidence** segment of Chapter 1's discovery loop: failure attribution determines whether later proposals have anything solid to rest on.
 
+Trajectory-prefix boundary evaluation makes a further point: **obtaining a piece of information and correctly applying it to the current decision are two different capabilities**. End-to-end regression guarantees that basic tasks do not degrade, while the trajectory-prefix boundary set directly checks scope judgment, current-instruction override, clarification, and confirmation before dangerous actions. User memory is just one case of this general method. Evaluation for production-grade Agents is not an occasional exam, but a verification system that continuously generates regression tasks and boundary tasks from real problem cases.
+
 Core methodology: Observe → Hypothesize → Experiment → Validate → New Understanding → New Hypothesis, transforming Agent engineering from experience-driven "alchemy" to data-driven scientific engineering.
 
-The evaluation system introduced in this chapter forms a complete closed loop: **Evaluation Environment** provides automated testing infrastructure → **Evaluation Dataset** defines test cases → **Automated Evaluation Methods** (LLM-as-a-Judge and Rubric) score Agent performance → **Benchmark Analysis** reveals improvement directions → **System Improvements** fix issues → Update the evaluation environment and dataset, starting a new iteration cycle.
+The evaluation system introduced in this chapter forms a complete closed loop: **Evaluation Environment** provides automated testing infrastructure → **Evaluation Dataset** defines test cases → **Automated Evaluation Methods** (deterministic verifiers, LLM-as-a-Judge, and Rubric) score Agent performance → **Benchmark Analysis** reveals improvement directions → **System Improvements** fix issues → Update the evaluation environment and dataset, starting a new iteration cycle.
 
-From the perspective of Harness engineering introduced in Chapter 1, the evaluation methodology in this chapter is the systematic implementation of the Harness's “validation” function, while the closed loop “from Benchmark report to system improvement” is the core mechanism for iterative Harness optimization. This chapter answers “how to measure reliably”; building on it, Chapter 9 answers “how to transform multidimensional trajectory evaluations into executable, reversible system updates.”
-
-The evaluation system established here not only supports optimization of the current system but also provides a critical foundation for the next two chapters. Chapter 8 turns evaluation environments and data into inputs for model post-training, using SFT and RL to write interaction policies into parameters. Chapter 9 transforms multidimensional evaluations of production trajectories into candidate updates to knowledge, instructions, programs, or parameters.
+The evaluation system established in this chapter serves not only the optimization of the current system but also provides a critical foundation for the next two chapters. Chapter 8 turns evaluation environments and data into inputs for model post-training; Chapter 9 turns multidimensional evaluation of production trajectories into updates to knowledge, instructions, and procedures.
 
 ## Thought Questions
 

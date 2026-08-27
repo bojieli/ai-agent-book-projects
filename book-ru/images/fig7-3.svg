@@ -1,68 +1,76 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 15 880 545" width="880" height="545" style="background:#ffffff">
-<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 512" width="880" height="512" style="background:#ffffff">
+<defs>
+<marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker>
+<marker id="ah-s" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 10 3.5, 0 7" fill="#666666"/></marker>
+<marker id="ah-r" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><polygon points="10 0, 0 3.5, 10 7" fill="#666666"/></marker>
+</defs>
+<style>
+.t{font-family:Arial,'Helvetica Neue',Helvetica,'PingFang SC','Microsoft YaHei',sans-serif;fill:#333333;text-anchor:middle;dominant-baseline:central}
+.l{font-family:Arial,'Helvetica Neue',Helvetica,'PingFang SC','Microsoft YaHei',sans-serif;fill:#333333;text-anchor:start;dominant-baseline:central}
+.h{font-size:15px;font-weight:bold}
+.m{font-size:12px}
+.n{font-size:10.5px;fill:#666666}
+.c{font-size:10.5px;fill:#666666;font-family:'SF Mono',Menlo,Consolas,monospace}
+</style>
 
-<rect x="20" y="70" width="220" height="230" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="130" y="93" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Симулятор пользователя (LLM)</text>
-<line x1="30" y1="105" x2="230" y2="105" stroke="#999999" stroke-width="2"/>
-<text x="30" y="115" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Известная информация:</text>
-<text x="35" y="133" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Имя: Sarah Johnson</text>
-<text x="35" y="151" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Бронирование: BK-98712</text>
-<text x="30" y="177" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Инструкция задачи:</text>
-<text x="35" y="195" font-family="'Courier New', Courier, monospace" font-size="7" fill="#333333" text-anchor="start" dominant-baseline="central">"Кажется, есть проблема с рейсом"</text>
-<text x="35" y="213" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">→ Постепенно раскрывать детали</text>
-<text x="35" y="231" font-family="'Courier New', Courier, monospace" font-size="6" fill="#333333" text-anchor="start" dominant-baseline="central">→ Не сообщать номер бронирования по своей инициативе</text>
-<rect x="300" y="70" width="260" height="230" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="430" y="93" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Агент (оцениваемый)</text>
-<line x1="310" y1="105" x2="550" y2="105" stroke="#999999" stroke-width="2"/>
-<rect x="315" y="115" width="230" height="40" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="430" y="135" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">LLM: рассуждение + выбор стратегии</text>
-<text x="320" y="175" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="start" dominant-baseline="central">① Подскажите номер вашего бронирования?</text>
-<text x="320" y="197" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">② lookup_booking(BK-98712)</text>
-<text x="320" y="219" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">③ Рейс UA123 отменён</text>
-<text x="320" y="241" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">④ cancel_booking(BK-98712)</text>
-<text x="320" y="263" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">⑤ Возврат $150, 3-5 рабочих дней</text>
-<rect x="620" y="70" width="240" height="230" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="740" y="93" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Инструменты + база данных</text>
-<line x1="630" y1="105" x2="850" y2="105" stroke="#999999" stroke-width="2"/>
-<text x="635" y="120" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">lookup_booking</text>
-<text x="780" y="120" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="6.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Детали бронирования</text>
-<text x="590" y="118" font-family="'Courier New', Courier, monospace" font-size="10" fill="#333333" text-anchor="middle" dominant-baseline="central">modify_booking</text>
-<text x="780" y="142" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="6" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Изменить бронирование</text>
-<text x="635" y="164" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">cancel_booking</text>
-<text x="780" y="164" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="5.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Отмена и возврат средств</text>
-<text x="635" y="186" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">search_flights</text>
-<text x="780" y="186" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Поиск других рейсов</text>
-<text x="635" y="208" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">send_notification</text>
-<text x="780" y="208" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="5.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Уведомление о подтверждении</text>
-<rect x="630" y="240" width="220" height="45" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
-<text x="640" y="255" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Состояние БД:</text>
-<text x="640" y="273" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">bookings, users, flights</text>
-<line x1="240" y1="150" x2="298" y2="150" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<text x="269.0" y="140.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle">Диалог</text>
-<line x1="300" y1="180" x2="242" y2="180" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<line x1="560" y1="155" x2="618" y2="155" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<text x="590" y="105" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#666666" text-anchor="middle">Вызов инструмента</text>
-<line x1="618" y1="185" x2="560" y2="185" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<path d="M 130,68 Q 435,30 740,68" fill="none" stroke="#666666" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#ah-light)"/>
-<text x="435" y="26" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Среда двойного управления: симулятор пользователя может напрямую управлять общей средой (инструменты + база данных)</text>
-<line x1="20" y1="320" x2="860" y2="320" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="440.0" y="345" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">После завершения задачи: многоуровневая проверка</text>
-<rect x="40" y="365" width="260" height="170" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="170" y="388" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Проверка статуса БД</text>
-<line x1="50" y1="400" x2="290" y2="400" stroke="#999999" stroke-width="2"/>
-<text x="55" y="420" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">booking.status == 'cancelled'</text>
-<text x="55" y="444" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">refund_record EXISTS</text>
-<text x="55" y="468" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">refund.amount == 150.00</text>
-<rect x="320" y="365" width="260" height="170" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="450" y="388" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Проверка содержания диалога</text>
-<line x1="330" y1="400" x2="570" y2="400" stroke="#999999" stroke-width="2"/>
-<text x="335" y="420" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Содержит «возврат» + сумма</text>
-<text x="335" y="444" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Содержит «время прибытия»</text>
-<text x="335" y="468" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Ложная информация отсутствует</text>
-<rect x="600" y="365" width="260" height="170" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="730" y="388" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Проверка соответствия процессу</text>
-<line x1="610" y1="400" x2="850" y2="400" stroke="#999999" stroke-width="2"/>
-<text x="615" y="420" font-family="'Courier New', Courier, monospace" font-size="7.5" fill="#333333" text-anchor="start" dominant-baseline="central">Получить подтверждение пользователя перед изменением</text>
-<text x="615" y="444" font-family="'Courier New', Courier, monospace" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central">Без несанкционированных операций</text>
-<text x="615" y="468" font-family="'Courier New', Courier, monospace" font-size="9.5" fill="#333333" text-anchor="start" dominant-baseline="central">Нет избыточной передачи человеку-оператору</text>
+<!-- user simulator -->
+<rect x="40" y="20" width="270" height="86" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text class="t h" x="175" y="40">Симулятор пользователя (LLM)</text>
+<text class="l n" x="56" y="62">known_info: John Smith / 555-123-2002 / во Франции</text>
+<text class="l n" x="56" y="80">task_instructions: раскрытие · эмоции · заземление</text>
+<text class="l n" x="56" y="96">Приёмка: решено только при excellent</text>
+
+<!-- Agent -->
+<rect x="570" y="20" width="270" height="86" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text class="t h" x="705" y="40">Agent (оцениваемый)</text>
+<text class="l n" x="586" y="62">Вход: тикет + политика домена</text>
+<text class="l n" x="586" y="80">Не видно: реальное состояние устройства</text>
+<text class="l n" x="586" y="96">Может только направлять, но не действовать за него</text>
+
+<!-- dialogue -->
+<line x1="316" y1="63" x2="560" y2="63" stroke="#666666" stroke-width="1.5" marker-end="url(#ah-s)" marker-start="url(#ah-r)"/>
+<text class="t n" x="438" y="50">Многоходовый диалог</text>
+<text class="t n" x="438" y="80">Постепенное раскрытие</text>
+
+<!-- shared environment -->
+<rect x="40" y="146" width="800" height="150" rx="6" fill="#f3f0e8" stroke="#333333" stroke-width="2"/>
+<text class="t h" x="440" y="166">Общая среда (двойное управление: состояние меняют обе стороны)</text>
+<rect x="60" y="182" width="370" height="98" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
+<text class="t m" x="245" y="200" font-weight="bold">Состояние на стороне устройства</text>
+<text class="l n" x="76" y="222">Авиарежим ON · роуминг OFF · экономия · остаток трафика</text>
+<text class="l c" x="76" y="246">Инструменты пользователя: toggle_airplane_mode / toggle_roaming</text>
+<text class="l c" x="76" y="266">      check_status_bar / run_speed_test</text>
+<rect x="450" y="182" width="370" height="98" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
+<text class="t m" x="635" y="200" font-weight="bold">База данных оператора</text>
+<text class="l n" x="466" y="222">Клиент C1001 · линии L1001/L1002/L1003 · тарифы · счета</text>
+<text class="l c" x="466" y="246">Инструменты Agent: get_customer_by_phone / get_data_usage</text>
+<text class="l c" x="466" y="266">      enable_roaming / refuel_data</text>
+
+<line x1="175" y1="106" x2="175" y2="178" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<line x1="705" y1="106" x2="705" y2="178" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+
+<!-- re-read note -->
+<rect x="40" y="306" width="800" height="34" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text class="t n" x="440" y="323">toggle_roaming пользователя изменил среду; Agent обязан снова вызвать инструмент — проверка охватывает это перечитывание</text>
+
+<!-- verification -->
+<rect x="40" y="356" width="800" height="136" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text class="t h" x="440" y="376">После задачи: четыре слоя проверок + правило агрегации</text>
+<rect x="56" y="392" width="182" height="62" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
+<text class="t m" x="147" y="408">env_assertions</text>
+<text class="t n" x="147" y="428">Мобильные данные доступны</text>
+<text class="t n" x="147" y="444">Скорость ≥ 200 / excellent</text>
+<rect x="254" y="392" width="182" height="62" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
+<text class="t m" x="345" y="408">actions</text>
+<text class="t n" x="345" y="428">toggle_airplane_mode</text>
+<text class="t n" x="345" y="444">requestor должен быть user</text>
+<rect x="452" y="392" width="182" height="62" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
+<text class="t m" x="543" y="408">communicate_info</text>
+<text class="t n" x="543" y="428">Донесена ли нужная информация</text>
+<text class="t n" x="543" y="444">в этой задаче null</text>
+<rect x="650" y="392" width="182" height="62" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
+<text class="t m" x="741" y="408">nl_assertions</text>
+<text class="t n" x="741" y="428">Суждение на уровне текста</text>
+<text class="t n" x="741" y="444">в этой задаче null</text>
+<text class="t n" x="440" y="474">reward_basis = ["ENV_ASSERTION"]  →  учитывается только первый слой; остальные пишутся в лог, но в награду не входят</text>
 </svg>
