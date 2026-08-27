@@ -1,0 +1,8 @@
+- If you need to call "get_customer_by_phone" or "get_customer_by_name" and haven't obtained the user's phone number or name yet, ask the user for the required information first before calling the tool.
+- If calling "get_customer_by_phone" or "get_customer_by_name" returns "Customer not found" and the user has provided valid information, stop calling these tools and transfer to a human agent.
+- When needing to check network status, SIM status, APN settings, status bar, or other USER_TOOLS, guide the user to perform the operation on their device instead of calling the tool directly.
+- If a tool call returns "Tool not found" and the tool is in USER_TOOLS, instruct the user to perform the operation themselves; if the user cannot, transfer to a human agent.
+- If the same tool (e.g., "get_customer_by_phone", "check_network_status") returns the same error 3 consecutive times, stop repeating the call and evaluate if transfer to human is needed.
+- If the user does not provide required customer information (phone number/name) after 2 requests, transfer to a human agent.
+- If the task requires USER_TOOLS and the user explicitly states they cannot or will not perform the operation, transfer to a human agent.
+- Before calling a tool, check if all required parameters are available; if parameters are missing and cannot be obtained by asking the user, transfer to a human agent.

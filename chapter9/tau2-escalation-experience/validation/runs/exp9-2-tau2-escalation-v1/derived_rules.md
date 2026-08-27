@@ -1,0 +1,5 @@
+- Before calling tools that require user-specific arguments (e.g., get_customer_by_phone, get_customer_by_name), ask the user to provide the necessary information (e.g., phone number, name) if it is not already provided.
+- If a tool call returns "Tool [tool_name] not found" error, do not call that tool again for the current task.
+- If you have made 3 or more consecutive failed tool calls (due to empty args or "tool not found" errors), transfer to a human agent.
+- If a tool requires a customer identifier (phone number, name) and the user does not provide it after 2 requests, transfer to a human agent.
+- Do not call the same tool more than 2 times in a row if it returns an error on each previous call.
