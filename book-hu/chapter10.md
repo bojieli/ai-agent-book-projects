@@ -417,6 +417,20 @@ A Lingtai többi tervezési eleme is visszautal a korábbi szakaszokra. A tudás
 >
 >
 
+**A Menedzser Ügynök generálja az ügynök-munkafolyamatot.** Az előző két formában a Menedzser Ügynök végig a hurokban marad: minden kiosztott részfeladat egy újabb modelldöntést kíván, a kontextus pedig a hívások számával együtt nő. Egy másik megközelítés, hogy **a menedzser előbb kódként írja meg az ügynök-munkafolyamatot, majd egy determinisztikus futtatókörnyezetre bízza a végrehajtását**.
+
+A Claude Code beépített Workflow eszköze éppen ilyen: néhány primitívet ad az ügynök kezébe – `agent()`, `parallel()`, `pipeline()`. Minden `agent()` egy saját kontextussal rendelkező al-ügynök, a schema pedig kiköti, hogy csak strukturált következtetést adjon vissza, ne a teljes trajektóriát. Például egy szakmai kézirat hét ténycsoportjának ellenőrzésekor a rendszer minden csoportot előbb felkutat, majd tételenként, egymástól függetlenül ellenőriz, végül mindent együtt összegez:
+
+```javascript
+const results = await pipeline(
+  DIMENSIONS,                                     // az ellenőrzendő hét irány
+  d => agent(research(d), { schema: FINDINGS }),  // 1. fázis: kutatás
+  r => parallel(r.findings.map(f => () =>         // 2. fázis: tételenkénti független ellenőrzés
+         agent(verify(f), { schema: VERDICT })))
+)
+await agent(writeProvenance(results.flat()))      // összegzés: megvárja az összes eredményt
+```
+
 ### Decentralizált minta
 
 Ha már van vezetői modell, mire jó a decentralizált? A központi vezérlő elhagyásának indoka mindenekelőtt az, hogy az emberi társadalom szervezőelvét utánozzuk: több, felelősségében egyenrangú szerep ossza meg a munkát és tartsa egyensúlyban egymást, mindegyik a maga szakmai nézőpontjából vizsgálja a problémát, és maga döntse el, kivel beszél – ahelyett, hogy minden ítélet egyetlen Managernél futna össze. A decentralizált modellben minden Agent saját szakmai megítélése alapján dönti el, mikor fordul egy másik Agenthez: lehet ez feladatátadás („a magam részével végeztem, tiéd a folytatás”), visszajelzéskérés („ez a megoldás technikailag megvalósítható?”) vagy problémajelzés („a kapott követelmények ellentmondanak egymásnak, újra kell tárgyalnunk”).

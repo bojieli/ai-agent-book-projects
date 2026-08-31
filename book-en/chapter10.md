@@ -406,6 +406,20 @@ The rest of Lingtai's design also echoes earlier sections. Knowledge lives in ea
 >
 >
 
+**The Manager Agent generates the Agent workflow.** In the two preceding forms the Manager Agent stays inside the loop: every subtask it dispatches demands one more decision from the model, and the context grows with the number of calls. Another approach is to **have the Manager first write the Agent workflow as a piece of code, and then hand it to a deterministic runtime to execute**.
+
+The Workflow tool built into Claude Code is one such instance: it gives the Agent a few primitives—`agent()`, `parallel()`, and `pipeline()`. Each `agent()` is a sub-agent with its own context, and a schema stipulates that it return only structured conclusions rather than a full trajectory. For example, to verify seven groups of facts for a technical manuscript, each group is first researched, then verified item by item independently, and finally summarized together:
+
+```javascript
+const results = await pipeline(
+  DIMENSIONS,                                     // the seven directions to verify
+  d => agent(research(d), { schema: FINDINGS }),  // stage 1: research
+  r => parallel(r.findings.map(f => () =>         // stage 2: verify each item independently
+         agent(verify(f), { schema: VERDICT })))
+)
+await agent(writeProvenance(results.flat()))      // summary: waits for all results
+```
+
 ### Decentralized Pattern
 
 Given the manager pattern, why do we still need a decentralized one? The motivation for removing the central controller is chiefly to emulate how human organizations work: let several roles of equal standing divide the labor and check one another, each examining the problem from its own professional angle and deciding for itself whom to talk to, rather than funnelling every judgment to a single Manager. In the decentralized pattern, each Agent decides on its own professional judgment when to reach out to another Agent—it may be handing off a task ("my part is done, over to you"), asking for feedback ("is this design technically feasible?"), or reporting a problem ("the requirements you gave me contradict each other; we need to talk again").

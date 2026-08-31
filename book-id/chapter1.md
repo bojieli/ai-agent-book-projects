@@ -427,6 +427,8 @@ Dalam praktiknya, workflow dan autonomous Agent tidak saling eksklusif—banyak 
 
 ![Gambar 1-7: Antarmuka editor workflow n8n](images/n8n-workflow.png)
 
+Ada juga cara pencampuran lain: **biarkan autonomous Agent menuliskan workflow-nya lebih dulu, lalu workflow itulah yang menjalankannya**. Setelah membaca tugas, Agent sendiri yang menentukan topologinya dan menghasilkan sepotong kode orkestrasi; begitu kode itu jadi, tahap eksekusi kembali kepada determinisme workflow. Dengan begitu fleksibilitas autonomous Agent dalam menghadapi tugas yang belum dikenal tetap terjaga, sementara model tidak perlu ikut memutuskan pada setiap penjadwalan. Bab 10 membahas bentuk ini secara rinci.
+
 #### Perbandingan Singkat Kerangka Kerja Agent Mainstream
 
 Tabel berikut ini merangkum kerangka kerja dan platform Agent yang banyak digunakan untuk membantu pembaca mengidentifikasi mana yang tepat untuk skenario mereka:

@@ -427,6 +427,8 @@ En la práctica, los workflows y los Agentes autónomos no son una disyuntiva: m
 
 ![Figura 1-7: Interfaz del editor de flujos de trabajo n8n](images/n8n-workflow.png)
 
+Existe además otra forma de mezcla: **dejar que el Agente autónomo escriba primero el workflow y que sea el workflow quien lo ejecute**. Tras leer la tarea, el Agente decide por sí mismo la topología y genera un fragmento de código de orquestación; una vez generado ese código, la fase de ejecución regresa al determinismo del workflow. Así se conserva la flexibilidad del Agente autónomo frente a tareas desconocidas sin obligar al modelo a decidir en cada planificación. El capítulo 10 analiza esta forma en detalle.
+
 #### Breve comparativa de los principales frameworks de Agentes
 
 La siguiente tabla presenta los principales frameworks/plataformas de Agentes disponibles actualmente para ayudar al lector a identificar rápidamente la opción más adecuada según el escenario:

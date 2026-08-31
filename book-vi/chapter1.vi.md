@@ -427,6 +427,8 @@ Trong thực tế, quy trình làm việc và quyền tự chủ Agent không ph
 
 ![Hình 1-7: Giao diện soạn thảo quy trình công việc n8n ](images/n8n-workflow.png)
 
+Còn một cách kết hợp nữa: **để Agent tự trị viết ra quy trình làm việc trước, rồi quy trình làm việc mới thực thi**. Sau khi đọc nhiệm vụ, Agent tự quyết định cấu trúc liên kết và sinh ra một đoạn mã điều phối; một khi mã đã sinh xong, giai đoạn thực thi quay về tính xác định của quy trình làm việc. Cách này vừa giữ được sự linh hoạt của Agent tự trị trước những nhiệm vụ chưa biết, vừa không bắt mô hình phải ra quyết định ở từng lần điều phối. Chương 10 sẽ bàn kỹ về hình thức này.
+
 #### So sánh ngắn gọn về các framework Agent chính thống
 
 Bảng sau đây sắp xếp khung/nền tảng Agent chính thống hiện nay để giúp người đọc nhanh chóng xác định vị trí theo kịch bản:

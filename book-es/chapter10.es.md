@@ -444,6 +444,20 @@ El resto de su diseño también se corresponde punto por punto con lo anterior: 
 >
 >
 
+**El Manager Agent genera el workflow de Agentes.** En las dos formas anteriores el Manager Agent permanece siempre dentro del bucle: cada subtarea que reparte exige una decisión más del modelo, y el contexto crece con el número de llamadas. Otra opción consiste en **que el Manager escriba primero el workflow de Agentes como un fragmento de código y lo entregue después a un runtime determinista para su ejecución**.
+
+La herramienta Workflow integrada en Claude Code es un ejemplo de ello: ofrece al Agente unas cuantas primitivas—`agent()`, `parallel()` y `pipeline()`. Cada `agent()` es un subagente con su propio contexto, y un schema estipula que devuelva solo conclusiones estructuradas en lugar de la traza completa. Por ejemplo, para verificar siete grupos de hechos de un manuscrito técnico, cada grupo se documenta primero, después se verifica punto por punto de forma independiente y al final se agrega todo:
+
+```javascript
+const results = await pipeline(
+  DIMENSIONS,                                     // las siete direcciones por verificar
+  d => agent(research(d), { schema: FINDINGS }),  // fase 1: documentación
+  r => parallel(r.findings.map(f => () =>         // fase 2: verificar cada punto de forma independiente
+         agent(verify(f), { schema: VERDICT })))
+)
+await agent(writeProvenance(results.flat()))      // agregación: espera todos los resultados
+```
+
 ### Patrón descentralizado
 
 Si ya existe el modelo de gestor, ¿para qué hace falta el modelo descentralizado? El motivo para suprimir al controlador central es sobre todo emular la forma en que se organiza la sociedad humana: que varios roles de responsabilidad equivalente se repartan el trabajo y se contrapesen, que cada uno examine el problema desde su propia perspectiva profesional y decida por sí mismo con quién hablar, en lugar de hacer converger todos los juicios en un único Manager. En el modelo descentralizado, cada Agente decide de forma autónoma, según su criterio profesional, cuándo dirigirse a otro Agente: puede tratarse de un traspaso de tarea («he terminado mi parte, te la paso»), de una petición de opinión («¿es viable técnicamente esta solución?») o de un aviso de problema («los requisitos que me diste son contradictorios, hay que volver a discutirlo»).

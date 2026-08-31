@@ -427,6 +427,8 @@ In practice, workflows and autonomous Agents are not mutually exclusive—many s
 
 ![Figure 1-7: n8n workflow editor interface](images/n8n-workflow.png)
 
+Another way to mix them is to **have the autonomous Agent write the workflow first, and then let the workflow do the executing**. After reading the task, the Agent decides the topology itself and generates a piece of orchestration code; once that code exists, the execution phase falls back to the determinism of a workflow. This keeps the autonomous Agent's flexibility in the face of unfamiliar tasks while sparing the model from making a decision at every dispatch. Chapter 10 discusses this form in detail.
+
 #### Brief Comparison of Mainstream Agent Frameworks
 
 The following table summarizes widely used Agent frameworks and platforms to help readers identify the right one for their scenario:
