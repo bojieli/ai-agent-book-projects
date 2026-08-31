@@ -444,6 +444,20 @@ Tasarımının geri kalanı da önceki bölümlerle bire bir örtüşür: bilgi 
 >
 >
 
+**Manager Agent, Agent workflow'unu üretir.** Önceki iki biçimde Manager Agent hep döngünün içinde kalır: dağıttığı her alt görev modelden bir karar daha ister ve context çağrı sayısıyla birlikte büyür. Başka bir yol da şudur: **Manager önce Agent workflow'unu bir kod parçası olarak yazar, sonra onu deterministik bir çalışma zamanına verip çalıştırır**.
+
+Claude Code'un yerleşik Workflow aracı tam olarak böyle bir örnektir: Agent'a `agent()`, `parallel()` ve `pipeline()` gibi birkaç ilkel sunar. Her `agent()`, kendi context'ine sahip bir alt Agent'tır; schema ise onun tam trajectory yerine yalnızca yapılandırılmış sonuç döndürmesini şart koşar. Örneğin teknik bir metindeki yedi olgu kümesini doğrulamak için her küme önce araştırılır, sonra madde madde bağımsız olarak doğrulanır, en sonunda hepsi birlikte özetlenir:
+
+```javascript
+const results = await pipeline(
+  DIMENSIONS,                                     // doğrulanacak yedi yön
+  d => agent(research(d), { schema: FINDINGS }),  // aşama 1: araştırma
+  r => parallel(r.findings.map(f => () =>         // aşama 2: her maddeyi bağımsız doğrula
+         agent(verify(f), { schema: VERDICT })))
+)
+await agent(writeProvenance(results.flat()))      // özet: tüm sonuçları bekler
+```
+
 ### Merkezsiz model
 
 Yönetici modeli varken merkeziyetsiz modele neden gerek duyulur? Merkezî denetleyiciyi kaldırmanın başlıca gerekçesi, insan toplumunun örgütlenme biçimini taklit etmektir: sorumlulukları eşit birden çok rol işi bölüşsün ve birbirini dengelesin, her biri soruna kendi uzmanlık açısından baksın ve kiminle konuşacağına kendi karar versin — bütün yargıları tek bir Manager'da toplamak yerine. Merkeziyetsiz modelde her Agent, kendi mesleki muhakemesine dayanarak başka bir Agent'a ne zaman başvuracağına kendisi karar verir: bu, görevin devri olabilir ("kendi payıma düşeni bitirdim, sende"), geri bildirim isteği olabilir ("bu çözüm teknik olarak uygulanabilir mi?") ya da bir sorunun bildirilmesi olabilir ("verdiğin gereksinimlerde çelişki var, yeniden tartışmalıyız").

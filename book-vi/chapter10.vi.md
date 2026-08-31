@@ -444,6 +444,20 @@ Phần thiết kế còn lại cũng ứng đối từng điểm với các ph�
 >
 >
 
+**Agent quản lý sinh ra quy trình làm việc của các Agent.** Ở hai hình thức trước, Agent quản lý luôn nằm trong vòng lặp: mỗi nhiệm vụ phụ được giao đều đòi hỏi mô hình ra thêm một quyết định, và ngữ cảnh lớn dần theo số lần gọi. Còn một cách khác: **người quản lý viết trước quy trình làm việc của các Agent thành một đoạn mã, rồi giao cho một môi trường chạy có tính xác định thực thi**.
+
+Công cụ Workflow tích hợp sẵn trong Claude Code chính là một ví dụ: nó cung cấp cho Agent vài nguyên thủy `agent()`, `parallel()`, `pipeline()`. Mỗi `agent()` là một sub-Agent có ngữ cảnh riêng, còn schema quy định nó chỉ trả về kết luận có cấu trúc chứ không phải toàn bộ quỹ đạo. Ví dụ, để kiểm chứng bảy nhóm dữ kiện cho một bản thảo kỹ thuật, mỗi nhóm được nghiên cứu trước, sau đó kiểm chứng độc lập từng mục, cuối cùng tổng hợp lại:
+
+```javascript
+const results = await pipeline(
+  DIMENSIONS,                                     // bảy hướng cần kiểm chứng
+  d => agent(research(d), { schema: FINDINGS }),  // giai đoạn 1: nghiên cứu
+  r => parallel(r.findings.map(f => () =>         // giai đoạn 2: kiểm chứng độc lập từng mục
+         agent(verify(f), { schema: VERDICT })))
+)
+await agent(writeProvenance(results.flat()))      // tổng hợp: đợi đủ mọi kết quả
+```
+
 ### Mô hình phi tập trung
 
 Đã có mô hình quản lý rồi, vì sao còn cần mô hình phi tập trung? Động cơ bỏ đi người điều khiển trung tâm chủ yếu là mô phỏng cách tổ chức của xã hội loài người: để nhiều vai trò ngang quyền phân công và kiềm chế lẫn nhau, mỗi bên soi vấn đề từ góc chuyên môn của mình và tự quyết định trao đổi với ai, thay vì dồn mọi phán đoán về một Manager. Trong mô hình phi tập trung, mỗi Agent dựa vào phán đoán chuyên môn của chính nó để tự quyết khi nào bắt chuyện với Agent khác — có thể là bàn giao nhiệm vụ ("phần của tôi xong rồi, giao lại cho anh"), có thể là xin phản hồi ("phương án này có khả thi về mặt kỹ thuật không?"), hoặc báo cáo vấn đề ("yêu cầu anh đưa có mâu thuẫn, chúng ta cần bàn lại").

@@ -444,6 +444,20 @@ Sisa dari desain Lingtai juga menggemakan bagian-bagian sebelumnya. Pengetahuan 
 > ![Gambar 10-8: Parallel Web Scraping Architecture](images/fig10-8.svg)
 >
 
+**Manager Agent menghasilkan workflow Agent.** Pada dua bentuk sebelumnya, Manager Agent selalu berada di dalam loop: setiap sub-tugas yang dibagikan menuntut satu keputusan lagi dari model, dan konteks bertambah seiring jumlah pemanggilan. Ada pendekatan lain: **Manager lebih dulu menuliskan workflow Agent sebagai sepotong kode, lalu menyerahkannya kepada runtime deterministik untuk dieksekusi**.
+
+Tool Workflow bawaan Claude Code adalah salah satu contohnya: tool ini memberi Agent beberapa primitif—`agent()`, `parallel()`, dan `pipeline()`. Setiap `agent()` adalah sub-agent dengan konteksnya sendiri, dan schema menetapkan bahwa ia hanya mengembalikan kesimpulan terstruktur, bukan trajectory lengkap. Misalnya, untuk memverifikasi tujuh kelompok fakta pada sebuah naskah teknis, tiap kelompok mula-mula diteliti, lalu diverifikasi butir demi butir secara independen, dan akhirnya dirangkum bersama:
+
+```javascript
+const results = await pipeline(
+  DIMENSIONS,                                     // tujuh arah yang perlu diverifikasi
+  d => agent(research(d), { schema: FINDINGS }),  // tahap 1: penelitian
+  r => parallel(r.findings.map(f => () =>         // tahap 2: verifikasi tiap butir secara independen
+         agent(verify(f), { schema: VERDICT })))
+)
+await agent(writeProvenance(results.flat()))      // rangkuman: menunggu semua hasil
+```
+
 ### Pola terdesentralisasi
 
 Sudah ada model manajer, lalu mengapa masih perlu model desentralisasi? Motif menghapus pengendali pusat terutama adalah meniru cara masyarakat manusia berorganisasi: membiarkan beberapa peran yang setara tanggung jawabnya berbagi kerja dan saling mengimbangi, masing-masing menimbang persoalan dari sudut pandang keahliannya sendiri dan menentukan sendiri hendak berbicara dengan siapa—alih-alih menghimpun semua penilaian pada satu Manager. Dalam model desentralisasi, setiap Agent menentukan sendiri, berdasarkan penilaian profesionalnya, kapan ia menghubungi Agent lain: bisa berupa penyerahan tugas ("bagian saya sudah selesai, silakan lanjut"), permintaan umpan balik ("apakah rancangan ini layak secara teknis?"), atau laporan masalah ("kebutuhan yang Anda berikan saling bertentangan, kita perlu membahas ulang").

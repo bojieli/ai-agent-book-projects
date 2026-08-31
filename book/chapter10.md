@@ -426,6 +426,20 @@ Manager 按顺序依次调用专门 Agent，每个 Agent 完成后返回结果�
 >
 >
 
+**管理者 Agent 生成 Agent 工作流。** 前两种形态里管理者 Agent 始终待在循环中：每派发一个子任务都要模型做一次决策，上下文随调用次数增长。还有一种做法是**管理者先把 Agent 工作流写成一段代码，再交给确定性的运行时去执行**。
+
+Claude Code 内置的 Workflow 工具就是这样一个实例，它给 Agent 提供 `agent()`、`parallel()`、`pipeline()` 几个原语：每个 `agent()` 是一个拥有独立上下文的子 Agent，schema 约定它只返回结构化结论而不是完整轨迹。例如：为一篇技术稿件核实七组事实，每组先调研，再逐条独立核实，最后统一汇总：
+
+```javascript
+const results = await pipeline(
+  DIMENSIONS,                                     // 七个待核实的方向
+  d => agent(research(d), { schema: FINDINGS }),  // 阶段一：调研
+  r => parallel(r.findings.map(f => () =>         // 阶段二：逐条独立核实
+         agent(verify(f), { schema: VERDICT })))
+)
+await agent(writeProvenance(results.flat()))      // 汇总：等齐所有结果
+```
+
 ### 去中心化模式
 
 有了管理者模式，为什么还要去中心化模式？去掉中心控制者的动机，主要在于模拟人类社会的组织方式：让多个职责对等的角色分工与制衡，各自从自己的专业视角审视问题、自主决定与谁沟通，而不是把所有判断都汇集到一个 Manager 那里。在去中心化模式中，每个 Agent 根据自己的专业判断，自主决定何时向其他 Agent 发起沟通——可能是移交任务（“我的部分做完了，交给你”），也可能是请求反馈（“这个方案技术上可行吗？”），或者报告问题（“你给的需求有矛盾，我们需要重新讨论”）。

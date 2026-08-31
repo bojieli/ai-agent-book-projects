@@ -427,6 +427,8 @@ Pratikte, workflow'lar ve autonomous Agent'lar ya-ya da seçimi değildir—bir�
 
 ![Şekil 1-7: n8n workflow editörü arayüzü](images/n8n-workflow.png)
 
+Karıştırmanın bir başka biçimi daha var: **önce autonomous Agent workflow'u yazar, sonra workflow onu çalıştırır**. Agent görevi okuduktan sonra topolojiye kendisi karar verir ve bir parça orkestrasyon kodu üretir; kod bir kez üretildikten sonra yürütme aşaması workflow'un determinizmine geri döner. Böylece autonomous Agent'ın bilinmeyen görevler karşısındaki esnekliği korunur, ama modelin her zamanlama kararına katılması gerekmez. Bölüm 10 bu biçimi ayrıntılı olarak ele alır.
+
 #### Ana Akım Agent Çerçevelerinin Kısa Karşılaştırması
 
 Aşağıdaki tablo, okuyucuların kendi senaryoları için doğru olanı hızla belirlemesine yardımcı olmak amacıyla güncel ana akım Agent çerçevelerini/platformlarını özetler:

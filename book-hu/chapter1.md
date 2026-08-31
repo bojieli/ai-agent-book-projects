@@ -427,6 +427,8 @@ A gyakorlatban a munkafolyamatok és az autonóm ügynökök nem zárják ki egy
 
 ![1-7. ábra: Az n8n munkafolyamat-szerkesztő felülete](images/n8n-workflow.png)
 
+Van a kettő vegyítésének még egy módja: **előbb az autonóm ügynök írja meg a munkafolyamatot, majd a munkafolyamat végzi a végrehajtást**. Az ügynök a feladat elolvasása után maga dönti el a topológiát, és generál egy vezénylő kódrészletet; amint a kód elkészült, a végrehajtási szakasz visszatér a munkafolyamat determinisztikusságához. Így megmarad az autonóm ügynök rugalmassága az ismeretlen feladatokkal szemben, ugyanakkor a modellnek nem kell minden egyes ütemezésnél döntenie. Ezt a formát a 10. fejezet tárgyalja részletesen.
+
 #### A főbb ügynökkeretrendszerek rövid összehasonlítása
 
 Az alábbi táblázat összefoglalja a széles körben használt ügynökkeretrendszereket és platformokat, hogy segítse az olvasókat a megfelelő kiválasztásában a saját forgatókönyvükhöz:
