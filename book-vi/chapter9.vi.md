@@ -1,6 +1,6 @@
 # Sự tiến hóa liên tục của Agent
 
-Agent ngày nay đối mặt với một nghịch lý năng lực rõ rệt: nó có thể giải quyết zero-shot những nhiệm vụ phức tạp chưa từng gặp, nhưng sau khi xử lý mười nghìn nhiệm vụ tương tự, ngày hôm sau vẫn có thể lặp lại sai lầm của ngày đầu tiên. **Khả năng tự chủ học hỏi từ kinh nghiệm** đang trở thành năng lực then chốt để Agent chuyển từ “biết hoàn thành nhiệm vụ” sang “có thể làm việc đáng tin cậy”, đồng thời là chủ đề nghiên cứu cốt lõi của thế hệ mô hình tiếp theo. Tuy nhiên, năng lực học liên tục của bản thân mô hình hiện vẫn còn rất hạn chế.
+Agent ngày nay đối mặt với một nghịch lý năng lực rõ rệt: nó có thể giải quyết zero-shot những nhiệm vụ phức tạp chưa từng gặp, nhưng sau khi xử lý mười nghìn nhiệm vụ tương tự, ngày hôm sau vẫn có thể lặp lại sai lầm của ngày đầu tiên. Sau khi mô hình vào việc, liệu nó có thể tiến bộ dần từ công việc hằng ngày như một nhân viên mới hay không? **Khả năng tự chủ học hỏi từ kinh nghiệm** — thứ ngày nay được gọi là **học liên tục** (continual learning) — đang trở thành năng lực then chốt để Agent chuyển từ “biết hoàn thành nhiệm vụ” sang “có thể làm việc đáng tin cậy”, đồng thời là chủ đề nghiên cứu cốt lõi của thế hệ mô hình tiếp theo. Khái niệm “học liên tục” hôm nay không phải là cùng một bài toán với dòng nghiên cứu trước đây về “học nhiệm vụ mới thì quên nhiệm vụ cũ”: quên chỉ là một bài toán con, và khó hơn nữa là không ai nói cho mô hình biết trong trải nghiệm của ngày hôm nay, điều gì đã làm đúng và điều gì đã làm sai. Hiện tại, năng lực học liên tục của bản thân mô hình vẫn còn rất hạn chế.
 
 Nguyên nhân là mô hình sau khi triển khai không tự động thay đổi tham số chỉ vì một lần suy luận. Học trong ngữ cảnh, duy trì trạng thái và nén được thảo luận ở Chương 2 có thể giúp Agent thích nghi **trong nhiệm vụ hiện tại**; nhưng khi ngữ cảnh kết thúc, thay đổi này không tự nhiên được chuyển sang nhiệm vụ tiếp theo. Lưu hội thoại vào bộ nhớ cũng không đồng nghĩa với việc đã học được hành vi mới: quỹ đạo gốc có thể rất dài, chứa cả chiến lược hiệu quả, thành công ngẫu nhiên, quy kết sai và đầu vào không đáng tin cậy.
 
@@ -8,7 +8,7 @@ Nguyên nhân là mô hình sau khi triển khai không tự động thay đổi
 
 Vậy tại sao không để mô hình tự huấn luyện trực tiếp sau mỗi nhiệm vụ? Vì môi trường sản xuất hiếm khi cung cấp tín hiệu học tập sạch. Sự hài lòng của người dùng không đồng nghĩa với tuân thủ; các cập nhật tham số cục bộ cũng có thể gây quên năng lực, trôi dạt chính sách hoặc suy giảm an toàn. Nếu cho phép mô hình đang vận hành trực tiếp sửa đổi các tham số của chính nó dựa trên phản hồi chưa được xác minh, kinh nghiệm sai và Prompt injection có thể bị củng cố, rồi tiếp tục khuếch đại trong các nhiệm vụ sau. Mặt khác, việc huấn luyện định kỳ các mô hình nền tảng có thể cải thiện năng lực tổng quát, nhưng không thể kịp thời hấp thụ các quy tắc riêng, thay đổi công cụ và kinh nghiệm cục bộ mà mỗi Agent gặp hằng ngày.
 
-Vì vậy, khi bản thân mô hình chưa thể học liên tục một cách đáng tin cậy, trước hết cần kiến tạo “học tập” thành một hệ thống tự chủ bao quanh mô hình: ghi lại bằng chứng vận hành, xác minh kết quả và quá trình, rút ra điểm chung từ nhiều quỹ đạo, rồi quyết định nên cập nhật tri thức, chỉ dẫn, chương trình hay tham số mô hình. Mọi sửa đổi trước tiên đều phải hình thành phiên bản ứng viên; chỉ sau khi vượt qua kiểm thử hồi quy và kiểm tra an toàn mới được phép thay đổi lần vận hành tiếp theo.
+Vì vậy, khi bản thân mô hình chưa thể học liên tục một cách đáng tin cậy, trước hết cần kiến tạo “học tập” thành một hệ thống tự chủ bao quanh mô hình — cuốn sách này gọi đó là **tiến hóa liên tục**, để phân biệt với học liên tục ở cấp độ trọng số mô hình: ghi lại bằng chứng vận hành, xác minh kết quả và quá trình, rút ra điểm chung từ nhiều quỹ đạo, rồi quyết định nên cập nhật tri thức, chỉ dẫn, chương trình hay tham số mô hình. Mọi sửa đổi trước tiên đều phải hình thành phiên bản ứng viên; chỉ sau khi vượt qua kiểm thử hồi quy và kiểm tra an toàn mới được phép thay đổi lần vận hành tiếp theo.
 
 Các chương trước đã trình bày những thành phần chủ yếu cần thiết cho hệ thống này. Chương 2 xử lý trạng thái trong nhiệm vụ, Chương 3 cung cấp hạ tầng tri thức, Chương 5 trao cho Agent siêu năng lực tạo công cụ và sửa đổi hệ thống, Chương 7 thiết lập đánh giá và xác minh, còn Chương 8 trình bày cách cập nhật tham số mô hình. Nhiệm vụ của Chương 9 là tổ chức các thành phần này thành vòng khép kín tiến hóa liên tục như minh họa trong Hình 9-1.
 
@@ -301,11 +301,11 @@ Bảng 9-3 Các chỉ số đánh giá phân tầng cho tiến hóa liên tục
 - tính an toàn, tức quy tắc, quyền riêng tư và ranh giới từ chối có trôi dạt theo quá trình tiến hóa hay không;
 - chất lượng kỹ thuật dài hạn, tức độ phức tạp bảo trì, tính nhất quán kiến trúc, ranh giới sở hữu, khả năng tương thích ngược và chi phí di chuyển, gỡ lỗi tương lai có xấu đi hay không.
 
-Một vấn đề chỉ giải quyết được trường hợp thất bại hiện tại nhưng suy giảm ở những trường hợp hiện có khác hoặc lĩnh vực mới không phải là học liên tục thành công.
+Một vấn đề chỉ giải quyết được trường hợp thất bại hiện tại nhưng suy giảm ở những trường hợp hiện có khác hoặc lĩnh vực mới không phải là tiến hóa liên tục thành công.
 
 > **Thí nghiệm 9-9 ★★★: Đánh giá Agent có đang tiến hóa liên tục hay không**
 >
-> **Mục tiêu thí nghiệm**: Phân biệt ba hành vi dài hạn — “biết lưu một lần phản hồi”, “chỉ biết nối thêm” và “có thể cập nhật, chuyển giao, duy trì năng lực” — để tránh giả mạo học liên tục bằng cách lặp lại cùng một tập câu hỏi.
+> **Mục tiêu thí nghiệm**: Phân biệt ba hành vi dài hạn — “biết lưu một lần phản hồi”, “chỉ biết nối thêm” và “có thể cập nhật, chuyển giao, duy trì năng lực” — để tránh giả mạo tiến hóa liên tục bằng cách lặp lại cùng một tập câu hỏi.
 >
 > **Luồng nhiệm vụ bốn giai đoạn**: Giai đoạn học cung cấp các nhiệm vụ hoàn tiền, xác minh danh tính và chính sách hành lý có chung quy luật tiềm ẩn. Giai đoạn chuyển giao thay đổi cách diễn đạt, người dùng và môi trường cục bộ để kiểm tra kinh nghiệm cũ có dùng được cho nhiệm vụ mới hay không. Giai đoạn thay đổi quy tắc cập nhật giới hạn hành lý từ 20kg lên 23kg, yêu cầu hệ thống thay thế hoặc loại bỏ tri thức cũ. Giai đoạn duy trì kiểm thử lại năng lực không thay đổi và quy tắc hiện hành để đo xem cập nhật có gây quên hay không. Chỉ sau khi mỗi nhiệm vụ có phản hồi kết thúc mới được cập nhật bộ nhớ ngoài; hành động kỳ vọng của câu hỏi hiện tại không được rò rỉ cho Agent trước.
 >
@@ -391,7 +391,7 @@ Tiến hóa liên tục cũng không có nghĩa là để tri thức, Prompt và
 
 ## Tổng kết chương
 
-Học liên tục đang trở thành một trong những năng lực quan trọng nhất của Agent, nhưng các mô hình hiện nay vẫn chưa thể tự mình thực hiện nó một cách đáng tin cậy. Thích nghi ngữ cảnh trong lúc suy luận không tự động lưu giữ lâu dài, còn cập nhật tham số trực tuyến chưa qua xác minh sẽ khuếch đại nhiễu, tấn công và trôi dạt năng lực. Vì vậy, con đường thực tế hơn hiện nay là xây dựng một hệ thống học tập có thể xác minh bao quanh mô hình.
+Tiến hóa liên tục đang trở thành một trong những năng lực quan trọng nhất của Agent, nhưng các mô hình hiện nay vẫn chưa thể tự mình thực hiện nó một cách đáng tin cậy. Thích nghi ngữ cảnh trong lúc suy luận không tự động lưu giữ lâu dài, còn cập nhật tham số trực tuyến chưa qua xác minh sẽ khuếch đại nhiễu, tấn công và trôi dạt năng lực. Vì vậy, con đường thực tế hơn hiện nay là xây dựng một hệ thống học tập có thể xác minh bao quanh mô hình.
 
 Xét theo cấu trúc toàn sách, chương này dựng đoạn **thực nghiệm và phản hồi** trong vòng lặp khám phá của Chương 1: đề xuất đã có sẵn, vấn đề chuyển thành làm sao dùng một thực nghiệm bám rễ vào quan sát thực để phán đoán nó có thật sự làm hệ thống tốt lên, và làm sao đưa kết quả trở lại vòng sau.
 

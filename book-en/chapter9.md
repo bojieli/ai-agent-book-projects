@@ -1,6 +1,6 @@
 # Continual Evolution of Agents
 
-Today’s Agents face a striking capability paradox: they can solve previously unseen complex tasks zero-shot, yet after handling ten thousand similar tasks, they may still repeat tomorrow the mistakes they made on the first day. **The ability to learn autonomously from experience** is becoming essential for Agents to progress from “being able to complete tasks” to “being able to work reliably,” and it is also a central research topic for the next generation of models. Yet current models remain far from capable of continual learning on their own.
+Today’s Agents face a striking capability paradox: they can solve previously unseen complex tasks zero-shot, yet after handling ten thousand similar tasks, they may still repeat tomorrow the mistakes they made on the first day. Once a model is on the job, can it keep getting better at that job the way a new hire does? **The ability to learn autonomously from experience**—what is now called **continual learning**—is becoming essential for Agents to progress from “being able to complete tasks” to “being able to work reliably,” and it is also a central research topic for the next generation of models. Today’s notion of “continual learning” is not the same problem as the earlier line of research on “learn a new task and forget the old one”: forgetting is only one sub-problem, and the harder part is that no one tells the model which parts of today’s experience it got right and which it got wrong. For now, models remain far from capable of continual learning on their own.
 
 A deployed model does not automatically change its parameters after an inference. The in-context learning, state maintenance, and compression discussed in Chapter 2 allow an Agent to adapt **within the current task**; once the context ends, however, these changes do not naturally carry over to the next task. Storing conversations in memory is not equivalent to learning new behavior. Raw trajectories may be lengthy and contain effective strategies alongside accidental successes, incorrect attributions, and untrusted inputs.
 
@@ -8,7 +8,7 @@ An important distinction is easy to miss here: **preserving experience is not th
 
 Why not let the model train itself directly after every task? Because production environments rarely provide clean learning signals. User satisfaction does not imply compliance; local parameter updates can also cause capability forgetting, policy drift, or safety degradation. If a running model is allowed to modify its own parameters directly based on unverified feedback, erroneous experience and Prompt injection may become entrenched and continue to amplify across later tasks. On the other hand, periodic training of foundation models can improve general capabilities, but it cannot promptly absorb the private rules, tool changes, and local experience encountered daily by each Agent.
 
-Therefore, while models themselves cannot yet learn continually and reliably, “learning” must first be constructed as an autonomous system around the model: record operational evidence, verify outcomes and processes, extract common patterns from multiple trajectories, and then decide whether to update knowledge, instructions, programs, or model parameters. Every modification must first become a candidate version and may alter the next round of operation only after regression testing and safety checks.
+Therefore, while models themselves cannot yet learn continually and reliably, “learning” must first be constructed as an autonomous system around the model—what this book calls **continual evolution**, as distinct from continual learning at the level of model weights: record operational evidence, verify outcomes and processes, extract common patterns from multiple trajectories, and then decide whether to update knowledge, instructions, programs, or model parameters. Every modification must first become a candidate version and may alter the next round of operation only after regression testing and safety checks.
 
 The preceding chapters have already introduced the principal components required by this system. Chapter 2 addresses within-task state, Chapter 3 provides knowledge infrastructure, Chapter 5 gives Agents the meta-capability to create tools and modify systems, Chapter 7 establishes evaluation and verification, and Chapter 8 explains how to update model parameters. The task of Chapter 9 is to organize these components into the continual evolution loop shown in Figure 9-1.
 
@@ -301,11 +301,11 @@ Evaluation is not an examination performed after learning ends, but an indispens
 - Safety, namely whether rules, privacy protections, and refusal boundaries drift during evolution;
 - Long-term engineering quality, namely whether maintenance complexity, architectural consistency, ownership boundaries, backward compatibility, and future migration and debugging costs deteriorate.
 
-Fixing only the current failed case while degrading performance on other existing cases or in new domains does not constitute successful continual learning.
+Fixing only the current failed case while degrading performance on other existing cases or in new domains does not constitute successful continual evolution.
 
 > **Experiment 9-9 ★★★: Evaluating Whether an Agent Is Continually Evolving**
 >
-> **Objective:** Distinguish among three long-term behaviors—saving one piece of feedback, merely appending forever, and genuinely updating, transferring, and retaining capabilities—so that repeatedly running the same tasks is not mistaken for continual learning.
+> **Objective:** Distinguish among three long-term behaviors—saving one piece of feedback, merely appending forever, and genuinely updating, transferring, and retaining capabilities—so that repeatedly running the same tasks is not mistaken for continual evolution.
 >
 > **Four-stage task stream:** The learning stage presents refund, identity-verification, and baggage-policy tasks that share latent patterns. The transfer stage changes the phrasing, user, and local environment to test whether old experience applies to new tasks. The rule-change stage updates the baggage limit from 20 kg to 23 kg and requires the system to replace or retire obsolete knowledge. The retention stage retests unchanged capabilities and currently valid rules to measure forgetting. External memory may be updated only after each feedback-bearing task ends; the expected action for the current task must never be leaked to the Agent in advance.
 >
@@ -391,7 +391,7 @@ Continual evolution does not mean allowing knowledge, Prompts, and tools to grow
 
 ## Chapter Summary
 
-Continual learning is becoming one of the most important capabilities of Agents, but today's models still cannot perform it reliably on their own. Contextual adaptation during inference does not persist automatically, while unvalidated online parameter updates amplify noise, attacks, and capability drift. The more practical approach today is therefore to build a verifiable learning system around the model.
+Continual evolution is becoming one of the most important capabilities of Agents, but today's models still cannot perform it reliably on their own. Contextual adaptation during inference does not persist automatically, while unvalidated online parameter updates amplify noise, attacks, and capability drift. The more practical approach today is therefore to build a verifiable learning system around the model.
 
 In terms of the book's larger structure, this chapter builds the **experiment and feedback** segment of Chapter 1's discovery loop: the proposal already exists, and the question becomes how one experiment grounded in real observation can tell whether it actually improved the system, and how the result is carried into the next round.
 
