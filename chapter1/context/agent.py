@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 import requests
 from openai import OpenAI
-import PyPDF2
+import pypdf
 from io import BytesIO
 import math
 from datetime import datetime
@@ -114,7 +114,7 @@ class ToolRegistry:
             
             # Parse the PDF content
             pdf_file = BytesIO(pdf_content)
-            pdf_reader = PyPDF2.PdfReader(pdf_file)
+            pdf_reader = pypdf.PdfReader(pdf_file)
             
             text_content = []
             for page_num, page in enumerate(pdf_reader.pages, 1):
@@ -141,7 +141,7 @@ class ToolRegistry:
     @staticmethod
     def convert_currency(amount: float, from_currency: str, to_currency: str) -> Dict[str, Any]:
         """
-        Convert currency using live exchange rates
+        Convert currency using static exchange rates
         
         Args:
             amount: Amount to convert
