@@ -549,8 +549,8 @@ def test_native_tools():
         try:
             # Check if model is available
             client = ollama.Client()
-            available_models = [m['name'] for m in client.list()['models']]
-            
+            # available_models = [m['name'] for m in client.list()['models']]
+            available_models = [getattr(m, 'model', None) or m.get('name') for m in client.list().models] 
             if not any(model_name in m for m in available_models):
                 print(f"⚠️  Model {model_name} not installed")
                 print(f"   Install with: ollama pull {model_name}")
@@ -601,7 +601,8 @@ def demo():
         # Check for best available model
         try:
             client = ollama.Client()
-            models = [m['name'] for m in client.list()['models']]
+            # models = [m['name'] for m in client.list()['models']]
+            models = [getattr(m, 'model', None) or m.get('name') for m in client.list().models]
             
             # Use qwen3:0.6b as the default model
             model = "qwen3:0.6b"
