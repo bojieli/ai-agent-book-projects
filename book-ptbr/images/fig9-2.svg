@@ -16,47 +16,47 @@
     </style>
   </defs>
 
-  <text x="500" y="30" text-anchor="middle" class="t h">Three-layer trajectory verification: keep evidence coming from the real environment</text>
+  <text x="500" y="30" text-anchor="middle" class="t h">verificação de trajetória em três camadas: manter as evidências vindas do ambiente real</text>
 
   <!-- 三类验证器 -->
   <rect x="30" y="76" width="245" height="82" rx="8" class="box"/>
-  <text x="152.5" y="107" text-anchor="middle" class="t h">Outcome verifier</text>
-  <text x="152.5" y="135" text-anchor="middle" class="t s">Tests, amounts, final order state</text>
+  <text x="152.5" y="107" text-anchor="middle" class="t h">Verificador de resultado</text>
+  <text x="152.5" y="135" text-anchor="middle" class="t s">Testes, valores, estado final do pedido</text>
 
   <rect x="30" y="174" width="245" height="82" rx="8" class="box"/>
-  <text x="152.5" y="205" text-anchor="middle" class="t h">Process verifier</text>
-  <text x="152.5" y="233" text-anchor="middle" class="t s" style="font-size:12px">Policy, permissions, actions, commitments</text>
+  <text x="152.5" y="205" text-anchor="middle" class="t h">Verificador de processo</text>
+  <text x="152.5" y="233" text-anchor="middle" class="t s" style="font-size:12px">Política, permissões, ações, compromissos</text>
 
   <rect x="30" y="272" width="245" height="82" rx="8" class="accent"/>
-  <text x="152.5" y="303" text-anchor="middle" class="t h">LLM Rubric</text>
-  <text x="152.5" y="331" text-anchor="middle" class="t s" style="font-size:11px">Naturalness, concision, compliant workarounds</text>
+  <text x="152.5" y="303" text-anchor="middle" class="t h">Rubrica de LLM</text>
+  <text x="152.5" y="331" text-anchor="middle" class="t s" style="font-size:11px">Naturalidade, concisão, soluções alternativas em conformidade</text>
 
   <!-- 结构化评价：改用纵向字段，避免中文字体宽度导致双列重叠 -->
   <rect x="342" y="62" width="320" height="340" rx="10" class="accent"/>
-  <text x="502" y="97" text-anchor="middle" class="t h">Structured trajectory evaluation</text>
+  <text x="502" y="97" text-anchor="middle" class="t h">Avaliação estruturada de trajetória</text>
   <line x1="374" y1="117" x2="630" y2="117" stroke="#89a0ac"/>
 
-  <text x="376" y="145" class="t label">Task outcome</text>
-  <text x="376" y="168" class="t value">Success, partial success or failure</text>
+  <text x="376" y="145" class="t label">Resultado da tarefa</text>
+  <text x="376" y="168" class="t value">Sucesso, sucesso parcial ou falha</text>
 
-  <text x="376" y="198" class="t label">Per-dimension scoring</text>
-  <text x="376" y="221" class="t value">Score each item, not just a total</text>
+  <text x="376" y="198" class="t label">Pontuação por dimensão</text>
+  <text x="376" y="221" class="t value">Pontuar cada item, não apenas o total</text>
 
-  <text x="376" y="251" class="t label">Evidence location</text>
-  <text x="376" y="274" class="t value">Mark the turn and the tool state</text>
+  <text x="376" y="251" class="t label">Localização da evidência</text>
+  <text x="376" y="274" class="t value">Marcar o turno e o estado da ferramenta</text>
 
-  <text x="376" y="304" class="t label">Failure labels</text>
-  <text x="376" y="327" class="t value">Keep the problem type for later diagnosis</text>
+  <text x="376" y="304" class="t label">Rótulos de falha</text>
+  <text x="376" y="327" class="t value">Manter o tipo de problema para diagnóstico posterior</text>
 
   <line x1="374" y1="348" x2="630" y2="348" stroke="#b6c7cf"/>
-  <text x="502" y="378" text-anchor="middle" class="t s">Allow refusal to score when evidence is thin</text>
+  <text x="502" y="378" text-anchor="middle" class="t s">Permitir recusar a pontuação quando a evidência é escassa</text>
 
   <!-- 供进化模块使用的诊断信号 -->
   <rect x="712" y="119" width="258" height="202" rx="10" class="box"/>
-  <text x="841" y="156" text-anchor="middle" class="t h" style="font-size:19px">Learnable diagnostic signal</text>
-  <text x="841" y="199" text-anchor="middle" class="t s" style="font-size:12.5px">Keeps where success and failure happened</text>
-  <text x="841" y="234" text-anchor="middle" class="t s" style="font-size:13px">States the evidence and the problem type</text>
-  <text x="841" y="269" text-anchor="middle" class="t s" style="font-size:10px">Hand off to a separate module to pick what to update</text>
+  <text x="841" y="156" text-anchor="middle" class="t h" style="font-size:19px">Sinal diagnóstico aprendível</text>
+  <text x="841" y="199" text-anchor="middle" class="t s" style="font-size:12.5px">Preserva onde ocorreram o sucesso e a falha</text>
+  <text x="841" y="234" text-anchor="middle" class="t s" style="font-size:13px">Declara a evidência e o tipo de problema</text>
+  <text x="841" y="269" text-anchor="middle" class="t s" style="font-size:10px">Repassa a um módulo separado a escolha do que atualizar</text>
 
   <!-- 数据流 -->
   <path d="M275 117 H307 V151 H340" class="line"/>

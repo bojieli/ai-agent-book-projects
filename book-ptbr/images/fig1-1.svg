@@ -21,51 +21,51 @@
 
   <!-- Agent boundary -->
   <rect class="box" x="28" y="42" width="432" height="382" rx="12" fill="#ffffff"/>
-  <text class="sans heading" x="50" y="72" dominant-baseline="middle">Agent</text>
+  <text class="sans heading" x="50" y="72" dominant-baseline="middle">Agente</text>
 
   <!-- Harness surrounds the model but remains inside the Agent boundary -->
   <rect x="58" y="92" width="372" height="300" rx="10" fill="#f3f3f3" stroke="#666666" stroke-width="2" stroke-dasharray="8 4"/>
-  <text class="sans subheading" x="244" y="112" text-anchor="middle" dominant-baseline="middle">Harness (model runtime &amp; interaction layer)</text>
+  <text class="sans subheading" x="244" y="112" text-anchor="middle" dominant-baseline="middle">Harness (runtime do modelo &amp; camada de interação)</text>
 
   <rect class="box" x="145" y="130" width="250" height="58" rx="7" fill="#ffffff"/>
-  <text class="sans subheading" x="270" y="151" text-anchor="middle" dominant-baseline="middle">Context</text>
-  <text class="sans note" x="270" y="172" text-anchor="middle" dominant-baseline="middle">observations · history · memory · task state</text>
+  <text class="sans subheading" x="270" y="151" text-anchor="middle" dominant-baseline="middle">Contexto</text>
+  <text class="sans note" x="270" y="172" text-anchor="middle" dominant-baseline="middle">observações · histórico · memória · estado da tarefa</text>
 
   <line class="flow" x1="270" y1="190" x2="270" y2="207"/>
 
   <rect class="box" x="145" y="210" width="250" height="78" rx="8" fill="#d5d5d5"/>
-  <text class="sans heading" x="270" y="236" text-anchor="middle" dominant-baseline="middle">Model</text>
-  <text class="sans body" x="270" y="263" text-anchor="middle" dominant-baseline="middle">understand · reason · choose next action</text>
+  <text class="sans heading" x="270" y="236" text-anchor="middle" dominant-baseline="middle">Modelo</text>
+  <text class="sans body" x="270" y="263" text-anchor="middle" dominant-baseline="middle">compreender · raciocinar · escolher a próxima ação</text>
 
   <line class="flow" x1="270" y1="290" x2="270" y2="313"/>
 
   <rect class="box" x="145" y="316" width="250" height="50" rx="7" fill="#ffffff"/>
-  <text class="sans subheading" x="270" y="341" text-anchor="middle" dominant-baseline="middle">Tools &amp; action interfaces</text>
+  <text class="sans subheading" x="270" y="341" text-anchor="middle" dominant-baseline="middle">Ferramentas &amp; interfaces de ação</text>
 
-  <text class="sans note" x="244" y="382" text-anchor="middle" dominant-baseline="middle">loop · state management · permissions · verification · correction</text>
+  <text class="sans note" x="244" y="382" text-anchor="middle" dominant-baseline="middle">loop · gerenciamento de estado · permissões · verificação · correção</text>
 
   <!-- Environment boundary -->
   <rect class="box" x="620" y="78" width="252" height="322" rx="12" fill="#eeeeee"/>
-  <text class="sans heading" x="746" y="111" text-anchor="middle" dominant-baseline="middle">Environment</text>
-  <text class="sans note" x="746" y="136" text-anchor="middle" dominant-baseline="middle">state &amp; transition rules</text>
+  <text class="sans heading" x="746" y="111" text-anchor="middle" dominant-baseline="middle">Ambiente</text>
+  <text class="sans note" x="746" y="136" text-anchor="middle" dominant-baseline="middle">estado &amp; regras de transição</text>
 
   <rect x="650" y="161" width="192" height="67" rx="7" fill="#ffffff" stroke="#777777" stroke-width="1.7"/>
-  <text class="sans subheading" x="746" y="184" text-anchor="middle" dominant-baseline="middle">Current state</text>
-  <text class="sans note" x="746" y="207" text-anchor="middle" dominant-baseline="middle">new state after action</text>
+  <text class="sans subheading" x="746" y="184" text-anchor="middle" dominant-baseline="middle">Estado atual</text>
+  <text class="sans note" x="746" y="207" text-anchor="middle" dominant-baseline="middle">novo estado após a ação</text>
 
   <line x1="650" y1="247" x2="842" y2="247" stroke="#b0b0b0"/>
-  <text class="sans body" x="670" y="274" dominant-baseline="middle">file system · database</text>
-  <text class="sans body" x="670" y="304" dominant-baseline="middle">web · APIs · applications</text>
-  <text class="sans body" x="670" y="334" dominant-baseline="middle">users · other Agents</text>
-  <text class="sans body" x="670" y="364" dominant-baseline="middle">simulated or physical world</text>
+  <text class="sans body" x="670" y="274" dominant-baseline="middle">sistema de arquivos · banco de dados</text>
+  <text class="sans body" x="670" y="304" dominant-baseline="middle">web · APIs · aplicações</text>
+  <text class="sans body" x="670" y="334" dominant-baseline="middle">usuários · outros Agentes</text>
+  <text class="sans body" x="670" y="364" dominant-baseline="middle">mundo simulado ou físico</text>
 
   <!-- Classic Agent–Environment loop -->
   <path class="flow" d="M 620 145 H 398"/>
   <rect x="477" y="119" width="116" height="22" rx="4" fill="#ffffff"/>
-  <text class="sans body" x="535" y="131" text-anchor="middle" dominant-baseline="middle">observation</text>
+  <text class="sans body" x="535" y="131" text-anchor="middle" dominant-baseline="middle">observação</text>
 
   <path class="flow" d="M 398 341 H 617"/>
   <rect x="477" y="311" width="116" height="22" rx="4" fill="#ffffff"/>
-  <text class="sans body" x="535" y="323" text-anchor="middle" dominant-baseline="middle">action</text>
+  <text class="sans body" x="535" y="323" text-anchor="middle" dominant-baseline="middle">ação</text>
 
 </svg>
