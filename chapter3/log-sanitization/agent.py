@@ -50,13 +50,12 @@ class LogSanitizationAgent:
         # Try the local Ollama backend first.
         try:
             self.client = ollama.Client()
-            models = self.client.list()
-            # models is a dict with 'models' key containing a list
-            if isinstance(models, dict) and 'models' in models:
-                available_models = [m.get('name', '') for m in models['models']]
-            else:
-                # If it's a direct list (older API versions)
-                available_models = [m.get('name', '') for m in models] if isinstance(models, list) else []
+            # ollama >= 0.4 returns a ListResponse whose entries are Model objects
+            # (field ``model``); older versions returned plain dicts (key ``name``).
+            available_models = [
+                getattr(m, "model", None) or m.get("name", "")
+                for m in self.client.list()["models"]
+            ]
 
             if not any(self.model in m for m in available_models):
                 print(f"⚠️  Model {self.model} not found. Pulling it now...")
