@@ -23,6 +23,7 @@ on:
       - 'book-tr/**'
       - 'book-hu/**'
       - 'book-he/**'
+      - 'book-ptbr/**'
       - 'build_epub.sh'
       - 'epub.css'
       - 'epub_external_links.lua'
@@ -52,6 +53,7 @@ on:
           - ja
           - ar
           - he
+          - ptbr
 
 permissions:
   contents: write
@@ -163,7 +165,7 @@ jobs:
         run: |
           set -u
           if [ "$GITHUB_REF" = "refs/heads/main" ] || [ "$EDITION" = "all" ]; then
-            main="book book-zhtw book-en book-es book-id book-ru book-vi book-ta book-ar book-tr book-ko book-hu book-he"
+            main="book book-zhtw book-en book-es book-id book-ru book-vi book-ta book-ar book-tr book-ko book-hu book-he book-ptbr"
             optional="book-ja"
           else
             # workflow_dispatch on a feature branch is a focused edition
@@ -183,6 +185,7 @@ jobs:
               ja) main="book-ja" ;;
               ar) main="book-ar" ;;
               he) main="book-he" ;;
+              ptbr) main="book-ptbr" ;;
               *) echo "::error::Unsupported edition: $EDITION"; exit 2 ;;
             esac
             optional=""
@@ -268,6 +271,7 @@ jobs:
           cp book-ko/AI-Agents-in-Depth-v2.0-ko.pdf                "$out/AI-Agents-in-Depth-ko.pdf"
           cp book-hu/AI-Agents-in-Depth-v2.0-hu.pdf                "$out/AI-Agents-in-Depth-hu.pdf"
           cp book-he/AI-Agents-in-Depth-v2.0-he.pdf                "$out/AI-Agents-in-Depth-he.pdf"
+          cp book-ptbr/AI-Agents-in-Depth-v2.0-ptbr.pdf            "$out/AI-Agents-in-Depth-ptbr.pdf"
           cp "book/深入理解-AI-Agent-李博杰-v2.0.epub"             "$out/AI-Agents-in-Depth-zh-CN.epub"
           cp "book-zhtw/深入理解-AI-Agent-李博杰-v2.0-zhtw.epub"   "$out/AI-Agents-in-Depth-zh-TW.epub"
           cp book-en/AI-Agents-in-Depth-Bojie-Li-v2.0.epub       "$out/AI-Agents-in-Depth-en.epub"
@@ -280,6 +284,7 @@ jobs:
           cp book-ko/AI-Agents-in-Depth-v2.0-ko.epub               "$out/AI-Agents-in-Depth-ko.epub"
           cp book-hu/AI-Agents-in-Depth-v2.0-hu.epub               "$out/AI-Agents-in-Depth-hu.epub"
           cp book-he/AI-Agents-in-Depth-v2.0-he.epub               "$out/AI-Agents-in-Depth-he.epub"
+          cp book-ptbr/AI-Agents-in-Depth-v2.0-ptbr.epub            "$out/AI-Agents-in-Depth-ptbr.epub"
           # WIP: ja artifacts and the Arabic EPUB are copied only if their
           # non-fatal builds produced them.
           cp book-ja/AI-Agents-in-Depth-Bojie-Li-v2.0-ja.pdf     "$out/AI-Agents-in-Depth-ja.pdf"  || echo "ja PDF not built yet (WIP) — skipping"

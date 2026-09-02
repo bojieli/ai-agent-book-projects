@@ -1,0 +1,110 @@
+% Cover page — a hand-drawn "agent motif": a central AI core with radiating
+% arms ending in tool glyphs (the "one agent + many tools" idea). Pure vector
+% TikZ, navy line art on white — no external image, fully reproducible. The
+% build date is stamped near the bottom so successive versions are distinguishable.
+\begin{titlepage}
+\thispagestyle{empty}
+% Thin navy top band + footer rule (series look; no tagline text).
+\begin{tikzpicture}[remember picture, overlay]
+  \fill[structurecolor] (current page.north west) rectangle ([yshift=-0.85cm]current page.north east);
+  \fill[structurecolor] (current page.south west) rectangle ([yshift=0.5cm]current page.south east);
+\end{tikzpicture}
+\centering
+\vspace*{2.5cm}
+
+{\fontsize{33}{41}\selectfont\rmfamily\bfseries AI Agents in Depth\par}
+\vspace{0.5cm}
+{\Large\sffamily\color{structurecolor} Design Principles and Engineering Practice\par}
+
+\vspace{1.5cm}
+
+% ── Agent motif: central core + radiating arms ending in tool glyphs ──
+\begingroup
+\definecolor{ink}{RGB}{30,58,107}
+\begin{tikzpicture}[line join=round, line cap=round,
+    arm/.style={ink, line width=1.1pt},
+    ring/.style={ink, line width=1.1pt, fill=white},
+    ic/.style={ink, line width=0.8pt}]
+  \def\R{3.15}    % arm length (hub centre → tool node)
+  \def\rh{0.98}   % hub radius
+
+  % arms first, so tool nodes sit on top of their ends
+  \foreach \a in {90,45,0,-45,-90,-135,180,135}{
+    \draw[arm] (\a:\rh) to[bend left=8] (\a:\R);
+  }
+
+  % hub (the "agent core") + a 4-point AI spark inside
+  \fill[ink!7] (0,0) circle (\rh);
+  \draw[ink, line width=1.3pt] (0,0) circle (\rh);
+  \fill[ink] (0,0.52) -- (0.13,0.13) -- (0.52,0) -- (0.13,-0.13) --
+             (0,-0.52) -- (-0.13,-0.13) -- (-0.52,0) -- (-0.13,0.13) -- cycle;
+
+  % ── tool nodes (r=0.52) with a simple glyph each ──
+  % 90° — search (magnifier)
+  \begin{scope}[shift={(90:\R)}]
+    \draw[ring] (0,0) circle (0.52);
+    \draw[ic] (-0.05,0.06) circle (0.15);
+    \draw[ic] (0.06,-0.05) -- (0.20,-0.19);
+  \end{scope}
+  % 45° — code </>
+  \begin{scope}[shift={(45:\R)}]
+    \draw[ring] (0,0) circle (0.52);
+    \draw[ic] (-0.06,0.17) -- (-0.21,0) -- (-0.06,-0.17);
+    \draw[ic] (0.06,0.17) -- (0.21,0) -- (0.06,-0.17);
+  \end{scope}
+  % 0° — terminal
+  \begin{scope}[shift={(0:\R)}]
+    \draw[ring] (0,0) circle (0.52);
+    \draw[ic] (-0.24,-0.17) rectangle (0.24,0.17);
+    \draw[ic] (-0.15,0.07) -- (-0.07,0) -- (-0.15,-0.07);
+    \draw[ic] (0.01,-0.08) -- (0.15,-0.08);
+  \end{scope}
+  % -45° — document
+  \begin{scope}[shift={(-45:\R)}]
+    \draw[ring] (0,0) circle (0.52);
+    \draw[ic] (-0.15,-0.21) -- (-0.15,0.21) -- (0.07,0.21) -- (0.17,0.11) -- (0.17,-0.21) -- cycle;
+    \draw[ic] (0.07,0.21) -- (0.07,0.11) -- (0.17,0.11);
+    \draw[ic] (-0.08,0.05) -- (0.10,0.05);
+    \draw[ic] (-0.08,-0.05) -- (0.10,-0.05);
+  \end{scope}
+  % -90° — gear
+  \begin{scope}[shift={(-90:\R)}]
+    \draw[ring] (0,0) circle (0.52);
+    \draw[ic] (0,0) circle (0.13);
+    \foreach \g in {0,45,90,135,180,225,270,315}{ \draw[ic] (\g:0.14) -- (\g:0.22); }
+    \fill[ink] (0,0) circle (0.035);
+  \end{scope}
+  % -135° — globe / web
+  \begin{scope}[shift={(-135:\R)}]
+    \draw[ring] (0,0) circle (0.52);
+    \draw[ic] (0,0) circle (0.20);
+    \draw[ic] (0,0) ellipse (0.08 and 0.20);
+    \draw[ic] (-0.20,0) -- (0.20,0);
+  \end{scope}
+  % 180° — database
+  \begin{scope}[shift={(180:\R)}]
+    \draw[ring] (0,0) circle (0.52);
+    \draw[ic] (0,0.14) ellipse (0.18 and 0.07);
+    \draw[ic] (-0.18,0.14) -- (-0.18,-0.14);
+    \draw[ic] (0.18,0.14) -- (0.18,-0.14);
+    \draw[ic] (-0.18,0.0) arc[start angle=180, end angle=360, x radius=0.18, y radius=0.07];
+    \draw[ic] (-0.18,-0.14) arc[start angle=180, end angle=360, x radius=0.18, y radius=0.07];
+  \end{scope}
+  % 135° — chat bubble
+  \begin{scope}[shift={(135:\R)}]
+    \draw[ring] (0,0) circle (0.52);
+    \draw[ic, rounded corners=2pt] (-0.20,-0.03) rectangle (0.20,0.21);
+    \draw[ic] (-0.11,-0.03) -- (-0.05,-0.16) -- (0.02,-0.03);
+    \fill[ink] (-0.10,0.09) circle (0.022);
+    \fill[ink] (0,0.09) circle (0.022);
+    \fill[ink] (0.10,0.09) circle (0.022);
+  \end{scope}
+\end{tikzpicture}
+\endgroup
+
+\vfill
+{\LARGE\sffamily Bojie Li\par}
+\vspace{0.7cm}
+{\small\sffamily\color{structurecolor!80} Version v2.0 · \today\par}
+\vspace{1.2cm}
+\end{titlepage}

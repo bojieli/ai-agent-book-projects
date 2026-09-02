@@ -18,8 +18,14 @@
       "思考题参考答案": "思考题参考答案",
       "配套实验": "配套实验"
     },
-    "sidebar": { "show": "展开侧边栏", "hide": "隐藏侧边栏" },
-    "palette": { "light": "切换日间模式", "dark": "切换夜间模式" }
+    "sidebar": {
+      "show": "展开侧边栏",
+      "hide": "隐藏侧边栏"
+    },
+    "palette": {
+      "light": "切换日间模式",
+      "dark": "切换夜间模式"
+    }
   },
   "zhtw": {
     "material_locale": "zh-TW",
@@ -40,8 +46,14 @@
       "思考题参考答案": "思考題參考答案",
       "配套实验": "配套實驗"
     },
-    "sidebar": { "show": "展開側邊欄", "hide": "隱藏側邊欄" },
-    "palette": { "light": "切換日間模式", "dark": "切換夜間模式" }
+    "sidebar": {
+      "show": "展開側邊欄",
+      "hide": "隱藏側邊欄"
+    },
+    "palette": {
+      "light": "切換日間模式",
+      "dark": "切換夜間模式"
+    }
   },
   "en": {
     "material_locale": "en",
@@ -62,8 +74,14 @@
       "思考题参考答案": "Reference Answers",
       "配套实验": "Experiments"
     },
-    "sidebar": { "show": "Show navigation", "hide": "Hide navigation" },
-    "palette": { "light": "Switch to light mode", "dark": "Switch to dark mode" }
+    "sidebar": {
+      "show": "Show navigation",
+      "hide": "Hide navigation"
+    },
+    "palette": {
+      "light": "Switch to light mode",
+      "dark": "Switch to dark mode"
+    }
   },
   "es": {
     "material_locale": "es",
@@ -84,8 +102,14 @@
       "思考题参考答案": "Respuestas de Referencia",
       "配套实验": "Experimentos"
     },
-    "sidebar": { "show": "Mostrar navegación", "hide": "Ocultar navegación" },
-    "palette": { "light": "Cambiar al modo claro", "dark": "Cambiar al modo oscuro" }
+    "sidebar": {
+      "show": "Mostrar navegación",
+      "hide": "Ocultar navegación"
+    },
+    "palette": {
+      "light": "Cambiar al modo claro",
+      "dark": "Cambiar al modo oscuro"
+    }
   },
   "id": {
     "material_locale": "id",
@@ -106,8 +130,14 @@
       "思考题参考答案": "Jawaban Referensi",
       "配套实验": "Eksperimen"
     },
-    "sidebar": { "show": "Tampilkan navigasi", "hide": "Sembunyikan navigasi" },
-    "palette": { "light": "Beralih ke mode terang", "dark": "Beralih ke mode gelap" }
+    "sidebar": {
+      "show": "Tampilkan navigasi",
+      "hide": "Sembunyikan navigasi"
+    },
+    "palette": {
+      "light": "Beralih ke mode terang",
+      "dark": "Beralih ke mode gelap"
+    }
   },
   "ru": {
     "material_locale": "ru",
@@ -128,8 +158,14 @@
       "思考题参考答案": "Ответы к вопросам",
       "配套实验": "Эксперименты"
     },
-    "sidebar": { "show": "Показать навигацию", "hide": "Скрыть навигацию" },
-    "palette": { "light": "Включить светлый режим", "dark": "Включить тёмный режим" }
+    "sidebar": {
+      "show": "Показать навигацию",
+      "hide": "Скрыть навигацию"
+    },
+    "palette": {
+      "light": "Включить светлый режим",
+      "dark": "Включить тёмный режим"
+    }
   },
   "ta": {
     "material_locale": "ta",
@@ -150,8 +186,14 @@
       "思考题参考答案": "குறிப்புப் பதில்கள்",
       "配套实验": "சோதனைகள்"
     },
-    "sidebar": { "show": "வழிசெலுத்தலைக் காட்டு", "hide": "வழிசெலுத்தலை மறை" },
-    "palette": { "light": "ஒளி பயன்முறைக்கு மாறு", "dark": "இருண்ட பயன்முறைக்கு மாறு" }
+    "sidebar": {
+      "show": "வழிசெலுத்தலைக் காட்டு",
+      "hide": "வழிசெலுத்தலை மறை"
+    },
+    "palette": {
+      "light": "ஒளி பயன்முறைக்கு மாறு",
+      "dark": "இருண்ட பயன்முறைக்கு மாறு"
+    }
   },
   "vi": {
     "material_locale": "vi",
@@ -177,8 +219,14 @@
       "思考题参考答案": "Đáp án tham khảo",
       "配套实验": "Thí nghiệm"
     },
-    "sidebar": { "show": "Hiện thanh điều hướng", "hide": "Ẩn thanh điều hướng" },
-    "palette": { "light": "Chuyển sang chế độ sáng", "dark": "Chuyển sang chế độ tối" }
+    "sidebar": {
+      "show": "Hiện thanh điều hướng",
+      "hide": "Ẩn thanh điều hướng"
+    },
+    "palette": {
+      "light": "Chuyển sang chế độ sáng",
+      "dark": "Chuyển sang chế độ tối"
+    }
   },
   "ja": {
     "material_locale": "ja",
@@ -199,8 +247,14 @@
       "思考题参考答案": "演習問題の解答例",
       "配套实验": "実験"
     },
-    "sidebar": { "show": "ナビゲーションを表示", "hide": "ナビゲーションを隠す" },
-    "palette": { "light": "ライトモードに切り替え", "dark": "ダークモードに切り替え" }
+    "sidebar": {
+      "show": "ナビゲーションを表示",
+      "hide": "ナビゲーションを隠す"
+    },
+    "palette": {
+      "light": "ライトモードに切り替え",
+      "dark": "ダークモードに切り替え"
+    }
   },
   "ko": {
     "material_locale": "ko",
@@ -221,8 +275,14 @@
       "思考题参考答案": "생각해 볼 문제 참고 답안",
       "配套实验": "실습"
     },
-    "sidebar": { "show": "탐색 메뉴 표시", "hide": "탐색 메뉴 숨기기" },
-    "palette": { "light": "라이트 모드로 전환", "dark": "다크 모드로 전환" }
+    "sidebar": {
+      "show": "탐색 메뉴 표시",
+      "hide": "탐색 메뉴 숨기기"
+    },
+    "palette": {
+      "light": "라이트 모드로 전환",
+      "dark": "다크 모드로 전환"
+    }
   },
   "ar": {
     "material_locale": "ar",
@@ -243,8 +303,14 @@
       "思考题参考答案": "إجابات الأسئلة",
       "配套实验": "التجارب"
     },
-    "sidebar": { "show": "إظهار التنقل", "hide": "إخفاء التنقل" },
-    "palette": { "light": "التبديل إلى الوضع الفاتح", "dark": "التبديل إلى الوضع الداكن" }
+    "sidebar": {
+      "show": "إظهار التنقل",
+      "hide": "إخفاء التنقل"
+    },
+    "palette": {
+      "light": "التبديل إلى الوضع الفاتح",
+      "dark": "التبديل إلى الوضع الداكن"
+    }
   },
   "tr": {
     "material_locale": "tr",
@@ -265,8 +331,14 @@
       "思考题参考答案": "Düşünce Soruları — Örnek Cevaplar",
       "配套实验": "Deneyler"
     },
-    "sidebar": { "show": "Navigasyonu göster", "hide": "Navigasyonu gizle" },
-    "palette": { "light": "Açık moda geç", "dark": "Koyu moda geç" }
+    "sidebar": {
+      "show": "Navigasyonu göster",
+      "hide": "Navigasyonu gizle"
+    },
+    "palette": {
+      "light": "Açık moda geç",
+      "dark": "Koyu moda geç"
+    }
   },
   "hu": {
     "material_locale": "hu",
@@ -290,8 +362,14 @@
       "思考题参考答案": "Válaszvázlatok a gondolatébresztő kérdésekhez",
       "配套实验": "Kísérletek"
     },
-    "sidebar": { "show": "Navigáció megjelenítése", "hide": "Navigáció elrejtése" },
-    "palette": { "light": "Váltás világos módra", "dark": "Váltás sötét módra" }
+    "sidebar": {
+      "show": "Navigáció megjelenítése",
+      "hide": "Navigáció elrejtése"
+    },
+    "palette": {
+      "light": "Váltás világos módra",
+      "dark": "Váltás sötét módra"
+    }
   },
   "he": {
     "material_locale": "he",
@@ -312,7 +390,41 @@
       "思考题参考答案": "תשובות לשאלות למחשבה",
       "配套实验": "ניסויים נלווים"
     },
-    "sidebar": { "show": "הצגת ניווט", "hide": "הסתרת ניווט" },
-    "palette": { "light": "מעבר למצב בהיר", "dark": "מעבר למצב כהה" }
+    "sidebar": {
+      "show": "הצגת ניווט",
+      "hide": "הסתרת ניווט"
+    },
+    "palette": {
+      "light": "מעבר למצב בהיר",
+      "dark": "מעבר למצב כהה"
+    }
+  },
+  "ptbr": {
+    "material_locale": "pt-BR",
+    "nav": {
+      "首页": "Página inicial",
+      "引言": "Introdução",
+      "第1章 Agent基础知识": "Capítulo 1 · Primeiros passos com agentes de IA",
+      "第2章 上下文工程": "Capítulo 2 · Engenharia de contexto",
+      "第3章 用户记忆和知识库": "Capítulo 3 · Memória do usuário e base de conhecimento",
+      "第4章 工具": "Capítulo 4 · Ferramentas",
+      "第5章 CodingAgent与通用Agent": "Capítulo 5 · Agente de código e geração de código",
+      "第6章 交互：观察与动作空间的扩展": "Capítulo 6 · Interação: expansão dos espaços de observação e ação",
+      "第7章 Agent的评估": "Capítulo 7 · Avaliação de agentes",
+      "第8章 模型后训练": "Capítulo 8 · Pós-treinamento de modelos",
+      "第9章 Agent的持续进化": "Capítulo 9 · Evolução contínua de agentes",
+      "第10章 多Agent协作": "Capítulo 10 · Colaboração multiagente",
+      "后记": "Posfácio",
+      "思考题参考答案": "Respostas das questões de reflexão",
+      "配套实验": "Experimentos"
+    },
+    "sidebar": {
+      "show": "Mostrar navegação",
+      "hide": "Ocultar navegação"
+    },
+    "palette": {
+      "light": "Mudar para modo claro",
+      "dark": "Mudar para modo escuro"
+    }
   }
 }

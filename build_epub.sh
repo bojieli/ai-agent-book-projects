@@ -17,9 +17,9 @@ for command in pandoc pdftoppm python3; do
 done
 
 case "$SELECTION" in
-    all|zh-CN|zh-TW|en|es|id|ru|ta|vi|tr|ko|hu|ja|ar|he) ;;
+    all|zh-CN|zh-TW|en|es|id|ru|ta|vi|tr|ko|hu|ja|ar|he|ptbr) ;;
     *)
-        echo "Usage: $0 [all|zh-CN|zh-TW|en|es|id|ru|ta|vi|tr|ko|hu|ja|ar|he]" >&2
+        echo "Usage: $0 [all|zh-CN|zh-TW|en|es|id|ru|ta|vi|tr|ko|hu|ja|ar|he|ptbr]" >&2
         exit 2
         ;;
 esac
@@ -173,6 +173,16 @@ build_edition() {
             toc_label="תוכן העניינים"
             chapters=(introduction.he.md chapter{1..10}.he.md afterword.he.md)
             ;;
+        ptbr)
+            directory="book-ptbr"
+            title="Agentes de IA em Profundidade: Princípios de Design e Prática de Engenharia"
+            author="Bojie Li; tradução para português do Brasil: Leonardo F. Nascimento"
+            pdf="AI-Agents-in-Depth-v2.0-ptbr.pdf"
+            output="AI-Agents-in-Depth-v2.0-ptbr.epub"
+            title_label="Página de rosto"
+            toc_label="Sumário"
+            chapters=(introduction.ptbr.md chapter{1..10}.ptbr.md afterword.ptbr.md)
+            ;;
     esac
 
     local edition_dir="$ROOT/$directory"
@@ -232,7 +242,7 @@ build_edition() {
 }
 
 if [ "$SELECTION" = "all" ]; then
-    for language in zh-CN zh-TW en es id ru ta vi tr ko hu he; do
+    for language in zh-CN zh-TW en es id ru ta vi tr ko hu he ptbr; do
         build_edition "$language"
     done
 else
