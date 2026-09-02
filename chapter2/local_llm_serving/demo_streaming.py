@@ -68,7 +68,12 @@ def demo_ollama_streaming():
     try:
         # Check available models
         client = ollama.Client()
-        models = [m['name'] for m in client.list()['models']]
+        # ollama >= 0.4 returns a ListResponse whose entries are Model objects
+        # (field ``model``); older versions returned plain dicts (key ``name``).
+        models = [
+            getattr(m, "model", None) or m.get("name", "")
+            for m in client.list()["models"]
+        ]
         
         # Use qwen3:0.6b as the default model
         model = "qwen3:0.6b"
