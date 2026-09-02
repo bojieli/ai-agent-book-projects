@@ -2,7 +2,7 @@
 
 [![PDF](https://img.shields.io/badge/PDF-Download-success.svg)](#livro-eletrônico) [![Leitura online](https://img.shields.io/badge/🌐_Leitura_online-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/index.ptbr/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE) [![Languages](https://img.shields.io/badge/Traduções-15%20idiomas-informational.svg)](#livro-eletrônico)
 
-[中文](README.md) · [English](docs/en/README.md) · [Español](docs/es/README.md) · [Bahasa Indonesia](docs/id/README.md) · [العربية](docs/ar/README.md) · [繁體中文（台灣）](docs/zh-TW/README.md) · [Русский](docs/ru/README.md) · [Tiếng Việt](docs/vi/README.md) · [தமிழ்](docs/ta/README.md) · [日本語](docs/ja/README.md) · [Türkçe](docs/tr/README.md) · [한국어](docs/ko/README.md) · [Magyar](docs/hu/README.md) · [עברית](docs/he/README.md) · **Português (Brasil)** ← atual
+[中文](README.md) · [English](docs/en/README.md) · [Español](docs/es/README.md) · [Bahasa Indonesia](docs/id/README.md) · [العربية](docs/ar/README.md) · [繁體中文（台灣）](docs/zh-TW/README.md) · [Русский](docs/ru/README.md) · [Tiếng Việt](docs/vi/README.md) · [தமிழ்](docs/ta/README.md) · [日本語](docs/ja/README.md) · [Türkçe](docs/tr/README.md) · [한국어](docs/ko/README.md) · [Magyar](docs/hu/README.md) · [עברית](README.he.md) · **Português (Brasil)** ← atual
 
 > 📥 **[Download do PDF / EPUB](#livro-eletrônico)** (recomendado) — as edições em PDF e EPUB oferecem a melhor experiência de leitura. Também é possível [ler online](https://bojieli.github.io/ai-agent-book/index.ptbr/) com navegação completa, alternância entre idiomas e busca em texto integral.
 
@@ -35,6 +35,7 @@ A tradução completa para português do Brasil foi produzida por [Leonardo F. N
 | 9 | Evolução contínua de agentes | [Ler](book-ptbr/chapter9.ptbr.md) |
 | 10 | Colaboração multiagente | [Ler](book-ptbr/chapter10.ptbr.md) |
 | — | Posfácio | [Ler](book-ptbr/afterword.ptbr.md) |
+| — | Respostas das questões de reflexão | [Ler](book-ptbr/reference-answers.ptbr.md) |
 
 A documentação dos experimentos que acompanham o livro ainda não foi traduzida para português do Brasil. O código dos experimentos e as instruções em inglês ou chinês estão disponíveis nas pastas `chapter1/` a `chapter10/`.
 

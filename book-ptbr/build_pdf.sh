@@ -41,6 +41,7 @@ CHAPTERS=(
     chapter9.ptbr.md
     chapter10.ptbr.md
     afterword.ptbr.md
+    reference-answers.ptbr.md
 )
 
 # Verify all chapters exist
@@ -67,7 +68,7 @@ pandoc "${CHAPTERS[@]}" \
     -V classoption=cyan \
     -V classoption=device=normal \
     -V author="Bojie Li" \
-    --metadata title-meta="AI Agents in Depth: Design Principles and Engineering Practice" \
+    --metadata title-meta="Agentes de IA em Profundidade: Princípios de Design e Prática de Engenharia" \
     --metadata author-meta="Bojie Li (Brazilian Portuguese translation: Leonardo F. Nascimento)" \
     -H preamble.tex \
     --include-before-body=cover.tex \

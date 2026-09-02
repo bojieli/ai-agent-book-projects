@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 486" width="880" height="486" style="background:#ffffff">
+<defs>
+<marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker>
+<marker id="ah-s" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 10 3.5, 0 7" fill="#666666"/></marker>
+</defs>
+<style>
+.t{font-family:Arial,'Helvetica Neue',Helvetica,'PingFang SC','Microsoft YaHei',sans-serif;fill:#333333;text-anchor:middle;dominant-baseline:central}
+.h{font-size:19px;font-weight:bold}
+.s{font-size:14px;fill:#666666}
+.m{font-size:14px}
+.n{font-size:12px;fill:#666666}
+</style>
+
+<rect x="100" y="20" width="690" height="56" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text class="t h" x="445" y="40">① Defining success</text>
+<text class="t s" x="445" y="61">Pass@k for the capability ceiling · Pass^k for business reliability</text>
+<line x1="445" y1="76" x2="445" y2="94" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+
+<rect x="100" y="96" width="690" height="102" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text class="t h" x="445" y="116">② Where tasks come from</text>
+<rect x="116" y="130" width="206" height="54" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
+<text class="t m" x="219" y="147">Public benchmarks</text>
+<text class="t n" x="219" y="167">Borrow methods · screen models</text>
+<rect x="342" y="130" width="206" height="54" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
+<text class="t m" x="445" y="147">Self-built business set</text>
+<text class="t n" x="445" y="167">The real task distribution</text>
+<rect x="568" y="130" width="206" height="54" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
+<text class="t m" x="671" y="147">Production feedback</text>
+<text class="t n" x="671" y="167">Output of failure attribution</text>
+<line x1="445" y1="198" x2="445" y2="216" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+
+<rect x="100" y="218" width="690" height="106" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text class="t h" x="445" y="238">③ How verification is done</text>
+<text class="t n" x="445" y="257">← ordered by how mechanically verifiable the task is →</text>
+<rect x="116" y="268" width="142" height="44" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
+<text class="t m" x="187" y="282">Deterministic</text>
+<text class="t n" x="187" y="300">SWE-bench</text>
+<line x1="262" y1="290" x2="284" y2="290" stroke="#666666" stroke-width="1.5" marker-end="url(#ah-s)"/>
+<rect x="288" y="268" width="142" height="44" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
+<text class="t m" x="359" y="282">Checklist</text>
+<text class="t n" x="359" y="300">τ²-bench</text>
+<line x1="434" y1="290" x2="456" y2="290" stroke="#666666" stroke-width="1.5" marker-end="url(#ah-s)"/>
+<rect x="460" y="268" width="142" height="44" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
+<text class="t m" x="531" y="282">Rubric + LLM</text>
+<text class="t n" x="531" y="300">Open-ended tasks</text>
+<line x1="606" y1="290" x2="628" y2="290" stroke="#666666" stroke-width="1.5" marker-end="url(#ah-s)"/>
+<rect x="632" y="268" width="142" height="44" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
+<text class="t m" x="703" y="282">Pairwise</text>
+<text class="t n" x="703" y="300">Chatbot Arena</text>
+<line x1="445" y1="324" x2="445" y2="342" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+
+<rect x="100" y="344" width="690" height="62" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text class="t h" x="445" y="364">④ Using the results</text>
+<text class="t s" x="445" y="388">Significance → Attribution → Regression tasks → Model &amp; Harness iteration</text>
+
+<path d="M100 375 L52 375 L52 147 L96 147" fill="none" stroke="#333333" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#ah)"/>
+<text class="t n" x="52" y="262" transform="rotate(-90 52 262)">Regression tasks become new cases</text>
+
+<rect x="100" y="424" width="690" height="46" rx="6" fill="#f3f0e8" stroke="#333333" stroke-width="2"/>
+<text class="t m" x="445" y="440" font-weight="bold">Supporting infrastructure</text>
+<text class="t n" x="445" y="458">Observability · Internal eval infra (ablation / AB / flags) · Simulation (Chapter 8)</text>
+</svg>

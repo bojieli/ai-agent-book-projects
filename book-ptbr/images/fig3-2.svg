@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 920 412" width="920" height="412" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="24" y="70" width="200" height="42" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="124.0" y="91" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Simple Notes</text>
+<rect x="38" y="126" width="172" height="84" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="48" y="150" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;User email:</text>
+<text x="48" y="172" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central"> john@x.com&quot;</text>
+<text x="124.0" y="236" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ Atomic fact · O(1)</text>
+<text x="124.0" y="262" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ Extremely low overhead</text>
+<text x="124.0" y="292" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">✗ Relevance lost</text>
+<rect x="248" y="70" width="200" height="42" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="348.0" y="91" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Enhanced Notes</text>
+<rect x="262" y="126" width="172" height="84" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="272" y="150" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">&quot;At TechCorp,</text>
+<text x="272" y="172" font-family="'Courier New', Courier, monospace" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central">a senior engineer leads</text>
+<text x="272" y="194" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">a team of five.&quot;</text>
+<text x="348.0" y="236" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ Full narrative</text>
+<text x="348.0" y="262" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ Semantically complete</text>
+<text x="348.0" y="292" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">✗ Redundant · Hard to update</text>
+<text x="348.0" y="318" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">✗ Long text is difficult to retrieve</text>
+<rect x="472" y="70" width="200" height="42" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="572.0" y="91" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">JSON Cards</text>
+<rect x="486" y="126" width="172" height="84" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="496" y="150" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">work.position</text>
+<text x="496" y="172" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central"> .title = …</text>
+<text x="496" y="194" font-family="'Courier New', Courier, monospace" font-size="11.5" fill="#333333" text-anchor="start" dominant-baseline="central">(category → key-value)</text>
+<text x="572.0" y="236" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ Three-level structure</text>
+<text x="572.0" y="262" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ Supports partial updates</text>
+<text x="572.0" y="292" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">✗ Rigid classification</text>
+<rect x="696" y="70" width="200" height="42" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="796.0" y="91" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Advanced JSON Cards</text>
+<rect x="710" y="126" width="172" height="84" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="720" y="150" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">+ backstory</text>
+<text x="720" y="172" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">+ person</text>
+<text x="720" y="194" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">+ relationship</text>
+<text x="796.0" y="236" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ Disambiguation · knowledge management</text>
+<text x="796.0" y="262" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">✓ With sources and relations</text>
+<text x="796.0" y="292" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">✗ Costly to generate and maintain</text>
+<line x1="70" y1="400" x2="850" y2="400" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<text x="70" y="383" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">Simplicity</text>
+<text x="850" y="383" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="end" dominant-baseline="central" font-weight="normal">Expressiveness</text>
+<text x="460" y="424" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Decreasing simplicity, increasing expressiveness</text>
+</svg>

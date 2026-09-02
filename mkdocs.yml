@@ -188,7 +188,7 @@ extra:
     tr:   { label: Türkçe,      prefix: book-tr/,   suffix: .tr,   readmeSuffix: tr }
     hu:   { label: Magyar,      prefix: book-hu/,                   readmeSuffix: hu }
     he:   { label: עברית,       prefix: book-he/,   suffix: .he }
-    ptbr: { label: Português (Brasil), prefix: book-ptbr/, suffix: .ptbr, readmeSuffix: pt-BR }
+    ptbr: { label: Português (Brasil), prefix: book-ptbr/, suffix: .ptbr }
 
   # Tier 3 — languages the book has no edition for. Selecting one loads
   # translate.js (MIT, https://github.com/xnx3/translate) on demand and

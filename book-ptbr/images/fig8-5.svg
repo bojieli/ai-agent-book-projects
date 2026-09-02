@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 440" width="780" height="440" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<rect x="20" y="60" width="280" height="45" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="160" y="82.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Classic RL Agent</text>
+<rect x="490" y="60" width="270" height="45" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="625" y="82.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">LLM Agent</text>
+<rect x="20" y="115" width="280" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="490" y="115" width="270" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="30" y="137" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Closed finite set (6 actions)</text>
+<text x="500" y="137" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Open: natural language + tools</text>
+<text x="395" y="137" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Action Space</text>
+<rect x="20" y="163" width="280" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="490" y="163" width="270" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="30" y="185" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Zero prior, from random policy</text>
+<text x="500" y="185" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Pretrained knowledge + priors</text>
+<text x="395" y="185" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Prior Knowledge</text>
+<rect x="20" y="211" width="280" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="490" y="211" width="270" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="30" y="233" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Hash encoding: state_id=0x3A7F</text>
+<text x="500" y="233" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Semantic: &quot;red key in storage room&quot;</text>
+<text x="395" y="233" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">State Representation</text>
+<rect x="20" y="259" width="280" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="490" y="259" width="270" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="30" y="281" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Scalar reward: R ∈ {-1, 0, +5, +50}</text>
+<text x="500" y="281" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Reward + feedback + self-reflection</text>
+<text x="395" y="281" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Learning Signal</text>
+<rect x="20" y="307" width="280" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="490" y="307" width="270" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="30" y="329" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">No internal thinking (purely reactive)</text>
+<text x="500" y="329" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Thinking as a special action (CoT)</text>
+<text x="395" y="329" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Thinking Ability</text>
+<rect x="20" y="355" width="280" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="490" y="355" width="270" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="30" y="377" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">New rules → full retraining</text>
+<text x="500" y="377" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Cross-task zero/few-shot transfer</text>
+<text x="395" y="377" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Generalization Ability</text>
+<rect x="20" y="403" width="280" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="490" y="403" width="270" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="30" y="425" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">~10000 episodes / 10 seconds</text>
+<text x="500" y="425" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">~1 episode / 2 minutes</text>
+<text x="395" y="425" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Sample Efficiency</text>
+</svg>

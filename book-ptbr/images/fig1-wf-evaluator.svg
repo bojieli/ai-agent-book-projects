@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 820 340" width="820" height="340" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="50" y="100" width="200" height="65" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="150.0" y="122.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">generator LLM</text>
+<text x="150.0" y="143.70000000000002" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">generate initial translation</text>
+<rect x="50" y="185" width="200" height="45" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="150" y="208" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">&amp;quot;春眠不觉晓&amp;quot; → v1 translation</text>
+<line x1="150" y1="167" x2="150" y2="183" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="330" y="100" width="200" height="65" rx="6" fill="#e8e8e8" stroke="#333333" stroke-width="2"/>
+<text x="430.0" y="122.9" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">evaluator LLM</text>
+<text x="430.0" y="143.70000000000002" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">multi-dimensional scoring</text>
+<line x1="252" y1="207" x2="330" y2="160" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="330" y="185" width="200" height="80" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="340" y="205" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">accuracy: 4/5</text>
+<text x="340" y="225" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">fluency: 3/5 ← needs improvement</text>
+<text x="340" y="245" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">cultural adaptation: 4/5</text>
+<line x1="430" y1="167" x2="430" y2="183" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<path d="M 430,267 Q 331.339380517819,114.0087186687023 150,98" fill="none" stroke="#999999" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#ah-light)"/>
+<text x="290" y="90" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">feedback + improvement suggestions</text>
+<rect x="610" y="100" width="170" height="55" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2"/>
+<text x="695.0" y="127.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">iteration count: n</text>
+<text x="695" y="170" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">exit conditions:</text>
+<text x="695" y="195" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">① all dimensions ≥ 4/5</text>
+<text x="695" y="218" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9.5" fill="#666666" text-anchor="start" dominant-baseline="central" font-weight="normal">② reached maximum rounds</text>
+<rect x="220" y="310" width="380" height="55" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="410.0" y="337.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">final output: high-quality translation after 3 iterations</text>
+</svg>
