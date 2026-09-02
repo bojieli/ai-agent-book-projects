@@ -190,6 +190,65 @@ python demo_streaming.py
 python test_streaming.py --mode compare
 ```
 
+#### Where the reasoning goes: the `thinking` field vs. `<think>` in `content`
+
+A common surprise when running this experiment: the book says a chain-of-thought model reasons inside `<think>` tags, yet nothing resembling `<think>` ever appears in `content` — the reasoning shows up in a separate `thinking` field instead. Both are true. `<think>` is a tag in the model's **raw token stream**; Ollama parses it out before the response reaches your client.
+
+You can observe each layer yourself against a running Ollama. The outputs below were captured on Ollama 0.20.7 + `qwen3:0.6b`; the reasoning wording differs from run to run, but the message shape does not.
+
+**1. Non-streaming `/api/chat` — reasoning arrives in its own `thinking` field:**
+
+```bash
+curl -s http://localhost:11434/api/chat -d '{
+  "model": "qwen3:0.6b", "stream": false, "think": true,
+  "messages": [{"role": "user", "content": "What is 17 * 23? Answer with just the number."}]
+}' | python -m json.tool
+```
+
+```jsonc
+{
+  "message": {
+    "role": "assistant",
+    "content": "391",                    // clean answer, no <think> tag
+    "thinking": "Okay, so I need to find 17 multiplied by 23. Let me think ..."
+  }
+}
+```
+
+**2. Streaming — the same reasoning arrives as incremental `thinking` deltas**, while `content` stays empty until the model finishes thinking:
+
+```bash
+curl -sN http://localhost:11434/api/chat -d '{
+  "model": "qwen3:0.6b", "stream": true, "think": true,
+  "messages": [{"role": "user", "content": "What is the weather in Tokyo?"}]
+}' | head -3
+```
+
+```jsonc
+{"message":{"role":"assistant","content":"","thinking":"Okay"},"done":false}
+{"message":{"role":"assistant","content":"","thinking":","},"done":false}
+{"message":{"role":"assistant","content":"","thinking":" the"},"done":false}
+```
+
+**3. The tag really is in the raw token stream.** Bypass both the chat template (`raw: true`) and Ollama's thinking parser (`think: false`), and `<think>` reappears:
+
+```bash
+curl -s http://localhost:11434/api/generate -d '{
+  "model": "qwen3:0.6b", "raw": true, "stream": false, "think": false,
+  "options": {"num_predict": 60},
+  "prompt": "<|im_start|>user\nWhat is 17 * 23?<|im_end|>\n<|im_start|>assistant\n"
+}' | python -c "import json,sys; print(json.load(sys.stdin)['response'][:120])"
+```
+
+```text
+<think>
+Okay, so I need to find 17 multiplied by 23. Hmm, let me think. First, I remember that multiplying numbers can b
+```
+
+So the `thinking` field and the `<think>` tag are two presentations of the same tokens: the model emits the tag, and the server decides whether you see it raw or pre-parsed.
+
+**How this project handles it.** `OllamaNativeAgent._chat_with_think_fallback()` sends `think=True`, so cases 1 and 2 are the normal path: `chat_stream()` reads `message.thinking` and yields `{"type": "thinking", ...}` chunks. The `<think>` / `</think>` string parsing you will also find in `chat_stream()` covers the other case, where a server hands the tag back inline in `content`. Models with no thinking support at all (qwen2.5, llama3.2, gemma, …) reject `think=True` with HTTP 400; `_chat_with_think_fallback()` catches that once per model, retries without `think`, and caches the decision — you simply get no thinking chunks for those models.
+
 ### Serving benchmark (`benchmark.py`)
 
 Companion to Experiment 2-1: measure **serving** metrics (throughput / latency / batching / KV cache) on a local small model via OpenAI-compatible APIs (vLLM or Ollama).
@@ -494,6 +553,65 @@ for chunk in agent.chat("What's the weather in Tokyo?", stream=True):
 python demo_streaming.py
 python test_streaming.py --mode compare
 ```
+
+#### 思考内容到底在哪里：`thinking` 字段与 `content` 里的 `<think>`
+
+跑这个实验时常见的困惑：书里说支持思维链的模型会先在 `<think>` 标签内思考，但实际跑起来 `content` 里根本看不到 `<think>`，思考内容出现在一个单独的 `thinking` 字段里。两种说法都没错——`<think>` 是模型**原始 token 流**里的标签，Ollama 在把响应交给客户端之前就已经把它解析掉了。
+
+对着运行中的 Ollama，可以自己逐层观察。下面的输出实测于 Ollama 0.20.7 + `qwen3:0.6b`——思考文字每次采样都不同，但消息结构是固定的。
+
+**1. 非流式 `/api/chat`——思考内容在独立的 `thinking` 字段里：**
+
+```bash
+curl -s http://localhost:11434/api/chat -d '{
+  "model": "qwen3:0.6b", "stream": false, "think": true,
+  "messages": [{"role": "user", "content": "What is 17 * 23? Answer with just the number."}]
+}' | python -m json.tool
+```
+
+```jsonc
+{
+  "message": {
+    "role": "assistant",
+    "content": "391",                    // 干净的答案，没有 <think> 标签
+    "thinking": "Okay, so I need to find 17 multiplied by 23. Let me think ..."
+  }
+}
+```
+
+**2. 流式——同一份思考内容以 `thinking` 增量逐块到达**，模型思考完之前 `content` 一直是空字符串：
+
+```bash
+curl -sN http://localhost:11434/api/chat -d '{
+  "model": "qwen3:0.6b", "stream": true, "think": true,
+  "messages": [{"role": "user", "content": "What is the weather in Tokyo?"}]
+}' | head -3
+```
+
+```jsonc
+{"message":{"role":"assistant","content":"","thinking":"Okay"},"done":false}
+{"message":{"role":"assistant","content":"","thinking":","},"done":false}
+{"message":{"role":"assistant","content":"","thinking":" the"},"done":false}
+```
+
+**3. 标签确实存在于原始 token 流里。** 同时绕开 chat template（`raw: true`）和 Ollama 的思考解析（`think: false`），`<think>` 就露出来了：
+
+```bash
+curl -s http://localhost:11434/api/generate -d '{
+  "model": "qwen3:0.6b", "raw": true, "stream": false, "think": false,
+  "options": {"num_predict": 60},
+  "prompt": "<|im_start|>user\nWhat is 17 * 23?<|im_end|>\n<|im_start|>assistant\n"
+}' | python -c "import json,sys; print(json.load(sys.stdin)['response'][:120])"
+```
+
+```text
+<think>
+Okay, so I need to find 17 multiplied by 23. Hmm, let me think. First, I remember that multiplying numbers can b
+```
+
+所以 `thinking` 字段和 `<think>` 标签是同一批 token 的两种呈现方式：标签由模型生成，而你看到的是原样还是解析后的结果，取决于服务端。
+
+**本项目如何处理。** `OllamaNativeAgent._chat_with_think_fallback()` 会传入 `think=True`，因此情况 1、2 是常规路径：`chat_stream()` 读取 `message.thinking` 并产出 `{"type": "thinking", ...}` 块。`chat_stream()` 里那段 `<think>` / `</think>` 字符串解析逻辑对应的是另一种情况——服务端把标签原样放在 `content` 里返回。至于完全不支持思考的模型（qwen2.5、llama3.2、gemma 等），它们会对 `think=True` 返回 HTTP 400，`_chat_with_think_fallback()` 每个模型只捕获一次，之后不带 `think` 重试并缓存该判断，此时就不会有任何 thinking 块。
 
 ### 服务基准（`benchmark.py`）
 
