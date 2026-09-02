@@ -146,21 +146,25 @@ class OllamaNativeAgent:
             if 'tool_calls' in message_content:
                 tool_calls = message_content['tool_calls']
                 logger.info(f"Model requested {len(tool_calls)} tool call(s)")
-                
+
                 # Add assistant's message with tool calls to history
-                self.conversation_history.append({
+                assistant_message = {
                     "role": "assistant",
                     "content": message_content.get('content', ''),
                     "tool_calls": tool_calls
-                })
-                
+                }
+                if message_content.get('thinking'):
+                    assistant_message["thinking"] = message_content['thinking']
+                self.conversation_history.append(assistant_message)
+
                 # Execute the tool calls (independent calls run in parallel)
                 results = self._execute_tool_calls(tool_calls)
-                
+
                 # Add tool results to conversation
-                for result in results:
+                for tool_call, result in zip(tool_calls, results):
                     self.conversation_history.append({
                         "role": "tool",
+                        "tool_name": tool_call.get('function', {}).get('name', 'unknown'),
                         "content": result
                     })
                 
@@ -172,27 +176,34 @@ class OllamaNativeAgent:
                     options={"temperature": temperature},
                 )
                 
-                final_content = final_response.get('message', {}).get('content', '')
+                final_message = final_response.get('message', {})
+                final_content = final_message.get('content', '')
                 
                 # Clean response (remove <think> tags if present)
                 import re
                 final_content = re.sub(r'<think>.*?</think>', '', final_content, flags=re.DOTALL).strip()
                 
                 # Add final response to history
-                self.conversation_history.append({
+                assistant_message = {
                     "role": "assistant",
                     "content": final_content
-                })
+                }
+                if final_message.get('thinking'):
+                    assistant_message["thinking"] = final_message['thinking']
+                self.conversation_history.append(assistant_message)
                 
                 return final_content
             
             else:
                 # No tool calls, just return the response
                 content = message_content.get('content', '')
-                self.conversation_history.append({
+                assistant_message = {
                     "role": "assistant",
                     "content": content
-                })
+                }
+                if message_content.get('thinking'):
+                    assistant_message["thinking"] = message_content['thinking']
+                self.conversation_history.append(assistant_message)
                 return content
                 
         except Exception as e:
@@ -233,9 +244,9 @@ class OllamaNativeAgent:
                     options={"temperature": temperature},
                     stream=True,
                 )
-                
+
                 collected_content = []
-                tool_calls_detected = False
+                collected_thinking = []
                 pending_tool_calls = []
                 thinking_buffer = ""
                 in_thinking = False
@@ -246,8 +257,9 @@ class OllamaNativeAgent:
                     message_chunk = chunk.get('message', {})
                     thinking_chunk = message_chunk.get('thinking', '')
                     content_chunk = message_chunk.get('content', '')
-                    
+
                     if thinking_chunk:
+                        collected_thinking.append(thinking_chunk)
                         yield {"type": "thinking", "content": thinking_chunk}
                     
                     if content_chunk:
@@ -305,8 +317,6 @@ class OllamaNativeAgent:
                     
                     # Check for tool calls in the chunk
                     if 'tool_calls' in message_chunk:
-                        tool_calls_detected = True
-                        
                         for tool_call in message_chunk['tool_calls']:
                             function = tool_call.get('function', {})
                             tool_name = function.get('name')
@@ -330,37 +340,44 @@ class OllamaNativeAgent:
                             ):
                                 pending_tool_calls.append(tool_call)
                                 yield {"type": "tool_call", "content": {"name": tool_name, "arguments": tool_args}}
-                
-                # Execute all tool calls from this turn in parallel
-                if pending_tool_calls:
-                    results = self._execute_tool_calls(pending_tool_calls)
-                    for result in results:
-                        # Yield tool result
-                        yield {"type": "tool_result", "content": result}
-                        
-                        # Add tool result to conversation
-                        self.conversation_history.append({
-                            "role": "tool",
-                            "content": result
-                        })
-                
+
                 # Save complete response to history
                 complete_response = ''.join(collected_content)
-                
-                if tool_calls_detected:
-                    # Add assistant's message to history
-                    self.conversation_history.append({
+                complete_thinking = ''.join(collected_thinking)
+
+                if pending_tool_calls:
+                    # Preserve the complete assistant turn before its tool
+                    # results, matching Ollama's multi-turn message contract.
+                    assistant_message = {
                         "role": "assistant",
-                        "content": complete_response if complete_response else ""
-                    })
+                        "content": complete_response,
+                        "tool_calls": pending_tool_calls
+                    }
+                    if complete_thinking:
+                        assistant_message["thinking"] = complete_thinking
+                    self.conversation_history.append(assistant_message)
+
+                    # Execute all tool calls from this turn in parallel.
+                    results = self._execute_tool_calls(pending_tool_calls)
+                    for tool_call, result in zip(pending_tool_calls, results):
+                        yield {"type": "tool_result", "content": result}
+                        self.conversation_history.append({
+                            "role": "tool",
+                            "tool_name": tool_call.get('function', {}).get('name', 'unknown'),
+                            "content": result
+                        })
+
                     # Continue the ReAct loop - let the model decide what to do next
                     # The loop will continue and get the next response
                 else:
                     # No tool calls - we have a final response
-                    self.conversation_history.append({
+                    assistant_message = {
                         "role": "assistant",
                         "content": complete_response
-                    })
+                    }
+                    if complete_thinking:
+                        assistant_message["thinking"] = complete_thinking
+                    self.conversation_history.append(assistant_message)
                     # Exit the ReAct loop
                     break
                     
