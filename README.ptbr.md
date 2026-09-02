@@ -12,7 +12,7 @@
 >
 > Se você tem um PDF antigo, recomendamos [baixar a versão mais recente do PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ptbr.pdf). A nova edição também inclui diversas correções e ajustes de conteúdo; confie apenas na versão mais recente.
 
-A tradução completa para português do Brasil foi produzida por [Leonardo F. Nascimento](https://github.com/leofn) (LABHD-UFBA) com assistência de IA (GPT-5.6 Sol), revisão estrutural automatizada e glossário técnico.
+A tradução completa para português do Brasil foi produzida por [Leonardo F. Nascimento](https://github.com/leofn) (LABHD-UFBA) com assistência de IA (GPT-5.6 Sol), revisão estrutural automatizada e glossário técnico. A tradução do texto das figuras (SVG) foi contribuída por [Líbna Raffaely](https://github.com/LibnaRaffaely).
 
 ## Livro eletrônico
 
