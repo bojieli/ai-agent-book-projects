@@ -23,7 +23,7 @@ Egy kiértékelő rendszer négy szakaszra bontható: mi számít sikernek, honn
 
 ## Egy kiértékelő feladat anatómiája: a τ²-bench telecom tartománya
 
-Kezdjük azzal, hogy teljes egészében felboncoljuk a τ²-bench telecom tartományának egy valódi feladatát. A τ²-bench a Sierra nyílt forráskódú projektje, amelyet szándékosan nem másoltunk be a kísérő tárolóba; klónozza a `chapter7/tau2-bench` könyvtárba a `chapter7/tau2-bench-eval/README.md` fájlban szereplő paranccsal, ezután a feladatfájl a `data/tau2/domains/telecom/tasks_small.json` útvonalon található.
+Kezdjük azzal, hogy teljes egészében felboncoljuk a τ²-bench telecom tartományának egy valódi feladatát. A τ²-bench a Sierra nyílt forráskódú projektje; klónozza helyben a `chapter7/tau2-bench-eval/README.md` fájlban szereplő paranccsal, majd nyissa meg a `data/tau2/domains/telecom/tasks_small.json` feladatfájlt.
 
 ### A feladatdefiníció négy összetevője
 

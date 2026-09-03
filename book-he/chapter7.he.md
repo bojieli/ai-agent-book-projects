@@ -23,7 +23,7 @@
 
 ## נתיחה של משימת הערכה אחת: תחום telecom ב‑τ²-bench
 
-נתחיל בנתיחה מלאה של משימה אמיתית אחת מתחום telecom של τ²-bench. ‏τ²-bench הוא פרויקט קוד פתוח של Sierra ואינו נכלל במאגר הנלווה; שכפלו אותו אל `chapter7/tau2-bench` באמצעות הפקודה שב-`chapter7/tau2-bench-eval/README.md`, ואז קובץ המשימות נמצא ב-`data/tau2/domains/telecom/tasks_small.json`.
+נתחיל בנתיחה מלאה של משימה אמיתית אחת מתחום telecom של τ²-bench. ‏τ²-bench הוא פרויקט קוד פתוח של Sierra; שכפלו אותו מקומית באמצעות הפקודה שב-`chapter7/tau2-bench-eval/README.md`, ואז פתחו את קובץ המשימות `data/tau2/domains/telecom/tasks_small.json`.
 
 ### ארבעת מרכיבי הגדרת המשימה
 

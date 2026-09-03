@@ -23,7 +23,7 @@
 
 ## 평가 과제 한 건의 해부: τ²-bench의 telecom 도메인
 
-먼저 τ²-bench의 telecom 도메인에서 실제 과제 하나를 통째로 해부해 보자. τ²-bench는 Sierra가 공개한 외부 프로젝트라 부속 저장소에는 포함하지 않았다. `chapter7/tau2-bench-eval/README.md`의 명령으로 `chapter7/tau2-bench`에 클론하면 과제 파일은 `data/tau2/domains/telecom/tasks_small.json`에 있다.
+먼저 τ²-bench의 telecom 도메인에서 실제 과제 하나를 통째로 해부해 보자. τ²-bench는 Sierra의 오픈소스 프로젝트이며, `chapter7/tau2-bench-eval/README.md`의 명령으로 로컬에 클론한 뒤 과제 파일 `data/tau2/domains/telecom/tasks_small.json`을 열면 된다.
 
 ### 과제 정의의 네 가지 구성 요소
 

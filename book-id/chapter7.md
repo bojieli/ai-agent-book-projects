@@ -23,7 +23,7 @@ Sebuah sistem evaluasi dapat diuraikan menjadi empat tahap: apa yang dihitung se
 
 ## Anatomi satu tugas evaluasi: domain telecom pada τ²-bench
 
-Mari kita mulai dengan membedah satu tugas nyata dari domain telecom τ²-bench secara utuh. τ²-bench adalah proyek sumber terbuka milik Sierra yang sengaja tidak disertakan di dalam repositori pendamping; klon ke `chapter7/tau2-bench` dengan perintah pada `chapter7/tau2-bench-eval/README.md`, setelah itu berkas tugasnya ada di `data/tau2/domains/telecom/tasks_small.json`.
+Mari kita mulai dengan membedah satu tugas nyata dari domain telecom τ²-bench secara utuh. τ²-bench adalah proyek sumber terbuka milik Sierra; klon ke lokal dengan perintah pada `chapter7/tau2-bench-eval/README.md`, lalu buka berkas tugas `data/tau2/domains/telecom/tasks_small.json`.
 
 ### Empat komponen definisi tugas
 

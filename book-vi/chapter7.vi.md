@@ -23,7 +23,7 @@ Một hệ thống đánh giá có thể tách thành bốn mắt xích: thế n
 
 ## Mổ xẻ một nhiệm vụ đánh giá: miền telecom của τ²-bench
 
-Trước hết hãy mổ xẻ trọn vẹn một nhiệm vụ thật trong miền telecom của τ²-bench. τ²-bench là dự án mã nguồn mở của Sierra và không được đưa vào kho đi kèm; hãy clone nó vào `chapter7/tau2-bench` bằng lệnh trong `chapter7/tau2-bench-eval/README.md`, khi đó tệp nhiệm vụ nằm ở `data/tau2/domains/telecom/tasks_small.json`.
+Trước hết hãy mổ xẻ trọn vẹn một nhiệm vụ thật trong miền telecom của τ²-bench. τ²-bench là dự án mã nguồn mở của Sierra; hãy clone về máy bằng lệnh trong `chapter7/tau2-bench-eval/README.md`, rồi mở tệp nhiệm vụ `data/tau2/domains/telecom/tasks_small.json`.
 
 ### Bốn thành phần của định nghĩa nhiệm vụ
 

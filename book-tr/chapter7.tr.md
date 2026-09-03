@@ -23,7 +23,7 @@ Bir değerlendirme sistemi dört halkaya ayrılabilir: neyin başarı sayıldı�
 
 ## Bir değerlendirme görevinin anatomisi: τ²-bench'in telecom alanı
 
-Önce τ²-bench'in telecom alanından gerçek bir görevi baştan sona inceleyelim. τ²-bench, Sierra'nın açık kaynaklı projesidir ve eşlik eden depoya bilinçli olarak dahil edilmemiştir; `chapter7/tau2-bench-eval/README.md` dosyasındaki komutla `chapter7/tau2-bench` dizinine klonlayın, görev dosyası o zaman `data/tau2/domains/telecom/tasks_small.json` konumunda olur.
+Önce τ²-bench'in telecom alanından gerçek bir görevi baştan sona inceleyelim. τ²-bench, Sierra'nın açık kaynaklı projesidir; `chapter7/tau2-bench-eval/README.md` dosyasındaki komutla yerel makinenize klonlayın, ardından `data/tau2/domains/telecom/tasks_small.json` görev dosyasını açın.
 
 ### Görev tanımının dört bileşeni
 
