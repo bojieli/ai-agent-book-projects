@@ -23,7 +23,7 @@ Un sistema de evaluación puede descomponerse en cuatro etapas: qué cuenta como
 
 ## Anatomía de una tarea de evaluación: el dominio telecom de τ²-bench
 
-Empecemos por diseccionar por completo una tarea real del dominio telecom de τ²-bench. El código fuente está en el repositorio, en `chapter7/tau2-bench`, y el fichero de tareas es `data/tau2/domains/telecom/tasks_small.json`.
+Empecemos por diseccionar por completo una tarea real del dominio telecom de τ²-bench. τ²-bench es un proyecto de código abierto de Sierra; clónelo en local con el comando que figura en `chapter7/tau2-bench-eval/README.md` y abra el fichero de tareas `data/tau2/domains/telecom/tasks_small.json`.
 
 ### Los cuatro componentes de la definición de una tarea
 

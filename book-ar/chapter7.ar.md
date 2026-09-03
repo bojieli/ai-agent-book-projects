@@ -23,7 +23,7 @@
 
 ## تشريح مهمة تقييم واحدة: نطاق telecom في τ²-bench
 
-لنبدأ بتشريح مهمة حقيقية واحدة من نطاق telecom في τ²-bench تشريحًا كاملًا. الشيفرة المصدرية في المستودع تحت `chapter7/tau2-bench`، وملف المهام هو `data/tau2/domains/telecom/tasks_small.json`.
+لنبدأ بتشريح مهمة حقيقية واحدة من نطاق telecom في τ²-bench تشريحًا كاملًا. إن τ²-bench مشروع مفتوح المصدر من Sierra؛ استنسخه محليًا بالأمر الوارد في `chapter7/tau2-bench-eval/README.md`، ثم افتح ملف المهام `data/tau2/domains/telecom/tasks_small.json`.
 
 ### المكوّنات الأربعة لتعريف المهمة
 

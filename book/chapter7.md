@@ -26,7 +26,7 @@
 
 ## 一条评估任务的解剖：τ²-bench 的 telecom 领域
 
-我们先完整解剖 τ²-bench 的 telecom 领域一条真实任务。源码位于仓库的 `chapter7/tau2-bench`，任务文件为 `data/tau2/domains/telecom/tasks_small.json`。
+我们先完整解剖 τ²-bench 的 telecom 领域一条真实任务。τ²-bench 是 Sierra 的开源项目，按照 `chapter7/tau2-bench-eval/README.md` 中的命令克隆到本地后，打开任务文件 `data/tau2/domains/telecom/tasks_small.json`。
 
 ### 任务定义的四个组成部分
 

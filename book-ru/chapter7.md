@@ -23,7 +23,7 @@
 
 ## Разбор одной задачи оценки: домен telecom в τ²-bench
 
-Начнём с того, что целиком разберём одну настоящую задачу из домена telecom в τ²-bench. Исходники лежат в репозитории по пути `chapter7/tau2-bench`, файл задач — `data/tau2/domains/telecom/tasks_small.json`.
+Начнём с того, что целиком разберём одну настоящую задачу из домена telecom в τ²-bench. τ²-bench — открытый проект Sierra; склонируйте его локально командой из `chapter7/tau2-bench-eval/README.md` и откройте файл задач `data/tau2/domains/telecom/tasks_small.json`.
 
 ### Четыре составные части определения задачи
 
