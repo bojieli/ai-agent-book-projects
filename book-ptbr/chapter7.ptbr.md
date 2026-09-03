@@ -24,7 +24,7 @@ Um sistema completo de avaliação pode ser dividido em quatro etapas: o que é 
 
 ## Anatomia de uma tarefa de avaliação: o domínio telecom do τ²-bench
 
-Começaremos analisando em detalhes uma tarefa real do domínio telecom do τ²-bench. O código-fonte está em `chapter7/tau2-bench` no repositório complementar, e o arquivo da tarefa é `data/tau2/domains/telecom/tasks_small.json`.
+Começaremos analisando em detalhes uma tarefa real do domínio telecom do τ²-bench. O τ²-bench é um projeto de código aberto da Sierra e não é incluído no repositório complementar; clone-o em `chapter7/tau2-bench` com o comando indicado em `chapter7/tau2-bench-eval/README.md` e o arquivo da tarefa estará em `data/tau2/domains/telecom/tasks_small.json`.
 
 ### Os quatro componentes da definição de uma tarefa
 

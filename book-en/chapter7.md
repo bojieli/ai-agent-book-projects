@@ -24,7 +24,7 @@ A complete evaluation system decomposes into four stages: what counts as success
 
 ## Anatomy of an Evaluation Task: The telecom Domain of τ²-bench
 
-Let us begin by dissecting one real task from the telecom domain of τ²-bench in full. The source lives at `chapter7/tau2-bench` in the companion repository, and the task file is `data/tau2/domains/telecom/tasks_small.json`.
+Let us begin by dissecting one real task from the telecom domain of τ²-bench in full. τ²-bench is Sierra's open-source project and is deliberately not vendored into the companion repository; clone it into `chapter7/tau2-bench` with the command in `chapter7/tau2-bench-eval/README.md`, and the task file is then at `data/tau2/domains/telecom/tasks_small.json`.
 
 ### The Four Components of a Task Definition
 

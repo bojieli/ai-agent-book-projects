@@ -23,7 +23,7 @@ Agent システムを構築する際、開発者は数多くの設計上の選�
 
 ## 評価タスクの解剖：τ²-bench の telecom ドメイン
 
-まず τ²-bench の telecom ドメインから実際のタスクを 1 本、丸ごと解剖してみましょう。ソースはリポジトリの `chapter7/tau2-bench` にあり、タスクファイルは `data/tau2/domains/telecom/tasks_small.json` です。
+まず τ²-bench の telecom ドメインから実際のタスクを 1 本、丸ごと解剖してみましょう。τ²-bench は Sierra が公開している外部プロジェクトで、付属リポジトリには取り込んでいません。`chapter7/tau2-bench-eval/README.md` のコマンドで `chapter7/tau2-bench` にクローンすると、タスクファイルは `data/tau2/domains/telecom/tasks_small.json` にあります。
 
 ### タスク定義の四つの構成要素
 
