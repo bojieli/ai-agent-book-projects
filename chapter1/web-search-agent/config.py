@@ -55,7 +55,12 @@ class Config:
 
     # 搜索配置
     MAX_SEARCH_ITERATIONS: int = 5  # 最大搜索迭代次数（与 agent 默认值保持一致）
-    SEARCH_TIMEOUT: float = float(os.getenv("SEARCH_TIMEOUT", "30"))
+    # 这个超时同时作用于 Formula 工具调用和 chat completion。kimi-k3 以
+    # reasoning_effort=max 运行，单次 completion 常需 1-3 分钟（validation/
+    # 目录里保留的真实运行记录中有 161 秒、121 秒的调用），30 秒会让交互模式
+    # 反复 "Request timed out"。默认值与 run_experiment_1_2.py 的 --timeout
+    # 保持一致，确保 README 里的交互入口与验收脚本跑在同一配置下。
+    SEARCH_TIMEOUT: float = float(os.getenv("SEARCH_TIMEOUT", "180"))
     
     # 日志配置
     LOG_LEVEL: str = "INFO"

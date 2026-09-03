@@ -5,7 +5,7 @@ Kimi Web Search Agent
 
 import json
 from typing import List, Dict, Any, Optional
-from openai import OpenAI
+from openai import APITimeoutError, OpenAI, RateLimitError
 from openai.types.chat.chat_completion import Choice
 import logging
 import os
@@ -74,6 +74,25 @@ def search_impl(arguments: Dict[str, Any]) -> Any:
 SEARCH_ERROR_PREFIX = "搜索过程中出现错误"
 MAX_ITERATIONS_MESSAGE = "抱歉，搜索过程超过了最大迭代次数，请稍后重试。"
 NO_INFO_MESSAGE = "抱歉，我无法获取足够的信息来回答您的问题。"
+
+
+def _error_hint(exc: Exception, timeout: Optional[float] = None) -> str:
+    """给 provider 故障补一句可操作的提示。
+
+    交互模式下最常见的两种失败是速率限制和请求超时，而且两者常常连在一起：
+    429 会被 SDK 自动重试，重试把超时预算耗完之后，用户只看到一句
+    "Request timed out"，很容易误判成网络问题或模型能力问题。
+    """
+    if isinstance(exc, RateLimitError):
+        return "（触发了服务商的速率限制，请降低请求频率或稍后重试）"
+    if isinstance(exc, APITimeoutError):
+        budget = f"超过 {timeout:.0f} 秒未返回" if timeout else "超时未返回"
+        return (
+            f"（请求{budget}。kimi-k3 以 reasoning_effort=max 运行，"
+            "单次调用可能需要一到数分钟；若持续超时，可调大环境变量 "
+            "SEARCH_TIMEOUT，并检查日志中是否有 429 导致的反复重试）"
+        )
+    return ""
 
 
 def is_failure_answer(answer: str) -> bool:
@@ -495,8 +514,10 @@ class WebSearchAgent:
             return NO_INFO_MESSAGE
                 
         except Exception as e:
-            logger.error(f"{SEARCH_ERROR_PREFIX}: {str(e)}")
-            return f"{SEARCH_ERROR_PREFIX}: {str(e)}"
+            hint = _error_hint(e, getattr(self, "_request_timeout", None))
+            message = f"{SEARCH_ERROR_PREFIX}: {str(e)}{hint}"
+            logger.error(message)
+            return message
     
     def clear_history(self):
         """清空对话历史"""
