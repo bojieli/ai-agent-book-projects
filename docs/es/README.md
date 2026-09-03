@@ -1,9 +1,9 @@
 # Agentes de IA en Profundidad: Principios de Diseño y Práctica de Ingeniería
 
-[![PDF](https://img.shields.io/badge/PDF-descargar-success.svg)](#-libro-electrónico) [![Leer en línea](https://img.shields.io/badge/🌐_Leer_en_línea-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![Licencia](https://img.shields.io/badge/licencia-Apache--2.0-blue.svg)](../../LICENSE) [![Idiomas](https://img.shields.io/badge/traducciones-14%20idiomas-informational.svg)](#-libro-electrónico)
+[![PDF](https://img.shields.io/badge/PDF-descargar-success.svg)](#-libro-electrónico) [![Leer en línea](https://img.shields.io/badge/🌐_Leer_en_línea-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![Licencia](https://img.shields.io/badge/licencia-Apache--2.0-blue.svg)](../../LICENSE) [![Idiomas](https://img.shields.io/badge/traducciones-15%20idiomas-informational.svg)](#-libro-electrónico)
 [![Tendencias en GitHub](https://img.shields.io/badge/GitHub%20Trending-Proyecto%20del%20Día-orange?logo=github)](https://github.com/trending)
 
-**[中文](../../README.md) · [English](../en/README.md) · Español ← actual · [Bahasa Indonesia](../id/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · [한국어](../ko/README.md) · [Magyar](../hu/README.md) · [עברית](../../README.he.md)**
+**[中文](../../README.md) · [English](../en/README.md) · Español ← actual · [Bahasa Indonesia](../id/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · [한국어](../ko/README.md) · [Magyar](../hu/README.md) · [עברית](../../README.he.md) · [Português (Brasil)](../../README.ptbr.md)**
 
 > 📥 **[Descargar PDF / EPUB](#-libro-electrónico)** (recomendado) — las ediciones en PDF / EPUB ofrecen la mejor experiencia de lectura; también puedes [leer en línea](https://bojieli.github.io/ai-agent-book/) (conmutador de idiomas, árbol de capítulos desplegable, búsqueda de texto completo, recompilado automáticamente en cada push a main).
 
@@ -13,7 +13,7 @@
 >
 > Si estás leyendo un PDF antiguo, te recomendamos [descargar el PDF más reciente](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-es.pdf). La nueva edición también incorpora numerosas correcciones y ajustes de contenido; utiliza siempre la versión más reciente.
 
-| 📚 **10 capítulos** de texto, desde lo básico hasta producción | 📂 **95 experimentos** complementarios, incluidos proyectos locales y rutas de reproducción externas | 🌐 **14 idiomas**: CN / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO / HU / HE |
+| 📚 **10 capítulos** de texto, desde lo básico hasta producción | 📂 **95 experimentos** complementarios, incluidos proyectos locales y rutas de reproducción externas | 🌐 **15 idiomas**: CN / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO / HU / HE / PT-BR |
 | :---: | :---: | :---: |
 
 ## 📖 Libro electrónico

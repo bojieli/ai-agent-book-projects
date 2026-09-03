@@ -1,9 +1,9 @@
 # Az AI-ügynökök mélyreható megértése: tervezési alapelvek és mérnöki gyakorlat
 
-[![PDF](https://img.shields.io/badge/PDF-letöltés-success.svg)](#-e-könyv) [![Online olvasás](https://img.shields.io/badge/🌐_Online_olvasás-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![Licenc](https://img.shields.io/badge/licenc-Apache--2.0-blue.svg)](../../LICENSE) [![Nyelvek](https://img.shields.io/badge/fordítások-14%20nyelv-informational.svg)](#-e-könyv)
+[![PDF](https://img.shields.io/badge/PDF-letöltés-success.svg)](#-e-könyv) [![Online olvasás](https://img.shields.io/badge/🌐_Online_olvasás-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![Licenc](https://img.shields.io/badge/licenc-Apache--2.0-blue.svg)](../../LICENSE) [![Nyelvek](https://img.shields.io/badge/fordítások-15%20nyelv-informational.svg)](#-e-könyv)
 [![A nap felkapott GitHub-projektje](https://img.shields.io/badge/GitHub%20Trending-A%20nap%20projektje-orange?logo=github)](https://github.com/trending)
 
-**[中文](../../README.md) · [English](../en/README.md) · [Español](../es/README.md) · [Bahasa Indonesia](../id/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · [한국어](../ko/README.md) · Magyar ← jelenlegi · [עברית](../../README.he.md)**
+**[中文](../../README.md) · [English](../en/README.md) · [Español](../es/README.md) · [Bahasa Indonesia](../id/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · [한국어](../ko/README.md) · Magyar ← jelenlegi · [עברית](../../README.he.md) · [Português (Brasil)](../../README.ptbr.md)**
 
 > 📥 **[PDF / EPUB letöltése](#-e-könyv)** (ajánlott) — a PDF- és EPUB-kiadás nyújtja a legjobb olvasási élményt; a könyv [online is olvasható](https://bojieli.github.io/ai-agent-book/), nyelvváltóval, összecsukható fejezetfával és teljes szövegű kereséssel.
 
@@ -13,7 +13,7 @@
 >
 > Ha egy régebbi PDF-et olvas, javasoljuk, hogy [töltse le a legújabb PDF-et](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-hu.pdf). Az új kiadás számos javítást és tartalmi módosítást is tartalmaz; kérjük, mindig a legfrissebb verziót használja.
 
-| 📚 **10 fejezet** az alapoktól az éles rendszerekig | 📂 **104 kapcsolódó projekt**, helyi projektekkel és külső reprodukciós útvonalakkal | 🌐 **14 nyelv**: ZH / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO / HU / HE |
+| 📚 **10 fejezet** az alapoktól az éles rendszerekig | 📂 **104 kapcsolódó projekt**, helyi projektekkel és külső reprodukciós útvonalakkal | 🌐 **15 nyelv**: ZH / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO / HU / HE / PT-BR |
 | :---: | :---: | :---: |
 
 ## 📖 E-könyv

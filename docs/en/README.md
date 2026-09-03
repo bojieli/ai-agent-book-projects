@@ -1,9 +1,9 @@
 # AI Agents in Depth: Design Principles and Engineering Practice
 
-[![PDF](https://img.shields.io/badge/PDF-download-success.svg)](#-e-book) [![Read online](https://img.shields.io/badge/🌐_Read_online-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![Languages](https://img.shields.io/badge/translations-14%20languages-informational.svg)](#-e-book)
+[![PDF](https://img.shields.io/badge/PDF-download-success.svg)](#-e-book) [![Read online](https://img.shields.io/badge/🌐_Read_online-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![Languages](https://img.shields.io/badge/translations-15%20languages-informational.svg)](#-e-book)
 [![Trending GitHub Project of the Day](https://img.shields.io/badge/GitHub%20Trending-Project%20of%20the%20Day-orange?logo=github)](https://github.com/trending)
 
-**[中文](../../README.md) · English ← current · [Español](../es/README.md) · [Bahasa Indonesia](../id/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · [한국어](../ko/README.md) · [Magyar](../hu/README.md) · [עברית](../../README.he.md)**
+**[中文](../../README.md) · English ← current · [Español](../es/README.md) · [Bahasa Indonesia](../id/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · [한국어](../ko/README.md) · [Magyar](../hu/README.md) · [עברית](../../README.he.md) · [Português (Brasil)](../../README.ptbr.md)**
 
 > 📥 **[Download PDF / EPUB](#-e-book)** (recommended) — the PDF / EPUB editions offer the best reading experience; you can also [read online](https://bojieli.github.io/ai-agent-book/) (multi-language switcher, collapsible chapter tree, full-text search, auto-rebuilt on every push to main).
 
@@ -13,7 +13,7 @@
 >
 > If you are reading an older PDF, we recommend [downloading the latest PDF](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-en.pdf). The new edition also includes many corrections and content adjustments, so please use the latest version.
 
-| 📚 **10 chapters** of text, from basics to production | 📂 **93** companion projects (70+ standalone) | 🌐 **14 languages**: CN / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO / HU / HE |
+| 📚 **10 chapters** of text, from basics to production | 📂 **93** companion projects (70+ standalone) | 🌐 **15 languages**: CN / EN / ES / ID / AR / zh-TW / RU / TA / VI / JA / TR / KO / HU / HE / PT-BR |
 | :---: | :---: | :---: |
 
 ## 📖 E-Book
