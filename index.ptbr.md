@@ -109,7 +109,8 @@ Use o seletor de idiomas no topo do site para alternar entre as 15 edições. A 
 
 - **Autor**: Bojie Li
 - **Tradução para português do Brasil**: [Leonardo F. Nascimento](https://github.com/leofn), LABHD-UFBA
+- **Tradução das figuras (SVG)**: [Líbna Raffaely](https://github.com/LibnaRaffaely)
 - **Repositório**: [bojieli/ai-agent-book](https://github.com/bojieli/ai-agent-book)
 - **Licença**: Apache License 2.0
 
-> Esta edição foi produzida com assistência de IA (GPT-5.6 Sol), glossário técnico e validação automatizada de fidelidade estrutural. As figuras mantêm os rótulos da edição inglesa.
+> Esta edição foi produzida com assistência de IA (GPT-5.6 Sol), glossário técnico e validação automatizada de fidelidade estrutural. As figuras foram traduzidas para o português.

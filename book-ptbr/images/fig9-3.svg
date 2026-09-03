@@ -8,35 +8,35 @@
       .accent{fill:#e8f1f5;stroke:#2f617a;stroke-width:2}
     </style>
   </defs>
-  <text x="500" y="30" text-anchor="middle" class="t h">How a capability is represented decides where it is mainly updated</text>
+  <text x="500" y="30" text-anchor="middle" class="t h">a forma como uma capacidade é representada decide onde ela é principalmente atualizada</text>
 
   <rect x="35" y="72" width="220" height="126" rx="9" class="box"/>
-  <text x="145" y="105" text-anchor="middle" class="t h">Knowledge</text>
-  <text x="145" y="135" text-anchor="middle" class="t s" style="font-size:15.5px">Facts, experience, exceptions</text>
-  <text x="145" y="164" text-anchor="middle" class="t s">Markdown / knowledge base</text>
+  <text x="145" y="105" text-anchor="middle" class="t h">Conhecimento</text>
+  <text x="145" y="135" text-anchor="middle" class="t s" style="font-size:15px">Fatos, experiência, exceções</text>
+  <text x="145" y="164" text-anchor="middle" class="t s" style="font-size:12.5px">Markdown / base de conhecimento</text>
 
   <rect x="275" y="72" width="220" height="126" rx="9" class="box"/>
-  <text x="385" y="105" text-anchor="middle" class="t h">Instructions</text>
-  <text x="385" y="135" text-anchor="middle" class="t s" style="font-size:10.5px">Judgment principles you can put into words</text>
+  <text x="385" y="105" text-anchor="middle" class="t h">Instruções</text>
+  <text x="385" y="135" text-anchor="middle" class="t s" style="font-size:11.5px">Julgamento expresso em palavras</text>
   <text x="385" y="164" text-anchor="middle" class="t s">Prompt / Skill</text>
 
   <rect x="515" y="72" width="220" height="126" rx="9" class="box"/>
-  <text x="625" y="105" text-anchor="middle" class="t h">Programs</text>
-  <text x="625" y="135" text-anchor="middle" class="t s" style="font-size:11.5px">Deterministic flows and hard constraints</text>
-  <text x="625" y="164" text-anchor="middle" class="t s">Tools / Workflow / Harness</text>
+  <text x="625" y="105" text-anchor="middle" class="t h">Programas</text>
+  <text x="625" y="135" text-anchor="middle" class="t s" style="font-size:11px">Fluxos determinísticos, regras rígidas</text>
+  <text x="625" y="164" text-anchor="middle" class="t s" style="font-size:13px">Ferramentas / Workflow / Harness</text>
 
   <rect x="755" y="72" width="220" height="126" rx="9" class="accent"/>
-  <text x="865" y="105" text-anchor="middle" class="t h">Parameters</text>
-  <text x="865" y="135" text-anchor="middle" class="t s" style="font-size:9.5px">High-dimensional perception and implicit policy</text>
-  <text x="865" y="164" text-anchor="middle" class="t s">SFT / Distillation / RL</text>
+  <text x="865" y="105" text-anchor="middle" class="t h">Parâmetros</text>
+  <text x="865" y="135" text-anchor="middle" class="t s" style="font-size:9px">Percepção de alta dimensão e política implícita</text>
+  <text x="865" y="164" text-anchor="middle" class="t s">SFT / Destilação / RL</text>
 
   <line x1="145" y1="226" x2="865" y2="226" stroke="#33434d" stroke-width="2"/>
   <path d="M145 218 V234 M865 218 V234" stroke="#33434d" stroke-width="2"/>
-  <text x="145" y="260" text-anchor="middle" class="t s">Easy to update, traceable</text>
-  <text x="865" y="260" text-anchor="middle" class="t s">Internalized, low inference cost</text>
-  <text x="500" y="289" text-anchor="middle" class="t h">Not a one-way ladder but four complementary carriers</text>
+  <text x="145" y="260" text-anchor="middle" class="t s">Fácil de atualizar, rastreável</text>
+  <text x="865" y="260" text-anchor="middle" class="t s">Internalizado, baixo custo de inferência</text>
+  <text x="500" y="289" text-anchor="middle" class="t h">Não é uma escada de mão única, mas quatro portadores complementares</text>
 
   <rect x="145" y="320" width="710" height="58" rx="8" class="accent"/>
-  <text x="500" y="344" text-anchor="middle" class="t h" style="font-size:16.5px">First question: can the capability be fully expressed as facts, language rules or programs?</text>
-  <text x="500" y="367" text-anchor="middle" class="t s">Stability, cost and update frequency decide the deployment, not whether it can be parameterized</text>
+  <text x="500" y="344" text-anchor="middle" class="t h" style="font-size:15px">Primeira pergunta: dá para expressar como fatos, regras ou programas?</text>
+  <text x="500" y="367" text-anchor="middle" class="t s" style="font-size:14px">Estabilidade, custo e frequência decidem a implantação, não a parametrização</text>
 </svg>

@@ -23,17 +23,17 @@
 
   <!-- ReAct steps -->
   <rect class="box" x="45" y="70" width="210" height="96" rx="8" fill="#e8e8e8"/>
-  <text class="sans heading" x="60" y="95" dominant-baseline="middle">① Think (Reasoning)</text>
+  <text class="sans heading" x="60" y="95" dominant-baseline="middle">① Pensar (Raciocínio)</text>
   <rect x="60" y="112" width="180" height="38" rx="5" fill="#ffffff" stroke="#777777"/>
-  <text class="code body" x="150" y="132" text-anchor="middle" dominant-baseline="middle">&quot;Need more info&quot;</text>
+  <text class="code body" x="150" y="132" text-anchor="middle" dominant-baseline="middle">&quot;Preciso de mais informações&quot;</text>
 
   <rect class="box" x="305" y="70" width="210" height="96" rx="8" fill="#f0f0f0"/>
-  <text class="sans heading" x="320" y="95" dominant-baseline="middle">② Acting</text>
+  <text class="sans heading" x="320" y="95" dominant-baseline="middle">② Agir</text>
   <rect x="320" y="112" width="180" height="38" rx="5" fill="#ffffff" stroke="#777777"/>
   <text class="code body" x="410" y="132" text-anchor="middle" dominant-baseline="middle">web_search(...)</text>
 
   <rect class="box" x="565" y="70" width="210" height="96" rx="8" fill="#f0f0f0"/>
-  <text class="sans heading" x="580" y="95" dominant-baseline="middle">③ Observing</text>
+  <text class="sans heading" x="580" y="95" dominant-baseline="middle">③ Observar</text>
   <rect x="580" y="112" width="180" height="38" rx="5" fill="#ffffff" stroke="#777777"/>
   <text class="code body" x="670" y="132" text-anchor="middle" dominant-baseline="middle">tool_result: &quot;...&quot;</text>
 
@@ -43,30 +43,30 @@
 
   <!-- Exit criteria feed the decision point -->
   <rect x="45" y="220" width="430" height="145" rx="8" fill="#ffffff" stroke="#777777" stroke-width="2" stroke-dasharray="7 4"/>
-  <text class="sans heading" x="65" y="244" dominant-baseline="middle">Exit conditions (any one)</text>
+  <text class="sans heading" x="65" y="244" dominant-baseline="middle">Condições de saída (qualquer uma)</text>
   <line x1="65" y1="258" x2="455" y2="258" stroke="#cccccc"/>
-  <text class="sans body" x="65" y="282" dominant-baseline="middle">① Task complete</text>
-  <text class="sans body" x="250" y="282" dominant-baseline="middle">② final_answer called</text>
-  <text class="sans body" x="65" y="314" dominant-baseline="middle">③ No tool call</text>
-  <text class="sans body" x="250" y="314" dominant-baseline="middle">④ Error limit exceeded</text>
-  <text class="sans body" x="65" y="346" dominant-baseline="middle">⑤ Max rounds reached</text>
+  <text class="sans body" x="65" y="282" dominant-baseline="middle">① Tarefa concluída</text>
+  <text class="sans body" x="250" y="282" dominant-baseline="middle">② final_answer chamado</text>
+  <text class="sans body" x="65" y="314" dominant-baseline="middle">③ Sem uso de ferramenta</text>
+  <text class="sans body" x="250" y="314" dominant-baseline="middle">④ Limite de erros excedido</text>
+  <text class="sans body" x="65" y="346" dominant-baseline="middle">⑤ Número máximo de rodadas atingido</text>
 
   <path d="M 475 260 H 587" fill="none" stroke="#777777" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arrow-light)"/>
   <rect x="493" y="238" width="80" height="20" rx="3" fill="#ffffff"/>
-  <text class="sans note" x="533" y="248" text-anchor="middle" dominant-baseline="middle">Decision criteria</text>
+  <text class="sans note" x="533" y="248" text-anchor="middle" dominant-baseline="middle">Critérios de decisão</text>
 
   <!-- Stop decision and branches -->
   <polygon class="box" points="670,208 750,260 670,312 590,260" fill="#e2e2e2"/>
-  <text class="sans heading" x="670" y="252" text-anchor="middle" dominant-baseline="middle">Exit condition</text>
-  <text class="sans heading" x="670" y="273" text-anchor="middle" dominant-baseline="middle">met?</text>
+  <text class="sans heading" x="670" y="252" text-anchor="middle" dominant-baseline="middle">Condição de saída</text>
+  <text class="sans heading" x="670" y="273" text-anchor="middle" dominant-baseline="middle">atendida?</text>
 
   <path class="flow" d="M 750 260 H 795 V 35 H 150 V 67"/>
-  <text class="sans note" x="765" y="245" dominant-baseline="middle">No</text>
+  <text class="sans note" x="765" y="245" dominant-baseline="middle">Não</text>
   <rect x="360" y="43" width="120" height="22" rx="3" fill="#ffffff"/>
-  <text class="sans note" x="420" y="54" text-anchor="middle" dominant-baseline="middle">Continue the loop</text>
+  <text class="sans note" x="420" y="54" text-anchor="middle" dominant-baseline="middle">Continuar o loop</text>
 
   <line class="flow" x1="670" y1="312" x2="670" y2="379"/>
-  <text class="sans note" x="685" y="346" dominant-baseline="middle">Yes</text>
+  <text class="sans note" x="685" y="346" dominant-baseline="middle">Sim</text>
   <rect class="box" x="555" y="382" width="230" height="68" rx="8" fill="#d6d6d6"/>
-  <text class="sans heading" x="670" y="416" text-anchor="middle" dominant-baseline="middle">Return final result</text>
+  <text class="sans heading" x="670" y="416" text-anchor="middle" dominant-baseline="middle">Retornar resultado final</text>
 </svg>

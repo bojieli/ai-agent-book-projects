@@ -10,34 +10,34 @@
       .line{fill:none;stroke:#33434d;stroke-width:2;marker-end:url(#arrow)}
     </style>
   </defs>
-  <text x="500" y="30" text-anchor="middle" class="t h">Turning experience into knowledge: raw trajectories are evidence, documents are the reusable unit</text>
+  <text x="500" y="30" text-anchor="middle" class="t h">transformando experiência em conhecimento: trajetórias brutas são evidência, documentos são a unidade reutilizável</text>
 
   <rect x="22" y="78" width="168" height="96" rx="8" class="box"/>
-  <text x="106" y="111" text-anchor="middle" class="t h">Raw trajectory</text>
-  <text x="106" y="139" text-anchor="middle" class="t s" style="font-size:10.5px">Actions, outcomes, environment</text>
-  <text x="106" y="160" text-anchor="middle" class="t s">Immutable evidence</text>
+  <text x="106" y="111" text-anchor="middle" class="t h">Trajetória bruta</text>
+  <text x="106" y="139" text-anchor="middle" class="t s" style="font-size:10.5px">Ações, resultados, ambiente</text>
+  <text x="106" y="160" text-anchor="middle" class="t s">Evidência imutável</text>
 
   <rect x="215" y="78" width="168" height="96" rx="8" class="box"/>
-  <text x="299" y="111" text-anchor="middle" class="t h">Single evaluation</text>
-  <text x="299" y="139" text-anchor="middle" class="t s">Success, failure, labels</text>
-  <text x="299" y="160" text-anchor="middle" class="t s" style="font-size:12px">Keeps the evidence location</text>
+  <text x="299" y="111" text-anchor="middle" class="t h">Avaliação única</text>
+  <text x="299" y="139" text-anchor="middle" class="t s">Sucesso, falha, rótulos</text>
+  <text x="299" y="160" text-anchor="middle" class="t s" style="font-size:12px">Preserva a localização da evidência</text>
 
   <rect x="408" y="63" width="184" height="126" rx="8" class="accent"/>
-  <text x="500" y="97" text-anchor="middle" class="t h" style="font-size:13px">Cross-trajectory comparison</text>
-  <text x="500" y="128" text-anchor="middle" class="t s">Aggregate similar tasks</text>
-  <text x="500" y="151" text-anchor="middle" class="t s" style="font-size:11.5px">Contrast success against failure</text>
-  <text x="500" y="174" text-anchor="middle" class="t s" style="font-size:10px">Extract commonalities and boundaries</text>
+  <text x="500" y="97" text-anchor="middle" class="t h" style="font-size:13px">Comparação entre trajetórias</text>
+  <text x="500" y="128" text-anchor="middle" class="t s">Agregar tarefas semelhantes</text>
+  <text x="500" y="151" text-anchor="middle" class="t s" style="font-size:11.5px">Contrastar sucesso e falha</text>
+  <text x="500" y="174" text-anchor="middle" class="t s" style="font-size:10px">Extrair pontos comuns e limites</text>
 
   <rect x="617" y="63" width="184" height="126" rx="8" class="accent"/>
-  <text x="709" y="97" text-anchor="middle" class="t h" style="font-size:17.5px">Markdown document</text>
-  <text x="709" y="128" text-anchor="middle" class="t s" style="font-size:11px">Applicable scenarios and strategy</text>
-  <text x="709" y="151" text-anchor="middle" class="t s" style="font-size:11px">Exceptions, no-go zones, sources</text>
-  <text x="709" y="174" text-anchor="middle" class="t s" style="font-size:13.5px">Version and verification time</text>
+  <text x="709" y="97" text-anchor="middle" class="t h" style="font-size:17.5px">Documento Markdown</text>
+  <text x="709" y="128" text-anchor="middle" class="t s" style="font-size:11px">Cenários aplicáveis e estratégia</text>
+  <text x="709" y="151" text-anchor="middle" class="t s" style="font-size:11px">Exceções, zonas proibidas, fontes</text>
+  <text x="709" y="174" text-anchor="middle" class="t s" style="font-size:13.5px">Versão e horário de verificação</text>
 
   <rect x="826" y="78" width="152" height="96" rx="8" class="box"/>
-  <text x="902" y="111" text-anchor="middle" class="t h" style="font-size:16.5px">Retrieval and use</text>
-  <text x="902" y="139" text-anchor="middle" class="t s" style="font-size:10px">Load on demand for new tasks</text>
-  <text x="902" y="160" text-anchor="middle" class="t s" style="font-size:11.5px">Keeps producing feedback</text>
+  <text x="902" y="111" text-anchor="middle" class="t h" style="font-size:16.5px">Recuperação e uso</text>
+  <text x="902" y="139" text-anchor="middle" class="t s" style="font-size:10px">Carregar sob demanda para novas tarefas</text>
+  <text x="902" y="160" text-anchor="middle" class="t s" style="font-size:11.5px">Continua produzindo feedback</text>
 
   <path d="M190 126 H213" class="line"/>
   <path d="M383 126 H406" class="line"/>
@@ -45,8 +45,8 @@
   <path d="M801 126 H824" class="line"/>
 
   <path d="M902 174 V244 H500 V191" class="line" stroke-dasharray="7 5"/>
-  <text x="700" y="270" text-anchor="middle" class="t s">New evidence revises, narrows or retires old knowledge</text>
+  <text x="700" y="270" text-anchor="middle" class="t s">Novas evidências revisam, restringem ou aposentam conhecimento antigo</text>
 
   <rect x="215" y="302" width="586" height="48" rx="8" fill="#fafbfb" stroke="#9aa8af"/>
-  <text x="508" y="332" text-anchor="middle" class="t s" style="font-size:9.5px">Shares the extraction and retrieval stack with Chapter 3; this chapter adds trajectory evaluation and the behavior-improvement loop</text>
+  <text x="508" y="332" text-anchor="middle" class="t s" style="font-size:9.5px">Compartilha a pilha de extração e recuperação com o Capítulo 3; este capítulo acrescenta a avaliação de trajetória e o ciclo de melhoria de comportamento</text>
 </svg>
