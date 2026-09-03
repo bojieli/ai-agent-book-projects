@@ -10,49 +10,48 @@
 .n{font-size:11px;fill:#333333}
 .a{font-size:12px;fill:#333333}
 
-.t,.l{direction:rtl;unicode-bidi:plaintext}
-.c{font-family:'SF Mono',Menlo,Consolas,monospace;direction:ltr;unicode-bidi:plaintext}
+.c{font-family:'SF Mono',Menlo,Consolas,monospace}
 
 </style>
 
 <line x1="40" y1="26" x2="846" y2="26" stroke="#333333" stroke-width="2" marker-end="url(#ax)"/>
-<text class="t a" x="130" y="12">יכולת האימות המכנית של המשימה: גבוהה</text>
-<text class="t a" x="790" y="12">נמוכה</text>
+<text class="t a" x="130" y="12" direction="rtl" unicode-bidi="plaintext">יכולת האימות המכנית של המשימה: גבוהה</text>
+<text class="t a" x="790" y="12" direction="rtl" unicode-bidi="plaintext">נמוכה</text>
 
 <rect x="18" y="52" width="190" height="112" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text class="t h" x="113" y="76">דטרמיניסטי</text>
-<text class="t m" x="113" y="100">מצב סופי יחיד וניתן לשאילתה</text>
-<text class="t m" x="113" y="120">עובר / נכשל</text>
-<text class="t n" x="113" y="146">SWE-bench מריץ בדיקות</text>
+<text class="t h" x="113" y="76" direction="rtl" unicode-bidi="plaintext">דטרמיניסטי</text>
+<text class="t m" x="113" y="100" direction="rtl" unicode-bidi="plaintext">מצב סופי יחיד וניתן לשאילתה</text>
+<text class="t m" x="113" y="120" direction="rtl" unicode-bidi="plaintext">עובר / נכשל</text>
+<text class="t n" x="113" y="146" direction="rtl" unicode-bidi="plaintext">SWE-bench מריץ בדיקות</text>
 <line x1="212" y1="108" x2="232" y2="108" stroke="#666666" stroke-width="1.5" marker-end="url(#ah-s)"/>
 
 <rect x="236" y="52" width="190" height="112" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text class="t h" x="331" y="76">רשימת בדיקות</text>
-<text class="t m" x="331" y="100">כמה בדיקות דטרמיניסטיות</text>
-<text class="t m" x="331" y="120">נצבר לפי הבסיס המוצהר</text>
-<text class="t n" x="331" y="146">ארבע השכבות של τ²-bench</text>
+<text class="t h" x="331" y="76" direction="rtl" unicode-bidi="plaintext">רשימת בדיקות</text>
+<text class="t m" x="331" y="100" direction="rtl" unicode-bidi="plaintext">כמה בדיקות דטרמיניסטיות</text>
+<text class="t m" x="331" y="120" direction="rtl" unicode-bidi="plaintext">נצבר לפי הבסיס המוצהר</text>
+<text class="t n" x="331" y="146" direction="rtl" unicode-bidi="plaintext">ארבע השכבות של τ²-bench</text>
 <line x1="430" y1="108" x2="450" y2="108" stroke="#666666" stroke-width="1.5" marker-end="url(#ah-s)"/>
 
 <rect x="454" y="52" width="190" height="112" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text class="t h" x="549" y="76">Rubric + שיפוט LLM</text>
-<text class="t m" x="549" y="100">יש ממדים, אין הכרעה בקוד</text>
-<text class="t m" x="549" y="120">ניקוד לפי ממד עם נימוק</text>
-<text class="t n" x="549" y="146">איכות שירות, כתיבת דוחות</text>
+<text class="t h" x="549" y="76" direction="rtl" unicode-bidi="plaintext">Rubric + שיפוט LLM</text>
+<text class="t m" x="549" y="100" direction="rtl" unicode-bidi="plaintext">יש ממדים, אין הכרעה בקוד</text>
+<text class="t m" x="549" y="120" direction="rtl" unicode-bidi="plaintext">ניקוד לפי ממד עם נימוק</text>
+<text class="t n" x="549" y="146" direction="rtl" unicode-bidi="plaintext">איכות שירות, כתיבת דוחות</text>
 <line x1="648" y1="108" x2="668" y2="108" stroke="#666666" stroke-width="1.5" marker-end="url(#ah-s)"/>
 
 <rect x="672" y="52" width="190" height="112" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text class="t h" x="767" y="76">השוואה זוגית</text>
-<text class="t m" x="767" y="100">קשה אפילו לנסח ממדים</text>
-<text class="t m" x="767" y="120">שופט רק בין A ל‑B</text>
-<text class="t n" x="767" y="146">Chatbot Arena</text>
+<text class="t h" x="767" y="76" direction="rtl" unicode-bidi="plaintext">השוואה זוגית</text>
+<text class="t m" x="767" y="100" direction="rtl" unicode-bidi="plaintext">קשה אפילו לנסח ממדים</text>
+<text class="t m" x="767" y="120" direction="rtl" unicode-bidi="plaintext">שופט רק בין A ל‑B</text>
+<text class="t n" x="767" y="146" direction="rtl" unicode-bidi="plaintext">Chatbot Arena</text>
 
 <rect x="18" y="192" width="408" height="66" rx="6" fill="#f3f0e8" stroke="#333333" stroke-width="2"/>
-<text class="t h" x="222" y="212">אימות דטרמיניסטי</text>
-<text class="t m" x="222" y="234">ניתן לשחזור מלא, מתאים ל‑CI, זול</text>
-<text class="t m" x="222" y="250">המחיר: אומר נכון או לא, לא היכן הכשל</text>
+<text class="t h" x="222" y="212" direction="rtl" unicode-bidi="plaintext">אימות דטרמיניסטי</text>
+<text class="t m" x="222" y="234" direction="rtl" unicode-bidi="plaintext">ניתן לשחזור מלא, מתאים ל‑CI, זול</text>
+<text class="t m" x="222" y="250" direction="rtl" unicode-bidi="plaintext">המחיר: אומר נכון או לא, לא היכן הכשל</text>
 
 <rect x="454" y="192" width="408" height="66" rx="6" fill="#f3f0e8" stroke="#333333" stroke-width="2"/>
-<text class="t h" x="658" y="212">שיפוט מודל</text>
-<text class="t m" x="658" y="234">נותן ממדים אבחוניים ומכסה את מה שלא ניתן לניסוח</text>
-<text class="t m" x="658" y="250">המחיר: הטיה ותנודתיות בשיפוט, יקר יותר</text>
+<text class="t h" x="658" y="212" direction="rtl" unicode-bidi="plaintext">שיפוט מודל</text>
+<text class="t m" x="658" y="234" direction="rtl" unicode-bidi="plaintext">נותן ממדים אבחוניים ומכסה את מה שלא ניתן לניסוח</text>
+<text class="t m" x="658" y="250" direction="rtl" unicode-bidi="plaintext">המחיר: הטיה ותנודתיות בשיפוט, יקר יותר</text>
 </svg>

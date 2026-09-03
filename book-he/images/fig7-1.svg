@@ -10,57 +10,56 @@
 .m{font-size:13px}
 .n{font-size:11px;fill:#666666}
 
-.t,.l{direction:rtl;unicode-bidi:plaintext}
-.c{font-family:'SF Mono',Menlo,Consolas,monospace;direction:ltr;unicode-bidi:plaintext}
+.c{font-family:'SF Mono',Menlo,Consolas,monospace}
 
 </style>
 
 <rect x="100" y="20" width="690" height="56" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text class="t h" x="445" y="40">① הגדרת ההצלחה</text>
-<text class="t s" x="445" y="61">Pass@k מודד תקרת יכולת · Pass^k מודד אמינות</text>
+<text class="t h" x="445" y="40" direction="rtl" unicode-bidi="plaintext">① הגדרת ההצלחה</text>
+<text class="t s" x="445" y="61" direction="rtl" unicode-bidi="plaintext">Pass@k מודד תקרת יכולת · Pass^k מודד אמינות</text>
 <line x1="445" y1="76" x2="445" y2="94" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
 
 <rect x="100" y="96" width="690" height="102" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text class="t h" x="445" y="116">② מקור המשימות</text>
+<text class="t h" x="445" y="116" direction="rtl" unicode-bidi="plaintext">② מקור המשימות</text>
 <rect x="116" y="130" width="206" height="54" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
-<text class="t m" x="219" y="147">מבחני ייחוס ציבוריים</text>
-<text class="t n" x="219" y="167">שאילת שיטות · סינון גס</text>
+<text class="t m" x="219" y="147" direction="rtl" unicode-bidi="plaintext">מבחני ייחוס ציבוריים</text>
+<text class="t n" x="219" y="167" direction="rtl" unicode-bidi="plaintext">שאילת שיטות · סינון גס</text>
 <rect x="342" y="130" width="206" height="54" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
-<text class="t m" x="445" y="147">מערך עסקי עצמי</text>
-<text class="t n" x="445" y="167">התפלגות משימות אמיתית</text>
+<text class="t m" x="445" y="147" direction="rtl" unicode-bidi="plaintext">מערך עסקי עצמי</text>
+<text class="t n" x="445" y="167" direction="rtl" unicode-bidi="plaintext">התפלגות משימות אמיתית</text>
 <rect x="568" y="130" width="206" height="54" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
-<text class="t m" x="671" y="147">זרימה חוזרת מהייצור</text>
-<text class="t n" x="671" y="167">תוצר ייחוס הכשלים</text>
+<text class="t m" x="671" y="147" direction="rtl" unicode-bidi="plaintext">זרימה חוזרת מהייצור</text>
+<text class="t n" x="671" y="167" direction="rtl" unicode-bidi="plaintext">תוצר ייחוס הכשלים</text>
 <line x1="445" y1="198" x2="445" y2="216" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
 
 <rect x="100" y="218" width="690" height="106" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text class="t h" x="445" y="238">③ אופן האימות</text>
-<text class="t n" x="445" y="257">← לפי מידת יכולת האימות המכנית של המשימה →</text>
+<text class="t h" x="445" y="238" direction="rtl" unicode-bidi="plaintext">③ אופן האימות</text>
+<text class="t n" x="445" y="257" direction="rtl" unicode-bidi="plaintext">← לפי מידת יכולת האימות המכנית של המשימה →</text>
 <rect x="116" y="268" width="142" height="44" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
-<text class="t m" x="187" y="282">דטרמיניסטי</text>
-<text class="t n" x="187" y="300">SWE-bench</text>
+<text class="t m" x="187" y="282" direction="rtl" unicode-bidi="plaintext">דטרמיניסטי</text>
+<text class="t n" x="187" y="300" direction="rtl" unicode-bidi="plaintext">SWE-bench</text>
 <line x1="262" y1="290" x2="284" y2="290" stroke="#666666" stroke-width="1.5" marker-end="url(#ah-s)"/>
 <rect x="288" y="268" width="142" height="44" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
-<text class="t m" x="359" y="282">רשימת בדיקות</text>
-<text class="t n" x="359" y="300">τ²-bench</text>
+<text class="t m" x="359" y="282" direction="rtl" unicode-bidi="plaintext">רשימת בדיקות</text>
+<text class="t n" x="359" y="300" direction="rtl" unicode-bidi="plaintext">τ²-bench</text>
 <line x1="434" y1="290" x2="456" y2="290" stroke="#666666" stroke-width="1.5" marker-end="url(#ah-s)"/>
 <rect x="460" y="268" width="142" height="44" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
-<text class="t m" x="531" y="282">Rubric + שיפוט LLM</text>
-<text class="t n" x="531" y="300">משימות פתוחות</text>
+<text class="t m" x="531" y="282" direction="rtl" unicode-bidi="plaintext">Rubric + שיפוט LLM</text>
+<text class="t n" x="531" y="300" direction="rtl" unicode-bidi="plaintext">משימות פתוחות</text>
 <line x1="606" y1="290" x2="628" y2="290" stroke="#666666" stroke-width="1.5" marker-end="url(#ah-s)"/>
 <rect x="632" y="268" width="142" height="44" rx="5" fill="#ffffff" stroke="#666666" stroke-width="1.5"/>
-<text class="t m" x="703" y="282">השוואה זוגית</text>
-<text class="t n" x="703" y="300">Chatbot Arena</text>
+<text class="t m" x="703" y="282" direction="rtl" unicode-bidi="plaintext">השוואה זוגית</text>
+<text class="t n" x="703" y="300" direction="rtl" unicode-bidi="plaintext">Chatbot Arena</text>
 <line x1="445" y1="324" x2="445" y2="342" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
 
 <rect x="100" y="344" width="690" height="62" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text class="t h" x="445" y="364">④ שימוש בתוצאות</text>
-<text class="t s" x="445" y="388">מובהקות ← ייחוס כשלים ← רגרסיה ← בחירת מודל ואיטרציית Harness</text>
+<text class="t h" x="445" y="364" direction="rtl" unicode-bidi="plaintext">④ שימוש בתוצאות</text>
+<text class="t s" x="445" y="388" direction="rtl" unicode-bidi="plaintext">מובהקות ← ייחוס כשלים ← רגרסיה ← בחירת מודל ואיטרציית Harness</text>
 
 <path d="M100 375 L52 375 L52 147 L96 147" fill="none" stroke="#333333" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#ah)"/>
-<text class="t n" x="52" y="262" transform="rotate(-90 52 262)">משימות רגרסיה הופכות למקרים חדשים</text>
+<text class="t n" x="52" y="262" transform="rotate(-90 52 262)" direction="rtl" unicode-bidi="plaintext">משימות רגרסיה הופכות למקרים חדשים</text>
 
 <rect x="100" y="424" width="690" height="46" rx="6" fill="#f3f0e8" stroke="#333333" stroke-width="2"/>
-<text class="t m" x="445" y="440" font-weight="bold">תשתית תומכת</text>
-<text class="t n" x="445" y="458">נצפוּת · תשתית הערכה פנימית (אבלציה / AB / דגלים) · סביבת סימולציה (פרק 8)</text>
+<text class="t m" x="445" y="440" font-weight="bold" direction="rtl" unicode-bidi="plaintext">תשתית תומכת</text>
+<text class="t n" x="445" y="458" direction="rtl" unicode-bidi="plaintext">נצפוּת · תשתית הערכה פנימית (אבלציה / AB / דגלים) · סביבת סימולציה (פרק 8)</text>
 </svg>
