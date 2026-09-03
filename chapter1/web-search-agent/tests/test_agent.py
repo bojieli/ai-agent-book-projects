@@ -2,7 +2,15 @@
 
 from unittest.mock import Mock
 
-from agent import WebSearchAgent, _reasoning_safe_temperature, format_trace_step
+import httpx
+from openai import APITimeoutError, RateLimitError
+
+from agent import (
+    WebSearchAgent,
+    _error_hint,
+    _reasoning_safe_temperature,
+    format_trace_step,
+)
 
 
 class FakeResponse:
@@ -282,3 +290,52 @@ def test_agent_loop_survives_malformed_tool_arguments_json(make_choice):
         "web_search", '{"query": "moonshot",}'
     )
     assert any(step["type"] == "action" for step in instance.get_trace())
+
+
+def _timeout_error():
+    request = httpx.Request("POST", "https://api.moonshot.cn/v1/chat/completions")
+    return APITimeoutError(request=request)
+
+
+def _rate_limit_error():
+    request = httpx.Request("POST", "https://api.moonshot.cn/v1/chat/completions")
+    response = httpx.Response(429, request=request)
+    return RateLimitError("rate limit reached", response=response, body=None)
+
+
+def test_timeout_answer_names_the_budget_and_the_429_suspect():
+    """"Request timed out." alone reads like a network fault; the reader has
+    to be told which knob to turn and that 429 retries can burn the budget."""
+    instance = build_agent()
+    instance._request_timeout = 180
+    instance._chat = Mock(side_effect=_timeout_error())
+
+    answer = instance.search_and_answer("question")
+
+    assert answer.startswith("搜索过程中出现错误")
+    assert "180 秒" in answer
+    assert "SEARCH_TIMEOUT" in answer
+    assert "429" in answer
+
+
+def test_rate_limit_answer_says_it_is_a_rate_limit():
+    instance = build_agent()
+    instance._request_timeout = 180
+    instance._chat = Mock(side_effect=_rate_limit_error())
+
+    answer = instance.search_and_answer("question")
+
+    assert "速率限制" in answer
+
+
+def test_error_hint_without_a_known_timeout_still_reads():
+    """The hint is built inside an error path, so a partially constructed
+    agent must not turn a provider failure into an AttributeError."""
+    hint = _error_hint(_timeout_error())
+
+    assert "SEARCH_TIMEOUT" in hint
+    assert "秒" not in hint.split("kimi-k3")[0]
+
+
+def test_error_hint_is_empty_for_unrelated_failures():
+    assert _error_hint(RuntimeError("provider unavailable"), 180) == ""

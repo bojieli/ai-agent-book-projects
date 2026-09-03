@@ -241,7 +241,7 @@ Includes:
 | `KIMI_BASE_URL` | API base URL | `https://api.moonshot.cn/v1` |
 | `DEFAULT_MODEL` | Default model | `kimi-k3` |
 | `MAX_SEARCH_ITERATIONS` | Max search iterations (in Config) | 5 |
-| `SEARCH_TIMEOUT` | Search timeout (seconds) | 30 |
+| `SEARCH_TIMEOUT` | Per-request timeout in seconds, for both the Formula tool call and the chat completion | 180 |
 | `temperature` | Generation creativity | 0.6 |
 
 ### Technical Notes
@@ -276,8 +276,9 @@ Includes:
 
 1. **API limits**: respect Kimi quotas and rate limits
 2. **Search quality**: depends on Kimi’s search capability
-3. **Latency**: web search can take time
-4. **Accuracy**: double-check critical facts; the agent may still err
+3. **Latency**: web search can take time, and `kimi-k3` runs with `reasoning_effort=max`, so a single completion often takes one to a few minutes — hence the 180 s default `SEARCH_TIMEOUT`
+4. **Rate limits**: on a 429 the SDK retries automatically; if the retries use up the timeout budget you will see a timeout rather than a rate-limit error, so check the log for `429` before raising `SEARCH_TIMEOUT`
+5. **Accuracy**: double-check critical facts; the agent may still err
 
 ### Usage tips
 
@@ -518,7 +519,7 @@ python examples.py
 | `KIMI_BASE_URL` | API 基础 URL | `https://api.moonshot.cn/v1` |
 | `DEFAULT_MODEL` | 默认模型 | `kimi-k3` |
 | `MAX_SEARCH_ITERATIONS` | 最大搜索迭代次数（Config 中设置） | 5 |
-| `SEARCH_TIMEOUT` | 搜索超时时间（秒） | 30 |
+| `SEARCH_TIMEOUT` | 单次请求超时（秒），同时作用于 Formula 工具调用与 chat completion | 180 |
 | `temperature` | 控制生成内容的创造性 | 0.6 |
 
 ### 技术特点
@@ -553,8 +554,9 @@ python examples.py
 
 1. **API 限制**: 请注意 Kimi API 的调用限制和配额
 2. **搜索质量**: 搜索结果质量依赖于 Kimi 的搜索能力
-3. **响应时间**: 网络搜索可能需要一定时间，请耐心等待
-4. **内容准确性**: Agent 会尽力提供准确信息，但建议对重要信息进行二次验证
+3. **响应时间**: 网络搜索本身需要时间，而 `kimi-k3` 以 `reasoning_effort=max` 运行，单次调用常需一到数分钟，因此 `SEARCH_TIMEOUT` 默认为 180 秒
+4. **速率限制**: 遇到 429 时 SDK 会自动重试，重试若把超时预算耗完，最终报出的是超时而不是速率限制；调大 `SEARCH_TIMEOUT` 之前，先看日志里有没有 `429`
+5. **内容准确性**: Agent 会尽力提供准确信息，但建议对重要信息进行二次验证
 
 ### 使用建议
 
