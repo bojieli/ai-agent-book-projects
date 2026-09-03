@@ -1,9 +1,9 @@
 # Hiểu sâu về AI Agent: Nguyên lý thiết kế và thực hành kỹ thuật
 
-[![PDF](https://img.shields.io/badge/PDF-tải%20về-success.svg)](#-sách-điện-tử) [![Đọc trực tuyến](https://img.shields.io/badge/🌐_Đọc_trực_tuyến-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![Languages](https://img.shields.io/badge/dịch-14%20ngôn%20ngữ-informational.svg)](#-sách-điện-tử)
+[![PDF](https://img.shields.io/badge/PDF-tải%20về-success.svg)](#-sách-điện-tử) [![Đọc trực tuyến](https://img.shields.io/badge/🌐_Đọc_trực_tuyến-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![Languages](https://img.shields.io/badge/dịch-15%20ngôn%20ngữ-informational.svg)](#-sách-điện-tử)
 [![Trending GitHub Project of the Day](https://img.shields.io/badge/GitHub%20Trending-Project%20of%20the%20Day-orange?logo=github)](https://github.com/trending)
 
-**[中文](../../README.md) · [English](../en/README.md) · [Español](../es/README.md) · [Bahasa Indonesia](../id/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · Tiếng Việt ← hiện tại · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · [한국어](../ko/README.md) · [Magyar](../hu/README.md) · [עברית](../../README.he.md)**
+**[中文](../../README.md) · [English](../en/README.md) · [Español](../es/README.md) · [Bahasa Indonesia](../id/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · Tiếng Việt ← hiện tại · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · [한국어](../ko/README.md) · [Magyar](../hu/README.md) · [עברית](../../README.he.md) · [Português (Brasil)](../../README.ptbr.md)**
 
 > 📥 **[Tải PDF / EPUB](#-sách-điện-tử)** (khuyên dùng) — nên đọc sách qua bản PDF / EPUB để có trải nghiệm tốt nhất; bạn cũng có thể [đọc trực tuyến](https://bojieli.github.io/ai-agent-book/) (chuyển đổi ngôn ngữ, mục lục đóng/mở được, tìm kiếm toàn văn; tự động xây dựng lại sau mỗi lần đẩy lên main).
 
@@ -13,7 +13,7 @@
 >
 > Nếu bạn đang đọc một bản PDF cũ, chúng tôi khuyên bạn [tải PDF mới nhất](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-vi.pdf). Ấn bản mới còn có nhiều nội dung được sửa chữa và điều chỉnh; vui lòng sử dụng phiên bản mới nhất.
 
-| 📚 **10 chương** nội dung, từ nền tảng đến sản xuất | 📂 **93** dự án đi kèm (70+ chạy độc lập) | 🌐 **14 ngôn ngữ**: Trung / Anh / Tây Ban Nha / Indonesia / Ả Rập / 繁體中文（台灣） / Nga / Tamil / Việt / Nhật / Thổ Nhĩ Kỳ / Hàn / Hungary / Do Thái |
+| 📚 **10 chương** nội dung, từ nền tảng đến sản xuất | 📂 **93** dự án đi kèm (70+ chạy độc lập) | 🌐 **15 ngôn ngữ**: Trung / Anh / Tây Ban Nha / Indonesia / Ả Rập / 繁體中文（台灣） / Nga / Tamil / Việt / Nhật / Thổ Nhĩ Kỳ / Hàn / Hungary / Do Thái / Bồ Đào Nha |
 | :---: | :---: | :---: |
 
 ## 📖 Sách điện tử

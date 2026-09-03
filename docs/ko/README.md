@@ -1,9 +1,9 @@
 # AI 에이전트를 깊이 이해하기: 설계 원리와 엔지니어링 실전
 
-[![PDF](https://img.shields.io/badge/PDF-다운로드-success.svg)](#-전자책) [![온라인으로 읽기](https://img.shields.io/badge/🌐_온라인으로_읽기-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![Languages](https://img.shields.io/badge/번역-14개%20언어-informational.svg)](#-전자책)
+[![PDF](https://img.shields.io/badge/PDF-다운로드-success.svg)](#-전자책) [![온라인으로 읽기](https://img.shields.io/badge/🌐_온라인으로_읽기-bojieli.github.io-success?style=flat-square)](https://bojieli.github.io/ai-agent-book/) [![Stars](https://img.shields.io/github/stars/bojieli/ai-agent-book?style=social)](https://github.com/bojieli/ai-agent-book) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](../../LICENSE) [![Languages](https://img.shields.io/badge/번역-15개%20언어-informational.svg)](#-전자책)
 [![Trending GitHub Project of the Day](https://img.shields.io/badge/GitHub%20Trending-Project%20of%20the%20Day-orange?logo=github)](https://github.com/trending)
 
-**[中文](../../README.md) · [English](../en/README.md) · [Español](../es/README.md) · [Bahasa Indonesia](../id/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · 한국어 ← 현재 · [Magyar](../hu/README.md) · [עברית](../../README.he.md)**
+**[中文](../../README.md) · [English](../en/README.md) · [Español](../es/README.md) · [Bahasa Indonesia](../id/README.md) · [العربية](../ar/README.md) · [繁體中文（台灣）](../zh-TW/README.md) · [Русский](../ru/README.md) · [Tiếng Việt](../vi/README.md) · [தமிழ்](../ta/README.md) · [日本語](../ja/README.md) · [Türkçe](../tr/README.md) · 한국어 ← 현재 · [Magyar](../hu/README.md) · [עברית](../../README.he.md) · [Português (Brasil)](../../README.ptbr.md)**
 
 > 📥 **[PDF / EPUB 다운로드](#-전자책)**(권장) — PDF와 EPUB 판본에서 가장 좋은 읽기 경험을 제공합니다. [온라인 판본](https://bojieli.github.io/ai-agent-book/)에서는 언어 전환, 접을 수 있는 장별 탐색, 전체 텍스트 검색을 이용할 수 있습니다.
 
@@ -13,7 +13,7 @@
 >
 > 이전 PDF를 읽고 계시다면 [최신 PDF를 다운로드](https://github.com/bojieli/ai-agent-book/releases/download/latest/AI-Agents-in-Depth-ko.pdf)하시기를 권장합니다. 신판에는 많은 내용 수정과 조정도 포함되어 있으므로 최신 버전을 이용해 주세요.
 
-| 📚 기초부터 프로덕션까지 **10개 장** | 📂 **94개** 연계 실습(로컬 프로젝트와 외부 재현 트랙 포함) | 🌐 **14개 언어**: 중 / 영 / 스페인 / 인도네시아 / 아랍 / 번체 중국어(대만) / 러 / 타밀 / 베트남 / 일 / 터키 / 한 / 헝가리 / 히브리 |
+| 📚 기초부터 프로덕션까지 **10개 장** | 📂 **94개** 연계 실습(로컬 프로젝트와 외부 재현 트랙 포함) | 🌐 **15개 언어**: 중 / 영 / 스페인 / 인도네시아 / 아랍 / 번체 중국어(대만) / 러 / 타밀 / 베트남 / 일 / 터키 / 한 / 헝가리 / 히브리 / 포르투갈어(브라질) |
 | :---: | :---: | :---: |
 
 ## 📖 전자책
