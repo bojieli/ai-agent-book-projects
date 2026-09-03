@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Build EPUB 3 editions from the Markdown sources.
-# Usage: ./build_epub.sh [all|zh-CN|zh-TW|en|es|id|ru|ta|vi|tr|ko|hu|ja|ar|he]
+# Usage: ./build_epub.sh [all|zh-CN|zh-TW|en|es|id|ru|ta|vi|tr|ko|hu|ja|ar|he|ptbr]
 # Note: `all` does NOT include ja or ar while their PDF pipelines are being
 # validated. Build them explicitly with `./build_epub.sh ja|ar`.
 
@@ -17,9 +17,9 @@ for command in pandoc pdftoppm python3; do
 done
 
 case "$SELECTION" in
-    all|zh-CN|zh-TW|en|es|id|ru|ta|vi|tr|ko|hu|ja|ar|he) ;;
+    all|zh-CN|zh-TW|en|es|id|ru|ta|vi|tr|ko|hu|ja|ar|he|ptbr) ;;
     *)
-        echo "Usage: $0 [all|zh-CN|zh-TW|en|es|id|ru|ta|vi|tr|ko|hu|ja|ar|he]" >&2
+        echo "Usage: $0 [all|zh-CN|zh-TW|en|es|id|ru|ta|vi|tr|ko|hu|ja|ar|he|ptbr]" >&2
         exit 2
         ;;
 esac
@@ -29,7 +29,7 @@ trap 'rm -rf "$TMP_DIR"' EXIT
 
 build_edition() {
     local language="$1"
-    local directory title author pdf output title_label toc_label direction
+    local directory title author pdf output title_label toc_label direction metadata_lang
     local -a chapters
 
     case "$language" in
@@ -173,9 +173,23 @@ build_edition() {
             toc_label="תוכן העניינים"
             chapters=(introduction.he.md chapter{1..10}.he.md afterword.he.md)
             ;;
+        ptbr)
+            directory="book-ptbr"
+            title="Agentes de IA em Profundidade: Princípios de Design e Prática de Engenharia"
+            author="Bojie Li; tradução para português do Brasil: Leonardo F. Nascimento"
+            pdf="AI-Agents-in-Depth-v2.0-ptbr.pdf"
+            output="AI-Agents-in-Depth-v2.0-ptbr.epub"
+            title_label="Página de rosto"
+            toc_label="Sumário"
+            chapters=(introduction.ptbr.md chapter{1..10}.ptbr.md afterword.ptbr.md reference-answers.ptbr.md)
+            ;;
     esac
 
     local edition_dir="$ROOT/$directory"
+    metadata_lang="$language"
+    if [ "$language" = "ptbr" ]; then
+        metadata_lang="pt-BR"
+    fi
     direction="ltr"
     if [ "$language" = "ar" ] || [ "$language" = "he" ]; then
         direction="rtl"
@@ -211,7 +225,7 @@ build_edition() {
             --epub-cover-image="$cover" \
             --metadata title="$title" \
             --metadata author="$author" \
-            --metadata lang="$language" \
+            --metadata lang="$metadata_lang" \
             --metadata dir="$direction" \
             --metadata identifier="https://github.com/bojieli/ai-agent-book#$language"
     )
@@ -232,7 +246,7 @@ build_edition() {
 }
 
 if [ "$SELECTION" = "all" ]; then
-    for language in zh-CN zh-TW en es id ru ta vi tr ko hu he; do
+    for language in zh-CN zh-TW en es id ru ta vi tr ko hu he ptbr; do
         build_edition "$language"
     done
 else

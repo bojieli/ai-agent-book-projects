@@ -314,5 +314,27 @@
     },
     "sidebar": { "show": "הצגת ניווט", "hide": "הסתרת ניווט" },
     "palette": { "light": "מעבר למצב בהיר", "dark": "מעבר למצב כהה" }
+  },
+  "ptbr": {
+    "material_locale": "pt-BR",
+    "nav": {
+      "首页": "Página inicial",
+      "引言": "Introdução",
+      "第1章 Agent基础知识": "Capítulo 1 · Primeiros passos com agentes de IA",
+      "第2章 上下文工程": "Capítulo 2 · Engenharia de contexto",
+      "第3章 用户记忆和知识库": "Capítulo 3 · Memória do usuário e base de conhecimento",
+      "第4章 工具": "Capítulo 4 · Ferramentas",
+      "第5章 CodingAgent与通用Agent": "Capítulo 5 · Agente de código e geração de código",
+      "第6章 交互：观察与动作空间的扩展": "Capítulo 6 · Interação: expansão dos espaços de observação e ação",
+      "第7章 Agent的评估": "Capítulo 7 · Avaliação de agentes",
+      "第8章 模型后训练": "Capítulo 8 · Pós-treinamento de modelos",
+      "第9章 Agent的持续进化": "Capítulo 9 · Evolução contínua de agentes",
+      "第10章 多Agent协作": "Capítulo 10 · Colaboração multiagente",
+      "后记": "Posfácio",
+      "思考题参考答案": "Respostas das questões de reflexão",
+      "配套实验": "Experimentos"
+    },
+    "sidebar": { "show": "Mostrar navegação", "hide": "Ocultar navegação" },
+    "palette": { "light": "Mudar para o modo claro", "dark": "Mudar para o modo escuro" }
   }
 }
