@@ -69,6 +69,13 @@ PROVIDERS: dict[str, Provider] = {
         default_model="glm-5.2",
         key_vars=("ZHIPU_API_KEY",),
     ),
+    "krill": Provider(
+        name="krill",
+        base_url="https://api.krill-code.net/v1",
+        default_model="gpt-5.6-luna",
+        key_vars=("KRILL_API_KEY",),
+        base_url_var="KRILL_BASE_URL",
+    ),
     "openrouter": Provider(
         name="openrouter",
         base_url=OPENROUTER_BASE_URL,
