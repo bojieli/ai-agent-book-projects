@@ -85,7 +85,7 @@ source .venv/bin/activate
 # 未安装 uv 时可用 pip 兜底：
 # python -m pip install -e ".[ch8]"
 
-cd chapter8/browser-use-rpa
+cd chapter9/browser-use-rpa
 
 # 迁移期间仍支持单项目兼容路径（playwright-stealth 等历史可选依赖）：
 # python -m pip install -r requirements.txt
