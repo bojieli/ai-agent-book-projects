@@ -79,14 +79,14 @@
 | **Zhipu GLM** | <https://open.bigmodel.cn/> | GLM-4.6 등, 중국어 성능과 비용 효율이 좋음 | 중국 본토 |
 | **SiliconFlow** | <https://siliconflow.cn/> | DeepSeek, Qwen 등 여러 오픈 소스 모델 | 중국 본토 |
 | **DeepSeek** | <https://platform.deepseek.com/> | DeepSeek 공식 API | 글로벌·중국 본토 |
-| **Krill AI** | [www.krill-ai.net](https://www.krill-ai.net/register?invite=Q8D3L35725) | 주요 글로벌·중국 모델을 한곳에서 제공 | 글로벌·중국 본토 |
+| **Krill AI** | [www.krill-code.com](https://www.krill-code.com/register?invite=Q8D3L35725) | 주요 글로벌·중국 모델을 한곳에서 제공 | 글로벌·중국 본토 |
 | **OpenRouter** | <https://openrouter.ai/> | GPT, Claude, Gemini, Kimi, GLM, DeepSeek, Qwen 등을 한곳에서 제공 | 글로벌 |
 
 ## 💎 후원
 
 이 프로젝트를 후원하는 **Krill AI**에 감사드립니다. Krill은 GPT, Claude, Gemini와 여러 중국 모델을 위한 안정적인 API 중계 서비스, 기업 맞춤 지원, 전용 WebSocket 연결을 제공합니다.
 
-이 책의 독자는 [이 링크](https://www.krill-ai.net/register?invite=Q8D3L35725)로 가입하고 충전할 때 프로모션 코드 `ai-agent-book`을 입력하면 첫 Codex 플랜을 23% 할인받을 수 있습니다.
+이 책의 독자는 [이 링크](https://www.krill-code.com/register?invite=Q8D3L35725)로 가입하고 충전할 때 프로모션 코드 `ai-agent-book`을 입력하면 첫 Codex 플랜을 23% 할인받을 수 있습니다.
 
 > 🧪 실험 실행 상태, 증거, 미충족 승인 조건은 [`EXPERIMENT_STATUS.md`](../EXPERIMENT_STATUS.md)에서 별도로 관리합니다. 소스 코드를 복제하거나 설치한 것만으로는 실험 완료를 입증할 수 없습니다.
 

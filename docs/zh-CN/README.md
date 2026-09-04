@@ -107,14 +107,14 @@ uv run python chapter1/context/main.py
 | **智谱 GLM** | <https://open.bigmodel.cn/> | GLM-4.6 等，中文能力突出，性价比高 | 中国大陆 |
 | **Siliconflow** | <https://siliconflow.cn/> | 各类开源模型（DeepSeek、Qwen 等），国内快速接入 | 中国大陆 |
 | **DeepSeek** | <https://platform.deepseek.com/> | DeepSeek 官方 API | 全球 + 中国大陆 |
-| **Krill AI** | [www.krill-ai.net](https://www.krill-ai.net/register?invite=Q8D3L35725) | 一站式接入全球及国内主流模型（OpenAI、Claude、Gemini、Grok、Kimi、GLM、DeepSeek、Qwen、Minimax） | 全球 + 中国大陆 |
+| **Krill AI** | [www.krill-code.com](https://www.krill-code.com/register?invite=Q8D3L35725) | 一站式接入全球及国内主流模型（OpenAI、Claude、Gemini、Grok、Kimi、GLM、DeepSeek、Qwen、Minimax） | 全球 + 中国大陆 |
 | **OpenRouter** | <https://openrouter.ai/> | 一站式接入全球及国内主流模型（GPT、Claude、Gemini、Kimi、GLM、DeepSeek、Qwen 等） | 全球 |
 
 ## 💎 赞助
 
 感谢 **Krill AI** 赞助本项目！Krill 提供 GPT / Claude / Gemini 及众多国产模型的官方稳定极速 API 中转，支持企业级定制、开票及 7×16h 专属技术支持，并独家适配 WebSocket 连接实现极速首 Token 响应。
 
-Krill 为本书读者提供专属优惠：通过 [此链接](https://www.krill-ai.net/register?invite=Q8D3L35725) 注册并在充值时输入优惠码 "ai-agent-book"，即可享受首单 Codex 方案 23% 折扣！
+Krill 为本书读者提供专属优惠：通过 [此链接](https://www.krill-code.com/register?invite=Q8D3L35725) 注册并在充值时输入优惠码 "ai-agent-book"，即可享受首单 Codex 方案 23% 折扣！
 
 > 🧪 实验执行状态、证据及未达验收条件另行记录于 [`EXPERIMENT_STATUS.md`](../EXPERIMENT_STATUS.md)；clone 或安装源码不构成完成证明。
 

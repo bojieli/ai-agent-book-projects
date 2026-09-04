@@ -108,14 +108,14 @@ Nên đăng ký API key từ vài nền tảng để thuận tiện học tập.
 | **Zhipu GLM** | <https://open.bigmodel.cn/> | GLM-4.6, tiếng Trung mạnh, hiệu năng/ch giá tốt | Trung Quốc đại lục |
 | **Siliconflow** | <https://siliconflow.cn/> | Các mô hình mở (DeepSeek, Qwen, v.v.), truy cập nhanh từ Trung Quốc đại lục | Trung Quốc đại lục |
 | **DeepSeek** | <https://platform.deepseek.com/> | API chính thức của DeepSeek | Toàn cầu + Trung Quốc đại lục |
-| **Krill AI** | [www.krill-ai.net](https://www.krill-ai.net/register?invite=Q8D3L35725) | Truy cập một điểm đến các mô hình chính toàn cầu và nội địa Trung Quốc (OpenAI, Claude, Gemini, Grok, Kimi, GLM, DeepSeek, Qwen, Minimax) | Toàn cầu + Trung Quốc đại lục |
+| **Krill AI** | [www.krill-code.com](https://www.krill-code.com/register?invite=Q8D3L35725) | Truy cập một điểm đến các mô hình chính toàn cầu và nội địa Trung Quốc (OpenAI, Claude, Gemini, Grok, Kimi, GLM, DeepSeek, Qwen, Minimax) | Toàn cầu + Trung Quốc đại lục |
 | **OpenRouter** | <https://openrouter.ai/> | Truy cập một điểm đến các mô hình chính toàn cầu và nội địa Trung Quốc (GPT, Claude, Gemini, Kimi, GLM, DeepSeek, Qwen, v.v.) | Toàn cầu |
 
 ## 💎 Nhà tài trợ
 
 Cảm ơn **Krill AI** đã tài trợ dự án này! Krill cung cấp dịch vụ trung chuyển API chính thức, ổn định và cực nhanh cho GPT / Claude / Gemini và nhiều mô hình Trung Quốc, hỗ trợ tùy chỉnh cấp doanh nghiệp, xuất hóa đơn, hỗ trợ kỹ thuật riêng 7×16h, cùng kết nối WebSocket được tối ưu độc quyền cho tốc độ token đầu tiên cực nhanh.
 
-Krill dành ưu đãi đặc biệt cho độc giả của sách: đăng ký qua [liên kết này](https://www.krill-ai.net/register?invite=Q8D3L35725) và nhập mã khuyến mãi "ai-agent-book" khi nạp tiền để được giảm 23% cho lần mua gói Codex đầu tiên!
+Krill dành ưu đãi đặc biệt cho độc giả của sách: đăng ký qua [liên kết này](https://www.krill-code.com/register?invite=Q8D3L35725) và nhập mã khuyến mãi "ai-agent-book" khi nạp tiền để được giảm 23% cho lần mua gói Codex đầu tiên!
 
 > 🧪 Trạng thái thực thi, bằng chứng và các tiêu chí nghiệm thu chưa đạt của thí nghiệm được theo dõi riêng tại [`EXPERIMENT_STATUS.md`](../EXPERIMENT_STATUS.md); việc clone hoặc cài đặt mã nguồn không chứng minh thí nghiệm đã hoàn thành.
 
