@@ -1,0 +1,85 @@
+{
+  "arm": "async_steer",
+  "passed": true,
+  "checks": {
+    "no_api_or_runner_error": true,
+    "requested_model_returned": true,
+    "latest_constraints_and_selection": true,
+    "one_call_one_execution_one_delivery": true,
+    "original_call_id_and_actual_result": true,
+    "receipt_grounded": true,
+    "native_async_flag": true,
+    "steer_while_tool_pending": true,
+    "one_steer_with_two_user_updates": true,
+    "accepted_and_successor_observed": true,
+    "steer_before_parent_terminal": true,
+    "successor_completed": true
+  },
+  "metrics": {
+    "returned_models": [
+      "gpt-6-astra"
+    ],
+    "response_ids": [
+      "resp_03613f7f68a34e88016a9c2264d1d487d0a367bf3484a2e402",
+      "resp_03613f7f68a34e88016a9c2267be1887d0aae26306458a2213",
+      "resp_03613f7f68a34e88016a9c226f937c87d099b377022ad0ff0d"
+    ],
+    "tool_calls": 1,
+    "steer_accepted": 1,
+    "steer_pending": 0,
+    "errors": [],
+    "answer": {
+      "venue": "B",
+      "budget": 1000,
+      "attendees": 10,
+      "receipt": "577f756e79820ca98cf2bda2",
+      "source": "demo"
+    },
+    "independent_text_while_tool_pending": true,
+    "tool_duration_s": 8.001,
+    "first_text_after_call_s": 0.001,
+    "parent_terminal": "response.completed",
+    "parent_incomplete_reason": null,
+    "accepted_latency_s": 0.24,
+    "automatic_successor": true,
+    "elapsed_s": 12.867352,
+    "usage": [
+      {
+        "input_tokens": 390,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 45,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 435
+      },
+      {
+        "input_tokens": 457,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 58,
+        "output_tokens_details": {
+          "reasoning_tokens": 10
+        },
+        "total_tokens": 515
+      },
+      {
+        "input_tokens": 590,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 39,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 629
+      }
+    ]
+  }
+}

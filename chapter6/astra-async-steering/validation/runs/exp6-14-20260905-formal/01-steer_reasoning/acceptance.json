@@ -1,0 +1,67 @@
+{
+  "arm": "steer_reasoning",
+  "passed": true,
+  "checks": {
+    "no_api_or_runner_error": true,
+    "requested_model_returned": true,
+    "latest_constraints_and_selection": true,
+    "one_steer_with_two_user_updates": true,
+    "accepted_and_successor_observed": true,
+    "steer_before_parent_terminal": true,
+    "successor_continues_steered_parent": true,
+    "successor_completed": true,
+    "no_manual_restart": true,
+    "reasoning_item_before_steer": true
+  },
+  "metrics": {
+    "returned_models": [
+      "gpt-6-astra"
+    ],
+    "response_ids": [
+      "resp_0a099a7561f003c0016a9c247d68cc87d088717749c759e60f",
+      "resp_0a099a7561f003c0016a9c2480591c87d0ac72a49fa23e1666"
+    ],
+    "tool_calls": 0,
+    "steer_accepted": 1,
+    "steer_pending": 0,
+    "errors": [],
+    "answer": {
+      "venue": "B",
+      "budget": 1000,
+      "attendees": 10,
+      "source": "demo",
+      "plan": "Feasibility: B is the cheapest qualifying venue, costing 900 with capacity for 12, leaving 100. Staffing: assign facilitator and note-taker roles among the 10 attendees. Setup: arrange 10 seats around a discussion table and check presentation equipment. Schedule: finalize the agenda two days before, confirm attendance one day before, and allow 30 minutes for setup. Simulation only; no booking."
+    },
+    "parent_terminal": "response.incomplete",
+    "parent_incomplete_reason": "steered",
+    "accepted_latency_s": 0.273,
+    "automatic_successor": true,
+    "elapsed_s": 7.76272,
+    "usage": [
+      {
+        "input_tokens": 304,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 78,
+        "output_tokens_details": {
+          "reasoning_tokens": 78
+        },
+        "total_tokens": 382
+      },
+      {
+        "input_tokens": 419,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 160,
+        "output_tokens_details": {
+          "reasoning_tokens": 34
+        },
+        "total_tokens": 579
+      }
+    ]
+  }
+}

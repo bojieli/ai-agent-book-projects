@@ -1,53 +1,65 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 480" width="880" height="480" style="background:#ffffff">
-<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
-<rect x="20" y="55" width="840" height="195" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="60" y="78" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">训练范式（严格同步序列）</text>
-<rect x="680" y="64" width="160" height="28" rx="14" fill="#999999" stroke="#333333" stroke-width="2"/>
-<text x="760.0" y="78.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">API 强制约束</text>
-<rect x="47.0" y="100" width="180" height="55" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="137.0" y="120" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Observation</text>
-<text x="137.0" y="142" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">用户: 查北京天气</text>
-<line x1="229.0" y1="128" x2="247.0" y2="128" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<rect x="249.0" y="100" width="180" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="339.0" y="120" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Thinking</text>
-<text x="339.0" y="142" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">需要调天气工具</text>
-<line x1="431.0" y1="128" x2="449.0" y2="128" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<rect x="451.0" y="100" width="180" height="55" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="541.0" y="120" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Action</text>
-<text x="541.0" y="142" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">get_weather(Beijing)</text>
-<line x1="633.0" y1="128" x2="651.0" y2="128" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<rect x="653.0" y="100" width="180" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="743.0" y="120" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Observation</text>
-<text x="743.0" y="142" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">22°C, 晴</text>
-<rect x="47.0" y="170" width="786" height="30" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
-<text x="57.0" y="185" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">tool_call → 必须下一条是 tool_result，否则 API 报错</text>
-<line x1="20" y1="262" x2="860" y2="262" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="440.0" y="280" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">矛盾</text>
-<rect x="20" y="295" width="840" height="210" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="60" y="318" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">部署现实（异步事件穿插）</text>
-<rect x="680" y="304" width="160" height="28" rx="14" fill="#999999" stroke="#333333" stroke-width="2"/>
-<text x="760.0" y="318.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">格式冲突!</text>
-<rect x="50.0" y="340" width="156.0" height="50" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="128.0" y="355" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Assistant</text>
-<text x="128.0" y="372" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">tool_call:</text>
-<text x="128.0" y="386" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">get_weather(Beijing)</text>
-<rect x="221.6" y="340" width="218.4" height="50" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="330.8" y="355" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">等待中...</text>
-<text x="330.8" y="372" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">工具执行 ~5s</text>
-<rect x="362.0" y="340" width="117.00000000000006" height="50" rx="4" fill="#999999" stroke="#333333" stroke-width="2"/>
-<text x="420.5" y="355" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">User 打断</text>
-<text x="420.5" y="372" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">&quot;不用了,</text>
-<text x="420.5" y="386" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">查上海的&quot;</text>
-<rect x="494.59999999999997" y="340" width="163.8" height="50" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="576.5" y="355" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">???</text>
-<text x="576.5" y="372" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">tool_result 何时到？</text>
-<text x="576.5" y="386" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">格式如何保证？</text>
-<rect x="674.0" y="340" width="156.0" height="50" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="752.0" y="355" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">占位符</text>
-<text x="752.0" y="372" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">[工具仍在执行,</text>
-<text x="752.0" y="386" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">优先处理打断]</text>
-<rect x="50" y="410" width="780" height="40" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
-<text x="60" y="430" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">解决: 占位符修复格式 + 非紧急事件入队 + 只在真正紧急时打断</text>
-<rect x="140" y="465" width="600" height="40" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
-<text x="440.0" y="485" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">根本解法：下一代模型需在异步环境中通过 RL 训练</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="620" viewBox="0 0 880 620" style="background:#ffffff">
+  <title>同步接口兼容与 Astra 原生异步</title>
+  <desc>同步接口通过任务句柄或占位符接入新事件；Astra 的异步工具与 steering 由原生协议支持，应用仍管理执行与结果归属。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#444"/></marker>
+    <style>
+      text{font-family:Arial,'PingFang SC','Microsoft YaHei',sans-serif;fill:#333}
+      .title{font-size:20px;font-weight:700}
+      .label{font-size:16px;font-weight:600}
+      .small{font-size:14px}
+      .code{font-family:Menlo,Consolas,monospace;font-size:13px}
+      .box{fill:#f4f4f4;stroke:#555;stroke-width:1.5}
+      .line{fill:none;stroke:#555;stroke-width:1.5;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="880" height="620" fill="#fff"/>
+  <rect x="20" y="20" width="840" height="162" rx="8" fill="#fff" stroke="#777" stroke-dasharray="7 4"/>
+  <text x="40" y="51" class="title">兼容路径：模型或接口要求同步工具配对</text>
+  <rect x="40" y="72" width="176" height="62" rx="5" class="box"/>
+  <text x="128" y="97" class="label" text-anchor="middle">发起后台任务</text>
+  <text x="128" y="120" class="small" text-anchor="middle">返回句柄或未完成状态</text>
+  <path d="M216 103 H243" class="line"/>
+  <rect x="249" y="72" width="176" height="62" rx="5" class="box"/>
+  <text x="337" y="97" class="label" text-anchor="middle">应用接入新事件</text>
+  <text x="337" y="120" class="small" text-anchor="middle">排队 / 取消后重新请求</text>
+  <path d="M425 103 H452" class="line"/>
+  <rect x="458" y="72" width="176" height="62" rx="5" class="box"/>
+  <text x="546" y="97" class="label" text-anchor="middle">模型继续任务</text>
+  <text x="546" y="120" class="small" text-anchor="middle">显式记录任务仍在运行</text>
+  <path d="M634 103 H661" class="line"/>
+  <rect x="667" y="72" width="173" height="62" rx="5" class="box"/>
+  <text x="753" y="97" class="label" text-anchor="middle">真实结果到达</text>
+  <text x="753" y="120" class="small" text-anchor="middle">按任务 ID 接入新事件</text>
+  <text x="40" y="162" class="small">运行时实现异步；模型仍通过同步格式交互。适用于不支持原生能力的组合。</text>
+  <rect x="20" y="202" width="840" height="320" rx="8" fill="#fff" stroke="#444" stroke-width="2"/>
+  <text x="40" y="234" class="title">原生路径：GPT-6 Astra + Responses API</text>
+  <text x="40" y="266" class="label">异步工具</text>
+  <rect x="40" y="282" width="226" height="65" rx="5" class="box"/>
+  <text x="153" y="307" class="code" text-anchor="middle">function / custom</text>
+  <text x="153" y="331" class="code" text-anchor="middle">async: true · call_id</text>
+  <path d="M266 315 H307" class="line"/>
+  <rect x="313" y="282" width="244" height="65" rx="5" class="box"/>
+  <text x="435" y="307" class="label" text-anchor="middle">应用执行工具 ∥ 模型继续工作</text>
+  <text x="435" y="331" class="small" text-anchor="middle">推理、其他工具、独立回答</text>
+  <path d="M557 315 H598" class="line"/>
+  <rect x="604" y="282" width="236" height="65" rx="5" class="box"/>
+  <text x="722" y="307" class="label" text-anchor="middle">随后归还真实结果</text>
+  <text x="722" y="331" class="small" text-anchor="middle">原始 call_id + 最新 response</text>
+  <text x="40" y="383" class="label">回合中途 steering（同一 WebSocket）</text>
+  <rect x="40" y="400" width="226" height="67" rx="5" class="box"/>
+  <text x="153" y="425" class="label" text-anchor="middle">response 仍在生成</text>
+  <text x="153" y="449" class="code" text-anchor="middle">→ response.steer(user)</text>
+  <path d="M266 433 H307" class="line"/>
+  <rect x="313" y="400" width="244" height="67" rx="5" class="box"/>
+  <text x="435" y="425" class="label" text-anchor="middle">accepted：更新已排队</text>
+  <text x="435" y="449" class="small" text-anchor="middle">在安全输出边界完成接续</text>
+  <path d="M557 433 H598" class="line"/>
+  <rect x="604" y="400" width="236" height="67" rx="5" class="box"/>
+  <text x="722" y="425" class="label" text-anchor="middle">新的 response ID</text>
+  <text x="722" y="449" class="small" text-anchor="middle">保留已完成内容，应用更新</text>
+  <text x="40" y="495" class="small">需要客户端工具结果时：pending → 补齐 required_input → 续接；不要重发已接收的 steering。</text>
+  <rect x="20" y="542" width="840" height="57" rx="6" fill="#e9e9e9"/>
+  <text x="440" y="566" class="label" text-anchor="middle">原生能力已经可用；任务状态、结果匹配与工具取消仍由运行时负责</text>
+  <text x="440" y="588" class="small" text-anchor="middle">同一个用户任务可以跨多个 response；steering 不自动撤销已发生的动作。</text>
 </svg>

@@ -1,0 +1,2 @@
+{"index": 0, "t_s": 1.7e-05, "direction": "local", "event": {"type": "run.config", "arm": "unsupported_steer", "model": "gpt-5.6-sol", "endpoint": "wss://api.openai.com/v1/responses", "tool_delay_s": 8.0, "timeout_s": 120.0, "started_utc": "2026-09-05T14:01:29.058938+00:00"}}
+{"index": 1, "t_s": 1.475943, "direction": "local", "event": {"type": "run.error", "class": "ConnectionResetError", "message": ""}}

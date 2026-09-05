@@ -1,0 +1,45 @@
+{
+  "arm": "unsupported_steer",
+  "passed": true,
+  "checks": {
+    "explicit_unsupported_error": true,
+    "model_response_observed": true,
+    "steer_was_sent": true
+  },
+  "metrics": {
+    "returned_models": [
+      "gpt-5.6-sol"
+    ],
+    "response_ids": [
+      "resp_0e86d9953f008bfb016a9c2271ee0887d0bf551ae0948fef45"
+    ],
+    "tool_calls": 0,
+    "steer_accepted": 0,
+    "steer_pending": 0,
+    "errors": [
+      {
+        "type": "response.steer.failed",
+        "steer": {
+          "previous_response_id": "resp_0e86d9953f008bfb016a9c2271ee0887d0bf551ae0948fef45",
+          "input": [
+            {
+              "role": "user",
+              "content": "Update: budget is now 1000. Preserve the meeting task."
+            },
+            {
+              "role": "user",
+              "content": "Update: attendees is now 10. Apply both updates together."
+            }
+          ]
+        },
+        "error": {
+          "type": "invalid_request_error",
+          "code": "steering_not_supported",
+          "message": "This model does not support response.steer."
+        },
+        "sequence_number": 2
+      }
+    ],
+    "answer": null
+  }
+}

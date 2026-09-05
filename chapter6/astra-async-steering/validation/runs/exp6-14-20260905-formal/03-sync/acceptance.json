@@ -1,0 +1,67 @@
+{
+  "arm": "sync",
+  "passed": true,
+  "checks": {
+    "no_api_or_runner_error": true,
+    "requested_model_returned": true,
+    "latest_constraints_and_selection": true,
+    "one_call_one_execution_one_delivery": true,
+    "original_call_id_and_actual_result": true,
+    "result_continues_latest_response": true,
+    "receipt_grounded": true,
+    "native_async_flag": true,
+    "no_premature_venue_json": true,
+    "sync_waits_for_result": true
+  },
+  "metrics": {
+    "returned_models": [
+      "gpt-6-astra"
+    ],
+    "response_ids": [
+      "resp_07ed82d8359b381f016a9c24c2906887d0a6403c05a0b38624",
+      "resp_07ed82d8359b381f016a9c24cbde6c87d09f8643ab8125d43c"
+    ],
+    "tool_calls": 1,
+    "steer_accepted": 0,
+    "steer_pending": 0,
+    "errors": [],
+    "answer": {
+      "venue": "A",
+      "budget": 2000,
+      "attendees": 20,
+      "receipt": "030f7f2f94d26dfddf80c607",
+      "source": "demo"
+    },
+    "independent_text_while_tool_pending": false,
+    "tool_duration_s": 8.001,
+    "first_text_after_call_s": null,
+    "text_deltas_during_tool_execution": 0,
+    "elapsed_s": 12.583166,
+    "usage": [
+      {
+        "input_tokens": 354,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 15,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 369
+      },
+      {
+        "input_tokens": 465,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 41,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 506
+      }
+    ]
+  }
+}

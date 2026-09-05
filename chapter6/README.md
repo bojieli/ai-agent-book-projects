@@ -9,6 +9,7 @@
 正文 skeleton 统一了“持续观察 → 受限动作 → 新观察 → 验收/抢占”的闭环；完整媒体、浏览器和机器人代码分层阅读：
 
 - **Starter**：从 [live-audio](live-audio/) 的级联入口理解 VAD → ASR → LLM → TTS；
+- **原生异步对照**：读完 6-1 / 6-2 后，运行 [6-14：Astra 异步工具与 steering](astra-async-steering/)，比较同步工具、原生异步与运行中追加用户要求；
 - **Builder**：再读 [computer-use-open-model](computer-use-open-model/) 的截图/动作/验证循环，以及 [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) 的五个有边界技能；
 - **Maintainer**：最后检查取消、不可逆动作门禁、真实观察证据、硬件急停和 sim-to-real 评估。首次可跳过前端样式、模型下载和设备驱动。
 
@@ -30,6 +31,7 @@
 | 6-11 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | ✅ | 使用 Gemini Robotics-ER 1.5 自主驱动真实 XLeRobot 完成同一整理桌面任务 |
 | 6-12 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | ✅ | 在模拟器中比较开环、逐步检查和预测式闭环三种同任务策略 |
 | 6-13 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | ✅ | 对同一桌面任务进行 RGB 跨环境测试，检查视觉策略对背景、外观、光照和噪声变化的适应性 |
+| 6-14 | [astra-async-steering](astra-async-steering/) | ✅ | 真实 Responses WebSocket 五组各三次：[15/15 验收](astra-async-steering/validation/runs/exp6-14-20260905-formal/manifest.json)，含 3 次旧模型明确拒绝；验证 Astra 原生异步工具、推理中 steering、工具挂起时的两条用户更新及结果归属 |
 
 ## 实验 6-7 / 6-8 的供应商可移植路径
 
