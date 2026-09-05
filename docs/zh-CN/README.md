@@ -131,9 +131,9 @@ Krill 为本书读者提供专属优惠：通过 [此链接](https://www.krill-c
 # 第 6 章 · GUI 与机器人外部复现轨道
 git clone https://github.com/browser-use/browser-use.git               chapter6/browser-use
 git clone https://github.com/anthropics/claude-quickstarts.git         chapter6/claude-quickstarts
-git clone https://github.com/Vector-Wangel/XLeRobot.git                chapter6/XLeRobot                       # 实验 6-9、6-11 共用
-git clone https://github.com/Grigorij-Dudnik/RoboCrew.git              chapter6/RoboCrew                       # 实验 6-10、6-11
-git clone https://github.com/StoneT2000/lerobot-sim2real.git           chapter6/lerobot-sim2real                # 实验 6-13
+git clone https://github.com/Vector-Wangel/XLeRobot.git                chapter6/XLeRobot                       # 实验 6-10、6-12 共用
+git clone https://github.com/Grigorij-Dudnik/RoboCrew.git              chapter6/RoboCrew                       # 实验 6-11、6-12
+git clone https://github.com/StoneT2000/lerobot-sim2real.git           chapter6/lerobot-sim2real                # 实验 6-14
 
 # 第 7 章 · 评估基准
 git clone https://github.com/google-research/android_world.git         chapter7/android_world

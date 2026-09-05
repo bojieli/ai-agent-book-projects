@@ -61,7 +61,7 @@
 | 3 | 📚 **使用者記憶和知識庫** | 跨會話記住使用者、接入外部知識：使用者記憶、RAG、結構化索引、知識圖譜 | [讀](../../book-zhtw/chapter3.zhtw.md) | [12](../../chapter3/README.zh-TW.md) |
 | 4 | 🛠️ **工具** | 工具是 Agent 的雙手：MCP 協議、感知/執行/協作三類工具、事件驅動非同步 Agent、主動工具發現 | [讀](../../book-zhtw/chapter4.zhtw.md) | [8](../../chapter4/README.zh-TW.md) |
 | 5 | 💻 **Coding Agent 與程式碼生成** | 程式碼是「能創造新工具的工具」，生產級 Coding Agent 全景 | [讀](../../book-zhtw/chapter5.zhtw.md) | [13](../../chapter5/README.zh-TW.md) |
-| 6 | 🎙️ **互動：觀察與動作空間的擴展** | 從模態與時序兩個維度擴展 Agent 的觀察與動作空間：非同步與事件驅動、語音互動、Computer Use 和機器人操作 | [讀](../../book-zhtw/chapter6.zhtw.md) | [13](../../chapter6/README.zh-TW.md) |
+| 6 | 🎙️ **互動：觀察與動作空間的擴展** | 從模態與時序兩個維度擴展 Agent 的觀察與動作空間：非同步與事件驅動、語音互動、Computer Use 和機器人操作 | [讀](../../book-zhtw/chapter6.zhtw.md) | [14](../../chapter6/README.zh-TW.md) |
 | 7 | 🎯 **Agent 的評估** | 把表現變成可比較訊號：評估環境、指標、統計顯著性、評估驅動選型 | [讀](../../book-zhtw/chapter7.zhtw.md) | [13](../../chapter7/README.zh-TW.md) |
 | 8 | 🧠 **模型後訓練** | 預訓練/SFT/RL 三階段：何時選 SFT、何時選 RL，工具呼叫內化、樣本效率 | [讀](../../book-zhtw/chapter8.zhtw.md) | [19](../../chapter8/README.zh-TW.md) |
 | 9 | 🔄 **Agent 的持續進化** | 從執行軌跡獲得學習訊號，更新知識、指令、程式與參數 | [讀](../../book-zhtw/chapter9.zhtw.md) | [9](../../chapter9/README.zh-TW.md) |

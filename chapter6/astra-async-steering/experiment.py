@@ -1,4 +1,4 @@
-"""Experiment 6-14: real Responses WebSocket calls, with replayable evidence.
+"""Experiment 6-3: real Responses WebSocket calls, with replayable evidence.
 
 Only the venue lookup is simulated. Models and transport are never mocked by
 this runner. Run `python experiment.py --help`; credentials stay in memory.
@@ -371,7 +371,7 @@ def replay(run_dir):
 async def main(args):
     if not os.getenv("OPENAI_API_KEY"):
         raise SystemExit("Set OPENAI_API_KEY in your environment before running.")
-    run_dir = args.out or Path(__file__).parent / "validation" / "runs" / datetime.now(timezone.utc).strftime("exp6-14-%Y%m%dT%H%M%SZ")
+    run_dir = args.out or Path(__file__).parent / "validation" / "runs" / datetime.now(timezone.utc).strftime("exp6-3-%Y%m%dT%H%M%SZ")
     run_dir.mkdir(parents=True, exist_ok=False)
     source_dir = run_dir / "source"
     source_dir.mkdir()

@@ -4,7 +4,7 @@
 
 A real-time voice chat demo featuring speech-to-text, AI conversation, and text-to-speech capabilities. The application supports multiple AI service providers and provides a seamless conversational experience with minimal latency.
 
-> This is the companion code for **实验 6-3「构建传统语音 Agent」** in 《深入理解 AI Agent》第 6 章. It implements the **cascaded** voice pipeline (VAD → ASR → LLM → TTS) discussed there: the frontend captures the microphone and streams audio over a WebSocket; the backend runs Silero VAD to detect end-of-speech (~500 ms of silence), then routes the utterance through pluggable ASR, LLM, and TTS providers and streams synthesized audio back for playback.
+> This is the companion code for **实验 6-4「构建传统语音 Agent」** in 《深入理解 AI Agent》第 6 章. It implements the **cascaded** voice pipeline (VAD → ASR → LLM → TTS) discussed there: the frontend captures the microphone and streams audio over a WebSocket; the backend runs Silero VAD to detect end-of-speech (~500 ms of silence), then routes the utterance through pluggable ASR, LLM, and TTS providers and streams synthesized audio back for playback.
 
 ## Code map
 
@@ -351,7 +351,7 @@ MIT
 
 一个具备语音转文本、AI 对话和文本转语音能力的实时语音聊天演示。该应用支持多家 AI 服务提供商，以极低延迟提供流畅的对话体验。
 
-> 这是《深入理解 AI Agent》第 6 章 **实验 6-3「构建传统语音 Agent」**的配套代码。它实现了书中讨论的**级联式**语音流水线（VAD → ASR → LLM → TTS）：前端采集麦克风音频并通过 WebSocket 以流的形式传输；后端运行 Silero VAD，通过约 500 ms 的静音检测语音结束，随后将话语依次交给可插拔的 ASR、LLM 和 TTS 提供商，并将合成音频流式返回播放。
+> 这是《深入理解 AI Agent》第 6 章 **实验 6-4「构建传统语音 Agent」**的配套代码。它实现了书中讨论的**级联式**语音流水线（VAD → ASR → LLM → TTS）：前端采集麦克风音频并通过 WebSocket 以流的形式传输；后端运行 Silero VAD，通过约 500 ms 的静音检测语音结束，随后将话语依次交给可插拔的 ASR、LLM 和 TTS 提供商，并将合成音频流式返回播放。
 
 ## 功能特性
 

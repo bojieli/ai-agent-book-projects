@@ -20,18 +20,21 @@
 | :--: | --- | :--: | --- |
 | 6-1 | [agent-with-event-trigger](agent-with-event-trigger/) | ✅ | FastAPI 事件驅動 Agent，原生非同步整合前三組 MCP 工具，透過 HTTP API 接收 Web/IM/GitHub/計時器事件 |
 | 6-2 | [async-agent](async-agent/) | ✅ | asyncio 單執行緒事件驅動框架 Flux：事件佇列按緊急度分派、非同步工具並行、執行中打斷、長任務取消與狀態查詢 |
-| 6-3 | [live-audio](live-audio/) | ✅ | 即時語音聊天，整合 VAD + ASR（Whisper/SenseVoice）+ LLM（GPT-4o/Gemini/Doubao）+ TTS（Fish Audio），WebSocket 低延遲 |
+| 6-3 | [astra-async-steering](astra-async-steering/) | ✅ | 比較同步工具、模型原生非同步與回合中途引導，理解等待、使用者更新和任務恢復之間的關係。 |
+| 6-4 | [live-audio](live-audio/) | ✅ | 即時語音聊天，整合 VAD + ASR（Whisper/SenseVoice）+ LLM（GPT-4o/Gemini/Doubao）+ TTS（Fish Audio），WebSocket 低延遲 |
 | Add-on | [phone-agent](phone-agent/) | 🚧 | 官方 `pine-voice` SDK 的 direct/ReAct 路徑已實作，但未提供獲授權且同意參與的 E.164 目的號碼；預檢明確記錄未撥號、無 transcript，test double 不算驗收。 |
-| 6-4 | [streaming-speech](streaming-speech/) | ✅ | 音訊按遞增長度分塊餵 ASR，每段立刻出文字降首包延遲，對比「整句到齊再識別」的高準確/高延遲 |
-| 6-5 | [end-to-end-speech](end-to-end-speech/) | ✅ | 已在單張 RTX PRO 6000 上真實本機執行固定 revision 的 MiniCPM-o 4.5；端到端與自級聯皆為 3/4，但語義與副語言錯誤互補，並保留真實 24kHz 語音輸出與完整驗收證據。 |
-| 6-6 | [controllable-tts](controllable-tts/) | 🚧 | 真實 Fish Audio S1 4×3×2 參考音庫與 A/B/C 媒體通過結構門禁；仍缺定性聽測與「接近真人客服」評估。 |
-| 6-7 | `claude-quickstarts/computer-use-demo/` | 📖 | 外部 `anthropics/claude-quickstarts` 固定於 `9bcc95e…`；正文對應容器化 Ubuntu 桌面＋Claude agent loop 的 Computer Use demo，不是整個 quickstarts。 |
-| 6-8 | `browser-use/` | 📖 | 外部 `browser-use/browser-use` 固定於 `ec9277c…`；正文用 `use_vision=True` 視覺 CLI 在 Google 查舊金山天氣並保留動作/截圖軌跡。 |
-| 6-9 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | 真機 XLeRobot 遙操作同一個整理桌面任務：把紅色杯子放入托盤、黃色廢紙放入垃圾盒，最後重新觀察並確認狀態。 |
-| 6-10 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | 在模擬器中測量同一桌面任務的理想控制上限；不代表真機已經執行。 |
-| 6-11 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | 使用 Gemini Robotics-ER 1.5 自主控制真機 XLeRobot 完成同一整理桌面任務。 |
-| 6-12 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | 在模擬器中比較同一任務的開環、逐步檢查與預測式閉環策略。 |
-| 6-13 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | 改變背景、物體外觀、光照與視覺雜訊，對同一桌面任務進行 RGB 跨環境測試。 |
+| 6-5 | [streaming-speech](streaming-speech/) | ✅ | 音訊按遞增長度分塊餵 ASR，每段立刻出文字降首包延遲，對比「整句到齊再識別」的高準確/高延遲 |
+| 6-6 | [end-to-end-speech](end-to-end-speech/) | ✅ | 已在單張 RTX PRO 6000 上真實本機執行固定 revision 的 MiniCPM-o 4.5；端到端與自級聯皆為 3/4，但語義與副語言錯誤互補，並保留真實 24kHz 語音輸出與完整驗收證據。 |
+| 6-7 | [controllable-tts](controllable-tts/) | 🚧 | 真實 Fish Audio S1 4×3×2 參考音庫與 A/B/C 媒體通過結構門禁；仍缺定性聽測與「接近真人客服」評估。 |
+| 6-8 | `claude-quickstarts/computer-use-demo/` | 📖 | 外部 `anthropics/claude-quickstarts` 固定於 `9bcc95e…`；正文對應容器化 Ubuntu 桌面＋Claude agent loop 的 Computer Use demo，不是整個 quickstarts。 |
+| 6-9 | `browser-use/` | 📖 | 外部 `browser-use/browser-use` 固定於 `ec9277c…`；正文用 `use_vision=True` 視覺 CLI 在 Google 查舊金山天氣並保留動作/截圖軌跡。 |
+| 6-10 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | 真機 XLeRobot 遙操作同一個整理桌面任務：把紅色杯子放入托盤、黃色廢紙放入垃圾盒，最後重新觀察並確認狀態。 |
+| 6-11 | [xlerobot-teleoperation](xlerobot-teleoperation/) | 📖 | 在模擬器中測量同一桌面任務的理想控制上限；不代表真機已經執行。 |
+| 6-12 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | 使用 Gemini Robotics-ER 1.5 自主控制真機 XLeRobot 完成同一整理桌面任務。 |
+| 6-13 | [gemini-xlerobot-navigation](gemini-xlerobot-navigation/) | 📖 | 在模擬器中比較同一任務的開環、逐步檢查與預測式閉環策略。 |
+| 6-14 | [rgb-sim2real-grasping](rgb-sim2real-grasping/) | 📖 | 改變背景、物體外觀、光照與視覺雜訊，對同一桌面任務進行 RGB 跨環境測試。 |
+
+實驗編號以目前簡體中文版為準；已封存的執行記錄保留原始識別碼，對應關係見[編號對照表](EXPERIMENT_LEDGER.md#current-numbering-and-archived-evidence)。
 
 ## 專案型別說明
 
