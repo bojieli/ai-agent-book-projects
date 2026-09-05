@@ -21,7 +21,7 @@ A korábbi fejezetek e két tér **tartalmát** terjesztették ki; ez a fejezet 
 | **Modalitás** (ez a fejezet) | Hang, képernyő, fizikai érzékelők | Beszéd, kattintás, ízületmozgás |
 | **Időzítés** (ez a fejezet) | A világ tol, folytonos folyamok | Köröket átívelő, megszakítható, kiszorítható |
 
-A modell betanítási korpusza szinte teljes egészében körökre osztott: egy kérdést válasz követ, egy eszközhívást eszközeredmény, az egyik beszélő befejezi, mielőtt a másik elkezdené. Ezért a modell által tanult policy eleve azt feltételezi, hogy a világ megvárja. A valós környezet viszont nem vár arra, hogy a modell reagáljon: a levél közben érkezik meg, a felhasználó a mondat közepén közbevág, a két képernyőkép között az oldal már megváltozott, és a csészét feldöntik, miközben a kar éppen felé nyúl.
+**A váltott megszólalás a modell és az interfész interakciós megállapodása, nem a környezet tulajdonsága.** A korai eszközhívási interfészek jellemzően szinkron körökbe rendezték az üzeneteket: kérdés után válasz következett, az érvelés folytatásához pedig előbb az eszközeredményeket kellett megadni. A valós környezet nem vár: gondolkodás közben levél érkezik, a felhasználó közbeszól, két képernyőkép között megváltozik az oldal, a robotkar nyúlása közben fellökik a poharat. Ez a megállapodás is változik: 2026 szeptemberében a GPT-6 Astra már támogatja a natív aszinkron eszközhívást és a felhasználói utasítások kör közbeni kiegészítését. A fejezet ezért a natív támogatást és a meglévő szinkron interfészekkel való kompatibilitást egyaránt tárgyalja.[^ch6-22][^ch6-23]
 
 | Skála | Forgatókönyv | Változás a megfigyelés oldalán | Változás a cselekvés oldalán |
 |---|---|---|---|
@@ -44,7 +44,7 @@ Kezdjük egy analógiával, hogy elmagyarázzuk, miért van szükség aszinkron 
 - **Eseményprioritás dinamikus megítélése** – Nem minden esemény egyformán fontos. Az Agentnek intelligensen kell kiválasztania a kezelési stratégiát: az aktuális művelet megszakítása (sürgős), sorba állítás (rutin), vagy párhuzamos feldolgozás (független könnyűsúlyú lekérdezés).
 - **A megszakítás és folytatás folyékonysága** – Egy megszakított beszélgetésnek vagy feladatnak természetesen kell tudnia folytatódnia.
 
-Az aszinkron paradigma azonban ütközik a jelenlegi LLM-ek alapvető jellemzőjével: a képzésük szinkronitást feltételez – egy eszközhívás után a következő üzenetnek az eszköz eredményének kell lennie –, miközben a valódi telepítés aszinkronitást követel: a felhasználók bármikor megszakíthatják, a feladatok párhuzamosan haladnak, és a külső események az eszköz visszatérése előtt érkeznek. Ez a "szinkron képzés / aszinkron telepítés" ellentmondás áthatja a szakasz hátralévő részének minden mérnöki kompromisszumát.
+Az aszinkron megközelítés LLM-re alkalmazásakor először azt kell ellenőrizni, hogy a modell és az API támogatja-e az üzenetek ilyen időzítését. Egyes interfészek minden eszközeredményt megkövetelnek a folytatás előtt; mások engedik, hogy az eszköz függőben maradjon, miközben a modell dolgozik, és generálás közben felhasználói frissítéseket fogad. Az előbbiekhez eseménysor, feladatazonosítók és kompatibilitási réteg kell, az utóbbiak közvetlenül használhatják a natív aszinkron protokollt. Az alkalmazás mindkét esetben kezeli az eseményforrásokat, az eszközök életciklusát és az eredmények hozzárendelését. Az `asyncio` használata önmagában nem bizonyítja a modell natív aszinkron képességét.
 
 Ennek megoldásához egy "eseményvezérelt aszinkron Agent architektúrára" van szükségünk. Technikailag ez azt jelenti, hogy a rendszer már nem aktívan és ismételten ellenőrzi az "új üzeneteket" (ez a polling, ami hatástalan), hanem automatikusan elindítja a feldolgozási logikát, amikor új üzenet érkezik. Minden bemenet, kimenet, gondolkodási folyamat és külső interakció egységesen eseményfolyamként van modellezve – eseményrekordok sorozataként, idővonalon elrendezve. A 6-1. ábra egy eseményvezérelt aszinkron Agent teljes architektúráját mutatja, illusztrálva az eseményforrások, az eseménysor és az Agent feldolgozási folyamat közötti kapcsolatot.
 
@@ -120,9 +120,9 @@ Egyetlen Agent példány több eseménnyel szembesülhet egyidejűleg: új üzen
 
 Ennek a mechanizmusnak a váza a konkurens programozásból ismert "eseményhurok (event loop)". Gondoljunk egy aszinkron Agentre mint egy hosszan futó hurokra: minden körben kivesz egy köteg eseményt a bemeneti sorból, hozzáfűzi a trajektóriához, egyszer meghívja az LLM-et, végrehajtja az általa meghívni kívánt eszközöket, majd visszatér a hurok elejére, hogy várjon a következő eseménykötegre – ugyanaz a struktúra, mint egy Go goroutine, amely üzeneteket olvas egy csatornából, és körönként dolgozza fel őket egy `for { select { ... } }` belsejében.
 
-Ennek a modellnek van egy kulcsfontosságú tulajdonsága: **az eseményeket csak az egyes körök határán fogyasztja el a rendszer**. Miközben az LLM következtet vagy egy eszköz éppen fut, a frissen érkező esemény nem furakodik be a semmiből, és nem zavarja meg az aktuális lépést, hanem a sorban várakozik, amíg a kör el nem ér egy **biztonságos pontot** (egy következtetési szakasz vége, egy eszközhívás visszatérése), és ekkor kerül sor az együttes feldolgozásra. A megszakítás ugyanezt a fegyelmet követi: nem tetszőleges pillanatban vágja el erőszakkal a munkát, hanem a biztonságos ponton ellenőrzi, hogy „kaptam-e leállítási utasítást” – pontosan ezt a szerepet tölti be a Go `ctx.Done()` hívása.
+Hagyományos, szinkron interfészre épülő megvalósításban **az események feldolgozása a körök határán történik**. Amíg az LLM gondolkodik vagy egy eszköz fut, az új események a sorban várnak egy **biztonságos pontig**: egy gondolatmenet végéig vagy egy eszköz visszatéréséig. A natív aszinkron működés lehetővé teszi új követelmények fogadását gondolkodás vagy kimenetképzés közben; a folytatás megfelelő pillanatát a rendszer választja meg. Mindkét megoldásnak vannak határai, de más réteg kezeli őket. Az eszköz leállításához a végrehajtónak továbbra is reagálnia kell a megszakítási jelre, a Go `ctx.Done()` ellenőrzéséhez hasonlóan; egy „állj” üzenet önmagában nem vonja vissza a már megtörtént műveleteket.
 
-Ha ezt megértettük, az alábbi három feldolgozási stratégia már csak abban különbözik, hogyan bánik a biztonságos ponttal: hagyja, hogy az esemény megvárja a következő, természetes módon adódó biztonságos pontot (sorba állítás), előre, szándékosan gyárt egy biztonságos pontot (megszakítás), vagy egyszerűen új hurkot indít, és meg sem várja a fő hurok biztonságos pontját (párhuzamos).
+Ezt megkülönböztetve először szinkron interfészekkel kompatibilis eseményciklussal mutatunk be három stratégiát: várakozás a következő természetes biztonságos pontig (sorba állítás), ilyen pont korábbi létrehozása (megszakítás), vagy új ciklus indítása a fő ciklus bevárása nélkül (párhuzamos feldolgozás). A natív steering folytatási módjára később térünk vissza.
 
 **Strukturált Eseménymodellezés.**
 
@@ -199,23 +199,23 @@ A következő kísérlet, egy eseményvezérelt e-mail feldolgozó Agent, a fent
 
 A 6-1. kísérlet bemutatja a legegyszerűbb eseményvezérelt mintát – események belépnek a sorba, és az Agent szekvenciálisan dolgozza fel őket. Amikor azonban az Agentnek a hosszú ideig futó eszközvégrehajtások során érkező megszakításokra kell reagálnia, vagy több egyidejű feladatot kell kezelnie, egy egyszerű eseménysor nem elegendő. Ezután mélyebb mérnöki kihívásokat tárgyalunk.
 
-### Mérnöki Megvalósítás: Hogyan Tegyük a Szinkron Modelleket Aszinkron Megszakítások Támogatására
+### Kompatibilitás natív aszinkron támogatás nélkül
 
-A 6-1. kísérlet csak szekvenciális eseményeket kezel – az események egyesével lépnek be a sorba, és az Agent egyesével dolgozza fel őket. Most térjünk vissza a szakasz elején felvetett "szinkron képzés / aszinkron telepítés" ellentmondáshoz: amikor a felhasználó megszakítja az Agentet, miközben egy eszköz még nem tért vissza, hogyan tud a szinkron formátum alkalmazkodni hozzá? Ez a szakasz bemutatja az iparág által ma használt mérnöki megkerülő megoldásokat.
+A 6-1. kísérlet csak soros eseményeket kezel: az események sorba kerülnek, és az ágens egyenként végez velük. Ha a kiválasztott modell vagy interfész nem támogat natív aszinkron működést, az eszköz visszatérése előtti felhasználói megszakítást szinkron formátumban kell kifejezni. Előbb ezt a kompatibilitási utat, majd a GPT-6 Astra natív interfészét ismertetjük.
 
-Először egy konkrét forgatókönyvvel illusztráljuk ezt az ellentmondást. Tegyük fel, hogy az Agent segít a felhasználónak egy e-mail megírásában (eszközhívás: elérhetőségek keresése). Mielőtt a keresés visszaadná az eredményeket, a felhasználó hirtelen azt mondja: "Várj, előbb nézd meg a holnapi időjárást." Egy szinkron ReAct hurokban az Agentnek meg kell várnia a keresés visszatérését, mielőtt feldolgozná a következő üzenetet – mert az API megköveteli, hogy "egy eszközhívás kiadása után a következő üzenet az eszköz eredménye legyen." De az aszinkron valóságban az események bármikor megszakíthatják a folyamatban lévő feladatokat. Az "aszinkron megszakítás" szemantikájának kifejezése a "szinkron formátum" korlátai között pontosan az a probléma, amelyet ez a mérnöki megoldás meg kíván oldani.
+Tegyük fel, hogy az ágens e-mailt fogalmaz, és eszközzel névjegyadatokat keres. Mielőtt megérkezne az eredmény, a felhasználó azt mondja: „Várj, előbb nézd meg a holnapi időjárást!” Ha az interfész először a függő eszközhívásokhoz tartozó eredményeket kéri, az ágens nyitott hívással nem dolgozhatja fel közvetlenül az új üzenetet. Ez a választott protokoll és modell együttes korlátozása, nem minden LLM-re érvényes szabály.
 
-**Mérnöki Megoldás: Aszinkron Implementáció Szinkron Viselkedés Szimulálásával.**
+**Szinkron formátummal kompatibilis aszinkron megvalósítás.**
 
 A központi gondolat: **Normál körülmények között, megszakítások nélkül, az LLM egy szabványos szinkron trajektóriát lát; csak akkor szúrunk be helyettesítőket (placeholdereket) a formátum javításához, ha megszakítás történik.** Íme öt kulcsszabály:
 
-**1. szabály**: Az asszisztens üzenetet (beleértve a gondolkodást, tartalmat és eszközhívást) azonnal rögzítse, amikor az LLM előállítja.
+**1. szabály**: Az API által befejezett asszisztensüzeneteket és eszközhívási elemeket időben rögzítsük. A kiszolgáló által kezelt érvelési állapotot a szolgáltató folytatási protokollja szerint őrizzük meg; ne állítsunk össze saját kezűleg láthatatlan gondolatmenetet.
 
 **2. szabály**: Az eszköz eredményét csak akkor rögzítse, amikor az eszközhívás befejeződött. A trajektória "részben befejezett" állapotban van a végrehajtás során.
 
 **3. szabály**: Az eszközvégrehajtás közbeni megszakítások helyettesítőket igényelnek. Generáljon egy helyettesítő választ a befejezetlen eszközhöz (pl. "Az eszköz a háttérben fut, kérjük, először az új eseményt kezelje"), fűzze hozzá a megszakítási eseményt, és hívja meg újra az LLM-et. Az LLM szemszögéből az asszisztens üzenet továbbra is párosítva van egy eszköz eredménnyel.
 
-**4. szabály**: Az LLM gondolkodása közbeni megszakítások közvetlenül eldobják a jelenlegi gondolkodást. Ne írja a trajektóriába; helyette fűzze hozzá az új eseményt, és kezdjen egy új gondolkodási kört.
+**4. szabály**: Natív steering vagy támogatott kör közbeni folytatási interfész nélkül szakítsuk meg a befejezetlen generálást, őrizzük meg az igazoltan befejezett üzeneteket és az eszközállapotot, adjuk hozzá az új eseményt, majd küldjünk új kérést. Ne feltételezzük, hogy részleges kimenet vagy rejtett érvelés tetszőlegesen visszaadható érvényes előtagként.
 
 **5. szabály**: A nem megszakító események a sorba kerülnek kötegelt feldolgozásra. Csak az aktuális ciklus befejezése után kerülnek egyszerre hozzáfűzésre.
 
@@ -225,13 +225,13 @@ Az Agent e-mail írásának példáján, amikor a felhasználó az időjárásr�
 2. Mielőtt a keresőeszköz visszaadná az eredményeket, a felhasználó elküldi: "Előbb nézd meg a holnapi időjárást." Mivel ez egy felhasználói megszakítás, a rendszer generál egy helyettesítő eszköz eredményt a befejezetlen `search_contacts`-hoz ("Az eszköz a háttérben fut, kérjük, először az új eseményt kezelje", 3. szabály), majd hozzáfűzi a felhasználó időjárás lekérdezését a trajektóriához, és újra meghívja az LLM-et. Ezen a ponton az LLM által látott trajektória formátum teljesen érvényes – az asszisztens üzenet és az eszköz eredménye tökéletesen párosítva van.
 3. Miután az Agent megválaszolta az időjárás lekérdezést, az eredeti `search_contacts` eredmény megérkezik, és új eseményként hozzáfűződik a trajektóriához (2. szabály). Az Agent elolvassa az elérhetőségi információkat, és folytatja az e-mail írását.
 
-A séma alapvető előnye: **normál körülmények között az LLM egy tökéletes szinkron trajektóriát lát** – asszisztens üzenetek és eszköz eredmények szigorúan párosítva, az idővonal tiszta, nincsenek helyettesítők vagy rendellenes állapotok. Ez a legkedvezőbb elrendezés a szinkron paradigma alatt képzett LLM-ek számára, és megőrzi a gondolkodás minőségét. A helyettesítő – egy szükséges kompromisszum – csak akkor jelenik meg, amikor valóban megszakítás történik.
+Ez a megoldás fenntartja a szinkron interfész által megkövetelt hívás–eredmény párosítást. Csak megszakításkor kerül be egy egyértelműen „befejezetlen” helyőrző. A valódi háttéreredmény megérkezésekor forrással és feladatazonosítóval ellátott eseményként kerül a nyomvonalba. Natív aszinkron modelleknél a rendszer megőrizheti a feladat függő állapotát, és a valódi eredményt érkezésekor adhatja át a modellnek.
 
-De fennáll a hallucinációk súlyosbodásának kockázata. Annak ellenére, hogy a helyettesítő kifejezetten jelzi, hogy az eszköz "még nem fejeződött be", a modell később mégis kitalálhat egy eszközeredményt a gondolkodás során – meggyőzve magát arról, hogy az eszköz érvényes adatokat adott vissza, és ezen kitalált adatok alapján hozhat döntéseket. Ez azért van, mert a képzés során látott trajektóriák túlnyomó többségében egy eszközhívást azonnal a valódi eredmény követi; a modell soha nem tanulta meg, hogyan kezelje azokat a helyzeteket, amikor "az eredmény még nem érkezett vissza." Ezért a gyakorlatban a megszakítások csak valóban sürgős helyzetekben indulnak el (amikor a felhasználó kifejezetten kéri a leállítást); a nem sürgős eseményeket egy sorba helyezik kötegelt feldolgozásra.
+A helyőrzők szemantikai kockázatot is jelentenek: a modell összekeverheti a „feladat elindult” és a „feladat befejeződött” állapotot, és az eredménytől függő döntést hozhat annak megérkezése előtt. Ezt világos feladatállapottal és eredményellenőrzéssel kell megelőzni; az értékelésben vizsgálni kell, kitalált-e még meg nem érkezett adatokat. Egyetlen hiba nem indokolja, hogy az okát egy nem nyilvános tanítási folyamatnak tulajdonítsuk.
 
-**Aszinkron Eszköz Interfészek a Meglévő Modellekhez.**
+**Aszinkron jelentés kifejezése feladatazonosítókkal.**
 
-Mivel a modellek szinkron feltételezése nehezen törhető meg, egy alapvetőbb stratégia az **aszinkron szemantika befogadása az eszköz-interfész tervezés szintjén**.
+Natív aszinkron protokollal vagy anélkül is **egyértelművé tehető az aszinkron jelentés az eszközinterfész kialakításával**. Szinkron interfésznél különösen hasznos, ha a „feladat indítása” önálló, teljes hívás valódi visszatérési értékkel.
 
 A hagyományos eszköztervezés "hívás egyenlő befejezés" szemantikát sugall. Például a `phone_call` név arra utal, hogy "a hívás tárcsázza a telefont, és megvárja a hívás végét, visszaadva a hívásnaplót." Az aszinkron paradigma alatt a "kezdeményezés" és a "befejezés" szétválasztandó:
 
@@ -242,7 +242,7 @@ A kulcs az, hogy az eszköz neve és leírása maga közvetítse az aszinkron sz
 
 **Figyelem Szóródása Sor-alapú Feldolgozásban.**
 
-Kötegelt események feldolgozásakor a modell gyakran csak az utolsó eseményre összpontosít. Ennek kiváltó oka, hogy **a modell arra van kiképezve, hogy a legfrissebb bemenetre reagáljon, és a kötegelt események megtörik ezt a feltételezést**.
+Kötegelt eseményfeldolgozáskor a modell csak az utolsó eseményre reagálhat, korábbi követelményeket kihagyva. A natív aszinkron működés azt oldja meg, hogy érkezhetnek-e üzenetek futás közben; továbbra is ellenőrizni kell, hogy a modell minden frissítést együttesen használ-e.
 
 Két szinten lehet beavatkozni:
 
@@ -259,35 +259,13 @@ Két szinten lehet beavatkozni:
 
 Adjon hozzá egy összefoglalót a végén: "Fent 4 feldolgozatlan esemény található, köztük 1 eszköz eredmény, 2 felhasználói üzenet és 1 rendszer emlékeztető. Kérjük, győződjön meg róla, hogy válasza lefedi az összes információt."
 
-### Mélyebb Ellentmondások és Jövőbeli Irányok
-
-![6-4. ábra: Szinkron Képzési Paradigma vs. Aszinkron Telepítési Valóság](images/fig6-4.svg)
-
-Végső soron az előző szakaszok helyettesítői, aszinkron eszköz interfészei és állapotsor jelzői mind prompt engineeringet használnak ugyanazon "szinkron képzés / aszinkron telepítés" ellentmondás javítására (6-4. ábra) – ennek az ellentmondásnak az okát a szakasz elején részleteztük, így itt nem ismételjük; ehelyett az alapvető megoldásra összpontosítunk.
-
-**A Modell Evolúció Előrejelzése: Szinkrontól Aszinkron Felé.**
-
-A fenti mérnöki technikák lényegében **a prompt engineering használata a modellképzés hiányosságainak kompenzálására**, egy átmeneti időszak ideiglenes megoldása. A valódi megoldás paradigma váltást igényel a modellképzés szintjén.
-
-A robotika területén a VLA (Vision-Language-Action, lásd 6. fejezet) modellek már kezdenek hasonló kihívásokkal szembenézni: elkerülhetetlen késleltetés van az észlelés és a cselekvés között. A VLA sikere utat mutat az Agent modellek evolúciója számára. A következő generációs modelleknek három alapvető képességet kell megszerezniük a megerősítéses tanuláson (RL) keresztül aszinkron környezetekben:
-
-1. **Aszinkron Események Közti Átfedés Megértése a Trajektóriákban**: Ez a legkritikusabb képességhiány. A jelenlegi modellek szigorúan szinkron sorrendet várnak, de egy valódi aszinkron környezetben egy eszközhívást nem biztos, hogy egy eszköz eredménye követ, hanem egy új felhasználói üzenet; a gondolkodás félbeszakadhat, de a köztes állapotot meg kell őrizni a trajektóriában, és a gondolkodásnak folytatódnia kell az új üzenet feldolgozása után, ahelyett, hogy újrakezdené. A modellnek világos megértést kell fenntartania az ilyen "rendezetlen" trajektóriákban – mely eszközhívások várnak még eredményekre, és mely gondolatok befejezetlen töredékek.
-2. **Megszakított Feladatok és Gondolatok Folytatása**: Amikor megszakítják egy sürgős esemény kezelésére, a modellnek emlékeznie kell a befejezetlen feladatra. Például, ha a felhasználó hirtelen az időjárásról kérdez, miközben az Agent egy adatelemző eszközt hajt végre, a válaszadás után az Agentnek természetesen meg kell várnia az adatelemzés eredményét, ahelyett, hogy elfelejtené, hogy egy eszköz még fut. Különösen fontos elkerülni azokat a hallucinációkat, ahol a modell tévesen azt hiszi, hogy a megszakított eszközhívás befejeződött.
-3. **Kötegelt Események Átfogó Feldolgozása**: Amikor több esemény egy kötegben kerül hozzáfűzésre a trajektóriához, a modell nem csak az utolsóra összpontosíthat; átfogóan kell figyelembe vennie az összes feldolgozatlan információt.
-
-Ennek az aszinkron RL képzésnek az eléréséhez új infrastruktúra szükséges: egy aszinkron környezeti szimulátor (olyan forgatókönyvek generálása, mint a késleltetett eszközvisszatérések, véletlenszerű felhasználói megszakítások, stb.) és specializált jutalmak az aszinkron képességekhez (a rendezetlen trajektóriák helyes megértése, a megszakított gondolatok sikeres folytatása, hallucinációk elkerülése, kötegelt események átfogó feldolgozása).
-
-A folyamatos gondolkodáshoz nem kell megvárni a következő modellgenerációt. Mintegy kétszáz sornyi összehangolás egy **meglévő** szöveges érvelőmodellt **folyamatos idejű** ügynökké alakíthat, összekötve a fenti mérnöki kerülőutat a modellfejlődéssel. Ez a 4. szabály továbbfejlesztése: a megszakított gondolattöredék eldobása helyett az interakció egyetlen megszakítás nélküli gondolatfolyam. A futtatókörnyezet lezárhatja az aktuális `<think>` blokkot, közönséges üzenetként beillesztheti az új megfigyelést—eszközeredményt, felhasználói megszakítást vagy felismerési frissítést—, majd folytathatja a dekódolást.
-
-Egy gyakran elpazarolt erőforrást használ ki: a modell másodpercenként több száz tokent generálhat, miközben egy eszközhívás vagy a felhasználó megszólalása több másodpercig tarthat. Ez a várakozás gondolkodásra fordítható. Az ügynök így **várakozás közben gondolkodhat**—részleges információból folytathatja, sőt korán elindíthatja a következő eszközt—, és **cselekvés közben gondolkodhat**—kimenet közben tovább érvelhet, és félúton javíthatja a cselekvést.
-
 > **6-2. ★★★ Kísérlet: Aszinkron Agent Párhuzamos Végrehajtással és Megszakítási Képességekkel**
 >
 >
-> ![6-5. ábra: 6-2. Kísérlet – Aszinkron Agent Megszakítás és Helyreállítás](images/fig6-5.svg)
+> ![6-4. ábra: 6-2. Kísérlet – Aszinkron Agent Megszakítás és Helyreállítás](images/fig6-4.svg)
 >
 >
-> A 6-1. kísérlet egyszerű eseménysorára építve ez a kísérlet az aszinkron Agentek nehéz részeibe merül: **párhuzamos eszközvégrehajtás, végrehajtás megszakítása és állapotkezelés**. Az Agent már nem csak egyesével dolgozza fel az eseményeket; egyszerre több egyidejű feladatot kell kezelnie, meg kell birkóznia a megszakításokkal és helyreállításokkal, és dinamikus döntéseket kell hoznia a valós idejű állapot alapján.
+> A 6-1. kísérlet egyszerű eseménysorára építve ez a kísérlet szinkron interfészekkel kompatibilis futtatókörnyezettel valósít meg **párhuzamos eszközvégrehajtást, megszakítást és állapotkezelést**. Az ágens több egyidejű feladatot kezel, megszakítás után folytat, és az aktuális állapot alapján dönt. Az Astra natív interfészével való összehasonlítást a 6-3. kísérlet mutatja be.
 >
 > **1. Aszinkron Eszközvégrehajtás**: Támogatja az időigényes eszközök (legalább 3-5 másodperc) aszinkron végrehajtását, azonnal visszaadva egy helyettesítőt a kezdeményezéskor. "Validációs Forgatókönyv": Az Agent végrehajt egy hosszan futó terminálparancsot. Ez idő alatt a felhasználó megkérdezi: "Hány óra van?" Az Agent azonnal válaszol, majd bemutatja az elemzési eredményt, amikor a hosszan futó parancs befejeződik.
 >
@@ -297,7 +275,37 @@ Egy gyakran elpazarolt erőforrást használ ki: a modell másodpercenként töb
 >
 > **4. Párhuzamos Eszközök Lemondása és Állapotlekérdezése**: Miután egy aszinkron eszköz befejeződött, a valódi eredmény egy új eseményen keresztül kerül a beszélgetésbe. Támogatja a lemondást vagy az előrehaladás lekérdezését feladat azonosító alapján. "Validációs Forgatókönyv": A felhasználó kéri: "Futtasd nekem ezt a három szkriptet egyszerre. Amelyik előbb befejeződik, ellenőrizd a maradék szkriptek előrehaladását. Ha valamelyik nem haladta meg az 50%-ot, mondd le." A három szkript elemzési folyamatokat szimulál, folyamatosan 3%, 2% és 1% sebességgel adva ki az előrehaladást másodpercenként. Az Agent három aszinkron terminálparancsot indít egyszerre. Amikor a 3%/másodperc sebességű szkript körülbelül 33 másodperc alatt befejeződik, az Agent lekérdezi a maradék két terminál állapotát, az egyiket körülbelül 66%-os, a másikat körülbelül 33%-os előrehaladással találva. Ezután lemondja azt, amelyik nem haladta meg az 50%-ot. Miután mindkét terminál befejeződött, integrálja az eredményeket egy teljes jelentés létrehozásához.
 
-Az aszinkron, eseményvezérelt végrehajtás lehetővé teszi, hogy a világ bármikor felébressze az ügynököt, de feltételezi, hogy a modell befejezheti a gondolkodást, mielőtt válaszol. A következő három szakasz ezt kérdőjelezi meg: ha a környezet a modell generálási sebességével azonosan vagy annál gyorsabban változik, az „előbb gondolkodj, aztán beszélj” elfogadhatatlan késleltetéssé válik.
+### A modell natív aszinkron működése: GPT-6 Astra
+
+Az előző kompatibilitási megoldásban a futtatókörnyezet rendezi az események belépési sorrendjét, hogy a szinkron interfészű modell aszinkron feladatokban vehessen részt. A másik út az, hogy a modell eleve értse ezt a ritmust: dolgozhasson máson az eszköz futása alatt, és módosíthassa a későbbi munkát új felhasználói követelmények alapján. A GPT-6 Astra már támogatja az aszinkron eszközhívást (Async tool calling) és a kör közbeni iránymódosítást (Mid-turn steering), ami ezt a változást példázza (6-5. ábra).[^ch6-22][^ch6-23]
+
+![6-5. ábra: Szinkron interfészkompatibilitás és a modell natív aszinkron működése](images/fig6-5.svg)
+
+**Az aszinkron eszközhívás szétválasztja a „művelet elindítását” és az „eredmény megszerzését”.** Hosszú lekérdezés indítása után az ágens tovább gondolkodhat, más eszközöket hívhat, vagy az eredménytől független részeket végezheti. Találkozóhelyszínek keresése közben például összeállíthatja a napirendet és az előkészületek listáját, majd az adatok megérkezésekor összehasonlíthatja a lehetőségeket. A függőségek megkülönböztetése a lényeg: az önálló munka haladjon, az eredményt igénylő döntés várjon annak megérkezéséig.
+
+**A kör közbeni iránymódosítás lehetővé teszi, hogy a felhasználó folyamatban lévő feladatot pontosítson.** Miközben az ágens gondolkodik vagy válaszát fogalmazza, a felhasználó jelezheti, hogy „csökkent a költségkeret” vagy „változott a létszám”. A rendszer megőrzi a kész munkát, és az új korlátokat beemeli a további feldolgozásba, így az ágens ugyanazon feladaton belül módosítja tervét. A frissítés fogadása és alkalmazása között lehet késés, de a felhasználónak nem kell megvárnia egy teljes válasz végét a változás közléséhez.
+
+Ezek a képességek az interakció időzítését bővítik: eszközeredmények és felhasználói követelmények egyaránt érkezhetnek munka közben. A rendszernek továbbra is külön kell kezelnie a forrásokat, és emlékeznie kell a kész és a függő munkára. A terv módosítása önmagában nem állítja le a futó eszközöket, és nem von vissza megtörtént műveleteket; a végrehajtás, megszakítás és állapotkezelés a futtatókörnyezet feladata marad.
+
+Nem minden modell rendelkezik natív aszinkron képességgel. Ágensépítéskor a modell támogatása alapján válasszunk natív interakciót vagy kompatibilitási megoldást, majd ellenőrizzük, hogy az egész rendszer helyesen kezeli-e a késői eredményeket, menet közbeni változásokat és a feladat folytatását. Az aszinkron tanítás tovább javíthatja ezeket a képességeket, de a fejlesztők már meglévő modellekkel is létrehozhatják ezt az interakciót.
+
+### Aszinkron üzenetek fogadásától az aszinkron feladatok megbízható kezeléséig
+
+A natív aszinkron működés megengedi az üzenetek futás közbeni érkezését. Összetett feladatok megbízhatósága attól is függ, hogyan használja őket a modell. Legalább három dolgot kell ellenőrizni:
+
+1. **Eredmény-hozzárendelés és függő állapot**: A későn érkező eredményt a megfelelő feladathoz kapcsolja-e, és elkerüli-e az adatok kitalálását, amíg nincs eredmény?
+2. **Feladatfolytatás és műveletvezérlés**: Visszatér-e az eredeti feladathoz az új követelmények után, és megkülönbözteti-e a tervmódosítást a végrehajtás leállításától?
+3. **Több frissítés együttes használata**: Egyszerre betartja-e a költségkeretet és a létszámkorlátot, ahelyett hogy csak az utolsó üzenetre emlékezne?
+
+A modell aszinkron környezetben tanítással fejleszthető, a rendszer pedig világos feladatállapottal, eseményforrásokkal és végrehajtási visszajelzéssel. Az értékelésnek mindkét rétegre ki kell terjednie: megértette-e a modell a változást, és a rendszer ennek megfelelően hajtott-e végre?
+
+> **6-3. kísérlet ★★★: A modell natív aszinkron működése és kör közbeni iránymódosítás**
+>
+> Válasszunk helyszínt egy találkozóhoz: a hosszú lekérdezés indítása után az ágens elvégzi az eredménytől független előkészületeket. Közben a felhasználó költségkeretre és létszámra vonatkozó követelményeket ad hozzá. A lekérdezés végén az összes korlát alapján választ helyszínt.
+>
+> A GPT-6 Astra API-ját hívva hasonlítsuk össze a szinkron eszközöket, a natív aszinkron eszközöket és a kör közbeni iránymódosítást. Figyeljük meg, blokkol-e más munkát a várakozás, bekerülnek-e az új követelmények a későbbi tervekbe, és az eredmény érkezésekor folytatódik-e az eredeti feladat. Kontrollként használjunk natív támogatás nélküli modellt is, hogy elkülönítsük a modell képességeinek és a futtatókörnyezet szervezésének szerepét.
+
+Az aszinkron és eseményvezérelt működés lehetővé teszi, hogy a világ feladat közben ébressze fel az ágenst; a natív iránymódosítás révén a felhasználó a teljes válasz vége előtt küldhet frissítést. A következő három rész tovább szűkíti az időskálát: ha a környezet olyan gyorsan vagy gyorsabban változik, mint ahogy a modell generál, nem elég a frissítések fogadása; időben reagálni is kell.
 
 ## Hang: A legtermészetesebb ember-gép interfész
 
@@ -340,7 +348,7 @@ Egy rövid, reasoning nélküli válasznál a VAD, az ASR, az LLM és a TTS vár
 
 ![6-8. ábra: Sorban állási késleltetési görbe](images/fig6-8.svg)
 
-> **6-3. kísérlet ★: Hagyományos hangügynök építése**
+> **6-4. kísérlet ★: Hagyományos hangügynök építése**
 >
 > WebSocketon keresztül kösd össze a mikrofont, a Silero VAD-ot, a helyi Whispert, egy streamelő LLM-et és a Fish S1 TTS-t a kaszkádos alapvonal felépítéséhez.
 
@@ -371,7 +379,7 @@ A modell nem csupán szöveget adhat ki, hanem akusztikai eseményjelöléseket 
 
 Ezek a jelölések a szöveges tokenekkel együtt egyetlen eseményfolyamot alkotnak: az Agent ez alapján ismeri fel a tétovázást, a félbeszakítást és a környezet változásait anélkül, hogy minden hangot puszta szöveggé kellene sűrítenie.
 
-> **6-4. kísérlet ★: Streaming hangészlelés szimulációja Qwen2-Audio-val**
+> **6-5. kísérlet ★: Streaming hangészlelés szimulációja Qwen2-Audio-val**
 >
 > A Qwen2-Audio önmagában nem streamelő modell. A kísérlet növekvő hangelőtagokkal szimulálja a folyamatos érzékelést, és 600 ms-os VAD + Whisper megoldással hasonlítja össze.
 
@@ -385,7 +393,7 @@ Az Omni modell továbbra is a felváltva beszélést feltételezi, és a szóló
 
 ![6-9. ábra: End-to-end omnimodális hangmodellek](images/fig6-9.svg)
 
-> **6-5. kísérlet ★★: MiniCPM-o 4.5 helyi futtatása — end-to-end és önkaszkád**
+> **6-6. kísérlet ★★: MiniCPM-o 4.5 helyi futtatása — end-to-end és önkaszkád**
 >
 > Futtasd helyben a MiniCPM-o 4.5-öt kikapcsolt thinking mode-dal, és hasonlítsd össze a közvetlen hangalapú választ azzal az önkaszkáddal, amely ugyanazzal a modellel előbb átír, majd válaszol. Ez azt méri, megmarad-e a hanginformáció, **nem** a későbbi „beszéd közbeni gondolkodást”.
 
@@ -441,7 +449,7 @@ A hagyományos TTS túl sima hangzásával és túl kevés szünetével árulhat
 
 A fő LLM a szöveg mellett vezérlőjelölőket is kibocsáthat, például **THINKING**, **EMO:happy** és **SPEED:0.8x**; a TTS ezeket szünetekké, prozódiává, beszédtempóvá, nevetéssé, sóhajjá és más nem verbális hangokká alakítja. A megvalósítás lehet olyan TTS, amelyet vezérlőjelölők megértésére tanítottak, vagy hangklónozás különböző érzelmekhez és stílusokhoz tartozó referenciafelvételekkel.
 
-> **6-6. kísérlet ★★: Vezérlőtoken-vezérelt TTS Fish Audióval**
+> **6-7. kísérlet ★★: Vezérlőtoken-vezérelt TTS Fish Audióval**
 >
 > Használjuk a Fish Audio S1-et többreferenciás hangkönyvtár felépítésére, és hasonlítsunk össze három konfigurációt: vezérlőjelölők nélkül, egy referenciafelvétellel és több referenciafelvétellel. A végrehajtási réteg a jelölők alapján választja ki a megfelelő érzelmet, beszédtempót és stílust.
 
@@ -475,7 +483,7 @@ Az Anthropic referencia-megvalósítása három eszköztípusra bontja a teljes 
 
 **Fájlszerkesztő Eszköz** (`str_replace_editor`): Biztonságos szerkesztést tesz lehetővé karakterlánc-illesztésen keresztül, támogatva a megtekintést, létrehozást, cserét, beszúrást és visszavonást. Pontosabb, mint a teljes fájl felülírása, és kisebb a valószínűsége, hogy véletlenül más tartalmat módosít.
 
-> **6-7. kísérlet ★: Computer Use futtatása (Anthropic referenciaútvonal vagy nyílt modell útvonal)**
+> **6-8. kísérlet ★: Computer Use futtatása (Anthropic referenciaútvonal vagy nyílt modell útvonal)**
 >
 > Az A útvonal az Anthropic Computer Use Demót használja. A konténer egy teljes Ubuntu asztali környezetet csomagol, beleértve a böngészőt, a terminált és más gyakori eszközöket. A front-end fogadja a feladatot, míg a back-end az utasításokat és a képernyőképeket elküldi Claude-nak, majd végrehajtja a modell által visszaadott egér-, billentyűzet-, terminál- vagy szerkesztési műveleteket.
 >
@@ -522,7 +530,7 @@ A koordináta-előrejelzési sémákban a modell koordináta-megértése nagymé
 
 A három út közötti választás a következőképpen foglalható össze: **ha strukturált információ áll rendelkezésre, részesítsük előnyben a DOM/akadálymentesítési fa indexálást** a legpontosabb és legstabilabb lokalizáció érdekében. "Ha nem áll rendelkezésre" — natív asztali szoftverekben, például Photoshop, canvas/WebGL renderelt felületek vagy játékok esetén — **használjunk vizuális annotációt (az eredeti SoM utat) vagy koordináta előrejelzést**. A vizuális annotáció többválasztásos problémává alakítja a lokalizációt, ami barátságosabbá teszi az általános célú modellek számára specializált tanítás nélkül. A koordináta előrejelzés kiküszöböli az annotációs lépést, és közvetlenebb a kifejezetten GUI lokalizációra tanított modellek számára. Mindkét megközelítés továbbra is küzd a kis elemekkel és a sűrű felületekkel.
 
-> **6-8. kísérlet ★: A browser-use használata automatizált böngészőműveletekhez**
+> **6-9. kísérlet ★: A browser-use használata automatizált böngészőműveletekhez**
 >
 > A Playwright böngésző-automatizálási keretrendszert multimodális modellel kombinálva valósíts meg természetes nyelvvel vezérelt böngészőműveleteket. Engedélyezd a SoM-megjelenítést, és minden döntés előtt ments jelölőkeretes képernyőképet.
 >
@@ -566,7 +574,7 @@ Ez azt jelenti, hogy a Computer Use nemcsak technikai ellenintézkedésekkel (mi
 
 ## Robot Manipuláció: Az Asztal Rendrakása XLeRobottal
 
-> **Hogyan olvassuk ezt a fejezetrészt**: elejétől a végéig egyetlen feladatot használunk——„tedd a piros poharat a tálcára, dobd a sárga papírgalacsint a szemetesbe, végül nézz rá még egyszer, és ellenőrizd az asztal állapotát”. A 9-7. és 6-11. kísérlet valódi XLeRoboton fut: kar, kalibráció, vészleállító és helyszíni felügyelő kell hozzá. A 9-8., 9-10. és 6-13. kísérlet ezek helyi GPU-n futó megfelelője. A valódi hardveren és a szimulációban kapott eredményeket külön jelentjük, de a feladat célja, a műveletek jelentése és a sikerfeltételek azonosak maradnak.
+> **Hogyan olvassuk ezt a fejezetrészt**: elejétől a végéig egyetlen feladatot használunk——„tedd a piros poharat a tálcára, dobd a sárga papírgalacsint a szemetesbe, végül nézz rá még egyszer, és ellenőrizd az asztal állapotát”. A 6-10. és 6-12. kísérlet valódi XLeRoboton fut: kar, kalibráció, vészleállító és helyszíni felügyelő kell hozzá. A 6-11., 6-13. és 6-14. kísérlet ezek helyi GPU-n futó megfelelője. A valódi hardveren és a szimulációban kapott eredményeket külön jelentjük, de a feladat célja, a műveletek jelentése és a sikerfeltételek azonosak maradnak.
 
 A robot manipuláció jóval nehezebb munka, mint „ránézni egy képre és válaszolni egy kérdésre”. A modellnek nemcsak a jelenetet kell értenie, hanem folyamatosan cselekednie is kell a valós világban, ráadásul minden egyes művelet megváltoztatja a következő pillanat helyzetét. Az XLeRobot nagyon kézzelfoghatóvá teszi ezt a különbséget. Ugyanazt a kart távvezérelheti ember billentyűzettel, játékvezérlővel vagy VR-eszközzel; de át is adhatjuk a kamerakép megfigyelését és egy szűkre szabott műveleti eszközkészletet egy Agentnek, hogy maga hívja őket. A hardver nem változik, a feladat sem; egyedül az változik, hogy ki kezeli——az elsőben az ember folyamatosan figyel és javít, a másodikban a modellnek és a vezérlőrendszernek kell ugyanazt a munkát végigvinnie.
 
@@ -589,7 +597,7 @@ A diagnózis módszere egyenes. Rögzített kamera, kar, megfogó, asztali elren
 
 Az XLeRobot többféle távvezérlési belépési pontot támogat: billentyűzet, Xbox-kontroller, Switch Joy-Con és VR-eszközök. Az emberi kezelő természetes módon csinál sok olyat, amit egy algoritmusnak kifejezetten meg kellene valósítania: lassít, amikor a megfogó közelít a pohárhoz; kijavítja a fogáspontot, ha a pohár megcsúszik; újranéz, ha elsőre nem sikerül megcsípnie a papírt; és ellenőrzi az eredményt, amikor a tárgy a célterületre kerül. A távvezérlés ezért nem csupán a bemutató adatok gyűjtésének eszköze, hanem olyan diagnosztikai kísérlet is, amely „rögzíti a hardvert, és csak a kezelőt cseréli”.[^ch6-1]
 
-> **6-9. kísérlet ★: Az asztal rendrakása valódi XLeRobot távvezérlésével**
+> **6-10. kísérlet ★: Az asztal rendrakása valódi XLeRobot távvezérlésével**
 >
 > Helyezzen egy valódi XLeRobot munkaterébe egy piros poharat, egy tálcát, egy összegyűrt sárga papírt és egy szemetest. A kezelő az egyik kalibrált távvezérlési úton hajtja végre a rögzített feladatot: „tedd a piros poharat a tálcára, dobd a sárga papírgalacsint a szemetesbe, végül nézz rá még egyszer, és ellenőrizd az asztal állapotát”. Ismételje meg legalább néhány körben, és rögzítse a kamera képét, a kezelő bemeneteit, a kar állapotát, a műveletek időtartamát, a sikertelen megfogásokat, az újrapróbálkozások számát és a végállapotot.
 >
@@ -597,11 +605,11 @@ Az XLeRobot többféle távvezérlési belépési pontot támogat: billentyűzet
 
 A valódi hardveren végzett távvezérlés a legmeggyőzőbben mutatja meg a feladat felső korlátját, de nem alkalmas arra, hogy tömegesen változtassuk a tárgyak számát és helyzetét. Hogy ismételhető és statisztikailag mérhető összehasonlítást kapjunk, ugyanazt a „tegyük vissza a tárgyakat a helyükre” feladatot a következő lépésben egy kétdimenziós asztali szimulátorba visszük át, és egy ideális szabályozót használunk annak az erős kezelőnek a helyettesítésére, aki nem téveszt az érzékelésben és nem választ rosszul műveletet.
 
-> **6-10. kísérlet ★: Ugyanannak a feladatnak az ideális vezérlési felső korlátja a szimulátorban**
+> **6-11. kísérlet ★: Ugyanannak a feladatnak az ideális vezérlési felső korlátja a szimulátorban**
 >
 > Egy kétdimenziós asztali szimulátorban helyezze el véletlenszerűen a piros poharat, a sárga papírt és a hozzájuk tartozó célterületeket, az ideális szabályozó pedig sorban közelítse meg a tárgyakat, fogja meg és vigye őket a helyes helyre. Nem kell képet felismernie, és nem választ rosszul műveletet, ezért azt képviseli, hogy „meddig juthat el legalább ez a feladat akkor, ha az érzékelés és a döntés is helyes”.
 >
-> Nézze a feladat sikerarányát, a lépések számát és az útvonal hosszát; változtassa a tárgyak kezdeti helyzetét és a feladat léptékét is, hogy lássa, stabil marad-e ez az ideális korlát. Ugyanazokat a sikerfeltételeket használjuk, mint a 6-9. kísérletben, de amit mérünk, az beavatkozó nélküli szimuláció: ez nem jelenti azt, hogy a valódi XLeRobot megmozdult volna. A kettő két alapvonal lesz a későbbi önálló vezérléshez——a 6-9. kísérlet az ember zárt hurka valódi hardveren, a 9-8. pedig az ideális zárt hurok szimulációs környezetben.
+> Nézze a feladat sikerarányát, a lépések számát és az útvonal hosszát; változtassa a tárgyak kezdeti helyzetét és a feladat léptékét is, hogy lássa, stabil marad-e ez az ideális korlát. Ugyanazokat a sikerfeltételeket használjuk, mint a 6-10. kísérletben, de amit mérünk, az beavatkozó nélküli szimuláció: ez nem jelenti azt, hogy a valódi XLeRobot megmozdult volna. A kettő két alapvonal lesz a későbbi önálló vezérléshez——a 6-10. kísérlet az ember zárt hurka valódi hardveren, a 6-11. pedig az ideális zárt hurok szimulációs környezetben.
 
 ### A Robotvezérlés Alapszerkezete
 
@@ -633,13 +641,13 @@ pick(red_cup) → place(red_cup, tray) → verify_state()
 
 Minden befejezett készség egy ellenőrizhető csomópontot hagy hátra. Ha a megfogás nem sikerül, csak azt a lépést kell újracsinálni. Ha valaki elmozdít egy tárgyat, vagy a felhasználó megváltoztatja a célt, elég az érintett későbbi lépéseket újratervezni, nem kell a régi tervet elölről végigcsinálni. Az ügynöknek adott eszközöknek is elég egyszerűnek kell lenniük: egy hívás egyetlen dolgot végez, a mozgástartomány rögzített, van időtúllépés, és a végrehajtás után azonnal újra megfigyelünk.
 
-> **6-11. kísérlet ★★: Hagyjuk, hogy a Gemini Robotics-ER 1.5 önállóan rakja rendbe az asztalt XLeRobottal**
+> **6-12. kísérlet ★★: Hagyjuk, hogy a Gemini Robotics-ER 1.5 önállóan rakja rendbe az asztalt XLeRobottal**
 >
-> Tartsa meg a 6-9. kísérlet valódi XLeRobotját, asztali elrendezését, feladatutasítását és sikerfeltételeit; egyedül az emberi kezelőt cserélje le egy Agentre. A megfigyelést és a tervezést bízza egy megtestesült következtető modellre, például a Gemini Robotics-ER 1.5-re, és egy RoboCrew-stílusú ügynökhurkon keresztül csak öt eszközt nyisson meg: `observe_scene`, `pick`, `place`, `verify_state` és `stop`.[^ch6-2]
+> Tartsa meg a 6-10. kísérlet valódi XLeRobotját, asztali elrendezését, feladatutasítását és sikerfeltételeit; egyedül az emberi kezelőt cserélje le egy Agentre. A megfigyelést és a tervezést bízza egy megtestesült következtető modellre, például a Gemini Robotics-ER 1.5-re, és egy RoboCrew-stílusú ügynökhurkon keresztül csak öt eszközt nyisson meg: `observe_scene`, `pick`, `place`, `verify_state` és `stop`.[^ch6-2]
 >
 > A modell először megfigyeli az asztalt, meghatározza a kezelés sorrendjét, majd meghívja az XLeRobot kalibrált megfogó és lehelyező műveleteit. Minden befejezett készség után újra kell megfigyelnie és ellenőriznie az utófeltételt. Sikertelen megfogás esetén csak az aktuális készséget próbálhatja újra; és meg kell hívnia a `stop`-ot, ha a felhasználó megállást kér, ha egy tárgy kikerül a munkatérből, vagy ha az állapot nem ellenőrizhető. A modell nem adhat ki közvetlenül tetszőleges ízületi szögeket, és nem hagyhatja ki a valódi ellenőrzést pusztán azért, mert korábban maga mondta, hogy „kész”.
 >
-> Az elfogadási feltétel pontosan ugyanaz, mint a 6-9. kísérletben: a pohár a tálcán, a papír a szemetesben, a kar visszatért biztonságos testhelyzetébe, nincs ütközés és munkatéren kívülre lépés. A különbség az, hogy az önálló kísérletben a feladat értelmének a modell saját megfigyeléséből kell származnia, a valódi műveleteknek eszközhívásokból, a végállapotot pedig új megfigyeléssel kell megerősíteni. Az ember csak indíthat, vészleállíthat és a biztonságra ügyelhet; nem fejezheti be félúton a műveletet az Agent helyett. Csak így hasonlítható össze közvetlenül a 9-7. és a 6-11. kísérlet: „azonos hardveren és azonos feladaton mi hiányzik a modell zárt hurkából az emberéhez képest”.
+> Az elfogadási feltétel pontosan ugyanaz, mint a 6-10. kísérletben: a pohár a tálcán, a papír a szemetesben, a kar visszatért biztonságos testhelyzetébe, nincs ütközés és munkatéren kívülre lépés. A különbség az, hogy az önálló kísérletben a feladat értelmének a modell saját megfigyeléséből kell származnia, a valódi műveleteknek eszközhívásokból, a végállapotot pedig új megfigyeléssel kell megerősíteni. Az ember csak indíthat, vészleállíthat és a biztonságra ügyelhet; nem fejezheti be félúton a műveletet az Agent helyett. Csak így hasonlítható össze közvetlenül a 6-10. és a 6-12. kísérlet: „azonos hardveren és azonos feladaton mi hiányzik a modell zárt hurkából az emberéhez képest”.
 
 A valódi hardveren végzett kísérletek felszínre hozzák a kalibrációs hibákat, a kamera takarásait és a megfogó kudarcait, de nem alkalmasak arra, hogy nagy számú meghibásodást biztonságosan és szabályozottan ismételjünk. A következő szimulációs kísérletek pontosan ugyanezt az öt eszközt és feladatállapotot őrzik meg, és csak a valódi beavatkozókat cserélik olyan asztali környezetre, amelybe hiba injektálható——így szétválasztható, hogy külön-külön mit tesz hozzá a nyílt hurkú végrehajtás, a lépésenkénti ellenőrzés és a műveleti előrejelzés.
 
@@ -697,9 +705,9 @@ Térjünk vissza az XLeRobot asztali feladatához. Ha a sárga papírt részben 
 
 A világmodell nem biztos válaszokat ad, hanem összehasonlítható előrejelzéseket arról, „mi történhet, ha így teszek”. Minél távolabbra jelzünk előre, annál nagyobb általában a hiba, és egy élethűnek látszó jövőbeli kép nem feltétlenül felel meg a valódi érintkezési és súrlódási törvényeknek. Ezért egy valódi rendszernek továbbra is szüksége van rövid távú előrejelzésre, valós idejű megfigyelésre, bizonytalanságbecslésre és önálló hardveres biztonsági szabályozóra. A generatív világmodellek jól használhatók interaktív szimulációra és megjelenítésre, de nem szabad összekeverni azt, hogy „tud videót előállítani”, azzal, hogy „képes irányítani a robot műveleteit”.[^ch6-21]
 
-> **6-12. kísérlet ★★: Három önálló asztalrendrakó hurok összehasonlítása a szimulátorban**
+> **6-13. kísérlet ★★: Három önálló asztalrendrakó hurok összehasonlítása a szimulátorban**
 >
-> Vigye át a 6-11. kísérlet feladatát, célállapotait, sikerfeltételeit és öt eszközét az asztali szimulátorba, és egyedül a valódi XLeRobot beavatkozóit cserélje szabályozható szimulációs végrehajtóra, amely a megfogásnál időnként átmeneti, de helyrehozható hibát okoz. Így a probléma megváltoztatása nélkül hasonlítható össze a három stratégia.
+> Vigye át a 6-12. kísérlet feladatát, célállapotait, sikerfeltételeit és öt eszközét az asztali szimulátorba, és egyedül a valódi XLeRobot beavatkozóit cserélje szabályozható szimulációs végrehajtóra, amely a megfogásnál időnként átmeneti, de helyrehozható hibát okoz. Így a probléma megváltoztatása nélkül hasonlítható össze a három stratégia.
 >
 > A **nyílt hurkú végrehajtás** egyszerre állítja elő a teljes műveletsort, és útközben nem figyel meg újra. A **lépésenkénti ellenőrzés** minden `pick` és `place` után újraolvassa az állapotot, és hiba esetén csak az aktuális készséget csinálja újra. Az **előrejelző végrehajtás** ezen felül egy rövid távú világmodellt is bevon: összehasonlítja a jelölt készségek várható eredményét, mielőtt kiválasztaná a következő lépést. A kísérlet összehasonlítja a feladat sikerarányát, az eszközhívások többletköltségét és a hibából való visszatérés képességét, továbbá ellenőrzi, hogy minden végső sikert megerősít-e egy új `verify_state` megfigyelés.
 >
@@ -707,9 +715,9 @@ A világmodell nem biztos válaszokat ad, hanem összehasonlítható előrejelz�
 
 ### A Szimulációs Környezettől a Valódi Robotig
 
-Attól, hogy a 6-12. kísérlet stabil a szimulátorban, a 6-11. kísérlet valódi XLeRobotja még nem lesz ugyanúgy sikeres. A szimulációtól a valódi gépig eljutni nem azt jelenti, hogy még egy szabályozót lecserélünk, hanem azt, hogy magunkra vállaljuk a két környezet közötti különbséget. A tanításhoz használhatunk távvezérlési adatot, videóadatot és szimulációs interakciós adatot; de valódi üzembe helyezéskor ugyanaz a piros pohár, ugyanaz a sárga papír, ugyanaz a tálca és ugyanaz a szemetes más háttér, más megvilágítás, más kamerapozíció és más takarási viszonyok mellett jelenik meg, a kar pedig ráadásul más súrlódással, más érzékelőzajjal és más beavatkozó-késleltetéssel találkozik. Ha ezek a különbségek elég nagyok, a szimulációban megtanult mozdulatok a valóságban felmondhatják a szolgálatot.
+Attól, hogy a 6-13. kísérlet stabil a szimulátorban, a 6-12. kísérlet valódi XLeRobotja még nem lesz ugyanúgy sikeres. A szimulációtól a valódi gépig eljutni nem azt jelenti, hogy még egy szabályozót lecserélünk, hanem azt, hogy magunkra vállaljuk a két környezet közötti különbséget. A tanításhoz használhatunk távvezérlési adatot, videóadatot és szimulációs interakciós adatot; de valódi üzembe helyezéskor ugyanaz a piros pohár, ugyanaz a sárga papír, ugyanaz a tálca és ugyanaz a szemetes más háttér, más megvilágítás, más kamerapozíció és más takarási viszonyok mellett jelenik meg, a kar pedig ráadásul más súrlódással, más érzékelőzajjal és más beavatkozó-késleltetéssel találkozik. Ha ezek a különbségek elég nagyok, a szimulációban megtanult mozdulatok a valóságban felmondhatják a szolgálatot.
 
-> **6-13. kísérlet ★★★: Környezetek közötti RGB-teszt ugyanazon az asztali feladaton**
+> **6-14. kísérlet ★★★: Környezetek közötti RGB-teszt ugyanazon az asztali feladaton**
 >
 > A szimulációs környezetben továbbra is a „vigyük a tárgyat a megfelelő célhoz” alapproblémát használja, és tekintsen minden mintát az asztalrendrakáson belüli helyi döntésnek: az RGB-képből eldönteni, melyik irányból kell megközelíteni a tárgyat, vagy hogy megfogható-e már. Tanítson négy, azonos szerkezetű vizuális eljárásmódot: az egyik csak rögzített jeleneteket lát; a másik a hátteret változtatja; a harmadik a tárgyak külsejét; az utolsó pedig egyszerre változtatja a hátteret, a külsőt, a megvilágítást és a zajt.
 >
@@ -740,6 +748,8 @@ Ez a fejezet befejezte az „Ügynök építése” rész utolsó darabját: a m
 [^ch6-2]: Google DeepMind, „Gemini Robotics-ER 1.5”. https://deepmind.google/models/gemini-robotics/gemini-robotics-er/; XLeRobot, „Vezérlés LLM Agenttel”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html. Az XLeRobot forrásoldali példája bemutatja, hogyan hangolható össze a modell az eszközhívásokkal; ez a fejezetrész ugyanazt az összehangolási elvet tartja meg, de a műveleti eszközöket kalibrált asztali megfogó, lehelyező, ellenőrző és leállító primitívekre korlátozza.
 [^ch6-6]: LeRobot, „Sim2Real oktatóanyag”. https://github.com/StoneT2000/lerobot-sim2real/blob/87d6c1d969f6e0ca4dc5697940804e231118a63a/docs/zero_shot_rgb_sim2real.md
 [^ch6-15]: Moo Jin Kim et al. *OpenVLA: An Open-Source Vision-Language-Action Model.* arXiv:2406.09246, 2024. https://arxiv.org/abs/2406.09246
+[^ch6-22]: OpenAI, „[Async tool calling](https://developers.openai.com/api/docs/guides/async-tool-calling)”; „[Using GPT-6 Astra](https://developers.openai.com/api/docs/guides/latest-model)”, ellenőrizve: 2026-09-05.
+[^ch6-23]: OpenAI, „[Mid-turn steering](https://developers.openai.com/api/docs/guides/steering)”, ellenőrizve: 2026-09-05.
 
 ## Elgondolkodtató Kérdések
 

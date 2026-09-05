@@ -21,7 +21,7 @@ Các chương trước mở rộng **nội dung** của hai không gian này, c�
 | **Phương thức** (chương này) | Giọng nói, màn hình, cảm biến vật lý | Nói, nhấp chuột, chuyển động khớp |
 | **Thời điểm** (chương này) | Thế giới chủ động đẩy, luồng liên tục | Vượt lượt, có thể ngắt, có thể bị giành quyền |
 
-Ngữ liệu huấn luyện của một mô hình gần như hoàn toàn theo lượt — một câu hỏi rồi đến một câu trả lời, một lệnh gọi công cụ rồi đến một kết quả công cụ, một người nói xong rồi người kia mới bắt đầu. Vì thế, chính sách mà mô hình học được mặc định rằng thế giới sẽ chờ nó. Môi trường thực tế thì không chờ mô hình phản ứng: thư đến trong lúc nó đang suy nghĩ, người dùng ngắt lời giữa chừng, trang đã đổi giữa hai ảnh chụp màn hình, và cái cốc bị làm đổ trong lúc cánh tay đang với tới nó.
+**Luân phiên theo lượt là quy ước tương tác của mô hình và giao diện, không phải thuộc tính của môi trường.** Các giao diện gọi công cụ ban đầu thường sắp xếp thông điệp theo vòng đồng bộ: câu hỏi rồi đến câu trả lời, kết quả công cụ phải được bổ sung trước khi tiếp tục suy luận. Môi trường thực không chờ: email đến lúc mô hình đang nghĩ, người dùng chen ngang câu nói, trang thay đổi giữa hai ảnh chụp, chiếc cốc bị đụng đổ khi cánh tay robot đang vươn tới. Quy ước này cũng đang thay đổi: tính đến tháng 9 năm 2026, GPT-6 Astra đã hỗ trợ gọi công cụ bất đồng bộ nguyên bản và bổ sung chỉ dẫn người dùng giữa lượt. Vì vậy, chương này bàn cả hỗ trợ nguyên bản lẫn khả năng tương thích với giao diện đồng bộ hiện có.[^ch6-22][^ch6-23]
 
 | Thang | Bối cảnh | Thay đổi ở phía quan sát | Thay đổi ở phía hành động |
 |---|---|---|---|
@@ -44,7 +44,7 @@ Trong phần này phương thức không thay đổi, vẫn là văn bản; th�
 - **Đánh giá động về mức độ ưu tiên của sự kiện** - Không phải tất cả các sự kiện đều quan trọng như nhau, Agent cần lựa chọn chiến lược xử lý một cách thông minh: hủy thao tác hiện tại (khẩn cấp), thêm vào hàng đợi (thông thường) hoặc xử lý song song (truy vấn nhẹ độc lập).
 - **Gián đoạn và tiếp tục trôi chảy** - Các cuộc hội thoại hoặc nhiệm vụ bị gián đoạn sẽ có thể tiếp tục một cách tự nhiên.
 
-Mâu thuẫn cơ bản gặp phải khi triển khai mô hình không đồng bộ vào LLM hiện tại là: mô hình đào tạo của LLM giả định đồng bộ hóa - sau khi đưa ra lệnh gọi công cụ, thông báo tiếp theo phải là kết quả công cụ; nhưng việc triển khai thực tế yêu cầu không đồng bộ - người dùng có thể gián đoạn bất kỳ lúc nào, nhiều tác vụ có thể tiến triển đồng thời và các sự kiện bên ngoài có thể đến trước khi công cụ hoạt động trở lại. Mâu thuẫn "đồng bộ hóa đào tạo/triển khai không đồng bộ" này xuyên suốt tất cả những cân nhắc kỹ thuật được thảo luận sau trong phần này.
+Khi áp dụng bất đồng bộ cho LLM, trước tiên cần kiểm tra mô hình và API có hỗ trợ thời điểm và thứ tự thông điệp này không. Một số giao diện yêu cầu đủ kết quả công cụ mới cho tiếp tục; số khác cho phép công cụ còn chờ trong khi mô hình tiếp tục làm việc và nhận cập nhật của người dùng lúc đang sinh đầu ra. Nhóm đầu cần hàng đợi sự kiện, handle tác vụ và lớp tương thích; nhóm sau dùng trực tiếp giao thức bất đồng bộ nguyên bản. Cả hai vẫn cần ứng dụng quản lý nguồn sự kiện, vòng đời công cụ và kết quả thuộc tác vụ nào. Chỉ dùng `asyncio` trong mã không chứng minh mô hình có năng lực bất đồng bộ nguyên bản.
 
 Để làm được điều này, chúng ta cần **kiến trúc Agent không đồng bộ hướng sự kiện**. Về mặt kỹ thuật, điều này có nghĩa là hệ thống không còn tích cực kiểm tra liên tục "liệu có tin nhắn mới" hay không (điều này được gọi là bỏ phiếu, không hiệu quả) mà tự động kích hoạt logic xử lý khi có tin nhắn mới đến. Tất cả đầu vào, đầu ra, quá trình suy nghĩ và tương tác bên ngoài đều được mô hình hóa thống nhất dưới dạng luồng sự kiện—một chuỗi sự kiện trên dòng thời gian. Hình 6-1 cho thấy kiến trúc tổng thể của Agent không đồng bộ hướng sự kiện, thể hiện mối quan hệ giữa các nguồn sự kiện, hàng đợi sự kiện và luồng xử lý Agent.
 
@@ -120,9 +120,9 @@ Phiên bản Agent có thể gặp phải nhiều sự kiện cùng lúc: tin nh
 
 Bộ khung của cơ chế này chính là **vòng lặp sự kiện** (event loop) trong lập trình đồng thời. Có thể xem Agent không đồng bộ như một vòng lặp chạy dài hạn: mỗi vòng lấy ra một số sự kiện từ hàng đợi đầu vào, nối vào trajectory, gọi LLM một lần, thực thi các công cụ mà nó quyết định, rồi quay về đầu vòng lặp để chờ lô sự kiện tiếp theo—đây là cùng một cấu trúc với việc goroutine của Go đọc tin nhắn từ channel và xử lý từng vòng trong `for { select { ... } }`.
 
-Mô hình này có một tính chất then chốt: **sự kiện chỉ được tiêu thụ tại ranh giới của mỗi vòng lặp**. Khi LLM đang suy luận hay công cụ đang chạy, sự kiện vừa đến sẽ không chen ngang làm rối bước hiện tại, mà trước hết chờ trong hàng đợi, đến khi vòng lặp này đạt tới một **điểm an toàn** (kết thúc một đoạn suy luận, một lần công cụ trả về) thì mới được xử lý gộp. Việc hủy cũng tuân theo đúng kỷ luật ấy: không cắt ngang cưỡng bức vào bất kỳ thời điểm nào, mà kiểm tra tại điểm an toàn xem "đã có yêu cầu dừng chưa"—đây chính là vai trò mà `ctx.Done()` đảm nhiệm trong Go.
+Trong cách triển khai giao diện đồng bộ truyền thống, **sự kiện được xử lý tại ranh giới mỗi vòng**. Khi LLM suy luận hoặc công cụ thực thi, sự kiện mới chờ trong hàng đợi đến một **điểm an toàn**: kết thúc đoạn suy luận hoặc công cụ trả về. Bất đồng bộ nguyên bản cho phép nhận yêu cầu mới khi mô hình còn suy nghĩ hay xuất câu trả lời; hệ thống chọn lúc thích hợp để tiếp tục xử lý. Cả hai đều có ranh giới, do các lớp khác nhau quản lý. Hủy công cụ vẫn đòi hỏi bộ thực thi phản hồi tín hiệu hủy, tương tự kiểm tra `ctx.Done()` trong Go; nhận thông điệp “dừng” tự nó không hoàn tác hành động đã xảy ra.
 
-Hiểu được điều này thì ba chiến lược xử lý dưới đây chỉ khác nhau ở cách đối xử với điểm an toàn: để sự kiện chờ tới điểm an toàn kế tiếp xuất hiện một cách tự nhiên (xếp hàng), chủ động tạo sớm một điểm an toàn (hủy), hay đơn giản là mở một vòng lặp khác và không cần chờ điểm an toàn của vòng lặp chính (song song).
+Với phân biệt này, trước hết ta dùng vòng lặp sự kiện tương thích với giao diện đồng bộ để giải thích ba chiến lược: chờ điểm an toàn tự nhiên tiếp theo (xếp hàng), tạo điểm an toàn sớm hơn (hủy), hoặc mở vòng lặp khác mà không chờ vòng chính (song song). Cách tiếp nối bằng steering nguyên bản sẽ được bàn sau.
 
 **Mô hình hóa có cấu trúc của các sự kiện.**
 
@@ -199,23 +199,23 @@ Sau đây là thử nghiệm Agent xử lý email theo hướng sự kiện đ�
 
 Thử nghiệm 6-1 trình diễn mô hình hướng sự kiện đơn giản nhất - các sự kiện được đưa vào hàng đợi và Agent lần lượt xử lý chúng. Nhưng khi Agent cần phản hồi các gián đoạn trong quá trình thực thi một công cụ chạy dài hoặc quản lý nhiều tác vụ đồng thời cùng lúc thì hàng đợi sự kiện đơn giản là không đủ. Những thách thức kỹ thuật sâu hơn sẽ được thảo luận tiếp theo.
 
-### Triển khai dự án: Làm thế nào để mô hình đồng bộ hỗ trợ gián đoạn không đồng bộ
+### Phương án tương thích khi không có bất đồng bộ nguyên bản
 
-Thử nghiệm 6-1 chỉ xử lý các sự kiện nối tiếp - các sự kiện lần lượt vào hàng đợi và Agent xử lý chúng lần lượt. Bây giờ hãy quay lại mâu thuẫn “đào tạo đồng bộ/triển khai không đồng bộ” được nêu ở đầu phần này: Định dạng đồng bộ nên giải quyết sự gián đoạn đột ngột của người dùng khi công cụ chưa quay trở lại như thế nào? Phần này cung cấp các giải pháp kỹ thuật hiện tại trong ngành.
+Thí nghiệm 6-1 chỉ xử lý sự kiện nối tiếp: sự kiện vào hàng đợi và Agent giải quyết từng việc. Nếu mô hình hoặc giao diện được chọn không hỗ trợ bất đồng bộ nguyên bản, sự chen ngang của người dùng trước khi công cụ trả về phải được biểu đạt trong định dạng đồng bộ. Ta trình bày phương án tương thích trước, rồi giới thiệu giao diện nguyên bản của GPT-6 Astra.
 
-Trước tiên hãy sử dụng một kịch bản cụ thể để minh họa mâu thuẫn này. Giả sử Agent đang giúp người dùng soạn thảo một email (gọi công cụ: tìm kiếm thông tin liên hệ). Trước khi kết quả tìm kiếm được trả về, người dùng đột nhiên nói: "Đợi một chút, trước tiên hãy giúp tôi kiểm tra thời tiết ngày mai." Trong vòng lặp ReAct được đồng bộ hóa, Agent phải đợi tìm kiếm quay trở lại trước khi xử lý tin nhắn tiếp theo - vì API yêu cầu rằng "sau khi phát ra lệnh gọi công cụ, tin nhắn tiếp theo phải là kết quả của công cụ". Nhưng trong thế giới thực không đồng bộ, các sự kiện có thể làm gián đoạn các nhiệm vụ đang diễn ra bất cứ lúc nào. Làm thế nào để diễn đạt ngữ nghĩa của "ngắt không đồng bộ" dưới các ràng buộc của "định dạng đồng bộ" chính xác là câu hỏi cần được trả lời bằng kế hoạch kỹ thuật sau đây.
+Giả sử Agent đang soạn email và gọi công cụ tìm thông tin liên hệ. Trước khi có kết quả, người dùng nói: “Chờ đã, xem thời tiết ngày mai trước nhé.” Nếu giao diện yêu cầu các lời gọi chưa hoàn tất phải nhận kết quả tương ứng trước, Agent không thể xử lý trực tiếp thông điệp mới khi lời gọi còn treo. Hạn chế này đến từ tổ hợp giao thức và mô hình đã chọn, không phải quy luật chung cho mọi LLM.
 
-**Phương pháp kỹ thuật: thực hiện đồng bộ hóa mô phỏng không đồng bộ.**
+**Triển khai bất đồng bộ tương thích với định dạng đồng bộ.**
 
 Ý tưởng cốt lõi là: **Trong điều kiện bình thường không xảy ra gián đoạn, hãy để LLM xem trajectory đồng bộ hóa tiêu chuẩn và chỉ chèn phần giữ chỗ để sửa định dạng khi xảy ra gián đoạn**. Dưới đây là năm quy tắc chính:
 
-**Quy tắc 1**: LLM ghi lại tin nhắn trợ lý (bao gồm suy nghĩ, nội dung và lệnh gọi công cụ) ngay khi xuất ra.
+**Quy tắc 1**: Kịp thời ghi lại thông điệp assistant và mục gọi công cụ mà API đã hoàn tất. Giữ trạng thái suy luận do máy chủ quản lý theo giao thức tiếp nối của nhà cung cấp; không tự ghép văn bản suy nghĩ không nhìn thấy.
 
 **Quy tắc 2**: Kết quả dao chỉ được ghi lại sau khi lệnh gọi dao hoàn tất. Dấu vết thực thi ở trạng thái "Đã hoàn thành một phần".
 
 **Quy tắc 3**: Sự gián đoạn trong quá trình thực thi công cụ cần có phần giữ chỗ. Tạo phản hồi giữ chỗ cho công cụ chưa hoàn thành (chẳng hạn như "Công cụ đang thực thi ở chế độ nền, vui lòng xử lý các sự kiện mới trước"), nối thêm sự kiện gián đoạn và gọi lại LLM. Từ góc độ của LLM, thông báo trợ lý vẫn có kết quả công cụ phù hợp.
 
-**Quy tắc 4**: LLM Việc gián đoạn trong quá trình suy nghĩ sẽ trực tiếp loại bỏ suy nghĩ hiện tại. Nếu không viết ra trajectory, các sự kiện mới sẽ được bổ sung trực tiếp và một vòng suy nghĩ mới được bắt đầu.
+**Quy tắc 4**: Khi không có steering nguyên bản hay giao diện tiếp nối giữa lượt được hỗ trợ, hủy phần sinh chưa hoàn tất, giữ thông điệp đã xác nhận hoàn thành cùng trạng thái công cụ, thêm sự kiện mới rồi gửi yêu cầu khác. Không được cho rằng đầu ra dở dang hoặc suy luận ẩn có thể tùy ý đưa trở lại như một tiền tố hợp lệ.
 
 **Quy tắc 5**: Các sự kiện không gián đoạn sẽ được đưa vào hàng đợi và chờ xử lý hàng loạt. Nó sẽ chỉ được thêm vào một lần sau khi chu kỳ hiện tại hoàn thành.
 
@@ -225,13 +225,13 @@ Lấy việc người dùng ngắt lời để hỏi về thời tiết khi Agen
 2. Khi công cụ tìm kiếm chưa trả về kết quả, người dùng gửi "Giúp tôi kiểm tra thời tiết ngày mai trước". Vì đây là sự gián đoạn của người dùng nên hệ thống sẽ tạo kết quả công cụ giữ chỗ cho `search_contacts` chưa hoàn thành ("Công cụ đang thực thi ở chế độ nền, vui lòng xử lý các sự kiện mới trước", quy tắc 3), sau đó thêm truy vấn thời tiết của người dùng vào trajectory và gọi lại LLM. Tại thời điểm này, định dạng trajectory mà LLM nhìn thấy là hoàn toàn hợp pháp—thông báo hỗ trợ và kết quả công cụ được ghép nối hoàn hảo.
 3. Sau khi hoàn thành truy vấn thời tiết và người dùng được trả lời, kết quả `search_contacts` ban đầu sẽ xuất hiện và được thêm vào trajectory dưới dạng một sự kiện mới (Quy tắc 2). Agent đọc thông tin liên hệ và tiếp tục soạn thảo email.
 
-Ưu điểm cốt lõi của giải pháp này là: **Trong điều kiện bình thường, LLM có trajectory đồng bộ hóa hoàn hảo**—thông báo hỗ trợ và kết quả công cụ được khớp hoàn toàn, trình tự thời gian rõ ràng và không có phần giữ chỗ hoặc trạng thái bất thường. Đây là phương pháp thân thiện nhất với LLM hiện tại dựa trên mô hình đào tạo đồng bộ, đảm bảo chất lượng tư duy ở mức cao nhất. Chỉ đưa ra “sự thỏa hiệp cần thiết” của các phần giữ chỗ khi sự gián đoạn thực sự cần thiết.
+Phương án này duy trì sự ghép cặp lời gọi–kết quả mà giao diện đồng bộ yêu cầu. Chỉ khi cần ngắt mới thêm phần giữ chỗ ghi rõ “chưa hoàn tất”. Khi kết quả nền thật đến, nó được đưa vào quỹ đạo dưới dạng sự kiện có nguồn và ID tác vụ. Với mô hình hỗ trợ bất đồng bộ nguyên bản, hệ thống có thể giữ trạng thái đang chờ và chuyển kết quả thật cho mô hình khi kết quả đến.
 
-Nhưng vẫn có nguy cơ làm trầm trọng thêm ảo giác. Trong trường hợp này, mặc dù trình giữ chỗ tuyên bố rõ ràng rằng công cụ này "chưa hoàn thiện", hệ thống vẫn có thể "chế tạo" một công cụ dẫn đến suy nghĩ tiếp theo, nhầm tưởng rằng công cụ đó đã trả về dữ liệu hợp lệ và đưa ra các quyết định không phù hợp dựa trên kết quả hư cấu này. Điều này là do trong phần lớn các trajectory mà mô hình nhìn thấy trong quá trình đào tạo, các lệnh gọi công cụ sẽ ngay lập tức dẫn đến kết quả thực và mô hình không bao giờ học cách giải quyết tình huống "kết quả vẫn chưa quay lại". Do đó, trong thực tế, nó chỉ bị gián đoạn khi thực sự khẩn cấp (người dùng yêu cầu dừng rõ ràng) và các sự kiện không khẩn cấp được đưa vào hàng đợi để xử lý hàng loạt.
+Phần giữ chỗ cũng có rủi ro ngữ nghĩa: mô hình có thể nhầm “tác vụ đã bắt đầu” thành “tác vụ đã hoàn thành” và quyết định dựa trên kết quả chưa đến. Trạng thái tác vụ rõ ràng và kiểm tra kết quả cần ngăn sự nhầm lẫn này; đánh giá phải phát hiện dữ liệu bị bịa ra trước khi nhận được. Một lần thất bại không đủ để quy nguyên nhân cho một quy trình huấn luyện chưa công bố.
 
-**Giao diện công cụ không đồng bộ phù hợp với các mô hình hiện có.**
+**Biểu đạt ngữ nghĩa bất đồng bộ qua handle tác vụ.**
 
-Do giả định đồng bộ hóa của mô hình khó bị phá vỡ nên chiến lược cơ bản hơn là áp dụng ngữ nghĩa không đồng bộ từ cấp độ thiết kế của giao diện công cụ.
+Dù có dùng giao thức bất đồng bộ nguyên bản hay không, **thiết kế giao diện công cụ vẫn có thể làm rõ ngữ nghĩa bất đồng bộ**. Cách đặc biệt hữu ích với giao diện đồng bộ là biến “khởi động tác vụ” thành một lời gọi hoàn chỉnh có giá trị trả về thật.
 
 Thiết kế công cụ truyền thống ngụ ý ngữ nghĩa "gọi và thế là xong". Ví dụ: tên `phone_call` ngụ ý rằng "cuộc gọi sẽ thực hiện cuộc gọi và đợi cuộc gọi kết thúc, trả lại nhật ký cuộc gọi". Trong mô hình không đồng bộ, "bắt đầu" và "hoàn thành" phải được tách riêng:
 
@@ -242,7 +242,7 @@ Thiết kế công cụ truyền thống ngụ ý ngữ nghĩa "gọi và thế 
 
 **Vấn đề mất tập trung trong xử lý hàng đợi.**
 
-Khi xử lý các sự kiện theo lô, mô hình thường chỉ tập trung vào sự kiện cuối cùng. Nguyên nhân cốt lõi là các mô hình được đào tạo để phản ứng với đầu vào mới nhất và các sự kiện hàng loạt phá vỡ giả định này.
+Khi xử lý sự kiện theo lô, mô hình có thể chỉ trả lời sự kiện cuối và bỏ sót yêu cầu trước đó. Bất đồng bộ nguyên bản giải quyết việc thông điệp có thể đến trong lúc chạy hay không; vẫn phải kiểm tra mô hình đã tổng hợp mọi cập nhật chưa.
 
 Sự can thiệp có thể xảy ra ở hai cấp độ:
 
@@ -259,37 +259,13 @@ Sự can thiệp có thể xảy ra ở hai cấp độ:
 
 Thêm phần tóm tắt ở cuối: "Có 4 sự kiện mở ở trên, bao gồm 1 kết quả công cụ, 2 tin nhắn của người dùng và 1 cảnh báo hệ thống. Hãy đảm bảo phản hồi bao gồm tất cả thông tin."
 
-### Mâu thuẫn sâu sắc và định hướng tương lai
-
-
-![Hình 6-4 Mô hình đào tạo đồng bộ và thực tế triển khai không đồng bộ ](images/fig6-4.svg)
-
-
-Trong phân tích cuối cùng, các phần giữ chỗ, giao diện công cụ không đồng bộ và các điểm đánh dấu trên thanh trạng thái trong các phần trước đều đang sử dụng Prompt Engineering (kỹ thuật prompt) để bù đắp cho cùng một mâu thuẫn "đồng bộ hóa đào tạo/triển khai không đồng bộ" (Hình 6-4) - nguyên nhân của mâu thuẫn này đã được trình bày chi tiết ở đầu phần này và sẽ không được nhắc lại ở đây mà chỉ tập trung vào giải pháp cơ bản của nó.
-
-**Mong chờ sự phát triển của mô hình: từ đồng bộ sang không đồng bộ.**
-
-Các kỹ thuật kỹ thuật trên về cơ bản là **sử dụng kỹ thuật nhanh chóng để bù đắp cho việc thiếu đào tạo mô hình** và là một biện pháp tạm thời trong giai đoạn chuyển tiếp. Giải pháp thực sự đòi hỏi sự thay đổi mô hình ở cấp độ đào tạo mô hình.
-
-Các mô hình VLA (Vision-Language-Action, Tầm nhìn-Ngôn ngữ-Hành động, xem Chương 6 để biết chi tiết) trong lĩnh vực robot đã bắt đầu đối mặt với những thách thức tương tự: có sự chậm trễ không thể tránh khỏi giữa nhận thức và hành động. Sự thành công của VLA mở đường cho sự phát triển của mẫu Agent. Các mô hình thế hệ tiếp theo yêu cầu ba khả năng cốt lõi thông qua học tăng cường trong môi trường không đồng bộ:
-
-1. **Hiểu sự đan xen không đồng bộ của các sự kiện trong trajectory**: Đây là lỗ hổng năng lực cốt lõi. Mô hình hiện tại yêu cầu một trình tự đồng bộ nghiêm ngặt, nhưng trong môi trường không đồng bộ thực sự, lệnh gọi công cụ có thể không được theo sau bởi kết quả công cụ mà là một thông báo người dùng mới; Việc suy nghĩ có thể bị gián đoạn giữa chừng, nhưng trạng thái trung gian nên được giữ lại trong quá trình theo dõi và tiếp tục suy nghĩ sau khi tin nhắn mới được xử lý thay vì bắt đầu lại từ đầu. Mô hình cần duy trì sự hiểu biết rõ ràng về trajectory "không theo thứ tự" này - những lệnh gọi công cụ nào vẫn đang chờ kết quả và những suy nghĩ nào là những phần chưa hoàn thành.
-2. **Tiếp tục những công việc và suy nghĩ bị gián đoạn**: Khi bị gián đoạn để giải quyết những tình huống khẩn cấp, vẫn nhớ những công việc còn dang dở. Ví dụ: khi Agent đang thực thi công cụ phân tích dữ liệu, người dùng đột nhiên hỏi về thời tiết. Sau khi trả lời, người dùng đương nhiên phải đợi kết quả phân tích dữ liệu thay vì quên rằng công cụ vẫn đang chạy. Đặc biệt, hãy tránh ảo tưởng rằng lệnh gọi công cụ bị gián đoạn đã hoàn thành.
-3. **Xử lý toàn diện các sự kiện hàng loạt**: Khi nhiều sự kiện được thêm vào trajectory theo lô, bạn không thể chỉ tập trung vào sự kiện cuối cùng mà phải xem xét toàn diện tất cả thông tin chưa được xử lý.
-
-Để đạt được loại hình đào tạo RL không đồng bộ này đòi hỏi cơ sở hạ tầng mới: trình mô phỏng môi trường không đồng bộ (tạo ra các tình huống như trả lại công cụ bị trì hoãn, gián đoạn người dùng ngẫu nhiên, v.v.) và phần thưởng đặc biệt cho khả năng không đồng bộ (hiểu đúng về trajectory không theo thứ tự, phục hồi thành công suy nghĩ bị gián đoạn, tránh ảo giác, xử lý toàn diện các sự kiện hàng loạt).
-
-“Suy nghĩ liên tục” không nhất thiết phải chờ thế hệ mô hình tiếp theo. Khoảng hai trăm dòng điều phối có thể biến một mô hình suy luận văn bản **hiện có** thành Agent **continuous-time**, nối giải pháp kỹ thuật tạm thời ở trên với sự tiến hóa của mô hình. Đây là bản nâng cấp của quy tắc 4: thay vì vứt bỏ nửa dòng suy nghĩ khi bị ngắt, hãy xây dựng toàn bộ tương tác thành một dòng suy nghĩ liên tục. Runtime có thể buộc đóng khối `<think>` đang viết, chèn quan sát mới—kết quả công cụ, lời ngắt của người dùng hoặc cập nhật nhận dạng—như một thông điệp bình thường rồi tiếp tục giải mã.
-
-Cơ chế này tận dụng một tài nguyên thường bị lãng phí: mô hình có thể sinh hàng trăm token mỗi giây, trong khi một lời gọi công cụ hoặc lượt nói của người dùng có thể mất vài giây. Thời gian chờ đó có thể dùng để suy nghĩ. Vì vậy Agent có thể **vừa chờ vừa nghĩ**—tiếp tục từ thông tin chưa đầy đủ, thậm chí gọi trước công cụ tiếp theo—và **vừa làm vừa nghĩ**—tiếp tục suy luận trong lúc xuất kết quả và tự sửa giữa chừng.
-
 > **Thử nghiệm 6-2 ★★★: Agent không đồng bộ với khả năng thực thi và ngắt song song**
 >
 >
-> ![Hình 6-5 Thí nghiệm 6-2 Ngắt và phục hồi tác nhân không đồng bộ ](images/fig6-5.svg)
+> ![Hình 6-4 Thí nghiệm 6-2 Ngắt và phục hồi tác nhân không đồng bộ ](images/fig6-4.svg)
 >
 >
-> Dựa trên hàng sự kiện đơn giản của thử nghiệm 6-1, thử nghiệm này đi vào vùng nước sâu của Agent không đồng bộ: **Thực thi công cụ song song, hủy thực thi và quản lý trạng thái**. Agent không còn chỉ xử lý từng sự kiện mà cần quản lý nhiều tác vụ đồng thời cùng lúc, xử lý các gián đoạn và phục hồi cũng như đưa ra quyết định linh hoạt dựa trên trạng thái thời gian thực.
+> Từ hàng đợi đơn giản của thí nghiệm 6-1, thí nghiệm này dùng runtime tương thích với giao diện đồng bộ để thực hiện **chạy công cụ song song, hủy thực thi và quản lý trạng thái**. Agent cần quản lý nhiều tác vụ đồng thời, xử lý ngắt và tiếp tục, ra quyết định theo trạng thái hiện tại. Xem thí nghiệm 6-3 để đối chiếu với giao diện nguyên bản của Astra.
 >
 > **1. Thực thi công cụ không đồng bộ**: Hỗ trợ thực thi không đồng bộ các công cụ tiêu tốn thời gian (ít nhất là 3-5 giây) và trả về phần giữ chỗ ngay sau khi khởi động. **Kịch bản xác minh**: Agent thực thi một lệnh đầu cuối dài, trong đó người dùng hỏi "Bây giờ là mấy giờ?", Agent phản hồi ngay lập tức và đợi kết quả phân tích được trả về trước khi hiển thị chúng.
 >
@@ -300,7 +276,37 @@ Cơ chế này tận dụng một tài nguyên thường bị lãng phí: mô h�
 > **4. Hủy và truy vấn trạng thái của các công cụ song song**: Sau khi hoàn thành công cụ không đồng bộ, kết quả thực sẽ được đưa vào cuộc trò chuyện thông qua các sự kiện mới và hỗ trợ hủy hoặc truy vấn tiến trình thông qua ID tác vụ. **Tình huống xác minh**: Người dùng yêu cầu "Giúp tôi chạy ba tập lệnh này cùng lúc. Cái nào hoàn thành trước, hãy xem tiến độ của các tập lệnh còn lại như thế nào. Nếu chưa vượt quá 50% thì hãy hủy nó." Ba tập lệnh mô phỏng quá trình phân tích và liên tục xuất ra tiến trình khi chạy. Tốc độ lần lượt là 3%, 2% và 1% mỗi giây. Agent khởi động ba lệnh đầu cuối không đồng bộ cùng một lúc. Khi 3% tập lệnh mỗi giây được hoàn thành trong khoảng 33 giây, Agent truy vấn trạng thái của hai thiết bị đầu cuối còn lại và nhận thấy rằng một thiết bị đầu cuối được thực thi ở khoảng 66% và thiết bị kia ở khoảng 33%, do đó, thiết bị đầu cuối không vượt quá 50% sẽ bị hủy. Sau khi cả hai thiết bị đầu cuối được hoàn thành, kết quả sẽ được kết hợp để tạo ra một báo cáo đầy đủ.
 >
 
-Thực thi bất đồng bộ hướng sự kiện cho phép thế giới đánh thức Agent bất cứ lúc nào, nhưng giả định mô hình có thể nghĩ xong rồi mới phản hồi. Ba phần tiếp theo thách thức giả định đó: khi môi trường thay đổi nhanh bằng hoặc nhanh hơn tốc độ sinh của mô hình, “nghĩ xong rồi mới nói” tự nó trở thành độ trễ không thể chấp nhận.
+### Bất đồng bộ nguyên bản của mô hình: GPT-6 Astra
+
+Trong phương án tương thích trước đó, runtime sắp xếp thứ tự nhận sự kiện để mô hình có giao diện đồng bộ tham gia tác vụ bất đồng bộ. Hướng khác là để mô hình trực tiếp hiểu nhịp tương tác này: làm việc khác khi công cụ đang chạy, và điều chỉnh công việc tiếp theo khi người dùng bổ sung yêu cầu. GPT-6 Astra đã hỗ trợ gọi công cụ bất đồng bộ (Async tool calling) và điều chỉnh chỉ dẫn giữa lượt (Mid-turn steering), thể hiện thay đổi này (Hình 6-5).[^ch6-22][^ch6-23]
+
+![Hình 6-5: Tương thích giao diện đồng bộ và bất đồng bộ nguyên bản của mô hình](images/fig6-5.svg)
+
+**Gọi công cụ bất đồng bộ tách “khởi động hành động” khỏi “nhận kết quả”.** Sau khi bắt đầu truy vấn mất thời gian, Agent có thể tiếp tục suy luận, gọi công cụ khác hoặc xử lý phần không phụ thuộc kết quả. Ví dụ, khi tìm địa điểm họp, nó có thể soạn chương trình và danh sách chuẩn bị, rồi so sánh phương án khi thông tin địa điểm trở về. Cốt lõi là phân biệt quan hệ phụ thuộc: tiếp tục việc độc lập, còn quyết định cần kết quả thì chờ kết quả đến.
+
+**Điều chỉnh chỉ dẫn giữa lượt cho phép người dùng sửa hướng khi tác vụ đang diễn ra.** Khi Agent còn nghĩ hoặc soạn câu trả lời, người dùng có thể thêm “ngân sách giảm” hay “số người tham dự thay đổi”. Hệ thống giữ công việc đã hoàn tất và đưa ràng buộc mới vào xử lý tiếp theo, giúp Agent điều chỉnh kế hoạch trong cùng tác vụ. Có thể vẫn có độ trễ từ lúc nhận cập nhật đến lúc áp dụng, nhưng người dùng không phải đợi hết một câu trả lời mới thông báo thay đổi.
+
+Hai khả năng này mở rộng thời điểm tương tác: kết quả công cụ và yêu cầu người dùng đều có thể đến trong quá trình làm việc. Hệ thống vẫn phải phân biệt nguồn, nhớ việc nào đã xong và việc nào còn chờ. Sửa kế hoạch không tự dừng công cụ đang chạy hay hoàn tác hành động đã thực hiện; thực thi, hủy và quản lý trạng thái vẫn do runtime đảm nhiệm.
+
+Không phải mô hình nào cũng có bất đồng bộ nguyên bản. Khi xây dựng Agent, hãy chọn tương tác nguyên bản hoặc phương án tương thích theo mức hỗ trợ của mô hình, rồi kiểm tra toàn hệ thống xử lý đúng kết quả trễ, thay đổi giữa chừng và tiếp tục tác vụ hay không. Huấn luyện bất đồng bộ có thể tiếp tục cải thiện các khả năng này, nhưng nhà phát triển đã có thể xây dựng kiểu tương tác đó bằng mô hình hiện có.
+
+### Từ nhận thông điệp bất đồng bộ đến xử lý tác vụ bất đồng bộ đáng tin cậy
+
+Bất đồng bộ nguyên bản cho phép thông điệp đến trong lúc thực thi. Độ tin cậy ở tác vụ phức tạp còn phụ thuộc cách mô hình sử dụng chúng. Ít nhất cần kiểm tra ba điểm:
+
+1. **Kết quả thuộc tác vụ nào và trạng thái chưa hoàn tất**: Kết quả trễ có được gắn đúng tác vụ, và mô hình có tránh bịa dữ liệu khi kết quả chưa có không?
+2. **Tiếp tục tác vụ và kiểm soát hành động**: Sau yêu cầu mới, mô hình có quay lại việc cũ và phân biệt đổi kế hoạch với dừng thực thi không?
+3. **Tổng hợp nhiều cập nhật**: Mô hình có đồng thời tuân thủ ràng buộc ngân sách và số người, thay vì chỉ nhớ thông điệp cuối không?
+
+Có thể cải thiện mô hình bằng huấn luyện trong môi trường bất đồng bộ, đồng thời cải thiện hệ thống bằng trạng thái tác vụ, nguồn sự kiện và phản hồi thực thi rõ ràng. Đánh giá phải bao phủ hai lớp: mô hình có hiểu thay đổi và hệ thống có thực hiện đúng theo thay đổi không.
+
+> **Thí nghiệm 6-3 ★★★: Bất đồng bộ nguyên bản của mô hình và điều chỉnh chỉ dẫn giữa lượt**
+>
+> Chọn địa điểm cho cuộc họp: sau khi bắt đầu truy vấn chậm, Agent hoàn tất phần chuẩn bị không phụ thuộc kết quả. Trong lúc đó, người dùng thêm yêu cầu về ngân sách và số người. Khi truy vấn xong, Agent chọn địa điểm theo toàn bộ ràng buộc.
+>
+> Gọi API GPT-6 Astra để so sánh công cụ đồng bộ, công cụ bất đồng bộ nguyên bản và điều chỉnh chỉ dẫn giữa lượt. Quan sát việc chờ có chặn công việc khác không, yêu cầu mới có đi vào kế hoạch tiếp theo không, và tác vụ cũ có tiếp tục khi kết quả đến không. Dùng thêm mô hình không hỗ trợ nguyên bản làm đối chứng để hiểu năng lực mô hình và điều phối runtime mỗi bên giải quyết vấn đề gì.
+
+Bất đồng bộ và thực thi hướng sự kiện cho phép thế giới đánh thức Agent khi tác vụ đang chạy; chỉ dẫn nguyên bản cũng cho phép người dùng gửi cập nhật trước khi hết câu trả lời. Ba phần tiếp theo thu hẹp thang thời gian hơn nữa: khi môi trường đổi nhanh bằng hoặc hơn tốc độ sinh của mô hình, nhận cập nhật chưa đủ; hệ thống còn phải phản ứng kịp thời.
 
 ## Giọng nói: giao diện người–máy tự nhiên nhất
 
@@ -343,7 +349,7 @@ Việc xếp hàng trong môi trường sản xuất còn khuếch đại thêm 
 
 ![Hình 6-8: Đường cong độ trễ xếp hàng](images/fig6-8.svg)
 
-> **Thử nghiệm 6-3 ★: Xây dựng Agent thoại truyền thống**
+> **Thử nghiệm 6-4 ★: Xây dựng Agent thoại truyền thống**
 >
 > Kết nối microphone, Silero VAD, Whisper cục bộ, LLM dạng streaming và Fish S1 TTS qua WebSocket để thiết lập baseline dạng chuỗi.
 
@@ -374,7 +380,7 @@ Mô hình không chỉ xuất ra văn bản mà còn có thể kèm theo các d�
 
 Những dấu hiệu này cùng với token văn bản tạo thành một luồng sự kiện thống nhất; dựa vào đó Agent nhận ra sự do dự, việc ngắt lời và thay đổi của môi trường, mà không phải nén mọi âm thanh thành văn bản thuần túy.
 
-> **Thử nghiệm 6-4 ★: Mô phỏng nhận biết giọng nói streaming bằng Qwen2-Audio**
+> **Thử nghiệm 6-5 ★: Mô phỏng nhận biết giọng nói streaming bằng Qwen2-Audio**
 >
 > Bản thân Qwen2-Audio không phải mô hình streaming. Thực nghiệm dùng tiền tố âm thanh tăng dần để mô phỏng nhận thức liên tục và so sánh với VAD 600 ms + Whisper.
 
@@ -388,7 +394,7 @@ Mô hình Omni vẫn giả định chia lượt và thường dùng VAD để x�
 
 ![Hình 6-9: So sánh mô hình giọng nói omnimodal end-to-end](images/fig6-9.svg)
 
-> **Thử nghiệm 6-5 ★★: Chạy MiniCPM-o 4.5 cục bộ — end-to-end so với self-cascade**
+> **Thử nghiệm 6-6 ★★: Chạy MiniCPM-o 4.5 cục bộ — end-to-end so với self-cascade**
 >
 > Chạy MiniCPM-o 4.5 cục bộ, tắt thinking mode, rồi so sánh trả lời trực tiếp từ âm thanh với self-cascade dùng cùng mô hình để phiên âm trước rồi mới trả lời. Thực nghiệm đo xem thông tin âm thanh có được giữ lại hay không, **không phải** “vừa nghĩ vừa nói” ở phần sau.
 
@@ -444,7 +450,7 @@ TTS truyền thống có thể để lộ bản chất máy móc của nó vì q
 
 LLM chính có thể phát ra các ký hiệu điều khiển ngoài văn bản, chẳng hạn như **THINKING**, **EMO:happy** và **SPEED:0.8x**; TTS ánh xạ chúng thành khoảng dừng, ngữ điệu, tốc độ nói, tiếng cười, tiếng thở dài và các âm thanh phi ngôn ngữ khác. Việc triển khai có thể là một TTS được huấn luyện để hiểu các ký hiệu điều khiển, hoặc sao chép giọng nói với các đoạn tham chiếu cho những cảm xúc và phong cách khác nhau.
 
-> **Thí nghiệm 6-6 ★★: TTS điều khiển bằng token với Fish Audio**
+> **Thí nghiệm 6-7 ★★: TTS điều khiển bằng token với Fish Audio**
 >
 > Dùng Fish Audio S1 để xây dựng một thư viện giọng nói nhiều tham chiếu và so sánh ba cấu hình: không có ký hiệu điều khiển, một đoạn tham chiếu, và nhiều đoạn tham chiếu. Lớp thực thi chọn cảm xúc, tốc độ nói và phong cách phù hợp từ các ký hiệu.
 
@@ -480,7 +486,7 @@ Bản triển khai tham chiếu của Anthropic chia khả năng tương tác ho
 
 **Công cụ chỉnh sửa tệp**(str_replace_editor): Chỉnh sửa an toàn đạt được thông qua khớp chuỗi. Nó hỗ trợ các hoạt động xem, tạo, thay thế, chèn và hoàn tác. Nó chính xác hơn việc ghi đè trực tiếp toàn bộ tập tin và ít có khả năng vô tình làm thay đổi nội dung khác.
 
-> **Thí nghiệm 6-7 ★: Chạy Computer Use (đường dẫn tham chiếu Anthropic hoặc đường dẫn mô hình mở)**
+> **Thí nghiệm 6-8 ★: Chạy Computer Use (đường dẫn tham chiếu Anthropic hoặc đường dẫn mô hình mở)**
 >
 > Đường dẫn A dùng Anthropic Computer Use Demo. Container của nó đóng gói một môi trường desktop Ubuntu hoàn chỉnh, bao gồm trình duyệt, terminal và các công cụ phổ biến khác. Frontend nhận một tác vụ, còn backend gửi hướng dẫn và ảnh chụp màn hình đến Claude, rồi thực thi các hành động chuột, bàn phím, terminal hoặc chỉnh sửa do mô hình trả về.
 >
@@ -530,7 +536,7 @@ Trong sơ đồ dự đoán tọa độ, sự hiểu biết của mô hình về
 
 Logic lựa chọn của ba tuyến đường có thể được tóm tắt như sau: **Khi có sẵn thông tin có cấu trúc, chỉ mục Cây DOM/Accessibility** được sử dụng đầu tiên và vị trí là chính xác và ổn định nhất; **Khi không có sẵn**(phần mềm máy tính gốc như Photoshop, giao diện kết xuất Canvas/WebGL, trò chơi), **Bạn có thể sử dụng chú thích trực quan (tuyến SoM gốc) hoặc dự đoán tọa độ**. Chú thích trực quan biến việc định vị thành một câu hỏi trắc nghiệm, thân thiện hơn với các mô hình tổng quát chưa được đào tạo đặc biệt; dự đoán tọa độ loại bỏ bước chú thích và trực tiếp hơn đối với các mô hình đã trải qua khóa đào tạo định vị GUI. Vẫn còn khoảng cách về độ chính xác giữa hai yếu tố này trên các phần tử nhỏ và giao diện dày đặc.
 
-> **Thử nghiệm 6-8 ★: Sử dụng browser-use để đạt được hoạt động trình duyệt tự động**
+> **Thử nghiệm 6-9 ★: Sử dụng browser-use để đạt được hoạt động trình duyệt tự động**
 >
 > Kết hợp Playwright, một framework tự động hóa trình duyệt, với mô hình đa phương thức để thực hiện thao tác trình duyệt bằng ngôn ngữ tự nhiên. Bật trực quan hóa SoM và lưu ảnh chụp có khung chú thích trước mỗi quyết định.
 >
@@ -574,7 +580,7 @@ Nhưng điều thực sự cản trở thiết bị đầu cuối di động th�
 
 ## Vận hành robot: dọn bàn làm việc với XLeRobot
 
-> **Cách đọc phần này**: từ đầu đến cuối chúng ta chỉ dùng một nhiệm vụ——"đặt cốc đỏ vào khay, bỏ tờ giấy vàng vào thùng rác, cuối cùng quan sát thêm một lần để xác nhận trạng thái mặt bàn". Thử nghiệm 6-9 và 9-9 chạy trên XLeRobot thật, cần cánh tay robot, hiệu chuẩn, nút dừng khẩn cấp và người giám sát tại chỗ. Thử nghiệm 6-10, 9-10 và 9-11 là các bản đối ứng chạy trên GPU cục bộ. Kết quả trên máy thật và trong mô phỏng được báo cáo tách bạch, nhưng mục tiêu nhiệm vụ, ý nghĩa hành động và điều kiện thành công thì giữ nguyên như nhau.
+> **Cách đọc phần này**: từ đầu đến cuối chúng ta chỉ dùng một nhiệm vụ——"đặt cốc đỏ vào khay, bỏ tờ giấy vàng vào thùng rác, cuối cùng quan sát thêm một lần để xác nhận trạng thái mặt bàn". Thử nghiệm 6-10 và 6-12 chạy trên XLeRobot thật, cần cánh tay robot, hiệu chuẩn, nút dừng khẩn cấp và người giám sát tại chỗ. Thử nghiệm 6-11, 6-13 và 6-14 là các bản đối ứng chạy trên GPU cục bộ. Kết quả trên máy thật và trong mô phỏng được báo cáo tách bạch, nhưng mục tiêu nhiệm vụ, ý nghĩa hành động và điều kiện thành công thì giữ nguyên như nhau.
 
 Vận hành robot khó hơn nhiều so với "nhìn ảnh rồi trả lời câu hỏi". Mô hình không chỉ phải hiểu khung cảnh mà còn phải hành động liên tục trong thế giới thực, và mỗi hành động lại làm thay đổi tình huống ở khoảnh khắc kế tiếp. XLeRobot khiến khác biệt ấy trở nên rất cụ thể. Cùng một cánh tay, người ta có thể điều khiển từ xa bằng bàn phím, tay cầm chơi game hay thiết bị VR; cũng có thể giao quan sát từ camera cùng một nhóm công cụ hành động hạn chế cho Agent để nó tự gọi. Phần cứng không đổi, nhiệm vụ cũng không đổi; thứ duy nhất đổi là ai đang vận hành——ở trường hợp trước, con người liên tục quan sát và sửa sai; ở trường hợp sau, mô hình và hệ điều khiển phải tự làm trọn vẹn công việc đó.
 
@@ -597,7 +603,7 @@ Cách chẩn đoán rất thẳng thắn. Giữ nguyên camera, cánh tay, kẹp
 
 XLeRobot hỗ trợ nhiều lối vào điều khiển từ xa: bàn phím, tay cầm Xbox, Joy-Con của Switch và thiết bị VR. Người vận hành làm một cách tự nhiên nhiều việc mà thuật toán buộc phải cài đặt tường minh: giảm tốc khi kẹp lại gần cốc, sửa điểm gắp khi cốc trượt, quan sát lại khi không kẹp được tờ giấy trong một lần, và xác nhận kết quả khi vật thể đã vào vùng đích. Vì vậy điều khiển từ xa không chỉ là cách thu thập dữ liệu trình diễn, mà còn là một thử nghiệm chẩn đoán "giữ nguyên phần cứng, chỉ thay người vận hành".[^ch6-1]
 
-> **Thử nghiệm 6-9 ★: Điều khiển từ xa XLeRobot thật để dọn bàn**
+> **Thử nghiệm 6-10 ★: Điều khiển từ xa XLeRobot thật để dọn bàn**
 >
 > Đặt vào vùng làm việc của một chiếc XLeRobot thật: cốc đỏ, khay, tờ giấy vàng vo tròn và thùng rác. Người vận hành thực hiện nhiệm vụ cố định qua một trong các lối điều khiển từ xa đã hiệu chuẩn: "đặt cốc đỏ vào khay, bỏ tờ giấy vàng vào thùng rác, cuối cùng quan sát thêm một lần để xác nhận trạng thái mặt bàn". Lặp ít nhất vài vòng, ghi lại video camera, đầu vào của người vận hành, trạng thái cánh tay, thời lượng hành động, các lần gắp hụt, số lần thử lại và trạng thái cuối cùng.
 >
@@ -605,11 +611,11 @@ XLeRobot hỗ trợ nhiều lối vào điều khiển từ xa: bàn phím, tay 
 
 Điều khiển từ xa trên máy thật là cách thuyết phục nhất để cho thấy giới hạn trên của nhiệm vụ, nhưng lại không tiện để thay đổi hàng loạt số lượng và vị trí vật thể. Để có một đối chứng lặp lại được và tính được thống kê, tiếp theo ta chuyển chính bài toán "đưa vật thể về đúng chỗ" ấy sang một bộ mô phỏng mặt bàn hai chiều, và dùng bộ điều khiển lý tưởng thay cho một người vận hành giỏi không hề nhìn nhầm cũng không chọn sai hành động.
 
-> **Thử nghiệm 6-10 ★: Đo giới hạn trên lý tưởng của việc điều khiển cùng nhiệm vụ trong bộ mô phỏng**
+> **Thử nghiệm 6-11 ★: Đo giới hạn trên lý tưởng của việc điều khiển cùng nhiệm vụ trong bộ mô phỏng**
 >
 > Trong bộ mô phỏng mặt bàn hai chiều, đặt ngẫu nhiên cốc đỏ, tờ giấy vàng cùng các vùng đích tương ứng, rồi để bộ điều khiển lý tưởng lần lượt tiến đến vật thể, gắp lên và đưa về đúng vị trí. Nó không cần nhận dạng hình ảnh và cũng không chọn sai hành động, nên nó biểu thị "khi tri giác lẫn quyết định đều đúng thì nhiệm vụ này ít nhất đi được đến đâu".
 >
-> Hãy xem tỷ lệ thành công, số bước cần dùng và độ dài quãng đường; đồng thời thay đổi vị trí ban đầu của vật thể và quy mô nhiệm vụ để xem giới hạn lý tưởng ấy có ổn định không. Ta dùng cùng điều kiện thành công như Thử nghiệm 6-9, nhưng thứ được đo là một mô phỏng không có cơ cấu chấp hành: điều đó không có nghĩa chiếc XLeRobot thật đã cử động. Hai thử nghiệm sẽ là hai đường cơ sở cho phần điều khiển tự chủ về sau——Thử nghiệm 6-9 là vòng kín của con người trên phần cứng thật, còn Thử nghiệm 6-10 là vòng kín lý tưởng trong môi trường mô phỏng.
+> Hãy xem tỷ lệ thành công, số bước cần dùng và độ dài quãng đường; đồng thời thay đổi vị trí ban đầu của vật thể và quy mô nhiệm vụ để xem giới hạn lý tưởng ấy có ổn định không. Ta dùng cùng điều kiện thành công như Thử nghiệm 6-10, nhưng thứ được đo là một mô phỏng không có cơ cấu chấp hành: điều đó không có nghĩa chiếc XLeRobot thật đã cử động. Hai thử nghiệm sẽ là hai đường cơ sở cho phần điều khiển tự chủ về sau——Thử nghiệm 6-10 là vòng kín của con người trên phần cứng thật, còn Thử nghiệm 6-11 là vòng kín lý tưởng trong môi trường mô phỏng.
 
 ### Cấu trúc cơ bản của điều khiển robot
 
@@ -641,13 +647,13 @@ pick(red_cup) → place(red_cup, tray) → verify_state()
 
 Mỗi kỹ năng hoàn tất cho ta một nút có thể kiểm chứng. Gắp hụt thì chỉ làm lại đúng bước ấy. Nếu ai đó dời vật thể hoặc người dùng đổi mục tiêu, chỉ cần lập lại kế hoạch cho những bước phía sau bị ảnh hưởng, chứ không phải làm lại toàn bộ kế hoạch cũ. Công cụ trao cho tác nhân cũng phải đủ đơn giản: mỗi lần gọi chỉ làm một việc, phạm vi cử động cố định, có thời gian chờ tối đa, và thực thi xong thì quan sát lại ngay.
 
-> **Thử nghiệm 6-11 ★★: Để Gemini Robotics-ER 1.5 tự chủ dọn bàn bằng XLeRobot**
+> **Thử nghiệm 6-12 ★★: Để Gemini Robotics-ER 1.5 tự chủ dọn bàn bằng XLeRobot**
 >
-> Giữ nguyên chiếc XLeRobot thật, cách bày bàn, chỉ dẫn nhiệm vụ và điều kiện thành công của Thử nghiệm 6-9; chỉ thay người vận hành bằng một Agent. Giao việc quan sát và lập kế hoạch cho một mô hình suy luận nhập thân như Gemini Robotics-ER 1.5, và qua vòng lặp tác nhân kiểu RoboCrew chỉ mở đúng năm công cụ: `observe_scene`, `pick`, `place`, `verify_state` và `stop`.[^ch6-2]
+> Giữ nguyên chiếc XLeRobot thật, cách bày bàn, chỉ dẫn nhiệm vụ và điều kiện thành công của Thử nghiệm 6-10; chỉ thay người vận hành bằng một Agent. Giao việc quan sát và lập kế hoạch cho một mô hình suy luận nhập thân như Gemini Robotics-ER 1.5, và qua vòng lặp tác nhân kiểu RoboCrew chỉ mở đúng năm công cụ: `observe_scene`, `pick`, `place`, `verify_state` và `stop`.[^ch6-2]
 >
 > Mô hình trước hết quan sát mặt bàn, định ra thứ tự xử lý, rồi mới gọi các hành động gắp và đặt đã hiệu chuẩn của XLeRobot. Cứ hoàn tất một kỹ năng là phải quan sát lại và kiểm tra hậu điều kiện. Khi gắp hụt, nó chỉ được phép thử lại kỹ năng hiện tại; và phải gọi `stop` khi người dùng bảo dừng, khi vật thể ra khỏi vùng làm việc, hoặc khi không xác minh được trạng thái. Mô hình không được trực tiếp xuất ra góc khớp tùy ý, cũng không được bỏ qua bước kiểm chứng thật chỉ vì chính nó đã nói trước rằng "xong rồi".
 >
-> Tiêu chí nghiệm thu hệt như Thử nghiệm 6-9: cốc nằm trong khay, giấy nằm trong thùng rác, cánh tay trở về tư thế an toàn, không va chạm và không ra khỏi vùng. Khác biệt nằm ở chỗ: trong thử nghiệm tự chủ, ý nghĩa của nhiệm vụ phải đến từ chính quan sát của mô hình, hành động thật phải đến từ lời gọi công cụ, và trạng thái cuối cùng phải được xác nhận bằng một quan sát mới. Con người chỉ được khởi động, dừng khẩn cấp và giám sát an toàn, không được làm thay Agent giữa chừng. Chỉ như vậy Thử nghiệm 6-9 và 9-9 mới so sánh trực tiếp được: "với cùng phần cứng và cùng nhiệm vụ, vòng kín của mô hình còn thiếu gì so với vòng kín của con người".
+> Tiêu chí nghiệm thu hệt như Thử nghiệm 6-10: cốc nằm trong khay, giấy nằm trong thùng rác, cánh tay trở về tư thế an toàn, không va chạm và không ra khỏi vùng. Khác biệt nằm ở chỗ: trong thử nghiệm tự chủ, ý nghĩa của nhiệm vụ phải đến từ chính quan sát của mô hình, hành động thật phải đến từ lời gọi công cụ, và trạng thái cuối cùng phải được xác nhận bằng một quan sát mới. Con người chỉ được khởi động, dừng khẩn cấp và giám sát an toàn, không được làm thay Agent giữa chừng. Chỉ như vậy Thử nghiệm 6-10 và 6-12 mới so sánh trực tiếp được: "với cùng phần cứng và cùng nhiệm vụ, vòng kín của mô hình còn thiếu gì so với vòng kín của con người".
 
 Thử nghiệm trên máy thật phơi bày sai số hiệu chuẩn, camera bị che khuất và kẹp hỏng ăn, nhưng lại không thích hợp để lặp lại một lượng lớn sự cố một cách an toàn và có kiểm soát. Các thử nghiệm mô phỏng tiếp sau giữ đúng năm công cụ ấy cùng trạng thái nhiệm vụ y hệt, và chỉ thay cơ cấu chấp hành thật bằng một môi trường mặt bàn có thể tiêm lỗi, để tách bạch xem thực thi vòng hở, kiểm tra theo từng bước và dự đoán hành động mỗi thứ đóng góp được gì.
 
@@ -705,9 +711,9 @@ Quay lại nhiệm vụ trên bàn của XLeRobot. Nếu tờ giấy vàng bị 
 
 Thứ mô hình thế giới đưa ra không phải câu trả lời chắc chắn, mà là những dự đoán so sánh được về "làm thế này thì có thể xảy ra chuyện gì". Dự đoán càng xa thì sai số càng có xu hướng lớn, và một khung cảnh tương lai trông như thật chưa chắc đã hợp với quy luật tiếp xúc và ma sát thật. Vì vậy hệ thống thật vẫn cần dự đoán ngắn hạn, quan sát thời gian thực, ước lượng bất định, và một bộ điều khiển an toàn phần cứng độc lập. Mô hình thế giới sinh mẫu dùng được cho mô phỏng tương tác và trực quan hóa, nhưng đừng lẫn lộn "sinh được video" với "dẫn dắt được hành động của robot".[^ch6-21]
 
-> **Thử nghiệm 6-12 ★★: So sánh ba vòng dọn bàn tự chủ trong bộ mô phỏng**
+> **Thử nghiệm 6-13 ★★: So sánh ba vòng dọn bàn tự chủ trong bộ mô phỏng**
 >
-> Đưa nhiệm vụ, trạng thái đích, điều kiện thành công và năm công cụ của Thử nghiệm 6-11 vào bộ mô phỏng mặt bàn, chỉ thay cơ cấu chấp hành của XLeRobot thật bằng một bộ thực thi mô phỏng có thể kiểm soát, thỉnh thoảng gây ra ở khâu gắp một thất bại nhất thời nhưng còn phục hồi được. Như vậy có thể so sánh ba chiến lược mà không đổi bài toán.
+> Đưa nhiệm vụ, trạng thái đích, điều kiện thành công và năm công cụ của Thử nghiệm 6-12 vào bộ mô phỏng mặt bàn, chỉ thay cơ cấu chấp hành của XLeRobot thật bằng một bộ thực thi mô phỏng có thể kiểm soát, thỉnh thoảng gây ra ở khâu gắp một thất bại nhất thời nhưng còn phục hồi được. Như vậy có thể so sánh ba chiến lược mà không đổi bài toán.
 >
 > **Thực thi vòng hở** sinh một lần trọn dãy hành động và không quan sát lại giữa chừng. **Kiểm tra theo từng bước** đọc lại trạng thái ở mỗi lần `pick` và `place`, hỏng thì chỉ làm lại kỹ năng hiện tại. **Thực thi có dự đoán** thêm vào một mô hình thế giới ngắn hạn, so sánh kết quả dự kiến của các kỹ năng ứng viên rồi mới chọn nước đi kế tiếp. Thử nghiệm so sánh tỷ lệ thành công, chi phí gọi công cụ và khả năng phục hồi sau thất bại, đồng thời kiểm tra xem mọi thành công cuối cùng có đều được một quan sát mới từ `verify_state` xác nhận hay không.
 >
@@ -715,9 +721,9 @@ Thứ mô hình thế giới đưa ra không phải câu trả lời chắc ch�
 
 ### Từ môi trường mô phỏng sang robot thật
 
-Thử nghiệm 6-12 ổn định trong bộ mô phỏng không có nghĩa chiếc XLeRobot thật ở Thử nghiệm 6-11 cũng thành công y như vậy. Đi từ mô phỏng sang máy thật không phải là thay thêm một loại bộ điều khiển, mà là gánh lấy khác biệt giữa hai môi trường. Để huấn luyện, ta có thể dùng dữ liệu điều khiển từ xa, dữ liệu video và dữ liệu tương tác mô phỏng; nhưng khi triển khai thật, vẫn cốc đỏ ấy, tờ giấy vàng ấy, khay ấy và thùng rác ấy lại xuất hiện dưới nền, ánh sáng, vị trí camera và quan hệ che khuất khác đi, còn cánh tay thì lại gặp ma sát, nhiễu cảm biến và độ trễ cơ cấu chấp hành khác. Nếu những khác biệt đó đủ lớn, chuyển động học được trong mô phỏng có thể mất tác dụng ngoài thực tế.
+Thử nghiệm 6-13 ổn định trong bộ mô phỏng không có nghĩa chiếc XLeRobot thật ở Thử nghiệm 6-12 cũng thành công y như vậy. Đi từ mô phỏng sang máy thật không phải là thay thêm một loại bộ điều khiển, mà là gánh lấy khác biệt giữa hai môi trường. Để huấn luyện, ta có thể dùng dữ liệu điều khiển từ xa, dữ liệu video và dữ liệu tương tác mô phỏng; nhưng khi triển khai thật, vẫn cốc đỏ ấy, tờ giấy vàng ấy, khay ấy và thùng rác ấy lại xuất hiện dưới nền, ánh sáng, vị trí camera và quan hệ che khuất khác đi, còn cánh tay thì lại gặp ma sát, nhiễu cảm biến và độ trễ cơ cấu chấp hành khác. Nếu những khác biệt đó đủ lớn, chuyển động học được trong mô phỏng có thể mất tác dụng ngoài thực tế.
 
-> **Thử nghiệm 6-13 ★★★: Kiểm thử xuyên môi trường RGB trên cùng nhiệm vụ mặt bàn**
+> **Thử nghiệm 6-14 ★★★: Kiểm thử xuyên môi trường RGB trên cùng nhiệm vụ mặt bàn**
 >
 > Trong môi trường mô phỏng, hãy tiếp tục dùng bài toán cơ bản "đưa vật thể tới đích tương ứng", và xem mỗi mẫu là một quyết định cục bộ trong quá trình dọn bàn: từ ảnh RGB mà phán đoán nên tiếp cận vật thể từ hướng nào, hay đã có thể gắp được chưa. Huấn luyện bốn chính sách thị giác có cấu trúc như nhau: một chính sách chỉ nhìn khung cảnh cố định; một thay đổi nền; một thay đổi hình dáng vật thể; và chính sách cuối cùng thay đổi đồng thời cả nền, hình dáng, ánh sáng lẫn nhiễu.
 >
@@ -748,6 +754,8 @@ Chương này hoàn tất mảnh ghép cuối cùng của phần “xây dựng 
 [^ch6-2]: Google DeepMind, “Gemini Robotics-ER 1.5”. https://deepmind.google/models/gemini-robotics/gemini-robotics-er/; XLeRobot, “Điều khiển bằng LLM Agent”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html. Ví dụ ở thượng nguồn của XLeRobot cho thấy cách phối hợp mô hình với lời gọi công cụ; phần này giữ nguyên nguyên tắc phối hợp ấy, nhưng giới hạn các công cụ hành động vào những nguyên thủy gắp, đặt, kiểm tra và dừng đã hiệu chuẩn trên mặt bàn.
 [^ch6-6]: LeRobot, “Hướng dẫn Sim2Real”. https://github.com/StoneT2000/lerobot-sim2real/blob/87d6c1d969f6e0ca4dc5697940804e231118a63a/docs/zero_shot_rgb_sim2real.md
 [^ch6-15]: Moo Jin Kim et al. *OpenVLA: An Open-Source Vision-Language-Action Model.* arXiv:2406.09246, 2024. https://arxiv.org/abs/2406.09246
+[^ch6-22]: OpenAI, “[Async tool calling](https://developers.openai.com/api/docs/guides/async-tool-calling)”; “[Using GPT-6 Astra](https://developers.openai.com/api/docs/guides/latest-model)”, kiểm tra ngày 2026-09-05.
+[^ch6-23]: OpenAI, “[Mid-turn steering](https://developers.openai.com/api/docs/guides/steering)”, kiểm tra ngày 2026-09-05.
 
 ## Câu hỏi tư duy
 

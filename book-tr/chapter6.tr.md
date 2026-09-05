@@ -21,7 +21,7 @@ Gözlem uzayı ile eylem uzayını açtığımızda, her birinin genişletilebil
 | **Kip** (bu bölüm) | Ses, ekran, fiziksel sensörler | Konuşma, tıklama, eklem hareketi |
 | **Zamanlama** (bu bölüm) | Dünyanın itmesi, sürekli akışlar | Turları aşan, kesilebilir, öne geçilebilir |
 
-Bir modelin eğitim külliyatı neredeyse bütünüyle tur temellidir—bir soru ardından bir yanıt, bir araç çağrısı ardından bir araç sonucu, biri başlamadan diğeri bitmiş olur. Dolayısıyla modelin öğrendiği politika, dünyanın onu bekleyeceğini varsayar. Gerçek ortam ise modelin tepki vermesini beklemez: o düşünürken posta gelir, kullanıcı cümlesinin ortasında araya girer, sayfa iki ekran görüntüsü arasında çoktan değişmiştir ve kol ona uzanırken bardak devrilir.
+**Sıra alma, ortamın bir özelliği değil, model ile arayüzünün bir etkileşim uzlaşımıdır.** İlk araç çağırma arayüzleri mesajları genellikle senkron turlar halinde düzenliyordu: soruyu yanıt izliyor, akıl yürütmeye devam etmeden önce araç sonuçları tamamlanıyordu. Gerçek ortam ise beklemez: model düşünürken e-posta gelir, kullanıcı cümleyi böler, sayfa iki ekran görüntüsü arasında değişir, robot kolu uzanırken bardak devrilir. Bu uzlaşım da değişiyor: Eylül 2026 itibarıyla GPT-6 Astra, yerleşik asenkron araç çağırmayı ve tur sırasında yeni kullanıcı talimatları eklemeyi destekliyor. Bu nedenle bölüm, hem yerleşik desteği hem de mevcut senkron arayüzlerle uyumluluğu ele alıyor.[^ch6-22][^ch6-23]
 
 | Ölçek | Senaryo | Gözlem tarafındaki değişim | Eylem tarafındaki değişim |
 |---|---|---|---|
@@ -44,7 +44,7 @@ Asenkronluğun neden gerekli olduğunu açıklamak için bir benzetmeyle başlay
 - **Olay önceliğinin dinamik değerlendirilmesi**—Tüm olaylar eşit derecede önemli değildir. Agent akıllıca bir işleme stratejisi seçmelidir: mevcut işlemi iptal etmek (acil), bir kuyruğa eklemek (rutin) veya paralel işlemek (bağımsız hafif sorgu).
 - **Kesinti ve devam etmede akıcılık**—Kesintiye uğramış bir konuşma veya görev doğal biçimde devam edebilmelidir.
 
-Ancak asenkron paradigma, günümüz LLM'leri hakkındaki temel bir gerçekle çarpışır: eğitimleri senkronluğu varsayar—bir tool call'dan sonra, bir sonraki mesaj araç sonucu olmalıdır—gerçek dağıtım ise asenkronluğu talep eder: kullanıcılar istedikleri zaman kesintiye uğratır, görevler eş zamanlı ilerler ve dış olaylar bir araç dönmeden önce gelir. Bu "senkron eğitim / asenkron dağıtım" çelişkisi, bu bölümün geri kalanındaki her mühendislik ödünleşimine nüfuz eder.
+Asenkron yaklaşımı bir LLM'e uygularken önce modelin ve API'nin bu mesaj zamanlamasını destekleyip desteklemediğini kontrol etmek gerekir. Bazı arayüzler devam etmeden önce araç sonuçlarının tamamlanmasını ister; bazıları ise araç beklemedeyken modelin çalışmasına ve üretim sırasında kullanıcı güncellemelerini almasına izin verir. İlk grup olay kuyruklarına, görev tutamaçlarına ve uyumluluk katmanına ihtiyaç duyar; ikinci grup yerleşik asenkron protokolü kullanabilir. Her ikisinde de uygulama olay kaynaklarını, araç yaşam döngüsünü ve sonuçların ait olduğu görevleri yönetmelidir. Kodda `asyncio` kullanılması, modelin yerleşik asenkron yeteneğe sahip olduğunu göstermez.
 
 Bunun için, bir **olay güdümlü asenkron Agent mimarisine** ihtiyacımız var. Teknik olarak, bu, sistemin artık aktif ve tekrar tekrar "yeni mesajları" kontrol etmediği (bu polling'dir, verimsizdir), bunun yerine yeni bir mesaj geldiğinde işleme mantığını otomatik olarak tetiklediği anlamına gelir. Tüm girdiler, çıktılar, düşünce süreçleri ve dış etkileşimler tek biçimli olarak bir olay akışı—bir zaman çizelgesinde düzenlenmiş bir olay kayıtları dizisi—olarak modellenir. Şekil 6-1, olay güdümlü asenkron bir Agent'ın genel mimarisini gösterir, olay kaynakları, olay kuyruğu ve Agent işleme akışı arasındaki ilişkiyi resmeder.
 
@@ -120,9 +120,9 @@ Tek bir Agent örneği, eş zamanlı olarak birden fazla olayla karşılaşabili
 
 Bu mekanizmanın iskeleti, eşzamanlı programlamadaki **olay döngüsüdür** (event loop). Asenkron bir Agent'ı uzun süre çalışan bir döngü olarak düşünün: her tur, girdi kuyruğundan bir grup olay alır, bunları trajectory'ye ekler, LLM'i bir kez çağırır, LLM'in karar verdiği araçları yürütür ve sonraki olay grubunu beklemek için döngünün başına döner—bu, bir Go goroutine'inin bir channel'dan mesaj okuyup bunları `for { select { ... } }` içinde tur tur işlemesiyle aynı yapıdır.
 
-Bu modelin kilit bir özelliği vardır: **olaylar yalnızca her turun sınırlarında tüketilir**. LLM akıl yürütürken ya da bir araç çalışırken, yeni gelen bir olay araya zorla girip mevcut adımı bozmaz; önce kuyrukta bekler ve bu tur bir **güvenli noktaya** (bir akıl yürütme parçasının bitişi, bir araç çağrısının dönüşü) ulaştığında hepsi birlikte işlenir. İptal de aynı disiplini izler: işi herhangi bir anda zorla kesmek yerine güvenli noktada "durmam istendi mi" diye bakar—Go'daki `ctx.Done()` tam olarak bu rolü üstlenir.
+Geleneksel senkron arayüz uygulamasında **olaylar her turun sınırlarında tüketilir**. LLM akıl yürütürken veya araç çalışırken yeni olaylar, bir düşünme bölümünün sonu ya da araç dönüşü gibi bir **güvenli noktaya** kadar kuyrukta bekler. Yerleşik asenkronluk, model düşünürken veya çıktı üretirken yeni gereksinimlerin alınmasına izin verir; işlemeye devam edilecek uygun anı sistem seçer. İki yaklaşımda da sınırlar vardır, ancak bunları farklı katmanlar yönetir. Aracı iptal etmek için yürütücünün iptal sinyaline yanıt vermesi gerekir; bu, Go'daki `ctx.Done()` denetimine benzer. “Dur” mesajı almak, gerçekleşmiş eylemleri kendiliğinden geri almaz.
 
-Bu anlaşıldığında, aşağıdaki üç işleme stratejisi arasındaki fark yalnızca güvenli noktaya nasıl davrandıklarına iner: olayı doğal olarak gelecek bir sonraki güvenli noktaya kadar bekletmek (kuyruğa alınmış), önceden bilinçli olarak bir güvenli nokta imal etmek (iptal tabanlı) ya da doğrudan başka bir döngü açıp ana döngünün güvenli noktasını hiç beklememek (paralel).
+Bu ayrımla, önce senkron arayüzlerle uyumlu bir olay döngüsü üzerinden üç stratejiyi açıklayacağız: bir sonraki doğal güvenli noktayı beklemek (kuyruk), güvenli noktayı erkenden oluşturmak (iptal) ya da ana döngüyü beklemeden başka bir döngü başlatmak (paralel işleme). Yerleşik steering ile devam etme mekanizmasına daha sonra döneceğiz.
 
 **Yapılandırılmış Olay Modellemesi.**
 
@@ -199,23 +199,23 @@ Aşağıdaki deney, olay güdümlü bir e-posta işleme Agent'ı, yukarıda tart
 
 Deney 6-1, en basit olay güdümlü kalıbı gösterir—olaylar bir kuyruğa girer ve Agent bunları sırayla işler. Ancak, Agent'ın uzun süren araç yürütmeleri sırasında kesintilere yanıt vermesi veya birden fazla eş zamanlı görevi aynı anda yönetmesi gerektiğinde, basit bir olay kuyruğu yetersiz kalır. Şimdi, daha derin mühendislik zorluklarını tartışıyoruz.
 
-### Mühendislik Uygulaması: Senkron Modellerin Asenkron Kesintileri Desteklemesi Nasıl Sağlanır
+### Yerleşik asenkron destek olmadığında uyumluluk yaklaşımı
 
-Deney 6-1 yalnızca seri olayları ele alır—olaylar kuyruğa birer birer girer ve Agent bunları arka arkaya işler. Şimdi, bu bölümün başında öne sürülen "senkron eğitim / asenkron dağıtım" çelişkisine geri dönelim: bir araç henüz dönmemişken kullanıcı kesintiye uğrattığında, senkron format bunu nasıl barındırabilir? Bu bölüm, sektörün bugün kullandığı mühendislik çözümlerini ortaya koyar.
+Deney 6-1 yalnızca sıralı olayları işler: olaylar kuyruğa girer ve Agent bunları birer birer tamamlar. Seçilen model veya arayüz yerleşik asenkronluğu desteklemiyorsa, araç dönmeden gelen kullanıcı kesintisinin senkron biçimde ifade edilmesi gerekir. Burada bir uyumluluk yolu sunuyor, ardından GPT-6 Astra'nın yerleşik arayüzünü ele alıyoruz.
 
-Önce bu çelişkiyi belirli bir senaryoyla gösterelim. Agent'ın bir kullanıcının bir e-posta taslağı hazırlamasına yardım ettiğini varsayalım (tool call: iletişim bilgisini arama). Arama sonuçları dönmeden önce, kullanıcı aniden "Bekle, önce yarınki hava durumunu kontrol et" der. Senkron bir ReAct döngüsünde, Agent bir sonraki mesajı işlemeden önce aramanın dönmesini beklemelidir—çünkü API "bir tool call verildikten sonra, bir sonraki mesajın araç sonucu olması gerektiğini" gerektirir. Ama asenkron gerçek dünyada, olaylar devam eden görevleri her an kesintiye uğratabilir. "Senkron bir format" kısıtları altında "asenkron kesinti" semantiğinin nasıl ifade edileceği, tam olarak bu mühendislik çözümünün yanıtlamayı amaçladığı sorudur.
+Agent'ın bir e-posta hazırlarken kişi bilgilerini arayan bir araç çağırdığını düşünelim. Sonuç gelmeden kullanıcı, “Bekle, önce yarının hava durumuna bak” der. Arayüz, bekleyen çağrılara önce karşılık gelen sonuçların verilmesini gerektiriyorsa Agent, çağrı hâlâ açıkken yeni mesajı doğrudan işleyemez. Bu sınırlama seçilen protokol ve model birleşiminden kaynaklanır; tüm LLM'ler için geçerli bir kural değildir.
 
-**Mühendislik Çaresi: Senkron Davranışı Simüle Eden Asenkron Bir Uygulama.**
+**Senkron biçimle uyumlu asenkron uygulama.**
 
 Temel fikir şudur: **kesinti olmadan normal koşullarda, LLM'in standart bir senkron trajectory görmesine izin verin; yalnızca bir kesinti oluştuğunda, formatı düzeltmek için yer tutucular ekleyin**. İşte beş kilit kural:
 
-**Kural 1**: LLM çıktı verdiğinde asistan mesajını (düşünme, içerik ve tool call dahil) hemen kaydedin.
+**Kural 1**: API'nin tamamladığı assistant mesajlarını ve araç çağrısı öğelerini zamanında kaydedin. Sunucunun yönettiği akıl yürütme durumunu sağlayıcının devam protokolüne göre koruyun; görünmeyen düşünce metnini kendiniz birleştirmeyin.
 
 **Kural 2**: Araç sonucunu yalnızca tool call tamamlandığında kaydedin. Trajectory yürütme sırasında "kısmen tamamlanmış" bir durumdadır.
 
 **Kural 3**: Araç yürütmesi sırasındaki kesintiler yer tutucular gerektirir. Bitmemiş araç için bir yer tutucu yanıt üretin (örn. "Araç arka planda çalışıyor, lütfen yeni olayı önceliklendirin"), kesinti olayını ekleyin ve LLM'i yeniden çağırın. LLM'in perspektifinden, asistan mesajının hâlâ eşleşen bir araç sonucu vardır.
 
-**Kural 4**: LLM düşünme sırasındaki kesintiler mevcut düşünmeyi doğrudan atar. Bunu trajectory'ye yazmayın; doğrudan yeni olayı ekleyin ve yeni bir düşünme turu başlatın.
+**Kural 4**: Yerleşik steering veya desteklenen bir tur içi devam arayüzü yoksa tamamlanmamış üretimi iptal edin; tamamlandığı doğrulanmış mesajları ve araç durumunu koruyun, yeni olayı ekleyip yeniden istekte bulunun. Kısmi çıktının veya gizli akıl yürütmenin geçerli bir önek olarak keyfî biçimde geri verilebileceğini varsaymayın.
 
 **Kural 5**: Kesintiye uğratmayan olaylar toplu işleme için kuyruğa girer. Yalnızca mevcut döngü tamamlandıktan sonra bir kerede eklenirler.
 
@@ -225,13 +225,13 @@ Agent'ın bir e-posta taslağı hazırlarken kullanıcının hava durumunu sorma
 2. Arama aracı sonuçları döndürmeden önce, kullanıcı "Önce yarınki hava durumunu kontrol et" gönderir. Bu bir kullanıcı kesintisi olduğundan, sistem bitmemiş `search_contacts` için bir yer tutucu araç sonucu üretir ("Araç arka planda çalışıyor, lütfen yeni olayı önceliklendirin", Kural 3), ardından kullanıcının hava durumu sorgusunu trajectory'ye ekler ve LLM'i yeniden çağırır. Bu noktada, LLM'in gördüğü trajectory formatı tamamen geçerlidir—asistan mesajı ve araç sonucu mükemmel biçimde eşleşir.
 3. Hava durumu sorgusu tamamlandıktan ve kullanıcı yanıtlandıktan sonra, orijinal `search_contacts` sonucu gelir ve yeni bir olay olarak trajectory'ye eklenir (Kural 2). Agent iletişim bilgisini okur ve e-posta taslağı hazırlamaya devam eder.
 
-Bu şemanın temel avantajı: **normal koşullarda, LLM mükemmel bir senkron trajectory görür**—asistan mesajları ve araç sonuçları sıkı biçimde eşleşir, zaman çizelgesi net, yer tutucu veya anormal durum yoktur. Bu, senkron paradigma altında eğitilmiş LLM'ler için en dost düzenlemedir ve düşünme kalitesini korur. Yer tutucu—gerekli bir uzlaşma—yalnızca gerçekten bir kesinti oluştuğunda görünür.
+Bu yaklaşım, senkron arayüzün gerektirdiği çağrı-sonuç eşleşmesini korur. Yalnızca kesinti gerektiğinde açıkça “tamamlanmadı” diyen bir yer tutucu eklenir. Gerçek arka plan sonucu geldiğinde, kaynak ve görev kimliği içeren bir olay olarak yörüngeye girer. Yerleşik asenkronluğu destekleyen modellerde sistem, görevin bekleyen durumunu koruyup gerçek sonucu geldiğinde modele iletebilir.
 
-Ancak halüsinasyon riski devam eder. Yer tutucu aracın "henüz tamamlanmadığını" açıkça belirtse bile, model sonraki düşünmede hâlâ bir araç sonucu uydurabilir—aracın geçerli veri döndürdüğüne kendini ikna edip icadın üzerine kötü kararlar alabilir. Bunun nedeni, eğitim sırasında görülen trajectory'lerin büyük çoğunluğunda, bir tool call'ı hemen gerçek sonucun izlemesidir; model "sonuç henüz gelmedi" durumlarını nasıl ele alacağını hiç öğrenmemiştir. Bu yüzden, pratikte, kesintiler yalnızca gerçekten acil durumlarda tetiklenir (kullanıcı açıkça bir durdurma talep ettiğinde); acil olmayan olaylar toplu işleme için bir kuyruğa yerleştirilir.
+Yer tutucular anlamsal risk de taşır: model, “görev başladı” ile “görev tamamlandı” ifadelerini karıştırıp henüz gelmeyen sonuca bağlı bir karar verebilir. Açık görev durumu ve sonuç doğrulaması bu karışıklığı önlemeli; değerlendirme, henüz ulaşmamış verilerin uydurulup uydurulmadığını denetlemelidir. Tek bir başarısızlık, nedeni açıklanmamış bir eğitim sürecine bağlamak için yeterli değildir.
 
-**Mevcut Modeller için Uygun Asenkron Araç Arayüzleri.**
+**Görev tutamaçlarıyla asenkron anlamı ifade etmek.**
 
-Modellerin senkron varsayımını kırmak zor olduğundan, daha temel bir strateji, **asenkron semantiği araç arayüzünün tasarım düzeyinden itibaren benimsemektir**.
+Yerleşik asenkron protokol kullanılsın ya da kullanılmasın, **araç arayüzünün tasarımı asenkron anlamı açıkça ifade edebilir**. Senkron arayüzlerde özellikle yararlı bir yöntem, “görevi başlat” işlemini gerçek dönüş değeri olan tamamlanmış bir çağrı yapmaktır.
 
 Geleneksel araç tasarımı "çağırma tamamlanma anlamına gelir" semantiğini ima eder. Örneğin, `phone_call` adı "çağırma telefonu çevirecek ve arama bitene kadar bekleyip arama kaydını döndürecek" izlenimi verir. Asenkron paradigma altında, "başlatma" ve "tamamlanma" ayrılmalıdır:
 
@@ -242,7 +242,7 @@ Kilit nokta, aracın adının ve açıklamasının kendisinin asenkron semantiğ
 
 **Kuyruk Tabanlı İşlemede Dikkat Dağınıklığı.**
 
-Toplu olayları işlerken, model genellikle yalnızca son olaya odaklanır. Kök neden, **modelin en son girdiye tepki vermek üzere eğitilmiş olması ve toplu olayların bu varsayımı bozmasıdır**.
+Olaylar toplu işlendiğinde model yalnızca son olaya yanıt verip önceki gereksinimleri atlayabilir. Yerleşik asenkronluk, mesajların yürütme sırasında ulaşıp ulaşamayacağını çözer; modelin tüm güncellemeleri birlikte kullandığı ayrıca kontrol edilmelidir.
 
 Müdahale iki düzeyde uygulanabilir:
 
@@ -259,37 +259,13 @@ Müdahale iki düzeyde uygulanabilir:
 
 Sona bir özet ekleyin: "Yukarıda 4 işlenmemiş olay var, 1 araç sonucu, 2 kullanıcı mesajı ve 1 sistem hatırlatması dahil. Lütfen yanıtınızın tüm bilgiyi kapsadığından emin olun."
 
-### Daha Derin Çelişkiler ve Gelecek Yönleri
-
-
-![Şekil 6-4: Senkron Eğitim Paradigması ve Asenkron Dağıtım Gerçekliği](images/fig6-4.svg)
-
-
-Nihayetinde, önceki bölümlerdeki yer tutucular, asenkron araç arayüzleri ve durum çubuğu işaretleri, hepsi aynı "senkron eğitim / asenkron dağıtım" çelişkisini (Şekil 6-4) yamamak için prompt engineering kullanıyor—bu çelişkinin nedeni bu bölümün başında ayrıntılı olarak ele alındı ve burada tekrarlanmayacak, yalnızca temel çözümüne odaklanılacak.
-
-**Model Evrimini Öngörmek: Senkrondan Asenkrona.**
-
-Yukarıdaki mühendislik teknikleri özünde **model eğitiminin eksikliklerini telafi etmek için prompt engineering kullanmaktır**, geçiş döneminde geçici bir çaredir. Gerçek çözüm, model eğitimi düzeyinde bir paradigma değişimi gerektirir.
-
-Robotik alanındaki VLA (Vision-Language-Action, bkz. Bölüm 6) modelleri zaten benzer zorluklarla karşılaşmaya başlıyor: algı ve eylem arasında kaçınılmaz bir gecikme vardır. VLA'nın başarısı, Agent modellerinin evrimi için yolu gösteriyor. Bir sonraki nesil modellerin, asenkron ortamlarda pekiştirmeli öğrenme yoluyla üç temel yetenek kazanması gerekiyor:
-
-1. **Trajectory'lerdeki Olayların Asenkron İç İçe Geçmesini Anlamak**: Bu en kritik yetenek eksikliğidir. Mevcut modeller kesinlikle senkron bir dizi bekler, ama gerçek bir asenkron ortamda, bir tool call'ı bir araç sonucu değil yeni bir kullanıcı mesajı takip edebilir; düşünme yarı yolda kesintiye uğrayabilir, ama ara durum trajectory'de tutulmalı ve düşünme, yeni mesaj işlendikten sonra baştan başlamak yerine devam etmelidir. Model, bu tür "sırasız" trajectory'lerde net bir biliş korumalıdır—hangi tool call'ların hâlâ sonuç beklediği ve hangi düşüncelerin bitmemiş parçalar olduğu.
-2. **Kesintiye Uğramış Görevleri ve Düşünceleri Devam Ettirmek**: Acil bir olayı ele almak için kesintiye uğradığında, model hâlâ bitmemiş görevi hatırlamalıdır. Örneğin, Agent bir veri analizi aracı yürütürken kullanıcı aniden hava durumunu sorarsa, yanıtladıktan sonra, Agent bir aracın hâlâ çalıştığını unutmak yerine doğal olarak veri analizi sonucunu beklemelidir. Modelin kesintiye uğramış tool call'ın tamamlandığına yanlışlıkla inandığı halüsinasyonlardan kaçınmak özellikle önemlidir.
-3. **Toplu Olayların Kapsamlı İşlenmesi**: Birden fazla olay trajectory'ye toplu olarak eklendiğinde, model yalnızca sonuncusuna odaklanmamalıdır; işlenmemiş tüm bilgiyi kapsamlı biçimde dikkate almalıdır.
-
-Bu asenkron RL eğitimini gerçekleştirmek yeni altyapı gerektirir: bir asenkron ortam simülatörü (geciktirilmiş araç dönüşleri, rastgele kullanıcı kesintileri gibi senaryolar üretmek) ve asenkron yetenekler için özel ödüller (sırasız trajectory'leri doğru anlamak, kesintiye uğramış düşünceleri başarıyla devam ettirmek, halüsinasyonlardan kaçınmak, toplu olayları kapsamlı biçimde işlemek).
-
-Sürekli düşünmek için yeni nesil modelleri beklemek gerekmez. Yaklaşık iki yüz satırlık orkestrasyon, **mevcut** bir metin akıl yürütme modelini **continuous-time** Agent'a dönüştürerek yukarıdaki mühendislik çözümüyle model evrimini birbirine bağlayabilir. Bu, Kural 4'ün yükseltilmiş hâlidir: kesilen yarım düşünceyi atmak yerine tüm etkileşimi kesintisiz bir düşünce akışı olarak kurar. Çalışma zamanı modelin yazdığı `<think>` bloğunu zorla kapatabilir, yeni gelen araç sonucunu, kullanıcı kesmesini veya tanıma güncellemesini sıradan mesaj olarak ekleyip decoding'e devam edebilir.
-
-Bu mekanizma çoğu zaman boşa giden bir kaynağı kullanır: model saniyede yüzlerce token üretebilirken bir araç çağrısı veya kullanıcının konuşması birkaç saniye sürebilir. Bu bekleme süresi düşünmeye ayrılabilir. Böylece Agent **beklerken düşünebilir**—kısmi bilgiden ilerleyip bir sonraki aracı erkenden başlatabilir—ve **eylemdeyken düşünebilir**—çıktı üretirken akıl yürütmeyi sürdürüp eylemin ortasında kendini düzeltebilir.
-
 > **Deney 6-2 ★★★: Paralel Yürütme ve Kesinti Yetenekleriyle Asenkron Agent**
 >
 >
-> ![Şekil 6-5: Deney 6-2 Asenkron Agent Kesintisi ve Kurtarma](images/fig6-5.svg)
+> ![Şekil 6-4: Deney 6-2 Asenkron Agent Kesintisi ve Kurtarma](images/fig6-4.svg)
 >
 >
-> Deney 6-1'ün basit olay kuyruğu üzerine inşa edilen bu deney, asenkron Agent'ların zor kısımlarına geçer: **paralel araç yürütme, yürütme iptali ve durum yönetimi**. Agent artık yalnızca olayları birer birer işlemez; birden fazla eş zamanlı görevi aynı anda yönetmesi, kesintileri ve kurtarmaları ele alması ve gerçek zamanlı duruma dayanarak dinamik kararlar alması gerekir.
+> Deney 6-1'deki basit olay kuyruğu üzerine kurulan bu deney, senkron arayüzlerle uyumlu bir çalışma zamanı kullanarak **paralel araç yürütme, yürütmeyi iptal etme ve durum yönetimini** uygular. Agent birden çok eşzamanlı görevi yönetmeli, kesintilerden sonra devam edebilmeli ve güncel duruma göre karar vermelidir. Astra'nın yerleşik arayüzüyle karşılaştırma Deney 6-3'tedir.
 >
 > **1. Asenkron Araç Yürütmesi**: Zaman alan araçların (en az 3-5 saniye) asenkron yürütülmesini destekler, başlatma üzerine hemen bir yer tutucu döndürür. **Doğrulama Senaryosu**: Agent uzun süren bir terminal komutu yürütür. Bu sırada, kullanıcı "Şu an saat kaç?" diye sorar. Agent hemen yanıt verir, ardından döndüğünde analiz sonucunu sunar.
 >
@@ -300,7 +276,37 @@ Bu mekanizma çoğu zaman boşa giden bir kaynağı kullanır: model saniyede y�
 > **4. Paralel Araçlar için İptal ve Durum Sorgusu**: Bir asenkron araç tamamlandıktan sonra, gerçek sonuç yeni bir olay aracılığıyla konuşmaya enjekte edilir. Görev ID'si aracılığıyla iptal veya ilerleme sorgusunu destekler. **Doğrulama Senaryosu**: Kullanıcı "Bu üç betiği benim için eş zamanlı çalıştır. Hangisi önce biterse, kalan betiklerin ilerlemesini kontrol et. Herhangi biri %50'yi aşmadıysa, iptal et" diye ister. Üç betik, sırasıyla saniyede %3, %2 ve %1 hızlarında sürekli ilerleme çıktısı vererek analiz süreçlerini simüle eder. Agent, üç asenkron terminal komutunu eş zamanlı olarak başlatır. Saniyede %3'lük betik yaklaşık 33 saniyede bittiğinde, Agent kalan iki terminalin durumunu sorgular, birinin yaklaşık %66'da, diğerinin ise yaklaşık %33'te olduğunu bulur. Ardından %50'yi aşmayanı iptal eder. Her iki terminal de tamamlandıktan sonra, sonuçları eksiksiz bir rapor üretmek için entegre eder.
 >
 
-Asenkron ve olay güdümlü yürütme, dünyanın Agent'ı her an uyandırmasını sağlar; ancak modelin yanıt vermeden önce düşünmesini bitirebileceğini varsayar. Sonraki üç bölüm bu varsayıma meydan okur: ortam model üretimi kadar hızlı veya daha hızlı değiştiğinde, “önce düşünüp sonra konuşmak” kabul edilemez bir gecikmeye dönüşür.
+### Modelin yerleşik asenkron yetenekleri: GPT-6 Astra
+
+Önceki uyumluluk yaklaşımında çalışma zamanı, gelen olayların sırasını düzenleyerek senkron arayüzlü modelin asenkron görevlere katılmasını sağlar. Diğer yaklaşımda model bu etkileşim ritmini doğrudan anlar: araç çalışırken başka işler yapabilir, kullanıcı yeni gereksinimler eklediğinde sonraki işi değiştirebilir. GPT-6 Astra'nın desteklediği asenkron araç çağırma (Async tool calling) ve tur içi yönlendirme (Mid-turn steering), bu değişimi gösterir (Şekil 6-5).[^ch6-22][^ch6-23]
+
+![Şekil 6-5: Senkron arayüz uyumluluğu ve modelin yerleşik asenkron yetenekleri](images/fig6-5.svg)
+
+**Asenkron araç çağırma, “eylemi başlatmak” ile “sonucu almak” adımlarını ayırır.** Agent uzun süren bir sorguyu başlattıktan sonra akıl yürütmeye devam edebilir, başka araçlar çağırabilir veya sonuca bağlı olmayan kısımları işleyebilir. Örneğin toplantı mekânlarını sorgularken gündemi ve hazırlık listesini oluşturabilir; bilgiler geldiğinde seçenekleri karşılaştırır. Esas olan bağımlılıkları ayırmaktır: bağımsız işler ilerler, sonuca ihtiyaç duyan kararlar sonuç gelene kadar bekler.
+
+**Tur içi yönlendirme, görev sürerken kullanıcının yönü düzeltmesini sağlar.** Agent hâlâ düşünürken veya yanıtını hazırlarken kullanıcı “bütçe azaldı” ya da “katılımcı sayısı değişti” diyebilir. Sistem tamamlanan işi korur ve yeni kısıtları sonraki işleme taşır; böylece Agent aynı görev içinde planını günceller. Güncellemeyi almakla uygulamak arasında gecikme olabilir, ancak kullanıcı değişikliği bildirmek için tam bir yanıtın bitmesini beklemez.
+
+Bu iki yetenek etkileşimin zamanlamasını genişletir: araç sonuçları ve kullanıcı gereksinimleri görev sırasında gelebilir. Sistem bunların kaynaklarını ayırt etmeli, tamamlanan ve bekleyen işleri hatırlamalıdır. Planı değiştirmek, çalışan araçları durdurmak veya gerçekleşmiş eylemleri geri almak anlamına gelmez; yürütme, iptal ve durum yönetimi çalışma zamanının sorumluluğundadır.
+
+Her model yerleşik asenkron yeteneklere sahip değildir. Agent tasarlarken modelin desteğine göre yerleşik etkileşim veya uyumluluk yaklaşımı seçilmeli; bütün sistemin geciken sonuçları, görev ortasındaki değişiklikleri ve göreve dönüşü doğru yönettiği doğrulanmalıdır. Asenkron eğitim bu yetenekleri geliştirebilir, ancak geliştiriciler mevcut modellerle bu etkileşimi şimdiden kurabilir.
+
+### Asenkron mesaj almaktan asenkron görevleri güvenilir biçimde işlemeye
+
+Yerleşik asenkronluk, mesajların yürütme sırasında alınmasını sağlar. Karmaşık görevlerin güvenilirliği, modelin bu mesajları nasıl kullandığına da bağlıdır. En az üç nokta denetlenmelidir:
+
+1. **Sonucun ait olduğu görev ve bekleme durumu**: Geciken sonuç doğru göreve bağlanıyor mu; sonuç yokken veri uydurulması önleniyor mu?
+2. **Göreve dönüş ve eylem kontrolü**: Yeni gereksinimler işlendiğinde asıl göreve dönülüyor mu; plan değişikliği ile yürütmeyi durdurma ayrılıyor mu?
+3. **Birden çok güncellemeyi birlikte kullanma**: Yalnızca son mesajı hatırlamak yerine bütçe ve katılımcı sayısı gibi kısıtlar birlikte gözetiliyor mu?
+
+Bu sorunlar için model asenkron ortamlarda eğitilebilir; sistem de açık görev durumu, olay kaynakları ve yürütme geri bildirimiyle geliştirilebilir. Değerlendirme iki katmanı kapsamalıdır: model değişikliği anladı mı ve sistem buna uygun yürüttü mü?
+
+> **Deney 6-3 ★★★: Modelin yerleşik asenkron yetenekleri ve tur içi yönlendirme**
+>
+> Bir toplantı için mekân seçin: Agent uzun süren sorguyu başlattıktan sonra sonuçtan bağımsız hazırlıkları tamamlar. Bu sırada kullanıcı bütçe ve katılımcı sayısı gereksinimlerini ekler. Sorgu tamamlandığında tüm kısıtlara göre mekân seçilir.
+>
+> GPT-6 Astra API'sini çağırarak senkron araçları, yerleşik asenkron araçları ve tur içi yönlendirmeyi karşılaştırın. Beklemenin başka işleri engelleyip engellemediğini, yeni gereksinimlerin sonraki planlara girip girmediğini ve sonuç geldiğinde asıl görevin sürdürülüp sürdürülmediğini gözlemleyin. Model yetenekleriyle çalışma zamanı orkestrasyonunun ayrı ayrı neyi çözdüğünü anlamak için yerleşik destek sunmayan bir modeli de kontrol olarak kullanın.
+
+Asenkronluk ve olay güdümlü yürütme, görev sürerken dünyanın Agent'ı uyandırmasını sağlar; yerleşik yönlendirme de kullanıcıya tam yanıt bitmeden güncelleme gönderme imkânı verir. Sonraki üç bölüm zaman ölçeğini daha da daraltır: ortam, modelin üretim hızı kadar hızlı veya daha hızlı değiştiğinde güncelleme almak yetmez; sistem zamanında tepki vermelidir.
 
 ## Ses: En Doğal İnsan-Makine Arayüzü
 
@@ -343,7 +349,7 @@ Reasoning açılmamış kısa bir yanıtta VAD, ASR, LLM ve TTS beklemeleri seri
 
 ![Şekil 6-8: Kuyruk gecikmesi eğrisi](images/fig6-8.svg)
 
-> **Deney 6-3 ★: Geleneksel bir sesli Agent inşa etmek**
+> **Deney 6-4 ★: Geleneksel bir sesli Agent inşa etmek**
 >
 > Mikrofonu, Silero VAD'ı, yerel Whisper'ı, akışlı bir LLM'i ve Fish S1 TTS'i WebSocket üzerinden bağlayarak kademeli baseline'ı kurun.
 
@@ -374,7 +380,7 @@ Modelin ürettiği yalnızca metin değildir; akustik olay işaretleri de içere
 
 Bu işaretler metin token'larıyla birleşerek tek bir olay akışı oluşturur; Agent bunlara dayanarak tereddüdü, kesintiyi ve ortam değişikliklerini tanıyabilir, tüm sesi düz metne sıkıştırmak zorunda kalmaz.
 
-> **Deney 6-4 ★: Qwen2-Audio ile akışlı konuşma algısını simüle etmek**
+> **Deney 6-5 ★: Qwen2-Audio ile akışlı konuşma algısını simüle etmek**
 >
 > Qwen2-Audio kendi başına akışlı bir model değildir. Bu deney, büyüyen ses önekleriyle sürekli algıyı simüle eder ve 600 ms VAD + Whisper ile karşılaştırır.
 
@@ -388,7 +394,7 @@ Omni modelleri hâlâ sırayla konuşmayı varsayar ve genellikle söz hakkını
 
 ![Şekil 6-9: Uçtan uca omnimodal konuşma modeli karşılaştırması](images/fig6-9.svg)
 
-> **Deney 6-5 ★★: MiniCPM-o 4.5'i yerel çalıştırmak — uçtan uca ve öz-kaskad**
+> **Deney 6-6 ★★: MiniCPM-o 4.5'i yerel çalıştırmak — uçtan uca ve öz-kaskad**
 >
 > MiniCPM-o 4.5'i thinking mode kapalı olarak yerelde çalıştırın; sesten doğrudan yanıtı, aynı modelin önce yazıya döküp sonra yanıtladığı self-cascade ile karşılaştırın. Bu, ses bilgisinin korunup korunmadığını ölçer; ilerideki **“konuşurken düşünme”yi değil**.
 
@@ -444,7 +450,7 @@ Geleneksel TTS, fazla pürüzsüz davranıp çok az duraklayarak makine kimliği
 
 Ana LLM, metne ek olarak **THINKING**, **EMO:happy** ve **SPEED:0.8x** gibi kontrol belirteçleri üretebilir; TTS bunları duraklamalara, prozodiye, konuşma hızına, kahkahaya, iç çekişe ve diğer sözsüz seslere eşler. Uygulama, kontrol belirteçlerini anlayacak şekilde eğitilmiş bir TTS ya da farklı duygular ve stiller için referans kliplerle ses klonlama olabilir.
 
-> **Deney 6-6 ★★: Fish Audio ile kontrol belirteç güdümlü TTS**
+> **Deney 6-7 ★★: Fish Audio ile kontrol belirteç güdümlü TTS**
 >
 > Fish Audio S1 kullanarak çok referanslı bir ses kütüphanesi oluşturun ve üç yapılandırmayı karşılaştırın: kontrol belirteci yok, tek referans klip ve birden çok referans klip. Yürütme katmanı, belirteçlerden eşleşen duyguyu, konuşma hızını ve stili seçer.
 
@@ -480,7 +486,7 @@ Anthropic'in referans uygulaması eksiksiz etkileşim yeteneğini üç araç tü
 
 **Dosya düzenleme aracı** (str_replace_editor): Dizi eşleştirmesi yoluyla güvenli düzenleme sağlar; görüntüleme, oluşturma, değiştirme, ekleme ve geri alma işlemlerini destekler. Dosyanın tamamının üzerine yazmaktan daha kesindir ve alakasız içeriği yanlışlıkla değiştirme olasılığı daha düşüktür.
 
-> **Deney 6-7 ★: Computer Use'ı Çalıştırma (Anthropic Referans Yolu veya Açık Model Yolu)**
+> **Deney 6-8 ★: Computer Use'ı Çalıştırma (Anthropic Referans Yolu veya Açık Model Yolu)**
 >
 > A Yolu Anthropic Computer Use Demo'yu kullanır. Konteyneri, tarayıcı, terminal ve diğer yaygın araçları içeren eksiksiz bir Ubuntu masaüstü ortamını paketler. Ön uç bir görev alırken, arka uç talimatları ve ekran görüntülerini Claude'a gönderir ve ardından modelin döndürdüğü fare, klavye, terminal veya düzenleme eylemlerini yürütür.
 >
@@ -530,7 +536,7 @@ Koordinat tahmini çözümlerinde modelin koordinatları kavrayışı, eğitim s
 
 Üç yol arasındaki seçim mantığı şöyle özetlenebilir: **yapısal bilgi elde edilebiliyorsa öncelikle DOM/Accessibility Tree indekslemesi kullanılmalıdır**; konumlandırması en kesin ve en kararlı olan budur. **Elde edilemiyorsa** (Photoshop gibi yerel masaüstü yazılımları, Canvas/WebGL ile render edilen arayüzler, oyunlar) **hem görsel işaretleme (orijinal SoM yolu) hem de koordinat tahmini kullanılabilir**. Görsel işaretleme konumlandırmayı çoktan seçmeli bir soruya dönüştürdüğü için, özel olarak eğitilmemiş genel amaçlı modellere daha dosttur; koordinat tahmini ise işaretleme adımını ortadan kaldırdığı için, GUI konumlandırma eğitimi almış modeller açısından daha doğrudandır. Küçük öğelerde ve yoğun arayüzlerde her ikisinin de doğruluğu hâlâ yetersizdir.
 
-> **Deney 6-8 ★: browser-use ile Otomatik Tarayıcı İşlemleri**
+> **Deney 6-9 ★: browser-use ile Otomatik Tarayıcı İşlemleri**
 >
 > Tarayıcı otomasyon çerçevesi Playwright'ı çok modlu bir modelle birleştirerek doğal dille yönlendirilen tarayıcı işlemlerini uygulayın. SoM görselleştirmesini açın ve her karardan önce açıklama kutuları bulunan bir ekran görüntüsü kaydedin.
 >
@@ -574,7 +580,7 @@ Bu da Computer Use'un yalnızca CAPTCHA (doğrulama kodu) gibi teknik düzeydeki
 
 ## Robot Manipülasyonu: XLeRobot ile Masa Toplama Örneği
 
-> **Bu bölüm nasıl okunmalı**: baştan sona tek bir görev kullanıyoruz——"kırmızı bardağı tepsiye koy, sarı kâğıt parçasını çöp kutusuna at, en sonunda bir kez daha gözlem yaparak masanın durumunu doğrula". Deney 6-9 ve 9-9 gerçek bir XLeRobot üzerinde yürütülür; kol, kalibrasyon, acil durdurma düzeneği ve yerinde bir gözetmen gerektirir. Deney 6-10, 9-10 ve 9-11 bunların yerel GPU'daki karşılıklarıdır. Gerçek donanım ile benzetim sonuçları ayrı ayrı raporlanır, ancak görevin amacı, eylemlerin anlamı ve başarı koşulları aynı tutulur.
+> **Bu bölüm nasıl okunmalı**: baştan sona tek bir görev kullanıyoruz——"kırmızı bardağı tepsiye koy, sarı kâğıt parçasını çöp kutusuna at, en sonunda bir kez daha gözlem yaparak masanın durumunu doğrula". Deney 6-10 ve 6-12 gerçek bir XLeRobot üzerinde yürütülür; kol, kalibrasyon, acil durdurma düzeneği ve yerinde bir gözetmen gerektirir. Deney 6-11, 6-13 ve 6-14 bunların yerel GPU'daki karşılıklarıdır. Gerçek donanım ile benzetim sonuçları ayrı ayrı raporlanır, ancak görevin amacı, eylemlerin anlamı ve başarı koşulları aynı tutulur.
 
 Robot manipülasyonu, "resme bakıp soruyu yanıtlamak"tan çok daha zor bir iştir. Model yalnızca sahneyi anlamakla kalmayıp gerçek dünyada sürekli eylemde bulunmak zorundadır ve her eylem bir sonraki anın durumunu değiştirir. XLeRobot bu farkı çok somut hâle getirir. Aynı kol, insan tarafından klavye, oyun kumandası veya VR donanımıyla uzaktan kumanda edilebilir; ya da kamera gözlemi ile sınırlı bir eylem aracı kümesi bir Agent'a devredilip onun kendi başına çağırması sağlanabilir. Donanım da görev de değişmez; değişen tek şey kimin kullandığıdır——birincisinde insan sürekli gözleyip düzeltir, ikincisinde ise modelin ve kontrol sisteminin aynı işi sonuna kadar götürmesi gerekir.
 
@@ -597,7 +603,7 @@ Tanı yöntemi dolaysızdır. Kamera, kol, tutucu, masa düzeni ve başarı koş
 
 XLeRobot birkaç uzaktan kumanda girişini destekler: klavye, Xbox kumandası, Switch Joy-Con ve VR donanımı. İnsan operatör, bir algoritmanın açıkça kodlaması gereken pek çok şeyi doğal olarak yapar: tutucu bardağa yaklaşırken yavaşlar, bardak kayarsa kavrama noktasını düzeltir, kâğıdı ilk seferde tutamazsa yeniden bakar ve nesne hedef bölgeye girdiğinde sonucu doğrular. Bu yüzden uzaktan kumanda yalnızca gösterim verisi toplamanın bir yolu değil, aynı zamanda "donanımı sabitleyip yalnızca operatörü değiştiren" bir tanı deneyidir.[^ch6-1]
 
-> **Deney 6-9 ★: Gerçek XLeRobot'u uzaktan kumanda ederek masayı toplamak**
+> **Deney 6-10 ★: Gerçek XLeRobot'u uzaktan kumanda ederek masayı toplamak**
 >
 > Gerçek bir XLeRobot'un çalışma alanına kırmızı bir bardak, bir tepsi, buruşturulmuş sarı bir kâğıt ve bir çöp kutusu yerleştirin. Operatör, kalibre edilmiş uzaktan kumanda yollarından biriyle sabit görevi yürütür: "kırmızı bardağı tepsiye koy, sarı kâğıt parçasını çöp kutusuna at, en sonunda bir kez daha gözlem yaparak masanın durumunu doğrula". En az birkaç tur yineleyin ve kamera görüntüsünü, operatör girdilerini, kolun durumunu, eylem sürelerini, kavrama hatalarını, yeniden deneme sayısını ve son durumu kaydedin.
 >
@@ -605,11 +611,11 @@ XLeRobot birkaç uzaktan kumanda girişini destekler: klavye, Xbox kumandası, S
 
 Gerçek donanımda uzaktan kumanda, görevin üst sınırını göstermenin en ikna edici yoludur; ama nesnelerin sayısını ve konumunu toplu hâlde değiştirmeye elverişli değildir. Yinelenebilir ve istatistiği alınabilir bir karşılaştırma elde etmek için, aynı "nesneleri yerine koyma" problemini iki boyutlu bir masa benzetimine taşıyoruz ve algıda yanılmayan, eylemi yanlış seçmeyen güçlü bir operatörün yerine ideal bir denetleyici koyuyoruz.
 
-> **Deney 6-10 ★: Benzetimde aynı görevin ideal kontrol üst sınırını ölçmek**
+> **Deney 6-11 ★: Benzetimde aynı görevin ideal kontrol üst sınırını ölçmek**
 >
 > İki boyutlu bir masa benzetiminde kırmızı bardağı, sarı kâğıdı ve bunların hedef bölgelerini rastgele yerleştirin; ideal denetleyici sırayla nesnelere yaklaşsın, onları kavrasın ve doğru konuma taşısın. Görüntü tanımaya ihtiyacı yoktur ve eylemi yanlış seçmez; dolayısıyla "algı da karar da doğruyken bu görev en azından nereye kadar gidebilir"i temsil eder.
 >
-> Görev başarı oranına, adım sayısına ve yol uzunluğuna bakın; ayrıca nesnelerin başlangıç konumunu ve görev ölçeğini değiştirerek bu ideal üst sınırın kararlı kalıp kalmadığını gözleyin. Deney 6-9 ile aynı başarı koşulları kullanılır, ama ölçülen şey eyleyicisiz bir benzetimdir: gerçek XLeRobot'un hareket ettiği anlamına gelmez. İkisi, sonraki özerk kontrol için iki taban çizgisi olacaktır——Deney 6-9 gerçek donanım üzerindeki insan kapalı çevrimi, Deney 6-10 ise benzetim ortamındaki ideal kapalı çevrimdir.
+> Görev başarı oranına, adım sayısına ve yol uzunluğuna bakın; ayrıca nesnelerin başlangıç konumunu ve görev ölçeğini değiştirerek bu ideal üst sınırın kararlı kalıp kalmadığını gözleyin. Deney 6-10 ile aynı başarı koşulları kullanılır, ama ölçülen şey eyleyicisiz bir benzetimdir: gerçek XLeRobot'un hareket ettiği anlamına gelmez. İkisi, sonraki özerk kontrol için iki taban çizgisi olacaktır——Deney 6-10 gerçek donanım üzerindeki insan kapalı çevrimi, Deney 6-11 ise benzetim ortamındaki ideal kapalı çevrimdir.
 
 ### Robot Kontrolünün Temel Yapısı
 
@@ -641,13 +647,13 @@ pick(red_cup) → place(red_cup, tray) → verify_state()
 
 Tamamlanan her beceri bize doğrulanabilir bir düğüm bırakır. Kavrama başarısız olursa yalnızca o adım yinelenir. Biri nesneyi kaydırırsa ya da kullanıcı hedefi değiştirirse, yalnızca etkilenen sonraki adımlar yeniden planlanır; eski planın tamamı tekrarlanmaz. Ajana verilen araçlar da yeterince yalın olmalıdır: her çağrı tek bir iş yapar, hareket aralığı sabittir, zaman aşımı vardır ve yürütmeden hemen sonra yeniden gözlem yapılır.
 
-> **Deney 6-11 ★★: Gemini Robotics-ER 1.5 ile XLeRobot'un masayı özerk biçimde toplaması**
+> **Deney 6-12 ★★: Gemini Robotics-ER 1.5 ile XLeRobot'un masayı özerk biçimde toplaması**
 >
-> Deney 6-9'deki gerçek XLeRobot'u, masa düzenini, görev yönergesini ve başarı koşullarını olduğu gibi bırakın; yalnızca insan operatörü bir Agent ile değiştirin. Gözlem ve planlamayı Gemini Robotics-ER 1.5 gibi bedenlenmiş bir akıl yürütme modeline bırakın ve RoboCrew tarzı bir ajan çevrimi üzerinden yalnızca beş aracı açın: `observe_scene`, `pick`, `place`, `verify_state` ve `stop`.[^ch6-2]
+> Deney 6-10'deki gerçek XLeRobot'u, masa düzenini, görev yönergesini ve başarı koşullarını olduğu gibi bırakın; yalnızca insan operatörü bir Agent ile değiştirin. Gözlem ve planlamayı Gemini Robotics-ER 1.5 gibi bedenlenmiş bir akıl yürütme modeline bırakın ve RoboCrew tarzı bir ajan çevrimi üzerinden yalnızca beş aracı açın: `observe_scene`, `pick`, `place`, `verify_state` ve `stop`.[^ch6-2]
 >
 > Model önce masayı gözler, ele alma sırasını belirler, ardından XLeRobot'un kalibre edilmiş kavrama ve yerleştirme eylemlerini çağırır. Her beceriyi bitirdiğinde yeniden gözlem yapıp son koşulu denetlemek zorundadır. Kavrama başarısız olduğunda yalnızca o anki beceriyi yeniden denemesine izin verilir; kullanıcı dur dediğinde, nesne çalışma alanının dışına çıktığında ya da durum doğrulanamadığında `stop` çağırmak zorundadır. Model doğrudan rastgele eklem açıları üretemez ve yalnızca kendisi daha önce "bitti" dediği için gerçek doğrulamayı atlayamaz.
 >
-> Kabul ölçütü Deney 6-9 ile birebir aynıdır: bardak tepsinin içinde, kâğıt çöp kutusunun içinde, kol güvenli duruşta, çarpışma ve alan dışına çıkma yok. Fark şudur: özerk deneyde görevin anlamı modelin kendi gözleminden gelmeli, gerçek eylemler araç çağrılarından gelmeli ve son durum yeni bir gözlemle doğrulanmalıdır. İnsan yalnızca başlatabilir, acil durdurabilir ve güvenliği gözetebilir; yolun ortasında Agent'ın yerine eylemi tamamlayamaz. Ancak böyle olursa Deney 6-9 ile 9-9, "aynı donanım ve aynı görevde, modelin kapalı çevrimi insanınkine göre neyi eksik bırakıyor" sorusunu doğrudan karşılaştırabilir.
+> Kabul ölçütü Deney 6-10 ile birebir aynıdır: bardak tepsinin içinde, kâğıt çöp kutusunun içinde, kol güvenli duruşta, çarpışma ve alan dışına çıkma yok. Fark şudur: özerk deneyde görevin anlamı modelin kendi gözleminden gelmeli, gerçek eylemler araç çağrılarından gelmeli ve son durum yeni bir gözlemle doğrulanmalıdır. İnsan yalnızca başlatabilir, acil durdurabilir ve güvenliği gözetebilir; yolun ortasında Agent'ın yerine eylemi tamamlayamaz. Ancak böyle olursa Deney 6-10 ile 6-12, "aynı donanım ve aynı görevde, modelin kapalı çevrimi insanınkine göre neyi eksik bırakıyor" sorusunu doğrudan karşılaştırabilir.
 
 Gerçek donanım deneyleri kalibrasyon hatalarını, kamera örtülmelerini ve tutucu başarısızlıklarını açığa çıkarır; ama çok sayıda arızayı güvenli ve denetimli biçimde yinelemeye elverişli değildir. Bundan sonraki benzetim deneyleri bu beş aracı ve görev durumunu birebir korur, yalnızca gerçek eyleyicileri hata enjekte edilebilen bir masa ortamıyla değiştirir; böylece açık çevrim yürütmenin, adım adım denetimin ve eylem kestiriminin ayrı ayrı ne kattığı ayrıştırılabilir.
 
@@ -705,9 +711,9 @@ XLeRobot'un masa görevine dönelim. Sarı kâğıt kısmen kırmızı bardağı
 
 Dünya modelinin verdiği şey kesin yanıtlar değil, "böyle yaparsam ne olabilir" konusunda karşılaştırılabilir kestirimlerdir. Ne kadar uzağa kestirilirse hata da o kadar büyüme eğilimindedir ve gerçekçi görünen bir gelecek sahnesi, gerçek temas ve sürtünme yasalarına uymak zorunda değildir. Bu yüzden gerçek bir sistem hâlâ kısa vadeli kestirime, gerçek zamanlı gözleme, belirsizlik kestirimine ve bağımsız bir donanım güvenlik denetleyicisine ihtiyaç duyar. Üretici dünya modelleri etkileşimli benzetim ve görselleştirme için kullanılabilir; ancak "video üretebilmek" ile "robotun eylemlerine yön verebilmek" birbirine karıştırılmamalıdır.[^ch6-21]
 
-> **Deney 6-12 ★★: Benzetimde üç özerk masa toplama çevriminin karşılaştırılması**
+> **Deney 6-13 ★★: Benzetimde üç özerk masa toplama çevriminin karşılaştırılması**
 >
-> Deney 6-11'daki görevi, hedef durumları, başarı koşullarını ve beş aracı olduğu gibi masa benzetimine taşıyın; yalnızca gerçek XLeRobot'un eyleyicilerini, kavrama sırasında ara sıra toparlanabilir geçici bir başarısızlık üreten, denetlenebilir bir benzetim yürütücüsüyle değiştirin. Böylece problem değişmeden üç strateji karşılaştırılabilir.
+> Deney 6-12'daki görevi, hedef durumları, başarı koşullarını ve beş aracı olduğu gibi masa benzetimine taşıyın; yalnızca gerçek XLeRobot'un eyleyicilerini, kavrama sırasında ara sıra toparlanabilir geçici bir başarısızlık üreten, denetlenebilir bir benzetim yürütücüsüyle değiştirin. Böylece problem değişmeden üç strateji karşılaştırılabilir.
 >
 > **Açık çevrim yürütme** eylem dizisinin tamamını tek seferde üretir ve yolda yeniden gözlem yapmaz. **Adım adım denetim** her `pick` ve `place` sonrası durumu yeniden okur, başarısızlıkta yalnızca o anki beceriyi yineler. **Kestirimli yürütme** buna kısa vadeli bir dünya modeli ekler; aday becerilerin beklenen sonuçlarını karşılaştırdıktan sonra bir sonraki hamleyi seçer. Deney; görev başarı oranını, araç çağrısı ek yükünü ve hatadan toparlanma yetisini karşılaştırır ve son başarıların tümünün `verify_state`'ten gelen yeni bir gözlemle doğrulanıp doğrulanmadığını denetler.
 >
@@ -715,9 +721,9 @@ Dünya modelinin verdiği şey kesin yanıtlar değil, "böyle yaparsam ne olabi
 
 ### Benzetim Ortamından Gerçek Robota
 
-Deney 6-12'un benzetimde kararlı olması, Deney 6-11'daki gerçek XLeRobot'un da aynı biçimde başarılı olacağı anlamına gelmez. Benzetimden gerçek makineye geçmek bir denetleyici daha değiştirmek değil, iki ortam arasındaki farkı üstlenmektir. Eğitim için uzaktan kumanda verisi, video verisi ve benzetim etkileşim verisi kullanılabilir; ama gerçekten sahaya çıkıldığında aynı kırmızı bardak, aynı sarı kâğıt, aynı tepsi ve aynı çöp kutusu farklı arka plan, aydınlatma, kamera konumu ve örtülme ilişkileri altında görünür; kol ise ayrıca başka bir sürtünmeyle, başka bir algılayıcı gürültüsüyle ve başka bir eyleyici gecikmesiyle karşılaşır. Bu farklar yeterince büyükse, benzetimde öğrenilen hareketler gerçeklikte işe yaramayabilir.
+Deney 6-13'un benzetimde kararlı olması, Deney 6-12'daki gerçek XLeRobot'un da aynı biçimde başarılı olacağı anlamına gelmez. Benzetimden gerçek makineye geçmek bir denetleyici daha değiştirmek değil, iki ortam arasındaki farkı üstlenmektir. Eğitim için uzaktan kumanda verisi, video verisi ve benzetim etkileşim verisi kullanılabilir; ama gerçekten sahaya çıkıldığında aynı kırmızı bardak, aynı sarı kâğıt, aynı tepsi ve aynı çöp kutusu farklı arka plan, aydınlatma, kamera konumu ve örtülme ilişkileri altında görünür; kol ise ayrıca başka bir sürtünmeyle, başka bir algılayıcı gürültüsüyle ve başka bir eyleyici gecikmesiyle karşılaşır. Bu farklar yeterince büyükse, benzetimde öğrenilen hareketler gerçeklikte işe yaramayabilir.
 
-> **Deney 6-13 ★★★: Aynı masa görevinde RGB ortamlar arası sınama**
+> **Deney 6-14 ★★★: Aynı masa görevinde RGB ortamlar arası sınama**
 >
 > Benzetim ortamında "nesneyi karşılık gelen hedefe taşıma" temel problemini kullanmayı sürdürün ve her örneği masa toplama sürecindeki yerel bir karar olarak görün: RGB görüntüden, nesneye hangi yönden yaklaşılması gerektiğine ya da artık kavranıp kavranamayacağına karar vermek. Yapısı aynı olan dört görsel politika eğitin: biri yalnızca sabit sahneleri görsün; biri arka planı değiştirsin; biri nesne görünümünü değiştirsin; sonuncusu ise arka planı, görünümü, aydınlatmayı ve gürültüyü aynı anda değiştirsin.
 >
@@ -748,6 +754,8 @@ Bu bölüm, “Agent inşa etme” kısmının son parçasını tamamladı: göz
 [^ch6-2]: Google DeepMind, “Gemini Robotics-ER 1.5”. https://deepmind.google/models/gemini-robotics/gemini-robotics-er/; XLeRobot, “LLM Agent ile kontrol”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html. XLeRobot'un üst kaynak örneği, modelin araç çağrılarıyla nasıl düzenlendiğini gösterir; bu bölüm aynı düzenleme ilkesini korur, ancak eylem araçlarını masa üzerinde kalibre edilmiş kavrama, yerleştirme, denetleme ve durdurma ilkelleriyle sınırlar.
 [^ch6-6]: LeRobot, “Sim2Real öğreticisi”. https://github.com/StoneT2000/lerobot-sim2real/blob/87d6c1d969f6e0ca4dc5697940804e231118a63a/docs/zero_shot_rgb_sim2real.md
 [^ch6-15]: Moo Jin Kim et al. *OpenVLA: An Open-Source Vision-Language-Action Model.* arXiv:2406.09246, 2024. https://arxiv.org/abs/2406.09246
+[^ch6-22]: OpenAI, “[Async tool calling](https://developers.openai.com/api/docs/guides/async-tool-calling)”; “[Using GPT-6 Astra](https://developers.openai.com/api/docs/guides/latest-model)”, kontrol tarihi: 2026-09-05.
+[^ch6-23]: OpenAI, “[Mid-turn steering](https://developers.openai.com/api/docs/guides/steering)”, kontrol tarihi: 2026-09-05.
 
 ## Düşünce Soruları
 

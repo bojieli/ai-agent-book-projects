@@ -1,39 +1,59 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 480" width="880" height="480" style="background:#ffffff">
-<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
-<text x="55" y="80" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Agent</text>
-<line x1="120" y1="80" x2="860" y2="80" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="55" y="180" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">도구 A</text>
-<line x1="120" y1="180" x2="860" y2="180" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="55" y="260" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">도구 B</text>
-<line x1="120" y1="260" x2="860" y2="260" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="55" y="340" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">도구 C</text>
-<line x1="120" y1="340" x2="860" y2="340" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="55" y="420" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">궤적</text>
-<line x1="120" y1="420" x2="860" y2="420" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
-<rect x="120.0" y="69.0" width="88.80000000000001" height="22" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="164.4" y="80" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">LLM: 도구 3개 시작</text>
-<rect x="216.2" y="169.0" width="236.8" height="22" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="334.6" y="180" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">스크립트 A: 초당 3% → 33초에 완료</text>
-<rect x="216.2" y="249.0" width="421.8" height="22" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="427.1" y="260" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">스크립트 B: 초당 2% → 50초...</text>
-<rect x="216.2" y="329.0" width="569.8" height="22" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="390.0" y="340" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">스크립트 C: 초당 1% → 100초...</text>
-<line x1="453.0" y1="70" x2="453.0" y2="450" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="453.0" y="62" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">A 완료</text>
-<rect x="460.40000000000003" y="69.0" width="88.80000000000001" height="22" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="504.80000000000007" y="80" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">B, C 진행률 조회</text>
-<rect x="460.40000000000003" y="409.0" width="88.80000000000001" height="22" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="504.80000000000007" y="420" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">B≈66% C≈33%</text>
-<line x1="564.0" y1="70" x2="564.0" y2="450" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="564.0" y="62" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">C 취소</text>
-<rect x="564.0" y="329.0" width="37.0" height="22" rx="3" fill="#999999" stroke="#333333" stroke-width="2"/>
-<text x="582.5" y="340" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">×</text>
-<line x1="638.0" y1="70" x2="638.0" y2="450" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="638.0" y="62" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">B 완료</text>
-<rect x="652.8" y="69.0" width="170.20000000000005" height="22" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="737.9" y="80" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">LLM: A+B 결과를 통합해 보고서 생성</text>
-<rect x="652.8" y="409.0" width="170.20000000000005" height="22" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="737.9" y="420" font-family="'Noto Sans CJK KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">A 결과 + B 결과 + C 취소 기록</text>
-<rect x="120" y="460" width="740" height="40" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
-<text x="130" y="480" font-family="'Noto Sans Mono CJK KR', 'Noto Sans CJK KR', 'Apple SD Gothic Neo', monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">핵심: 자리표시자 주입 + 비동기 완료 이벤트 + cancel_tool(task_id) API</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="540" viewBox="0 0 880 540">
+  <title>그림 6-5 동기 인터페이스 호환 방식과 모델의 네이티브 비동기 능력</title>
+  <desc>앞선 호환 방식에서는 런타임이 이벤트 유입 순서를 조정해 동기 인터페이스 모델이 비동기 작업에 참여하도록 합니다. 다른 방법은 모델 자체가 이 상호작용 리듬을 이해하게 하는 것입니다. 도구가 실행되는 동안 다른 일을 하고, 사용자가 중간에 요구를 추가하면 이후 작업을 조정할 수 있습니다. GPT-6 Astra는 비동기 도구 호출(Async tool calling)과 턴 도중 지시 변경(Mid-turn steering)을 지원하며 이러한 변화를 보여 줍니다(그림 6-5).</desc>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#555" /></marker>
+    <style>
+      text{font-family:Arial,'PingFang SC','Microsoft YaHei',sans-serif;fill:#333}
+      .title{font-size:20px;font-weight:700}
+      .label{font-size:17px;font-weight:600}
+      .small{font-size:15px}
+      .box{fill:#f4f4f4;stroke:#555;stroke-width:1.5}
+      .arrow{fill:none;stroke:#555;stroke-width:1.5;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="880" height="540" fill="#fff" />
+  <rect x="20" y="20" width="840" height="145" rx="8" fill="#fff" stroke="#777" stroke-dasharray="7 4" />
+  <text x="40" y="53" class="title">호환 방식: 런타임이 비동기 진행을 조정</text>
+  <rect x="40" y="75" width="230" height="60" rx="5" class="box" />
+  <text x="155" y="100" text-anchor="middle" class="label">백그라운드에서 작업 실행</text>
+  <text x="155" y="122" text-anchor="middle" class="small">미완료 상태를 명확히 기록</text>
+  <path d="M270 105 H313" class="arrow" />
+  <rect x="320" y="75" width="240" height="60" rx="5" class="box" />
+  <text x="440" y="100" text-anchor="middle" class="label">런타임이 새 이벤트 수신</text>
+  <text x="440" y="122" text-anchor="middle" class="small">큐·개입·병렬 처리 선택</text>
+  <path d="M560 105 H603" class="arrow" />
+  <rect x="610" y="75" width="230" height="60" rx="5" class="box" />
+  <text x="725" y="100" text-anchor="middle" class="label">모델이 작업을 계속</text>
+  <text x="725" y="122" text-anchor="middle" class="small">입력은 여전히 동기식 턴</text>
+
+  <rect x="20" y="185" width="840" height="250" rx="8" fill="#fff" stroke="#444" stroke-width="2" />
+  <text x="40" y="218" class="title">네이티브 비동기: 모델이 대기와 중간 변화를 이해</text>
+  <rect x="40" y="240" width="230" height="65" rx="5" class="box" />
+  <text x="155" y="267" text-anchor="middle" class="label">오래 걸리는 질의 시작</text>
+  <text x="155" y="290" text-anchor="middle" class="small">예: 회의 장소 조회</text>
+  <path d="M270 272 H313" class="arrow" />
+  <rect x="320" y="240" width="240" height="65" rx="5" class="box" />
+  <text x="440" y="267" text-anchor="middle" class="label">기다리는 동안 작업 계속</text>
+  <text x="440" y="290" text-anchor="middle" class="small">예: 의제와 준비 목록 작성</text>
+  <path d="M560 272 H603" class="arrow" />
+  <rect x="610" y="240" width="230" height="65" rx="5" class="box" />
+  <text x="725" y="267" text-anchor="middle" class="label">결과 도착 후 결정</text>
+  <text x="725" y="290" text-anchor="middle" class="small">실제 정보로 장소 비교</text>
+
+  <rect x="40" y="340" width="230" height="65" rx="5" class="box" />
+  <text x="155" y="367" text-anchor="middle" class="label">사용자가 도중에 요구 추가</text>
+  <text x="155" y="390" text-anchor="middle" class="small">예: 예산과 인원 변경</text>
+  <path d="M270 372 H313" class="arrow" />
+  <rect x="320" y="340" width="240" height="65" rx="5" class="box" />
+  <text x="440" y="367" text-anchor="middle" class="label">완료된 작업 보존</text>
+  <text x="440" y="390" text-anchor="middle" class="small">새 요구를 현재 작업에 반영</text>
+  <path d="M560 372 H603" class="arrow" />
+  <rect x="610" y="340" width="230" height="65" rx="5" class="box" />
+  <text x="725" y="367" text-anchor="middle" class="label">이후 행동 조정</text>
+  <text x="725" y="390" text-anchor="middle" class="small">기존 정보와 모든 갱신 종합</text>
+
+  <rect x="20" y="455" width="840" height="65" rx="6" fill="#e9e9e9" />
+  <text x="440" y="482" text-anchor="middle" class="label">모델은 변화를 이해하고 계획을 조정하며, 런타임은 도구 실행·상태·이벤트 출처를 관리</text>
+  <text x="440" y="506" text-anchor="middle" class="small">메시지 수신과 함께 올바른 작업 재개와 실제 행동 제어도 필요합니다.</text>
 </svg>
