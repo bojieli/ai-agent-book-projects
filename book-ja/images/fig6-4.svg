@@ -1,53 +1,39 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 880 480" width="880" height="480" style="background:#ffffff">
 <defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
-<rect x="20" y="55" width="840" height="195" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="60" y="78" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">学習パラダイム（厳密に同期的なシーケンス）</text>
-<rect x="680" y="64" width="160" height="28" rx="14" fill="#999999" stroke="#333333" stroke-width="2"/>
-<text x="760.0" y="78.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">API の必須制約</text>
-<rect x="47.0" y="100" width="180" height="55" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="137.0" y="120" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">観察</text>
-<text x="137.0" y="142" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13.5" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">ユーザー: 北京の天気を確認</text>
-<line x1="229.0" y1="128" x2="247.0" y2="128" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<rect x="249.0" y="100" width="180" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="339.0" y="120" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">思考</text>
-<text x="339.0" y="142" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">天気ツールを呼び出す必要あり</text>
-<line x1="431.0" y1="128" x2="449.0" y2="128" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<rect x="451.0" y="100" width="180" height="55" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="541.0" y="120" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">実行</text>
-<text x="541.0" y="142" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">get_weather(Beijing)</text>
-<line x1="633.0" y1="128" x2="651.0" y2="128" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
-<rect x="653.0" y="100" width="180" height="55" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="743.0" y="120" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">観察</text>
-<text x="743.0" y="142" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">22°C、晴れ</text>
-<rect x="47.0" y="170" width="786" height="30" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
-<text x="57.0" y="185" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">tool_call → 次は必ず tool_result、そうでなければ API エラー</text>
-<line x1="20" y1="262" x2="860" y2="262" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="440.0" y="280" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">矛盾</text>
-<rect x="20" y="295" width="840" height="210" rx="6" fill="#ffffff" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
-<text x="60" y="318" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">デプロイの現実（非同期イベントが交錯）</text>
-<rect x="680" y="304" width="160" height="28" rx="14" fill="#999999" stroke="#333333" stroke-width="2"/>
-<text x="760.0" y="318.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">フォーマット競合！</text>
-<rect x="50.0" y="340" width="156.0" height="50" rx="4" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
-<text x="128.0" y="355" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">アシスタント</text>
-<text x="128.0" y="372" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">tool_call:</text>
-<text x="128.0" y="386" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">get_weather(Beijing)</text>
-<rect x="221.6" y="340" width="218.4" height="50" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="330.8" y="355" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">待機中...</text>
-<text x="330.8" y="372" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">ツール実行 ~5s</text>
-<rect x="362.0" y="340" width="117.00000000000006" height="50" rx="4" fill="#999999" stroke="#333333" stroke-width="2"/>
-<text x="420.5" y="355" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">ユーザーが割り込み</text>
-<text x="420.5" y="372" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">&quot;不要、</text>
-<text x="420.5" y="386" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">上海のを確認&quot;</text>
-<rect x="494.59999999999997" y="340" width="163.8" height="50" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="576.5" y="355" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">???</text>
-<text x="576.5" y="372" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">tool_result はいつ届く？ </text>
-<text x="576.5" y="386" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">フォーマットをどう保証？</text>
-<rect x="674.0" y="340" width="156.0" height="50" rx="4" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
-<text x="752.0" y="355" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">プレースホルダー</text>
-<text x="752.0" y="372" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">[ツールはまだ実行中、 </text>
-<text x="752.0" y="386" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">割り込みを優先]</text>
-<rect x="50" y="410" width="780" height="40" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
-<text x="60" y="430" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">解決策: プレースホルダーでフォーマットを固定 + 非緊急イベントはキューに追加 + 本当に緊急なときだけ割り込み</text>
-<rect x="140" y="465" width="600" height="40" rx="6" fill="#999999" stroke="#333333" stroke-width="2"/>
-<text x="440.0" y="485" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15.5" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="bold">根本的な解決策: 次世代モデルは非同期環境で RL によって学習させる必要がある</text>
+<text x="55" y="80" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Agent</text>
+<line x1="120" y1="80" x2="860" y2="80" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="55" y="180" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">ツール A</text>
+<line x1="120" y1="180" x2="860" y2="180" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="55" y="260" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">ツール B</text>
+<line x1="120" y1="260" x2="860" y2="260" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="55" y="340" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">ツール C</text>
+<line x1="120" y1="340" x2="860" y2="340" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="55" y="420" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">軌跡</text>
+<line x1="120" y1="420" x2="860" y2="420" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
+<rect x="120.0" y="69.0" width="88.80000000000001" height="22" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="164.4" y="80" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="7" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">LLM: 3つのツールを起動</text>
+<rect x="216.2" y="169.0" width="236.8" height="22" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="334.6" y="180" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">スクリプト A: 毎秒3% → 33秒で完了</text>
+<rect x="216.2" y="249.0" width="421.8" height="22" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="427.1" y="260" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">スクリプト B: 毎秒2% → 50秒...</text>
+<rect x="216.2" y="329.0" width="569.8" height="22" rx="3" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
+<text x="501.1" y="340" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">スクリプト C: 毎秒1% → 100秒...</text>
+<line x1="453.0" y1="70" x2="453.0" y2="450" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="453.0" y="62" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">A 完了</text>
+<rect x="460.40000000000003" y="69.0" width="88.80000000000001" height="22" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="504.80000000000007" y="80" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">B、C の進捗を照会</text>
+<rect x="460.40000000000003" y="409.0" width="88.80000000000001" height="22" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="504.80000000000007" y="420" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">B≈66% C≈33%</text>
+<line x1="564.0" y1="70" x2="564.0" y2="450" stroke="#999999" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="564.0" y="62" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">C をキャンセル</text>
+<rect x="564.0" y="329.0" width="37.0" height="22" rx="3" fill="#999999" stroke="#333333" stroke-width="2"/>
+<text x="582.5" y="340" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#ffffff" text-anchor="middle" dominant-baseline="central" font-weight="normal">×</text>
+<line x1="638.0" y1="70" x2="638.0" y2="450" stroke="#333333" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="638.0" y="62" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">B 完了</text>
+<rect x="652.8" y="69.0" width="170.20000000000005" height="22" rx="3" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="737.9" y="80" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8.5" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">LLM: A+B の結果を統合してレポート生成</text>
+<rect x="652.8" y="409.0" width="170.20000000000005" height="22" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="737.9" y="420" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">A の結果 + B の結果 + C のキャンセル記録</text>
+<rect x="120" y="460" width="740" height="40" rx="4" fill="#f5f5f5" stroke="#999999" stroke-width="2"/>
+<text x="130" y="480" font-family="'Courier New', Courier, monospace" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central">要点: プレースホルダー注入 + 非同期完了イベント + cancel_tool(task_id) API</text>
 </svg>

@@ -1,0 +1,89 @@
+{
+  "arm": "async_steer",
+  "passed": true,
+  "checks": {
+    "no_api_or_runner_error": true,
+    "requested_model_returned": true,
+    "latest_constraints_and_selection": true,
+    "one_call_one_execution_one_delivery": true,
+    "original_call_id_and_actual_result": true,
+    "result_continues_latest_response": true,
+    "receipt_grounded": true,
+    "native_async_flag": true,
+    "no_premature_venue_json": true,
+    "steer_while_tool_pending": true,
+    "one_steer_with_two_user_updates": true,
+    "accepted_and_successor_observed": true,
+    "steer_before_parent_terminal": true,
+    "successor_continues_steered_parent": true,
+    "successor_completed": true
+  },
+  "metrics": {
+    "returned_models": [
+      "gpt-6-astra"
+    ],
+    "response_ids": [
+      "resp_06066c5a7bda6fcd016a9c2485696c87d09a258238356a26d2",
+      "resp_06066c5a7bda6fcd016a9c2488297487d08eaba4583a87b704",
+      "resp_06066c5a7bda6fcd016a9c248fac2c87d081fe0f3d1dcad00e"
+    ],
+    "tool_calls": 1,
+    "steer_accepted": 1,
+    "steer_pending": 0,
+    "errors": [],
+    "answer": {
+      "venue": "B",
+      "budget": 1000,
+      "attendees": 10,
+      "receipt": "1cff1e9c5a5cff91e3cfab3a",
+      "source": "demo"
+    },
+    "independent_text_while_tool_pending": true,
+    "tool_duration_s": 8.001,
+    "first_text_after_call_s": 0.0,
+    "text_deltas_during_tool_execution": 65,
+    "parent_terminal": "response.completed",
+    "parent_incomplete_reason": null,
+    "accepted_latency_s": 0.241,
+    "automatic_successor": true,
+    "elapsed_s": 12.574874,
+    "usage": [
+      {
+        "input_tokens": 390,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 46,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 436
+      },
+      {
+        "input_tokens": 458,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 47,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 505
+      },
+      {
+        "input_tokens": 584,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 43,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 627
+      }
+    ]
+  }
+}

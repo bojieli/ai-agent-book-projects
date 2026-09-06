@@ -21,7 +21,7 @@ Os capítulos anteriores expandiram o **conteúdo** desses dois espaços; este c
 | **Modalidade** (este capítulo) | Voz, tela, sensores físicos | Fala, cliques, movimento de articulações |
 | **Momento de acionamento** (este capítulo) | Envio pelo mundo, fluxos contínuos | Entre turnos, interrompível, preemptível |
 
-O corpus de treinamento de um modelo é quase inteiramente baseado em turnos: uma pergunta seguida de uma resposta, uma chamada de ferramenta seguida do resultado da ferramenta, um interlocutor terminando de falar antes que o outro comece. Assim, a política aprendida pelo modelo pressupõe que o mundo esperará por ele. O ambiente real, porém, não espera que o modelo reaja: um e-mail chega enquanto ele pensa, o usuário o interrompe no meio de uma frase, a página muda entre duas capturas de tela e uma xícara é derrubada enquanto o braço robótico tenta alcançá-la.
+**A alternância de turnos é uma convenção de interação do modelo e da interface, não uma propriedade do ambiente.** As primeiras interfaces de ferramentas costumavam organizar mensagens em rodadas síncronas: uma pergunta seguida de uma resposta, e resultados de ferramentas antes de retomar o raciocínio. O ambiente real não espera: e-mails chegam enquanto o modelo pensa, o usuário interrompe uma frase, a página muda entre capturas e um copo é derrubado enquanto o braço o alcança. Essa convenção também está mudando: em setembro de 2026, o GPT-6 Astra já oferece chamadas assíncronas nativas a ferramentas e novas instruções do usuário durante o turno. Este capítulo aborda tanto o suporte nativo quanto a compatibilidade com interfaces síncronas existentes.[^ch6-22][^ch6-23]
 
 | Escala | Cenário | Mudança na observação | Mudança na ação |
 |---|---|---|---|
@@ -44,7 +44,7 @@ Comecemos com uma analogia. Síncrono significa “é preciso terminar uma taref
 - **Avaliação dinâmica da prioridade dos eventos** — nem todos os eventos têm a mesma importância. O agente precisa escolher de forma inteligente uma estratégia de tratamento: cancelar a operação atual em casos urgentes, adicionar o evento a uma fila em casos rotineiros ou processá-lo em paralelo quando se tratar de uma consulta leve e independente.
 - **Fluidez na interrupção e na retomada** — uma conversa ou tarefa interrompida deve poder ser retomada naturalmente.
 
-O paradigma assíncrono, porém, entra em conflito com uma característica fundamental dos LLMs atuais: seu treinamento pressupõe sincronia — depois de uma chamada de ferramenta, a próxima mensagem deve ser o resultado da ferramenta —, enquanto a implantação real exige assincronia: usuários podem interromper a qualquer momento, várias tarefas avançam simultaneamente e eventos externos podem chegar antes que uma ferramenta retorne. Essa contradição entre “treinamento síncrono” e “implantação assíncrona” permeia todas as decisões de engenharia discutidas no restante desta seção.
+Ao aplicar assincronia a um LLM, primeiro verifique se o modelo e a API aceitam essa sequência temporal de mensagens. Algumas interfaces exigem todos os resultados de ferramentas antes de continuar; outras permitem ferramentas pendentes enquanto o modelo trabalha e recebe atualizações do usuário durante a geração. As primeiras precisam de filas de eventos, identificadores de tarefas e uma camada de compatibilidade; as outras podem usar protocolos assíncronos nativos. Em ambos os casos, a aplicação ainda gerencia a origem dos eventos, o ciclo de vida das ferramentas e a associação dos resultados. Usar `asyncio` no código não comprova capacidade assíncrona nativa no modelo.
 
 Para resolvê-la, precisamos de uma **arquitetura assíncrona de agentes orientada a eventos**. Tecnicamente, isso significa que o sistema deixa de verificar repetidamente se “há novas mensagens” — prática conhecida como polling, que é ineficiente — e passa a acionar automaticamente a lógica de processamento quando uma nova mensagem chega. Todas as entradas, saídas, etapas de raciocínio e interações externas são modeladas de maneira uniforme como um fluxo de eventos: uma sequência de registros dispostos em uma linha do tempo. A Figura 6-1 apresenta a arquitetura geral de um agente assíncrono orientado a eventos e mostra a relação entre as fontes de eventos, a fila de eventos e o fluxo de processamento do agente.
 
@@ -120,9 +120,9 @@ Uma única instância de agente pode lidar simultaneamente com vários eventos: 
 
 A base desse mecanismo é o **loop de eventos** da programação concorrente. Um agente assíncrono pode ser visto como um loop de longa duração: a cada rodada, ele retira um lote de eventos da fila de entrada, acrescenta-os à trajetória, invoca o LLM uma vez, executa as ferramentas que o modelo decide chamar e retorna ao início do loop para aguardar o próximo lote de eventos — a mesma estrutura de uma goroutine do Go que lê mensagens de um channel e as processa rodada a rodada dentro de um `for { select { ... } }`.
 
-Esse modelo tem uma propriedade fundamental: **os eventos só são consumidos nos limites de cada rodada**. Enquanto o LLM está raciocinando ou uma ferramenta está em execução, um novo evento não invade nem interrompe a etapa atual; ele aguarda na fila até que a rodada chegue a um **ponto seguro** — o fim de uma etapa de raciocínio ou o retorno de uma chamada de ferramenta —, quando todos os eventos pendentes são processados em conjunto. O cancelamento segue a mesma disciplina: em vez de interromper o trabalho à força em um momento arbitrário, verifica-se, no ponto seguro, se houve uma solicitação de parada — precisamente o papel desempenhado por `ctx.Done()` em Go.
+Em uma implementação tradicional com interface síncrona, **os eventos são consumidos nos limites de cada rodada**. Enquanto o LLM raciocina ou uma ferramenta executa, novos eventos aguardam na fila até um **ponto seguro**: o fim de um trecho de raciocínio ou o retorno de uma ferramenta. A assincronia nativa permite receber novos requisitos enquanto o modelo pensa ou produz a resposta; o sistema escolhe um momento adequado para continuar o processamento. Ambos têm limites, administrados por camadas diferentes. Cancelar uma ferramenta ainda exige que seu executor responda ao sinal de cancelamento, como na verificação de `ctx.Done()` em Go; receber “pare” não desfaz ações já realizadas.
 
-Com isso em mente, as três estratégias de processamento descritas a seguir diferem apenas na forma como tratam o ponto seguro: deixar o evento aguardar o próximo ponto seguro que ocorrer naturalmente, no processamento em fila; antecipar deliberadamente a criação de um ponto seguro, no processamento por cancelamento; ou iniciar outro loop, sem precisar aguardar o ponto seguro do loop principal, no processamento paralelo.
+Com essa distinção, começaremos usando um loop de eventos compatível com interfaces síncronas para explicar três estratégias: esperar o próximo ponto seguro natural (fila), criar um ponto seguro antecipadamente (cancelamento) ou iniciar outro loop sem esperar o principal (paralelismo). A continuação por steering nativo será discutida adiante.
 
 **Modelagem estruturada de eventos.**
 
@@ -200,23 +200,23 @@ O experimento a seguir implementa as estratégias de tratamento de eventos discu
 
 O Experimento 6-1 demonstra o padrão orientado a eventos mais simples: os eventos entram em uma fila e o agente os processa sequencialmente. No entanto, quando o agente precisa responder a interrupções durante execuções prolongadas de ferramentas ou gerenciar várias tarefas concorrentes, uma fila de eventos simples deixa de ser suficiente. A seguir, discutiremos desafios de engenharia mais profundos.
 
-### Implementação de engenharia: como fazer modelos síncronos aceitarem interrupções assíncronas
+### Compatibilidade quando não há assincronia nativa
 
-O Experimento 6-1 trata apenas de eventos seriais — os eventos entram na fila um a um, e o agente os processa em sequência. Voltemos agora à contradição entre “treinamento síncrono e implantação assíncrona”, apresentada no início desta seção: quando o usuário interrompe uma tarefa antes de uma ferramenta retornar, como acomodar essa interrupção no formato síncrono? Esta seção apresenta as soluções de engenharia usadas atualmente no setor.
+O experimento 6-1 trata apenas eventos em série: eles entram na fila e o Agente os processa um após o outro. Se o modelo ou a interface não admite assincronia nativa, uma interrupção do usuário antes do retorno da ferramenta precisa ser expressa no formato síncrono. Apresentaremos essa abordagem de compatibilidade antes da interface nativa do GPT-6 Astra.
 
-Primeiro, vamos ilustrar essa contradição com um cenário específico. Suponha que o agente esteja ajudando um usuário a redigir um e-mail e tenha feito uma chamada de ferramenta para buscar informações de contato. Antes que a busca retorne resultados, o usuário diz de repente: “Espere, primeiro veja para mim a previsão do tempo de amanhã.” Em um ciclo ReAct síncrono, o agente precisa aguardar o retorno da busca para processar a próxima mensagem, pois a API exige que, “após uma chamada de ferramenta, a mensagem seguinte seja o resultado da ferramenta”. No mundo real assíncrono, porém, eventos podem interromper tarefas em andamento a qualquer momento. Expressar a semântica de uma “interrupção assíncrona” sob as restrições de um “formato síncrono” é justamente o problema que esta solução de engenharia busca resolver.
+Suponha que o Agente esteja redigindo um e-mail e tenha chamado uma ferramenta para buscar contatos. Antes do resultado, o usuário diz: “Espere, consulte primeiro o tempo de amanhã”. Se a interface exigir os resultados correspondentes às chamadas pendentes antes de prosseguir, o Agente não poderá tratar diretamente a nova mensagem com uma chamada ainda em aberto. Essa restrição vem da combinação de protocolo e modelo escolhida; não é uma regra para todos os LLMs.
 
-**Solução paliativa de engenharia: implementação assíncrona que simula o comportamento síncrono.**
+**Implementação assíncrona compatível com o formato síncrono.**
 
 A ideia central é: **na operação normal, sem interrupções, permitir que o LLM veja uma trajetória síncrona padrão; somente quando houver uma interrupção, inserir placeholders para corrigir o formato**. Estas são as cinco regras principais:
 
-**Regra 1**: registrar imediatamente a mensagem do assistente — incluindo o raciocínio, o conteúdo e a chamada de ferramenta — assim que ela for produzida pelo LLM.
+**Regra 1**: Registrar prontamente as mensagens do assistente e os itens de chamada a ferramentas já concluídos pela API. Preservar o estado de raciocínio gerenciado pelo servidor conforme o protocolo de continuação do provedor, sem reconstruir texto de pensamento invisível.
 
 **Regra 2**: registrar o resultado da ferramenta somente quando a chamada for concluída. Durante a execução, a trajetória permanece em um estado “parcialmente concluído”.
 
 **Regra 3**: interrupções durante a execução da ferramenta exigem placeholders. Gere uma resposta de placeholder para a ferramenta ainda não concluída — por exemplo, “A ferramenta está sendo executada em segundo plano; priorize o novo evento” —, acrescente o evento de interrupção e invoque novamente o LLM. Do ponto de vista do LLM, a mensagem do assistente continua pareada com um resultado de ferramenta.
 
-**Regra 4**: em caso de interrupção durante o raciocínio do LLM, descarte o raciocínio em andamento. Não o registre na trajetória; acrescente o novo evento e inicie uma nova rodada de raciocínio.
+**Regra 4**: Sem steering nativo ou uma interface compatível de continuação durante o turno, cancelar a geração incompleta, preservar mensagens confirmadas como concluídas e o estado das ferramentas, adicionar o novo evento e enviar outra solicitação. Não se deve presumir que uma saída parcial ou raciocínio oculto possam ser reinseridos livremente como prefixo válido.
 
 **Regra 5**: eventos que não causam interrupção entram na fila para processamento em lote. Eles só são acrescentados de uma só vez após a conclusão do ciclo atual.
 
@@ -226,13 +226,13 @@ No exemplo em que o agente está redigindo um e-mail e o usuário o interrompe p
 2. Antes que a ferramenta de busca retorne os resultados, o usuário envia: “Primeiro, veja para mim a previsão do tempo de amanhã.” Como se trata de uma interrupção do usuário, o sistema gera um resultado de ferramenta de placeholder para a chamada de `search_contacts` ainda não concluída — “A ferramenta está sendo executada em segundo plano; priorize o novo evento” (Regra 3) —, acrescenta a consulta do usuário sobre a previsão do tempo à trajetória e invoca novamente o LLM. Nesse momento, o formato da trajetória visto pelo LLM é inteiramente válido: a mensagem do assistente e o resultado da ferramenta estão devidamente pareados.
 3. Depois que o agente responde à consulta sobre a previsão do tempo, o resultado original de `search_contacts` chega e é acrescentado à trajetória como um novo evento (Regra 2). O agente lê as informações de contato e retoma a redação do e-mail.
 
-A principal vantagem dessa abordagem é que, **em condições normais, o LLM vê uma trajetória síncrona perfeita**: as mensagens do assistente e os resultados das ferramentas estão rigorosamente pareados, e a ordem temporal é clara. Essa configuração é a mais adequada aos LLMs treinados segundo o paradigma síncrono e preserva ao máximo a qualidade do raciocínio. O placeholder — uma concessão necessária — só aparece quando de fato ocorre uma interrupção.
+Essa abordagem mantém o pareamento entre chamadas e resultados exigido pela interface síncrona. Um marcador explícito de “não concluído” só é introduzido quando é preciso interromper. Quando chega o resultado real da tarefa em segundo plano, ele entra na trajetória como evento com origem e ID de tarefa. Em modelos com assincronia nativa, o sistema pode manter o estado pendente e entregar o resultado real quando ele chegar.
 
-Ainda assim, há o risco de agravar as alucinações. Embora o placeholder declare explicitamente que a ferramenta “ainda não foi concluída”, o modelo pode fabricar um resultado em um raciocínio posterior, acreditando que a ferramenta retornou dados válidos e tomando decisões inadequadas com base nesses dados inventados. Isso ocorre porque, na grande maioria das trajetórias vistas durante o treinamento, uma chamada de ferramenta é imediatamente seguida pelo resultado real; o modelo nunca aprendeu a lidar com situações em que “o resultado ainda não chegou”. Por isso, na prática, as interrupções só são acionadas em situações realmente urgentes; eventos não urgentes são colocados em uma fila para processamento em lote.
+Marcadores também trazem risco semântico: o modelo pode confundir “tarefa iniciada” com “tarefa concluída” e decidir com base em um resultado ainda ausente. Estados explícitos e validação de resultados devem evitar essa confusão; a avaliação deve verificar se dados ainda não recebidos foram inventados. Uma única falha não justifica atribuir a causa a um processo de treinamento não divulgado.
 
-**Interfaces de ferramentas assíncronas adequadas aos modelos atuais.**
+**Expressar semântica assíncrona por meio de identificadores de tarefas.**
 
-Como é difícil romper a premissa síncrona dos modelos, uma estratégia mais fundamental é **incorporar a semântica assíncrona já no projeto da interface das ferramentas**.
+Com ou sem protocolo assíncrono nativo, **o projeto da interface de ferramentas pode explicitar a semântica assíncrona**. Uma abordagem especialmente útil em interfaces síncronas é tornar “iniciar tarefa” uma chamada completa com um valor de retorno real.
 
 O projeto tradicional de ferramentas pressupõe a semântica de que “a chamada equivale à conclusão”. Por exemplo, o nome `phone_call` sugere que “a chamada discará o número, aguardará o término da ligação e retornará seu registro”. No paradigma assíncrono, a “iniciação” e a “conclusão” devem ser desacopladas:
 
@@ -243,7 +243,7 @@ O ponto central é que o próprio nome e a descrição da ferramenta devem trans
 
 **Dispersão da atenção no processamento em fila.**
 
-Ao processar eventos em lote, o modelo costuma se concentrar apenas no último evento. A causa fundamental é que **o modelo é treinado para reagir à entrada mais recente, e o processamento de eventos em lote rompe essa premissa**.
+Ao processar eventos em lote, o modelo pode responder apenas ao último e omitir requisitos anteriores. A assincronia nativa resolve se mensagens podem chegar durante a execução; ainda é necessário verificar se todas as atualizações foram incorporadas.
 
 É possível intervir em dois níveis:
 
@@ -260,37 +260,13 @@ Ao processar eventos em lote, o modelo costuma se concentrar apenas no último e
 
 Ao final, acrescente um resumo: “Há quatro eventos não processados acima: um resultado de ferramenta, duas mensagens do usuário e um lembrete do sistema. Certifique-se de que sua resposta contemple todas as informações.”
 
-### Contradições profundas e direções futuras
-
-
-![Figura 6-4: Paradigma de treinamento síncrono versus realidade da implantação assíncrona](images/fig6-4.svg)
-
-
-Em última análise, os placeholders, as interfaces assíncronas de ferramentas e os indicadores da barra de status apresentados nas seções anteriores recorrem à engenharia de prompts para remediar a mesma contradição entre “treinamento síncrono e implantação assíncrona” (Figura 6-4). A origem dessa contradição já foi detalhada no início desta seção; portanto, não a repetiremos aqui e nos concentraremos em sua solução fundamental.
-
-**A evolução esperada dos modelos: do síncrono ao assíncrono.**
-
-As técnicas de engenharia apresentadas acima consistem, em essência, em **usar a engenharia de prompts para compensar as limitações do treinamento dos modelos**. São soluções provisórias para um período de transição. A solução definitiva exige uma mudança de paradigma no treinamento dos modelos.
-
-Os modelos VLA (Vision-Language-Action; visão, linguagem e ação — consulte a seção sobre robótica deste capítulo) já começam a enfrentar desafios semelhantes no campo da robótica: há uma latência inevitável entre percepção e ação. O sucesso dos modelos VLA aponta o caminho para a evolução dos modelos de agentes. A próxima geração precisará adquirir três capacidades essenciais por meio do aprendizado por reforço em ambientes assíncronos:
-
-1. **Compreender o entrelaçamento assíncrono de eventos nas trajetórias**: esta é a deficiência mais crítica. Os modelos atuais esperam uma sequência estritamente síncrona, mas, em um ambiente assíncrono real, uma chamada de ferramenta pode ser seguida não pelo resultado da ferramenta, mas por uma nova mensagem do usuário. O raciocínio também pode ser interrompido pela metade, mas o estado intermediário deve permanecer na trajetória; depois de processar a nova mensagem, o modelo deve retomar o raciocínio, em vez de recomeçar. O modelo precisa manter uma compreensão clara nessas trajetórias “fora de ordem”: quais chamadas de ferramentas ainda aguardam resultados e quais raciocínios são fragmentos inacabados.
-2. **Retomar tarefas e raciocínios interrompidos**: após ser interrompido para tratar um evento urgente, o modelo ainda precisa se lembrar da tarefa inacabada. Por exemplo, se o usuário perguntar de repente sobre o tempo enquanto o agente executa uma ferramenta de análise de dados, depois de responder o agente deverá aguardar naturalmente o resultado da análise, em vez de esquecer que ainda há uma ferramenta em execução. É especialmente importante evitar alucinações nas quais o modelo suponha, por engano, que a chamada de ferramenta interrompida já foi concluída.
-3. **Processar eventos em lote de forma abrangente**: quando vários eventos são acrescentados à trajetória em lote, o modelo não pode se concentrar apenas no último; deve considerar todas as informações ainda não processadas.
-
-Esse treinamento assíncrono por aprendizado por reforço exige uma nova infraestrutura: um simulador de ambientes assíncronos, capaz de gerar situações como resultados de ferramentas que chegam com atraso e interrupções aleatórias do usuário, e mecanismos de recompensa específicos para capacidades assíncronas, como compreender corretamente trajetórias fora de ordem, retomar raciocínios interrompidos, evitar alucinações e processar eventos em lote de forma abrangente.
-
-O “raciocínio contínuo”, porém, não precisa esperar pela próxima geração de modelos. Cerca de duzentas linhas de lógica de orquestração podem transformar um modelo **existente** de raciocínio textual em um agente de **raciocínio contínuo (continuous-time)**, conectando as soluções provisórias de engenharia à evolução dos modelos. O mecanismo é uma versão aprimorada da Regra 4: em vez de **descartar** um raciocínio parcial quando ocorre uma interrupção, toda a interação é estruturada como **um fluxo de pensamento ininterrupto**. O runtime pode fechar à força o bloco `<think>` que o modelo está escrevendo, injetar uma observação recém-chegada — o resultado de uma ferramenta, uma interrupção do usuário ou uma nova atualização de reconhecimento — como uma mensagem comum e deixar o modelo continuar a decodificação.
-
-Esse mecanismo aproveita um recurso frequentemente desperdiçado: um modelo consegue gerar centenas de tokens por segundo, enquanto uma chamada de ferramenta ou uma fala do usuário pode levar vários segundos. Todo esse tempo de espera pode ser usado para raciocinar. Assim, o agente pode **pensar enquanto espera** — continuar raciocinando com base nas informações parciais disponíveis e até acionar antecipadamente a próxima ferramenta — e **pensar enquanto age** — continuar raciocinando durante a geração da saída e corrigir o próprio curso no meio de uma ação.
-
 > **Experimento 6-2 ★★★: agente assíncrono com execução paralela e capacidade de interrupção**
 >
 >
-> ![Figura 6-5: Interrupção e retomada do agente assíncrono no Experimento 6-2](images/fig6-5.svg)
+> ![Figura 6-4: Interrupção e retomada do agente assíncrono no Experimento 6-2](images/fig6-4.svg)
 >
 >
-> Partindo da fila de eventos simples do Experimento 6-1, este experimento avança para os aspectos mais complexos dos agentes assíncronos: **execução paralela de ferramentas, cancelamento da execução e gerenciamento de estado**. O agente deixa de apenas processar eventos um a um: precisa gerenciar várias tarefas concorrentes simultaneamente, tratar interrupções e retomadas e tomar decisões dinâmicas com base no estado em tempo real.
+> A partir da fila simples do experimento 6-1, este experimento implementa **execução paralela de ferramentas, cancelamento e gerenciamento de estado** com um runtime compatível com interfaces síncronas. O Agente precisa administrar várias tarefas concorrentes, lidar com interrupções e retomadas e decidir conforme o estado atual. O experimento 6-3 traz a comparação com a interface nativa do Astra.
 >
 > **1. Execução assíncrona de ferramentas**: oferece suporte à execução assíncrona de ferramentas demoradas, com duração mínima de 3 a 5 segundos, retornando um placeholder assim que a execução começa. **Cenário de validação**: o agente executa um comando demorado no terminal. Enquanto isso, o usuário pergunta: “Que horas são agora?”. O agente responde imediatamente e apresenta o resultado da análise quando o comando termina.
 >
@@ -301,7 +277,37 @@ Esse mecanismo aproveita um recurso frequentemente desperdiçado: um modelo cons
 > **4. Cancelamento e consulta de status de ferramentas paralelas**: quando uma ferramenta assíncrona termina, o resultado real é injetado na conversa por meio de um novo evento. É possível cancelar uma tarefa ou consultar seu progresso pelo ID. **Cenário de validação**: o usuário solicita: “Execute estes três scripts simultaneamente. Quando o primeiro terminar, verifique o progresso dos demais. Se algum deles ainda não tiver ultrapassado 50%, cancele-o”. Os três scripts simulam processos de análise e exibem continuamente o progresso, com velocidades de 3%, 2% e 1% por segundo, respectivamente. O agente inicia simultaneamente três comandos assíncronos de terminal. Quando o script que avança 3% por segundo termina, após cerca de 33 segundos, o agente consulta o status dos outros dois terminais e constata que um atingiu cerca de 66% e o outro, aproximadamente 33%. Então, cancela aquele que ainda não ultrapassou 50%. Depois que os dois terminais restantes encerram a execução, o agente integra os resultados e gera um relatório completo.
 >
 
-A execução assíncrona e orientada a eventos permite que o mundo desperte o agente a qualquer momento, mas pressupõe que, após a chegada de um evento, o modelo possa concluir tranquilamente o raciocínio antes de responder. As próximas três seções questionam essa premissa: quando o ambiente muda tão rápido quanto o modelo gera conteúdo — ou ainda mais rápido —, “pensar primeiro e falar depois” passa a impor uma latência inaceitável.
+### Assincronia nativa do modelo: GPT-6 Astra
+
+Na abordagem anterior, o runtime ordena a entrada de eventos para que um modelo com interface síncrona participe de tarefas assíncronas. Outra abordagem permite que o próprio modelo compreenda esse ritmo: trabalhar em outras partes enquanto uma ferramenta executa e ajustar o trabalho seguinte quando o usuário acrescenta requisitos. O GPT-6 Astra já oferece chamadas assíncronas a ferramentas (Async tool calling) e orientação durante o turno (Mid-turn steering), exemplificando essa mudança (Figura 6-5).[^ch6-22][^ch6-23]
+
+![Figura 6-5: Compatibilidade síncrona e assincronia nativa do modelo](images/fig6-5.svg)
+
+**Chamadas assíncronas separam “iniciar uma ação” de “obter seu resultado”.** Após iniciar uma consulta demorada, o Agente pode continuar raciocinando, chamar outras ferramentas ou executar partes independentes do resultado. Ao consultar locais para uma reunião, por exemplo, pode preparar a pauta e a lista de preparativos; depois, compara as opções com as informações recebidas. É essencial distinguir dependências: avançar no trabalho independente e adiar decisões que exigem o resultado até sua chegada.
+
+**A orientação durante o turno permite corrigir o rumo com a tarefa em andamento.** Enquanto o Agente pensa ou compõe a resposta, o usuário pode acrescentar “o orçamento diminuiu” ou “o número de participantes mudou”. O sistema conserva o trabalho concluído e incorpora as novas restrições ao processamento seguinte, permitindo ajustar o plano dentro da mesma tarefa. Pode haver atraso entre receber a atualização e agir, mas o usuário não precisa esperar uma resposta inteira terminar para comunicar a mudança.
+
+Essas capacidades ampliam o momento da interação: resultados de ferramentas e requisitos do usuário podem chegar durante a tarefa. O sistema ainda deve distinguir suas origens e lembrar o que foi concluído e o que está pendente. Alterar o plano não interrompe por si só ferramentas em execução nem desfaz ações já realizadas; execução, cancelamento e estado continuam sob responsabilidade do runtime.
+
+Nem todos os modelos possuem essas capacidades nativas. Ao construir um Agente, escolha interação nativa ou compatibilidade conforme o suporte do modelo e verifique se o sistema completo trata corretamente resultados atrasados, alterações intermediárias e retomada de tarefas. O treinamento assíncrono pode continuar aprimorando essas capacidades, mas já é possível construir essa interação com modelos existentes.
+
+### De receber mensagens assíncronas a tratar tarefas assíncronas com confiabilidade
+
+A assincronia nativa permite que mensagens cheguem durante a execução. A confiabilidade de tarefas complexas também depende de como o modelo as utiliza. Há pelo menos três aspectos a verificar:
+
+1. **Associação de resultados e estado pendente**: O modelo associa um resultado atrasado à tarefa correta e evita inventar dados quando o resultado não chegou?
+2. **Retomada e controle das ações**: Retoma a tarefa original depois de atender novos requisitos e distingue alterar o plano de interromper a execução?
+3. **Integração de várias atualizações**: Respeita simultaneamente restrições de orçamento e participantes, em vez de lembrar apenas a última mensagem?
+
+Podemos melhorar o modelo com treinamento em ambientes assíncronos e o sistema com estados claros, origens de eventos e feedback da execução. A avaliação deve cobrir as duas camadas: se o modelo entendeu a mudança e se o sistema executou de acordo com ela.
+
+> **Experimento 6-3 ★★★: Assincronia nativa do modelo e orientação durante o turno**
+>
+> Escolher um local para uma reunião: após iniciar uma consulta demorada, o Agente conclui preparativos independentes do resultado. Nesse intervalo, o usuário acrescenta requisitos de orçamento e participantes. Ao terminar a consulta, o Agente escolhe o local considerando todas as restrições.
+>
+> Chamar a API do GPT-6 Astra para comparar ferramentas síncronas, ferramentas assíncronas nativas e orientação durante o turno. Observar se a espera bloqueia outros trabalhos, se novos requisitos entram nos planos seguintes e se a tarefa original continua quando os resultados chegam. Usar também um modelo sem suporte nativo como controle para entender o que cabe às capacidades do modelo e à orquestração do runtime.
+
+A assincronia e a execução orientada a eventos permitem que o mundo desperte o Agente durante uma tarefa; a orientação nativa também permite enviar atualizações antes de uma resposta inteira terminar. As próximas três seções comprimem ainda mais a escala de tempo: quando o ambiente muda tão rápido quanto a geração do modelo, ou mais, receber atualizações não basta; o sistema precisa reagir a tempo.
 
 ## Voz: a interface homem-máquina mais natural
 
@@ -344,7 +350,7 @@ Em produção, as filas ampliam ainda mais a latência sem carga (Figura 6-8), m
 
 ![Figura 6-8: Curva de latência de enfileiramento](images/fig6-8.svg)
 
-> **Experimento 6-3 ★: construa um agente de voz tradicional**
+> **Experimento 6-4 ★: construa um agente de voz tradicional**
 >
 > Neste experimento, conecte por WebSocket um microfone, o Silero VAD, o Whisper local, um LLM com streaming e o Fish S1 TTS para estabelecer a referência em cascata das abordagens posteriores.
 
@@ -375,7 +381,7 @@ Além das palavras, o modelo também pode produzir marcadores de eventos acústi
 
 Juntamente com os tokens de texto, esses marcadores formam um fluxo unificado de eventos. O agente pode usá-lo para identificar hesitações, interrupções e mudanças no ambiente sem reduzir todos os sons a texto simples.
 
-> **Experimento 6-4 ★: Simular percepção de voz em streaming com o Qwen2-Audio**
+> **Experimento 6-5 ★: Simular percepção de voz em streaming com o Qwen2-Audio**
 >
 > O Qwen2-Audio não é, por si só, um modelo em streaming. Este experimento simula a percepção contínua com prefixos de áudio progressivamente maiores e a compara com VAD de 600 ms + Whisper.
 
@@ -389,7 +395,7 @@ Os modelos Omni ainda pressupõem alternância de turnos e, em geral, usam VAD p
 
 ![Figura 6-9: Comparação de modelos de fala omnimodais de ponta a ponta](images/fig6-9.svg)
 
-> **Experimento 6-5 ★★: Executar o MiniCPM-o 4.5 localmente — ponta a ponta versus autocascata**
+> **Experimento 6-6 ★★: Executar o MiniCPM-o 4.5 localmente — ponta a ponta versus autocascata**
 >
 > Execute o MiniCPM-o 4.5 localmente, com o thinking mode desativado, e compare respostas geradas diretamente a partir do áudio com uma autocascata em que o mesmo modelo primeiro transcreve e depois responde. O experimento mede se as informações do áudio são preservadas, **não** o conceito de “pensar enquanto fala” discutido mais adiante.
 
@@ -443,7 +449,7 @@ O TTS tradicional pode revelar sua natureza artificial por ser fluido demais e f
 
 Além do texto, o LLM principal pode emitir marcadores de controle, como **THINKING**, **EMO:happy** e **SPEED:0.8x**. O TTS os converte em pausas, prosódia, velocidade da fala, risadas, suspiros e outros sons não verbais. A implementação pode usar um TTS treinado para interpretar marcadores de controle ou clonagem de voz com clipes de referência para diferentes emoções e estilos.
 
-> **Experimento 6-6 ★★: TTS orientado por marcadores de controle com Fish Audio**
+> **Experimento 6-7 ★★: TTS orientado por marcadores de controle com Fish Audio**
 >
 > Use o Fish Audio S1 para criar uma biblioteca de vozes com múltiplas referências e compare três configurações: sem marcadores de controle, com um clipe de referência e com vários clipes de referência. A camada de execução seleciona a emoção, a velocidade da fala e o estilo correspondentes aos marcadores.
 
@@ -476,7 +482,7 @@ A implementação de referência da Anthropic divide a capacidade completa de in
 
 **Ferramenta de edição de arquivos** (`str_replace_editor`): permite editar arquivos com segurança por correspondência de strings e oferece operações de visualização, criação, substituição, inserção e desfazer. É mais precisa do que sobrescrever o arquivo inteiro e reduz o risco de alterar acidentalmente conteúdo não relacionado.
 
-> **Experimento 6-7 ★: execução do Computer Use pela implementação de referência da Anthropic ou por um modelo aberto**
+> **Experimento 6-8 ★: execução do Computer Use pela implementação de referência da Anthropic ou por um modelo aberto**
 >
 > O caminho A usa o Anthropic Computer Use Demo. Seu contêiner reúne um ambiente de desktop Ubuntu completo, incluindo navegador, terminal e outras ferramentas comuns. O frontend recebe uma tarefa, enquanto o backend envia as instruções e capturas de tela ao Claude e, em seguida, executa as ações de mouse, teclado, terminal ou edição retornadas pelo modelo.
 >
@@ -526,7 +532,7 @@ Nos métodos de previsão de coordenadas, a compreensão das coordenadas pelo mo
 
 A escolha entre as três abordagens pode ser resumida da seguinte forma: **quando houver informações estruturadas, priorize a indexação por DOM/Accessibility Tree**, que oferece a localização mais precisa e estável. **Quando essas informações não estiverem disponíveis** — em software desktop nativo, como o Photoshop, interfaces renderizadas por Canvas/WebGL ou jogos —, **use a anotação visual, seguindo a abordagem original do SoM, ou a previsão de coordenadas**. A anotação visual transforma a localização em uma questão de múltipla escolha, sendo mais adequada a modelos de propósito geral sem treinamento específico. A previsão de coordenadas elimina a etapa de anotação e é mais direta para modelos treinados especificamente para localização em GUIs. As duas abordagens ainda apresentam limitações de precisão com elementos pequenos e interfaces densas.
 
-> **Experimento 6-8 ★: uso do browser-use para automatizar operações no navegador**
+> **Experimento 6-9 ★: uso do browser-use para automatizar operações no navegador**
 >
 > Use o Playwright, um framework de automação de navegadores, em conjunto com um modelo multimodal para implementar operações no navegador orientadas por linguagem natural. Ative a visualização do SoM e salve, antes de cada decisão, uma captura de tela com caixas delimitadoras.
 >
@@ -570,7 +576,7 @@ Isso significa que o Computer Use enfrenta não apenas contramedidas técnicas, 
 
 ## Manipulação robótica: organizando uma mesa com o XLeRobot
 
-> **Nota de leitura**: esta seção usa a mesma tarefa do início ao fim — “colocar o copo vermelho na bandeja, colocar o papel amarelo descartado na lixeira e, por fim, observar novamente e confirmar o estado da mesa”. Os experimentos 6-9 e 9-9 são realizados em um XLeRobot físico e exigem um braço robótico, calibração, um dispositivo de parada de emergência e um observador no local; os experimentos 9-8, 9-10 e 9-11 são os experimentos correspondentes executados em uma GPU local. Os resultados com hardware físico e em simulação são apresentados separadamente, mas o objetivo da tarefa, a semântica das ações e as condições de sucesso permanecem os mesmos.
+> **Nota de leitura**: esta seção usa a mesma tarefa do início ao fim — “colocar o copo vermelho na bandeja, colocar o papel amarelo descartado na lixeira e, por fim, observar novamente e confirmar o estado da mesa”. Os experimentos 6-10 e 6-12 são realizados em um XLeRobot físico e exigem um braço robótico, calibração, um dispositivo de parada de emergência e um observador no local; os experimentos 6-11, 6-13 e 6-14 são os experimentos correspondentes executados em uma GPU local. Os resultados com hardware físico e em simulação são apresentados separadamente, mas o objetivo da tarefa, a semântica das ações e as condições de sucesso permanecem os mesmos.
 
 A manipulação robótica é muito mais difícil do que responder a perguntas sobre uma imagem. O modelo precisa compreender a cena e executar ações continuamente no mundo real, onde cada ação altera a situação no instante seguinte. O XLeRobot torna essa diferença concreta: o mesmo braço robótico pode ser teleoperado por uma pessoa por meio de um teclado, um gamepad ou um dispositivo de realidade virtual, ou pode fornecer as observações das câmeras e um conjunto restrito de ferramentas de ação para que um agente as acione por conta própria. O hardware e a tarefa não mudam; muda apenas o operador — no primeiro caso, uma pessoa observa e corrige continuamente; no segundo, o modelo e o sistema de controle precisam realizar o mesmo trabalho.
 
@@ -593,7 +599,7 @@ O método de diagnóstico é direto: mantenha inalterados a câmera, o braço ro
 
 O XLeRobot permite teleoperação por teclado, controle Xbox, Switch Joy-Con e dispositivos de realidade virtual. Um operador humano realiza naturalmente muitas ações que um algoritmo precisa implementar de forma explícita: desacelera a garra ao se aproximar do copo, corrige o ponto de preensão quando o copo desliza, observa novamente quando não consegue prender o papel na primeira tentativa e verifica o resultado depois que o objeto é colocado na área de destino. Portanto, a teleoperação não serve apenas para coletar demonstrações; ela também é um experimento diagnóstico que “mantém o hardware e troca o operador”.[^ch6-1]
 
-> **Experimento 6-9 ★: Teleoperação de um XLeRobot real para organizar uma mesa**
+> **Experimento 6-10 ★: Teleoperação de um XLeRobot real para organizar uma mesa**
 >
 > Coloque um copo vermelho, uma bandeja, um papel amarelo e uma lixeira no espaço de trabalho real do XLeRobot. Usando um método de teleoperação devidamente calibrado, o operador executa a tarefa predefinida: “coloque o copo vermelho na bandeja, coloque o papel amarelo na lixeira e, depois, observe novamente e confirme o estado da mesa”. Repita o experimento por várias rodadas, registrando as imagens da câmera, os comandos do operador, o estado do braço robótico, o tempo das ações, as falhas de preensão, o número de novas tentativas e o estado final.
 >
@@ -601,11 +607,11 @@ O XLeRobot permite teleoperação por teclado, controle Xbox, Switch Joy-Con e d
 
 A teleoperação no hardware real fornece o limite superior mais convincente para a tarefa, mas não é adequada para variar em larga escala a quantidade e a posição dos objetos. Para obter um controle repetível e estatisticamente significativo, a próxima etapa transfere o mesmo problema de “colocar os objetos nos lugares corretos” para um simulador de mesa 2D e usa um controlador ideal para representar um operador competente, que nunca comete erros de percepção nem escolhe a ação errada.
 
-> **Experimento 6-10 ★: Medição, em simulação, do limite superior do controle ideal para a mesma tarefa**
+> **Experimento 6-11 ★: Medição, em simulação, do limite superior do controle ideal para a mesma tarefa**
 >
 > Em um simulador de mesa 2D, distribua aleatoriamente o copo vermelho, o papel amarelo e suas respectivas áreas de destino. Em seguida, deixe um controlador ideal se aproximar de cada objeto, pegá-lo e levá-lo ao local correto. Como não precisa reconhecer imagens nem escolhe ações incorretas, esse controlador representa “o que esta tarefa pode alcançar, no mínimo, quando a percepção e a tomada de decisão estão corretas”.
 >
-> O experimento mede a taxa de sucesso da tarefa, o número de etapas e o comprimento do trajeto, além de variar as posições iniciais dos objetos e a escala da tarefa para verificar se o limite ideal permanece estável. Ele usa os mesmos critérios de sucesso do experimento 6-9, mas mede um resultado de simulação idealizado e não implica que o XLeRobot real tenha sido executado. Juntos, os dois experimentos estabelecem as referências para o controle autônomo apresentado a seguir: o experimento 6-9 corresponde ao controle humano em malha fechada no hardware real, enquanto o experimento 6-10 corresponde ao controle ideal em malha fechada no ambiente simulado.
+> O experimento mede a taxa de sucesso da tarefa, o número de etapas e o comprimento do trajeto, além de variar as posições iniciais dos objetos e a escala da tarefa para verificar se o limite ideal permanece estável. Ele usa os mesmos critérios de sucesso do experimento 6-10, mas mede um resultado de simulação idealizado e não implica que o XLeRobot real tenha sido executado. Juntos, os dois experimentos estabelecem as referências para o controle autônomo apresentado a seguir: o experimento 6-10 corresponde ao controle humano em malha fechada no hardware real, enquanto o experimento 6-11 corresponde ao controle ideal em malha fechada no ambiente simulado.
 
 ### Estrutura básica do controle robótico
 
@@ -637,13 +643,13 @@ pick(red_cup) → place(red_cup, tray) → verify_state()
 
 Cada skill concluída gera um ponto verificável. Se uma preensão falhar, apenas essa etapa é repetida. Se alguém mover um objeto ou se o usuário mudar o objetivo, apenas as etapas posteriores afetadas precisam ser replanejadas; não é necessário refazer todo o plano anterior. As ferramentas fornecidas ao agente também devem ser simples: cada chamada executa apenas uma ação, a amplitude do movimento é limitada, há um tempo máximo de execução e uma nova observação é feita imediatamente após a ação.
 
-> **Experimento 6-11 ★★: Uso do Gemini Robotics-ER 1.5 para fazer o XLeRobot organizar uma mesa de forma autônoma**
+> **Experimento 6-12 ★★: Uso do Gemini Robotics-ER 1.5 para fazer o XLeRobot organizar uma mesa de forma autônoma**
 >
-> Mantenha inalterados o XLeRobot real, a disposição da mesa, as instruções da tarefa e os critérios de sucesso do experimento 6-9, mas substitua o operador humano por um agente. Um modelo de raciocínio corporificado, como o Gemini Robotics-ER 1.5, pode cuidar da observação e do planejamento, com apenas cinco ferramentas disponíveis por meio de um ciclo de agente no estilo do RoboCrew: `observe_scene`, `pick`, `place`, `verify_state` e `stop`.[^ch6-2]
+> Mantenha inalterados o XLeRobot real, a disposição da mesa, as instruções da tarefa e os critérios de sucesso do experimento 6-10, mas substitua o operador humano por um agente. Um modelo de raciocínio corporificado, como o Gemini Robotics-ER 1.5, pode cuidar da observação e do planejamento, com apenas cinco ferramentas disponíveis por meio de um ciclo de agente no estilo do RoboCrew: `observe_scene`, `pick`, `place`, `verify_state` e `stop`.[^ch6-2]
 >
 > Primeiro, o modelo observa a mesa e define a ordem de execução; depois, chama as ações calibradas de preensão e posicionamento do XLeRobot. Após a conclusão de cada skill, ele deve observar novamente e verificar a pós-condição. Se a preensão falhar, o modelo só pode repetir a skill atual. Ele deve chamar `stop` quando o usuário mandar parar, quando um objeto sair do espaço de trabalho ou quando não for possível confirmar o estado. O modelo não pode gerar ângulos arbitrários para as juntas nem ignorar uma verificação real apenas porque afirmou anteriormente que a tarefa estava “concluída”.
 >
-> Os critérios de aceitação são exatamente os mesmos do experimento 6-9: o copo deve estar na bandeja, o papel deve estar na lixeira, o braço robótico deve retornar a uma postura segura e não pode haver colisões nem movimentos além dos limites. A diferença é que, no experimento autônomo, a interpretação da tarefa deve se basear na observação do próprio modelo, as ações reais devem resultar de chamadas de ferramentas e o estado final deve ser confirmado por uma nova observação. A pessoa pode apenas iniciar a execução, acionar a parada de emergência e supervisionar a segurança; não pode realizar nenhuma ação em nome do agente durante a tarefa. Só assim os experimentos 6-9 e 6-11 podem comparar diretamente, com o mesmo hardware e a mesma tarefa, o que ainda separa o controle humano em malha fechada do controle do modelo em malha fechada.
+> Os critérios de aceitação são exatamente os mesmos do experimento 6-10: o copo deve estar na bandeja, o papel deve estar na lixeira, o braço robótico deve retornar a uma postura segura e não pode haver colisões nem movimentos além dos limites. A diferença é que, no experimento autônomo, a interpretação da tarefa deve se basear na observação do próprio modelo, as ações reais devem resultar de chamadas de ferramentas e o estado final deve ser confirmado por uma nova observação. A pessoa pode apenas iniciar a execução, acionar a parada de emergência e supervisionar a segurança; não pode realizar nenhuma ação em nome do agente durante a tarefa. Só assim os experimentos 6-10 e 6-12 podem comparar diretamente, com o mesmo hardware e a mesma tarefa, o que ainda separa o controle humano em malha fechada do controle do modelo em malha fechada.
 
 Experimentos com hardware real revelam erros de calibração, oclusões da câmera e falhas da garra, mas não são adequados para repetir com segurança e controle um grande número de falhas. Os experimentos simulados apresentados a seguir mantêm essas cinco ferramentas e exatamente o mesmo estado da tarefa, substituindo apenas o atuador real por um ambiente de mesa no qual é possível injetar falhas. Isso permite separar a contribuição da execução em malha aberta, da verificação passo a passo e da previsão de ações.
 
@@ -701,9 +707,9 @@ Voltando à tarefa de mesa do XLeRobot: se o papel amarelo estiver parcialmente 
 
 O modelo de mundo não fornece uma resposta definitiva, mas previsões comparáveis sobre “o que pode acontecer se eu fizer isto”. Quanto mais distante o horizonte da previsão, maior tende a ser o erro; além disso, uma imagem futura aparentemente realista pode não respeitar as condições reais de contato e atrito. Por isso, sistemas práticos ainda precisam de previsões de curto horizonte, observação em tempo real, estimativas de incerteza e um controlador independente de segurança do hardware. Modelos de mundo generativos podem ser usados em simulações interativas ou visualizações, mas não se deve confundir “ser capaz de gerar vídeo” com “ser capaz de orientar as ações de um robô”.[^ch6-21]
 
-> **Experimento 6-12 ★★: Comparação de três ciclos autônomos de organização de mesa em simulação**
+> **Experimento 6-13 ★★: Comparação de três ciclos autônomos de organização de mesa em simulação**
 >
-> Insira no simulador de mesa, sem alterações, a tarefa, o estado dos objetos, as condições de sucesso e as cinco ferramentas do experimento 9-9, substituindo apenas o atuador real do XLeRobot por um atuador simulado e controlável. Faça também com que as preensões sofram ocasionalmente falhas transitórias recuperáveis. Assim, é possível comparar três estratégias sem alterar o problema.
+> Insira no simulador de mesa, sem alterações, a tarefa, o estado dos objetos, as condições de sucesso e as cinco ferramentas do experimento 6-12, substituindo apenas o atuador real do XLeRobot por um atuador simulado e controlável. Faça também com que as preensões sofram ocasionalmente falhas transitórias recuperáveis. Assim, é possível comparar três estratégias sem alterar o problema.
 >
 > A **execução em ciclo aberto** gera uma única vez a sequência completa de ações, sem voltar a observar o ambiente durante o processo; a **verificação passo a passo** relê o estado após cada `pick` e `place` e, em caso de falha, repete apenas a skill atual; a **execução preditiva** acrescenta um modelo de mundo de curto horizonte, que compara os resultados esperados das skills candidatas antes de escolher a próxima etapa. O experimento compara a taxa de sucesso da tarefa, o custo das chamadas de ferramentas e a capacidade de recuperação de falhas, além de verificar se cada sucesso final é confirmado por uma nova observação de `verify_state`.
 >
@@ -711,9 +717,9 @@ O modelo de mundo não fornece uma resposta definitiva, mas previsões comparáv
 
 ### Da simulação ao robô real
 
-Mesmo que o experimento 9-10 apresente resultados estáveis no simulador, isso não significa que o XLeRobot real do experimento 9-9 terá o mesmo sucesso. Passar da simulação para um robô real não consiste em trocar novamente o controlador, mas em lidar com as diferenças entre os dois ambientes. O treinamento pode usar dados de teleoperação, vídeos ou interações simuladas; na implantação real, porém, o mesmo copo vermelho, papel amarelo, bandeja e lixeira aparecem com diferentes fundos, condições de iluminação, posições de câmera e oclusões. O braço também encontra diferentes níveis de atrito, ruídos de sensores e latências dos atuadores. Quando essas diferenças são grandes o bastante, movimentos aprendidos na simulação podem falhar na realidade.
+Mesmo que o experimento 6-13 apresente resultados estáveis no simulador, isso não significa que o XLeRobot real do experimento 6-12 terá o mesmo sucesso. Passar da simulação para um robô real não consiste em trocar novamente o controlador, mas em lidar com as diferenças entre os dois ambientes. O treinamento pode usar dados de teleoperação, vídeos ou interações simuladas; na implantação real, porém, o mesmo copo vermelho, papel amarelo, bandeja e lixeira aparecem com diferentes fundos, condições de iluminação, posições de câmera e oclusões. O braço também encontra diferentes níveis de atrito, ruídos de sensores e latências dos atuadores. Quando essas diferenças são grandes o bastante, movimentos aprendidos na simulação podem falhar na realidade.
 
-> **Experimento 6-13 ★★★: Teste RGB da mesma tarefa de mesa em diferentes ambientes**
+> **Experimento 6-14 ★★★: Teste RGB da mesma tarefa de mesa em diferentes ambientes**
 >
 > Continue usando na simulação o problema básico de “mover o objeto até o destino correspondente”, tratando cada amostra como uma decisão local da organização da mesa: com base na imagem RGB, determine por qual direção o objeto deve ser abordado ou se ele já pode ser agarrado. Treine quatro políticas visuais com a mesma estrutura: uma vê apenas uma cena fixa; outra varia o fundo; a terceira varia a aparência dos objetos; e a última varia simultaneamente o fundo, a aparência, a iluminação e o ruído.
 >
@@ -744,6 +750,8 @@ Este capítulo conclui a última parte da seção “construção de um agente�
 [^ch6-2]: Google DeepMind, “Gemini Robotics-ER 1.5”. https://deepmind.google/models/gemini-robotics/gemini-robotics-er/; XLeRobot, “Controle por agente LLM”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html. O exemplo original do XLeRobot mostra como o modelo e as chamadas de ferramentas são orquestrados; esta seção mantém o mesmo princípio de orquestração, mas restringe as ferramentas de ação às operações calibradas de agarrar, posicionar, verificar e parar na mesa.
 [^ch6-6]: LeRobot, “Tutorial de Sim2Real”. https://github.com/StoneT2000/lerobot-sim2real/blob/87d6c1d969f6e0ca4dc5697940804e231118a63a/docs/zero_shot_rgb_sim2real.md
 [^ch6-15]: Moo Jin Kim et al. *OpenVLA: An Open-Source Vision-Language-Action Model.* arXiv:2406.09246, 2024. https://arxiv.org/abs/2406.09246
+[^ch6-22]: OpenAI, “[Async tool calling](https://developers.openai.com/api/docs/guides/async-tool-calling)”; “[Using GPT-6 Astra](https://developers.openai.com/api/docs/guides/latest-model)”, consultados em 2026-09-05.
+[^ch6-23]: OpenAI, “[Mid-turn steering](https://developers.openai.com/api/docs/guides/steering)”, consultado em 2026-09-05.
 
 ## Questões para reflexão
 

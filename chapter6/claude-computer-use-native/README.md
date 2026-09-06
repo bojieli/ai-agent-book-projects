@@ -1,8 +1,8 @@
-# Experiment 6-7: Anthropic native Computer Use
+# Experiment 6-8: Anthropic native Computer Use
 
-This record covers the provider-specific arm of Experiment 6-7: Anthropic's
+This record covers the provider-specific arm of Experiment 6-8: Anthropic's
 native tool protocol in the official containerized Computer Use Demo. It is
-separate from the completed open-model Experiment 6-8 arm. The runner, validator,
+separate from the completed open-model Experiment 6-9 arm. The runner, validator,
 and retained evidence directories consistently use the `exp6-7-*` identifier.
 
 Current status: **complete for the bounded read-only task**. The canonical

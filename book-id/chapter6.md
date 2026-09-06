@@ -21,7 +21,7 @@ Bab-bab sebelumnya memperluas **isi** kedua ruang tersebut; bab ini memperluas *
 | **Modalitas** (bab ini) | Suara, layar, sensor fisik | Berbicara, mengklik, gerak sendi |
 | **Waktu** (bab ini) | Dunia mendorong, aliran kontinu | Lintas giliran, dapat disela, dapat didahului |
 
-Korpus pelatihan model hampir seluruhnya berbasis giliran—pertanyaan diikuti jawaban, panggilan tool diikuti hasil tool, satu pembicara selesai lebih dulu sebelum yang lain mulai. Jadi kebijakan yang dipelajari model mengasumsikan dunia akan menunggunya. Lingkungan nyata tidak menunggu model untuk bereaksi: surel datang saat ia sedang berpikir, pengguna menyela di tengah kalimat, halaman sudah berubah di antara dua tangkapan layar, dan cangkir tersenggol saat lengan sedang menjangkaunya.
+**Pergiliran adalah kesepakatan interaksi antara model dan antarmukanya, bukan sifat lingkungan.** Antarmuka pemanggilan alat awal biasanya menyusun pesan dalam putaran sinkron: pertanyaan diikuti jawaban, lalu hasil alat harus dilengkapi sebelum penalaran dilanjutkan. Lingkungan nyata tidak menunggu: email datang saat model berpikir, pengguna menyela kalimat, halaman berubah di antara tangkapan layar, dan cangkir tersenggol ketika lengan robot menjangkaunya. Kesepakatan ini juga berubah: per September 2026, GPT-6 Astra sudah menyediakan pemanggilan alat asinkron secara native dan penambahan instruksi pengguna di tengah giliran. Karena itu, bab ini membahas dukungan native serta kompatibilitas dengan antarmuka sinkron yang ada.[^ch6-22][^ch6-23]
 
 | Skala | Skenario | Perubahan di sisi observasi | Perubahan di sisi aksi |
 |---|---|---|---|
@@ -44,7 +44,7 @@ Mari kita mulai dengan analogi untuk menjelaskan mengapa asinkroni diperlukan. S
 - **Penilaian dinamis terhadap prioritas peristiwa**—Tidak semua peristiwa sama pentingnya. Agent perlu secara cerdas memilih strategi penanganan: batalkan operasi saat ini (mendesak), tambahkan ke antrean (rutin), atau proses secara paralel (kueri ringan yang independen).
 - **Kelancaran dalam interupsi dan pelanjutan kembali**—Percakapan atau tugas yang terinterupsi harus dapat dilanjutkan kembali secara alami.
 
-Namun, paradigma asinkron ini berbenturan dengan fakta mendasar tentang LLM saat ini: pelatihannya mengasumsikan sinkroni—setelah pemanggilan alat, pesan berikutnya haruslah hasil alat tersebut—sementara penyebaran dunia nyata menuntut asinkroni: pengguna dapat menginterupsi sesuka hati, berbagai tugas berjalan bersamaan, dan kejadian eksternal tiba sebelum sebuah alat mengembalikan hasil. Kontradiksi "pelatihan sinkron / penyebaran asinkron" ini menembus setiap tarik-ulur (*trade-off*) rekayasa di sisa bagian ini.
+Saat menerapkan paradigma asinkron pada LLM, periksa dahulu apakah model dan API mendukung urutan waktu pesan tersebut. Sebagian antarmuka mengharuskan semua hasil alat dilengkapi sebelum melanjutkan; yang lain sudah membolehkan alat tetap tertunda sementara model bekerja dan menerima pembaruan pengguna selama generasi. Kelompok pertama memerlukan antrean peristiwa, handle tugas, dan lapisan kompatibilitas; kelompok kedua dapat langsung memakai protokol asinkron native. Keduanya tetap membutuhkan aplikasi untuk mengelola sumber peristiwa, siklus hidup alat, dan keterkaitan hasil. Penggunaan `asyncio` saja tidak membuktikan bahwa model memiliki kemampuan asinkron native.
 
 Untuk mengatasinya, kita memerlukan **arsitektur Agent asinkron berbasis peristiwa**. Secara teknis, ini berarti sistem tidak lagi secara aktif dan berulang kali memeriksa "pesan baru" (ini adalah *polling*, yang tidak efisien), melainkan secara otomatis memicu logika pemrosesan ketika pesan baru tiba. Semua input, output, proses berpikir, dan interaksi eksternal dimodelkan secara seragam sebagai aliran peristiwa (*event stream*)—urutan catatan peristiwa yang diatur dalam sebuah garis waktu (*timeline*). Gambar 6-1 menunjukkan arsitektur keseluruhan dari Agent asinkron berbasis peristiwa, mengilustrasikan hubungan antara sumber peristiwa, antrean peristiwa, dan alur pemrosesan Agent.
 
@@ -120,9 +120,9 @@ Satu instance Agent mungkin menghadapi beberapa event secara bersamaan: pesan ba
 
 Kerangka dari mekanisme ini adalah **event loop** dari pemrograman konkuren (concurrent programming). Pikirkan asynchronous Agent sebagai loop yang berjalan panjang: setiap putaran mengambil sekumpulan event dari antrean input (input queue), menambahkannya ke trajectory, memanggil LLM sekali, mengeksekusi tool yang diputuskan untuk dipanggil, lalu kembali ke bagian atas loop untuk menunggu sekumpulan event berikutnya—struktur yang sama dengan goroutine pada Go yang membaca pesan dari channel dan memprosesnya putaran demi putaran di dalam `for { select { ... } }`.
 
-Model ini punya satu properti kunci: **event hanya dikonsumsi di batas setiap putaran loop**. Saat LLM sedang melakukan reasoning atau tool sedang berjalan, event yang baru tiba tidak menyelinap masuk begitu saja dan mengacaukan langkah yang sedang berjalan, melainkan menunggu di antrian sampai putaran ini mencapai sebuah **safe point** (akhir satu tahap reasoning, satu tool yang mengembalikan hasil), baru kemudian semuanya diproses bersama. Pembatalan mengikuti disiplin yang sama: ia tidak memutus pekerjaan secara paksa di sembarang saat, melainkan memeriksa di safe point apakah "ada perintah berhenti"—persis peran yang dimainkan `ctx.Done()` di Go.
+Dalam implementasi antarmuka sinkron tradisional, **peristiwa dikonsumsi pada batas setiap putaran**. Saat LLM bernalar atau alat berjalan, peristiwa baru menunggu di antrean hingga **titik aman**: akhir suatu bagian penalaran atau kembalinya hasil alat. Asinkroni native memungkinkan persyaratan baru diterima saat model masih berpikir atau menghasilkan keluaran; sistem memilih saat yang tepat untuk melanjutkan pemrosesan. Keduanya memiliki batas yang dikelola oleh lapisan berbeda. Pembatalan alat tetap memerlukan pelaksana yang merespons sinyal pembatalan, seperti pemeriksaan `ctx.Done()` dalam Go; menerima pesan “berhenti” tidak otomatis membatalkan tindakan yang sudah terjadi.
 
-Dengan memahami hal ini, ketiga strategi penanganan di bawah hanya berbeda dalam cara memperlakukan safe point: membiarkan event menunggu safe point berikutnya yang muncul secara alami (queued), secara proaktif menciptakan safe point lebih awal (cancellation-based), atau langsung membuka loop lain sehingga tidak perlu menunggu safe point dari loop utama (parallel).
+Dengan pembedaan ini, kita terlebih dahulu memakai loop peristiwa yang kompatibel dengan antarmuka sinkron untuk menjelaskan tiga strategi: menunggu titik aman alami berikutnya (antrean), membuat titik aman lebih awal (pembatalan), atau memulai loop lain tanpa menunggu loop utama (paralel). Kelanjutan melalui steering native dibahas kemudian.
 
 **Structured Event Modeling.**
 
@@ -199,23 +199,23 @@ Eksperimen berikut, yakni event-driven Agent pemroses email, mengimplementasikan
 
 Eksperimen 6-1 mendemonstrasikan pola event-driven paling sederhana—event masuk ke antrean, dan Agent memprosesnya secara berurutan. Akan tetapi, ketika Agent perlu merespons terhadap interupsi selama pengeksekusian tool yang berjalan lama (long-running tool executions), atau mengelola banyak task konkuren secara bersamaan, event queue yang sederhana tidaklah cukup. Selanjutnya, kita akan membahas tantangan engineering yang lebih dalam.
 
-### Implementasi Rekayasa: Membuat Model Sinkron Mendukung Interupsi Asinkron
+### Kompatibilitas ketika asinkroni native tidak didukung
 
-Eksperimen 6-1 hanya menangani event-event secara serial—event masuk ke antrean satu per satu, dan Agent memprosesnya satu per satu. Sekarang, mari kita kembali pada kontradiksi "synchronous training / asynchronous deployment" yang dikemukakan pada awal bagian ini: ketika pengguna menginterupsi padahal tool belum mengembalikan hasil, bagaimana synchronous format dapat mengakomodasinya? Bagian ini memaparkan solusi teknis (engineering workarounds) yang digunakan oleh industri saat ini.
+Eksperimen 6-1 hanya menangani peristiwa serial: peristiwa masuk antrean dan Agent menyelesaikannya satu per satu. Jika model atau antarmuka yang dipilih tidak mendukung asinkroni native, interupsi pengguna sebelum alat mengembalikan hasil harus dinyatakan dalam format sinkron. Berikut jalur kompatibilitasnya; setelah itu kita membahas antarmuka native GPT-6 Astra.
 
-Mari kita ilustrasikan kontradiksi ini terlebih dahulu dengan skenario spesifik. Misalkan Agent sedang membantu pengguna menyusun draf email (pemanggilan tool: mencari informasi kontak). Sebelum pencarian mengembalikan hasil, pengguna tiba-tiba berkata, "Tunggu, periksakan cuaca besok untuk saya terlebih dahulu." Dalam loop ReAct yang sinkron (synchronous ReAct loop), Agent harus menunggu pencarian tersebut memberikan hasil sebelum memproses pesan berikutnya—karena API mengharuskan "setelah mengeluarkan tool call, pesan berikutnya haruslah tool result." Namun di dunia nyata yang bersifat asynchronous, event-event dapat menginterupsi task yang sedang berlangsung kapan saja. Mengekspresikan semantik "asynchronous interruption" di bawah batasan "synchronous format" inilah yang menjadi masalah persis dari solusi engineering ini untuk diselesaikan.
+Misalkan Agent sedang menyusun email dan memanggil alat pencarian kontak. Sebelum hasilnya tiba, pengguna berkata, “Tunggu, periksa dulu cuaca besok.” Jika antarmuka mengharuskan panggilan yang belum selesai mendapatkan hasil pasangannya terlebih dahulu, Agent tidak dapat langsung memproses pesan baru dengan panggilan yang masih tertunda. Batasan ini berasal dari kombinasi protokol dan model yang dipilih, bukan aturan yang berlaku bagi semua LLM.
 
-**Solusi Sementara Engineering (Engineering Expedient): Implementasi Asynchronous yang Mensimulasikan Perilaku Synchronous.**
+**Implementasi asinkron yang kompatibel dengan format sinkron.**
 
 Ide intinya adalah: **Di bawah kondisi normal tanpa interupsi, biarkan LLM melihat synchronous trajectory standar; hanya ketika interupsi terjadi, sisipkan placeholder untuk memperbaiki format tersebut**. Berikut adalah lima aturan utama:
 
-**Aturan 1**: Segera rekam pesan assistant (termasuk pemikiran (thinking), konten, dan tool call) saat LLM menghasilkannya.
+**Aturan 1**: Segera catat pesan assistant dan item pemanggilan alat yang sudah diselesaikan API. Pertahankan status penalaran yang dikelola server sesuai protokol kelanjutan penyedia; jangan merangkai sendiri teks pemikiran yang tidak terlihat.
 
 **Aturan 2**: Rekam tool result hanya setelah pengeksekusian tool call selesai. Trajectory berada dalam keadaan "selesai sebagian (partially completed)" selama eksekusi.
 
 **Aturan 3**: Interupsi selama pengeksekusian tool memerlukan placeholder. Hasilkan placeholder response untuk tool yang belum selesai (misalnya, "Tool sedang dieksekusi di background, mohon prioritaskan event baru ini"), tambahkan event interupsi tersebut, dan panggil kembali LLM. Dari sudut pandang LLM, pesan assistant masih memiliki pasangan tool result.
 
-**Aturan 4**: Interupsi selama proses berpikir LLM akan langsung membuang hasil pemikiran saat itu. Jangan menulisnya ke dalam trajectory; sebaliknya, tambahkan event baru tersebut dan mulai babak pemikiran yang baru.
+**Aturan 4**: Tanpa steering native atau antarmuka kelanjutan di tengah giliran yang didukung, batalkan generasi yang belum selesai, simpan pesan yang terkonfirmasi lengkap beserta status alat, tambahkan peristiwa baru, lalu kirim permintaan baru. Jangan menganggap keluaran parsial atau penalaran tersembunyi dapat sembarang dimasukkan kembali sebagai prefiks yang sah.
 
 **Aturan 5**: Event yang tidak menginterupsi akan masuk ke antrean untuk diproses secara batch. Event tersebut akan ditambahkan sekaligus hanya setelah siklus saat ini selesai.
 
@@ -225,13 +225,13 @@ Menggunakan contoh Agent yang sedang menyusun draf email ketika pengguna mengint
 2. Sebelum tool pencarian mengembalikan hasil, pengguna mengirimkan "Cek dulu cuaca besok untuk saya." Karena ini adalah interupsi dari pengguna, sistem menghasilkan hasil tool placeholder (pengganti sementara) untuk `search_contacts` yang belum selesai ("Tool sedang berjalan di latar belakang, mohon prioritaskan event baru", Aturan 3), lalu menambahkan kueri cuaca dari pengguna ke dalam trajectory dan memanggil ulang LLM. Pada titik ini, format trajectory yang dilihat oleh LLM sepenuhnya valid—pesan assistant dan hasil tool berpasangan dengan sempurna.
 3. Setelah Agent menjawab kueri cuaca, hasil `search_contacts` yang asli tiba dan ditambahkan ke dalam trajectory sebagai event baru (Aturan 2). Agent membaca informasi kontak dan melanjutkan penyusunan draf email.
 
-Keuntungan inti dari skema ini: **dalam kondisi normal, LLM melihat trajectory sinkron yang sempurna**—pesan assistant dan hasil tool dipasangkan secara ketat, garis waktu jelas, tidak ada placeholder atau status anomali. Ini adalah pengaturan yang paling ramah untuk LLM yang dilatih di bawah paradigma sinkron, dan ini mempertahankan kualitas pemikiran. Placeholder—sebuah kompromi yang diperlukan—hanya muncul ketika interupsi benar-benar terjadi.
+Pendekatan ini mempertahankan pasangan panggilan dan hasil yang disyaratkan antarmuka sinkron. Placeholder yang jelas menyatakan “belum selesai” hanya ditambahkan ketika interupsi diperlukan. Ketika hasil nyata dari tugas latar belakang tiba, hasil masuk ke lintasan sebagai peristiwa dengan sumber dan ID tugas. Untuk model dengan asinkroni native, sistem dapat mempertahankan status tertunda lalu menyerahkan hasil nyata ketika tersedia.
 
-Namun masih ada risiko yang memperburuk halusinasi (hallucinations). Meskipun placeholder secara eksplisit menyatakan bahwa tool "belum selesai," model masih dapat mengarang hasil tool dalam pemikiran selanjutnya—meyakinkan dirinya sendiri bahwa tool telah mengembalikan data yang valid dan mendasarkan keputusan pada data fiktif. Hal ini karena, pada sebagian besar trajectory yang dilihat selama pelatihan, pemanggilan tool segera diikuti oleh hasil nyata; model tidak pernah belajar bagaimana menangani situasi di mana "hasilnya belum kembali." Oleh karena itu, dalam praktiknya, interupsi hanya dipicu dalam situasi yang benar-benar mendesak (ketika pengguna secara eksplisit meminta untuk berhenti); event yang tidak mendesak ditempatkan dalam antrean untuk diproses secara batch.
+Placeholder juga membawa risiko semantik: model dapat menyamakan “tugas dimulai” dengan “tugas selesai” dan mengambil keputusan yang bergantung pada hasil sebelum hasil itu tiba. Status tugas yang jelas dan validasi hasil harus mencegah kekeliruan ini; evaluasi perlu memeriksa apakah data yang belum diterima justru direkayasa. Satu kegagalan saja tidak membenarkan kesimpulan bahwa penyebabnya adalah suatu proses pelatihan yang tidak dipublikasikan.
 
-**Antarmuka Tool Asinkron yang Cocok untuk Model yang Ada.**
+**Menyatakan semantik asinkron melalui handle tugas.**
 
-Karena asumsi sinkron pada model sulit untuk dipatahkan, strategi yang lebih mendasar adalah **merangkul semantik asinkron pada tingkat desain antarmuka tool**.
+Dengan atau tanpa protokol asinkron native, **desain antarmuka alat dapat memperjelas semantik asinkron**. Cara yang sangat berguna untuk antarmuka sinkron adalah menjadikan “mulai tugas” sebagai panggilan lengkap dengan nilai kembalian nyata.
 
 Desain tool tradisional mengimplikasikan semantik "panggilan sama dengan penyelesaian". Misalnya, nama `phone_call` mengisyaratkan bahwa "memanggil akan memutar nomor telepon dan menunggu panggilan berakhir, lalu mengembalikan log panggilan." Di bawah paradigma asinkron, "inisiasi" dan "penyelesaian" harus dipisahkan:
 
@@ -242,7 +242,7 @@ Kuncinya adalah bahwa nama dan deskripsi tool itu sendiri harus menyampaikan sem
 
 **Dispersi Perhatian dalam Pemrosesan Berbasis Antrean.**
 
-Ketika memproses event batch, model sering kali hanya berfokus pada event terakhir. Akar penyebabnya adalah bahwa **model dilatih untuk bereaksi terhadap input terbaru, dan event batch mematahkan asumsi ini**.
+Saat memproses peristiwa secara berkelompok, model mungkin hanya menanggapi peristiwa terakhir dan melewatkan persyaratan sebelumnya. Asinkroni native menjawab apakah pesan dapat tiba saat eksekusi berlangsung; kita tetap harus memeriksa apakah model menggunakan semua pembaruan secara terpadu.
 
 Intervensi dapat diterapkan pada dua tingkatan:
 
@@ -259,37 +259,13 @@ Intervensi dapat diterapkan pada dua tingkatan:
 
 Tambahkan ringkasan di bagian akhir: "Terdapat 4 event yang belum diproses di atas, termasuk 1 hasil tool, 2 pesan pengguna, dan 1 pengingat sistem. Pastikan respons Anda mencakup semua informasi tersebut."
 
-### Kontradiksi yang Lebih Dalam dan Arah Masa Depan
-
-
-![Gambar 6-4: Paradigma Pelatihan Sinkron vs. Realitas Penerapan Asinkron](images/fig6-4.svg)
-
-
-Pada akhirnya, placeholder, antarmuka tool asinkron, dan penanda status bar dari bagian sebelumnya semuanya menggunakan prompt engineering untuk menambal kontradiksi "pelatihan sinkron / penerapan asinkron" yang sama (Gambar 6-4)—penyebab dari kontradiksi ini telah dirinci di awal bagian ini, jadi kami tidak mengulanginya di sini; sebaliknya, kami berfokus pada solusi fundamental.
-
-**Mengantisipasi Evolusi Model: Dari Sinkron ke Asinkron.**
-
-Teknik-teknik rekayasa di atas pada dasarnya **menggunakan prompt engineering untuk mengkompensasi kekurangan pelatihan model**, sebuah solusi sementara selama masa transisi. Solusi yang sebenarnya membutuhkan pergeseran paradigma pada tingkat pelatihan model.
-
-Model VLA (Vision-Language-Action, lihat Bab 6) di bidang robotika sudah mulai menghadapi tantangan serupa: ada penundaan yang tidak dapat dihindari antara persepsi dan tindakan (action). Kesuksesan VLA menunjukkan arah bagi evolusi model Agent. Model generasi berikutnya perlu memperoleh tiga kemampuan inti melalui reinforcement learning dalam lingkungan asinkron:
-
-1. **Memahami Interleaving Asinkron dari Event dalam Trajectory**: Ini adalah kekurangan kemampuan yang paling kritis. Model saat ini mengharapkan urutan yang sinkron secara ketat, tetapi dalam lingkungan asinkron yang nyata, sebuah pemanggilan tool mungkin tidak diikuti oleh hasil tool melainkan oleh pesan pengguna baru; pemikiran mungkin terinterupsi di tengah jalan, tetapi status perantara tersebut harus dipertahankan dalam trajectory, dan pemikiran harus dilanjutkan setelah pesan baru diproses, alih-alih memulai dari awal. Model perlu mempertahankan pemahaman yang jelas dalam trajectory "di luar urutan" (out-of-order) tersebut—pemanggilan tool mana yang masih menunggu hasil, dan pemikiran mana yang merupakan fragmen yang belum selesai.
-2. **Melanjutkan Tugas dan Pemikiran yang Terinterupsi**: Ketika terinterupsi untuk menangani event yang mendesak, model harus tetap mengingat tugas yang belum selesai. Misalnya, jika pengguna tiba-tiba menanyakan cuaca saat Agent sedang menjalankan tool analisis data, setelah menjawab, Agent secara alami harus menunggu hasil analisis data tersebut, alih-alih melupakan bahwa tool tersebut masih berjalan. Sangat penting untuk menghindari halusinasi di mana model secara keliru meyakini bahwa panggilan tool yang terinterupsi telah selesai.
-3. **Pemrosesan Komprehensif dari Event Batch**: Ketika beberapa event ditambahkan ke dalam trajectory secara batch, model tidak boleh hanya fokus pada event terakhir; model harus secara komprehensif mempertimbangkan semua informasi yang belum diproses.
-
-Mencapai pelatihan RL asinkron ini membutuhkan infrastruktur baru: simulator lingkungan asinkron (menghasilkan skenario seperti penundaan pengembalian tool, interupsi pengguna secara acak, dll.) dan reward khusus untuk kemampuan asinkron (memahami trajectory out-of-order dengan benar, berhasil melanjutkan pemikiran yang terinterupsi, menghindari halusinasi, dan memproses event batch secara komprehensif).
-
-Continuous thinking tidak harus menunggu generasi model berikutnya. Sekitar dua ratus baris logika orkestrasi dapat mengubah model penalaran teks yang **sudah ada** menjadi Agent **continuous-time**, menghubungkan solusi engineering sementara di atas dengan evolusi model. Ini adalah peningkatan Aturan 4: alih-alih membuang pemikiran parsial saat terinterupsi, bangun seluruh interaksi sebagai satu aliran pemikiran tanpa putus. Runtime dapat menutup paksa blok `<think>` yang sedang ditulis, menyisipkan observasi baru—hasil tool, interupsi pengguna, atau pembaruan pengenalan—sebagai pesan biasa, lalu melanjutkan decoding.
-
-Mekanisme ini memanfaatkan sumber daya yang sering terbuang: model dapat menghasilkan ratusan token per detik, sedangkan satu pemanggilan tool atau ucapan pengguna bisa memakan beberapa detik. Waktu tunggu tersebut dapat dipakai untuk berpikir. Agent dapat **berpikir sambil menunggu**—melanjutkan dari informasi parsial dan bahkan memulai tool berikutnya lebih awal—serta **berpikir sambil bertindak**—terus menalar saat menghasilkan output dan mengoreksi diri di tengah tindakan.
-
 > **Eksperimen 6-2 ★★★: Agent Asinkron dengan Eksekusi Paralel dan Kemampuan Interupsi**
 >
 >
-> ![Gambar 6-5: Interupsi dan Pemulihan Agent Asinkron Eksperimen 6-2](images/fig6-5.svg)
+> ![Gambar 6-4: Interupsi dan Pemulihan Agent Asinkron Eksperimen 6-2](images/fig6-4.svg)
 >
 >
-> Dibangun di atas antrean event sederhana dari Eksperimen 6-1, eksperimen ini bergerak ke bagian-bagian yang sulit dari Agent asinkron: **eksekusi tool paralel, pembatalan eksekusi, dan manajemen status (state management)**. Agent tidak lagi hanya memproses event satu per satu; ia perlu mengelola beberapa tugas secara bersamaan, menangani interupsi dan pemulihan, dan membuat keputusan dinamis berdasarkan status real-time.
+> Berangkat dari antrean sederhana pada eksperimen 6-1, eksperimen ini memakai runtime yang kompatibel dengan antarmuka sinkron untuk menerapkan **eksekusi alat paralel, pembatalan eksekusi, dan pengelolaan status**. Agent harus mengelola beberapa tugas bersamaan, menangani interupsi dan pemulihan, serta mengambil keputusan berdasarkan status terkini. Lihat eksperimen 6-3 untuk perbandingan dengan antarmuka native Astra.
 >
 > **1. Eksekusi Tool Asinkron**: Mendukung eksekusi asinkron dari tool yang memakan waktu (setidaknya 3-5 detik), segera mengembalikan placeholder setelah inisiasi. **Skenario Validasi**: Agent mengeksekusi perintah terminal yang berjalan lama. Selama waktu ini, pengguna bertanya, "Jam berapa sekarang?" Agent segera merespons, lalu menyajikan hasil analisis ketika perintah yang berjalan lama selesai.
 >
@@ -300,7 +276,37 @@ Mekanisme ini memanfaatkan sumber daya yang sering terbuang: model dapat menghas
 > **4. Pembatalan dan Kueri Status untuk Tool Paralel**: Setelah tool asinkron selesai, hasil nyata disuntikkan ke dalam percakapan melalui event baru. Mendukung pembatalan atau kueri kemajuan melalui task ID. **Skenario Validasi**: Pengguna meminta, "Jalankan ketiga skrip ini secara bersamaan untuk saya. Mana saja yang selesai lebih dulu, periksa kemajuan skrip yang tersisa. Jika ada yang belum melebihi 50%, batalkan." Ketiga skrip mensimulasikan proses analisis, mengeluarkan kemajuan terus menerus dengan kecepatan masing-masing 3%, 2%, dan 1% per detik. Agent memulai tiga perintah terminal asinkron secara bersamaan. Ketika skrip pada 3% per detik selesai dalam sekitar 33 detik, Agent melakukan kueri status dari dua terminal yang tersisa, menemukan satu sekitar 66% dan yang lainnya sekitar 33%. Agent kemudian membatalkan yang belum melebihi 50%. Setelah kedua terminal selesai, Agent mengintegrasikan hasil untuk menghasilkan laporan lengkap.
 >
 
-Eksekusi asynchronous berbasis event memungkinkan dunia membangunkan Agent kapan saja, tetapi mengasumsikan model dapat menyelesaikan pemikiran sebelum merespons. Tiga bagian berikut menantang asumsi ini: ketika environment berubah secepat atau lebih cepat daripada generasi model, “berpikir dahulu, lalu berbicara” menjadi latensi yang tidak dapat diterima.
+### Asinkroni native pada model: GPT-6 Astra
+
+Pada pendekatan kompatibilitas sebelumnya, runtime mengatur urutan masuknya peristiwa agar model berantarmuka sinkron dapat menangani tugas asinkron. Jalur lain membuat model memahami ritme tersebut secara native: ia dapat mengerjakan hal lain saat alat berjalan dan menyesuaikan pekerjaan berikutnya ketika pengguna menambahkan persyaratan. GPT-6 Astra sudah mendukung pemanggilan alat asinkron (Async tool calling) dan pengarahan di tengah giliran (Mid-turn steering), yang menunjukkan perubahan ini (Gambar 6-5).[^ch6-22][^ch6-23]
+
+![Gambar 6-5: Kompatibilitas antarmuka sinkron dan asinkroni native pada model](images/fig6-5.svg)
+
+**Pemanggilan alat asinkron memisahkan “memulai tindakan” dari “memperoleh hasil”.** Setelah memulai kueri yang lama, Agent dapat terus bernalar, memanggil alat lain, atau menyelesaikan bagian yang tidak bergantung pada hasil kueri. Saat mencari tempat rapat, misalnya, ia dapat menyusun agenda dan daftar persiapan terlebih dahulu, lalu membandingkan pilihan setelah informasi tempat tiba. Kuncinya adalah memahami ketergantungan: lanjutkan pekerjaan mandiri dan tunda keputusan yang membutuhkan hasil sampai hasil tersedia.
+
+**Pengarahan di tengah giliran memungkinkan pengguna mengoreksi arah saat tugas berjalan.** Ketika Agent masih berpikir atau menyusun jawaban, pengguna dapat menambahkan “anggaran berkurang” atau “jumlah peserta berubah”. Sistem mempertahankan pekerjaan yang selesai dan membawa batasan baru ke pemrosesan berikutnya sehingga rencana dapat disesuaikan dalam tugas yang sama. Masih mungkin ada jeda antara menerima pembaruan dan menerapkannya, tetapi pengguna tidak perlu menunggu satu jawaban penuh berakhir untuk menyampaikan perubahan.
+
+Kedua kemampuan ini memperluas waktu interaksi: hasil alat dan persyaratan pengguna dapat tiba selama tugas berlangsung. Sistem tetap harus membedakan sumbernya dan mengingat pekerjaan yang selesai maupun yang tertunda. Mengubah rencana tidak otomatis menghentikan alat yang berjalan atau mengurungkan tindakan yang sudah terjadi; eksekusi, pembatalan, dan pengelolaan status tetap menjadi tanggung jawab runtime.
+
+Tidak semua model memiliki kemampuan asinkron native. Saat membangun Agent, pilih interaksi native atau pendekatan kompatibilitas sesuai dukungan model, lalu periksa apakah seluruh sistem menangani hasil terlambat, perubahan di tengah tugas, dan kelanjutan tugas dengan benar. Pelatihan asinkron dapat terus meningkatkan kemampuan tersebut, tetapi pengembang sudah dapat membangun interaksi ini dengan model yang ada.
+
+### Dari menerima pesan asinkron hingga menangani tugas asinkron secara andal
+
+Asinkroni native memungkinkan pesan tiba selama eksekusi. Keandalan tugas kompleks juga bergantung pada cara model menggunakan pesan tersebut. Setidaknya tiga hal harus diperiksa:
+
+1. **Keterkaitan hasil dan status tertunda**: Apakah hasil yang terlambat dikaitkan dengan tugas yang benar dan data tidak direkayasa ketika hasil belum ada?
+2. **Kelanjutan tugas dan kontrol tindakan**: Apakah model kembali ke tugas semula setelah menangani persyaratan baru dan membedakan perubahan rencana dari penghentian eksekusi?
+3. **Penggabungan beberapa pembaruan**: Apakah batasan anggaran dan jumlah peserta dipatuhi sekaligus, alih-alih hanya mengingat pesan terakhir?
+
+Model dapat diperbaiki melalui pelatihan dalam lingkungan asinkron; sistem dapat diperbaiki melalui status tugas, sumber peristiwa, dan umpan balik eksekusi yang jelas. Evaluasi harus mencakup keduanya: apakah model memahami perubahan dan apakah sistem menjalankannya dengan benar.
+
+> **Eksperimen 6-3 ★★★: Asinkroni native pada model dan pengarahan di tengah giliran**
+>
+> Memilih tempat rapat: setelah memulai kueri yang lama, Agent menyelesaikan persiapan yang tidak bergantung pada hasilnya. Sementara itu, pengguna menambahkan persyaratan anggaran dan jumlah peserta. Setelah kueri selesai, Agent memilih tempat berdasarkan seluruh batasan.
+>
+> Panggil API GPT-6 Astra untuk membandingkan alat sinkron, alat asinkron native, dan pengarahan di tengah giliran. Amati apakah menunggu menghambat pekerjaan lain, apakah persyaratan baru masuk ke rencana berikutnya, dan apakah tugas semula berlanjut ketika hasil tiba. Gunakan juga model tanpa dukungan native sebagai kontrol untuk memahami masalah yang ditangani kemampuan model dan orkestrasi runtime masing-masing.
+
+Asinkroni dan eksekusi berbasis peristiwa memungkinkan dunia membangunkan Agent saat tugas berlangsung; pengarahan native juga memungkinkan pengguna mengirim pembaruan sebelum jawaban penuh selesai. Tiga bagian berikut memperpendek skala waktu lebih jauh: ketika lingkungan berubah secepat atau lebih cepat daripada generasi model, menerima pembaruan saja tidak cukup; sistem harus bereaksi tepat waktu.
 
 ## Suara: Antarmuka Manusia-Mesin yang Paling Alami
 
@@ -343,7 +349,7 @@ Antrean di lingkungan produksi masih akan memperbesar latensi idle (Gambar 6-8),
 
 ![Gambar 6-8: Kurva latensi antrean](images/fig6-8.svg)
 
-> **Eksperimen 6-3 ★: Membangun voice Agent tradisional**
+> **Eksperimen 6-4 ★: Membangun voice Agent tradisional**
 >
 > Hubungkan mikrofon, Silero VAD, Whisper lokal, LLM streaming, dan Fish S1 TTS melalui WebSocket untuk membangun baseline berantai.
 
@@ -374,7 +380,7 @@ Keluaran model tidak hanya berupa teks, tetapi juga dapat menyertakan penanda pe
 
 Penanda-penanda ini bersama token teks membentuk satu aliran peristiwa yang sama; berdasarkan itu, Agent dapat mengenali keraguan, interupsi, dan perubahan lingkungan tanpa harus memampatkan semua suara menjadi teks murni.
 
-> **Eksperimen 6-4 ★: Mensimulasikan persepsi suara streaming dengan Qwen2-Audio**
+> **Eksperimen 6-5 ★: Mensimulasikan persepsi suara streaming dengan Qwen2-Audio**
 >
 > Qwen2-Audio bukan model streaming. Eksperimen ini menyimulasikan persepsi kontinu dengan prefix audio yang terus bertambah dan membandingkannya dengan VAD 600 ms + Whisper.
 
@@ -388,7 +394,7 @@ Model Omni tetap mengasumsikan orang berbicara bergantian dan umumnya mengandalk
 
 ![Gambar 6-9: Perbandingan model suara omnimodal end-to-end](images/fig6-9.svg)
 
-> **Eksperimen 6-5 ★★: Menjalankan MiniCPM-o 4.5 secara lokal, end-to-end versus self-cascade**
+> **Eksperimen 6-6 ★★: Menjalankan MiniCPM-o 4.5 secara lokal, end-to-end versus self-cascade**
 >
 > Jalankan MiniCPM-o 4.5 secara lokal dengan thinking mode dimatikan, lalu bandingkan jawaban langsung dari audio dengan self-cascade yang mentranskripsikan terlebih dahulu dan menjawab memakai model yang sama. Ini mengukur apakah informasi audio dipertahankan, **bukan** “berpikir sambil berbicara” yang dibahas kemudian.
 
@@ -444,7 +450,7 @@ TTS tradisional dapat mengungkap identitas mesinnya karena terlalu mulus dan ter
 
 LLM utama dapat mengeluarkan marker kontrol selain teks, seperti **THINKING**, **EMO:happy**, dan **SPEED:0.8x**; TTS memetakannya menjadi jeda, prosodi, kecepatan bicara, tawa, helaan napas, dan audio nonverbal lainnya. Implementasinya dapat berupa TTS yang dilatih untuk memahami marker kontrol, atau voice cloning dengan klip referensi untuk berbagai emosi dan gaya.
 
-> **Eksperimen 6-6 ★★: TTS berbasis token kontrol dengan Fish Audio**
+> **Eksperimen 6-7 ★★: TTS berbasis token kontrol dengan Fish Audio**
 >
 > Gunakan Fish Audio S1 untuk membangun pustaka suara multi-referensi dan bandingkan tiga konfigurasi: tanpa marker kontrol, satu klip referensi, dan beberapa klip referensi. Lapisan eksekusi memilih emosi, kecepatan bicara, dan gaya yang cocok dari marker.
 
@@ -478,7 +484,7 @@ Implementasi referensi Anthropic membagi kemampuan interaksi lengkap menjadi tig
 
 **File Editing Tool** (`str_replace_editor`): Memungkinkan pengeditan yang aman melalui pencocokan string dan mendukung operasi lihat, buat, ganti, sisipkan, dan urungkan. Ini lebih presisi daripada menimpa seluruh file dan lebih kecil kemungkinannya untuk memodifikasi konten yang tidak terkait secara tidak sengaja.
 
-> **Eksperimen 6-7 ★: Menjalankan Computer Use (Jalur Referensi Anthropic atau Jalur Model Terbuka)**
+> **Eksperimen 6-8 ★: Menjalankan Computer Use (Jalur Referensi Anthropic atau Jalur Model Terbuka)**
 >
 > Jalur A menggunakan Anthropic Computer Use Demo. Kontainernya mengemas lingkungan desktop Ubuntu lengkap, termasuk browser, terminal, dan tool umum lainnya. Frontend menerima tugas, sedangkan backend mengirim instruksi dan tangkapan layar ke Claude, lalu mengeksekusi aksi mouse, keyboard, terminal, atau pengeditan yang dikembalikan oleh model.
 >
@@ -525,7 +531,7 @@ Dalam skema prediksi koordinat, pemahaman model tentang koordinat sangat bergant
 
 Pilihan di antara ketiga rute tersebut dapat diringkas sebagai berikut: **ketika informasi terstruktur tersedia, prioritaskan pengindeksan DOM/accessibility-tree** untuk pelokalan yang paling akurat dan stabil. **Ketika tidak tersedia**—dalam perangkat lunak desktop asli seperti Photoshop, antarmuka yang dirender canvas/WebGL, atau game—**gunakan anotasi visual (rute SoM asli) atau prediksi koordinat**. Anotasi visual mengubah pelokalan menjadi masalah pilihan ganda, membuatnya lebih ramah terhadap model serbaguna tanpa pelatihan khusus. Prediksi koordinat menghilangkan langkah anotasi dan lebih langsung untuk model yang dilatih khusus pada pelokalan GUI. Kedua pendekatan ini masih kesulitan dengan elemen kecil dan antarmuka yang padat.
 
-> **Eksperimen 6-8 ★: Menggunakan browser-use untuk Mengimplementasikan Operasi Browser Otomatis**
+> **Eksperimen 6-9 ★: Menggunakan browser-use untuk Mengimplementasikan Operasi Browser Otomatis**
 >
 > Gabungkan Playwright, framework otomasi browser, dengan model multimodal untuk menjalankan operasi browser berbasis bahasa alami. Aktifkan visualisasi SoM dan simpan screenshot dengan kotak anotasi sebelum setiap keputusan.
 >
@@ -569,7 +575,7 @@ Artinya, yang dihadapi Computer Use bukan sekadar perlawanan teknis seperti CAPT
 
 ## Robot Manipulation: Merapikan Meja dengan XLeRobot
 
-> **Cara membaca bagian ini**: dari awal sampai akhir kita memakai satu tugas saja——"masukkan cangkir merah ke nampan, buang kertas kuning ke tempat sampah, lalu amati sekali lagi untuk memastikan keadaan meja". Eksperimen 6-9 dan 9-9 dijalankan pada XLeRobot fisik dan memerlukan lengan robot, kalibrasi, tombol henti darurat, serta pengawas di tempat. Eksperimen 6-10, 9-10, dan 9-11 adalah padanannya di GPU lokal. Hasil fisik dan hasil simulasi dilaporkan terpisah, tetapi tujuan tugas, makna aksi, dan syarat keberhasilannya dijaga tetap sama.
+> **Cara membaca bagian ini**: dari awal sampai akhir kita memakai satu tugas saja——"masukkan cangkir merah ke nampan, buang kertas kuning ke tempat sampah, lalu amati sekali lagi untuk memastikan keadaan meja". Eksperimen 6-10 dan 6-12 dijalankan pada XLeRobot fisik dan memerlukan lengan robot, kalibrasi, tombol henti darurat, serta pengawas di tempat. Eksperimen 6-11, 6-13, dan 6-14 adalah padanannya di GPU lokal. Hasil fisik dan hasil simulasi dilaporkan terpisah, tetapi tujuan tugas, makna aksi, dan syarat keberhasilannya dijaga tetap sama.
 
 Manipulasi robot jauh lebih sulit daripada "melihat gambar lalu menjawab pertanyaan". Model bukan hanya harus memahami pemandangan, tetapi harus bertindak secara berkelanjutan di dunia nyata, dan setiap aksi mengubah keadaan pada detik berikutnya. XLeRobot membuat perbedaan ini menjadi sangat konkret. Lengan yang sama bisa dikendalikan dari jarak jauh oleh manusia dengan papan ketik, gamepad, atau perangkat VR; bisa pula pengamatan kamera dan sehimpunan kecil alat aksi diserahkan kepada Agent agar ia memanggilnya sendiri. Perangkat kerasnya tidak berubah, tugasnya juga tidak; yang berubah hanya siapa yang mengoperasikan——pada kasus pertama manusia terus mengamati dan mengoreksi, pada kasus kedua model dan sistem kendali harus menuntaskan pekerjaan yang sama.
 
@@ -592,7 +598,7 @@ Cara mendiagnosisnya lugas. Dengan kamera, lengan, penjepit, tata letak meja, da
 
 XLeRobot mendukung beberapa pintu masuk teleoperasi: papan ketik, pengendali Xbox, Joy-Con Switch, dan perangkat VR. Operator manusia secara alami melakukan banyak hal yang harus ditulis eksplisit bila dikerjakan algoritme: melambat ketika penjepit mendekati cangkir, memperbaiki titik jepit bila cangkir tergelincir, mengamati ulang bila kertas tak terjepit dalam sekali coba, dan memastikan hasilnya ketika benda masuk ke zona sasaran. Karena itu teleoperasi bukan hanya sarana mengumpulkan data demonstrasi, melainkan juga eksperimen diagnostik yang "mengunci perangkat keras dan hanya mengganti operatornya".[^ch6-1]
 
-> **Eksperimen 6-9 ★: Merapikan meja dengan meneleoperasi XLeRobot fisik**
+> **Eksperimen 6-10 ★: Merapikan meja dengan meneleoperasi XLeRobot fisik**
 >
 > Taruh cangkir merah, nampan, gumpalan kertas kuning, dan tempat sampah di area kerja XLeRobot fisik. Operator menjalankan tugas tetap melalui salah satu jalur teleoperasi yang sudah dikalibrasi: "masukkan cangkir merah ke nampan, buang kertas kuning ke tempat sampah, lalu amati sekali lagi untuk memastikan keadaan meja". Ulangi sekurang-kurangnya beberapa putaran, dan catat video kamera, masukan operator, keadaan lengan, lama aksi, kegagalan jepitan, jumlah percobaan ulang, serta keadaan akhir.
 >
@@ -600,11 +606,11 @@ XLeRobot mendukung beberapa pintu masuk teleoperasi: papan ketik, pengendali Xbo
 
 Teleoperasi fisik adalah cara paling meyakinkan untuk menunjukkan batas atas tugas, tetapi kurang cocok untuk mengubah jumlah dan posisi benda secara besar-besaran. Untuk memperoleh pembanding yang dapat diulang dan bisa dihitung secara statistik, masalah "mengembalikan benda ke tempatnya" yang sama berikutnya kita pindahkan ke simulator meja dua dimensi, dan kita pakai pengendali ideal sebagai pengganti operator kuat yang tidak salah mempersepsi dan tidak salah memilih aksi.
 
-> **Eksperimen 6-10 ★: Mengukur batas atas kendali ideal untuk tugas yang sama di simulator**
+> **Eksperimen 6-11 ★: Mengukur batas atas kendali ideal untuk tugas yang sama di simulator**
 >
 > Di dalam simulator meja dua dimensi, tempatkan cangkir merah, kertas kuning, dan zona sasaran masing-masing secara acak, lalu biarkan pengendali ideal mendekati benda satu per satu, menjepitnya, dan memindahkannya ke posisi yang benar. Ia tidak perlu mengenali gambar dan tidak pernah salah memilih aksi, sehingga ia mewakili "sejauh mana tugas ini setidaknya bisa berjalan bila persepsi dan keputusan sama-sama benar".
 >
-> Amati tingkat keberhasilan, jumlah langkah, dan panjang lintasan; ubah pula posisi awal benda dan skala tugas untuk melihat apakah batas ideal itu tetap stabil. Syarat keberhasilannya sama dengan Eksperimen 6-9, tetapi yang diukur adalah simulasi tanpa aktuator: ini tidak berarti XLeRobot fisik telah bergerak. Keduanya menjadi dua garis dasar bagi kendali mandiri sesudahnya——Eksperimen 6-9 adalah lingkar tertutup manusia di atas perangkat keras nyata, dan Eksperimen 6-10 adalah lingkar tertutup ideal di lingkungan simulasi.
+> Amati tingkat keberhasilan, jumlah langkah, dan panjang lintasan; ubah pula posisi awal benda dan skala tugas untuk melihat apakah batas ideal itu tetap stabil. Syarat keberhasilannya sama dengan Eksperimen 6-10, tetapi yang diukur adalah simulasi tanpa aktuator: ini tidak berarti XLeRobot fisik telah bergerak. Keduanya menjadi dua garis dasar bagi kendali mandiri sesudahnya——Eksperimen 6-10 adalah lingkar tertutup manusia di atas perangkat keras nyata, dan Eksperimen 6-11 adalah lingkar tertutup ideal di lingkungan simulasi.
 
 ### Struktur Dasar Kendali Robot
 
@@ -636,13 +642,13 @@ pick(red_cup) → place(red_cup, tray) → verify_state()
 
 Setiap keterampilan yang tuntas memberi kita satu simpul yang bisa diperiksa. Bila jepitan gagal, hanya langkah itu yang diulang. Bila ada yang memindahkan benda atau pengguna mengubah sasaran, cukup rencanakan ulang langkah-langkah sesudahnya yang terpengaruh, bukan mengulang seluruh rencana lama. Alat yang diberikan kepada agen juga harus cukup sederhana: satu panggilan mengerjakan satu hal saja, jangkauan geraknya terkunci, ada batas waktu, dan sesudah dijalankan langsung diamati ulang.
 
-> **Eksperimen 6-11 ★★: Membiarkan Gemini Robotics-ER 1.5 merapikan meja secara mandiri dengan XLeRobot**
+> **Eksperimen 6-12 ★★: Membiarkan Gemini Robotics-ER 1.5 merapikan meja secara mandiri dengan XLeRobot**
 >
-> Pertahankan XLeRobot fisik, tata letak meja, perintah tugas, dan syarat keberhasilan dari Eksperimen 6-9; ganti hanya operator manusianya dengan Agent. Serahkan pengamatan dan perencanaan kepada model penalaran terwujud seperti Gemini Robotics-ER 1.5, dan lewat lingkar agen bergaya RoboCrew bukalah lima alat saja: `observe_scene`, `pick`, `place`, `verify_state`, dan `stop`.[^ch6-2]
+> Pertahankan XLeRobot fisik, tata letak meja, perintah tugas, dan syarat keberhasilan dari Eksperimen 6-10; ganti hanya operator manusianya dengan Agent. Serahkan pengamatan dan perencanaan kepada model penalaran terwujud seperti Gemini Robotics-ER 1.5, dan lewat lingkar agen bergaya RoboCrew bukalah lima alat saja: `observe_scene`, `pick`, `place`, `verify_state`, dan `stop`.[^ch6-2]
 >
 > Model mula-mula mengamati meja, menetapkan urutan penanganan, lalu memanggil aksi jepit dan letak XLeRobot yang sudah dikalibrasi. Setiap kali sebuah keterampilan tuntas, ia harus mengamati ulang dan memeriksa pascasyaratnya. Ketika jepitan gagal ia hanya boleh mengulang keterampilan yang sedang berjalan, dan ia harus memanggil `stop` bila pengguna menyuruh berhenti, bila benda keluar dari area kerja, atau bila keadaan tak bisa diverifikasi. Model tidak boleh langsung mengeluarkan sudut sendi sembarang, dan tidak boleh melewati verifikasi nyata hanya karena ia sendiri sudah lebih dulu berkata "sudah selesai".
 >
-> Syarat penerimaannya persis sama dengan Eksperimen 6-9: cangkir di dalam nampan, kertas di dalam tempat sampah, lengan kembali ke sikap aman, tanpa tabrakan dan tanpa keluar area. Bedanya, pada eksperimen mandiri makna tugas harus lahir dari pengamatan model itu sendiri, aksi nyata harus lahir dari panggilan alat, dan keadaan akhir harus dipastikan lewat pengamatan yang baru. Manusia hanya boleh menyalakan, menekan henti darurat, dan mengawasi keselamatan——tidak boleh menuntaskan aksi menggantikan Agent di tengah jalan. Hanya dengan begitu Eksperimen 6-9 dan 9-9 dapat langsung dibandingkan: "dengan perangkat keras dan tugas yang sama, apa yang masih kurang pada lingkar tertutup model dibanding lingkar tertutup manusia".
+> Syarat penerimaannya persis sama dengan Eksperimen 6-10: cangkir di dalam nampan, kertas di dalam tempat sampah, lengan kembali ke sikap aman, tanpa tabrakan dan tanpa keluar area. Bedanya, pada eksperimen mandiri makna tugas harus lahir dari pengamatan model itu sendiri, aksi nyata harus lahir dari panggilan alat, dan keadaan akhir harus dipastikan lewat pengamatan yang baru. Manusia hanya boleh menyalakan, menekan henti darurat, dan mengawasi keselamatan——tidak boleh menuntaskan aksi menggantikan Agent di tengah jalan. Hanya dengan begitu Eksperimen 6-10 dan 6-12 dapat langsung dibandingkan: "dengan perangkat keras dan tugas yang sama, apa yang masih kurang pada lingkar tertutup model dibanding lingkar tertutup manusia".
 
 Eksperimen fisik menyingkap galat kalibrasi, kamera yang terhalang, dan kegagalan penjepit, tetapi tidak cocok untuk mengulang banyak kerusakan secara aman dan terkendali. Eksperimen simulasi selanjutnya mempertahankan kelima alat itu dan keadaan tugas yang persis sama, dan hanya mengganti aktuator nyata dengan lingkungan meja tempat kegagalan bisa disuntikkan, agar dapat dipilah apa sumbangan masing-masing: eksekusi lingkar terbuka, pemeriksaan bertahap, dan prediksi aksi.
 
@@ -700,9 +706,9 @@ Kembali ke tugas meja XLeRobot. Bila kertas kuning sebagian tertutup cangkir mer
 
 Yang diberikan model dunia bukan jawaban pasti, melainkan ramalan yang bisa dibandingkan tentang "apa yang mungkin terjadi bila begini". Makin jauh ke depan meramal, galatnya cenderung makin besar, dan pemandangan masa depan yang tampak nyata belum tentu sesuai dengan hukum sentuh dan gesek yang sesungguhnya. Karena itu sistem nyata tetap memerlukan ramalan jangka pendek, pengamatan waktu nyata, taksiran ketidakpastian, dan pengendali keselamatan perangkat keras yang berdiri sendiri. Model dunia generatif berguna untuk simulasi interaktif dan visualisasi, tetapi jangan mencampuradukkan "bisa membangkitkan video" dengan "bisa memandu aksi robot".[^ch6-21]
 
-> **Eksperimen 6-12 ★★: Membandingkan tiga lingkar perapian meja mandiri di simulator**
+> **Eksperimen 6-13 ★★: Membandingkan tiga lingkar perapian meja mandiri di simulator**
 >
-> Pindahkan tugas, keadaan sasaran, syarat keberhasilan, dan kelima alat dari Eksperimen 6-11 ke simulator meja, dan ganti hanya aktuator XLeRobot fisik dengan pelaksana simulasi yang terkendali, yang sesekali membuat jepitan gagal sementara namun masih bisa dipulihkan. Dengan begitu tiga strategi dapat dibandingkan tanpa mengubah masalahnya.
+> Pindahkan tugas, keadaan sasaran, syarat keberhasilan, dan kelima alat dari Eksperimen 6-12 ke simulator meja, dan ganti hanya aktuator XLeRobot fisik dengan pelaksana simulasi yang terkendali, yang sesekali membuat jepitan gagal sementara namun masih bisa dipulihkan. Dengan begitu tiga strategi dapat dibandingkan tanpa mengubah masalahnya.
 >
 > **Eksekusi lingkar terbuka** menghasilkan seluruh runtunan aksi sekaligus dan tidak mengamati ulang di tengah jalan. **Pemeriksaan bertahap** membaca ulang keadaan pada setiap `pick` dan `place`, dan bila gagal hanya mengulang keterampilan yang sedang berjalan. **Eksekusi prediktif** menambahkan model dunia jangka pendek, membandingkan ramalan hasil keterampilan calon sebelum memilih langkah berikutnya. Eksperimen ini membandingkan tingkat keberhasilan, ongkos tambahan panggilan alat, dan kemampuan pulih dari kegagalan, serta memeriksa apakah semua keberhasilan akhir sudah dipastikan oleh pengamatan baru dari `verify_state`.
 >
@@ -710,9 +716,9 @@ Yang diberikan model dunia bukan jawaban pasti, melainkan ramalan yang bisa diba
 
 ### Dari Lingkungan Simulasi ke Robot Nyata
 
-Eksperimen 6-12 yang stabil di simulator tidak berarti XLeRobot fisik pada Eksperimen 6-11 akan sama berhasilnya. Melangkah dari simulasi ke mesin nyata bukan sekadar berganti pengendali, melainkan memikul selisih antara dua lingkungan. Untuk berlatih kita bisa memakai data teleoperasi, data video, dan data interaksi simulasi; tetapi ketika benar-benar digelar, cangkir merah, kertas kuning, nampan, dan tempat sampah yang sama muncul di bawah latar belakang, pencahayaan, posisi kamera, dan hubungan halangan yang berbeda, sedangkan lengan robot lagi-lagi bertemu gesekan, derau sensor, dan tundaan aktuator yang lain. Bila selisih itu cukup besar, gerak yang dipelajari di simulasi bisa tidak mempan di dunia nyata.
+Eksperimen 6-13 yang stabil di simulator tidak berarti XLeRobot fisik pada Eksperimen 6-12 akan sama berhasilnya. Melangkah dari simulasi ke mesin nyata bukan sekadar berganti pengendali, melainkan memikul selisih antara dua lingkungan. Untuk berlatih kita bisa memakai data teleoperasi, data video, dan data interaksi simulasi; tetapi ketika benar-benar digelar, cangkir merah, kertas kuning, nampan, dan tempat sampah yang sama muncul di bawah latar belakang, pencahayaan, posisi kamera, dan hubungan halangan yang berbeda, sedangkan lengan robot lagi-lagi bertemu gesekan, derau sensor, dan tundaan aktuator yang lain. Bila selisih itu cukup besar, gerak yang dipelajari di simulasi bisa tidak mempan di dunia nyata.
 
-> **Eksperimen 6-13 ★★★: Uji lintas lingkungan RGB pada tugas meja yang sama**
+> **Eksperimen 6-14 ★★★: Uji lintas lingkungan RGB pada tugas meja yang sama**
 >
 > Di lingkungan simulasi, teruslah memakai masalah dasar "memindahkan benda ke sasaran yang sesuai", dan pandanglah setiap sampel sebagai keputusan setempat di dalam perapian meja: dari gambar RGB, menimbang dari arah mana benda harus didekati, atau apakah ia sudah bisa dijepit. Latih empat kebijakan visual berstruktur sama: satu hanya melihat pemandangan tetap; satu mengubah-ubah latar belakang; satu mengubah-ubah rupa benda; dan yang terakhir mengubah latar belakang, rupa, pencahayaan, dan derau sekaligus.
 >
@@ -743,6 +749,8 @@ Bab ini merampungkan kepingan terakhir bagian “membangun Agent”: ruang obser
 [^ch6-2]: Google DeepMind, “Gemini Robotics-ER 1.5”. https://deepmind.google/models/gemini-robotics/gemini-robotics-er/; XLeRobot, “Kendali LLM Agent”. https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html. Contoh hulu XLeRobot memperlihatkan cara menata model bersama panggilan alat; bagian ini mempertahankan prinsip penataan yang sama, tetapi membatasi alat aksinya pada primitif jepit, letak, periksa, dan henti di atas meja yang sudah dikalibrasi.
 [^ch6-6]: LeRobot, “Tutorial Sim2Real”. https://github.com/StoneT2000/lerobot-sim2real/blob/87d6c1d969f6e0ca4dc5697940804e231118a63a/docs/zero_shot_rgb_sim2real.md
 [^ch6-15]: Moo Jin Kim et al. *OpenVLA: An Open-Source Vision-Language-Action Model.* arXiv:2406.09246, 2024. https://arxiv.org/abs/2406.09246
+[^ch6-22]: OpenAI, “[Async tool calling](https://developers.openai.com/api/docs/guides/async-tool-calling)”; “[Using GPT-6 Astra](https://developers.openai.com/api/docs/guides/latest-model)”, diperiksa 2026-09-05.
+[^ch6-23]: OpenAI, “[Mid-turn steering](https://developers.openai.com/api/docs/guides/steering)”, diperiksa 2026-09-05.
 
 ## Pertanyaan Pemikiran
 

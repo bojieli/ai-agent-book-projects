@@ -21,7 +21,7 @@ The previous chapters expanded the **content** of these two spaces; this chapter
 | **Modality** (this chapter) | Voice, screen, physical sensors | Speaking, clicking, joint motion |
 | **Timing** (this chapter) | The world pushes, continuous streams | Across turns, interruptible, preemptible |
 
-A model's training corpus is almost entirely turn-based—a question followed by an answer, a tool call followed by a tool result, one speaker finishing before the other begins. So the policy a model learns assumes the world will wait for it. The real environment does not wait for the model to react: mail arrives while it is thinking, the user cuts in mid-sentence, the page has already changed between two screenshots, and the cup is knocked over while the arm is reaching for it.
+**Turn-taking is an interaction convention of the model and its interface, not a property of the environment.** Early tool-calling interfaces generally organized messages into synchronous rounds: a question was followed by an answer, and tool results had to be supplied before reasoning continued. The real environment does not wait for the model to react: mail arrives while it is thinking, the user cuts in mid-sentence, a page changes between screenshots, and a cup is knocked over while the arm reaches for it. This convention is changing too: as of September 2026, GPT-6 Astra offers native asynchronous tool calling and the ability to add user instructions mid-turn. This chapter therefore covers both native support and compatibility with existing synchronous interfaces.[^ch6-22][^ch6-23]
 
 | Scale | Scenario | Change on the observation side | Change on the action side |
 |---|---|---|---|
@@ -44,7 +44,7 @@ Let's start with an analogy to explain why asynchrony is needed. Synchronous mea
 - **Dynamic judgment of event priority**—Not all events are equally important. The Agent needs to intelligently choose a handling strategy: cancel the current operation (urgent), add it to a queue (routine), or process in parallel (independent lightweight query).
 - **Fluency in interruption and resumption**—An interrupted conversation or task should be able to resume naturally.
 
-The asynchronous paradigm, however, collides with a fundamental fact about current LLMs: their training assumes synchrony—after a tool call, the next message must be the tool result—while real deployment demands asynchrony: users interrupt at will, tasks progress concurrently, and external events arrive before a tool returns. This "synchronous training / asynchronous deployment" contradiction runs through every engineering trade-off in the rest of this section.
+When applying the asynchronous paradigm to an LLM, first check whether the model and API support this message timing. Some interfaces require all tool results before work can continue; others already allow tools to remain pending while the model keeps working and accepts user updates during generation. The former need event queues, task handles, and a compatibility layer; the latter can use native asynchronous protocols directly. Both still require the application to manage event sources, tool lifecycles, and result ownership. Using `asyncio` in the code alone does not establish that the model has native asynchronous capabilities.
 
 To solve this, we need an **event-driven asynchronous Agent architecture**. Technically, this means the system no longer actively and repeatedly checks for "new messages" (this is polling, which is inefficient), but instead automatically triggers processing logic when a new message arrives. All inputs, outputs, thought processes, and external interactions are uniformly modeled as an event stream—a sequence of event records arranged on a timeline. Figure 6-1 shows the overall architecture of an event-driven asynchronous Agent, illustrating the relationship between event sources, the event queue, and the Agent processing flow.
 
@@ -120,9 +120,9 @@ A single Agent instance may face multiple events concurrently: a new message fro
 
 The skeleton of this mechanism is the **event loop** from concurrent programming. Think of an asynchronous Agent as a long-running loop: each round takes a batch of events off the input queue, appends them to the trajectory, invokes the LLM once, executes the tools it decides to call, then returns to the top of the loop to wait for the next batch of events—the same structure as a Go goroutine reading messages from a channel and processing them round by round inside a `for { select { ... } }`.
 
-This model has one key property: **events are consumed only at the boundaries of each round**. While the LLM is reasoning or a tool is executing, a newly arriving event does not barge in and disrupt the current step; it waits in the queue until the round reaches a **safe point** (the end of a stretch of reasoning, the return of a tool call), where all pending events are then handled together. Cancellation follows the same discipline: rather than forcibly cutting off work at an arbitrary moment, it checks "have I been asked to stop?" at the safe point—precisely the role that `ctx.Done()` plays in Go.
+In a traditional synchronous-interface implementation, **events are consumed at the boundaries of each round**. While the LLM is reasoning or a tool is executing, new events wait in a queue until the round reaches a **safe point**—the end of a stretch of reasoning or the return of a tool call. Native asynchrony allows new requirements to arrive while the model is still thinking or producing output, with the system choosing an appropriate moment to continue processing. Both have boundaries, managed by different layers. Cancelling a tool still requires its executor to respond to a cancellation signal, much like checking `ctx.Done()` in Go; receiving a “stop” message does not itself undo actions that have already occurred.
 
-Once this is understood, the three processing strategies below differ only in how they treat the safe point: let the event wait for the next safe point that arrives naturally (queued), proactively manufacture a safe point early (cancellation-based), or simply start another loop and not wait for the main loop's safe point at all (parallel).
+With this distinction in mind, we first use an event loop compatible with synchronous interfaces to explain three strategies: let events wait for the next natural safe point (queuing), create a safe point early (cancellation), or start another loop without waiting for the main loop's safe point (parallel processing). We return to native steering later.
 
 **Structured Event Modeling.**
 
@@ -199,23 +199,23 @@ The following experiment, an event-driven email processing Agent, implements the
 
 Experiment 6-1 demonstrates the simplest event-driven pattern—events enter a queue, and the Agent processes them sequentially. However, when the Agent needs to respond to interruptions during long-running tool executions, or manage multiple concurrent tasks simultaneously, a simple event queue is insufficient. Next, we discuss deeper engineering challenges.
 
-### Engineering Implementation: How to Make Synchronous Models Support Asynchronous Interruptions
+### Compatibility When Native Asynchrony Is Unavailable
 
-Experiment 6-1 only handles serial events—events enter the queue one by one, and the Agent processes them one after another. Now, let's return to the "synchronous training / asynchronous deployment" contradiction raised at the beginning of this section: when the user interrupts while a tool has not yet returned, how can the synchronous format accommodate it? This section lays out the engineering workarounds the industry uses today.
+Experiment 6-1 handles only serial events: events enter the queue, and the Agent processes them one after another. If the chosen model or interface does not support native asynchrony, a user interruption before a tool returns must be expressed within a synchronous format. We introduce a compatibility approach here, then discuss GPT-6 Astra's native interface later.
 
-Let's first illustrate this contradiction with a specific scenario. Suppose the Agent is helping a user draft an email (tool call: search for contact information). Before the search returns results, the user suddenly says, "Wait, first check tomorrow's weather for me." In a synchronous ReAct loop, the Agent must wait for the search to return before processing the next message—because the API requires that "after issuing a tool call, the next message must be the tool result." But in the asynchronous real world, events can interrupt ongoing tasks at any time. Expressing the semantics of "asynchronous interruption" under the constraints of a "synchronous format" is precisely the problem this engineering solution aims to solve.
+Suppose the Agent is helping a user draft an email and has called a tool to search for contact information. Before the search returns, the user says, “Wait, first check tomorrow's weather for me.” If the interface requires outstanding tool calls to receive their corresponding results first, the Agent cannot directly process this new message with a call still pending. This restriction comes from the chosen combination of protocol and model; it is not a rule every LLM must follow.
 
-**Engineering Expedient: An Asynchronous Implementation Simulating Synchronous Behavior.**
+**An Asynchronous Implementation Compatible with a Synchronous Format.**
 
 The core idea is: **Under normal conditions without interruptions, let the LLM see a standard synchronous trajectory; only when an interruption occurs, insert placeholders to fix the format**. Here are five key rules:
 
-**Rule 1**: Immediately record the assistant message (including thinking, content, and tool call) when the LLM produces it.
+**Rule 1**: Promptly record completed assistant messages and tool-call items from the API. Preserve server-managed reasoning state according to the provider's continuation protocol; do not assemble invisible reasoning text yourself.
 
 **Rule 2**: Record the tool result only when the tool call is complete. The trajectory is in a "partially completed" state during execution.
 
 **Rule 3**: Interruptions during tool execution require placeholders. Generate a placeholder response for the unfinished tool (e.g., "The tool is executing in the background, please prioritize the new event"), append the interruption event, and re-invoke the LLM. From the LLM's perspective, the assistant message still has a paired tool result.
 
-**Rule 4**: Interruptions during LLM thinking directly discard the current thinking. Do not write it to the trajectory; instead, append the new event and start a new round of thinking.
+**Rule 4**: Without native steering or a supported mid-turn continuation interface, cancel unfinished generation, retain confirmed completed messages and tool state, append the new event, and send a new request. Do not assume that partial output or hidden reasoning can be freely fed back as a valid prefix.
 
 **Rule 5**: Non-interrupting events enter the queue for batch processing. They are appended all at once only after the current cycle is complete.
 
@@ -225,13 +225,13 @@ Using the example of the Agent drafting an email when the user interrupts to ask
 2. Before the search tool returns results, the user sends "First check tomorrow's weather for me." Since this is a user interruption, the system generates a placeholder tool result for the unfinished `search_contacts` ("The tool is executing in the background, please prioritize the new event", Rule 3), then appends the user's weather query to the trajectory and re-invokes the LLM. At this point, the trajectory format seen by the LLM is completely valid—the assistant message and tool result are perfectly paired.
 3. After the Agent answers the weather query, the original `search_contacts` result arrives and is appended to the trajectory as a new event (Rule 2). The Agent reads the contact information and continues drafting the email.
 
-The core advantage of this scheme: **under normal conditions, the LLM sees a perfect synchronous trajectory**—assistant messages and tool results strictly paired, the timeline clear, no placeholders or anomalous states. This is the friendliest arrangement for LLMs trained under the synchronous paradigm, and it preserves thinking quality. The placeholder—a necessary compromise—appears only when an interruption genuinely occurs.
+This approach maintains the tool/result pairing required by a synchronous interface. A placeholder explicitly marked “unfinished” is introduced only when an interruption is needed. When the real background result arrives, it enters the trajectory as an event with a source and task ID. For models that already support native asynchrony, the system can retain the task's pending state and pass the real result to the model when it arrives.
 
-But there remains a risk of exacerbating hallucinations. Even though the placeholder states explicitly that the tool "has not yet completed," the model may still fabricate a tool result in later thinking—convincing itself the tool returned valid data and basing decisions on fabricated data. This is because, in the vast majority of trajectories seen during training, a tool call is immediately followed by the real result; the model has never learned how to handle situations where "the result hasn't come back yet." Therefore, in practice, interruptions are only triggered in truly urgent situations (when the user explicitly requests a stop); non-urgent events are placed in a queue for batch processing.
+Placeholders also carry a semantic risk: the model may confuse “task started” with “task completed” and make a decision that depends on a result before that result arrives. Clear task state and result validation should prevent this confusion, and evaluation should check for fabricated data that has not yet arrived. A single failure does not justify attributing the cause to an undisclosed training process.
 
-**Asynchronous Tool Interfaces Suitable for Existing Models.**
+**Expressing Asynchronous Semantics Through Task Handles.**
 
-Since the synchronous assumption of models is difficult to break, a more fundamental strategy is to **embrace asynchronous semantics at the tool-interface design level**.
+Whether or not a native asynchronous protocol is used, **tool-interface design can make asynchronous semantics explicit**. One approach especially useful for synchronous interfaces is to make “start task” a complete call with a real return value.
 
 Traditional tool design implies a "call equals completion" semantics. For example, the name `phone_call` suggests "calling will dial the phone and wait for the call to end, returning the call log." Under the asynchronous paradigm, "initiation" and "completion" should be decoupled:
 
@@ -242,7 +242,7 @@ The key is that the tool's name and description themselves should convey asynchr
 
 **Attention Dispersion in Queue-Based Processing.**
 
-When processing batch events, the model often focuses only on the last event. The root cause is that **the model is trained to react to the most recent input, and batch events break this assumption**.
+When processing events in a batch, a model may respond only to the last event and overlook earlier requirements. Native asynchrony addresses whether messages can arrive during execution; we must still check whether the model incorporates all updates.
 
 Intervention can be applied at two levels:
 
@@ -259,37 +259,13 @@ Intervention can be applied at two levels:
 
 Add a summary at the end: "There are 4 unprocessed events above, including 1 tool result, 2 user messages, and 1 system reminder. Please ensure your response covers all the information."
 
-### Deeper Contradictions and Future Directions
-
-
-![Figure 6-4: Synchronous Training Paradigm vs. Asynchronous Deployment Reality](images/fig6-4.svg)
-
-
-Ultimately, the placeholders, asynchronous tool interfaces, and status bar markers from the previous sections are all using prompt engineering to patch the same "synchronous training / asynchronous deployment" contradiction (Figure 6-4)—the cause of this contradiction has been detailed at the beginning of this section, so we do not repeat it here; instead, we focus on the fundamental solution.
-
-**Anticipating Model Evolution: From Synchronous to Asynchronous.**
-
-The engineering techniques above are essentially **using prompt engineering to compensate for the shortcomings of model training**, a temporary expedient during a transitional period. The real solution requires a paradigm shift at the model training level.
-
-VLA (Vision-Language-Action, see Chapter 6) models in the robotics field are already beginning to face similar challenges: there is an unavoidable delay between perception and action. The success of VLA points the way for the evolution of Agent models. The next generation of models needs to acquire three core capabilities through reinforcement learning in asynchronous environments:
-
-1. **Understanding Asynchronous Interleaving of Events in Trajectories**: This is the most critical capability deficiency. Current models expect a strictly synchronous sequence, but in a real asynchronous environment, a tool call might be followed not by a tool result but by a new user message; thinking might be interrupted halfway, but the intermediate state should be retained in the trajectory, and thinking should continue after the new message is processed, rather than starting over. The model needs to maintain a clear understanding in such "out-of-order" trajectories—which tool calls are still waiting for results, and which thoughts are unfinished fragments.
-2. **Resuming Interrupted Tasks and Thoughts**: When interrupted to handle an urgent event, the model must still remember the unfinished task. For example, if the user suddenly asks about the weather while the Agent is executing a data analysis tool, after answering, the Agent should naturally wait for the data analysis result, rather than forgetting that a tool is still running. It is particularly important to avoid hallucinations where the model mistakenly believes the interrupted tool call has completed.
-3. **Comprehensive Processing of Batch Events**: When multiple events are appended to the trajectory in a batch, the model must not only focus on the last one; it must comprehensively consider all unprocessed information.
-
-Achieving this asynchronous RL training requires new infrastructure: an asynchronous environment simulator (generating scenarios like delayed tool returns, random user interruptions, etc.) and specialized rewards for asynchronous capabilities (correctly understanding out-of-order trajectories, successfully resuming interrupted thoughts, avoiding hallucinations, comprehensively processing batch events).
-
-Continuous thinking need not wait for the next generation of models. About two hundred lines of orchestration can turn an **existing** text-reasoning model into a **continuous-time** Agent, connecting the engineering expedient above with model evolution. It upgrades Rule 4: rather than discard an interrupted partial thought, make the interaction one uninterrupted stream of thought. The runtime can forcibly close the model's current `<think>` block, inject a newly arrived observation—a tool result, user interruption, or recognition update—as an ordinary message, and let decoding continue.
-
-It uses a commonly wasted resource: a model can generate hundreds of tokens per second, while a tool call or a user's utterance may take several seconds. That waiting time can be used for thought. The Agent can therefore **think while waiting**—continue from partial information and even start the next tool early—and **think while acting**—continue reasoning while producing output and correct itself midway through an action.
-
 > **Experiment 6-2 ★★★: Asynchronous Agent with Parallel Execution and Interruption Capabilities**
 >
 >
-> ![Figure 6-5: Experiment 6-2 Asynchronous Agent Interruption and Recovery](images/fig6-5.svg)
+> ![Figure 6-4: Experiment 6-2 Asynchronous Agent Interruption and Recovery](images/fig6-4.svg)
 >
 >
-> Building on the simple event queue of Experiment 6-1, this experiment moves into the hard parts of asynchronous Agents: **parallel tool execution, execution cancellation, and state management**. The Agent no longer just processes events one by one; it needs to manage multiple concurrent tasks simultaneously, handle interruptions and recoveries, and make dynamic decisions based on real-time state.
+> Building on the simple event queue in Experiment 6-1, this experiment uses a runtime compatible with synchronous interfaces to implement **parallel tool execution, execution cancellation, and state management**. The Agent must manage several concurrent tasks, handle interruptions and recovery, and make dynamic decisions from current state. See Experiment 6-3 for the native Astra comparison.
 >
 > **1. Asynchronous Tool Execution**: Supports asynchronous execution of time-consuming tools (at least 3-5 seconds), returning a placeholder immediately upon initiation. **Validation Scenario**: The Agent executes a long-running terminal command. During this time, the user asks, "What time is it now?" The Agent responds immediately, then presents the analysis result when the long-running command completes.
 >
@@ -300,7 +276,37 @@ It uses a commonly wasted resource: a model can generate hundreds of tokens per 
 > **4. Cancellation and Status Query for Parallel Tools**: After an asynchronous tool completes, the real result is injected into the conversation via a new event. Supports cancellation or progress query via task ID. **Validation Scenario**: The user requests, "Run these three scripts simultaneously for me. Whichever finishes first, check the progress of the remaining scripts. If any hasn't exceeded 50%, cancel it." The three scripts simulate analysis processes, outputting progress continuously at speeds of 3%, 2%, and 1% per second, respectively. The Agent starts three asynchronous terminal commands simultaneously. When the script at 3% per second finishes in about 33 seconds, the Agent queries the status of the remaining two terminals, finding one at about 66% and the other at about 33%. It then cancels the one that hasn't exceeded 50%. After both terminals complete, it integrates the results to generate a complete report.
 >
 
-Asynchrony and event-driven execution let the world wake an Agent at any time, but assume the model can finish thinking before it responds. The next three sections challenge that assumption: when the environment changes as fast as or faster than model generation, “think first, then speak” becomes unacceptable latency.
+### Model-Native Asynchrony: GPT-6 Astra
+
+In the compatibility approach above, the runtime orders incoming events so that a model with a synchronous interface can participate in asynchronous tasks. Another approach lets the model understand this interaction rhythm natively: it can do other work while a tool runs and adjust subsequent work when the user adds requirements midway. GPT-6 Astra already supports Async tool calling and Mid-turn steering, illustrating this change (Figure 6-5).[^ch6-22][^ch6-23]
+
+![Figure 6-5: Synchronous-Interface Compatibility and Model-Native Asynchrony](images/fig6-5.svg)
+
+**Asynchronous tool calling separates “starting an action” from “obtaining its result.”** After starting a slow query, an Agent can continue reasoning, call other tools, or handle parts that do not depend on the query result. While looking up meeting venues, for example, it can prepare the agenda and checklist, then compare options when venue information arrives. The key is to distinguish dependencies: keep independent work moving, and defer decisions that require the result until it arrives.
+
+**Mid-turn steering lets the user correct the direction while a task is underway.** While the Agent is still thinking or composing its answer, the user can add requirements such as “the budget has decreased” or “the number of attendees has changed.” The system retains completed work and brings the new constraints into subsequent processing, allowing the Agent to adjust its plan within the same task. There may still be a delay between receiving an update and acting on it, but the user need not wait for an entire answer to finish before expressing the change.
+
+These capabilities extend the timing of interaction: tool results and user requirements can both arrive as a task progresses. The system must still distinguish their sources and remember which work is complete and which remains pending. Changing a plan does not itself stop running tools or undo actions already taken; actual execution, cancellation, and state management remain the runtime's responsibility.
+
+Not every model has native asynchronous capabilities. When building an Agent, choose native interaction or a compatibility approach according to the model's support, then check whether the whole system correctly handles delayed results, mid-task changes, and task resumption. Asynchronous training can improve these capabilities further, but developers can already build this kind of interaction using existing models.
+
+### From Receiving Asynchronous Messages to Handling Asynchronous Tasks Reliably
+
+Native asynchrony addresses whether messages can arrive during execution. Reliability in complex tasks also depends on how the model uses those messages. At least three things need checking:
+
+1. **Result ownership and pending state**: Can the model associate a delayed result with the correct task and avoid inventing data when the result is absent?
+2. **Task resumption and action control**: Can it return to the original task after handling new requirements and distinguish changing a plan from stopping execution?
+3. **Integrating multiple updates**: Can it respect both budget and attendance constraints, rather than remembering only the last message?
+
+These issues can be addressed through model training in asynchronous environments and through clearer task state, event sources, and execution feedback in the system. Evaluation must cover both layers: whether the model understood the change and whether the system executed accordingly.
+
+> **Experiment 6-3 ★★★: Model-Native Asynchrony and Mid-Turn Steering**
+>
+> Choose a venue for a meeting: after starting a slow query, the Agent completes preparation that does not depend on the result. Meanwhile, the user adds budget and attendance requirements. Once the query finishes, the Agent selects a venue according to all constraints.
+>
+> Call the GPT-6 Astra API to compare synchronous tools, native asynchronous tools, and mid-turn steering. Observe whether waiting blocks other work, whether new requirements enter subsequent plans, and whether the original task resumes when results arrive. Then use a model without native support as a control to understand what model capabilities and runtime orchestration each address.
+
+Asynchrony and event-driven execution let the world wake an Agent while a task is underway; native steering also lets the user submit updates before a full answer finishes. The next three sections compress the timescale further: when the environment changes as fast as or faster than the model generates, receiving updates is not enough—the system must also react in time.
 
 ## Voice: The Most Natural Human-Machine Interface
 
@@ -343,7 +349,7 @@ Production queueing amplifies idle latency further (Figure 6-8), but capacity pl
 
 ![Figure 6-8: Queueing latency curve](images/fig6-8.svg)
 
-> **Experiment 6-3 ★: Build a traditional voice Agent**
+> **Experiment 6-4 ★: Build a traditional voice Agent**
 >
 > Connect a microphone, Silero VAD, local Whisper, a streaming LLM, and Fish S1 TTS over WebSocket to establish the cascaded baseline.
 
@@ -374,7 +380,7 @@ The model can emit acoustic-event markers as well as words:
 
 Together with text tokens, these markers form one event stream. The Agent can detect hesitation, interruption, and environmental changes without compressing every sound into plain text.
 
-> **Experiment 6-4 ★: Simulate streaming voice perception with Qwen2-Audio**
+> **Experiment 6-5 ★: Simulate streaming voice perception with Qwen2-Audio**
 >
 > Qwen2-Audio is not itself a streaming model. This experiment simulates continuous perception with increasing audio prefixes and compares it with 600 ms VAD + Whisper.
 
@@ -388,7 +394,7 @@ Omni models still assume turn-taking and generally use VAD to assign the floor. 
 
 ![Figure 6-9: End-to-end omnimodal speech-model comparison](images/fig6-9.svg)
 
-> **Experiment 6-5 ★★: Run MiniCPM-o 4.5 locally—end-to-end versus self-cascade**
+> **Experiment 6-6 ★★: Run MiniCPM-o 4.5 locally—end-to-end versus self-cascade**
 >
 > Run MiniCPM-o 4.5 locally with thinking mode disabled, comparing direct answers from audio against a self-cascade that first transcribes and then answers with the same model. This measures whether audio information is preserved, **not** the “thinking while speaking” discussed later.
 
@@ -442,7 +448,7 @@ Traditional TTS can expose its machine identity by being too smooth and pausing 
 
 The main LLM can emit control markers in addition to text, such as **THINKING**, **EMO:happy**, and **SPEED:0.8x**; TTS maps them to pauses, prosody, speaking rate, laughter, sighs, and other nonverbal audio. The implementation can be a TTS trained to understand control markers, or voice cloning with reference clips for different emotions and styles.
 
-> **Experiment 6-6 ★★: Control token-driven TTS with Fish Audio**
+> **Experiment 6-7 ★★: Control token-driven TTS with Fish Audio**
 >
 > Use Fish Audio S1 to build a multi-reference voice library and compare three configurations: no control markers, one reference clip, and multiple reference clips. The execution layer selects matching emotion, speaking rate, and style from the markers.
 
@@ -475,7 +481,7 @@ Anthropic's reference implementation divides a complete interaction capability i
 
 **File Editing Tool** (`str_replace_editor`): Enables safe editing through string matching and supports view, create, replace, insert, and undo operations. It is more precise than overwriting an entire file and less likely to modify unrelated content accidentally.
 
-> **Experiment 6-7 ★: Running Computer Use (Anthropic Reference Path or Open-Model Path)**
+> **Experiment 6-8 ★: Running Computer Use (Anthropic Reference Path or Open-Model Path)**
 >
 > Path A uses the Anthropic Computer Use Demo. Its container packages a complete Ubuntu desktop environment, including a browser, terminal, and other common tools. The frontend receives a task, while the backend sends the instructions and screenshots to Claude and then executes the mouse, keyboard, terminal, or editing actions returned by the model.
 >
@@ -525,7 +531,7 @@ In coordinate prediction schemes, the model's understanding of coordinates is hi
 
 The choice among the three routes can be summarized as follows: **when structured information is available, prioritize DOM/accessibility-tree indexing** for the most accurate and stable localization. **When it is unavailable**—in native desktop software such as Photoshop, canvas/WebGL-rendered interfaces, or games—**use either visual annotation (the original SoM route) or coordinate prediction**. Visual annotation turns localization into a multiple-choice problem, making it friendlier to general-purpose models without specialized training. Coordinate prediction eliminates the annotation step and is more direct for models trained specifically on GUI localization. Both approaches still struggle with small elements and dense interfaces.
 
-> **Experiment 6-8 ★: Using browser-use to Implement Automated Browser Operations**
+> **Experiment 6-9 ★: Using browser-use to Implement Automated Browser Operations**
 >
 > Use Playwright, a browser-automation framework, together with a multimodal model to implement natural-language-driven browser operations. Enable SoM visualization and save a screenshot with annotated bounding boxes before every decision.
 >
@@ -569,7 +575,7 @@ This means that Computer Use faces not only technical countermeasures such as CA
 
 ## Robot Manipulation: Tidying a Desk with XLeRobot
 
-> **Reading note**: This section uses one task throughout—"put the red cup in the tray, put the yellow scrap paper in the bin, then observe again and confirm the state of the desk." Experiments 6-9 and 9-9 run on real XLeRobot hardware and need an arm, calibration, an emergency stop and an on-site observer; experiments 9-8, 9-10 and 9-11 are the corresponding local-GPU experiments. Hardware and simulation are reported separately, but the task goal, the action semantics and the success conditions stay the same.
+> **Reading note**: This section uses one task throughout—"put the red cup in the tray, put the yellow scrap paper in the bin, then observe again and confirm the state of the desk." Experiments 6-10 and 6-12 run on real XLeRobot hardware and need an arm, calibration, an emergency stop and an on-site observer; experiments 6-11, 6-13 and 6-14 are the corresponding local-GPU experiments. Hardware and simulation are reported separately, but the task goal, the action semantics and the success conditions stay the same.
 
 Robot manipulation is much harder than answering questions about a picture. The model has to understand the scene and then take actions continuously in the real world, where every action changes what the next moment looks like. XLeRobot makes that difference concrete: the same arm can be teleoperated by a person through a keyboard, a gamepad or a VR device, or it can hand camera observations and a constrained set of action tools to an Agent to call on its own. The hardware and the task stay fixed; only the operator changes—in the first case a human observes and corrects continuously, in the second the model and the control system must do the same work.
 
@@ -592,7 +598,7 @@ The diagnostic method is direct: keep the camera, the arm, the gripper, the desk
 
 XLeRobot supports keyboard, Xbox controller, Switch Joy-Con and VR teleoperation. A human operator naturally does many things an algorithm has to implement explicitly: slowing the gripper as it nears the cup, correcting the grasp point when the cup slides, observing again after failing to pinch the paper the first time, and checking the outcome once an object is in the target area. Teleoperation is therefore not only a way to collect demonstrations but also a "fix the hardware, swap the operator" diagnostic experiment.[^ch6-1]
 
-> **Experiment 6-9 ★: Teleoperating a real XLeRobot to tidy a desk**
+> **Experiment 6-10 ★: Teleoperating a real XLeRobot to tidy a desk**
 >
 > Place a red cup, a tray, yellow scrap paper and a bin in the real XLeRobot workspace. Using one calibrated teleoperation method, the operator performs the fixed task: "put the red cup in the tray, put the yellow scrap paper in the bin, then observe again and confirm the state of the desk." Repeat for several rounds at minimum, recording the camera feed, operator input, arm state, action timing, failed grasps, retry counts and the final state.
 >
@@ -600,11 +606,11 @@ XLeRobot supports keyboard, Xbox controller, Switch Joy-Con and VR teleoperation
 
 Teleoperation on real hardware gives the most convincing ceiling for the task, but it is not suited to varying object counts and positions in bulk. To obtain a repeatable, statistically meaningful control, the next step moves the same "put objects where they belong" problem into a 2D desktop simulator, using an ideal controller to stand in for a strong operator who never misperceives and never picks the wrong action.
 
-> **Experiment 6-10 ★: Measuring the ideal control ceiling for the same task in simulation**
+> **Experiment 6-11 ★: Measuring the ideal control ceiling for the same task in simulation**
 >
 > In a 2D desktop simulator, randomly place the red cup, the yellow paper and their target areas, and let an ideal controller approach each object in turn, grasp it and move it to the right place. It does not need to recognise images and never picks the wrong action, so it represents "what this task can at least achieve when perception and decision-making are both correct."
 >
-> The experiment tracks task success rate, number of steps and path length, and varies initial object positions and task scale to see whether the ideal ceiling stays stable. It uses the same success conditions as experiment 9-7, but measures a non-actuated simulation and does not imply the real XLeRobot has been run. Together the two establish the reference lines for the autonomous control that follows: experiment 9-7 is a human loop on real hardware, experiment 9-8 an ideal loop in simulation.
+> The experiment tracks task success rate, number of steps and path length, and varies initial object positions and task scale to see whether the ideal ceiling stays stable. It uses the same success conditions as experiment 6-10, but measures a non-actuated simulation and does not imply the real XLeRobot has been run. Together the two establish the reference lines for the autonomous control that follows: experiment 6-10 is a human loop on real hardware, experiment 6-11 an ideal loop in simulation.
 
 ### The Basic Structure of Robot Control
 
@@ -636,13 +642,13 @@ pick(red_cup) → place(red_cup, tray) → verify_state()
 
 Every completed skill yields a checkable node. If a grasp fails, only that step is retried; if someone moves an object, or the user changes the goal, only the affected later steps need replanning—the old plan does not have to be redone from scratch. The tools given to the agent should be equally simple: one call does one thing, the range of motion is fixed, there is a timeout, and observation happens again immediately after execution.
 
-> **Experiment 6-11 ★★: Driving XLeRobot to tidy a desk autonomously with Gemini Robotics-ER 1.5**
+> **Experiment 6-12 ★★: Driving XLeRobot to tidy a desk autonomously with Gemini Robotics-ER 1.5**
 >
-> Keep the real XLeRobot, the desk layout, the task instruction and the success conditions of experiment 9-7 unchanged, and replace the human operator with an Agent. An embodied reasoning model such as Gemini Robotics-ER 1.5 can handle observation and planning, exposing only five tools through a RoboCrew-style agent loop: `observe_scene`, `pick`, `place`, `verify_state` and `stop`.[^ch6-2]
+> Keep the real XLeRobot, the desk layout, the task instruction and the success conditions of experiment 6-10 unchanged, and replace the human operator with an Agent. An embodied reasoning model such as Gemini Robotics-ER 1.5 can handle observation and planning, exposing only five tools through a RoboCrew-style agent loop: `observe_scene`, `pick`, `place`, `verify_state` and `stop`.[^ch6-2]
 >
 > The model first observes the desk, decides the order, then calls the calibrated XLeRobot grasp and place actions. After every completed skill it must observe again and check the postcondition; on a failed grasp it may only retry the current skill, and it must call `stop` when the user says stop, when an object leaves the workspace, or when the state cannot be confirmed. The model cannot emit arbitrary joint angles, nor skip a real check merely because it previously said "done."
 >
-> The acceptance criteria are exactly those of experiment 9-7: cup in the tray, paper in the bin, arm back in a safe pose, no collision and no out-of-bounds motion. The difference is that in the autonomous experiment the task semantics must come from the model's own observation, the real actions must come from tool calls, and the final state must be confirmed by a fresh observation; the human may only start the run, hit the emergency stop and supervise safety, never complete an action on the Agent's behalf midway. Only then can experiments 9-7 and 9-9 be compared directly on "same hardware, same task—what is still missing between the human loop and the model loop."
+> The acceptance criteria are exactly those of experiment 6-10: cup in the tray, paper in the bin, arm back in a safe pose, no collision and no out-of-bounds motion. The difference is that in the autonomous experiment the task semantics must come from the model's own observation, the real actions must come from tool calls, and the final state must be confirmed by a fresh observation; the human may only start the run, hit the emergency stop and supervise safety, never complete an action on the Agent's behalf midway. Only then can experiments 6-10 and 6-12 be compared directly on "same hardware, same task—what is still missing between the human loop and the model loop."
 
 Real-hardware experiments expose calibration error, camera occlusion and gripper failure, but they are poorly suited to repeating large numbers of faults safely and controllably. The simulation experiments that follow keep these five tools and exactly the same task state, replacing only the real actuator with a desktop environment into which failures can be injected, in order to separate what open-loop execution, step-by-step checking and action prediction each contribute.
 
@@ -700,9 +706,9 @@ Back to the XLeRobot desk task: if the yellow paper is partly hidden under the r
 
 What a world model gives is not a definite answer but a comparable prediction of "if I do this, what may happen." The further ahead it predicts, the larger the error usually grows, and a future frame that looks realistic may still violate real contact and friction. Practical systems therefore still need short-horizon prediction, real-time observation, an estimate of uncertainty, and an independent hardware safety controller. Generative world models can serve interactive simulation or visualisation, but "can generate video" must not be conflated with "can guide robot action."[^ch6-21]
 
-> **Experiment 6-12 ★★: Comparing three autonomous desk-tidying loops in simulation**
+> **Experiment 6-13 ★★: Comparing three autonomous desk-tidying loops in simulation**
 >
-> Put the task, object state, success conditions and five tools of experiment 9-9 into the desktop simulator unchanged, replacing only the real XLeRobot actuator with a controllable simulated one, and let grasps occasionally suffer recoverable transient failures. This allows three strategies to be compared without changing the problem.
+> Put the task, object state, success conditions and five tools of experiment 6-12 into the desktop simulator unchanged, replacing only the real XLeRobot actuator with a controllable simulated one, and let grasps occasionally suffer recoverable transient failures. This allows three strategies to be compared without changing the problem.
 >
 > **Open-loop execution** generates the full action sequence once and never observes again midway; **step-by-step checking** re-reads the state after every `pick` and `place` and retries only the current skill on failure; **predictive execution** adds a short-horizon world model, comparing the expected outcomes of candidate skills before choosing the next step. The experiment compares task success rate, tool-call overhead and failure-recovery ability, and checks that every final success is confirmed by a fresh `verify_state` observation.
 >
@@ -710,9 +716,9 @@ What a world model gives is not a definite answer but a comparable prediction of
 
 ### From Simulation to a Real Robot
 
-Even if experiment 9-10 is stable in the simulator, that does not imply the real XLeRobot of experiment 9-9 will succeed the same way. Going from simulation to a real robot is not a matter of swapping in yet another controller, but of handling the differences between two environments. Training may use teleoperation data, video data or simulated interaction data; in real deployment the same red cup, yellow paper, tray and bin appear against different backgrounds, lighting, camera positions and occlusion relationships, and the arm additionally meets different friction, sensor noise and actuator latency. Once those differences are large enough, motions learned in simulation may fail in reality.
+Even if experiment 6-13 is stable in the simulator, that does not imply the real XLeRobot of experiment 6-12 will succeed the same way. Going from simulation to a real robot is not a matter of swapping in yet another controller, but of handling the differences between two environments. Training may use teleoperation data, video data or simulated interaction data; in real deployment the same red cup, yellow paper, tray and bin appear against different backgrounds, lighting, camera positions and occlusion relationships, and the arm additionally meets different friction, sensor noise and actuator latency. Once those differences are large enough, motions learned in simulation may fail in reality.
 
-> **Experiment 6-13 ★★★: A cross-environment RGB test on the same desk task**
+> **Experiment 6-14 ★★★: A cross-environment RGB test on the same desk task**
 >
 > Keep using the basic "move the object to its target" problem in simulation, treating each sample as one local decision within desk tidying: from the RGB frame, judge which direction to approach the object from, or whether it can already be grasped. Train four visual policies with identical structure: one sees only a fixed scene, one varies the background, one varies object appearance, and the last varies background, appearance, lighting and noise together.
 >
@@ -743,6 +749,8 @@ This chapter completes the last piece of the “building an Agent” part: the o
 [^ch6-2]: Google DeepMind, "Gemini Robotics-ER 1.5". https://deepmind.google/models/gemini-robotics/gemini-robotics-er/; XLeRobot, "LLM Agent control". https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html. The upstream XLeRobot example shows how the model and tool calls are orchestrated; this section keeps the same orchestration principle but restricts the action tools to calibrated desktop grasp, place, check and stop primitives.
 [^ch6-6]: LeRobot, "Sim2Real tutorial". https://github.com/StoneT2000/lerobot-sim2real/blob/87d6c1d969f6e0ca4dc5697940804e231118a63a/docs/zero_shot_rgb_sim2real.md
 [^ch6-15]: Moo Jin Kim et al. *OpenVLA: An Open-Source Vision-Language-Action Model.* arXiv:2406.09246, 2024. https://arxiv.org/abs/2406.09246
+[^ch6-22]: OpenAI, “[Async tool calling](https://developers.openai.com/api/docs/guides/async-tool-calling)”; “[Using GPT-6 Astra](https://developers.openai.com/api/docs/guides/latest-model)”, checked 2026-09-05.
+[^ch6-23]: OpenAI, “[Mid-turn steering](https://developers.openai.com/api/docs/guides/steering)”, checked 2026-09-05.
 
 ## Thought Questions
 

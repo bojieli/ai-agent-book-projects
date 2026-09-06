@@ -58,7 +58,7 @@
 | 3 | 📚 **ユーザーメモリと知識ベース** | セッションをまたいでユーザーを記憶し、外部知識を接続する: ユーザーメモリ、RAG、構造化インデックス、ナレッジグラフ | [読む](../../book-ja/chapter3.ja.md) | [12](../../chapter3/README.ja.md) |
 | 4 | 🛠️ **ツール** | ツールは Agent の両手: MCP プロトコル、知覚/実行/協調の3種類のツール、イベント駆動の非同期 Agent、能動的なツール発見 | [読む](../../book-ja/chapter4.ja.md) | [8](../../chapter4/README.ja.md) |
 | 5 | 💻 **Coding Agent とコード生成** | コードは「新しいツールを生み出せるツール」。本番グレードの Coding Agent の全体像 | [読む](../../book-ja/chapter5.ja.md) | [13](../../chapter5/README.ja.md) |
-| 6 | 🎙️ **交互：観察空間と動作空間の拡張** | モダリティと時間の両面から Agent の観察・動作空間を拡張する：非同期・イベント駆動システム、音声、Computer Use、ロボティクス | [読む](../../book-ja/chapter6.ja.md) | [13](../../chapter6/README.ja.md) |
+| 6 | 🎙️ **交互：観察空間と動作空間の拡張** | モダリティと時間の両面から Agent の観察・動作空間を拡張する：非同期・イベント駆動システム、音声、Computer Use、ロボティクス | [読む](../../book-ja/chapter6.ja.md) | [14](../../chapter6/README.ja.md) |
 | 7 | 🎯 **Agent の評価** | パフォーマンスを比較可能なシグナルに変える：評価環境、指標、統計的有意性、評価駆動の選定 | [読む](../../book-ja/chapter7.ja.md) | [13](../../chapter7/README.ja.md) |
 | 8 | 🧠 **モデルのポストトレーニング** | 事前学習、SFT、RL の3段階：いつ SFT または RL を選ぶか、ツール呼び出しの内在化、サンプル効率 | [読む](../../book-ja/chapter8.ja.md) | [19](../../chapter8/README.ja.md) |
 | 9 | 🔄 **Agent の継続的進化** | 実行軌跡から学習シグナルを得て、知識、指示、プログラム、パラメータを更新する | [読む](../../book-ja/chapter9.ja.md) | [9](../../chapter9/README.ja.md) |

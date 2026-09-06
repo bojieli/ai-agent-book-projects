@@ -1,0 +1,24 @@
+{
+  "arm": "unsupported_steer",
+  "passed": false,
+  "checks": {
+    "explicit_unsupported_error": false,
+    "model_response_observed": false,
+    "steer_was_sent": false
+  },
+  "metrics": {
+    "returned_models": [],
+    "response_ids": [],
+    "tool_calls": 0,
+    "steer_accepted": 0,
+    "steer_pending": 0,
+    "errors": [
+      {
+        "type": "run.error",
+        "class": "ConnectionResetError",
+        "message": ""
+      }
+    ],
+    "answer": null
+  }
+}

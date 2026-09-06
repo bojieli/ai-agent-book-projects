@@ -1,0 +1,135 @@
+{
+  "started_utc": "2026-09-05T14:17:03.312611+00:00",
+  "endpoint": "wss://api.openai.com/v1/responses",
+  "python": "3.11.4",
+  "websockets": "15.0.1",
+  "cases": [
+    {
+      "name": "01-sync",
+      "arm": "sync",
+      "model": "gpt-6-astra",
+      "passed": true
+    },
+    {
+      "name": "01-async",
+      "arm": "async",
+      "model": "gpt-6-astra",
+      "passed": true
+    },
+    {
+      "name": "01-steer_reasoning",
+      "arm": "steer_reasoning",
+      "model": "gpt-6-astra",
+      "passed": true
+    },
+    {
+      "name": "01-async_steer",
+      "arm": "async_steer",
+      "model": "gpt-6-astra",
+      "passed": true
+    },
+    {
+      "name": "01-unsupported_steer",
+      "arm": "unsupported_steer",
+      "model": "gpt-5.6-sol",
+      "passed": true
+    },
+    {
+      "name": "02-sync",
+      "arm": "sync",
+      "model": "gpt-6-astra",
+      "passed": true
+    },
+    {
+      "name": "02-async",
+      "arm": "async",
+      "model": "gpt-6-astra",
+      "passed": true
+    },
+    {
+      "name": "02-steer_reasoning",
+      "arm": "steer_reasoning",
+      "model": "gpt-6-astra",
+      "passed": true
+    },
+    {
+      "name": "02-async_steer",
+      "arm": "async_steer",
+      "model": "gpt-6-astra",
+      "passed": true
+    },
+    {
+      "name": "02-unsupported_steer",
+      "arm": "unsupported_steer",
+      "model": "gpt-5.6-sol",
+      "passed": true
+    },
+    {
+      "name": "03-sync",
+      "arm": "sync",
+      "model": "gpt-6-astra",
+      "passed": true
+    },
+    {
+      "name": "03-async",
+      "arm": "async",
+      "model": "gpt-6-astra",
+      "passed": true
+    },
+    {
+      "name": "03-steer_reasoning",
+      "arm": "steer_reasoning",
+      "model": "gpt-6-astra",
+      "passed": true
+    },
+    {
+      "name": "03-async_steer",
+      "arm": "async_steer",
+      "model": "gpt-6-astra",
+      "passed": true
+    },
+    {
+      "name": "03-unsupported_steer",
+      "arm": "unsupported_steer",
+      "model": "gpt-5.6-sol",
+      "passed": true
+    }
+  ],
+  "all_passed": true,
+  "sha256": {
+    "01-async/acceptance.json": "d336a8af4d97e1f40cb0bdd6d8531ee9f87a6381d7b94f61d9436bfa679f6984",
+    "01-async/events.jsonl": "3bdfcbde6add406a60b9c22d72e71e3d6a487a7ec7442c68ae02afa96366a5b3",
+    "01-async_steer/acceptance.json": "ef2a0a938d80d399f856b9cf63b6c7c5d40595ddb377d8b7df92543258fbe92f",
+    "01-async_steer/events.jsonl": "151ba55a9f3481239d403cf56132bd9aaa378f751b8674eee863c0b812c2435b",
+    "01-steer_reasoning/acceptance.json": "a1937abc3082ddde811d8e72081dd4f101e0c9d1e6d212fe17a1545892a448b5",
+    "01-steer_reasoning/events.jsonl": "404ca74b0188d67dacc7be13d97a421bc993fa4ecfb0359b46b41b31283f5a87",
+    "01-sync/acceptance.json": "fe5f36547e2ece8a258c54112d41355b7785b67207c0c7f59a4c180a4390c4ab",
+    "01-sync/events.jsonl": "f11060d9c83f7de87c368c74048ba7eb7e59ac302144d8fa384ba908ab685054",
+    "01-unsupported_steer/acceptance.json": "d7c7cf52693e4a4dcc43831aee456d057510f507d40e83ac035c99feb7692f8e",
+    "01-unsupported_steer/events.jsonl": "dc155f537442548cf15c4862bf65be01ed9a1a4239897a6385e74681d534f9d5",
+    "02-async/acceptance.json": "f93af0d3987135c49753bec2f1f146efefcd6854008f4ef91cf5a60f1b72edf8",
+    "02-async/events.jsonl": "3744c19ee82ac5ebb73e17362966e2a4eef899e8d047405a973c3b9a6661889a",
+    "02-async_steer/acceptance.json": "18e3a8374684fee037e3a4cdecc79ee391b498754d0f9dfc1325b9a35373534f",
+    "02-async_steer/events.jsonl": "138dfeb7a9bf6cf3d733b1da4b5408ae78ce1f4217eb4d41470d724e21797cf7",
+    "02-steer_reasoning/acceptance.json": "e404a7ef028472eb3d26874694b8e2ca6bae5745a39bb38c2dc365548f39e775",
+    "02-steer_reasoning/events.jsonl": "998d6674ba87c4ff3cce53affa6e171465cfdc84fee9d75bcd03e84031ef87a3",
+    "02-sync/acceptance.json": "5be7b349b8392c7f388fa5d20cb41f66323224450d2ea4f06d6acb3c36b66d48",
+    "02-sync/events.jsonl": "25fb183eb3f7b1b0966ea6fc30a854bf6836a70c3f8d28f609de363f2c9905fc",
+    "02-unsupported_steer/acceptance.json": "99c704ad2b5f97fb4f66e86752c0c6ab18eeb1a19ac1ebb2d01e66db82c09541",
+    "02-unsupported_steer/events.jsonl": "af211b7fe8bacdd750595243fa17f53621e4353bac601fef0c2fa66912d0d30a",
+    "03-async/acceptance.json": "15c94f98a668d366424d3019b644d6d6da34d772867a1eed4460b8347750c870",
+    "03-async/events.jsonl": "97fa1dd738dac13a768b9dbd62d1cee7f3f827b8ff158faf0ecfd12c59ef98e4",
+    "03-async_steer/acceptance.json": "57b546ad7758e90a946e77b24c687ef8f830453f2a7f16d4668cd2f6ce49ff39",
+    "03-async_steer/events.jsonl": "912da233b9af5e0a35fac3770111036abd7294dfd0b55174e49c443ec2bc2d93",
+    "03-steer_reasoning/acceptance.json": "51aa04ca17602f09b561bbbbaacbf27d8a23e5f0e4c54a4704458cead04513e9",
+    "03-steer_reasoning/events.jsonl": "ff3b2a56182c96b08d9138a6c7c55b9b065616ebd3cdf656c28e0dcd76a2be37",
+    "03-sync/acceptance.json": "433c6ae74fc8d8db483197a3639bd622075dce1163c96e716beba82d57ebb7a6",
+    "03-sync/events.jsonl": "290a829af336c1655a76632b8f860fbdf36f43d05f623adda65f0878be654852",
+    "03-unsupported_steer/acceptance.json": "dcd811a99d05c1b738a48dcc59063e0567caf6464e437467a62688b517c35f0a",
+    "03-unsupported_steer/events.jsonl": "340680e8a79eb48e82b351ac4694f5aae99bfab8776b4c93820de21e5c26db6d",
+    "source/experiment.py": "9f5353832e47db6e0aac1f3d776454c6893ae350224930c647deeeb17ac27077",
+    "source/requirements.txt": "9ec828179a682425537349fb41440b48a47b1ef006b7b3e1d1542566d3ec6943",
+    "source/test_judging.py": "9c2948aeba4386c31179deb6a6537fc70daca844970747aac6ba3a71905326af"
+  },
+  "finished_utc": "2026-09-05T14:19:30.656152+00:00"
+}

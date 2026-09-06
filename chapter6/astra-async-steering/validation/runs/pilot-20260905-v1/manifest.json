@@ -1,0 +1,54 @@
+{
+  "started_utc": "2026-09-05T14:01:20.779107+00:00",
+  "endpoint": "wss://api.openai.com/v1/responses",
+  "python": "3.11.4",
+  "websockets": "15.0.1",
+  "cases": [
+    {
+      "name": "01-sync",
+      "arm": "sync",
+      "model": "gpt-6-astra",
+      "passed": false
+    },
+    {
+      "name": "01-async",
+      "arm": "async",
+      "model": "gpt-6-astra",
+      "passed": false
+    },
+    {
+      "name": "01-steer_reasoning",
+      "arm": "steer_reasoning",
+      "model": "gpt-6-astra",
+      "passed": false
+    },
+    {
+      "name": "01-async_steer",
+      "arm": "async_steer",
+      "model": "gpt-6-astra",
+      "passed": false
+    },
+    {
+      "name": "01-unsupported_steer",
+      "arm": "unsupported_steer",
+      "model": "gpt-5.6-sol",
+      "passed": false
+    }
+  ],
+  "all_passed": false,
+  "sha256": {
+    "01-async/acceptance.json": "eb695317e600fdcaf9fd0b3f350cf9f84141f5c44e8920b017326aa5e77cb3bc",
+    "01-async/events.jsonl": "e67ad51e44d615160ef11e6b40f001ca307bef93c3e7c94c12191f85f490ba7f",
+    "01-async_steer/acceptance.json": "307f85ec9496f11f862483549944af2d649629ae66e5423b0d0c9bb09fee485c",
+    "01-async_steer/events.jsonl": "4c995653073df1d429899e34e17f6e4ba23f7b7965f5be4f68515679fcc1a651",
+    "01-steer_reasoning/acceptance.json": "517cf991b0af4f712d76516f0959f26864e9a60dea460c4529d0919397f7905b",
+    "01-steer_reasoning/events.jsonl": "46e8b9a0200528d3d50f0542bf905862509a1afdaedb654c35f1e8fc85868874",
+    "01-sync/acceptance.json": "4873f8c808903614a5b37ca5c9079ede468e3200e9763b5de6525a94df4c3389",
+    "01-sync/events.jsonl": "4c3d6a31ae4f7dc1236c00c9d345f6a858ed5df1f0cc0c462b126e5a55acab65",
+    "01-unsupported_steer/acceptance.json": "40630b186bbb592e7873d8ca2d444a7ad72672abbe0079fd6c765dfbeeeb0f83",
+    "01-unsupported_steer/events.jsonl": "67d766e0b6536c1b8a7195c344757e7b10f3780ea6c92f8ecb46c647e8d6bd5f",
+    "source/experiment.py": "feb13593be7438a48ddae0f710fc8e89ca6a39be11b97719112a4365041dc9da",
+    "source/requirements.txt": "9ec828179a682425537349fb41440b48a47b1ef006b7b3e1d1542566d3ec6943"
+  },
+  "finished_utc": "2026-09-05T14:01:30.539146+00:00"
+}

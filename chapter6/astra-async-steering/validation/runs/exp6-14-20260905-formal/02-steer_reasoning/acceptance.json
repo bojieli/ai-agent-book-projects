@@ -1,0 +1,73 @@
+{
+  "arm": "steer_reasoning",
+  "passed": true,
+  "checks": {
+    "no_api_or_runner_error": true,
+    "requested_model_returned": true,
+    "latest_constraints_and_selection": true,
+    "one_steer_with_two_user_updates": true,
+    "accepted_and_successor_observed": true,
+    "steer_before_parent_terminal": true,
+    "successor_continues_steered_parent": true,
+    "successor_completed": true,
+    "no_manual_restart": true,
+    "reasoning_item_before_steer": true
+  },
+  "metrics": {
+    "returned_models": [
+      "gpt-6-astra"
+    ],
+    "response_ids": [
+      "resp_010de0950553962b016a9c24ab4d9087d0aea5e8d0dee84d36",
+      "resp_010de0950553962b016a9c24ae8e8487d0b2226c1e25be1395"
+    ],
+    "tool_calls": 0,
+    "steer_accepted": 1,
+    "steer_pending": 0,
+    "errors": [],
+    "answer": {
+      "venue": "B",
+      "budget": 1000,
+      "attendees": 10,
+      "source": "demo",
+      "plan": {
+        "feasibility": "B is the cheapest feasible venue: cost 900, capacity 12, leaving 100 in budget. C is too small; A exceeds budget.",
+        "staffing": "Assign a facilitator and a check-in/technical lead from the attendees.",
+        "room_setup": "Arrange 10 seats around a discussion table; confirm presentation equipment and accessibility.",
+        "schedule": "One week before: finalize agenda and roles. One day before: confirm attendance and materials. Thirty minutes before: arrange seating and test equipment.",
+        "status": "Simulation only; no bookings or external actions."
+      }
+    },
+    "parent_terminal": "response.incomplete",
+    "parent_incomplete_reason": "steered",
+    "accepted_latency_s": 0.362,
+    "automatic_successor": true,
+    "elapsed_s": 8.107459,
+    "usage": [
+      {
+        "input_tokens": 304,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 82,
+        "output_tokens_details": {
+          "reasoning_tokens": 82
+        },
+        "total_tokens": 386
+      },
+      {
+        "input_tokens": 423,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 219,
+        "output_tokens_details": {
+          "reasoning_tokens": 49
+        },
+        "total_tokens": 642
+      }
+    ]
+  }
+}

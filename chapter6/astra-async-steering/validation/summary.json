@@ -1,0 +1,121 @@
+{
+  "run": "exp6-14-20260905-formal",
+  "started_utc": "2026-09-05T14:17:03.312611+00:00",
+  "finished_utc": "2026-09-05T14:19:30.656152+00:00",
+  "manifest_sha256": "bfece1666a63131e44c911908f4b0a07e6afffb719e8463b7507840d7d998c9e",
+  "summarizer_sha256": "02f8340752b8e1511f5756933fa6021b4e25ac68d582838a27f6fd97c7cf1e82",
+  "formal_cases": 15,
+  "passed": 15,
+  "groups": {
+    "sync": {
+      "cases": 3,
+      "passed": 3,
+      "models": [
+        "gpt-6-astra"
+      ],
+      "independent_output_before_tool_ready": 0,
+      "automatic_successors": 0,
+      "steered_incomplete_parents": 0,
+      "pending_notifications": 0,
+      "median_elapsed_s": 12.583,
+      "ack_latency_range_s": null,
+      "reported_input_tokens": 2458,
+      "reported_output_tokens": 169,
+      "usage_available": true
+    },
+    "async": {
+      "cases": 3,
+      "passed": 3,
+      "models": [
+        "gpt-6-astra"
+      ],
+      "independent_output_before_tool_ready": 3,
+      "automatic_successors": 0,
+      "steered_incomplete_parents": 0,
+      "pending_notifications": 0,
+      "median_elapsed_s": 12.684,
+      "ack_latency_range_s": null,
+      "reported_input_tokens": 2668,
+      "reported_output_tokens": 265,
+      "usage_available": true
+    },
+    "steer_reasoning": {
+      "cases": 3,
+      "passed": 3,
+      "models": [
+        "gpt-6-astra"
+      ],
+      "independent_output_before_tool_ready": 0,
+      "automatic_successors": 3,
+      "steered_incomplete_parents": 3,
+      "pending_notifications": 0,
+      "median_elapsed_s": 8.107,
+      "ack_latency_range_s": [
+        0.261,
+        0.362
+      ],
+      "reported_input_tokens": 2165,
+      "reported_output_tokens": 790,
+      "usage_available": true
+    },
+    "async_steer": {
+      "cases": 3,
+      "passed": 3,
+      "models": [
+        "gpt-6-astra"
+      ],
+      "independent_output_before_tool_ready": 3,
+      "automatic_successors": 3,
+      "steered_incomplete_parents": 0,
+      "pending_notifications": 0,
+      "median_elapsed_s": 12.575,
+      "ack_latency_range_s": [
+        0.241,
+        0.269
+      ],
+      "reported_input_tokens": 4325,
+      "reported_output_tokens": 431,
+      "usage_available": true
+    },
+    "unsupported_steer": {
+      "cases": 3,
+      "passed": 3,
+      "models": [
+        "gpt-5.6-sol"
+      ],
+      "independent_output_before_tool_ready": 0,
+      "automatic_successors": 0,
+      "steered_incomplete_parents": 0,
+      "pending_notifications": 0,
+      "median_elapsed_s": null,
+      "ack_latency_range_s": null,
+      "reported_input_tokens": 0,
+      "reported_output_tokens": 0,
+      "usage_available": false
+    }
+  },
+  "reasoning_windows": [
+    {
+      "case": "01-steer_reasoning",
+      "reasoning_open_s": 2.189541,
+      "steer_sent_s": 2.19032,
+      "reasoning_closed_s": 3.818841,
+      "steer_inside_observed_reasoning_item": true
+    },
+    {
+      "case": "02-steer_reasoning",
+      "reasoning_open_s": 2.194272,
+      "steer_sent_s": 2.194864,
+      "reasoning_closed_s": 4.102571,
+      "steer_inside_observed_reasoning_item": true
+    },
+    {
+      "case": "03-steer_reasoning",
+      "reasoning_open_s": 2.471145,
+      "steer_sent_s": 2.471861,
+      "reasoning_closed_s": 4.298258,
+      "steer_inside_observed_reasoning_item": true
+    }
+  ],
+  "latency_scope": "Client-observed times; not server sampling latency or a statistical performance benchmark."
+}
