@@ -285,6 +285,8 @@ def execute_test_case(code: str, test_case: dict) -> dict:
             else:
                 return {"status": "pass", "result": f"rejected: {result}"}
 
+    except TimeoutError:
+        return {"status": "timeout", "error": "timed out"}
     except (ValueError, PermissionError, Exception) as e:
         signal.alarm(0)
         err = str(e)
@@ -292,8 +294,6 @@ def execute_test_case(code: str, test_case: dict) -> dict:
             return {"status": "pass", "result": f"rejected via exception: {err[:80]}"}
         else:
             return {"status": "fail", "result": f"should allow but raised: {err[:80]}"}
-    except TimeoutError:
-        return {"status": "timeout", "error": "timed out"}
     finally:
         signal.signal(signal.SIGALRM, old_handler)
         signal.alarm(0)
