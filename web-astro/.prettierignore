@@ -1,0 +1,5 @@
+node_modules/
+dist/
+.astro/
+public/book-en/
+package-lock.json

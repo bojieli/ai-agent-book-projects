@@ -1,0 +1,1019 @@
+---
+const stages = [
+  {
+    label: 'Observe',
+    detail: 'Observations update the context available to the model.',
+  },
+  {
+    label: 'Reason',
+    detail: 'The model uses that context to choose its next action.',
+  },
+  {
+    label: 'Act',
+    detail:
+      'Tools act on the environment; the results become new observations.',
+  },
+];
+---
+
+<section
+  class="agent-motion"
+  data-stage="0"
+  aria-labelledby="architecture-title"
+>
+  <div class="motion-heading">
+    <span class="motion-kicker">THE AGENT LOOP</span><span
+      class="edition-number">CONCEPTUAL MODEL</span
+    >
+  </div>
+  <div
+    class="agent-scene"
+    role="img"
+    aria-label="Context supplies observations to the LLM. The model chooses tools, which act on the environment. Feedback from the environment returns to context."
+  >
+    <svg class="circuit" viewBox="0 0 640 460" fill="none" aria-hidden="true">
+      <defs>
+        <marker
+          id="flow-arrow"
+          viewBox="0 0 10 10"
+          refX="8"
+          refY="5"
+          markerWidth="5"
+          markerHeight="5"
+          orient="auto"
+          ><path d="m2 1 6 4-6 4" stroke="currentColor" stroke-width="1.5"
+          ></path></marker
+        >
+      </defs>
+      <g class="circuit-paths" marker-end="url(#flow-arrow)">
+        <path data-route="observe" d="M275 382H116Q80 382 80 346V218"></path>
+        <path data-route="reason" d="M147 180H241"></path>
+        <path data-route="select" d="M399 180H493"></path>
+        <path data-route="execute" d="M560 218V346Q560 382 524 382H365"></path>
+      </g>
+      <g class="energy-paths" aria-hidden="true">
+        <path data-energy="0" pathLength="1" d="M275 382H116Q80 382 80 346V218"
+        ></path>
+        <path data-energy="1" pathLength="1" d="M147 180H241"></path>
+        <path data-energy="2" pathLength="1" d="M399 180H493"></path>
+        <path
+          data-energy="3"
+          pathLength="1"
+          d="M560 218V346Q560 382 524 382H365"></path>
+      </g>
+      <g class="packet-stream" opacity="0" aria-hidden="true">
+        {
+          [0, 1, 2, 3, 4, 5].map((index) => (
+            <circle
+              data-packet={index}
+              r={index === 0 ? 5 : 3.5 - index * 0.35}
+            />
+          ))
+        }
+      </g>
+      <g class="processing-waves" aria-hidden="true">
+        <circle data-wave="0" cx="320" cy="180" r="88"></circle>
+        <circle data-wave="1" cx="320" cy="180" r="88"></circle>
+      </g>
+    </svg>
+    <div class="model-core">
+      <div class="core-inner"><strong>LLM</strong></div>
+    </div>
+    <span class="model-label">Reasoning engine</span>
+    <div class="context-node side-node">
+      <svg
+        class="context-visual node-visual"
+        viewBox="0 0 90 44"
+        fill="none"
+        aria-hidden="true"
+      >
+        <rect class="context-sheet" x="20" y="3" width="54" height="29" rx="4"
+        ></rect>
+        <rect class="context-sheet" x="14" y="8" width="54" height="29" rx="4"
+        ></rect>
+        <rect
+          class="context-sheet front-sheet"
+          x="8"
+          y="13"
+          width="54"
+          height="29"
+          rx="4"></rect>
+        <path d="M18 23h33M18 29h25M18 35h17"></path>
+        <circle class="incoming-observation" cx="72" cy="29" r="7"
+        ></circle><path class="incoming-mark" d="M69 29h6m-3-3v6"></path>
+      </svg><strong>Context</strong><span class="node-description"
+        >Task · history<br />observations</span
+      >
+    </div>
+    <div class="tools-node side-node">
+      <svg
+        class="tools-visual node-visual"
+        viewBox="0 0 96 44"
+        fill="none"
+        aria-hidden="true"
+      >
+        <g class="search-tool"
+          ><rect x="2" y="8" width="28" height="28" rx="6"></rect><circle
+            cx="14"
+            cy="20"
+            r="5"></circle><path d="m18 24 5 5"></path></g
+        >
+        <g class="code-tool"
+          ><rect x="34" y="8" width="28" height="28" rx="6"></rect><path
+            d="m43 17-5 5 5 5m10-10 5 5-5 5m-4-11-3 14"></path></g
+        >
+        <g class="api-tool"
+          ><rect x="66" y="8" width="28" height="28" rx="6"></rect><path
+            d="M75 16v6h10v6m-10-6v6"></path><circle cx="75" cy="14" r="2"
+          ></circle><circle cx="75" cy="30" r="2"></circle><circle
+            cx="85"
+            cy="30"
+            r="2"></circle></g
+        >
+      </svg><strong>Tools</strong><span class="node-description"
+        >Search · code<br />APIs</span
+      >
+    </div>
+    <span class="flow-label observations-label">Observations</span><span
+      class="flow-label actions-label">Actions</span
+    >
+    <div class="environment-label">
+      <svg
+        class="world-visual"
+        viewBox="0 0 110 30"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path d="M8 4h11l6 6v16H8Zm10 0v7h7M12 16h9m-9 5h7"></path>
+        <rect x="40" y="5" width="28" height="21" rx="3"></rect><path
+          d="M40 11h28"></path><circle cx="45" cy="8" r=".7"></circle><circle
+          cx="49"
+          cy="8"
+          r=".7"></circle>
+        <circle cx="94" cy="10" r="5"></circle><path
+          d="M85 27v-3a9 9 0 0 1 18 0v3"></path>
+      </svg><strong>Environment</strong><span>Files · browsers · people</span>
+    </div>
+  </div>
+  <div class="loop-caption">
+    <h2 id="architecture-title">
+      Decide. Act.<br /><em>Observe what changed.</em>
+    </h2>
+  </div>
+  <div class="motion-controls" hidden>
+    <div class="stage-buttons" aria-label="Explore the agent loop">
+      {
+        stages.map((stage, index) => (
+          <button
+            type="button"
+            data-select-stage={index}
+            data-description={stage.detail}
+            aria-pressed={index === 0}
+            aria-controls="agent-explanation"
+          >
+            <span class="step-dot" aria-hidden="true" />
+            {stage.label}
+          </button>
+        ))
+      }
+    </div>
+    <button class="motion-play" type="button" aria-label="Pause animation"
+      ><svg
+        viewBox="0 0 20 20"
+        width="16"
+        height="16"
+        fill="currentColor"
+        aria-hidden="true"
+        ><path class="pause-symbol" d="M5 4h3v12H5zm7 0h3v12h-3z"></path><path
+          class="play-symbol"
+          d="m6 3 11 7-11 7z"></path></svg
+      ><span class="playback-label">Pause</span></button
+    >
+  </div>
+  <p id="agent-explanation" class="motion-explanation">
+    Context informs the model. Tools act on the world.
+  </p>
+</section>
+<script>
+  const panel = document.querySelector<HTMLElement>('.agent-motion');
+  if (panel) {
+    const routes = ['observe', 'reason', 'select', 'execute'].map((name) =>
+      panel.querySelector<SVGPathElement>(`[data-route="${name}"]`)!,
+    );
+    const lengths = routes.map((path) => path.getTotalLength());
+    const packetStream = panel.querySelector<SVGGElement>('.packet-stream')!;
+    const packets = [
+      ...panel.querySelectorAll<SVGCircleElement>('[data-packet]'),
+    ];
+    const energyPaths = [
+      ...panel.querySelectorAll<SVGPathElement>('[data-energy]'),
+    ];
+    const waves = [...panel.querySelectorAll<SVGCircleElement>('[data-wave]')];
+    const buttons = [
+      ...panel.querySelectorAll<HTMLButtonElement>('[data-select-stage]'),
+    ];
+    const descriptions = buttons.map(
+      (button) => button.dataset.description ?? '',
+    );
+    const playback = panel.querySelector<HTMLButtonElement>('.motion-play')!;
+    const explanation = panel.querySelector<HTMLElement>(
+      '.motion-explanation',
+    )!;
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+    let paused = reducedMotion.matches;
+    const initialBounds = panel.getBoundingClientRect();
+    let visible = initialBounds.bottom > 0 && initialBounds.top < innerHeight;
+    let stage = 0;
+    let elapsed = 0;
+    let previous = 0;
+    let frame = 0;
+    const duration = 3600;
+    const clamp = (value: number) => Math.max(0, Math.min(1, value));
+    const ease = (value: number) => {
+      const t = clamp(value);
+      return t * t * (3 - 2 * t);
+    };
+    const draw = () => {
+      const progress = elapsed / duration;
+      const motion = !reducedMotion.matches;
+      let routeIndex = stage;
+      let travel = 0;
+      let travelling = true;
+      let contextEnergy = 0;
+      let modelEnergy = 0;
+      let toolEnergy = 0;
+      let resultEnergy = 0;
+      const reveal = [0, 0, 0, 0];
+      if (stage === 0) {
+        travel = ease((progress - 0.06) / 0.66);
+        travelling = progress >= 0.06 && progress <= 0.72;
+        reveal[0] = travel;
+        contextEnergy = Math.sin(clamp((progress - 0.65) / 0.35) * Math.PI);
+      } else if (stage === 1) {
+        travel = ease(progress / 0.3);
+        travelling = progress <= 0.3;
+        reveal[1] = travel;
+        // A pair of expanding waves signals the model processing the received context.
+        modelEnergy =
+          progress > 0.24
+            ? Math.sin(clamp((progress - 0.24) / 0.76) * Math.PI)
+            : 0;
+      } else {
+        routeIndex = progress < 0.4 ? 2 : 3;
+        travel =
+          routeIndex === 2
+            ? ease(progress / 0.25)
+            : ease((progress - 0.4) / 0.48);
+        travelling = progress < 0.25 || (progress >= 0.4 && progress <= 0.88);
+        reveal[2] = ease(progress / 0.25);
+        reveal[3] = ease((progress - 0.4) / 0.48);
+        toolEnergy = Math.sin(clamp((progress - 0.2) / 0.25) * Math.PI);
+        resultEnergy = Math.sin(clamp((progress - 0.82) / 0.18) * Math.PI);
+      }
+      energyPaths.forEach((path, index) => {
+        path.style.strokeDashoffset = String(1 - reveal[index]);
+        path.style.opacity = reveal[index] ? '1' : '0';
+      });
+      packetStream.setAttribute('opacity', motion && travelling ? '1' : '0');
+      packets.forEach((packet, index) => {
+        const distance = lengths[routeIndex] * travel - index * 9;
+        const point = routes[routeIndex].getPointAtLength(
+          Math.max(0, distance),
+        );
+        packet.setAttribute('cx', String(point.x));
+        packet.setAttribute('cy', String(point.y));
+        packet.setAttribute(
+          'opacity',
+          distance < 0 ? '0' : String(1 - index * 0.15),
+        );
+      });
+      waves.forEach((wave, index) => {
+        const t = clamp((progress - 0.28 - index * 0.2) / 0.48);
+        wave.setAttribute('r', String(84 + ease(t) * 42));
+        wave.style.opacity =
+          motion && stage === 1 ? String(Math.sin(t * Math.PI) * 0.65) : '0';
+      });
+      panel.style.setProperty(
+        '--context-energy',
+        String(motion ? contextEnergy : 0),
+      );
+      panel.style.setProperty(
+        '--model-energy',
+        String(motion ? modelEnergy : 0),
+      );
+      panel.style.setProperty('--tool-energy', String(motion ? toolEnergy : 0));
+      panel.style.setProperty(
+        '--result-energy',
+        String(motion ? resultEnergy : 0),
+      );
+    };
+    const setStage = (next: number) => {
+      stage = next;
+      panel.dataset.stage = String(stage);
+      routes.forEach((route, index) => {
+        route.dataset.active = String(
+          stage === 2 ? index >= 2 : index === stage,
+        );
+      });
+      buttons.forEach((button, index) =>
+        button.setAttribute('aria-pressed', String(index === stage)),
+      );
+      explanation.textContent = descriptions[stage];
+    };
+    const tick = (now: number) => {
+      frame = 0;
+      if (paused || !visible || document.hidden) {
+        previous = 0;
+        return;
+      }
+      if (previous) elapsed += Math.min(now - previous, 100);
+      previous = now;
+      if (elapsed >= duration) {
+        elapsed %= duration;
+        setStage((stage + 1) % 3);
+      }
+      draw();
+      frame = requestAnimationFrame(tick);
+    };
+    const syncPlayback = () => {
+      if (frame) cancelAnimationFrame(frame);
+      frame = 0;
+      previous = 0;
+      panel.dataset.paused = String(paused);
+      draw();
+      playback.querySelector('.playback-label')!.textContent = paused
+        ? 'Play'
+        : 'Pause';
+      playback.setAttribute(
+        'aria-label',
+        paused ? 'Play animation' : 'Pause animation',
+      );
+      if (!paused && visible && !document.hidden)
+        frame = requestAnimationFrame(tick);
+    };
+    buttons.forEach((button, index) =>
+      button.addEventListener('click', () => {
+        // Selecting a stage keeps the current playback preference.
+        elapsed = paused ? duration * 0.5 : 0;
+        setStage(index);
+        draw();
+        syncPlayback();
+      }),
+    );
+    playback.addEventListener('click', () => {
+      paused = !paused;
+      syncPlayback();
+    });
+    reducedMotion.addEventListener('change', () => {
+      paused = reducedMotion.matches;
+      draw();
+      syncPlayback();
+    });
+    document.addEventListener('visibilitychange', syncPlayback);
+    new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting;
+        syncPlayback();
+      },
+      { threshold: 0.01 },
+    ).observe(panel.querySelector('.agent-scene')!);
+    panel.querySelector<HTMLElement>('.motion-controls')!.hidden = false;
+    setStage(0);
+    draw();
+    syncPlayback();
+  }
+</script>
+<style>
+  .agent-motion {
+    --signal: #768c3d;
+    align-self: center;
+    position: relative;
+    min-width: 0;
+    padding: 0 0 12px;
+    color: var(--ink);
+  }
+  .motion-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 14px;
+    padding-bottom: 17px;
+    border-bottom: 1px solid var(--line);
+  }
+  .motion-kicker,
+  .edition-number {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+  }
+  .edition-number {
+    font-variant-numeric: tabular-nums;
+  }
+  .agent-scene {
+    position: relative;
+    aspect-ratio: 640/460;
+    margin: 18px 0 0;
+  }
+  .circuit {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .circuit-paths {
+    stroke: #adb99d;
+    transition: stroke 0.35s;
+    stroke-width: 1.8;
+    color: #899673;
+  }
+
+  .model-core {
+    position: absolute;
+    left: 50%;
+    top: 39.13%;
+    transform: translate(-50%, -50%);
+    width: 25%;
+    aspect-ratio: 1;
+    container-type: inline-size;
+    border-radius: 50%;
+    padding: 5px;
+    background: linear-gradient(145deg, #e4e9db, #c1cdac 48%, #fcfff6);
+    box-shadow:
+      0 16px 34px -14px #354b4155,
+      0 0 0 8px #d7e0c820;
+    z-index: 2;
+    transition: box-shadow 0.8s;
+  }
+  .core-inner {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: radial-gradient(
+      ellipse at 35% 5%,
+      #50614a 0%,
+      #293729 48%,
+      #162019 100%
+    );
+    color: #f2f8e8;
+    box-shadow:
+      inset 0 1px 2px #ffffff66,
+      inset 0 -6px 16px #0003;
+  }
+
+  .core-inner strong {
+    font: 450 clamp(1.4rem, 38cqi, 3rem)/1 var(--serif);
+    letter-spacing: -0.03em;
+    margin: 0;
+  }
+
+  .side-node {
+    position: absolute;
+    top: 39.13%;
+    transform: translate(-50%, -50%);
+    width: 23%;
+    background: var(--bg);
+    padding: 8px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1;
+  }
+  .context-node {
+    left: 12.5%;
+  }
+  .tools-node {
+    left: 87.5%;
+  }
+
+  .side-node strong {
+    font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+  }
+  .node-description {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 5px;
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+
+  .flow-label {
+    position: absolute;
+    top: 67%;
+    font-size: 0.75rem;
+    color: var(--muted);
+    background: var(--bg);
+    padding: 3px 6px;
+  }
+  .observations-label {
+    left: 4%;
+  }
+  .actions-label {
+    right: 7%;
+  }
+  .environment-label {
+    position: absolute;
+    left: 50%;
+    top: 79.5%;
+    transform: translateX(-50%);
+    background: var(--bg);
+    padding: 0 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    white-space: nowrap;
+  }
+
+  .environment-label strong {
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-top: 4px;
+  }
+  .environment-label > span:last-child {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 5px;
+  }
+
+  [data-stage='1'] .model-core {
+    box-shadow:
+      0 16px 35px -10px #48633466,
+      0 0 0 10px #d8ed7a25,
+      0 0 50px -15px #acc56f88;
+  }
+
+  .loop-caption {
+    text-align: center;
+    margin-top: 24px;
+  }
+  .loop-caption h2 {
+    font-family: var(--serif);
+    font-size: 1.55rem;
+    line-height: 1.25;
+    letter-spacing: -0.035em;
+    font-weight: 450;
+    margin: 0;
+  }
+  .loop-caption h2 em {
+    font-style: italic;
+    color: var(--muted);
+  }
+  .motion-controls {
+    display: flex;
+    gap: 13px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 24px;
+  }
+  .stage-buttons {
+    display: flex;
+    border: 1px solid var(--line);
+    border-radius: 30px;
+    padding: 3px;
+    gap: 2px;
+    background: var(--bg);
+  }
+  .stage-buttons button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border-radius: 24px;
+    font-size: 0.75rem;
+    font-weight: 550;
+    color: var(--muted);
+    min-height: 40px;
+    padding: 8px 13px;
+    transition:
+      background 0.4s,
+      color 0.4s;
+  }
+  .stage-buttons button[aria-pressed='true'] {
+    background: var(--ink);
+    color: var(--bg);
+  }
+  .stage-buttons button:hover:not([aria-pressed='true']) {
+    background: var(--surface);
+  }
+  .step-dot {
+    height: 4px;
+    width: 4px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.5;
+  }
+  .stage-buttons button[aria-pressed='true'] .step-dot {
+    background: var(--accent);
+    opacity: 1;
+  }
+  .motion-play {
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--line);
+    height: 42px;
+    width: 42px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    color: var(--muted);
+  }
+  .motion-play:hover {
+    background: var(--surface);
+  }
+  .play-symbol {
+    display: none;
+  }
+  [data-paused='true'] .pause-symbol {
+    display: none;
+  }
+  [data-paused='true'] .play-symbol {
+    display: block;
+  }
+  .motion-explanation {
+    font-size: 0.75rem;
+    line-height: 1.6;
+    text-align: center;
+    color: var(--muted);
+    margin: 14px 10px 0;
+    min-height: 3.2em;
+    max-width: 390px;
+    margin-inline: auto;
+  }
+
+  :global([data-theme='dark']) .core-inner {
+    background: radial-gradient(
+      ellipse at 35% 5%,
+      #465a7d,
+      #29364e 48%,
+      #1b2230 100%
+    );
+  }
+
+  @media (max-width: 1100px) {
+    .agent-scene {
+      margin-inline: -12px;
+    }
+
+    .side-node {
+      padding-inline: 3px;
+    }
+    .loop-caption h2 {
+      font-size: 1.4rem;
+    }
+    .stage-buttons button {
+      padding-inline: 10px;
+    }
+    .motion-controls {
+      gap: 9px;
+    }
+  }
+  @media (max-width: 760px) {
+    .agent-motion {
+      width: 100%;
+      max-width: 520px;
+      justify-self: center;
+      margin-top: 0;
+    }
+    .agent-scene {
+      margin: 15px -8px 0;
+    }
+    .motion-heading {
+      margin-inline: 0;
+    }
+
+    .side-node strong {
+      font-size: 1rem;
+    }
+
+    .side-node {
+      padding-block: 7px;
+    }
+
+    .loop-caption {
+      margin-top: 29px;
+    }
+    .loop-caption h2 {
+      font-size: 1.5rem;
+    }
+    .motion-explanation {
+      margin-inline: 0;
+    }
+    .environment-label {
+      padding-inline: 8px;
+    }
+    .node-description {
+      font-size: 0.75rem;
+      white-space: normal;
+    }
+
+    .flow-label {
+      font-size: 0.75rem;
+    }
+
+    .stage-buttons button {
+      min-height: 38px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .packet-stream {
+      display: none;
+    }
+  }
+
+  .circuit-paths path {
+    transition: stroke 0.4s;
+  }
+  .circuit-paths path[data-active='true'] {
+    stroke: #6e8b38;
+    stroke-width: 2.4;
+  }
+  [data-stage='0'] .context-node strong,
+  [data-stage='2'] .tools-node strong {
+    color: #587225;
+  }
+  :global([data-theme='dark']) .circuit-paths path[data-active='true'] {
+    stroke: var(--signal);
+  }
+  :global([data-theme='dark']) [data-stage='0'] .context-node strong,
+  :global([data-theme='dark']) [data-stage='2'] .tools-node strong {
+    color: var(--signal);
+  }
+  @media (max-width: 760px) {
+    .agent-scene {
+      margin-inline: 0;
+    }
+    .motion-heading {
+      gap: 15px;
+    }
+    .edition-number {
+      letter-spacing: 0.03em;
+    }
+  }
+
+  .agent-motion {
+    --context-energy: 0;
+    --model-energy: 0;
+    --tool-energy: 0;
+    --result-energy: 0;
+    --signal: #248f7e;
+  }
+  .agent-motion[data-stage='1'] {
+    --signal: #86a32e;
+  }
+  .agent-motion[data-stage='2'] {
+    --signal: #b87a38;
+  }
+  .energy-paths {
+    stroke: var(--signal);
+    stroke-width: 3;
+    stroke-linecap: round;
+    filter: drop-shadow(
+      0 0 4px color-mix(in srgb, var(--signal) 40%, transparent)
+    );
+  }
+  .energy-paths path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+  .packet-stream {
+    fill: var(--signal);
+    filter: drop-shadow(0 0 5px var(--signal));
+  }
+  .packet-stream circle:first-child {
+    fill: var(--signal);
+    stroke: var(--bg);
+    stroke-width: 1.5;
+  }
+  .processing-waves {
+    stroke: #93b545;
+    stroke-width: 1.5;
+  }
+  .processing-waves circle {
+    opacity: 0;
+  }
+  .model-core {
+    transform: translate(-50%, -50%)
+      scale(calc(1 + var(--model-energy) * 0.045));
+  }
+  .core-inner {
+    position: relative;
+    overflow: hidden;
+  }
+  .core-inner::after {
+    content: '';
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(145deg, #e1f4a74d, transparent 55%);
+    opacity: var(--model-energy);
+  }
+  .core-inner strong {
+    text-shadow: 0 0 calc(var(--model-energy) * 18px) #d8ed7a90;
+  }
+  .side-node::after {
+    content: '';
+    position: absolute;
+    inset: -7px -3px;
+    border: 1px solid var(--signal);
+    border-radius: 10px;
+    pointer-events: none;
+    opacity: 0;
+  }
+  .context-node::after {
+    opacity: var(--context-energy);
+    transform: scale(calc(1 + var(--context-energy) * 0.06));
+  }
+  .tools-node::after {
+    opacity: var(--tool-energy);
+    transform: scale(calc(1 + var(--tool-energy) * 0.06));
+  }
+  .environment-label::after {
+    content: '';
+    position: absolute;
+    inset: -10px;
+    border-radius: 8px;
+    border: 1px solid var(--signal);
+    opacity: var(--result-energy);
+    transform: scale(calc(1 + var(--result-energy) * 0.07));
+    pointer-events: none;
+  }
+  .circuit-paths path[data-active='true'] {
+    stroke: var(--signal);
+    opacity: 0.28;
+    stroke-width: 2;
+  }
+  :global([data-theme='dark']) .agent-motion {
+    --signal: #91bcff;
+  }
+  :global([data-theme='dark']) .model-core {
+    background: linear-gradient(145deg, #667791, #39465d 48%, #9aabc7);
+    box-shadow:
+      0 16px 34px -14px #080b1255,
+      0 0 0 8px #a4c1ef0c;
+  }
+  :global([data-theme='dark']) [data-stage='1'] .model-core {
+    box-shadow:
+      0 16px 35px -10px #202c4866,
+      0 0 0 10px #bdb0ff25,
+      0 0 50px -15px #aac7ff88;
+  }
+  :global([data-theme='dark']) .core-inner {
+    color: #edf2ff;
+  }
+  :global([data-theme='dark']) .core-inner::after {
+    background: linear-gradient(145deg, #aac7ff4d, transparent 55%);
+  }
+  :global([data-theme='dark']) .core-inner strong {
+    text-shadow: 0 0 calc(var(--model-energy) * 18px) #aac7ff90;
+  }
+  :global([data-theme='dark']) .processing-waves {
+    stroke: var(--signal);
+  }
+  :global([data-theme='dark']) .circuit-paths {
+    stroke: #7c879b;
+    color: #9aa7bd;
+  }
+  :global([data-theme='dark']) .node-visual {
+    color: #9aa7bd;
+  }
+  :global([data-theme='dark']) [data-stage='0'] .context-visual,
+  :global([data-theme='dark']) [data-stage='2'] .tools-visual {
+    color: var(--signal);
+  }
+
+  :global([data-theme='dark']) .agent-motion[data-stage='1'] {
+    --signal: #bdb0ff;
+  }
+  :global([data-theme='dark']) .agent-motion[data-stage='2'] {
+    --signal: #efbd7f;
+  }
+  :global([data-theme='dark']) .circuit-paths path[data-active='true'] {
+    stroke: var(--signal);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .processing-waves,
+    .packet-stream,
+    .side-node::after,
+    .environment-label::after {
+      display: none;
+    }
+    .model-core {
+      transform: translate(-50%, -50%);
+    }
+  }
+
+  .model-label {
+    position: absolute;
+    left: 50%;
+    top: 58%;
+    transform: translateX(-50%);
+    max-width: 44%;
+    font-size: 0.75rem;
+    line-height: 1.3;
+    text-align: center;
+    color: var(--muted);
+  }
+  .node-visual {
+    width: min(100%, 82px);
+    height: 38px;
+    margin-bottom: 9px;
+    color: #829573;
+    stroke: currentColor;
+    stroke-width: 1.25;
+    overflow: visible;
+  }
+  .context-sheet,
+  .tools-visual rect {
+    fill: var(--bg);
+  }
+  .front-sheet {
+    fill: var(--surface);
+  }
+  .incoming-observation {
+    fill: var(--bg);
+  }
+  .context-visual .incoming-mark {
+    stroke-width: 1.4;
+  }
+  .tools-visual g {
+    transition: color 0.35s;
+  }
+  [data-stage='0'] .context-visual {
+    color: var(--signal);
+  }
+  [data-stage='0'] .incoming-observation {
+    fill: color-mix(in srgb, var(--signal) 15%, var(--bg));
+  }
+  [data-stage='2'] .tools-visual {
+    color: var(--signal);
+  }
+  .world-visual {
+    width: 88px;
+    height: 24px;
+    margin-bottom: 5px;
+    stroke: var(--muted);
+    stroke-width: 1.3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .environment-label {
+    top: 78.5%;
+  }
+  .motion-play {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: auto;
+    min-width: 72px;
+    height: 42px;
+    padding: 8px 11px;
+    border-radius: 24px;
+  }
+  .playback-label {
+    font-size: 0.75rem;
+  }
+  .motion-controls {
+    gap: 9px;
+  }
+  @media (max-width: 760px) {
+    .node-visual {
+      width: 64px;
+      height: 29px;
+      margin-bottom: 7px;
+    }
+    .model-label {
+      font-size: 0.75rem;
+    }
+    .environment-label {
+      top: 76.5%;
+    }
+    .world-visual {
+      height: 19px;
+      width: 72px;
+      margin-bottom: 3px;
+    }
+    .loop-caption {
+      margin-top: 40px;
+    }
+    .stage-buttons button {
+      padding-inline: 8px;
+    }
+    .motion-controls {
+      gap: 6px;
+    }
+    .motion-play {
+      min-width: 66px;
+      padding-inline: 9px;
+    }
+  }
+</style>

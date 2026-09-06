@@ -1,0 +1,49 @@
+---
+import Icon from './Icon.astro';
+import { repo } from '../lib/book';
+const { reader = false } = Astro.props;
+---
+
+<header class:list={['site-header', { 'reader-header': reader }]}>
+  <a class="brand" href="/" aria-label="AI Agents in Depth — home"
+    ><span class="brand-mark" aria-hidden="true">a<span>i</span></span><span
+      >AI Agents<span class="brand-secondary">in Depth</span></span
+    ></a
+  >
+  <nav class="header-nav" aria-label="Main navigation">
+    <a href="/#contents">The book</a>
+    <a class="desktop-link" href={`${repo}/tree/main/chapter1`}
+      >Experiments <Icon name="external" size={15} /></a
+    >
+    <a href={repo}>GitHub <Icon name="external" size={15} /></a>
+  </nav>
+  <div class="header-tools">
+    <span class="edition-label"
+      >EN <span aria-hidden="true">/</span> English edition</span
+    >
+    <button
+      class="icon-button theme-toggle"
+      type="button"
+      aria-label="Switch to dark theme"
+      title="Switch color theme"
+      hidden
+      ><span class="moon-icon"><Icon name="moon" /></span><span class="sun-icon"
+        ><Icon name="sun" /></span
+      ></button
+    >
+    {
+      reader && (
+        <button
+          class="icon-button mobile-menu"
+          type="button"
+          aria-label="Open chapter navigation"
+          aria-expanded="false"
+          aria-controls="chapter-navigation"
+          hidden
+        >
+          <Icon name="menu" />
+        </button>
+      )
+    }
+  </div>
+</header>
