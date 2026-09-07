@@ -34,10 +34,24 @@ npm test
 - Chapter reader with book navigation, an active section outline, and a mobile menu.
 - Light/dark themes, adjustable text size, focus mode, and chapter progress.
 - Expandable figures, captions, code copying, tables, and linked footnotes.
+- Select a passage to highlight it; revisit or remove it in My highlights.
+- Highlights and plain-text notes save in IndexedDB on this browser, with JSON backup export/import.
+- Choose Add note on a selection or click a highlight to edit it. Save note commits
+  the note; unfinished drafts are stored separately and restored after closing or reloading.
+- Backups include notes and drafts. Older highlight-only backups still import;
+  conflicting notes are kept as separate entries rather than overwritten.
 - Fonts are self-hosted. No accounts, external font requests, or AI services.
 
 Theme and text-size preferences stay in the browser's local storage. The reader
-does not save reading position yet. Essential content and links work without
+does not save reading position yet. Highlights are scoped to this book, language,
+and chapter; clearing site data removes them, and private browsing may discard
+them on exit. They do not sync across devices or site origins. Export a backup
+before switching browsers or moving from localhost to a hosted preview.
+
+Highlight anchoring stores the selected quote and surrounding text. Ambiguous
+or changed passages remain in My highlights as unmatched quotes. This first
+version supports chapter prose (including inline emphasis and links), excluding
+code blocks, figures, and footnotes. Essential content and links work without
 JavaScript; enhanced controls are shown when their scripts initialize.
 
 ## Source boundaries

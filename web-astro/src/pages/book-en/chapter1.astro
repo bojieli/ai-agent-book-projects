@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Icon from '../../components/Icon.astro';
+import Highlights from '../../components/Highlights.astro';
 import { chapters, readingMinutes, repo, originalSite } from '../../lib/book';
 import { Content, getHeadings } from '../../../../book-en/chapter1.md';
 import '../../styles/reader.css';
@@ -61,6 +62,7 @@ const outline = getHeadings().filter(
             class="reader-controls"
             hidden
           >
+            <Highlights />
             <details class="reading-settings">
               <summary aria-label="Reading settings"
                 ><span class="type-icon">Aa</span><span class="setting-label"
@@ -203,7 +205,7 @@ const outline = getHeadings().filter(
     const applySize = () => {
       root.style.setProperty(
         '--reading-size',
-        `${1.1875 * sizes[sizeIndex]}rem`,
+        `${1.125 * sizes[sizeIndex]}rem`,
       );
       sizeOutput.value = `${Math.round(sizes[sizeIndex] * 100)}%`;
       smaller.disabled = sizeIndex === 0;

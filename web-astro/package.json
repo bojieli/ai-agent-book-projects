@@ -11,7 +11,7 @@
     "build": "node scripts/prepare-assets.mjs && astro build",
     "preview": "astro preview --host 127.0.0.1",
     "check": "astro check",
-    "test": "node --test scripts/*.test.mjs",
+    "test": "node --experimental-strip-types --test scripts/*.test.mjs",
     "format": "prettier --write ."
   },
   "dependencies": {

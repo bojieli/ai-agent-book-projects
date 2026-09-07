@@ -1,0 +1,113 @@
+---
+import Icon from './Icon.astro';
+import '../styles/highlights.css';
+---
+
+<button id="open-highlights" class="highlights-toggle" type="button" hidden>
+  <svg
+    width="17"
+    height="17"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.6"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+    ><path d="m14 3 7 7-9 9-7-7ZM5 12l-2 7 2 2 7-2M3 22h18"></path></svg
+  >
+  <span>My highlights</span><span id="highlight-count">0</span>
+</button>
+<div
+  id="highlight-selection"
+  class="highlight-selection"
+  role="group"
+  aria-label="Selected passage"
+  hidden
+>
+  <button id="save-highlight" type="button">Highlight</button>
+  <button id="add-highlight-note" type="button">Add note</button>
+</div>
+<p id="highlight-status" class="highlight-status" role="status"></p>
+<dialog
+  id="highlights-dialog"
+  class="highlights-dialog"
+  aria-labelledby="highlights-title"
+>
+  <div class="highlights-heading">
+    <div>
+      <p class="eyebrow">YOUR READING NOTES</p><h2 id="highlights-title">
+        My highlights
+      </h2>
+    </div>
+    <button
+      id="close-highlights"
+      class="icon-button"
+      type="button"
+      aria-label="Close highlights"><Icon name="close" /></button
+    >
+  </div>
+  <p class="highlights-intro">Chapter 1 · Saved in this browser</p>
+  <p class="highlights-help">
+    Select text to highlight it or add a note. Click a highlight to edit its
+    note. Export a backup to keep your highlights and notes if you clear browser
+    data or change devices.
+  </p>
+  <div class="highlights-backup">
+    <button id="export-highlights" type="button">Export backup</button>
+    <label class="import-highlights"
+      >Import backup<input
+        id="import-highlights"
+        type="file"
+        accept="application/json,.json"
+      /></label
+    >
+  </div>
+  <div id="highlight-backup-panel" hidden>
+    <label for="highlight-backup-json">Backup JSON</label>
+    <textarea id="highlight-backup-json" rows="4" readonly></textarea>
+    <button id="copy-highlight-backup" type="button">Copy backup</button>
+    <p>If the download does not start, copy this backup into a .json file.</p>
+  </div>
+  <p id="highlight-dialog-status" role="status"></p>
+  <p id="highlights-empty">Your saved passages will appear here.</p>
+  <ol id="highlights-list"></ol>
+</dialog>
+<dialog
+  id="note-dialog"
+  class="highlights-dialog note-dialog"
+  aria-labelledby="note-title"
+>
+  <div class="highlights-heading">
+    <div>
+      <p class="eyebrow">A THOUGHT TO KEEP</p><h2 id="note-title">Add note</h2>
+    </div>
+    <button
+      id="close-note"
+      class="icon-button"
+      type="button"
+      aria-label="Close note editor"><Icon name="close" /></button
+    >
+  </div>
+  <blockquote id="note-quote"></blockquote>
+  <label for="note-text">Your note</label>
+  <textarea
+    id="note-text"
+    rows="6"
+    maxlength="10000"
+    placeholder="What stands out? What would you like to explore?"
+    aria-describedby="note-draft-status"></textarea>
+  <p id="note-draft-status" role="status">
+    Drafts stay in this browser. Choose Save note when you’re ready.
+  </p>
+  <div class="note-editor-actions">
+    <button id="discard-note-draft" type="button">Discard draft</button>
+    <button id="save-note" type="button" class="button button-primary"
+      >Save note</button
+    >
+  </div>
+</dialog>
+<script>
+  import { initHighlights } from '../scripts/highlights';
+  initHighlights();
+</script>
