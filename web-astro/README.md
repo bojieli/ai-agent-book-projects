@@ -1,7 +1,8 @@
 # Astro reading prototype
 
 A local design exploration for **AI Agents in Depth**, built with plain Astro.
-The homepage and complete English Chapter 1 are implemented. All other chapter
+The homepage and complete Chapter 1 are implemented in English, Simplified Chinese,
+and Traditional Chinese. All other chapter
 links lead to the existing online edition.
 
 ## Run locally
@@ -15,7 +16,9 @@ npm run dev
 ```
 
 Open the URL printed by Astro (normally `http://127.0.0.1:4321`). The chapter is
-at `/book-en/chapter1/`, matching its existing online path. Astro 7 runs the
+at `/book-en/chapter1/`, matching its existing online path. Use the header language
+switcher to view Chinese homepages at `/zh-CN/` and `/zh-TW/`, and Chapter 1 at
+`/book/chapter1/` and `/book-zhtw/chapter1.zhtw/`. Astro 7 runs the
 server in the background; stop it with `npx astro dev stop` from this directory.
 
 ```sh
@@ -29,6 +32,7 @@ npm test
 
 ## Design and reading features
 
+- Language switcher keeps readers on the homepage or Chapter 1 in their chosen edition.
 - Editorial homepage with an animated agent loop and all 10 chapters.
 - The loop supports pause/play, manual steps, reduced motion, and off-screen suspension.
 - Chapter reader with book navigation, an active section outline, and a mobile menu.
@@ -38,7 +42,7 @@ npm test
 - Highlights and plain-text notes save in IndexedDB on this browser, with JSON backup export/import.
 - Choose Add note on a selection or click a highlight to edit it. Save note commits
   the note; unfinished drafts are stored separately and restored after closing or reloading.
-- Backups include notes and drafts. Older highlight-only backups still import;
+- Backups include notes and drafts for the current edition only. Import into the same language edition. Older highlight-only backups still import;
   conflicting notes are kept as separate entries rather than overwritten.
 - Fonts are self-hosted. No accounts, external font requests, or AI services.
 
@@ -56,8 +60,10 @@ JavaScript; enhanced controls are shown when their scripts initialize.
 
 ## Source boundaries
 
-`src/pages/book-en/chapter1.astro` imports the tracked `book-en/chapter1.md`
-directly. `src/lib/book.ts` reads chapter titles through Vite's raw imports.
+Each Chapter 1 route imports its tracked Markdown directly from `book-en/`,
+`book/`, or `book-zhtw/`. Shared `Home.astro` and `Reader.astro` components render
+the editions; `src/lib/i18n.ts` defines edition routes and `translations.json`
+contains interface text. `src/lib/book.ts` reads chapter titles through Vite's raw imports.
 There is no second editable copy of the book text.
 
 `src/lib/book-markdown.mjs` adapts the web rendering: it removes the duplicated
@@ -66,8 +72,8 @@ and relative page links. Astro's unified Markdown processor preserves GFM tables
 footnotes, and highlighted code. Only Chapter 1's syntax has been validated;
 Pandoc attributes, math, and Mermaid in other chapters need migration work.
 
-`npm run dev` and `npm run build` copy only Chapter 1's seven referenced images
-from `book-en/images/` into an ignored generated public directory. Rerun the
+`npm run dev` and `npm run build` copy Chapter 1's seven referenced images
+per edition (21 total) into ignored generated public directories. Rerun the
 command when source images change. The original Markdown, assets, MkDocs
 configuration, PDF pipeline, and root dependencies are untouched.
 
@@ -76,8 +82,10 @@ credits and source history remain available in `docs/en/README.md` and Git.
 
 ## Prototype limits
 
-- English homepage and Chapter 1 only; other chapters open the existing site.
-- No search or language switcher yet. These need a separate multilingual pass.
+- Three prototype editions; other chapters open the matching existing edition.
+- The book has 15 editions; the remaining languages and search are not prototyped yet.
+- Explicit language URLs are authoritative; no automatic language redirects.
+- Chinese typography uses system fonts; it may vary across operating systems.
 - No deployment configuration or publishing workflow; this preview is local only.
 - Root hosting paths are assumed. A GitHub Pages subpath needs an explicit base
   URL migration before deployment.

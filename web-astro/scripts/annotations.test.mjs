@@ -117,3 +117,28 @@ test('imports enrich bare highlights without losing notes or drafts', () => {
     [{ ...note, id: 'new' }],
   );
 });
+
+test('edition backups reject other languages and never merge identical text across editions', () => {
+  const chinese = {
+    ...item,
+    id: 'zh-note',
+    chapter: 'ai-agents-in-depth:zh-CN:chapter1',
+    note: '中文笔记',
+  };
+  const backup = {
+    format: 'ai-agent-book-highlights',
+    version: 2,
+    highlights: [chinese],
+  };
+  assert.deepEqual(parseBackup(backup, chinese.chapter), [chinese]);
+  assert.throws(() => parseBackup(backup), /different chapter/);
+  assert.throws(
+    () => parseBackup(backup, 'ai-agents-in-depth:zh-TW:chapter1'),
+    /different chapter/,
+  );
+  const merged = mergeBackup([item], [chinese], () => 'new-id');
+  assert.equal(merged.length, 1);
+  assert.equal(merged[0].id, 'new-id');
+  assert.equal(merged[0].chapter, chinese.chapter);
+  assert.equal(merged[0].note, '中文笔记');
+});

@@ -1,3 +1,4 @@
+import { browserTranslator } from '../lib/i18n';
 import type { Annotation } from '../lib/annotations';
 import { readHighlights, updateNote } from '../lib/highlight-store';
 
@@ -5,7 +6,9 @@ export function createNoteEditor(
   db: IDBDatabase,
   refresh: () => Promise<void>,
   notify: (message: string) => void,
+  chapterKey: string,
 ) {
+  const t = browserTranslator();
   const get = <T extends HTMLElement>(id: string) =>
     document.getElementById(id) as T;
   const dialog = get<HTMLDialogElement>('note-dialog');
@@ -30,19 +33,21 @@ export function createNoteEditor(
     cache.set(record.id, snapshot);
     const noteDraft = value === (record.note ?? '') ? undefined : value;
     pendingWrites++;
-    status.textContent = 'Saving draft…';
+    status.textContent = t('Saving draft…');
     writes = writes.then(async () => {
       try {
         await updateNote(db, record.id, { noteDraft });
         failedDrafts.delete(record.id);
         if (cache.get(record.id) === snapshot) cache.delete(record.id);
         if (editing?.id === record.id)
-          status.textContent =
-            'Draft saved in this browser. Choose Save note when you’re ready.';
+          status.textContent = t(
+            'Draft saved in this browser. Choose Save note when you’re ready.',
+          );
       } catch {
         failedDrafts.add(record.id);
-        status.textContent =
-          'Draft could not be saved. Keep this page open and copy your text before leaving.';
+        status.textContent = t(
+          'Draft could not be saved. Keep this page open and copy your text before leaving.',
+        );
       } finally {
         pendingWrites--;
       }
@@ -63,7 +68,9 @@ export function createNoteEditor(
       await refresh();
     } catch {
       notify(
-        'Could not refresh your highlights. Please reload when your draft is saved.',
+        t(
+          'Could not refresh your highlights. Please reload when your draft is saved.',
+        ),
       );
     }
     if (!dialog.open) {
@@ -73,7 +80,9 @@ export function createNoteEditor(
       } else get('open-highlights').focus({ preventScroll: true });
       if (failedDrafts.size)
         notify(
-          'Your draft is still in this tab, but browser storage failed. Reopen the note and copy it before leaving.',
+          t(
+            'Your draft is still in this tab, but browser storage failed. Reopen the note and copy it before leaving.',
+          ),
         );
     }
   });
@@ -99,18 +108,21 @@ export function createNoteEditor(
       failedDrafts.delete(record.id);
       if (discardDraft) {
         text.value = record.note ?? '';
-        status.textContent = 'Draft discarded. Your saved note is unchanged.';
+        status.textContent = t(
+          'Draft discarded. Your saved note is unchanged.',
+        );
       } else {
         dialog.close();
         notify(
           value
-            ? 'Note saved in this browser.'
-            : 'Note removed. The highlight is kept.',
+            ? t('Note saved in this browser.')
+            : t('Note removed. The highlight is kept.'),
         );
       }
     } catch {
-      status.textContent =
-        'Could not save this change. Your text is still here; copy it before leaving.';
+      status.textContent = t(
+        'Could not save this change. Your text is still here; copy it before leaving.',
+      );
     } finally {
       saving = false;
       text.disabled = false;
@@ -132,19 +144,23 @@ export function createNoteEditor(
     async open(record: Annotation) {
       await writes;
       try {
-        const current = (await readHighlights(db)).find(
+        const current = (await readHighlights(db, chapterKey)).find(
           (item) => item.id === record.id,
         );
         if (!current) {
           notify(
-            'This highlight was removed. Select the passage again to add a note.',
+            t(
+              'This highlight was removed. Select the passage again to add a note.',
+            ),
           );
           return;
         }
         editing = current;
         returnToList = listDialog.open;
         if (returnToList) listDialog.close();
-        get('note-title').textContent = current.note ? 'Edit note' : 'Add note';
+        get('note-title').textContent = current.note
+          ? t('Edit note')
+          : t('Add note');
         get('note-quote').textContent = current.quote;
         text.value =
           cache.get(current.id)?.value ??
@@ -153,12 +169,14 @@ export function createNoteEditor(
           '';
         const recovered = text.value !== (current.note ?? '');
         status.textContent = recovered
-          ? 'Draft restored. Choose Save note when you’re ready.'
-          : 'Drafts stay in this browser. Choose Save note when you’re ready.';
+          ? t('Draft restored. Choose Save note when you’re ready.')
+          : t(
+              'Drafts stay in this browser. Choose Save note when you’re ready.',
+            );
         dialog.showModal();
         text.focus();
       } catch {
-        notify('Could not open the note. Please try again.');
+        notify(t('Could not open the note. Please try again.'));
       }
     },
   };

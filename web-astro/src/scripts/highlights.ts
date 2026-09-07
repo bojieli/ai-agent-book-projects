@@ -1,7 +1,7 @@
+import { browserTranslator } from '../lib/i18n';
 import { createNoteEditor } from './note-editor';
 import {
   anchor,
-  chapterKey,
   parseBackup,
   samePassage,
   type Annotation,
@@ -14,9 +14,12 @@ import {
 } from '../lib/highlight-store';
 
 export async function initHighlights() {
+  const t = browserTranslator();
   const article = document.querySelector<HTMLElement>('#chapter-content');
   if (!article) return;
   const content = article;
+  const chapterKey = article.dataset.chapterKey;
+  if (!chapterKey) return;
   const element = <T extends HTMLElement>(id: string) =>
     document.getElementById(id) as T;
   const toggle = element<HTMLButtonElement>('open-highlights');
@@ -128,8 +131,8 @@ export async function initHighlights() {
             ({ position }) => position?.start === entry.start + cuts[i],
           );
           mark.title = covering.some(({ record }) => record.note)
-            ? 'Edit note'
-            : 'Add note';
+            ? t('Edit note')
+            : t('Add note');
           if (first && !entry.node.parentElement?.closest('a')) {
             mark.tabIndex = 0;
             mark.setAttribute('role', 'button');
@@ -171,21 +174,22 @@ export async function initHighlights() {
       if (record.noteDraft !== undefined) {
         const draftLabel = document.createElement('p');
         draftLabel.className = 'note-draft-label';
-        draftLabel.textContent = 'Unfinished draft';
+        draftLabel.textContent = t('Unfinished draft');
         li.append(draftLabel);
       }
       if (!position) {
         const message = document.createElement('p');
         message.className = 'unmatched';
-        message.textContent =
-          'Passage changed or could not be matched. Your saved quote is preserved.';
+        message.textContent = t(
+          'Passage changed or could not be matched. Your saved quote is preserved.',
+        );
         li.append(message);
       }
       const actions = document.createElement('div');
       actions.className = 'highlight-actions';
       const jump = document.createElement('button');
       jump.type = 'button';
-      jump.textContent = 'Go to passage';
+      jump.textContent = t('Go to passage');
       jump.disabled = !position;
       jump.addEventListener('click', () => {
         const current = textMap();
@@ -217,16 +221,16 @@ export async function initHighlights() {
       });
       const remove = document.createElement('button');
       remove.type = 'button';
-      remove.textContent = 'Remove';
+      remove.textContent = t('Remove');
       remove.setAttribute(
         'aria-label',
-        `Remove highlight: ${record.quote.slice(0, 60)}`,
+        `${t('Remove highlight')}: ${record.quote.slice(0, 60)}`,
       );
       remove.addEventListener('click', async () => {
         const rowIndex = [...list.children].indexOf(li);
         await mutate(
           () => writeHighlights(db!, [], record.id),
-          'Highlight removed.',
+          t('Highlight removed.'),
         );
         const nextRow =
           list.children[Math.min(rowIndex, list.children.length - 1)];
@@ -239,10 +243,10 @@ export async function initHighlights() {
       edit.type = 'button';
       edit.textContent =
         record.noteDraft !== undefined
-          ? 'Resume draft'
+          ? t('Resume draft')
           : record.note
-            ? 'Edit note'
-            : 'Add note';
+            ? t('Edit note')
+            : t('Add note');
       edit.addEventListener('click', () => openNote(record));
       actions.append(jump, edit, remove);
       li.append(actions);
@@ -251,7 +255,7 @@ export async function initHighlights() {
   }
   async function refresh() {
     if (!db) return;
-    records = (await readHighlights(db)).sort((a, b) =>
+    records = (await readHighlights(db, chapterKey)).sort((a, b) =>
       a.createdAt.localeCompare(b.createdAt),
     );
     render();
@@ -268,7 +272,9 @@ export async function initHighlights() {
       notify(message);
     } catch {
       notify(
-        'Could not save this change. Browser storage may be unavailable or full. Please try again.',
+        t(
+          'Could not save this change. Browser storage may be unavailable or full. Please try again.',
+        ),
       );
     } finally {
       busy = false;
@@ -280,7 +286,9 @@ export async function initHighlights() {
     hideSelection();
     dialogStatus.textContent = db
       ? ''
-      : 'Highlight storage is unavailable. Allow site storage and reload to try again.';
+      : t(
+          'Highlight storage is unavailable. Allow site storage and reload to try again.',
+        );
     dialog.showModal();
   });
   element('close-highlights').addEventListener('click', () => dialog.close());
@@ -289,12 +297,14 @@ export async function initHighlights() {
   try {
     db = await openHighlights();
     await refresh();
-    noteEditor = createNoteEditor(db, refresh, notify);
+    noteEditor = createNoteEditor(db, refresh, notify, chapterKey);
     importInput.disabled = false;
   } catch {
     db = undefined;
     notify(
-      'Highlights could not load. Allow browser storage and reload to try again.',
+      t(
+        'Highlights could not load. Allow browser storage and reload to try again.',
+      ),
     );
     return;
   }
@@ -384,7 +394,7 @@ export async function initHighlights() {
     const item = pending;
     if (!item) return;
     mutate(async () => {
-      const latest = await readHighlights(db!);
+      const latest = await readHighlights(db!, chapterKey);
       if (
         !latest.some(
           (record) =>
@@ -394,20 +404,20 @@ export async function initHighlights() {
         )
       )
         await writeHighlights(db!, [item]);
-    }, 'Highlight saved in this browser.');
+    }, t('Highlight saved in this browser.'));
   });
   element('add-highlight-note').addEventListener('click', async () => {
     const item = pending;
     if (!item || !db || busy) return;
     let target: Annotation | undefined;
     await mutate(async () => {
-      const latest = await readHighlights(db!);
+      const latest = await readHighlights(db!, chapterKey);
       target = latest.find((record) => samePassage(record, item));
       if (!target) {
         await writeHighlights(db!, [item]);
         target = item;
       }
-    }, 'Highlight saved.');
+    }, t('Highlight saved.'));
     if (target) openNote(target);
   });
   function activateMark(event: MouseEvent | KeyboardEvent) {
@@ -428,8 +438,9 @@ export async function initHighlights() {
     else if (matches.length > 1) {
       hideSelection();
       dialog.showModal();
-      dialogStatus.textContent =
-        'This passage has multiple highlights. Choose Add note or Edit note below.';
+      dialogStatus.textContent = t(
+        'This passage has multiple highlights. Choose Add note or Edit note below.',
+      );
     }
   }
   content.addEventListener('click', activateMark);
@@ -438,11 +449,11 @@ export async function initHighlights() {
     const output = element<HTMLTextAreaElement>('highlight-backup-json');
     try {
       await navigator.clipboard.writeText(output.value);
-      notify('Backup copied. Save it as a .json file.');
+      notify(t('Backup copied. Save it as a .json file.'));
     } catch {
       output.focus();
       output.select();
-      notify('Copy the selected backup text and save it as a .json file.');
+      notify(t('Copy the selected backup text and save it as a .json file.'));
     }
   });
   exportButton.addEventListener('click', () => {
@@ -459,29 +470,25 @@ export async function initHighlights() {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = 'ai-agent-book-chapter1-highlights.json';
+      link.download = `ai-agent-book-${document.documentElement.lang}-chapter1-highlights.json`;
       document.body.append(link);
       link.click();
       link.remove();
       window.setTimeout(() => URL.revokeObjectURL(url), 60000);
     } catch {
-      notify('Could not export your highlights. Please try again.');
+      notify(t('Could not export your highlights. Please try again.'));
     }
   });
   importInput.addEventListener('change', async () => {
     const file = importInput.files?.[0];
     if (!file) return;
     try {
-      const imported = parseBackup(JSON.parse(await file.text()));
+      const imported = parseBackup(JSON.parse(await file.text()), chapterKey);
       await mutate(async () => {
-        await importHighlights(db!, imported);
-      }, 'Backup imported. Existing highlights were kept.');
+        await importHighlights(db!, imported, chapterKey);
+      }, t('Backup imported. Existing highlights were kept.'));
     } catch (error) {
-      notify(
-        error instanceof Error
-          ? error.message
-          : 'Could not import this backup.',
-      );
+      notify(t('Could not import this backup.'));
     } finally {
       importInput.value = '';
     }
@@ -489,7 +496,7 @@ export async function initHighlights() {
   window.addEventListener('focus', () => {
     if (!busy && !pending && !dialog.open && !noteEditor?.isOpen())
       refresh().catch(() =>
-        notify('Could not reload highlights. Please reload the page.'),
+        notify(t('Could not reload highlights. Please reload the page.')),
       );
   });
 }

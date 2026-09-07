@@ -183,15 +183,6 @@ img {
   align-items: center;
   gap: 18px;
 }
-.edition-label {
-  font-size: 0.75rem;
-  white-space: nowrap;
-  color: var(--muted);
-}
-.edition-label span {
-  margin: 0 8px;
-  color: var(--line);
-}
 .icon-button {
   width: 42px;
   height: 42px;
@@ -485,9 +476,6 @@ img {
     padding-inline: 30px;
     gap: 20px;
   }
-  .edition-label {
-    display: none;
-  }
   .home-hero {
     gap: 40px;
   }
@@ -639,5 +627,94 @@ img {
   *::after {
     animation: none !important;
     transition: none !important;
+  }
+}
+
+/* Keep language selection available at every screen size. Native links also work without JS. */
+.language-picker {
+  position: relative;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+.language-picker summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+  list-style: none;
+}
+.language-picker summary::-webkit-details-marker {
+  display: none;
+}
+.language-picker summary:hover,
+.language-picker[open] summary {
+  background: var(--surface);
+}
+.language-picker nav {
+  position: absolute;
+  z-index: 100;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 180px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+  box-shadow: 0 12px 32px #0002;
+}
+.language-picker nav a {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 11px 12px;
+  border-radius: 6px;
+}
+.language-picker nav a:hover,
+.language-picker nav a[aria-current] {
+  background: var(--surface);
+}
+:root:lang(zh-CN) {
+  --sans: 'Manrope Variable', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --serif: 'Newsreader Variable', 'Songti SC', 'SimSun', serif;
+}
+:root:lang(zh-TW) {
+  --sans: 'Manrope Variable', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+  --serif: 'Newsreader Variable', 'Songti TC', 'PMingLiU', serif;
+}
+:lang(zh) .hero-copy h1 {
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+}
+:lang(zh) .hero-subtitle {
+  line-height: 1.65;
+}
+:lang(zh) .chapter-heading h1 {
+  line-height: 1.25;
+}
+:lang(zh) .prose {
+  line-height: 1.95;
+}
+:lang(zh) .eyebrow,
+:lang(zh) .rail-label {
+  letter-spacing: 0.1em;
+}
+@media (max-width: 640px) {
+  .header-nav {
+    display: none;
+  }
+  .header-tools {
+    margin-left: auto;
+  }
+}
+@media (max-width: 480px) {
+  .brand > span:last-child {
+    display: none;
+  }
+  .language-picker summary {
+    min-height: 38px;
   }
 }

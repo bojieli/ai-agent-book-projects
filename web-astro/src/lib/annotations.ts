@@ -37,7 +37,10 @@ export function anchor(
   return start === undefined ? null : { start, end: start + item.quote.length };
 }
 
-export function parseBackup(value: unknown): Annotation[] {
+export function parseBackup(
+  value: unknown,
+  expectedChapter = chapterKey,
+): Annotation[] {
   const data = value as {
     format?: unknown;
     version?: unknown;
@@ -58,7 +61,7 @@ export function parseBackup(value: unknown): Annotation[] {
       typeof a.id !== 'string' ||
       !a.id.length ||
       a.id.length > 100 ||
-      a.chapter !== chapterKey ||
+      a.chapter !== expectedChapter ||
       typeof a.quote !== 'string' ||
       !a.quote.trim() ||
       a.quote.length > 10000 ||
@@ -97,7 +100,12 @@ export function parseBackup(value: unknown): Annotation[] {
 }
 
 export function samePassage(a: Annotation, b: Annotation) {
-  return a.quote === b.quote && a.prefix === b.prefix && a.suffix === b.suffix;
+  return (
+    a.chapter === b.chapter &&
+    a.quote === b.quote &&
+    a.prefix === b.prefix &&
+    a.suffix === b.suffix
+  );
 }
 
 // Enrich empty highlights, but keep conflicting notes as separate entries instead of overwriting either.

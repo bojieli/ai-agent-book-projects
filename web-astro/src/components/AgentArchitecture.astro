@@ -1,17 +1,21 @@
 ---
+import { translator, type Locale } from '../lib/i18n';
+const { locale = 'en' } = Astro.props as { locale?: Locale };
+const t = translator(locale);
 const stages = [
   {
-    label: 'Observe',
-    detail: 'Observations update the context available to the model.',
+    label: t('Observe'),
+    detail: t('Observations update the context available to the model.'),
   },
   {
-    label: 'Reason',
-    detail: 'The model uses that context to choose its next action.',
+    label: t('Reason'),
+    detail: t('The model uses that context to choose its next action.'),
   },
   {
-    label: 'Act',
-    detail:
+    label: t('Act'),
+    detail: t(
       'Tools act on the environment; the results become new observations.',
+    ),
   },
 ];
 ---
@@ -22,14 +26,16 @@ const stages = [
   aria-labelledby="architecture-title"
 >
   <div class="motion-heading">
-    <span class="motion-kicker">THE AGENT LOOP</span><span
-      class="edition-number">CONCEPTUAL MODEL</span
+    <span class="motion-kicker">{t('THE AGENT LOOP')}</span><span
+      class="edition-number">{t('CONCEPTUAL MODEL')}</span
     >
   </div>
   <div
     class="agent-scene"
     role="img"
-    aria-label="Context supplies observations to the LLM. The model chooses tools, which act on the environment. Feedback from the environment returns to context."
+    aria-label={t(
+      'Context supplies observations to the LLM. The model chooses tools, which act on the environment. Feedback from the environment returns to context.',
+    )}
   >
     <svg class="circuit" viewBox="0 0 640 460" fill="none" aria-hidden="true">
       <defs>
@@ -79,7 +85,7 @@ const stages = [
     <div class="model-core">
       <div class="core-inner"><strong>LLM</strong></div>
     </div>
-    <span class="model-label">Reasoning engine</span>
+    <span class="model-label">{t('Reasoning engine')}</span>
     <div class="context-node side-node">
       <svg
         class="context-visual node-visual"
@@ -101,8 +107,8 @@ const stages = [
         <path d="M18 23h33M18 29h25M18 35h17"></path>
         <circle class="incoming-observation" cx="72" cy="29" r="7"
         ></circle><path class="incoming-mark" d="M69 29h6m-3-3v6"></path>
-      </svg><strong>Context</strong><span class="node-description"
-        >Task · history<br />observations</span
+      </svg><strong>{t('Context')}</strong><span class="node-description"
+        >{t('Task · history')}<br />{t('observations')}</span
       >
     </div>
     <div class="tools-node side-node">
@@ -130,12 +136,12 @@ const stages = [
             cy="30"
             r="2"></circle></g
         >
-      </svg><strong>Tools</strong><span class="node-description"
-        >Search · code<br />APIs</span
+      </svg><strong>{t('Tools')}</strong><span class="node-description"
+        >{t('Search · code')}<br />APIs</span
       >
     </div>
-    <span class="flow-label observations-label">Observations</span><span
-      class="flow-label actions-label">Actions</span
+    <span class="flow-label observations-label">{t('Observations')}</span><span
+      class="flow-label actions-label">{t('Actions')}</span
     >
     <div class="environment-label">
       <svg
@@ -152,16 +158,18 @@ const stages = [
           r=".7"></circle>
         <circle cx="94" cy="10" r="5"></circle><path
           d="M85 27v-3a9 9 0 0 1 18 0v3"></path>
-      </svg><strong>Environment</strong><span>Files · browsers · people</span>
+      </svg><strong>{t('Environment')}</strong><span
+        >{t('Files · browsers · people')}</span
+      >
     </div>
   </div>
   <div class="loop-caption">
     <h2 id="architecture-title">
-      Decide. Act.<br /><em>Observe what changed.</em>
+      {t('Decide. Act.')}<br /><em>{t('Observe what changed.')}</em>
     </h2>
   </div>
   <div class="motion-controls" hidden>
-    <div class="stage-buttons" aria-label="Explore the agent loop">
+    <div class="stage-buttons" aria-label={t('Explore the agent loop')}>
       {
         stages.map((stage, index) => (
           <button
@@ -177,7 +185,7 @@ const stages = [
         ))
       }
     </div>
-    <button class="motion-play" type="button" aria-label="Pause animation"
+    <button class="motion-play" type="button" aria-label={t('Pause animation')}
       ><svg
         viewBox="0 0 20 20"
         width="16"
@@ -187,14 +195,16 @@ const stages = [
         ><path class="pause-symbol" d="M5 4h3v12H5zm7 0h3v12h-3z"></path><path
           class="play-symbol"
           d="m6 3 11 7-11 7z"></path></svg
-      ><span class="playback-label">Pause</span></button
+      ><span class="playback-label">{t('Pause')}</span></button
     >
   </div>
   <p id="agent-explanation" class="motion-explanation">
-    Context informs the model. Tools act on the world.
+    {t('Context informs the model. Tools act on the world.')}
   </p>
 </section>
 <script>
+  import { browserTranslator } from '../lib/i18n';
+  const t = browserTranslator();
   const panel = document.querySelector<HTMLElement>('.agent-motion');
   if (panel) {
     const routes = ['observe', 'reason', 'select', 'execute'].map((name) =>
@@ -342,11 +352,11 @@ const stages = [
       panel.dataset.paused = String(paused);
       draw();
       playback.querySelector('.playback-label')!.textContent = paused
-        ? 'Play'
-        : 'Pause';
+        ? t('Play')
+        : t('Pause');
       playback.setAttribute(
         'aria-label',
-        paused ? 'Play animation' : 'Pause animation',
+        paused ? t('Play animation') : t('Pause animation'),
       );
       if (!paused && visible && !document.hidden)
         frame = requestAnimationFrame(tick);

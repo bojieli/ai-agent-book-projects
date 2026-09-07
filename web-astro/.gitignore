@@ -2,5 +2,7 @@ node_modules/
 dist/
 .astro/
 public/book-en/
+public/book/
+public/book-zhtw/
 !.prettierrc.json
 !.prettierignore

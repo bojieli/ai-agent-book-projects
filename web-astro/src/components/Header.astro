@@ -1,31 +1,58 @@
 ---
+import { translator, editions, locales, type Locale } from '../lib/i18n';
 import Icon from './Icon.astro';
 import { repo } from '../lib/book';
-const { reader = false } = Astro.props;
+const { reader = false, locale = 'en' } = Astro.props as {
+  reader?: boolean;
+  locale?: Locale;
+};
+const t = translator(locale);
+const edition = editions[locale];
 ---
 
 <header class:list={['site-header', { 'reader-header': reader }]}>
-  <a class="brand" href="/" aria-label="AI Agents in Depth — home"
+  <a class="brand" href={edition.home} aria-label={t('AI Agents in Depth')}
     ><span class="brand-mark" aria-hidden="true">a<span>i</span></span><span
       >AI Agents<span class="brand-secondary">in Depth</span></span
     ></a
   >
-  <nav class="header-nav" aria-label="Main navigation">
-    <a href="/#contents">The book</a>
+  <nav class="header-nav" aria-label={t('Main navigation')}>
+    <a href={`${edition.home}#contents`}>{t('The book')}</a>
     <a class="desktop-link" href={`${repo}/tree/main/chapter1`}
-      >Experiments <Icon name="external" size={15} /></a
+      >{t('Experiments')} <Icon name="external" size={15} /></a
     >
     <a href={repo}>GitHub <Icon name="external" size={15} /></a>
   </nav>
   <div class="header-tools">
-    <span class="edition-label"
-      >EN <span aria-hidden="true">/</span> English edition</span
-    >
+    <details class="language-picker">
+      <summary aria-label={t('Language')}
+        ><span aria-hidden="true">◎</span>
+        {edition.name}
+        <span aria-hidden="true">⌄</span></summary
+      >
+      <nav aria-label={t('Language')}>
+        {
+          locales.map((language) => (
+            <a
+              href={
+                reader ? editions[language].chapter : editions[language].home
+              }
+              lang={language}
+              hreflang={language}
+              aria-current={language === locale ? 'page' : undefined}
+            >
+              {editions[language].name}
+              <span aria-hidden="true">{language === locale ? '✓' : ''}</span>
+            </a>
+          ))
+        }
+      </nav>
+    </details>
     <button
       class="icon-button theme-toggle"
       type="button"
-      aria-label="Switch to dark theme"
-      title="Switch color theme"
+      aria-label={t('Switch to dark theme')}
+      title={t('Switch color theme')}
       hidden
       ><span class="moon-icon"><Icon name="moon" /></span><span class="sun-icon"
         ><Icon name="sun" /></span
@@ -36,7 +63,7 @@ const { reader = false } = Astro.props;
         <button
           class="icon-button mobile-menu"
           type="button"
-          aria-label="Open chapter navigation"
+          aria-label={t('Open chapter navigation')}
           aria-expanded="false"
           aria-controls="chapter-navigation"
           hidden

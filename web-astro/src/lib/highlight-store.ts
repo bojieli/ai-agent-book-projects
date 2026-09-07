@@ -22,13 +22,16 @@ export function openHighlights(): Promise<IDBDatabase> {
   });
 }
 
-export function readHighlights(db: IDBDatabase): Promise<Annotation[]> {
+export function readHighlights(
+  db: IDBDatabase,
+  chapter = chapterKey,
+): Promise<Annotation[]> {
   return new Promise((resolve, reject) => {
     const tx = db.transaction('highlights', 'readonly');
     const request = tx
       .objectStore('highlights')
       .index('chapter')
-      .getAll(chapterKey);
+      .getAll(chapter);
     tx.oncomplete = () => resolve(request.result);
     tx.onabort = () => reject(tx.error);
     tx.onerror = () => reject(tx.error);
@@ -79,11 +82,12 @@ export function updateNote(
 export function importHighlights(
   db: IDBDatabase,
   imported: Annotation[],
+  chapter = chapterKey,
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     const tx = db.transaction('highlights', 'readwrite');
     const store = tx.objectStore('highlights');
-    const request = store.index('chapter').getAll(chapterKey);
+    const request = store.index('chapter').getAll(chapter);
     request.onsuccess = () => {
       for (const record of mergeBackup(request.result, imported, () =>
         crypto.randomUUID(),
