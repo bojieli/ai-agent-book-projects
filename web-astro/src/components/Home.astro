@@ -1,0 +1,156 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import AgentArchitecture from '../components/AgentArchitecture.astro';
+import Icon from '../components/Icon.astro';
+import { getBook, repo } from '../lib/book';
+import { translator, editions, type Locale } from '../lib/i18n';
+const { locale = 'en' } = Astro.props as { locale?: Locale };
+const t = translator(locale);
+const edition = editions[locale];
+const { chapters, chapterPath } = getBook(locale);
+---
+
+<Layout
+  locale={locale}
+  title={`${t('AI Agents in Depth')} — ${t('From principles to practice')}`}
+>
+  <Header locale={locale} />
+  <main id="main-content">
+    <section class="home-hero page-width" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow">
+          <span class="status-dot"></span>
+          {t('An open-source book')}
+        </p>
+        <h1 id="hero-title">
+          {
+            locale === 'en' ? (
+              <>
+                AI Agents
+                <>
+                  <br />
+                  <span class="serif-title">in Depth.</span>
+                </>
+              </>
+            ) : (
+              <>
+                深入理解
+                <>
+                  <br />
+                  <span class="serif-title">AI Agent.</span>
+                </>
+              </>
+            )
+          }
+        </h1>
+        <p class="hero-subtitle">
+          {t('Design principles.')}<br />{t('Engineering practice.')}
+        </p>
+        <p class="hero-description">
+          {t('Understand how agents work.')}<br />{
+            t('Learn to build systems that do.')
+          }
+        </p>
+        <div class="hero-actions">
+          <a class="button button-primary" href={chapterPath}
+            >{t('Start reading')} <Icon name="arrow" /></a
+          ><a class="text-link" href="#contents"
+            >{t('Explore the book')} <span aria-hidden="true">↓</span></a
+          >
+        </div>
+        <p class="hero-credit">
+          {locale === 'en' ? 'By ' : '作者：'}<a
+            href="https://github.com/bojieli"
+            >{locale === 'en' ? 'Bojie Li' : '李博杰'}</a
+          >{
+            locale === 'en'
+              ? ' & the open-source community'
+              : locale === 'zh-CN'
+                ? '与开源社区'
+                : '與開源社群'
+          }
+        </p>
+      </div>
+      <AgentArchitecture locale={locale} />
+    </section>
+    <div class="book-facts page-width">
+      <span
+        ><strong>10</strong> {t('chapters, from foundations to systems')}</span
+      ><span><strong>15</strong> {t('language editions')}</span><span
+        ><span class="fact-symbol" aria-hidden="true">↗</span>
+        {t('Open source. Open to everyone.')}</span
+      >
+    </div>
+    <section
+      id="contents"
+      class="contents-section page-width"
+      aria-labelledby="contents-title"
+    >
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">{t('A path from understanding to building')}</p><h2
+            id="contents-title"
+          >
+            {t('Inside the book')}<span class="accent-period">.</span>
+          </h2>
+        </div><p>
+          {t('Start with the fundamentals.')}<br />{
+            t('Follow your curiosity from there.')
+          }
+        </p>
+      </div>
+      <div class="chapter-grid">
+        {
+          chapters.map((chapter) => (
+            <a
+              class:list={[
+                'chapter-card',
+                { 'first-chapter': chapter.number === 1 },
+              ]}
+              href={chapter.href}
+              aria-label={`${chapter.label}. ${chapter.title}${chapter.external ? ` — ${t('existing reading site')}` : ''}`}
+            >
+              <>
+                <span class="chapter-number">{chapter.label}</span>
+                <div>
+                  <h3>{chapter.title}</h3>
+                  <p>{chapter.description}</p>
+                  {chapter.number === 1 && (
+                    <span class="start-label">{t('START HERE')}</span>
+                  )}
+                </div>
+                <Icon
+                  name={chapter.external ? 'external' : 'arrow'}
+                  size={22}
+                />
+              </>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+    <section class="practice-strip page-width">
+      <div>
+        <p class="eyebrow">{t('Ideas become clearer when you run them')}</p><h2>
+          {t('Read it. Then build it.')}
+        </h2><p>
+          {
+            t(
+              'Explore the companion experiments, inspect the code, and make it your own.',
+            )
+          }
+        </p>
+      </div><a class="button button-outline" href={`${repo}/tree/main/chapter1`}
+        >{t('Chapter 1 experiments')} <Icon name="external" /></a
+      >
+    </section>
+  </main>
+  <footer class="site-footer page-width">
+    <a class="footer-title" href={edition.home}>{t('AI Agents in Depth')}</a
+    ><span>{t('Written in the open. Built to be explored.')}</span><a
+      href={`${repo}/blob/main/LICENSE`}
+      >Apache 2.0 <Icon name="external" size={14} /></a
+    >
+  </footer>
+</Layout>

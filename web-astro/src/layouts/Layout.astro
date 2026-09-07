@@ -1,0 +1,78 @@
+---
+import '@fontsource-variable/manrope';
+import '@fontsource-variable/newsreader';
+import '../styles/global.css';
+import { translator, type Locale } from '../lib/i18n';
+interface Props {
+  title: string;
+  locale?: Locale;
+  description?: string;
+  reader?: boolean;
+}
+const {
+  title,
+  locale = 'en',
+  description = 'An open-source book on the design principles and engineering practice of AI agents.',
+  reader = false,
+} = Astro.props;
+const t = translator(locale);
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={t(description)} />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="color-scheme" content="light dark" />
+    <title>{title}</title>
+    <script is:inline>
+      try {
+        const saved = localStorage.getItem('book-theme');
+        document.documentElement.dataset.theme =
+          saved === 'dark' || saved === 'light'
+            ? saved
+            : matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light';
+      } catch {
+        document.documentElement.dataset.theme = 'light';
+      }
+    </script>
+  </head>
+  <body class:list={[{ 'reader-page': reader }]}>
+    <a class="skip-link" href="#main-content">{t('Skip to content')}</a>
+    <slot />
+    <script>
+      import { browserTranslator } from '../lib/i18n';
+      const t = browserTranslator();
+      const toggle = document.querySelector<HTMLButtonElement>('.theme-toggle');
+      function updateLabel() {
+        toggle?.setAttribute(
+          'aria-label',
+          t(
+            document.documentElement.dataset.theme === 'dark'
+              ? 'Switch to light theme'
+              : 'Switch to dark theme',
+          ),
+        );
+      }
+      if (toggle) {
+        toggle.hidden = false;
+        updateLabel();
+        toggle.addEventListener('click', () => {
+          const theme =
+            document.documentElement.dataset.theme === 'dark'
+              ? 'light'
+              : 'dark';
+          document.documentElement.dataset.theme = theme;
+          try {
+            localStorage.setItem('book-theme', theme);
+          } catch {}
+          updateLabel();
+        });
+      }
+    </script>
+  </body>
+</html>

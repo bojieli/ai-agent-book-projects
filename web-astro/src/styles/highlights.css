@@ -1,0 +1,284 @@
+.highlights-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+#highlight-count {
+  background: var(--surface);
+  color: var(--muted);
+  border-radius: 20px;
+  padding: 2px 6px;
+  font-variant-numeric: tabular-nums;
+}
+.highlight-selection {
+  position: fixed;
+  z-index: 30;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--ink);
+  color: var(--bg);
+  box-shadow: 0 5px 20px #0002;
+}
+.highlight-selection button {
+  padding: 8px 16px;
+  font: 650 0.8125rem var(--sans);
+  border-radius: 5px;
+}
+.highlight-selection button:focus-visible {
+  outline-offset: 1px;
+}
+.prose mark.reader-highlight {
+  background: #f2dc8c80;
+  color: inherit;
+  border-radius: 2px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+[data-theme='dark'] .prose mark.reader-highlight {
+  background: #9c7b354d;
+  box-shadow: inset 0 -1px #d5b36c80;
+}
+.highlight-status {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  max-width: min(90vw, 480px);
+  background: var(--ink);
+  color: var(--bg);
+  border-radius: 8px;
+  padding: 12px 18px;
+  font: 500 0.8125rem/1.5 var(--sans);
+  box-shadow: 0 8px 30px #0002;
+}
+.highlight-status:empty {
+  display: none;
+}
+.highlights-dialog {
+  background: var(--bg);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  width: min(560px, calc(100vw - 32px));
+  max-height: 85dvh;
+  padding: 28px;
+  font: 400 0.875rem/1.6 var(--sans);
+}
+.highlights-dialog::backdrop {
+  background: #090b1266;
+}
+.highlights-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 20px;
+}
+.highlights-heading .eyebrow {
+  font-size: 0.65rem;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.highlights-heading h2 {
+  font: 500 2rem/1.1 var(--serif);
+  margin-bottom: 12px;
+}
+.highlights-intro {
+  color: var(--ink);
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.highlights-help {
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+.highlights-backup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 20px 0;
+}
+.highlights-backup button,
+.import-highlights {
+  padding: 7px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+.import-highlights {
+  position: relative;
+}
+.import-highlights input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+.import-highlights:focus-within {
+  outline: 3px solid var(--interactive, #79991e);
+  outline-offset: 3px;
+}
+#highlight-dialog-status {
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+#highlights-empty {
+  padding: 24px 0;
+  color: var(--muted);
+}
+#highlights-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+#highlights-list li {
+  padding: 20px 0;
+  border-top: 1px solid var(--line);
+}
+#highlights-list blockquote {
+  margin: 0 0 12px;
+  padding-left: 14px;
+  border-left: 3px solid #c6a34b;
+  font: 400 1.1rem/1.6 var(--serif);
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+#highlights-list .highlight-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.75rem;
+}
+#highlights-list button {
+  padding: 5px 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+#highlights-list .unmatched {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+.reader-controls {
+  flex-wrap: wrap;
+}
+@media (max-width: 760px) {
+  .highlights-dialog {
+    padding: 22px;
+  }
+}
+
+#highlight-backup-panel {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 0.75rem;
+}
+#highlight-backup-json {
+  display: block;
+  width: 100%;
+  margin: 8px 0;
+  padding: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  font: 0.75rem/1.5 monospace;
+  resize: vertical;
+}
+#highlight-backup-panel button {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+#highlight-backup-panel p {
+  color: var(--muted);
+  margin: 8px 0 0;
+}
+
+.highlight-selection button + button {
+  border-left: 1px solid color-mix(in srgb, var(--bg) 35%, transparent);
+  border-radius: 0 5px 5px 0;
+}
+.prose mark.reader-highlight {
+  cursor: pointer;
+}
+.prose mark.reader-highlight.has-note::after {
+  content: '';
+  display: inline-block;
+  width: 0.6em;
+  height: 0.65em;
+  margin: 0 0.18em;
+  border: 1px solid currentColor;
+  border-radius: 2px 2px 2px 0;
+  opacity: 0.65;
+  vertical-align: 0.05em;
+  background:
+    linear-gradient(currentColor, currentColor) center 35% / 60% 1px no-repeat,
+    linear-gradient(currentColor, currentColor) center 65% / 60% 1px no-repeat;
+}
+.saved-note {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: 400 0.875rem/1.65 var(--sans);
+  margin: 0 0 12px;
+}
+.note-draft-label {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin: 0 0 10px;
+}
+#note-quote {
+  max-height: 150px;
+  overflow-y: auto;
+  margin: 8px 0 24px;
+  padding-left: 14px;
+  border-left: 3px solid #c6a34b;
+  font: 400 1.15rem/1.55 var(--serif);
+  overflow-wrap: anywhere;
+}
+.note-dialog label {
+  font-weight: 600;
+  font-size: 0.8125rem;
+}
+#note-text {
+  display: block;
+  width: 100%;
+  min-height: 150px;
+  resize: vertical;
+  margin: 8px 0 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font: 400 0.9375rem/1.65 var(--sans);
+}
+#note-text::placeholder {
+  color: var(--muted);
+}
+#note-draft-status {
+  color: var(--muted);
+  font-size: 0.75rem;
+  min-height: 2.5em;
+}
+.note-editor-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+#discard-note-draft {
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+#save-note {
+  min-height: 42px;
+  padding: 10px 18px;
+  font-size: 0.8125rem;
+}

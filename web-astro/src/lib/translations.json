@@ -1,0 +1,332 @@
+{
+  "An open-source book": ["一本开源书", "一本開源書"],
+  "AI Agents in Depth": ["深入理解 AI Agent", "深入理解 AI Agent"],
+  "From principles to practice": ["从原理到实践", "從原理到實踐"],
+  "Design principles.": ["设计原理。", "設計原理。"],
+  "Engineering practice.": ["工程实践。", "工程實踐。"],
+  "Understand how agents work.": [
+    "理解智能体如何工作。",
+    "理解智慧體如何運作。"
+  ],
+  "Learn to build systems that do.": [
+    "动手构建能解决问题的系统。",
+    "動手建構能解決問題的系統。"
+  ],
+  "Start reading": ["开始阅读", "開始閱讀"],
+  "Explore the book": ["浏览目录", "瀏覽目錄"],
+  "chapters, from foundations to systems": [
+    "章内容，从基础到系统",
+    "章內容，從基礎到系統"
+  ],
+  "language editions": ["种语言版本", "種語言版本"],
+  "Open source. Open to everyone.": [
+    "开源，向所有人开放。",
+    "開源，向所有人開放。"
+  ],
+  "A path from understanding to building": [
+    "从理解原理，到动手构建",
+    "從理解原理，到動手建構"
+  ],
+  "Inside the book": ["全书目录", "全書目錄"],
+  "Start with the fundamentals.": ["从基础开始。", "從基礎開始。"],
+  "Follow your curiosity from there.": [
+    "沿着好奇心，继续探索。",
+    "沿著好奇心，繼續探索。"
+  ],
+  "START HERE": ["从这里开始", "從這裡開始"],
+  "Ideas become clearer when you run them": [
+    "动手实践，让想法更清晰",
+    "動手實踐，讓想法更清晰"
+  ],
+  "Read it. Then build it.": ["读懂它，再实现它。", "讀懂它，再實現它。"],
+  "Explore the companion experiments, inspect the code, and make it your own.": [
+    "探索配套实验，阅读代码，构建自己的智能体。",
+    "探索配套實驗，閱讀程式碼，建構自己的智慧體。"
+  ],
+  "Chapter 1 experiments": ["第 1 章配套实验", "第 1 章配套實驗"],
+  "Written in the open. Built to be explored.": [
+    "开放共创，期待你的探索。",
+    "開放共創，期待你的探索。"
+  ],
+  "The book": ["全书目录", "全書目錄"],
+  "Experiments": ["配套实验", "配套實驗"],
+  "Main navigation": ["主导航", "主導覽"],
+  "Switch to dark theme": ["切换深色模式", "切換深色模式"],
+  "Switch to light theme": ["切换浅色模式", "切換淺色模式"],
+  "Switch color theme": ["切换配色", "切換配色"],
+  "Open chapter navigation": ["打开章节导航", "開啟章節導覽"],
+  "Skip to content": ["跳到正文", "跳到正文"],
+  "Book chapters": ["全书章节", "全書章節"],
+  "Back to the book": ["返回目录", "返回目錄"],
+  "CONTENTS": ["目录", "目錄"],
+  "Chapter navigation": ["章节导航", "章節導覽"],
+  "Companion experiments": ["配套实验", "配套實驗"],
+  "Download the book": ["下载全书", "下載全書"],
+  "Chapter 01": ["第 01 章", "第 01 章"],
+  "min read": ["分钟阅读", "分鐘閱讀"],
+  "Foundations": ["基础入门", "基礎入門"],
+  "Reading settings": ["阅读设置", "閱讀設定"],
+  "Text size": ["字号", "字級"],
+  "Decrease text size": ["缩小字号", "縮小字級"],
+  "Increase text size": ["放大字号", "放大字級"],
+  "Reset": ["重置", "重設"],
+  "Focus": ["专注阅读", "專注閱讀"],
+  "Exit focus": ["退出专注", "退出專注"],
+  "In this chapter": ["本章内容", "本章內容"],
+  "IN THIS CHAPTER": ["本章内容", "本章內容"],
+  "Chapter sections": ["本章节段落", "本章節段落"],
+  "Put it into practice": ["动手实践", "動手實踐"],
+  "Make your first agent.": [
+    "构建你的第一个智能体。",
+    "建構你的第一個智慧體。"
+  ],
+  "Explore the chapter’s companion experiments and see these ideas in code.": [
+    "探索本章配套实验，看看这些想法如何变成代码。",
+    "探索本章配套實驗，看看這些想法如何變成程式碼。"
+  ],
+  "Explore the experiments": ["探索配套实验", "探索配套實驗"],
+  "Previous and next chapters": ["上一章与下一章", "上一章與下一章"],
+  "BACK TO": ["返回", "返回"],
+  "UP NEXT": ["下一章", "下一章"],
+  "View chapter source": ["查看本章源码", "查看本章原始碼"],
+  "On this page": ["本页目录", "本頁目錄"],
+  "Back to top": ["回到顶部", "回到頂端"],
+  "Close chapter navigation": ["关闭章节导航", "關閉章節導覽"],
+  "Mobile chapter navigation": ["移动端章节导航", "行動版章節導覽"],
+  "Close expanded figure": ["关闭大图", "關閉大圖"],
+  "Expand figure": ["放大图片", "放大圖片"],
+  "Copy": ["复制", "複製"],
+  "Copy code": ["复制代码", "複製程式碼"],
+  "Copied": ["已复制", "已複製"],
+  "Select code to copy": ["请选择代码后复制", "請選取程式碼後複製"],
+  "Observe": ["观察", "觀察"],
+  "Reason": ["推理", "推理"],
+  "Act": ["行动", "行動"],
+  "Observations update the context available to the model.": [
+    "观察结果更新模型可用的上下文。",
+    "觀察結果更新模型可用的上下文。"
+  ],
+  "The model uses that context to choose its next action.": [
+    "模型根据上下文，选择下一步行动。",
+    "模型根據上下文，選擇下一步行動。"
+  ],
+  "Tools act on the environment; the results become new observations.": [
+    "工具作用于环境，结果成为新的观察信息。",
+    "工具作用於環境，結果成為新的觀察資訊。"
+  ],
+  "THE AGENT LOOP": ["智能体循环", "智慧體循環"],
+  "CONCEPTUAL MODEL": ["概念模型", "概念模型"],
+  "Context supplies observations to the LLM. The model chooses tools, which act on the environment. Feedback from the environment returns to context.": [
+    "上下文将观察信息提供给大语言模型。模型选择工具作用于环境，环境反馈再回到上下文。",
+    "上下文將觀察資訊提供給大型語言模型。模型選擇工具作用於環境，環境回饋再回到上下文。"
+  ],
+  "Reasoning engine": ["推理引擎", "推理引擎"],
+  "Context": ["上下文", "上下文"],
+  "Task · history": ["任务 · 历史", "任務 · 歷史"],
+  "observations": ["观察结果", "觀察結果"],
+  "Tools": ["工具", "工具"],
+  "Search · code": ["搜索 · 代码", "搜尋 · 程式碼"],
+  "Observations": ["观察信息", "觀察資訊"],
+  "Actions": ["行动", "行動"],
+  "Environment": ["环境", "環境"],
+  "Files · browsers · people": ["文件 · 浏览器 · 人", "檔案 · 瀏覽器 · 人"],
+  "Decide. Act.": ["决策，行动。", "決策，行動。"],
+  "Observe what changed.": ["观察世界的变化。", "觀察世界的變化。"],
+  "Explore the agent loop": ["探索智能体循环", "探索智慧體循環"],
+  "Pause animation": ["暂停动画", "暫停動畫"],
+  "Play animation": ["播放动画", "播放動畫"],
+  "Pause": ["暂停", "暫停"],
+  "Play": ["播放", "播放"],
+  "Context informs the model. Tools act on the world.": [
+    "上下文为模型提供信息，工具让它影响世界。",
+    "上下文為模型提供資訊，工具讓它影響世界。"
+  ],
+  "My highlights": ["我的划线", "我的畫線"],
+  "Selected passage": ["选中的段落", "選取的段落"],
+  "Highlight": ["划线", "畫線"],
+  "Add note": ["添加笔记", "新增筆記"],
+  "YOUR READING NOTES": ["你的阅读笔记", "你的閱讀筆記"],
+  "Close highlights": ["关闭划线列表", "關閉畫線清單"],
+  "Chapter 1 · Saved in this browser": [
+    "第 1 章 · 保存在此浏览器",
+    "第 1 章 · 儲存在此瀏覽器"
+  ],
+  "Select text to highlight it or add a note. Click a highlight to edit its note. Export a backup to keep your highlights and notes if you clear browser data or change devices.": [
+    "选中文字后划线或添加笔记，点击划线可编辑笔记。清除浏览器数据或更换设备前，请导出备份。备份仅包含当前语言版本。",
+    "選取文字後畫線或新增筆記，點擊畫線可編輯筆記。清除瀏覽器資料或更換裝置前，請匯出備份。備份僅包含目前語言版本。"
+  ],
+  "Export backup": ["导出备份", "匯出備份"],
+  "Import backup": ["导入备份", "匯入備份"],
+  "Backup JSON": ["JSON 备份", "JSON 備份"],
+  "Copy backup": ["复制备份", "複製備份"],
+  "If the download does not start, copy this backup into a .json file.": [
+    "如果没有开始下载，请复制备份并保存为 .json 文件。",
+    "若未開始下載，請複製備份並儲存為 .json 檔案。"
+  ],
+  "Your saved passages will appear here.": [
+    "保存的划线会显示在这里。",
+    "儲存的畫線會顯示在這裡。"
+  ],
+  "A THOUGHT TO KEEP": ["记下你的想法", "記下你的想法"],
+  "Close note editor": ["关闭笔记编辑器", "關閉筆記編輯器"],
+  "Your note": ["你的笔记", "你的筆記"],
+  "What stands out? What would you like to explore?": [
+    "什么让你印象深刻？还想探索什么？",
+    "什麼讓你印象深刻？還想探索什麼？"
+  ],
+  "Drafts stay in this browser. Choose Save note when you’re ready.": [
+    "草稿保存在此浏览器。写好后请选择「保存笔记」。",
+    "草稿儲存在此瀏覽器。寫好後請選擇「儲存筆記」。"
+  ],
+  "Discard draft": ["丢弃草稿", "捨棄草稿"],
+  "Save note": ["保存笔记", "儲存筆記"],
+  "Edit note": ["编辑笔记", "編輯筆記"],
+  "Saving draft…": ["正在保存草稿…", "正在儲存草稿…"],
+  "Draft saved in this browser. Choose Save note when you’re ready.": [
+    "草稿已保存在此浏览器。写好后请选择「保存笔记」。",
+    "草稿已儲存在此瀏覽器。寫好後請選擇「儲存筆記」。"
+  ],
+  "Draft could not be saved. Keep this page open and copy your text before leaving.": [
+    "草稿保存失败。请保持页面打开，离开前复制文字。",
+    "草稿儲存失敗。請保持頁面開啟，離開前複製文字。"
+  ],
+  "Could not refresh your highlights. Please reload when your draft is saved.": [
+    "无法刷新划线。请在草稿保存后重新加载。",
+    "無法重新整理畫線。請在草稿儲存後重新載入。"
+  ],
+  "Your draft is still in this tab, but browser storage failed. Reopen the note and copy it before leaving.": [
+    "草稿仍在此标签页中，但浏览器保存失败。离开前请重新打开笔记并复制内容。",
+    "草稿仍在此分頁中，但瀏覽器儲存失敗。離開前請重新開啟筆記並複製內容。"
+  ],
+  "Draft discarded. Your saved note is unchanged.": [
+    "草稿已丢弃，已保存的笔记保持不变。",
+    "草稿已捨棄，已儲存的筆記保持不變。"
+  ],
+  "Note saved in this browser.": [
+    "笔记已保存在此浏览器。",
+    "筆記已儲存在此瀏覽器。"
+  ],
+  "Note removed. The highlight is kept.": [
+    "笔记已移除，划线已保留。",
+    "筆記已移除，畫線已保留。"
+  ],
+  "Could not save this change. Your text is still here; copy it before leaving.": [
+    "无法保存修改。文字仍在此处，离开前请复制。",
+    "無法儲存修改。文字仍在此處，離開前請複製。"
+  ],
+  "This highlight was removed. Select the passage again to add a note.": [
+    "此划线已被移除。请重新选择段落以添加笔记。",
+    "此畫線已被移除。請重新選取段落以新增筆記。"
+  ],
+  "Draft restored. Choose Save note when you’re ready.": [
+    "草稿已恢复。写好后请选择「保存笔记」。",
+    "草稿已還原。寫好後請選擇「儲存筆記」。"
+  ],
+  "Could not open the note. Please try again.": [
+    "无法打开笔记，请重试。",
+    "無法開啟筆記，請重試。"
+  ],
+  "Unfinished draft": ["未完成的草稿", "未完成的草稿"],
+  "Passage changed or could not be matched. Your saved quote is preserved.": [
+    "原文已更改或无法匹配，保存的引文仍然保留。",
+    "原文已變更或無法比對，儲存的引文仍然保留。"
+  ],
+  "Go to passage": ["跳到原文", "跳到原文"],
+  "Remove": ["移除", "移除"],
+  "Highlight removed.": ["划线已移除。", "畫線已移除。"],
+  "Resume draft": ["继续草稿", "繼續草稿"],
+  "Could not save this change. Browser storage may be unavailable or full. Please try again.": [
+    "无法保存修改。浏览器存储可能不可用或已满，请重试。",
+    "無法儲存修改。瀏覽器儲存空間可能無法使用或已滿，請重試。"
+  ],
+  "Highlight storage is unavailable. Allow site storage and reload to try again.": [
+    "划线存储不可用。请允许网站存储数据后重新加载。",
+    "畫線儲存無法使用。請允許網站儲存資料後重新載入。"
+  ],
+  "Highlights could not load. Allow browser storage and reload to try again.": [
+    "无法加载划线。请允许浏览器存储后重新加载。",
+    "無法載入畫線。請允許瀏覽器儲存後重新載入。"
+  ],
+  "Highlight saved in this browser.": [
+    "划线已保存在此浏览器。",
+    "畫線已儲存在此瀏覽器。"
+  ],
+  "Highlight saved.": ["划线已保存。", "畫線已儲存。"],
+  "This passage has multiple highlights. Choose Add note or Edit note below.": [
+    "此段有多条划线，请在下方添加或编辑笔记。",
+    "此段有多筆畫線，請在下方新增或編輯筆記。"
+  ],
+  "Backup copied. Save it as a .json file.": [
+    "备份已复制，请保存为 .json 文件。",
+    "備份已複製，請儲存為 .json 檔案。"
+  ],
+  "Copy the selected backup text and save it as a .json file.": [
+    "请复制选中的备份文字，并保存为 .json 文件。",
+    "請複製選取的備份文字，並儲存為 .json 檔案。"
+  ],
+  "Could not export your highlights. Please try again.": [
+    "无法导出划线，请重试。",
+    "無法匯出畫線，請重試。"
+  ],
+  "Backup imported. Existing highlights were kept.": [
+    "备份已导入，原有划线已保留。",
+    "備份已匯入，原有畫線已保留。"
+  ],
+  "Could not import this backup.": [
+    "无法导入备份。请使用当前语言版本的有效备份。",
+    "無法匯入備份。請使用目前語言版本的有效備份。"
+  ],
+  "Could not reload highlights. Please reload the page.": [
+    "无法重新加载划线，请刷新页面。",
+    "無法重新載入畫線，請重新整理頁面。"
+  ],
+  "Language": ["语言", "語言"],
+  "existing reading site": ["原阅读网站", "原閱讀網站"],
+  "Remove highlight": ["移除划线", "移除畫線"],
+  "Expand": ["放大", "放大"],
+  "figure": ["图片", "圖片"],
+  "The model, the context, the tools—and the loop that brings them together.": [
+    "模型、上下文、工具，以及将它们连接起来的循环。",
+    "模型、上下文、工具，以及將它們連接起來的循環。"
+  ],
+  "Build the working context that makes an agent effective.": [
+    "构建有效的上下文，让智能体更好地完成任务。",
+    "建構有效的上下文，讓智慧體更好地完成任務。"
+  ],
+  "Connect agents to what they know and what they remember.": [
+    "连接知识与记忆，让智能体有所依据。",
+    "連接知識與記憶，讓智慧體有所依據。"
+  ],
+  "Give agents reliable interfaces to act on the world.": [
+    "为智能体提供可靠的工具接口，与世界交互。",
+    "為智慧體提供可靠的工具介面，與世界互動。"
+  ],
+  "Use code as a tool for creating new capabilities.": [
+    "把代码作为工具，创造新的能力。",
+    "把程式碼作為工具，創造新的能力。"
+  ],
+  "Extend agents across voice, vision, interfaces, and time.": [
+    "将智能体延伸到语音、视觉、界面与长时任务。",
+    "將智慧體延伸到語音、視覺、介面與長時任務。"
+  ],
+  "Measure behavior, compare systems, and learn from failures.": [
+    "衡量行为、对比系统，从失败中学习。",
+    "衡量行為、比較系統，從失敗中學習。"
+  ],
+  "Understand how supervised learning and reinforcement learning shape models.": [
+    "理解监督学习和强化学习如何塑造模型。",
+    "理解監督式學習和強化學習如何塑造模型。"
+  ],
+  "Turn execution experience into lasting improvements.": [
+    "把执行经验转化为持续的改进。",
+    "把執行經驗轉化為持續的改進。"
+  ],
+  "Coordinate agents, share context, and divide complex work.": [
+    "协调多个智能体，共享上下文，分解复杂任务。",
+    "協調多個智慧體，共享上下文，分解複雜任務。"
+  ],
+  "An open-source book on the design principles and engineering practice of AI agents.": [
+    "一本关于 AI Agent 设计原理与工程实践的开源书。",
+    "一本關於 AI Agent 設計原理與工程實踐的開源書。"
+  ]
+}
