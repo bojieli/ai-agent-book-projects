@@ -10,7 +10,7 @@ from typing import List, Dict, Any, Optional
 from dataclasses import dataclass, field
 from enum import Enum
 import requests
-from openai import OpenAI
+from openai import APITimeoutError, OpenAI
 import pypdf
 from io import BytesIO
 import math
@@ -906,7 +906,7 @@ Important: When you have gathered all necessary information and computed the fin
             # TimeoutError) when the request exceeds the configured 180s
             # timeout below; catch it explicitly so timeouts are reported
             # as timeouts instead of falling through to the generic path.
-            except (openai.APITimeoutError, requests.exceptions.Timeout) as exc:
+            except (APITimeoutError, requests.exceptions.Timeout) as exc:
                 logger.error(f"Request timed out after 180 seconds: {exc}")
                 return {
                     "error": "Request timed out. The model is taking too long to respond. Try a simpler task or different provider.",
