@@ -16,6 +16,9 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
 
+# Disable on-the-fly TFM creation for missing macOS fonts during probing
+export MKTEXTFM=0
+
 OUT="AI-Agents-in-Depth-Bojie-Li-v2.0-ja.pdf"
 CHAPTERS=(
     introduction.ja.md
@@ -46,6 +49,8 @@ pandoc "${CHAPTERS[@]}" \
     -o "$OUT" \
     --from markdown+lists_without_preceding_blankline \
     --pdf-engine=xelatex \
+    --pdf-engine-opt=-interaction=nonstopmode \
+    --pdf-engine-opt=-halt-on-error \
     --lua-filter=crossref.lua \
     --lua-filter=experiment_box.lua \
     --toc \
