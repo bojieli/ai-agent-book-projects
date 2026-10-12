@@ -46,7 +46,16 @@
 \newunicodechar{ω}{{\fallbackfont ω}}
 
 % ── Code/monospace font (covers box-drawing glyphs used in code) ──
-\setmonofont[Scale=0.86]{Menlo}
+% Menlo is a macOS font; fall back to DejaVu Sans Mono / Noto Sans Mono on Linux.
+\IfFontExistsTF{Menlo}{%
+  \setmonofont[Scale=0.86]{Menlo}%
+}{%
+  \IfFontExistsTF{DejaVu Sans Mono}{%
+    \setmonofont[Scale=0.86]{DejaVu Sans Mono}%
+  }{%
+    \setmonofont[Scale=0.86]{Noto Sans Mono}%
+  }%
+}
 
 % ── tcolorbox (ElegantBook already loads it; just add libraries) ──
 \tcbuselibrary{skins,breakable}
