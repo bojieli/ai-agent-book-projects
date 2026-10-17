@@ -77,3 +77,5 @@ ablation_study_results.png
 /chapter7/user-memory-system-evaluation/results/checkpoints/*
 !/chapter7/user-memory-system-evaluation/results/checkpoints/7_11/
 !/chapter7/user-memory-system-evaluation/results/checkpoints/7_11/**
+.github/.DS_Store
+.DS_Store
