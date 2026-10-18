@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Build EPUB 3 editions from the Markdown sources.
-# Usage: ./build_epub.sh [all|zh-CN|zh-TW|en|ru|ta|vi|tr|ja|ar]
+# Usage: ./build_epub.sh [all|zh-CN|zh-TW|en|ru|ta|vi|tr|ja|ar|fa]
 # Note: `all` does NOT include ja or ar while their PDF pipelines are being
 # validated. Build them explicitly with `./build_epub.sh ja|ar`.
 
@@ -17,9 +17,9 @@ for command in pandoc pdftoppm python3; do
 done
 
 case "$SELECTION" in
-    all|zh-CN|zh-TW|en|ru|ta|vi|tr|ja|ar) ;;
+    all|zh-CN|zh-TW|en|ru|ta|vi|tr|ja|ar|fa) ;;
     *)
-        echo "Usage: $0 [all|zh-CN|zh-TW|en|ru|ta|vi|tr|ja|ar]" >&2
+        echo "Usage: $0 [all|zh-CN|zh-TW|en|ru|ta|vi|tr|ja|ar|fa]" >&2
         exit 2
         ;;
 esac
@@ -123,11 +123,21 @@ build_edition() {
             toc_label="المحتويات"
             chapters=(introduction.ar.md chapter{1..10}.ar.md afterword.ar.md)
             ;;
+        fa)
+            directory="book-fa"
+            title="فهم عمیق عامل‌های هوش مصنوعی: اصول طراحی و تمرینات مهندسی"
+            author="لی بوجی (Bojie Li)؛ ترجمه فارسی"
+            pdf="AI-Agents-in-Depth-fa.pdf"
+            output="AI-Agents-in-Depth-fa.epub"
+            title_label="صفحه عنوان"
+            toc_label="فهرست مطالب"
+            chapters=(introduction.fa.md chapter{1..10}.fa.md afterword.fa.md)
+            ;;
     esac
 
     local edition_dir="$ROOT/$directory"
     direction="ltr"
-    if [ "$language" = "ar" ]; then
+    if [ "$language" = "ar" ] || [ "$language" = "fa" ]; then
         direction="rtl"
     fi
     local chapter
@@ -166,7 +176,7 @@ build_edition() {
             --metadata identifier="https://github.com/bojieli/ai-agent-book#$language"
     )
 
-    if [ "$language" = "ar" ]; then
+    if [ "$language" = "ar" ] || [ "$language" = "fa" ]; then
         python3 "$ROOT/flatten_epub_toc.py" \
             "$edition_dir/$output" "$title_label" "$toc_label" rtl
     else

@@ -152,6 +152,7 @@ extra:
     ja:   { label: 日本語,     prefix: book-ja/,   suffix: .ja,   readmeSuffix: ja }
     ar:   { label: العربية,    prefix: book-ar/,   suffix: .ar,   readmeSuffix: ar }
     tr:   { label: Türkçe,      prefix: book-tr/,   suffix: .tr,   readmeSuffix: tr }
+    fa:   { label: فارسی,      prefix: book-fa/,   suffix: .fa,   readmeSuffix: fa }
 
 nav:
   # The left sidebar is a clean chapter tree. With navigation.indexes,
