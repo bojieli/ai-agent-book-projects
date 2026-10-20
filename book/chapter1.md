@@ -32,7 +32,9 @@
 
 ![图1-1 Agent 与 Environment 的闭环交互，以及 Agent 内部的 Model–Harness 结构](images/fig1-1.svg)
 
-图1-1 同时给出了两个抽象层次。外层是 **Agent 与 Environment 的交互关系**：环境包含文件、数据库、网页、用户、其他 Agent 以及物理或仿真世界，Agent 只能通过观察和行动接口与它交互。内层是 **Agent 的 Model–Harness 结构**：Model 负责策略决策；Harness 是 Agent 边界内环绕模型的运行与治理层，负责构造上下文、暴露工具接口、维护循环和状态，并实施权限、验证与纠正。Harness 可以创建、隔离或代理一个环境，却不因此包含环境自身的状态与转移规律。
+图1-1 同时给出了两个抽象层次。外层是 **Agent 与 Environment 的交互关系**：环境包含文件、数据库、网页、用户、其他 Agent 以及物理或仿真世界，Agent 只能通过观察和行动接口与它交互。内层是 **Agent 的 Model–Harness 结构**：Model 负责策略决策；Harness 是 Agent 边界内环绕模型的运行与治理层，负责构造上下文、暴露工具接口、维护循环和状态，并实施权限、验证与纠正。Harness 可以创建、隔离或代理一个环境，却不因此包含环境自身的状态与转移规律。[^ch1-harness]
+
+[^ch1-harness]: 关于 Agent Harness 的组成与工程实践，参见 Vivek Trivedy, "The Anatomy of an Agent Harness", LangChain, 2026-03-10, https://www.langchain.com/blog/the-anatomy-of-an-agent-harness；Anthropic, "Effective harnesses for long-running agents", 2025-11-26, https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents。LangChain 的文章将配套文件系统、沙盒等基础设施纳入 Harness；本书按图 1-1 区分运行与治理机制和环境自身的状态与转移规律。
 
 本节开头的工程公式可以据此重新展开：LLM 对应 Model，“上下文 + 工具”构成最小 Harness；生产系统还会在 Harness 中加入约束、验证和纠正。后文所有架构都遵循这条边界。
 
