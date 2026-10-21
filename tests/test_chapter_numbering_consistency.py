@@ -1,12 +1,13 @@
 """Regression checks for the 2.0 chapter reorganization.
 
 The checks cover the public chapter index, build-version metadata, the issue
-#907 trajectory-verifier example, and representative retained-run migrations.
+#907 trajectory-verifier example, event-trigger setup, and retained-run migrations.
 """
 
 from __future__ import annotations
 
 import html
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -111,6 +112,39 @@ def test_issue_907_verifier_and_runner_use_experiment_9_1():
     assert "Experiment 9-1" in demo
     assert (ROOT / "chapter9/trajectory-verifier/run_experiment_9_1.py").is_file()
     assert not (ROOT / "chapter9/trajectory-verifier/run_experiment_8_1.py").exists()
+
+
+def test_event_trigger_readme_uses_chapter_6_labels():
+    readme = read("chapter6/agent-with-event-trigger/README.md")
+
+    assert "Chapter 6 — **Experiment 6-1" in readme
+    assert "第 6 章 **实验 6-1" in readme
+    assert "[Chapter 6 index / 返回第 6 章目录](../README.md)" in readme
+    assert "第 4 章 **实验" not in readme
+    assert "Chapter 4 index" not in readme
+
+
+def test_event_trigger_readme_setup_directories_exist():
+    readme = read("chapter6/agent-with-event-trigger/README.md")
+    directories = re.findall(r"^cd (chapter\d+/agent-with-event-trigger)$", readme, re.MULTILINE)
+
+    assert directories
+    for directory in directories:
+        assert (ROOT / directory).is_dir(), f"Documented directory does not exist: {directory}"
+        assert directory == "chapter6/agent-with-event-trigger"
+
+
+def test_event_trigger_readme_installs_chapter_and_mcp_server_extras():
+    readme = read("chapter6/agent-with-event-trigger/README.md")
+    uv_commands = re.findall(r"^uv sync .+$", readme, re.MULTILINE)
+    pip_extras = re.findall(r'python -m pip install -e "\.\[([^]]+)\]"', readme)
+
+    assert uv_commands and pip_extras
+    # ch6 alone lacks FastAPI, Uvicorn and MCP; ch4 supplies the shared tool servers.
+    for command in uv_commands:
+        assert {"ch6", "ch4"} <= set(re.findall(r"--extra (\w+)", command)), command
+    for extras in pip_extras:
+        assert {"ch6", "ch4"} <= set(extras.split(",")), extras
 
 
 def test_representative_retained_runs_use_current_identifiers():

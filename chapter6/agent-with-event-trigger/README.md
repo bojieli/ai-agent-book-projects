@@ -206,9 +206,11 @@ AGENT_PORT=9000 python server.py
 
 #### 安装
 
+本实验位于第 6 章，但复用第 4 章的 MCP 工具服务器。当前 `ch6` extra 不包含 FastAPI、Uvicorn 和 MCP 依赖，因此安装时同时启用 `ch6` 和 `ch4`。
+
 ```bash
-# 在仓库根目录使用统一的第 6 章环境
-uv sync --locked --python 3.12 --extra ch6
+# 在仓库根目录安装第 6 章与共享 MCP 工具依赖
+uv sync --locked --python 3.12 --extra ch6 --extra ch4
 
 # 切换目录前先激活环境：
 # macOS/Linux：
@@ -217,7 +219,7 @@ source .venv/bin/activate
 # Windows cmd：.venv\Scripts\activate.bat
 
 # 未安装 uv 时可用 pip 兜底：
-# python -m pip install -e ".[ch6]"
+# python -m pip install -e ".[ch6,ch4]"
 
 cd chapter6/agent-with-event-trigger
 
@@ -236,10 +238,10 @@ export KIMI_API_KEY='your-api-key-here'
 
 ```bash
 # 在仓库根目录安装 pytest 所需的 dev extra：
-uv sync --locked --python 3.12 --extra ch6 --extra dev
+uv sync --locked --python 3.12 --extra ch6 --extra ch4 --extra dev
 
 # pip 测试兜底路径：
-# python -m pip install -e ".[ch6,dev]"
+# python -m pip install -e ".[ch6,ch4,dev]"
 
 cd chapter6/agent-with-event-trigger
 python -m pytest tests
@@ -414,9 +416,9 @@ python client.py --event-type timer_trigger --message "检查每日备份"
 ### 项目说明
 
 > Companion code for *AI Agents in Depth*, Chapter 6 — **Experiment 6-1 ★★★**. FastAPI event-driven Agent with async MCP tool loading from collaboration / execution / perception servers.
-> 配套《深入理解 AI Agent》第 4 章 **实验 6-1 ★★★**。FastAPI 事件驱动 Agent，异步加载协作/执行/感知 MCP 工具。
+> 配套《深入理解 AI Agent》第 6 章 **实验 6-1 ★★★**。FastAPI 事件驱动 Agent，异步加载协作/执行/感知 MCP 工具。
 
-← [Chapter 4 index / 返回第 4 章目录](../README.md)
+← [Chapter 6 index / 返回第 6 章目录](../README.md)
 
 ---
 
@@ -548,8 +550,8 @@ curl -X POST http://localhost:8000/mcp/reload
 #### 导入错误
 
 ```bash
-# 从仓库根目录重新安装统一的第 4 章环境
-uv sync --locked --python 3.12 --extra ch4
+# 从仓库根目录重新安装第 6 章与共享 MCP 工具依赖
+uv sync --locked --python 3.12 --extra ch6 --extra ch4
 
 # 单项目兼容路径：
 # python -m pip install -r requirements.txt
@@ -717,9 +719,11 @@ The official endpoint versions used by the implementation are pinned in
 
 #### Installation
 
+This Chapter 6 experiment reuses the Chapter 4 MCP tool servers. The current `ch6` extra does not include FastAPI, Uvicorn or MCP, so enable both `ch6` and `ch4` when installing.
+
 ```bash
-# From the repository root: use the shared Chapter 4 environment
-uv sync --locked --python 3.12 --extra ch4
+# From the repository root: install Chapter 6 and shared MCP tool dependencies
+uv sync --locked --python 3.12 --extra ch6 --extra ch4
 
 # Activate it before changing directories:
 # macOS/Linux:
@@ -728,9 +732,9 @@ source .venv/bin/activate
 # Windows cmd: .venv\Scripts\activate.bat
 
 # pip fallback when uv is not installed:
-# python -m pip install -e ".[ch4]"
+# python -m pip install -e ".[ch6,ch4]"
 
-cd chapter4/agent-with-event-trigger
+cd chapter6/agent-with-event-trigger
 
 # Single-project compatibility path, still supported during migration:
 # python -m pip install -r requirements.txt
@@ -748,12 +752,12 @@ Automated tests are offline regressions under `tests/` and do not require an API
 
 ```bash
 # From the repository root, include the dev extra for pytest:
-uv sync --locked --python 3.12 --extra ch4 --extra dev
+uv sync --locked --python 3.12 --extra ch6 --extra ch4 --extra dev
 
 # pip testing fallback:
-# python -m pip install -e ".[ch4,dev]"
+# python -m pip install -e ".[ch6,ch4,dev]"
 
-cd chapter4/agent-with-event-trigger
+cd chapter6/agent-with-event-trigger
 python -m pytest tests
 ```
 
@@ -1127,8 +1131,8 @@ curl -X POST http://localhost:8000/mcp/reload
 #### Import Errors
 
 ```bash
-# Reinstall the shared Chapter 4 environment from the repository root
-uv sync --locked --python 3.12 --extra ch4
+# Reinstall Chapter 6 and shared MCP tool dependencies from the repository root
+uv sync --locked --python 3.12 --extra ch6 --extra ch4
 
 # Single-project compatibility path:
 # python -m pip install -r requirements.txt
