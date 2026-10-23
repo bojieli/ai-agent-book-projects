@@ -18,7 +18,7 @@
 
 | 실험 | 프로젝트 | 유형 | 설명 |
 | :--: | --- | :--: | --- |
-| 4-1 | [active-tool-discovery](active-tool-discovery/) | ✅ | ‘120개가 넘는 도구 스키마를 모두 주입’하는 방식과 ‘필요할 때 능동적으로 발견’하는 방식을 비교합니다. 후자는 시스템 프롬프트에 몇 가지 기본 도구와 `discover_tools` 메타 도구만 유지하고, 임베딩 유사도로 도구 라이브러리에서 가장 관련 있는 전문 도구 3~5개를 검색합니다. 토큰을 절약하고, 지나치게 긴 목록 때문에 모델이 일반 도구를 잘못 선택하거나 오용하는 문제를 막습니다. |
+| 4-1 | [active-tool-discovery](active-tool-discovery/) | ✅ | ‘120개가 넘는 도구 스키마를 모두 주입’하는 방식과 ‘필요할 때 능동적으로 발견’하는 방식을 비교합니다. 후자는 시스템 프롬프트에 몇 가지 기본 도구와 `discover_tools` 메타 도구만 유지하고, 임베딩 유사도로 도구 라이브러리에서 가장 관련 있는 전문 도구 3\~5개를 검색합니다. 토큰을 절약하고, 지나치게 긴 목록 때문에 모델이 일반 도구를 잘못 선택하거나 오용하는 문제를 막습니다. |
 | 4-2 | [perception-tools](perception-tools/) | ✅ | 웹 검색, 멀티모달 이해, 파일 시스템 작업, 공개 데이터 소스 접근 기능을 아우르는 인식 도구 모음을 구축합니다. 대부분 무료 공개 API(DuckDuckGo, Open-Meteo, Yahoo Finance, OpenStreetMap 등)를 사용하므로 API 키가 필요하지 않습니다. |
 | 4-3 | [multimodal-agent](multimodal-agent/) | ✅ | Multimodal processing: compare native multimodal, extract-to-text, and tool-based analysis. |
 | 4-4 | [execution-tools](execution-tools/) | ✅ | 파일 작업, 코드 인터프리터, 가상 터미널, 외부 시스템 연동을 포함한 안전장치 내장 실행 도구 모음을 구현합니다. 보조 LLM 승인으로 위험한 작업을 막고, 복잡한 출력을 자동으로 요약하며, 코드 문법을 검증합니다. |

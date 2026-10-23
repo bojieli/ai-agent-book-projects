@@ -28,7 +28,7 @@
 | 3-7 | [structured-index](structured-index/) | ✅ | 재귀 요약을 이용한 계층형 트리 RAPTOR와 지식 그래프 GraphRAG라는 두 가지 구조화 색인 방식을 구현하고 비교합니다. |
 | 3-8 | [agentic-rag](agentic-rag/) | ✅ | 전통적인 비에이전트형 RAG와 Agentic RAG의 성능을 비교합니다. ReAct 패턴을 사용하는 에이전트가 반복적인 정보 검색을 주도해 복잡한 사법 질의응답에서 답변 품질을 크게 높이는 과정을 보여 줍니다. |
 | 3-9 | [agentic-rag-for-user-memory](agentic-rag-for-user-memory/) | ✅ | Agentic RAG 프레임워크를 사용자 대화 기록 관리에 적용합니다. 여러 차례 반복 검색하는 능력을 활용해 세션을 넘나드는 메모리 검색을 처리하고, 기본 회상과 세션 간 검색 기능을 구현합니다. |
-| 3-10 | [contextual-retrieval](contextual-retrieval/) | ✅ | Anthropic이 제안한 컨텍스트 인식 검색 기법을 구현합니다. 텍스트 청크마다 핵심 맥락을 담은 접두 요약을 생성해 전통적인 청킹의 컨텍스트 손실 문제를 해결하고 검색 실패율을 49~67% 줄입니다. |
+| 3-10 | [contextual-retrieval](contextual-retrieval/) | ✅ | Anthropic이 제안한 컨텍스트 인식 검색 기법을 구현합니다. 텍스트 청크마다 핵심 맥락을 담은 접두 요약을 생성해 전통적인 청킹의 컨텍스트 손실 문제를 해결하고 검색 실패율을 49\~67% 줄입니다. |
 | 3-11 | [contextual-retrieval-for-user-memory](contextual-retrieval-for-user-memory/) | ✅ | 컨텍스트 인식 검색 기법을 사용자 메모리 구축에 적용합니다. 고급 JSON 카드와 컨텍스트 인식 RAG를 결합해 2계층 메모리 아키텍처를 만들고, 더 높은 수준의 능동적 서비스 역량을 구현합니다. |
 | 3-12 | [structured-knowledge-extraction](structured-knowledge-extraction/) | ✅ | 사법 판례를 예로 들어 ‘상향식 요인 발견 → 사건 프로토타입 군집화 → 대화형 자문 에이전트’의 3단계 파이프라인을 구현합니다. 미리 정한 경직된 필드 없이 LLM이 많은 사건에서 요인을 스스로 발견해 모듈형 스키마(핵심 요인 + 혐의별 확장 요인)로 정리합니다. 이어 사건을 여러 프로토타입으로 군집화하고 각 프로토타입에서 요인별 중요도를 계산합니다. 에이전트는 새 사건의 사실관계를 가장 유사한 프로토타입에 대응시키고, 요인 중요도에 따라 빠진 정보를 질문한 뒤 근거 기반 조언을 제공합니다(법률 면책 고지 포함). |
 

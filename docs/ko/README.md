@@ -43,7 +43,7 @@
 <summary><b>🔧 PDF / EPUB를 직접 빌드하려면?</b> (PDF는 pandoc / xelatex / ElegantBook 필요)</summary>
 
 - **EPUB**: 공통 빌더를 사용합니다. 자세한 내용은 [EPUB 빌드 안내](../../EPUB.md)를 참고하세요
-- **본문 소스**: `book-ko/introduction.ko.md`, `book-ko/chapter1.ko.md` ~ `book-ko/chapter10.ko.md`, `book-ko/afterword.ko.md`
+- **본문 소스**: `book-ko/introduction.ko.md`, `book-ko/chapter1.ko.md` \~ `book-ko/chapter10.ko.md`, `book-ko/afterword.ko.md`
 - **빌드**: pandoc, xelatex, ElegantBook 문서 클래스와 Noto CJK KR 글꼴을 설치한 뒤 다음을 실행합니다.
 
   ```bash
